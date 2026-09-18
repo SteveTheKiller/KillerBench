@@ -122,7 +122,12 @@ public partial class MainWindow
         {
             string detail = error is OperationCanceledException ? "Transfer observation stopped or timed out." : "Transfer observation unavailable: " + error.Message;
             AppendWorkflowOutput(detail);
-            Report(detail);
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.BackgroundTransfers, Environment.MachineName, DateTimeOffset.UtcNow,
+                "Transfer observation not completed", [new WorkflowCheck("Transfer observation", CheckState.Unknown, detail),
+                new WorkflowCheck("Change boundary", CheckState.Information,
+                    "No transfer was changed. Retry remains a separate guarded action that requires fresh eligibility and explicit consent.")], [],
+                "Review the retained console output before considering another transfer observation or retry."),
+                "Background transfer observation");
             SetScanLight("incomplete", detail);
         }
         finally
