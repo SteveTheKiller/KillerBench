@@ -64,8 +64,17 @@ public partial class MainWindow
         try
         {
             var plan = ReadTaskDraftForm();
-            RegisterSource(new TextEvidence("Task draft: " + plan.Identity.FullName, ScheduledTaskReview.Format(plan, DateTimeOffset.UtcNow).Split('\n'), false));
-            Report("Task draft reviewed. No conflict check, registration or execution performed.");
+            string output = ScheduledTaskReview.Format(plan, DateTimeOffset.UtcNow);
+            BeginWorkflowOutput(WorkflowKind.ScheduledTasks);
+            AppendWorkflowOutput(output);
+            const string status = "Task draft reviewed. No conflict check, registration or execution performed.";
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.ScheduledTasks, Environment.MachineName, DateTimeOffset.UtcNow,
+                status,
+                [new WorkflowCheck("Task identity", CheckState.Information, "Draft: " + plan.Identity.FullName + "."),
+                 new WorkflowCheck("Registration boundary", CheckState.Information,
+                    "This draft review did not check for conflicts, register, enable, execute, or change a Windows task.")], [],
+                "Read-only scheduled-task draft review. No task journal was written."), "Scheduled task draft");
+            Report(status);
             SetScanLight("incomplete", "Draft review only; eligibility is unverified.");
         }
         catch (Exception error) when (error is ArgumentException or FormatException or OverflowException)
