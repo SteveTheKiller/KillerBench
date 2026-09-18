@@ -196,6 +196,14 @@ internal static class Program
             Require(FindTextBlocks(window).Any(block => block.Text == "Application inventory comparison report") &&
                 FindTextBlocks(window).Any(block => block.Text == "Registration differences"),
                 "Saved inventory comparisons have a readable report with the retained change count");
+            var packageReport = new WorkflowResult(WorkflowKind.AppPackages, "smoke", DateTimeOffset.UtcNow,
+                "Package snapshot reviewed. No package removal is available or authorized.",
+                [new("Package review item 1", CheckState.Information, "Windows reports this package as non-removable."),
+                 new("Dependent packages", CheckState.Information, "No dependent packages were reported in this retained snapshot.")], [], "read-only");
+            typeof(KillerBench.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [packageReport, "Package snapshot review"]);
+            Require(FindTextBlocks(window).Any(block => block.Text == "Package snapshot review report") &&
+                FindTextBlocks(window).Any(block => block.Text.Contains("No package removal is available or authorized", StringComparison.Ordinal)),
+                "Selected package reviews have a readable report without a removal action");
             Console.WriteLine("PASS: WPF workbench geometry, zoom containment, PEEK monitor bounds and safe report navigation.");
             return 0;
         }
