@@ -113,7 +113,8 @@ public partial class MainWindow
         readCancellation = cancellation;
         CompareApplicationInventories.IsEnabled = false;
         CancelButton.IsEnabled = true;
-        Report("Comparing saved application inventories...");
+        BeginWorkflowOutput(WorkflowKind.InstalledApps);
+        AppendWorkflowOutput("Comparing saved application inventories. No application will be changed.");
         try
         {
             var result = await Task.Run(() => ApplicationInventoryFiles.CompareAsync(before, after, cancellation.Token));
@@ -128,9 +129,18 @@ public partial class MainWindow
                 if (change.Before is { } old) text.AppendLine("  Before: " + old.Name + " | " + old.Version + " | " + old.Publisher);
                 if (change.After is { } current) text.AppendLine("  After: " + current.Name + " | " + current.Version + " | " + current.Publisher);
             }
-            RegisterSource(new TextEvidence("Application comparison " + DateTime.Now.ToString("HHmmss"), text.ToString().Replace("\r\n", "\n").Split('\n'), false));
-            ModeLabel.Text = "SAVED INVENTORY COMPARISON";
-            Report(result.Comparable ? "Inventory comparison ready. No applications changed." : "Inventories cannot establish differences: incomplete or mismatched coverage.");
+            AppendWorkflowOutput(text.ToString());
+            var checks = new[]
+            {
+                new WorkflowCheck("Comparison scope", CheckState.Information, "Both saved inventories use the " + result.Scope + " registration scope."),
+                new WorkflowCheck("Registration differences", !result.Comparable ? CheckState.Unknown : result.Differences.Count == 0 ? CheckState.Clear : CheckState.Attention,
+                    !result.Comparable ? "The saved inventories have incomplete or mismatched coverage, so differences cannot be established." : result.Differences.Count == 0 ? "No registration differences were identified." : result.Differences.Count + " registration difference" + (result.Differences.Count == 1 ? " was" : "s were") + " identified. Review the raw output before choosing any action.")
+            };
+            string status = result.Comparable ? "Application inventory comparison complete. No applications changed." : "Application inventory comparison incomplete. No applications changed.";
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.InstalledApps, Environment.MachineName, DateTimeOffset.UtcNow,
+                status, checks, [], "Read-only application inventory comparison. No journal was written."), "Application inventory comparison");
+            Report(status);
+            SetScanLight(result.Comparable ? "ready" : "incomplete", status);
         }
         catch (OperationCanceledException) { Report("Inventory comparison stopped or timed out."); }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or JsonException or InvalidOperationException or KeyNotFoundException or ArgumentException or NotSupportedException or FormatException)
@@ -138,6 +148,9 @@ public partial class MainWindow
         finally
         {
             readCancellation = null;
+            workflowOutputActive = false;
+            SourcesList.IsEnabled = true;
+            SearchBox.IsEnabled = true;
             CompareApplicationInventories.IsEnabled = true;
             CancelButton.IsEnabled = false;
         }

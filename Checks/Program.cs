@@ -180,6 +180,14 @@ internal static class Program
                     "Duplicate-file review opens a formatted read-only report");
             }
             finally { Directory.Delete(emptyFolder); }
+            var comparisonReport = new WorkflowResult(WorkflowKind.InstalledApps, "smoke", DateTimeOffset.UtcNow,
+                "Application inventory comparison complete. No applications changed.",
+                [new("Comparison scope", CheckState.Information, "Both saved inventories use the Machine registration scope."),
+                 new("Registration differences", CheckState.Attention, "1 registration difference was identified. Review the raw output before choosing any action.")], [], "read-only");
+            typeof(KillerBench.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [comparisonReport, "Application inventory comparison"]);
+            Require(FindTextBlocks(window).Any(block => block.Text == "Application inventory comparison report") &&
+                FindTextBlocks(window).Any(block => block.Text == "Registration differences"),
+                "Saved inventory comparisons have a readable report with the retained change count");
             Console.WriteLine("PASS: WPF workbench geometry, zoom containment, PEEK monitor bounds and safe report navigation.");
             return 0;
         }
