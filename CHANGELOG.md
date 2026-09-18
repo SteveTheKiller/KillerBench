@@ -32,6 +32,7 @@
 - Add CLI reconciliation for interrupted MACE package removal without adding a removal command.
 - Add a repeatable framework-dependent Windows x64 single-file publish profile.
 - Remove the bright border around category buttons.
+- Move report export into the main workspace and remove the inspector sidebar.
 
 ## [0.1.0] - Unreleased
 

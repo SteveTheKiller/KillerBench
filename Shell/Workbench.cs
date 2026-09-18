@@ -18,12 +18,11 @@ public partial class MainWindow
     private readonly Queue<SessionActivityEntry> activity = new();
     private bool shellReady;
     private bool sourcesOpen = true;
-    private bool detailsOpen = true;
     private double appScale = 1;
     private readonly Dictionary<Control, double> zoomFonts = [];
     private static readonly (Key Key, string Label)[] bindings =
     [ (Key.F1, "Keyboard shortcuts"), (Key.F2, "Toggle evidence sources"),
-      (Key.F3, "Toggle activity log"), (Key.F4, "Toggle inspector") ];
+      (Key.F3, "Toggle activity log") ];
 
     private void InitializeShell()
     {
@@ -121,14 +120,7 @@ public partial class MainWindow
         AnimateWidth(LeftPanel, sourcesOpen ? 370 : 0);
         SidebarButton.Content = ((char)(sourcesOpen ? 0xE76B : 0xE76C)).ToString();
     }
-    private void SetDetailsOpen(bool open)
-    {
-        detailsOpen = open;
-        DetailsPanel.IsEnabled = open;
-        AnimateWidth(DetailsPanel, open ? 270 : 0);
-        DetailsPanel.Margin = open ? new Thickness(8, 0, 0, 0) : new Thickness(0);
-    }
-    private void OnToggleDetails(object sender, RoutedEventArgs e) => SetDetailsOpen(!detailsOpen);
+    private void SetDetailsOpen(bool _) => DetailsPanel.Visibility = Visibility.Collapsed;
     private void OnToggleActivity(object sender, RoutedEventArgs e)
     {
         ActivityPanel.Visibility = ActivityPanel.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
@@ -211,7 +203,6 @@ public partial class MainWindow
             case Key.F1: OnShortcuts(this, e); break;
             case Key.F2: OnToggleSources(this, e); break;
             case Key.F3: OnToggleActivity(this, e); break;
-            case Key.F4: OnToggleDetails(this, e); break;
             default: return false;
         }
         e.Handled = true;

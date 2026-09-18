@@ -586,8 +586,9 @@ internal static class Program
             var categoryOrigin = categories.TranslatePoint(new Point(), window);
             Require(categoryOrigin.X >= controlOrigin.X + controlBank.ActualWidth && categories.ActualHeight < 65,
                 "Compact category buttons occupy only the middle pane beside the tool sidebar");
-            Require(Grid.GetColumnSpan(categories) == 1 && Grid.GetRowSpan((FrameworkElement)window.FindName("DetailsPanel")) == 2,
-                "Category bank excludes the inspector column");
+            Require(Grid.GetColumnSpan(categories) == 1 && ((FrameworkElement)window.FindName("DetailsPanel")).Visibility == Visibility.Collapsed &&
+                ((Button)window.FindName("ExportReportButton")).Visibility == Visibility.Visible,
+                "Category bank leads to the report workspace with a visible export action and no inspector sidebar");
             var categoryTools = (ComboBox)window.FindName("CategoryWorkflow");
             var allTools = (ComboBox)window.FindName("MainWorkflow");
             var reachableTools = new HashSet<WorkflowKind>();

@@ -847,7 +847,7 @@
                 </Grid>
               </Expander>
               <DockPanel Margin="0,0,0,6">
-                <Button x:Name="DetailsButton" DockPanel.Dock="Right" Content="Display / details" Click="OnToggleDetails" ToolTip="{DynamicResource Str_ToolTip_Toggle_inspector_F4}" Padding="10,4"/>
+                <Button x:Name="ExportReportButton" DockPanel.Dock="Right" Content="{DynamicResource Str_ExportReport}" Click="OnExportReport" ToolTip="{DynamicResource Str_ExportContents}" Padding="10,4"/>
                 <TextBlock x:Name="EvidenceTitle" Text="{DynamicResource Str_Text_Evidence}" FontFamily="{DynamicResource WordmarkFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,12,0"/>
               </DockPanel>
               <DockPanel Grid.Row="1" Margin="0,0,0,6">
@@ -877,7 +877,7 @@
             </Grid>
           </Border></Grid>
 </Border>
-          <Border x:Name="DetailsPanel" Grid.Column="1" Grid.RowSpan="2" Width="270" Style="{StaticResource Panel}" Margin="4,0,0,0" ClipToBounds="True">
+          <Border x:Name="DetailsPanel" Grid.Column="1" Grid.RowSpan="2" Width="270" Style="{StaticResource Panel}" Margin="4,0,0,0" ClipToBounds="True" Visibility="Collapsed">
 <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
 <Border Padding="0">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -892,7 +892,7 @@
                   <Button x:Name="RepairRun" Content="GO" IsEnabled="{Binding IsChecked, ElementName=RepairConsent}" Click="OnRunRepair" Margin="0,8,0,0" ToolTip="Run the previewed repair on this PC; administrator rights required"/>
                 </StackPanel>
                 <WrapPanel Margin="0,0,0,14"><Button Content="{DynamicResource Str_Findings}" Click="OnFindingsTab" Margin="0,0,6,0"/><Button Content="{DynamicResource Str_Content_Display}" Click="OnDisplayTab" Margin="0,0,6,0"/><Button Content="{DynamicResource Str_Content_Source}" Click="OnSourceTab"/></WrapPanel>
-                <WrapPanel Margin="0,0,0,10"><Button x:Name="DemoButton" Content="{DynamicResource Str_LoadDemo}" Click="OnDemo" Margin="0,0,6,0"/><Button Content="{DynamicResource Str_ExportReport}" Click="OnExportReport" ToolTip="{DynamicResource Str_ExportContents}"/></WrapPanel>
+                <WrapPanel Margin="0,0,0,10"><Button x:Name="DemoButton" Content="{DynamicResource Str_LoadDemo}" Click="OnDemo" Margin="0,0,6,0"/></WrapPanel>
                 <StackPanel x:Name="FindingsPanel" Visibility="Collapsed"><TextBlock x:Name="FindingsSummary" TextWrapping="Wrap"/><StackPanel x:Name="FindingCards"/></StackPanel>
                 <StackPanel x:Name="DisplaySettings">
                   <TextBlock Text="{DynamicResource Str_Text_Console_phosphor}" FontSize="17" Margin="0,0,0,6"/>
