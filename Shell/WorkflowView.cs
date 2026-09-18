@@ -23,12 +23,13 @@ public partial class MainWindow
     }
 
     private void RegisterGuardedActionReport(WorkflowKind kind, string reportTitle, string actionName, string output,
-        string detail, string journal, bool verified, string verifiedNextAction, bool requiresRestart = false)
+        string detail, string journal, bool verified, string verifiedNextAction, bool requiresRestart = false,
+        string? restartNextAction = null)
     {
         AppendWorkflowOutput(output);
         string status = requiresRestart ? "Restart required" : verified ? "Verified" : "Review required";
         var action = new WorkflowAction(actionName, status, detail,
-            requiresRestart ? "Restart Windows, then return to this report and reconcile the exact computer-name change."
+            requiresRestart ? restartNextAction ?? "Restart Windows, then return to this report and reconcile the selected operation."
                 : verified ? verifiedNextAction : "Review the local change journal and current state before retrying.", verified, requiresRestart);
         RegisterWorkflowResult(new WorkflowResult(kind, Environment.MachineName, DateTimeOffset.UtcNow,
             requiresRestart ? "Restart required" : verified ? "Guarded action verified" : "Guarded action requires review",
@@ -939,7 +940,8 @@ public partial class MainWindow
                 bool requiresRestart = rename.Outcome == ComputerRenameOutcome.RestartRequired;
                 RegisterGuardedActionReport(WorkflowKind.ComputerName, "Computer name", "Computer name / " + rename.Outcome,
                     output, rename.Detail, rename.RecordPath ?? "No operation record created.", verified,
-                    "Confirm the computer name in Windows and test dependent services before making another change.", requiresRestart);
+                    "Confirm the computer name in Windows and test dependent services before making another change.", requiresRestart,
+                    "Restart Windows, then return to this report and reconcile the exact computer-name change.");
                 SetScanLight(rename.Outcome == ComputerRenameOutcome.Verified ? "ready" :
                     rename.Outcome == ComputerRenameOutcome.RestartRequired ? "attention" : "incomplete", rename.Detail);
                 return;
@@ -1153,10 +1155,13 @@ public partial class MainWindow
                             new WindowsFileSystemRepairHost(), progress, stop.Token));
                         string recoveryOutput = "FILESYSTEM REPAIR / INTERRUPTED OPERATION\nOutcome: " + recovery.Outcome +
                             "\n" + recovery.Detail + "\nRecord: " + (recovery.ArchivePath ?? recovery.PendingPath);
-                        workflowOutputActive = false;
-                        RegisterSource(new TextEvidence("Filesystem repair review " + DateTime.Now.ToString("HHmmss"),
-                            recoveryOutput.Split('\n'), false));
-                        Report(recovery.Detail);
+                        bool recoveryRequiresRestart = recovery.Outcome == FileSystemRepairReconciliationOutcome.AwaitingRestart;
+                        RegisterGuardedActionReport(WorkflowKind.Storage, "Filesystem repair",
+                            "Filesystem repair recovery / " + recovery.Outcome, recoveryOutput, recovery.Detail,
+                            recovery.ArchivePath ?? recovery.PendingPath,
+                            recovery.Outcome == FileSystemRepairReconciliationOutcome.Verified,
+                            "Confirm the selected volume is healthy before selecting another storage maintenance action.", recoveryRequiresRestart,
+                            "Restart Windows, then return to this report to reconcile the scheduled filesystem repair.");
                         SetScanLight(recovery.Outcome == FileSystemRepairReconciliationOutcome.Verified ? "ready" : "attention", recovery.Detail);
                         return;
                     }
@@ -1165,9 +1170,12 @@ public partial class MainWindow
                     string repairOutput = "FILESYSTEM REPAIR\nVolume: " + draft.Volume + "\nMode: " + draft.Mode +
                         "\nOutcome: " + repair.Outcome + "\n" + repair.Detail +
                         "\nJournal: " + (repair.JournalPath ?? "No repair journal created.");
-                    workflowOutputActive = false;
-                    RegisterSource(new TextEvidence("Filesystem repair " + DateTime.Now.ToString("HHmmss"), repairOutput.Split('\n'), false));
-                    Report(repair.Detail);
+                    bool repairRequiresRestart = repair.Outcome == FileSystemRepairOutcome.RestartRequired;
+                    RegisterGuardedActionReport(WorkflowKind.Storage, "Filesystem repair",
+                        "Filesystem repair / " + repair.Outcome, repairOutput, repair.Detail,
+                        repair.JournalPath ?? "No repair journal created.", repair.Outcome == FileSystemRepairOutcome.Verified,
+                        "Confirm the selected volume is healthy before selecting another storage maintenance action.", repairRequiresRestart,
+                        "Restart Windows, then return to this report to reconcile the scheduled filesystem repair.");
                     SetScanLight(repair.Outcome == FileSystemRepairOutcome.Verified ? "ready" : "attention", repair.Detail);
                     return;
                 }
@@ -1178,9 +1186,10 @@ public partial class MainWindow
                     "\nDismount required by proposed operation: " + (draft.RequiresDismount ? "Yes" : "No") +
                     "\n\nDiagnosis: " + diagnosis.State + "\n" + diagnosis.Detail + "\n\nNext: " + review.NextAction +
                     "\nJournal: " + record.JournalPath + "\n\nNo repair, dismount or restart was scheduled.";
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("Filesystem repair review " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
-                Report("Filesystem repair review saved. No repair or restart was scheduled. Journal: " + record.JournalPath);
+                AppendWorkflowOutput(output);
+                RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Storage, Environment.MachineName, DateTimeOffset.UtcNow,
+                    "Filesystem repair review", [diagnosis, new WorkflowCheck("Recommended next step", CheckState.Information, review.NextAction)], [],
+                    record.JournalPath), "Filesystem repair");
                 SetScanLight(review.EvidenceMatched ? "attention" : "incomplete", review.NextAction);
                 return;
             }
