@@ -169,9 +169,13 @@ public partial class MainWindow
         string summary = title.ToUpperInvariant() + " / " + (result.Verified ? "VERIFIED" : "NOT VERIFIED") +
             "\n" + result.Detail + "\n" + receipt + "\n\n" + note +
             "\nVerification does not prove permissions, alternate streams, encrypted files, application state or restore behavior.";
-        workflowOutputActive = false;
-        RegisterSource(new TextEvidence(title + " " + DateTime.Now.ToString("HHmmss"), summary.Split('\n'), false));
-        Report(note);
+        AppendWorkflowOutput(summary);
+        RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Profiles, Environment.MachineName, DateTimeOffset.UtcNow,
+            result.Verified ? title + " verified" : title + " requires review",
+            [new WorkflowCheck(title, result.Verified ? CheckState.Information : CheckState.Unknown, result.Detail),
+             new WorkflowCheck("Change boundary", CheckState.Information,
+                "No profile was removed. Verification does not prove restore behavior or every copied profile attribute.")], [],
+            "Profile backup verification result. No profile removal was requested."), title);
         SetScanLight(result.Verified ? "ready" : "attention", note);
     }
 
