@@ -575,6 +575,8 @@ internal static class Program
             window.UpdateLayout();
             Require(window.Left + window.ActualWidth < SystemParameters.VirtualScreenLeft && !window.ShowActivated && !window.ShowInTaskbar,
                 "UI validation stays outside the desktop without activation or a taskbar entry");
+            Require(text.Text.Contains("START HERE") && ((ListBox)window.FindName("SourcesList")).Items.Count == 0,
+                "Startup explains the diagnostic flow without pretending that sample evidence is machine evidence");
             var controlBank = (FrameworkElement)window.FindName("LeftPanel");
             var consoleBank = (FrameworkElement)window.FindName("ConsoleBank");
             var controlOrigin = controlBank.TranslatePoint(new Point(), window);
@@ -1051,9 +1053,10 @@ internal static class Program
             profileList.ItemsSource = null;
             workflowPicker.SelectedIndex = 0;
             ((Expander)window.FindName("AdvancedTools")).IsExpanded = true;
-            ((Button)window.FindName("DetailsButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             ((Button)window.FindName("ActivityButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
+            typeof(KillerBench.MainWindow).GetMethod("LoadSample", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, null);
+            Require(text.Text.Contains("SYNTHETIC SAMPLE"), "Theme changes start from explicitly loaded sample evidence");
             foreach (var theme in Enum.GetValues<KillerBench.Services.Theme>())
             {
                 KillerBench.Services.ThemeManager.Apply(theme);
@@ -1063,7 +1066,7 @@ internal static class Program
                 var caption = (Grid)window.FindName("CaptionBar");
                 var captionPoint = caption.TranslatePoint(new Point(caption.ActualWidth / 2, caption.ActualHeight / 2), window);
                 Require(ReferenceEquals(window.InputHitTest(captionPoint), caption), "Empty title bar receives drag input in " + theme);
-                Require(text.Text.Contains("START HERE"), "Theme switch retains startup guidance");
+                Require(text.Text.Contains("SYNTHETIC SAMPLE"), "Theme switch retains explicitly loaded sample evidence");
                 Require(text.Foreground is SolidColorBrush brush && window.TryFindResource("ConsoleTextBrush") is SolidColorBrush consoleText && brush.Color == consoleText.Color,
                     "Console output follows the active theme");
                 foreach (string key in new[] { "PrimaryBrush", "TextBrush", "PaneBrush", "ControlCornerRadius", "SliderTrack", "WindowEdgeThickness", "ConsoleSurfaceBrush", "ConsoleTextBrush", "ConsoleBorderBrush", "ConsoleShadowEffect" })
@@ -1086,8 +1089,6 @@ internal static class Program
                 }
             KillerBench.Services.ThemeManager.ApplyAccent(KillerBench.Services.Theme.Black, KillerBench.Services.Accent.Green);
             KillerBench.Services.ThemeManager.Apply(KillerBench.Services.Theme.Black);
-            ((Button)window.FindName("DetailsButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            ((Button)window.FindName("DetailsButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             ((Button)window.FindName("SidebarButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             ((Button)window.FindName("SidebarButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             ((Button)window.FindName("ActivityButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -1113,11 +1114,8 @@ internal static class Program
             Require(((Border)window.FindName("LeftPanel")).Style == window.FindResource("Panel"), "Tool sidebar uses the family pane style");
             Require(((TextBox)window.FindName("PathBox")).Padding.Top <= 3, "Compact text input padding");
             window.UpdateLayout();
-            Require(text.Text.Contains("START HERE") && ((ListBox)window.FindName("SourcesList")).Items.Count == 0,
-                "Startup explains the diagnostic flow without pretending that sample evidence is machine evidence");
-            FindButtons(window).Single(button => Equals(button.Content, "Load sample")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(text.Text.Contains("SYNTHETIC SAMPLE") && ((ListBox)window.FindName("SourcesList")).Items.Count == 1,
-                "Sample evidence loads only after the user explicitly requests it");
+                "Sample evidence remains available after theme and localization changes");
             ((TextBox)window.FindName("SearchBox")).Text = "error";
             var find = FindButtons(window).Single(b => Equals(b.Content, "FIND"));
             find.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
