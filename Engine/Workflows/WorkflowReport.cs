@@ -4,6 +4,15 @@ namespace KillerBench.Engine;
 
 public static class WorkflowReport
 {
+    public static string NextAction(WorkflowResult result, bool commandLine = false)
+    {
+        const string prefix = "NEXT: ";
+        string line = Format(result, commandLine).Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries)
+            .FirstOrDefault(candidate => candidate.StartsWith(prefix, StringComparison.Ordinal)) ?? "";
+        return line.Length > prefix.Length ? line[prefix.Length..] :
+            "Review the completed checks before selecting any repair.";
+    }
+
     public static string Format(WorkflowResult result, bool commandLine = false)
     {
         var text = new StringBuilder();

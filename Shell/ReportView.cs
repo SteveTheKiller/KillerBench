@@ -135,12 +135,5 @@ public partial class MainWindow
         _ => "Needs attention"
     };
 
-    private static string NextAction(WorkflowResult result)
-    {
-        const string prefix = "NEXT: ";
-        string line = WorkflowReport.Format(result).Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries)
-            .FirstOrDefault(candidate => candidate.StartsWith(prefix, StringComparison.Ordinal)) ?? "";
-        return line.Length > prefix.Length ? line[prefix.Length..] :
-            "Review the completed checks before selecting any repair.";
-    }
+    private static string NextAction(WorkflowResult result) => WorkflowReport.NextAction(result);
 }

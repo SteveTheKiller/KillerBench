@@ -22,6 +22,7 @@ internal static class WorkflowReportExportChecks
 
         string diagnostic = WorkflowReportExport.BuildHtml(result, WorkflowReportScope.Diagnostics, "Dark");
         Require(diagnostic.StartsWith("<!DOCTYPE html>", StringComparison.Ordinal) && diagnostic.Contains("Diagnostic report") &&
+            diagnostic.Contains("<h2>Start here</h2>") && diagnostic.Contains("Review the unresolved findings below") &&
             diagnostic.Contains("Area outcomes") && diagnostic.Contains("Problems and review items") && diagnostic.Contains("Completed checks") &&
             diagnostic.Split("Network path readiness verdict", StringSplitOptions.None).Length == 2 && diagnostic.Contains("class='item verdict'"),
             "Diagnostic HTML is a structured standalone report");
@@ -51,7 +52,8 @@ internal static class WorkflowReportExportChecks
             "A conventional repair restart requirement is visible in the full HTML report");
 
         string text = WorkflowReportExport.BuildText(result, WorkflowReportScope.DiagnosticsAndRepairs);
-        Require(text.Contains("PROBLEMS AND REVIEW ITEMS") && text.Contains("ACTIONS AND RESULTS") &&
+        Require(text.Contains("START HERE") && text.Contains("Review the unresolved findings below") &&
+            text.Contains("PROBLEMS AND REVIEW ITEMS") && text.Contains("ACTIONS AND RESULTS") &&
             text.Contains("AREA OUTCOMES") && text.Split("Network path readiness verdict", StringSplitOptions.None).Length == 2 &&
             text.Contains("Verification:") && text.Contains("Command plan (not dispatched): sfc.exe /scannow") &&
             text.Contains("Outcome: Not dispatched. Final eligibility changed") && !text.Contains(result.JournalPath) && !text.Contains(skipped.JournalPath),

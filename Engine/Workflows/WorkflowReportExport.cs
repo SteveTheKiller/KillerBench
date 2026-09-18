@@ -33,6 +33,7 @@ public static class WorkflowReportExport
         string theme = NormalizeTheme(themeKey);
         string accent = NormalizeAccent(accentKey);
         var summary = result.Summary;
+        string nextAction = WorkflowReport.NextAction(result);
         var verdicts = result.Checks.Where(IsReadinessVerdict).ToArray();
         var detailedChecks = result.Checks.Where(check => !IsReadinessVerdict(check)).ToArray();
         var problemChecks = detailedChecks.Where(c => c.EffectiveState is CheckState.Repairable or CheckState.Attention or CheckState.Unknown).ToArray();
@@ -50,6 +51,7 @@ public static class WorkflowReportExport
         Metric(sb, "Status", result.Status); Metric(sb, "Problems", problemChecks.Length.ToString()); Metric(sb, "Verified repairs", summary.VerifiedRepairs.ToString()); Metric(sb, "Incomplete", summary.Incomplete.ToString());
         sb.Append("</div><p><b>Machine:</b> ").Append(E(result.Machine)).Append("<br/><b>Workflow:</b> ").Append(E(Humanize(result.Kind.ToString())))
             .Append("<br/><b>Started:</b> ").Append(E(result.StartedUtc.ToString("yyyy-MM-dd HH:mm:ss zzz"))).AppendLine("</p></section>");
+        sb.Append("<section class='panel notice'><h2>Start here</h2><p>").Append(E(nextAction)).AppendLine("</p></section>");
         sb.AppendLine("<section class='panel notice'><h2>Scope and limitations</h2><p>This report covers only the checks selected for this workflow. A clear result does not prove overall computer health. Historical evidence does not by itself prove a current fault or authorize a repair.</p></section>");
         if (verdicts.Length > 0)
         {
@@ -84,9 +86,11 @@ public static class WorkflowReportExport
     {
         ArgumentNullException.ThrowIfNull(result);
         var sb = new StringBuilder();
+        string nextAction = WorkflowReport.NextAction(result);
         sb.AppendLine("KILLERBENCH " + (scope == WorkflowReportScope.Diagnostics ? "DIAGNOSTIC REPORT" : "DIAGNOSTIC AND REPAIR REPORT"));
         sb.AppendLine("Status: " + result.Status).AppendLine("Machine: " + result.Machine).AppendLine("Workflow: " + Humanize(result.Kind.ToString()))
             .AppendLine("Started: " + result.StartedUtc.ToString("yyyy-MM-dd HH:mm:ss zzz"));
+        sb.AppendLine().AppendLine("START HERE").AppendLine(nextAction);
         sb.AppendLine().AppendLine("SCOPE AND LIMITATIONS").AppendLine("This report covers only the checks selected for this workflow. Historical evidence does not prove a current fault or authorize a repair.");
         var verdicts = result.Checks.Where(IsReadinessVerdict).ToArray();
         if (verdicts.Length > 0)
