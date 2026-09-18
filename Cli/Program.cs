@@ -46,6 +46,7 @@ if (args.Length > 0 && args[0] == "minidump-analyze") return await DiagnosticCom
 if (args.Length > 0 && args[0] == "crash-config") return await DiagnosticCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "installed-apps-compare") return await ApplicationCompareCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "app-folder-review") return ApplicationFolderCommands.Run(args);
+if (args.Length > 0 && args[0] == "startup-apps") return await StartupApplicationCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "duplicate-files") return await DuplicateFileCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "large-files") return await LargeFileCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "backup-events") return await DiagnosticCommands.RunAsync(args);
@@ -204,6 +205,7 @@ if (args.Length == 0 || args is ["--help"] or ["-h"])
     Console.WriteLine("killerbench-cli installed-apps [--current-user] (uninstall registrations and capability flags; no removal)");
     Console.WriteLine("killerbench-cli installed-apps-compare BEFORE.json AFTER.json (saved inventory registration differences; no machine changes)");
     Console.WriteLine("killerbench-cli app-folder-review FOLDER_NAME (fixed-root exact folder review; no deletion)");
+    Console.WriteLine("killerbench-cli startup-apps (startup registrations and boot or logon task review; no disablement)");
     Console.WriteLine("killerbench-cli workflow app-packages [--all-users] [--include-provisioned] [--json] (inventory only)");
     Console.WriteLine("killerbench-cli app-package-review FULL_NAME [--all-users] (exact target and dependent packages; no removal)");
     Console.WriteLine("investigate also accepts a saved .evtx archive (Windows only; newest 200 records, no date filter).");
