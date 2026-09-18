@@ -1469,6 +1469,15 @@ internal static class Program
             Require(categories.SelectedItem?.ToString() == "Repair" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.CoreWindowsServices } &&
                 automaticRepair.IsChecked != true && window.FindName("ReportPane") is Border { Visibility: Visibility.Visible },
                 "Actionable reports open safe Repair options without approving or starting a repair");
+            var defenderWorkflow = new WorkflowResult(WorkflowKind.Defender, "fixture", DateTimeOffset.UtcNow, "Needs attention",
+                [new("Defender fixture", CheckState.Attention, "Security review required.")], [], "fixture-journal.json");
+            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [defenderWorkflow]);
+            var securityNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review security options"));
+            securityNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Pump();
+            Require(categories.SelectedItem?.ToString() == "Security" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Defender } &&
+                automaticRepair.IsChecked != true,
+                "Defender reports open Security options without selecting a scan or security action");
             Capture(window, Path.Combine(scratch, "workflow-outcome.png"));
             window.Close();
             Console.WriteLine("PASS: UI construction, sample labeling, console and report output, all 13 themes, panels, and theme menu.");

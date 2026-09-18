@@ -54,6 +54,7 @@ public partial class MainWindow
             "No action starts from this report. Review the selected workflow controls before confirming a repair."));
         if (HasRepairAvailable(result)) ReportContent.Children.Add(RepairNavigationButton(result));
         if (HasMaintenanceOptions(result)) ReportContent.Children.Add(MaintenanceNavigationButton());
+        if (HasSecurityOptions(result)) ReportContent.Children.Add(SecurityNavigationButton(result.Kind));
 
         ReportContent.Children.Add(Heading("What needs attention", 18));
         var problems = result.Checks.Where(check => check.EffectiveState is CheckState.Attention or CheckState.Repairable or CheckState.Unknown)
@@ -169,6 +170,25 @@ public partial class MainWindow
         CategoryList.SelectedItem = ToolCategories.Single(category => category.Title == "Maintenance");
     }
 
+    private Button SecurityNavigationButton(WorkflowKind workflow)
+    {
+        var button = new Button
+        {
+            Content = "Review security options",
+            ToolTip = "Open the Security workspace. No security setting, scan or repair is selected, approved or started.",
+            HorizontalAlignment = HorizontalAlignment.Left,
+            Margin = new Thickness(0, 0, 0, 14)
+        };
+        button.SetResourceReference(Button.StyleProperty, "SurfaceButton");
+        button.Click += (_, _) =>
+        {
+            MainAutoRepair.IsChecked = false;
+            CategoryList.SelectedItem = ToolCategories.Single(category => category.Title == "Security");
+            MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == workflow);
+        };
+        return button;
+    }
+
     private static bool HasRepairAvailable(WorkflowResult result) =>
         result.Checks.Any(check => check.EffectiveState == CheckState.Repairable && check.Repair is not null) ||
         result.Recipes.Any(recipe => recipe.EffectiveOutcome == RecipeOutcome.RepairAvailable &&
@@ -203,6 +223,9 @@ public partial class MainWindow
 
     private static bool HasMaintenanceOptions(WorkflowResult result) =>
         result.Kind == WorkflowKind.CommonProblems && result.Summary.ReviewItems > 0;
+
+    private static bool HasSecurityOptions(WorkflowResult result) =>
+        result.Kind == WorkflowKind.Defender && result.Summary.ReviewItems > 0;
 
     private TextBlock Heading(string text, double size)
     {
