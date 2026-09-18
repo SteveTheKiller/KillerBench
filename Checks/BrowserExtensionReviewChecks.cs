@@ -30,9 +30,17 @@ internal static class BrowserExtensionReviewChecks
             result = BrowserExtensionReview.Read([new("Edge", edge)]);
             Require(!result.Complete && result.Extensions.Count == 256, "Browser extension limits retain incomplete coverage");
 
+            string firefox = Path.Combine(root, "Firefox");
+            Directory.CreateDirectory(Path.Combine(firefox, "fixture.default-release"));
+            File.WriteAllText(Path.Combine(firefox, "fixture.default-release", "extensions.json"),
+                "{\"addons\":[{\"id\":\"fixture@example.invalid\"}]}" );
+            result = BrowserExtensionReview.Read([new("Firefox", firefox, BrowserExtensionLayout.Firefox)]);
+            Require(result.Complete && result.Extensions.SequenceEqual([new("Firefox", "fixture.default-release", "fixture@example.invalid")]),
+                "Firefox review retains extension identities without browser content or settings");
+
             try { _ = BrowserExtensionReview.Read([]); throw new Exception("An empty browser root list was accepted."); }
             catch (ArgumentException) { }
-            Console.WriteLine("PASS: browser extension review retains bounded identities and incomplete coverage; no browser changes.");
+            Console.WriteLine("PASS: browser extension review retains Chromium and Firefox identities, bounded coverage and no browser changes.");
         }
         finally { Directory.Delete(root, true); }
     }

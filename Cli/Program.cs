@@ -207,7 +207,7 @@ if (args.Length == 0 || args is ["--help"] or ["-h"])
     Console.WriteLine("killerbench-cli installed-apps-compare BEFORE.json AFTER.json (saved inventory registration differences; no machine changes)");
     Console.WriteLine("killerbench-cli app-folder-review FOLDER_NAME (fixed-root exact folder review; no deletion)");
     Console.WriteLine("killerbench-cli startup-apps (startup registrations and boot or logon task review; no disablement)");
-    Console.WriteLine("killerbench-cli browser-extensions (Chrome, Edge and Brave extension identity review; no removal)");
+    Console.WriteLine("killerbench-cli browser-extensions (Chrome, Edge, Brave and Firefox extension identity review; no removal)");
     Console.WriteLine("killerbench-cli workflow app-packages [--all-users] [--include-provisioned] [--json] (inventory only)");
     Console.WriteLine("killerbench-cli app-package-review FULL_NAME [--all-users] (exact target and dependent packages; no removal)");
     Console.WriteLine("investigate also accepts a saved .evtx archive (Windows only; newest 200 records, no date filter).");
