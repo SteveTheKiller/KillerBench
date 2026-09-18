@@ -196,6 +196,17 @@ public partial class MainWindow
             "Profile backup did not reach verified completion. No profile removal was requested."), title);
     }
 
+    private void ShowProfileReviewIncomplete(string detail, string nextStep)
+    {
+        AppendWorkflowOutput("PROFILE REVIEW / INCOMPLETE\n" + detail + "\n\n" + nextStep);
+        RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Profiles, Environment.MachineName, DateTimeOffset.UtcNow,
+            "Profile review requires attention",
+            [new WorkflowCheck("Profile snapshot review", CheckState.Unknown, detail),
+             new WorkflowCheck("Change boundary", CheckState.Information,
+                "This is a review only. No profile was copied or removed.")], [],
+            "Profile review did not produce a complete plan. No profile change was requested."), "Profile review");
+    }
+
     private void BeginProfileBackupOperation(CancellationTokenSource stop, string mode)
     {
         readCancellation = stop;
@@ -254,9 +265,18 @@ public partial class MainWindow
             SetScanLight(plan.ReviewPassed ? "ready" : "incomplete", "Profile review only. No profiles changed.");
         }
         catch (ArgumentException error) { Report(error.Message); }
-        catch (OperationCanceledException) { AppendWorkflowOutput("Profile review stopped. No profiles changed."); SetScanLight("incomplete", "Review stopped."); }
+        catch (OperationCanceledException)
+        {
+            ShowProfileReviewIncomplete("Profile review stopped. No profiles changed.",
+                "Run the review again when the selected profile evidence is available.");
+            SetScanLight("incomplete", "Review stopped.");
+        }
         catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException or InvalidOperationException or NotSupportedException or TimeoutException)
-        { AppendWorkflowOutput("Profile review unavailable: " + error.Message); SetScanLight("incomplete", "Review unavailable."); }
+        {
+            ShowProfileReviewIncomplete("Profile review unavailable: " + error.Message,
+                "Confirm the selected profile and try the review again.");
+            SetScanLight("incomplete", "Review unavailable.");
+        }
         finally
         {
             readCancellation = null;
