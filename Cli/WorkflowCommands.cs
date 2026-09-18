@@ -5,9 +5,22 @@ internal static class WorkflowCommands
 {
     internal static async Task<int> RunAsync(string[] args)
     {
+        string? reportPath = null;
+        int reportIndex = Array.IndexOf(args, "--report");
+        if (reportIndex >= 0)
+        {
+            if (args.Count(value => value == "--report") != 1 || reportIndex + 1 >= args.Length || string.IsNullOrWhiteSpace(args[reportIndex + 1]))
+            { Console.Error.WriteLine("--report requires a new .html or .txt output path."); return 2; }
+            reportPath = args[reportIndex + 1];
+            string extension = Path.GetExtension(reportPath);
+            if (!extension.Equals(".html", StringComparison.OrdinalIgnoreCase) && !extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
+            { Console.Error.WriteLine("--report output must use .html or .txt."); return 2; }
+            if (File.Exists(reportPath)) { Console.Error.WriteLine("--report output already exists. Choose a new path."); return 2; }
+            args = args.Where((_, index) => index != reportIndex && index != reportIndex + 1).ToArray();
+        }
         var definition = args.Length > 1 ? WorkflowCatalog.Find(args[1]) : null;
         if (args.Contains("--set"))
-            return await RunOptionPlanAsync(args, definition).ConfigureAwait(false);
+            return await RunOptionPlanAsync(args, definition, reportPath).ConfigureAwait(false);
         List<CommonDiagnosticScope>? diagnosticScopes = null;
         if (args.Contains("--scope"))
         {
@@ -181,6 +194,7 @@ internal static class WorkflowCommands
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Workflows"),
                 progress, stop.Token, new WindowsWorkflowHost
                 { BitsAllUsers = bitsAllUsers, ApplicationScope = applicationScope, IncludeProvisionedPackages = includeProvisioned, PackageScope = packageScope, NetworkEndpoint = networkEndpoint, NetworkLookupHost = networkLookupHost, MsiProductCode = msiProductCode, StorageVolume = storageVolume, ProposedComputerName = proposedName, SecurityOptions = new(!args.Contains("--skip-tpm"), !args.Contains("--skip-secure-boot"), !args.Contains("--skip-virtualization")), UpdateOptions = updateOptions, IncludeThirdPartyUpdates = args.Contains("--third-party"), Progress = progress }, selectedRecipes, diagnosticScopes);
+            if (reportPath is not null) await ExportReportAsync(result, reportPath, args.Contains("--auto-repair")).ConfigureAwait(false);
             Console.WriteLine(args.Contains("--json") ? JsonSerializer.Serialize(result, Capture.JsonOptions) :
                 WorkflowReport.Format(result, commandLine: true));
             return result.GetExitCode();
@@ -192,7 +206,17 @@ internal static class WorkflowCommands
         finally { Console.CancelKeyPress -= onCancel; }
     }
 
-    private static async Task<int> RunOptionPlanAsync(string[] args, WorkflowDefinition? definition)
+    private static async Task ExportReportAsync(WorkflowResult result, string reportPath, bool includeRepairs)
+    {
+        string extension = Path.GetExtension(reportPath);
+        string report = extension.Equals(".html", StringComparison.OrdinalIgnoreCase)
+            ? WorkflowReportExport.BuildHtml(result, includeRepairs ? WorkflowReportScope.DiagnosticsAndRepairs : WorkflowReportScope.Diagnostics)
+            : WorkflowReportExport.BuildText(result, includeRepairs ? WorkflowReportScope.DiagnosticsAndRepairs : WorkflowReportScope.Diagnostics);
+        await File.WriteAllTextAsync(reportPath, report).ConfigureAwait(false);
+        Console.Error.WriteLine("Readable report saved: " + Path.GetFullPath(reportPath));
+    }
+
+    private static async Task<int> RunOptionPlanAsync(string[] args, WorkflowDefinition? definition, string? reportPath)
     {
         if (definition is null || WorkflowOptionCatalog.ForWorkflow(definition.Kind) is not { } optionSet ||
             args.Contains("--auto-repair") || args.Contains("--recipes") || args.Contains("--scope"))
@@ -242,6 +266,7 @@ internal static class WorkflowCommands
             var progress = new Progress<string>(Console.Error.WriteLine);
             if (definition.Kind == WorkflowKind.ServicingActivity)
             {
+                if (reportPath is not null) { Console.Error.WriteLine("--report is unavailable for the PEEK servicing monitor. Its report is already written to standard output."); return 2; }
                 ServicingMonitorOptions options = WorkflowOptionProjection.CreateServicingOptions(validation);
                 IReadOnlyList<ServicingActivitySnapshot> snapshots = await ServicingActivityMonitor.ObserveAsync(
                     options, progress: progress, token: stop.Token).ConfigureAwait(false);
@@ -254,6 +279,7 @@ internal static class WorkflowCommands
             WorkflowResult result = await Workflows.RunAsync(definition.Kind, false,
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Workflows"),
                 progress, stop.Token, host).ConfigureAwait(false);
+            if (reportPath is not null) await ExportReportAsync(result, reportPath, false).ConfigureAwait(false);
             Console.WriteLine(json ? JsonSerializer.Serialize(result, Capture.JsonOptions) :
                 WorkflowReport.Format(result, commandLine: true));
             return result.GetExitCode();

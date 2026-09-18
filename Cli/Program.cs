@@ -448,11 +448,11 @@ if (args.Length == 0 || args is ["help"] or ["--help"] or ["-h"])
     Console.WriteLine("killerbench-cli bitlocker-encrypt DRIVE: RECOVERY_PROTECTOR_GUID NEW_BACKUP_FILE [--encryption XtsAes128] [--used-space-only] [--execute] (preview by default; requires existing TPM and recovery protectors)");
     Console.WriteLine("killerbench-cli bitlocker-encrypt-recover (verify pending conversion state without repeating the request)");
     Console.WriteLine("killerbench-cli cleanup --user-temp [--windows-temp] [--system-temp] [--shader-caches] [--browser-caches] [--office-caches] [--thumbnail-cache] [--icon-cache] [--error-reports] [--crash-dumps] [--windows-minidumps] [--delivery-optimization-cache] [--recycle-bin] [--days 7] [--max-files 100] [--json] [--execute] (preview by default; Recycle Bin is all-or-nothing and age does not apply)");
-    Console.WriteLine("killerbench-cli full-scan [--recipes ID[,ID]] [--auto-repair] [--json] (all diagnostic areas; no repair unless --auto-repair is explicit)");
-    Console.WriteLine("killerbench-cli full-scan --scope NAME [--scope NAME ...] [--json] (focused diagnostic journal; no repairs)");
-    Console.WriteLine("killerbench-cli workflow <" + WorkflowCatalog.CommandChoices + "> [--recipes ID[,ID]] [--auto-repair] [--json]");
-    Console.WriteLine("killerbench-cli workflow WORKFLOW --set KEY=VALUE [--set KEY=VALUE ...] [--json] (run a validated read-only shared option plan)");
-    Console.WriteLine("killerbench-cli workflow common-problems --scope NAME [--scope NAME ...] [--json] (focused diagnostic journal; no repairs)");
+    Console.WriteLine("killerbench-cli full-scan [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json] (all diagnostic areas; no repair unless --auto-repair is explicit)");
+    Console.WriteLine("killerbench-cli full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json] (focused diagnostic journal; no repairs)");
+    Console.WriteLine("killerbench-cli workflow <" + WorkflowCatalog.CommandChoices + "> [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json]");
+    Console.WriteLine("killerbench-cli workflow WORKFLOW --set KEY=VALUE [--set KEY=VALUE ...] [--report OUTPUT.html|OUTPUT.txt] [--json] (run a validated read-only shared option plan)");
+    Console.WriteLine("killerbench-cli workflow common-problems --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json] (focused diagnostic journal; no repairs)");
     Console.WriteLine("Defender options: --skip-tpm --skip-secure-boot --skip-virtualization (signature checks remain included)");
     Console.WriteLine("Available updates: workflow updates [--drivers] [--no-software] [--json] (discovery only)");
     Console.WriteLine("killerbench-cli update-plan --select GUID:REVISION [--drivers] [--no-software] [--allow-restart-required] [--json] [--execute] (repeat --select; preview by default)");
