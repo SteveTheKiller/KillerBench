@@ -1195,7 +1195,8 @@ public partial class MainWindow
                     "KillerBench", "VolumeOptimization");
                 var optimizationHost = new WindowsVolumeOptimizationHost();
                 VolumeOptimizationResult optimization;
-                if (File.Exists(Path.Combine(optimizationFolder, "volume-optimization.pending.json")))
+                bool hasPendingOptimization = File.Exists(Path.Combine(optimizationFolder, "volume-optimization.pending.json"));
+                if (hasPendingOptimization)
                     optimization = await Task.Run(() => VolumeOptimization.ReconcileAsync(optimizationFolder, optimizationHost, progress, stop.Token));
                 else if (autoRepair)
                     optimization = await Task.Run(() => VolumeOptimization.RunAsync(request, true, optimizationFolder, optimizationHost, progress, stop.Token));
@@ -1208,10 +1209,22 @@ public partial class MainWindow
                     "\n\n" + optimization.Detail +
                     "\n\nJournal: " + (optimization.JournalPath ?? "No change journal created.") +
                     "\nKillerBench did not alter the Optimize Drives schedule or restart Windows.";
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("Drive optimization " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
-                Report(optimization.Detail);
-                SetScanLight(optimization.Outcome is VolumeOptimizationOutcome.Verified or VolumeOptimizationOutcome.Preview ? "ready" : "attention", optimization.Detail);
+                bool actionSelected = autoRepair || hasPendingOptimization;
+                if (actionSelected)
+                {
+                    bool verified = optimization.Outcome == VolumeOptimizationOutcome.Verified;
+                    RegisterGuardedActionReport(WorkflowKind.Storage, "Drive optimization",
+                        "Drive optimization / " + optimization.Outcome, output, optimization.Detail,
+                        optimization.JournalPath ?? "No change journal created.", verified,
+                        "Confirm normal disk performance before selecting another storage maintenance action.");
+                    SetScanLight(verified ? "ready" : "attention", optimization.Detail);
+                    return;
+                }
+                AppendWorkflowOutput(output);
+                RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Storage, Environment.MachineName, DateTimeOffset.UtcNow,
+                    "Drive optimization review", [new WorkflowCheck("Selected-volume optimization", optimization.Outcome == VolumeOptimizationOutcome.Preview ? CheckState.Information : CheckState.Attention, optimization.Detail)], [],
+                    optimization.JournalPath ?? "No change journal created."), "Drive optimization");
+                SetScanLight(optimization.Outcome == VolumeOptimizationOutcome.Preview ? "ready" : "attention", optimization.Detail);
                 return;
             }
             if (previousWindowsRemoval)
