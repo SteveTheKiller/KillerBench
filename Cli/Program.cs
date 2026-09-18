@@ -208,7 +208,7 @@ if (args.Length == 0 || args is ["help"] or ["--help"] or ["-h"])
     Console.WriteLine("killerbench-cli provisioned-packages (packages staged for new users in local Windows; no removal)");
     Console.WriteLine("killerbench-cli installed-apps [--current-user] (uninstall registrations and capability flags; no removal)");
     Console.WriteLine("killerbench-cli installed-apps-compare BEFORE.json AFTER.json (saved inventory registration differences; no machine changes)");
-    Console.WriteLine("killerbench-cli app-folder-review FOLDER_NAME (fixed-root exact folder review; no deletion)");
+    Console.WriteLine("killerbench-cli app-folder-review FOLDER_NAME [--report] (fixed-root exact folder review; no deletion)");
     Console.WriteLine("killerbench-cli startup-apps (startup registrations and boot or logon task review; no disablement)");
     Console.WriteLine("killerbench-cli browser-extensions (Chrome, Edge, Brave and Firefox extension identity review; no removal)");
     Console.WriteLine("killerbench-cli workflow app-packages [--all-users] [--include-provisioned] [--json] (inventory only)");
