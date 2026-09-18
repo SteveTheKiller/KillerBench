@@ -36,6 +36,7 @@
 - Apply themed list rows to advanced diagnostic and recipe checks.
 - Keep report export and category navigation available while a scan is running.
 - Explain that live output can be browsed without interrupting the active scan.
+- Keep focused CLI coverage aligned with the expanded Vitals result set.
 
 ## [0.1.0] - Unreleased
 

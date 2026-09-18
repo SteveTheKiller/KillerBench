@@ -21,9 +21,10 @@ function Invoke-Focused([string]$options, [string]$command = 'common-check') {
     } finally { $child.Dispose() }
 }
 $result = Invoke-Focused '--scope printerports --scope Vitals --scope PrinterPorts'
-$checks = @($result.Output | ConvertFrom-Json)
+$checks = foreach ($check in ($result.Output | ConvertFrom-Json)) { $check }
 $vitalsNames = @('Memory snapshot','Physical disk health','System uptime','Processor snapshot','Battery snapshot',
-    'System identity','Local Administrators','Windows version','Graphics adapters','Physical memory modules')
+    'System identity','Local Administrators','Windows version','Graphics adapters','Physical memory modules',
+    'Windows Memory Diagnostic results')
 if (@($checks | Where-Object Name -eq 'Memory snapshot').Count -ne 1 -or
     @($checks | Where-Object Name -eq 'Physical disk health').Count -ne 1 -or
     @($checks | Where-Object { $_.Name -like 'Printer port*' }).Count -lt 1 -or
