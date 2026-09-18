@@ -289,12 +289,20 @@ public partial class MainWindow
         AppendWorkflowOutput("Checking the recorded update and restart state. No installation or retry will run.");
         string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Updates");
         string outcome = "Recovery outcome unavailable. Review retained records before another installation attempt.";
+        bool reported = false;
         try
         {
             var recovery = await Task.Run(() => UpdateReconciliation.ResolveAsync(folder, new WindowsUpdateExecutionHost(), stop.Token));
             outcome = recovery.Detail;
             AppendWorkflowOutput(recovery.Detail);
             AppendWorkflowOutput("Recovery records: " + folder);
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.AvailableUpdates, Environment.MachineName, DateTimeOffset.UtcNow,
+                recovery.Detail,
+                [new WorkflowCheck("Interrupted update recovery", recovery.Resolved ? CheckState.Clear : CheckState.Unknown, recovery.Detail),
+                 new WorkflowCheck("Change boundary", CheckState.Information,
+                    "This recovery check did not install, retry, remove, or change a Windows Update.")], [],
+                "Read-only Windows Update recovery check. No installation or retry was requested."), "Windows Update recovery");
+            reported = true;
             Report(recovery.Detail);
             SetScanLight(recovery.Resolved ? "ready" : "incomplete", recovery.Detail);
         }
@@ -314,9 +322,10 @@ public partial class MainWindow
         {
             readCancellation = null;
             workflowOutputActive = false;
-            RegisterSource(new TextEvidence("Update recovery " + DateTime.Now.ToString("HHmmss"),
-                new[] { "UPDATE RECOVERY", outcome, "Recovery records: " + folder,
-                    "No installation or retry was requested. This result does not establish overall system health." }, false));
+            if (!reported)
+                RegisterSource(new TextEvidence("Update recovery " + DateTime.Now.ToString("HHmmss"),
+                    new[] { "UPDATE RECOVERY", outcome, "Recovery records: " + folder,
+                        "No installation or retry was requested. This result does not establish overall system health." }, false));
             SourcesList.IsEnabled = true;
             SearchBox.IsEnabled = true;
             SetCaptureBusy(false);
