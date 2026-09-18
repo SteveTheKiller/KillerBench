@@ -79,7 +79,7 @@ public partial class MainWindow
 
         var information = result.Checks.Where(check => check.EffectiveState == CheckState.Information)
             .OrderBy(check => check.Name, StringComparer.Ordinal).ToArray();
-        if (problems.Length == 0 && reviewRecipes.Length == 0 && information.Length > 0)
+        if (information.Length > 0)
         {
             ReportContent.Children.Add(Heading("Collected information", 18));
             const int maximumVisibleInformationItems = 12;

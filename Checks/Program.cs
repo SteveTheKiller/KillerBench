@@ -97,10 +97,14 @@ internal static class Program
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
                 "Desktop subtitle identifies the full maintenance scope");
             var actionable = new WorkflowResult(WorkflowKind.CommonProblems, "smoke", DateTimeOffset.UtcNow, "Needs attention",
-                [new("Service repair", CheckState.Repairable, "Fixture repair option", RepairKind.SystemFiles)], [], "smoke-journal.json");
+                [new("Service repair", CheckState.Repairable, "Fixture repair option", RepairKind.SystemFiles),
+                 new("Collected system detail", CheckState.Information, "Fixture informational evidence")], [], "smoke-journal.json");
             typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [actionable]);
             typeof(KillerBench.MainWindow).GetMethod("SetOutputView", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [true]);
             window.UpdateLayout();
+            Require(FindTextBlocks(window).Any(block => block.Text == "Collected information") &&
+                FindTextBlocks(window).Any(block => block.Text.Contains("Fixture informational evidence", StringComparison.Ordinal)),
+                "Readable reports retain collected evidence alongside repairable findings");
             var repairNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review System files repair"));
             var maintenanceNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review maintenance options"));
             repairNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
