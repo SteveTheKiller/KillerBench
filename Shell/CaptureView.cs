@@ -19,8 +19,8 @@ public partial class MainWindow
         TimeSettings.IsEnabled = !busy;
         TaskSettings.IsEnabled = !busy;
         SystemRestoreSettings.IsEnabled = !busy;
-        CategoryList.IsEnabled = !busy;
-        CategoryWorkflow.IsEnabled = !busy;
+        CategoryList.IsEnabled = true;
+        CategoryWorkflow.IsEnabled = true;
         MainAutoRepair.IsEnabled = !busy;
         CleanupSettings.IsEnabled = !busy;
         SecuritySettings.IsEnabled = !busy;
@@ -34,6 +34,7 @@ public partial class MainWindow
         SaveCaptureButton.IsEnabled = !busy && capture is not null;
         OpenButton.IsEnabled = !busy;
         CancelButton.IsEnabled = busy;
+        ExportReportButton.IsEnabled = true;
     }
 
     private async void OnScan(object sender, RoutedEventArgs e)

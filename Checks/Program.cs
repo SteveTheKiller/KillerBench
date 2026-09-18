@@ -787,6 +787,13 @@ internal static class Program
             Require(((Button)window.FindName("TaskRegistrationRecoveryButton")).Content is "Check interrupted registration",
                 "Desktop exposes exact read-only task registration recovery beside the draft");
             Require(((Button)window.FindName("MainGo")).IsEnabled && !((Button)window.FindName("CancelButton")).IsEnabled, "Navigation does not run a workflow");
+            var setCaptureBusy = typeof(KillerBench.MainWindow).GetMethod("SetCaptureBusy", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            setCaptureBusy.Invoke(window, [true]);
+            Require(!((Button)window.FindName("MainGo")).IsEnabled && ((Button)window.FindName("CancelButton")).IsEnabled &&
+                ((ListBox)window.FindName("CategoryList")).IsEnabled && ((ComboBox)window.FindName("CategoryWorkflow")).IsEnabled &&
+                ((Button)window.FindName("ExportReportButton")).IsEnabled,
+                "A running scan keeps Stop, navigation and report export available while preventing another GO action");
+            setCaptureBusy.Invoke(window, [false]);
             categories.SelectedIndex = 0;
             Require(!((Expander)window.FindName("AdvancedTools")).IsExpanded, "Advanced tools start tucked away");
             Capture(window, Path.Combine(scratch, "simple-start.png"));

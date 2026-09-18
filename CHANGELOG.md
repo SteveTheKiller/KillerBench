@@ -34,6 +34,7 @@
 - Remove the bright border around category buttons.
 - Move report export into the main workspace and remove the inspector sidebar.
 - Apply themed list rows to advanced diagnostic and recipe checks.
+- Keep report export and category navigation available while a scan is running.
 
 ## [0.1.0] - Unreleased
 
