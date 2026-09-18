@@ -1273,6 +1273,20 @@ internal static class Program
             Require(reportContent.Children.OfType<Border>().Count() == 13 &&
                 reportContent.Children.OfType<TextBlock>().Any(block => block.Text.Contains("4 additional review items")),
                 "Report caps the visible triage list while retaining the remaining review items");
+            var prioritizedWorkflow = completedWorkflow with
+            {
+                Checks =
+                [
+                    new("Unknown item", CheckState.Unknown, "Fixture incomplete item"),
+                    new("Attention item", CheckState.Attention, "Fixture attention item"),
+                    new("Repairable item", CheckState.Repairable, "Fixture repairable item", RepairKind.SystemFiles)
+                ]
+            };
+            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [prioritizedWorkflow]);
+            string[] cardTitles = ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>()
+                .Select(card => ((StackPanel)card.Child).Children.OfType<TextBlock>().First().Text).ToArray();
+            Require(cardTitles.Take(4).SequenceEqual(["Recommended next step", "Repairable item", "Attention item", "Unknown item"]),
+                "Report orders actionable findings before attention and incomplete evidence");
             Capture(window, Path.Combine(scratch, "workflow-outcome.png"));
             window.Close();
             Console.WriteLine("PASS: UI construction, sample labeling, console and report output, all 13 themes, panels, and theme menu.");

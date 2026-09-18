@@ -52,8 +52,10 @@ public partial class MainWindow
             "No action starts from this report. Review the selected workflow controls before confirming a repair."));
 
         ReportContent.Children.Add(Heading("What needs attention", 18));
-        var problems = result.Checks.Where(check => check.EffectiveState is CheckState.Attention or CheckState.Repairable or CheckState.Unknown).ToArray();
-        var reviewRecipes = result.Recipes.Where(recipe => recipe.EffectiveOutcome is not RecipeOutcome.Clear).ToArray();
+        var problems = result.Checks.Where(check => check.EffectiveState is CheckState.Attention or CheckState.Repairable or CheckState.Unknown)
+            .OrderBy(check => ReviewPriority(check.EffectiveState)).ThenBy(check => check.Name, StringComparer.Ordinal).ToArray();
+        var reviewRecipes = result.Recipes.Where(recipe => recipe.EffectiveOutcome is not RecipeOutcome.Clear)
+            .OrderBy(recipe => ReviewPriority(recipe.EffectiveOutcome)).ThenBy(recipe => recipe.RecipeId, StringComparer.Ordinal).ToArray();
         const int maximumVisibleReviewItems = 12;
         int visibleProblems = Math.Min(problems.Length, maximumVisibleReviewItems);
         if (problems.Length == 0 && reviewRecipes.Length == 0)
@@ -133,6 +135,25 @@ public partial class MainWindow
         RecipeOutcome.Canceled => "Stopped",
         RecipeOutcome.Unknown => "Could not determine",
         _ => "Needs attention"
+    };
+
+    private static int ReviewPriority(CheckState state) => state switch
+    {
+        CheckState.Repairable => 0,
+        CheckState.Attention => 1,
+        CheckState.Unknown => 2,
+        _ => 3
+    };
+
+    private static int ReviewPriority(RecipeOutcome outcome) => outcome switch
+    {
+        RecipeOutcome.RepairAvailable => 0,
+        RecipeOutcome.RestartRequired => 1,
+        RecipeOutcome.Repaired => 2,
+        RecipeOutcome.Unknown => 3,
+        RecipeOutcome.Blocked => 4,
+        RecipeOutcome.Canceled => 5,
+        _ => 6
     };
 
     private static string NextAction(WorkflowResult result) => WorkflowReport.NextAction(result);
