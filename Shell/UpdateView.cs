@@ -323,9 +323,12 @@ public partial class MainWindow
             readCancellation = null;
             workflowOutputActive = false;
             if (!reported)
-                RegisterSource(new TextEvidence("Update recovery " + DateTime.Now.ToString("HHmmss"),
-                    new[] { "UPDATE RECOVERY", outcome, "Recovery records: " + folder,
-                        "No installation or retry was requested. This result does not establish overall system health." }, false));
+                RegisterWorkflowResult(new WorkflowResult(WorkflowKind.AvailableUpdates, Environment.MachineName, DateTimeOffset.UtcNow,
+                    "Windows Update recovery incomplete",
+                    [new WorkflowCheck("Interrupted update recovery", CheckState.Unknown, outcome),
+                     new WorkflowCheck("Change boundary", CheckState.Information,
+                        "This recovery check did not install, retry, remove, or change a Windows Update.")], [],
+                    "Review retained update records in " + folder + " before another installation attempt."), "Windows Update recovery");
             SourcesList.IsEnabled = true;
             SearchBox.IsEnabled = true;
             SetCaptureBusy(false);
