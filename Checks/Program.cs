@@ -1478,6 +1478,15 @@ internal static class Program
             Require(categories.SelectedItem?.ToString() == "Security" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Defender } &&
                 automaticRepair.IsChecked != true,
                 "Defender reports open Security options without selecting a scan or security action");
+            var bitLockerWorkflow = new WorkflowResult(WorkflowKind.BitLocker, "fixture", DateTimeOffset.UtcNow, "Needs attention",
+                [new("BitLocker fixture", CheckState.Attention, "Encryption review required.")], [], "fixture-journal.json");
+            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [bitLockerWorkflow]);
+            securityNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review security options"));
+            securityNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Pump();
+            Require(categories.SelectedItem?.ToString() == "Security" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.BitLocker } &&
+                automaticRepair.IsChecked != true,
+                "BitLocker reports open Security options without selecting encryption or recovery-key actions");
             var networkWorkflow = new WorkflowResult(WorkflowKind.Network, "fixture", DateTimeOffset.UtcNow, "Needs attention",
                 [new("Network fixture", CheckState.Attention, "Network review required.")], [], "fixture-journal.json");
             typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [networkWorkflow]);

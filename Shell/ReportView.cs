@@ -247,7 +247,7 @@ public partial class MainWindow
             ToolCategories.Single(category => category.Title == "Maintenance").Tools.Contains(result.Kind));
 
     private static bool HasSecurityOptions(WorkflowResult result) =>
-        result.Kind == WorkflowKind.Defender && result.Summary.ReviewItems > 0;
+        result.Summary.ReviewItems > 0 && ToolCategories.Single(category => category.Title == "Security").Tools.Contains(result.Kind);
 
     private static bool HasNetworkOptions(WorkflowResult result) =>
         result.Kind == WorkflowKind.Network && result.Summary.ReviewItems > 0;
