@@ -105,7 +105,7 @@ internal static class Program
             repairNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             window.UpdateLayout();
             Require(window.FindName("CategoryList") is ListBox { SelectedItem: not null } categories && categories.SelectedItem.ToString() == "Repair" &&
-                window.FindName("MainWorkflow") is ComboBox { SelectedItem: WorkflowDefinition { Kind: WorkflowKind.CommonProblems } } &&
+                window.FindName("MainWorkflow") is ComboBox { SelectedItem: WorkflowDefinition { Kind: WorkflowKind.CoreWindowsServices } } &&
                 window.FindName("MainAutoRepair") is CheckBox { IsChecked: not true },
                 "Actionable reports lead to unapproved Repair options");
             Console.WriteLine("PASS: WPF workbench geometry, zoom containment, PEEK monitor bounds and safe report-to-repair navigation.");
@@ -620,12 +620,12 @@ internal static class Program
                 "Primary categories place Diagnostics beside Repair in a clear UI face while keeping Network separate and BitLocker under Security");
             var mainAction = (Button)window.FindName("MainGo");
             var automaticRepair = (CheckBox)window.FindName("MainAutoRepair");
-            Require(categories.SelectedItem?.ToString() == "Diagnostics" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Vitals } &&
+            Require(categories.SelectedItem?.ToString() == "Diagnostics" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.CommonProblems } &&
                 mainAction.Content is "Run diagnosis" && mainAction.ToolTip is string { Length: > 0 },
-                "KillerBench opens on Diagnostics and states that the default workflow produces a readable report");
+                "KillerBench opens on Diagnostics with the diagnosis-first Full system scan action");
             categories.SelectedItem = categories.Items.Cast<object>().Single(category => category.ToString() == "Repair");
             Pump();
-            Require(allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.CommonProblems } && automaticRepair.IsEnabled,
+            Require(allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.CoreWindowsServices } && automaticRepair.IsEnabled,
                 "Repair stays directly beside Diagnostics and requires a separate explicit approval");
             automaticRepair.IsChecked = true;
             Require(mainAction.Content is "Run repair", "Primary action changes only after explicit repair approval");
@@ -1325,7 +1325,7 @@ internal static class Program
             Pump();
             repairNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
-            Require(categories.SelectedItem?.ToString() == "Repair" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.CommonProblems } &&
+            Require(categories.SelectedItem?.ToString() == "Repair" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.CoreWindowsServices } &&
                 automaticRepair.IsChecked != true && window.FindName("ReportPane") is Border { Visibility: Visibility.Visible },
                 "Actionable reports open safe Repair options without approving or starting a repair");
             Capture(window, Path.Combine(scratch, "workflow-outcome.png"));
