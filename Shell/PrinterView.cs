@@ -84,11 +84,20 @@ public partial class MainWindow
         try
         {
             Report("Finding print jobs currently reported as Error or Blocked...");
+            BeginWorkflowOutput(WorkflowKind.Printing);
             ToolResult evidence = await Task.Run(() => PrintJobDiagnostics.CaptureAsync(stop.Token));
             PrintJobInventory? inventory = PrintJobDiagnostics.ReadInventory(evidence);
             if (inventory is not { Complete: true })
             {
-                Report("Complete print-job evidence is unavailable. No cancellation is available.");
+                const string incompleteStatus = "Complete print-job evidence is unavailable. No cancellation is available.";
+                RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Printing, Environment.MachineName, DateTimeOffset.UtcNow,
+                    incompleteStatus,
+                    [new WorkflowCheck("Print-job evidence", CheckState.Unknown,
+                        "The print-job list was incomplete or could not be read. No cancellation candidate was made available.", Evidence: evidence),
+                     new WorkflowCheck("Change boundary", CheckState.Information,
+                        "No print job was canceled, restarted, paused, resumed, or otherwise changed.")], [],
+                    "Read-only print-job discovery. No cancellation journal was written."), "Blocked print job review");
+                Report(incompleteStatus);
                 return;
             }
             var items = inventory.Jobs.Where(PrintJobCancellation.IsCandidate)
@@ -102,9 +111,21 @@ public partial class MainWindow
             PrintJobChoice.SelectedIndex = -1;
             PrintJobCancelConsent.IsChecked = false;
             PrintJobCancelConsent.IsEnabled = false;
-            Report(items.Length == 0
+            string status = items.Length == 0
                 ? "No visible print job is currently reported as Error or Blocked. No job changed."
-                : items.Length + " cancellation candidate(s) found. Select one, confirm the exact cancellation, then press GO.");
+                : items.Length + " cancellation candidate(s) found. Select one, confirm the exact cancellation, then press GO.";
+            AppendWorkflowOutput("PRINT JOB REVIEW\n" + status + "\nCandidates: " +
+                (items.Length == 0 ? "None" : string.Join("; ", items.Select(item => item.Content?.ToString()))));
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Printing, Environment.MachineName, DateTimeOffset.UtcNow,
+                status,
+                [new WorkflowCheck("Print-job evidence", CheckState.Clear,
+                    "A complete bounded snapshot of current print jobs was collected.", Evidence: evidence),
+                 new WorkflowCheck("Cancellation candidates", items.Length == 0 ? CheckState.Clear : CheckState.Attention,
+                    items.Length == 0 ? "No visible Error or Blocked print job was reported in this snapshot." : items.Length + " exact Error or Blocked print job candidate" + (items.Length == 1 ? " was" : "s were") + " retained for review. Select one in the Printing controls before any cancellation can be considered."),
+                 new WorkflowCheck("Change boundary", CheckState.Information,
+                    "No print job was canceled, restarted, paused, resumed, or otherwise changed.")], [],
+                "Read-only print-job discovery. No cancellation journal was written."), "Blocked print job review");
+            Report(status);
         }
         catch (OperationCanceledException) { Report("Print-job discovery stopped. No job changed."); }
         catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException or

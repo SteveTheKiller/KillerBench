@@ -213,6 +213,15 @@ internal static class Program
             Require(FindTextBlocks(window).Any(block => block.Text == "Background transfer review report") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("No transfer was resumed", StringComparison.Ordinal)),
                 "Background transfer reviews have a readable report that preserves the no-change boundary");
+            var printJobReport = new WorkflowResult(WorkflowKind.Printing, "smoke", DateTimeOffset.UtcNow,
+                "1 cancellation candidate found. Select one, confirm the exact cancellation, then press GO.",
+                [new("Print-job evidence", CheckState.Clear, "A complete bounded snapshot of current print jobs was collected."),
+                 new("Cancellation candidates", CheckState.Attention, "1 exact Error or Blocked print job candidate was retained for review."),
+                 new("Change boundary", CheckState.Information, "No print job was canceled, restarted, paused, resumed, or otherwise changed.")], [], "read-only");
+            typeof(KillerBench.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [printJobReport, "Blocked print job review"]);
+            Require(FindTextBlocks(window).Any(block => block.Text == "Blocked print job review report") &&
+                FindTextBlocks(window).Any(block => block.Text.Contains("No print job was canceled", StringComparison.Ordinal)),
+                "Blocked print-job discovery has a readable report before any cancellation is considered");
             Console.WriteLine("PASS: WPF workbench geometry, zoom containment, PEEK monitor bounds and safe report navigation.");
             return 0;
         }
