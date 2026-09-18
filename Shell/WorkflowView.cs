@@ -678,12 +678,15 @@ public partial class MainWindow
                 var snapshots = await Task.Run(() => ServicingActivityMonitor.ObserveAsync(
                     servicingMonitorOptions, progress: progress, token: stop.Token));
                 string output = ServicingActivityText.FormatReport(snapshots);
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("PEEK servicing activity " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
                 bool incomplete = snapshots.Any(snapshot => snapshot.State == CheckState.Unknown);
                 bool attention = snapshots.Any(snapshot => snapshot.State == CheckState.Attention);
                 string detail = $"PEEK retained {snapshots.Count} read-only servicing snapshot{(snapshots.Count == 1 ? "" : "s")}.";
-                Report(detail);
+                CheckState state = incomplete ? CheckState.Unknown : attention ? CheckState.Attention : CheckState.Information;
+                AppendWorkflowOutput(output);
+                RegisterWorkflowResult(new WorkflowResult(WorkflowKind.ServicingActivity, Environment.MachineName,
+                    DateTimeOffset.UtcNow, incomplete ? "PEEK monitoring incomplete" : attention ? "PEEK needs attention" : "PEEK monitoring complete",
+                    snapshots.SelectMany(snapshot => snapshot.Checks).DefaultIfEmpty(new WorkflowCheck("PEEK servicing activity", state, detail)).ToArray(), [],
+                    "Read-only servicing activity monitor. No operation journal was created."), "PEEK servicing activity");
                 SetScanLight(incomplete ? "incomplete" : attention ? "attention" : "ready", detail);
                 return;
             }
