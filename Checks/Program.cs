@@ -238,6 +238,14 @@ internal static class Program
             Require(FindTextBlocks(window).Any(block => block.Text == "Application update recovery report") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("did not install, retry, remove", StringComparison.Ordinal)),
                 "Application update recovery has a readable no-retry report");
+            var timeRecoveryReport = new WorkflowResult(WorkflowKind.TimeService, "smoke", DateTimeOffset.UtcNow,
+                "No interrupted time change record was found.",
+                [new("Recovery result", CheckState.Clear, "No interrupted time change record was found."),
+                 new("Change boundary", CheckState.Information, "This recovery check did not synchronize the clock, change a time source, or retry a prior change.")], [], "read-only");
+            typeof(KillerBench.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [timeRecoveryReport, "Time recovery check"]);
+            Require(FindTextBlocks(window).Any(block => block.Text == "Time recovery check report") &&
+                FindTextBlocks(window).Any(block => block.Text.Contains("did not synchronize the clock", StringComparison.Ordinal)),
+                "Time recovery checks have a readable no-change report");
             Console.WriteLine("PASS: WPF workbench geometry, zoom containment, PEEK monitor bounds and safe report navigation.");
             return 0;
         }

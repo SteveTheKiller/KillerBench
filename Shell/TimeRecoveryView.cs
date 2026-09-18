@@ -23,20 +23,28 @@ public partial class MainWindow
             string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Time");
             var recovery = await Task.Run(() => TimeConfigurationRecovery.ReconcileAsync(folder, stop.Token));
             string detail = recovery.Detail;
-            workflowOutputActive = false;
-            RegisterSource(new TextEvidence("Time recovery check",
-                new[] { "TIME RECOVERY / " + recovery.Outcome.ToString().ToUpperInvariant(), detail,
-                    "Pending record: " + recovery.PendingPath,
-                    "Archived record: " + (recovery.ArchivedPath ?? "None"), "No clock or source settings changed." }, false));
+            AppendWorkflowOutput("TIME RECOVERY / " + recovery.Outcome.ToString().ToUpperInvariant() + "\n" + detail +
+                "\nPending record: " + recovery.PendingPath + "\nArchived record: " + (recovery.ArchivedPath ?? "None") +
+                "\nNo clock or source settings changed.");
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.TimeService, Environment.MachineName, DateTimeOffset.UtcNow,
+                detail,
+                [new WorkflowCheck("Recovery result", recovery.Resolved ? CheckState.Clear : CheckState.Unknown, detail),
+                 new WorkflowCheck("Change boundary", CheckState.Information,
+                    "This recovery check did not synchronize the clock, change a time source, or retry a prior change.")], [],
+                "Read-only time recovery check. No time-change journal was written."), "Time recovery check");
             Report(detail);
             SetScanLight(recovery.Resolved ? "ready" : "incomplete", detail);
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or NotSupportedException or OperationCanceledException)
         {
             string detail = "Recovery check did not complete: " + error.Message;
-            workflowOutputActive = false;
-            RegisterSource(new TextEvidence("Time recovery incomplete",
-                new[] { "TIME RECOVERY / INCOMPLETE", detail, "No change retried. Pending evidence was not resolved by this check." }, false));
+            AppendWorkflowOutput("TIME RECOVERY / INCOMPLETE\n" + detail + "\nNo change retried. Pending evidence was not resolved by this check.");
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.TimeService, Environment.MachineName, DateTimeOffset.UtcNow,
+                detail,
+                [new WorkflowCheck("Recovery result", CheckState.Unknown, detail),
+                 new WorkflowCheck("Change boundary", CheckState.Information,
+                    "No time source or clock setting was changed, and no pending change was retried.")], [],
+                "Incomplete read-only time recovery check. No retry was requested."), "Time recovery check");
             Report(detail);
             SetScanLight("incomplete", "Recovery check incomplete. No change retried.");
         }
