@@ -96,6 +96,7 @@ if (args.Length > 0 && args[0] == "schedule-preview") return ScheduleCommands.Ru
 if (args.Length > 0 && args[0] == "foxit-inventory") return await FoxitCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "mace-review") return await MaceCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "mace-package-plan") return await MaceCommands.RunPackagePlanAsync(args);
+if (args.Length > 0 && args[0] == "mace-package-recover") return await MaceCommands.RecoverPackageRemovalAsync(args);
 if (args.Length > 0 && args[0] == "tcp-check") return await TcpCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "gateway-check") return await GatewayCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "ip-addresses") return await IpAddressCommands.RunAsync(args);
@@ -199,6 +200,7 @@ if (args.Length == 0 || args is ["--help"] or ["-h"])
     Console.WriteLine("killerbench-cli foxit-inventory (read-only machine product inventory; JSON output)");
     Console.WriteLine("killerbench-cli mace-review (--onedrive|--outlook|--office|--project|--teams|--all-products) [--all-users] [--remove-data] [--remove-credentials] [--review-folder-restore] [--json] (review only; no removal)");
     Console.WriteLine("killerbench-cli mace-package-plan (--onedrive|--outlook|--office|--project|--teams|--all-products) --package PACKAGE_FULL_NAME [--json] (fresh exact eligibility preview; no removal provider)");
+    Console.WriteLine("killerbench-cli mace-package-recover (freshly reconcile one interrupted MACE package-removal record; never repeats removal)");
     Console.WriteLine("Usage: killerbench-cli <analyze|investigate> <text-log-path> [--json]");
     Console.WriteLine("killerbench-cli investigate-batch FILE [FILE ...] (up to 12 files; JSON Lines; exit 3 for failed or partial imports)");
     Console.WriteLine("killerbench-cli app-packages [--all-users] (registered Appx/MSIX inventory only; no removal)");

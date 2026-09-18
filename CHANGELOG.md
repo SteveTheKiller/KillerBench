@@ -29,6 +29,7 @@
 - Correct MACE preserved-data eligibility so ordinary installed Store/MSIX packages remain blocked and only loose-file development packages can use the Windows preservation boundary.
 - Add MACE package removal behind a separate red desktop control with consent, confirmation, fresh safeguards, durable records and no automatic retry.
 - Add desktop reconciliation for interrupted MACE package removal without repeating the request.
+- Add CLI reconciliation for interrupted MACE package removal without adding a removal command.
 
 ## [0.1.0] - Unreleased
 

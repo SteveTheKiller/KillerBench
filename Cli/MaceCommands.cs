@@ -95,6 +95,28 @@ internal static class MaceCommands
         finally { Console.CancelKeyPress -= cancel; }
     }
 
+    internal static async Task<int> RecoverPackageRemovalAsync(string[] args)
+    {
+        if (args.Length != 1) return PackageRecoveryUsage("mace-package-recover does not accept options.");
+        using var stop = new CancellationTokenSource();
+        ConsoleCancelEventHandler cancel = (_, e) => { e.Cancel = true; stop.Cancel(); };
+        Console.CancelKeyPress += cancel;
+        try
+        {
+            string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "KillerBench", "MacePackageRemoval");
+            MacePackageRemovalReconciliationResult result = await MacePackageRemoval.ReconcileAsync(folder,
+                new WindowsMacePackageRemovalHost(), stop.Token);
+            Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
+            return result.GetExitCode();
+        }
+        catch (OperationCanceledException) { Console.Error.WriteLine("MACE package recovery stopped. No removal was repeated."); return 130; }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or NotSupportedException or
+            InvalidOperationException or System.ComponentModel.Win32Exception)
+        { Console.Error.WriteLine("MACE package recovery unavailable: " + error.Message); return 1; }
+        finally { Console.CancelKeyPress -= cancel; }
+    }
+
     private static int Usage(string message)
     {
         Console.Error.WriteLine(message);
@@ -108,6 +130,14 @@ internal static class MaceCommands
         Console.Error.WriteLine(message);
         Console.Error.WriteLine("Usage: mace-package-plan (--onedrive|--outlook|--office|--project|--teams|--all-products) --package PACKAGE_FULL_NAME [--json]");
         Console.Error.WriteLine("Preview only. The CLI does not connect a package-removal provider.");
+        return 2;
+    }
+
+    private static int PackageRecoveryUsage(string message)
+    {
+        Console.Error.WriteLine(message);
+        Console.Error.WriteLine("Usage: mace-package-recover");
+        Console.Error.WriteLine("Freshly reconcile one interrupted MACE package-removal record without repeating removal.");
         return 2;
     }
 }
