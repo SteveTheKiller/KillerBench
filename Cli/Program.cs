@@ -186,7 +186,7 @@ if (args.Length == 0 || args is ["help"] or ["--help"] or ["-h"])
     Console.WriteLine("killerbench-cli workflow-report JOURNAL.json OUTPUT.html|OUTPUT.txt [--include-repairs] [--theme THEME] [--accent ACCENT] [--overwrite] (historical report only; no commands run)");
     Console.WriteLine("killerbench-cli task-plan PLAN.json [--check-conflicts] [--inspect-executable] [--resolve-account] [--inspect-signature] (validate and review a task draft; no registration)");
     Console.WriteLine("killerbench-cli task-xml PLAN.json YYYY-MM-DD (disabled review XML to stdout; local-zone calendar schedules only; no registration)");
-    Console.WriteLine("killerbench-cli task-register PLAN.json YYYY-MM-DD [--execute] (preview by default; disabled create-only Local System definition)");
+    Console.WriteLine("killerbench-cli task-register PLAN.json YYYY-MM-DD [--execute] [--report OUTPUT.html|OUTPUT.txt] (preview by default; disabled create-only Local System definition)");
     Console.WriteLine("killerbench-cli task-register-recover PLAN.json (read-only exact-definition reconciliation; never retries or runs a task)");
     Console.WriteLine("killerbench-cli storage-reliability (read-only temperature, wear and I/O counters; JSON; no repair)");
     Console.WriteLine("killerbench-cli storage-jobs (read-only aggregate Storage module job state and progress; JSON; no changes)");

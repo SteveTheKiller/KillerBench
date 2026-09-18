@@ -32,20 +32,30 @@ internal static class TaskPlanCommands
         Func<DateOnly, ITaskRegistrationHost>? hostFactory = null,
         Func<string, ITaskRegistrationJournal>? journalFactory = null)
     {
-        bool execute = args.Length == 4 && args[3] == "--execute";
-        if (args.Length is < 3 or > 4 || args[0] != "task-register" || args.Length == 4 && !execute ||
-            !DateOnly.TryParseExact(args[2], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture,
+        bool execute = false;
+        string? reportPath = null;
+        var positional = new List<string>();
+        for (int index = 1; index < args.Length; index++)
+        {
+            if (args[index] == "--execute" && !execute) { execute = true; continue; }
+            if (args[index] == "--report" && reportPath is null && index + 1 < args.Length)
+            { reportPath = args[++index]; continue; }
+            positional.Add(args[index]);
+        }
+        if (args.Length < 3 || args[0] != "task-register" || positional.Count != 2 ||
+            !DateOnly.TryParseExact(positional[1], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture,
                 System.Globalization.DateTimeStyles.None, out var start))
         {
-            Console.Error.WriteLine("Usage: killerbench-cli task-register PLAN.json YYYY-MM-DD [--execute] (preview by default; disabled create-only Local System definition)");
+            Console.Error.WriteLine("Usage: killerbench-cli task-register PLAN.json YYYY-MM-DD [--execute] [--report OUTPUT.html|OUTPUT.txt] (preview by default; disabled create-only Local System definition)");
             return 2;
         }
+        if (!TryValidateReportPath(reportPath, out string? reportError)) { Console.Error.WriteLine(reportError); return 2; }
         using var stop = new CancellationTokenSource(TimeSpan.FromSeconds(100));
         ConsoleCancelEventHandler cancel = (_, e) => { e.Cancel = true; stop.Cancel(); };
         Console.CancelKeyPress += cancel;
         try
         {
-            var plan = await ScheduledTaskPlanJson.ReadFileAsync(args[1], stop.Token);
+            var plan = await ScheduledTaskPlanJson.ReadFileAsync(positional[0], stop.Token);
             var host = (hostFactory ?? (date => new WindowsTaskRegistrationHost(date)))(start)
                 ?? throw new InvalidOperationException("Task registration host is unavailable.");
             string journalDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -54,12 +64,18 @@ internal static class TaskPlanCommands
                 ?? throw new InvalidOperationException("Task registration journal is unavailable.");
             var result = await TaskRegistration.RunAsync(plan, host, execute, stop.Token, journal,
                 progress: new Progress<string>(Console.Error.WriteLine));
+            if (reportPath is not null)
+            {
+                await ExportTaskRegistrationReportAsync(plan, result, execute, reportPath).ConfigureAwait(false);
+                Console.Error.WriteLine("Readable report saved: " + Path.GetFullPath(reportPath));
+            }
             Console.WriteLine(JsonSerializer.Serialize(new
             {
                 previewOnly = !execute,
                 definitionEnabled = false,
                 taskExecuted = false,
                 target = plan.Identity.FullName,
+                reportPath,
                 result
             }, Capture.JsonOptions));
             return result.Status switch
@@ -87,6 +103,34 @@ internal static class TaskPlanCommands
             return 1;
         }
         finally { Console.CancelKeyPress -= cancel; }
+    }
+
+    private static bool TryValidateReportPath(string? reportPath, out string? error)
+    {
+        error = null;
+        if (reportPath is null) return true;
+        string extension = Path.GetExtension(reportPath);
+        if (extension is not (".html" or ".txt")) { error = "--report output must use .html or .txt."; return false; }
+        if (File.Exists(reportPath)) { error = "--report will not overwrite an existing file."; return false; }
+        return true;
+    }
+
+    private static async Task ExportTaskRegistrationReportAsync(ScheduledTaskPlan plan, TaskRegistrationResult result,
+        bool execute, string reportPath)
+    {
+        bool registered = result.Status == "Registered";
+        bool preview = result.Status == "Preview";
+        var report = new WorkflowResult(WorkflowKind.ScheduledTasks, Environment.MachineName, DateTimeOffset.UtcNow,
+            registered ? "Task registration verified" : preview ? "Task registration preview" : "Task registration requires review",
+            [new WorkflowCheck("Disabled task registration", registered || preview ? CheckState.Information : CheckState.Unknown,
+                plan.Identity.FullName + ": " + result.Detail),
+             new WorkflowCheck("Change boundary", CheckState.Information,
+                "The task definition remains disabled and was not run.")], [],
+            "Task registration command. Review the JSON output and local recovery records for exact evidence.");
+        string content = Path.GetExtension(reportPath) == ".html"
+            ? WorkflowReportExport.BuildHtml(report, execute ? WorkflowReportScope.DiagnosticsAndRepairs : WorkflowReportScope.Diagnostics)
+            : WorkflowReportExport.BuildText(report, execute ? WorkflowReportScope.DiagnosticsAndRepairs : WorkflowReportScope.Diagnostics);
+        await File.WriteAllTextAsync(reportPath, content).ConfigureAwait(false);
     }
 
     internal static async Task<int> RecoverRegistrationAsync(string[] args,

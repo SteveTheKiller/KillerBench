@@ -49,6 +49,17 @@ internal static class TaskPlanCommandChecks
             preview.Json.RootElement.GetProperty("result").GetProperty("status").GetString() != "Preview")
             throw new Exception("Task registration preview performed work or misreported its result.");
 
+        string previewReportPath = Path.Combine(scratch, "task-registration-preview.txt");
+        var previewReportHost = new RegistrationHost(plan, true);
+        var previewReportJournal = new RegistrationJournal();
+        var previewWithReport = await InvokeRegistrationAsync(
+            ["task-register", path, "2026-09-14", "--report", previewReportPath], previewReportHost, previewReportJournal);
+        if (previewWithReport.Exit != 0 || previewReportHost.Checks != 0 || previewReportHost.Creates != 0 ||
+            previewReportJournal.Prepares != 0 || !File.Exists(previewReportPath) ||
+            !File.ReadAllText(previewReportPath).Contains("Task registration preview", StringComparison.Ordinal) ||
+            previewWithReport.Json.RootElement.GetProperty("reportPath").GetString() != previewReportPath)
+            throw new Exception("Task registration preview report changed state or omitted its readable outcome.");
+
         var executeHost = new RegistrationHost(plan, true);
         var executeJournal = new RegistrationJournal();
         var executed = await InvokeRegistrationAsync(["task-register", path, "2026-09-14", "--execute"], executeHost, executeJournal);
@@ -71,7 +82,8 @@ internal static class TaskPlanCommandChecks
         {
             new[] { "task-register", path },
             new[] { "task-register", path, "09/14/2026" },
-            new[] { "task-register", path, "2026-09-14", "--force" }
+            new[] { "task-register", path, "2026-09-14", "--force" },
+            new[] { "task-register", path, "2026-09-14", "--report", Path.Combine(scratch, "invalid-report.json") }
         })
         {
             var rejected = await InvokeRegistrationAsync(invalid, new RegistrationHost(plan, true), new RegistrationJournal());
