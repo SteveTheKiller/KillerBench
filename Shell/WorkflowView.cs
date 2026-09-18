@@ -1336,10 +1336,9 @@ public partial class MainWindow
                     }
                     string registrationOutput = title + "\n" + detail + "\nRecord: " + record +
                         "\n\nThe Installer engine was never unregistered. Packages and user data were not selected.";
-                    workflowOutputActive = false;
-                    RegisterSource(new TextEvidence("Installer registration " +
-                        DateTime.Now.ToString("HHmmss"), registrationOutput.Split('\n'), false));
-                    Report(detail);
+                    RegisterGuardedActionReport(WorkflowKind.Installer, "Windows Installer registration", title,
+                        registrationOutput, detail, record, verified,
+                        "Test the affected installer before making another Windows Installer change.");
                     SetScanLight(verified ? "ready" : "attention", detail);
                     return;
                 }
