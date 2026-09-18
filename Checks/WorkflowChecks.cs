@@ -728,6 +728,23 @@ internal static class WorkflowChecks
             Workflows.Preview(WorkflowKind.StartupApplications).Contains("accounts and credentials are not collected", StringComparison.Ordinal) &&
             Workflows.Preview(WorkflowKind.StartupApplications).Contains("does not prove an item ran", StringComparison.Ordinal),
             "Startup application inventory is private and diagnostic-only");
+        Require(WorkflowCatalog.Find("browser-extensions")?.Kind == WorkflowKind.BrowserExtensions &&
+            Workflows.Scopes(WorkflowKind.BrowserExtensions).Length == 0 && !Workflows.SupportsRepair(WorkflowKind.BrowserExtensions) &&
+            RecipeCatalog.ForWorkflow(WorkflowKind.BrowserExtensions).Count == 0 &&
+            Workflows.Preview(WorkflowKind.BrowserExtensions).Contains("Chrome, Edge, Brave and Firefox", StringComparison.Ordinal) &&
+            Workflows.Preview(WorkflowKind.BrowserExtensions).Contains("No browser, extension or policy is changed", StringComparison.Ordinal),
+            "Browser extension inventory is a read-only Maintenance workflow with explicit privacy limits");
+        var browserWorkflow = await Workflows.RunAsync(WorkflowKind.BrowserExtensions, false, folder,
+            host: new WindowsWorkflowHost
+            {
+                BrowserExtensionReader = _ => new([new("Fixture browser", "Default", "fixture-extension")], true,
+                    "Fixture identity-only browser extension review. No browser or policy changed.")
+            });
+        Require(browserWorkflow.Status == "Browser extension identities reviewed; no browser or extension changed" &&
+            browserWorkflow.Repairs.Count == 0 && browserWorkflow.GetExitCode() == 0 &&
+            browserWorkflow.Checks.Any(check => check.Name == "Fixture browser extension: fixture-extension") &&
+            WorkflowReport.Format(browserWorkflow).Contains("fixture-extension", StringComparison.Ordinal) && File.Exists(browserWorkflow.JournalPath),
+            "Browser extension workflow retains fixture identities in the Engine report and journal without a repair path");
         var notificationRecipes = RecipeCatalog.ForWorkflow(WorkflowKind.SystemNotifications);
         var eventSystemPlan = Repairs.Plan(RepairKind.ComPlusEventSystem);
         var sensPlan = Repairs.Plan(RepairKind.SystemEventNotificationService);

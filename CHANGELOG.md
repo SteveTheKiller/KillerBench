@@ -1,5 +1,6 @@
 # Changelog
 
+- Add browser extension inventory to the standard read-only Maintenance workflow and report path.
 - Open the exact focused repair workflow from a single-repair report finding.
 - Link full-scan reports to safe Maintenance options without selecting an action.
 - State the full-scan repair boundary directly in CLI help.

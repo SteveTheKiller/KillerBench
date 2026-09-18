@@ -39,6 +39,7 @@ public static class WorkflowCatalog
         new WorkflowDefinition(WorkflowKind.CommonProblems, "common-problems", "Full system scan"),
         new WorkflowDefinition(WorkflowKind.AppPackages, "app-packages", "App packages"),
         new WorkflowDefinition(WorkflowKind.InstalledApps, "installed-apps", "Installed applications"),
+        new WorkflowDefinition(WorkflowKind.BrowserExtensions, "browser-extensions", "Browser extensions"),
         new WorkflowDefinition(WorkflowKind.BackupServices, "backup-services", "Backup services"),
         new WorkflowDefinition(WorkflowKind.BackgroundTransfers, "background-transfers", "Background transfers (BITS)"),
         new WorkflowDefinition(WorkflowKind.FirewallServices, "firewall-services", "Firewall services"),

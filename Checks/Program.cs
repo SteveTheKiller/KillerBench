@@ -133,6 +133,18 @@ internal static class Program
             window.UpdateLayout();
             Require(FindButtons(window).Any(button => Equals(button.Content, "Review System files repair")),
                 "Recipe-only repair reports identify their focused Repair workflow");
+            ((ComboBox)window.FindName("MainWorkflow")).SelectedItem = WorkflowCatalog.All.Single(workflow => workflow.Kind == WorkflowKind.BrowserExtensions);
+            window.UpdateLayout();
+            Require(window.FindName("CategoryList") is ListBox { SelectedItem: not null } browserCategories && browserCategories.SelectedItem.ToString() == "Maintenance" &&
+                window.FindName("MainAutoRepair") is CheckBox { IsChecked: not true, IsEnabled: false },
+                "Browser extension inventory appears in Maintenance without repair controls");
+            ((ComboBox)window.FindName("MainWorkflow")).SelectedItem = WorkflowCatalog.All.Single(workflow => workflow.Kind == WorkflowKind.InstalledApps);
+            window.UpdateLayout();
+            ((Button)window.FindName("ReviewBrowserExtensions")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            window.UpdateLayout();
+            Require(window.FindName("MainWorkflow") is ComboBox { SelectedItem: WorkflowDefinition { Kind: WorkflowKind.BrowserExtensions } } &&
+                window.FindName("MainAutoRepair") is CheckBox { IsChecked: not true, IsEnabled: false },
+                "Installed-applications handoff routes browser review through GO without repair consent");
             Console.WriteLine("PASS: WPF workbench geometry, zoom containment, PEEK monitor bounds and safe report navigation.");
             return 0;
         }
@@ -697,7 +709,7 @@ internal static class Program
                     if (tool.Kind == WorkflowKind.InstalledApps)
                     {
                         Require(((StackPanel)window.FindName("InstalledApplicationSettings")).IsVisible && !((CheckBox)window.FindName("MainAutoRepair")).IsEnabled, "Application scope options visible without repair");
-                        Require(window.FindName("ReviewBrowserExtensions") is Button { IsEnabled: true }, "Browser extension review is available from installed applications");
+                        Require(window.FindName("ReviewBrowserExtensions") is Button { IsEnabled: true }, "Browser extension report handoff is available from installed applications");
                         ((ComboBox)window.FindName("InstalledApplicationScopeChoice")).SelectedIndex = 1;
                         window.UpdateLayout();
                         Capture(window, Path.Combine(scratch, "application-scope.png"));
