@@ -23,13 +23,15 @@ public partial class MainWindow
     }
 
     private void RegisterGuardedActionReport(WorkflowKind kind, string reportTitle, string actionName, string output,
-        string detail, string journal, bool verified, string verifiedNextAction)
+        string detail, string journal, bool verified, string verifiedNextAction, bool requiresRestart = false)
     {
         AppendWorkflowOutput(output);
-        var action = new WorkflowAction(actionName, verified ? "Verified" : "Review required", detail,
-            verified ? verifiedNextAction : "Review the local change journal and current state before retrying.", verified);
+        string status = requiresRestart ? "Restart required" : verified ? "Verified" : "Review required";
+        var action = new WorkflowAction(actionName, status, detail,
+            requiresRestart ? "Restart Windows, then return to this report and reconcile the exact computer-name change."
+                : verified ? verifiedNextAction : "Review the local change journal and current state before retrying.", verified, requiresRestart);
         RegisterWorkflowResult(new WorkflowResult(kind, Environment.MachineName, DateTimeOffset.UtcNow,
-            verified ? "Guarded action verified" : "Guarded action requires review",
+            requiresRestart ? "Restart required" : verified ? "Guarded action verified" : "Guarded action requires review",
             [new WorkflowCheck("Guarded action outcome", verified ? CheckState.Information : CheckState.Unknown, detail)], [], journal)
         { Actions = [action] }, reportTitle);
     }
@@ -933,9 +935,11 @@ public partial class MainWindow
                 string output = "COMPUTER NAME / " + rename.Outcome + "\nTarget: " + (string.IsNullOrWhiteSpace(rename.TargetName) ? proposedName : rename.TargetName) +
                     "\n" + rename.Detail + "\nRecord: " + (rename.RecordPath ?? "No operation record created.") +
                     "\n\nKillerBench did not restart Windows or join a domain.";
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("Computer name " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
-                Report(rename.Detail);
+                bool verified = rename.Outcome == ComputerRenameOutcome.Verified;
+                bool requiresRestart = rename.Outcome == ComputerRenameOutcome.RestartRequired;
+                RegisterGuardedActionReport(WorkflowKind.ComputerName, "Computer name", "Computer name / " + rename.Outcome,
+                    output, rename.Detail, rename.RecordPath ?? "No operation record created.", verified,
+                    "Confirm the computer name in Windows and test dependent services before making another change.", requiresRestart);
                 SetScanLight(rename.Outcome == ComputerRenameOutcome.Verified ? "ready" :
                     rename.Outcome == ComputerRenameOutcome.RestartRequired ? "attention" : "incomplete", rename.Detail);
                 return;

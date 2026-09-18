@@ -14,13 +14,15 @@ public sealed record WorkflowCheck(string Name, CheckState State, string Detail,
         (Evidence is { ExitCode: not 0 } or { TimedOut: true } or { Truncated: true } || !string.IsNullOrWhiteSpace(Evidence?.Error))
         ? CheckState.Unknown : State;
 }
-public sealed record WorkflowAction(string Name, string Status, string Detail, string NextAction, bool Verified);
+public sealed record WorkflowAction(string Name, string Status, string Detail, string NextAction, bool Verified,
+    bool RequiresRestart = false);
 public sealed record WorkflowResult(WorkflowKind Kind, string Machine, DateTimeOffset StartedUtc,
     string Status, IReadOnlyList<WorkflowCheck> Checks, IReadOnlyList<RepairResult> Repairs, string JournalPath)
 {
     public IReadOnlyList<RecipeResult> Recipes { get; init; } = [];
     public IReadOnlyList<WorkflowAction> Actions { get; init; } = [];
-    public bool RequiresRestart => Repairs.Any(r => r.RequiresRestart) || Recipes.Any(recipe => recipe.Outcome == RecipeOutcome.RestartRequired);
+    public bool RequiresRestart => Repairs.Any(r => r.RequiresRestart) || Recipes.Any(recipe => recipe.Outcome == RecipeOutcome.RestartRequired) ||
+        Actions.Any(action => action.RequiresRestart);
     public WorkflowSummary Summary => WorkflowSummary.From(this);
     public WorkflowRecoveryPlan RecoveryPlan => WorkflowRecoveryPlan.From(this);
     public IReadOnlyList<string>? RequestedRecipeIds { get; init; }

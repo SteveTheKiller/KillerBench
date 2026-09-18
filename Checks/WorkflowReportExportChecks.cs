@@ -65,6 +65,11 @@ internal static class WorkflowReportExportChecks
             actionHtml.Contains(guardedAction.Name) && actionHtml.Contains(guardedAction.Detail) &&
             actionText.Contains(guardedAction.Name) && actionText.Contains("Result: Verified"),
             "Guarded action reports retain the action, verification outcome and next step in the readable exports");
+        var restartAction = guardedAction with { Status = "Restart required", Verified = false, RequiresRestart = true };
+        var restartActionResult = actionResult with { Actions = [restartAction], Status = "Restart required" };
+        Require(restartActionResult.RequiresRestart && restartActionResult.GetExitCode() == 4 &&
+            WorkflowReportExport.BuildHtml(restartActionResult, WorkflowReportScope.DiagnosticsAndRepairs).Contains("Restart required</h2>"),
+            "Guarded actions that require a restart retain the restart outcome in workflow reports");
 
         string text = WorkflowReportExport.BuildText(result, WorkflowReportScope.DiagnosticsAndRepairs);
         Require(text.Contains("START HERE") && text.Contains("Review the unresolved findings below") &&
