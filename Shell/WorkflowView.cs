@@ -11,12 +11,15 @@ public partial class MainWindow
     private void RegisterWorkflowResult(WorkflowResult result)
     {
         string summary = WorkflowReport.Format(result);
-        var text = new TextEvidence("Workflow " + DateTime.Now.ToString("HHmmss"), summary.Replace("\r\n", "\n").Split('\n'), false);
+        AppendWorkflowOutput("Workflow completed: " + result.Status + ". Read the Report view for findings and next actions.");
+        var text = new TextEvidence("Workflow " + DateTime.Now.ToString("HHmmss"), EvidenceBox.Text.Replace("\r\n", "\n").Split('\n'), false);
         reports.Add(text, Investigation.Analyze(text) with { Limitation = "Live workflow results. See the workflow journal for decisions and repair verification." });
         workflowSummaries.Add(text, result);
         workflowOutputActive = false;
         RegisterSource(text);
         RepairPreview.Text = summary;
+        RenderWorkflowReport(result);
+        SetOutputView(report: true);
     }
     private void OnTimePeersChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
     {

@@ -848,14 +848,23 @@
               </Expander>
               <DockPanel Margin="0,0,0,6">
                 <Button x:Name="ExportReportButton" DockPanel.Dock="Right" Content="{DynamicResource Str_ExportReport}" Click="OnExportReport" ToolTip="{DynamicResource Str_ExportContents}" Padding="10,4"/>
-                <TextBlock x:Name="EvidenceTitle" Text="{DynamicResource Str_Text_Evidence}" FontFamily="{DynamicResource WordmarkFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,12,0"/>
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                  <Button x:Name="ConsoleViewButton" Content="Console" Click="OnConsoleView" Padding="10,4"/>
+                  <Button x:Name="ReportViewButton" Content="Report" Click="OnReportView" IsEnabled="False" Padding="10,4" Margin="6,0,0,0"/>
+                </StackPanel>
+                <TextBlock x:Name="EvidenceTitle" Text="{DynamicResource Str_Text_Evidence}" FontFamily="{DynamicResource WordmarkFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="12,0,12,0"/>
               </DockPanel>
-              <DockPanel Grid.Row="1" Margin="0,0,0,6">
+              <DockPanel x:Name="ConsoleSearchPanel" Grid.Row="1" Margin="0,0,0,6">
                 <Button DockPanel.Dock="Right" Content="{DynamicResource Str_Content_FIND}" Click="OnFind" ToolTip="{DynamicResource Str_ToolTip_Filter_evidence_lines_Enter_in_search}" Margin="4,0,0,0"/>
                 <TextBox x:Name="SearchBox" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Filter_evidence}" ToolTip="{DynamicResource Str_ToolTip_Filter_loaded_lines_Clear_to_show_all_lines}" VerticalContentAlignment="Center" KeyDown="OnSearchKey"/>
               </DockPanel>
               <Border x:Name="ConsolePane" Grid.Row="2" Background="{DynamicResource ConsoleSurfaceBrush}" BorderBrush="{DynamicResource ConsoleBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="5" ClipToBounds="True" Effect="{DynamicResource ConsoleShadowEffect}">
                 <TextBox x:Name="EvidenceBox" IsReadOnly="True" AcceptsReturn="True" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource ConsoleTextBrush}" FontFamily="Consolas" FontSize="14" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Evidence_with_original_line_numbers}"/>
+              </Border>
+              <Border x:Name="ReportPane" Grid.Row="2" Style="{StaticResource Panel}" Visibility="Collapsed" Padding="0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                  <StackPanel x:Name="ReportContent" Margin="16"/>
+                </ScrollViewer>
               </Border>
               <TextBlock x:Name="CoverageLabel" Grid.Row="3" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,10,0,0"/>
             </Grid>

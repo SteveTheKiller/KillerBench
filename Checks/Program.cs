@@ -1242,15 +1242,26 @@ internal static class Program
             var outcomeLabel = (TextBlock)window.FindName("CoverageLabel");
             Require(outcomeLabel.Text.Contains("Needs attention | 1 checks | 0 repairs run") && !outcomeLabel.Text.Contains("0 findings"),
                 "Workflow result summary uses recorded checks instead of log-rule findings");
+            Require(window.FindName("ReportPane") is Border { Visibility: Visibility.Visible } &&
+                window.FindName("ConsolePane") is Border { Visibility: Visibility.Collapsed } &&
+                ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>().Any(card => card.Child is StackPanel),
+                "Completed workflows open a separate formatted report instead of replacing the console");
+            FindButtons(window).Single(button => Equals(button.Content, "Console")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(window.FindName("ConsolePane") is Border { Visibility: Visibility.Visible } && text.Text.Contains("Verification 42% complete"),
+                "Console retains the raw live output after a report is created");
             ((TextBox)window.FindName("SearchBox")).Text = "no matching report text";
             typeof(KillerBench.MainWindow).GetMethod("ShowEvidence", flags)!.Invoke(window, null);
             Require(outcomeLabel.Text.Contains("Needs attention") && outcomeLabel.Text.Contains("0 matching report lines"),
                 "Filtering does not replace the recorded workflow outcome");
             ((TextBox)window.FindName("SearchBox")).Clear();
             typeof(KillerBench.MainWindow).GetMethod("ShowEvidence", flags)!.Invoke(window, null);
+            FindButtons(window).Single(button => Equals(button.Content, "Report")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(window.FindName("ReportPane") is Border { Visibility: Visibility.Visible } &&
+                ((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "What to do next"),
+                "Report view gives the user a distinct next-action section");
             Capture(window, Path.Combine(scratch, "workflow-outcome.png"));
             window.Close();
-            Console.WriteLine("PASS: UI construction, sample labeling, search, CRT effects, all 13 themes, panels, and theme menu.");
+            Console.WriteLine("PASS: UI construction, sample labeling, console and report output, all 13 themes, panels, and theme menu.");
             Console.WriteLine("Preview: " + preview);
             return 0;
         }

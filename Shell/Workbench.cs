@@ -86,6 +86,8 @@ public partial class MainWindow
             ModeLabel.Text = "CAPTURED EVIDENCE / RULES EVALUATED";
         SearchBox.Clear();
         ShowEvidence();
+        if (workflowSummaries.TryGetValue(selected, out var workflow)) RenderWorkflowReport(workflow);
+        else ClearWorkflowReport();
         if (SourceDetails.Visibility == Visibility.Visible) SetDetailsOpen(true);
     }
 
