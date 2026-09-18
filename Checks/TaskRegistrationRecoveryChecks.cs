@@ -103,6 +103,14 @@ internal static class TaskRegistrationRecoveryChecks
             !cli.Json.RootElement.GetProperty("taskExecuted").GetBoolean() &&
             cli.Json.RootElement.GetProperty("result").GetProperty("outcome").GetString() == "Verified",
             "CLI recovery did not preserve the read-only exact-definition boundary.");
+        string cliReportPath = Path.Combine(scratch, "task-recovery-report.txt");
+        var cliReportHost = new RecoveryHost(plan.Identity, null, Good);
+        var cliWithReport = await InvokeCliAsync(["task-register-recover", planPath, "--report", cliReportPath],
+            cliReportHost, Path.Combine(scratch, "task-recovery-cli-report"));
+        Require(cliWithReport.Exit == 0 && cliReportHost.Reads == 0 && File.Exists(cliReportPath) &&
+            File.ReadAllText(cliReportPath).Contains("Task registration recovery", StringComparison.Ordinal) &&
+            cliWithReport.Json.RootElement.GetProperty("reportPath").GetString() == cliReportPath,
+            "CLI recovery report changed state or omitted its readable outcome.");
         var rejectedCli = await InvokeCliAsync(["task-register-recover"],
             new RecoveryHost(plan.Identity, exactXml, Good), cliRoot);
         Require(rejectedCli.Exit == 2, "CLI recovery accepted a missing plan path.");

@@ -137,11 +137,13 @@ internal static class TaskPlanCommands
         Func<ITaskRegistrationRecoveryHost>? hostFactory = null,
         string? journalDirectory = null)
     {
-        if (args.Length != 2 || args[0] != "task-register-recover")
+        string? reportPath = args.Length == 4 && args[2] == "--report" ? args[3] : null;
+        if (args.Length is not (2 or 4) || args[0] != "task-register-recover" || args.Length == 4 && reportPath is null)
         {
-            Console.Error.WriteLine("Usage: killerbench-cli task-register-recover PLAN.json (read-only exact-definition reconciliation; never retries or runs a task)");
+            Console.Error.WriteLine("Usage: killerbench-cli task-register-recover PLAN.json [--report OUTPUT.html|OUTPUT.txt] (read-only exact-definition reconciliation; never retries or runs a task)");
             return 2;
         }
+        if (!TryValidateReportPath(reportPath, out string? reportError)) { Console.Error.WriteLine(reportError); return 2; }
         using var stop = new CancellationTokenSource(TimeSpan.FromSeconds(40));
         ConsoleCancelEventHandler cancel = (_, e) => { e.Cancel = true; stop.Cancel(); };
         Console.CancelKeyPress += cancel;
@@ -154,12 +156,18 @@ internal static class TaskPlanCommands
                 ?? throw new InvalidOperationException("Task registration recovery host is unavailable.");
             var result = await TaskRegistrationRecovery.RecoverAsync(plan, journalDirectory, host, stop.Token,
                 progress: new Progress<string>(Console.Error.WriteLine));
+            if (reportPath is not null)
+            {
+                await ExportTaskRecoveryReportAsync(plan, result, reportPath).ConfigureAwait(false);
+                Console.Error.WriteLine("Readable report saved: " + Path.GetFullPath(reportPath));
+            }
             Console.WriteLine(JsonSerializer.Serialize(new
             {
                 retryAttempted = false,
                 taskChanged = false,
                 taskExecuted = false,
                 target = plan.Identity.FullName,
+                reportPath,
                 result
             }, Capture.JsonOptions));
             return result.Outcome switch
@@ -186,6 +194,23 @@ internal static class TaskPlanCommands
             return 1;
         }
         finally { Console.CancelKeyPress -= cancel; }
+    }
+
+    private static async Task ExportTaskRecoveryReportAsync(ScheduledTaskPlan plan, TaskRegistrationRecoveryResult result,
+        string reportPath)
+    {
+        bool verified = result.Outcome == TaskRegistrationRecoveryOutcome.Verified;
+        var report = new WorkflowResult(WorkflowKind.ScheduledTasks, Environment.MachineName, DateTimeOffset.UtcNow,
+            verified ? "Task registration recovery verified" : "Task registration recovery requires review",
+            [new WorkflowCheck("Interrupted registration recovery", verified ? CheckState.Information : CheckState.Unknown,
+                plan.Identity.FullName + ": " + result.Detail),
+             new WorkflowCheck("Change boundary", CheckState.Information,
+                "Recovery did not create, change, run, or remove a task.")], [],
+            result.RecoveryRecord ?? result.PendingRecord ?? "No task recovery record was created.");
+        string content = Path.GetExtension(reportPath) == ".html"
+            ? WorkflowReportExport.BuildHtml(report, WorkflowReportScope.Diagnostics)
+            : WorkflowReportExport.BuildText(report, WorkflowReportScope.Diagnostics);
+        await File.WriteAllTextAsync(reportPath, content).ConfigureAwait(false);
     }
 
     internal static async Task<int> RunAsync(string[] args, Readers? readers = null)
