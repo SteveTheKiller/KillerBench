@@ -159,8 +159,14 @@ public partial class MainWindow
                 "\nCreate attempted: " + (result.CreateAttempted ? "Yes" : "No") +
                 "\nDefinition enabled: No\nTask executed: No\n\n" + result.Detail +
                 "\n\nRecovery folder: " + journalFolder;
-            workflowOutputActive = false;
-            RegisterSource(new TextEvidence("Task registration: " + plan.Identity.FullName, output.Split('\n'), false));
+            AppendWorkflowOutput(output);
+            bool registered = result.Status == "Registered";
+            bool preview = result.Status == "Preview";
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.ScheduledTasks, Environment.MachineName, DateTimeOffset.UtcNow,
+                registered ? "Task registration verified" : preview ? "Task registration preview" : "Task registration requires review",
+                [new WorkflowCheck("Disabled task registration", registered || preview ? CheckState.Information : CheckState.Unknown, result.Detail),
+                 new WorkflowCheck("Change boundary", CheckState.Information,
+                    "The task definition remains disabled and was not run.")], [], journalFolder), "Task registration");
             Report(result.Detail);
             SetScanLight(result.Status == "Registered" ? "ready" :
                 result.Status is "Blocked" or "Unverified" ? "attention" : "incomplete", result.Detail);
@@ -194,8 +200,14 @@ public partial class MainWindow
                 "\nRetry attempted: No\nTask changed: No\nTask executed: No\n\n" + result.Detail +
                 "\n\nPending or archived record: " + (result.PendingRecord ?? "None") +
                 "\nRecovery record: " + (result.RecoveryRecord ?? "None");
-            workflowOutputActive = false;
-            RegisterSource(new TextEvidence("Task registration recovery: " + plan.Identity.FullName, output.Split('\n'), false));
+            AppendWorkflowOutput(output);
+            bool verified = result.Outcome == TaskRegistrationRecoveryOutcome.Verified;
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.ScheduledTasks, Environment.MachineName, DateTimeOffset.UtcNow,
+                verified ? "Task registration recovery verified" : "Task registration recovery requires review",
+                [new WorkflowCheck("Interrupted registration recovery", verified ? CheckState.Information : CheckState.Unknown, result.Detail),
+                 new WorkflowCheck("Change boundary", CheckState.Information,
+                    "Recovery did not create, change, run, or remove a task.")], [],
+                result.RecoveryRecord ?? result.PendingRecord ?? "No task recovery record was created."), "Task registration recovery");
             Report(result.Detail);
             SetScanLight(result.Outcome == TaskRegistrationRecoveryOutcome.Verified ? "ready" :
                 result.Outcome is TaskRegistrationRecoveryOutcome.Conflict or TaskRegistrationRecoveryOutcome.Inconclusive
