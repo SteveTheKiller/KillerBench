@@ -1243,11 +1243,16 @@ public partial class MainWindow
             if (kind == WorkflowKind.Cleanup && CleanupRemove.IsChecked == true)
             {
                 var removal = await Task.Run(() => CleanupRemoval.RunAsync(cleanupOptions, folder, progress, stop.Token));
-                var output = new TextEvidence("Cleanup " + DateTime.Now.ToString("HHmmss"), removal.Format().Split('\n'), false);
-                workflowOutputActive = false;
-                RegisterSource(output);
-                Report(removal.Status + ". Journal: " + removal.JournalPath);
-                SetScanLight(removal.Status == "Finished" ? "ready" : "incomplete", removal.Status + ". Review cleanup results.");
+                bool verified = removal.Status == "Finished";
+                string detail = verified
+                    ? "The selected cleanup candidates were removed and each removal was verified."
+                    : removal.Status == "Needs review"
+                        ? "Some selected cleanup candidates were skipped or could not be verified."
+                        : "Cleanup did not complete. Review the recorded outcomes before another attempt.";
+                RegisterGuardedActionReport(WorkflowKind.Cleanup, "Permanent cleanup", "Permanent cleanup / " + removal.Status,
+                    removal.Format(), detail, removal.JournalPath, verified,
+                    "Review the completed cleanup and confirm available disk space before selecting another permanent cleanup action.");
+                SetScanLight(verified ? "ready" : "incomplete", detail);
                 return;
             }
             if (kind == WorkflowKind.Orca && autoRepair)
