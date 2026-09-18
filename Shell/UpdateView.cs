@@ -361,8 +361,22 @@ public partial class MainWindow
             var progress = new Progress<string>(AppendWorkflowOutput);
             var result = await Task.Run(() => UpdateExecution.RunAsync(search, selections, options, folder, new WindowsUpdateExecutionHost(), progress, stop.Token));
             string summary = result.Format();
-            workflowOutputActive = false;
-            RegisterSource(new TextEvidence("Update installation " + DateTime.Now.ToString("HHmmss"), summary.Split('\n'), false));
+            AppendWorkflowOutput(summary);
+            bool restartRequired = result.GetExitCode() == 4;
+            bool verified = result.GetExitCode() == 0;
+            var action = new WorkflowAction("Windows Update installation", restartRequired ? "Restart required" : verified ? "Verified" : "Review required",
+                result.Status + ". " + result.Outcomes.Count(outcome => outcome.Installed) + " of " + result.SelectedCount + " selected update(s) verified installed.",
+                restartRequired ? "Restart Windows when convenient, then check the interrupted update result before another installation." :
+                    verified ? "Review the installed updates and test the affected computer before considering another installation." :
+                    "Review Windows Update and the saved journal before another installation attempt.", verified, restartRequired);
+            WorkflowCheck[] checks = result.Outcomes.Select(outcome => new WorkflowCheck(
+                "Update " + outcome.Selection.Id + " revision " + outcome.Selection.Revision,
+                outcome.Installed ? CheckState.Information : CheckState.Unknown, outcome.Detail)).Append(
+                new WorkflowCheck("Installation boundary", CheckState.Information,
+                    "Only the explicitly selected updates were requested. No automatic restart was requested.")).ToArray();
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.AvailableUpdates, Environment.MachineName, DateTimeOffset.UtcNow,
+                restartRequired ? "Restart required" : result.Status, checks, [], result.JournalPath)
+            { Actions = [action] }, "Windows Update installation");
             Report(result.Status + ". Journal: " + result.JournalPath);
             SetScanLight(result.GetExitCode() == 0 ? "ready" : "incomplete", result.Status + ". Review the update report.");
         }
