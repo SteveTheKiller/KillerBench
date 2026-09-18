@@ -5,6 +5,48 @@ namespace KillerBench;
 
 public partial class MainWindow
 {
+    private async void OnViewDefenderOverview(object sender, System.Windows.RoutedEventArgs e)
+    {
+        if (readCancellation is not null) return;
+        using var stop = new CancellationTokenSource(TimeSpan.FromMinutes(2));
+        readCancellation = stop;
+        SetCaptureBusy(true);
+        ModeLabel.Text = "DEFENDER / OVERVIEW";
+        BeginWorkflowOutput(WorkflowKind.Defender);
+        AppendWorkflowOutput("Reading Defender protection, scan timing and aggregate threat history. No scan or security setting will change.");
+        try
+        {
+            Task<IReadOnlyList<WorkflowCheck>> protection = DefenderProtectionDiagnostics.CheckAsync(stop.Token);
+            Task<WorkflowCheck> scanHistory = DefenderScanHistory.CheckAsync(stop.Token);
+            Task<WorkflowCheck> threatHistory = DefenderThreatSummary.CheckAsync(stop.Token);
+            await Task.WhenAll(protection, scanHistory, threatHistory);
+            WorkflowCheck[] checks = protection.Result.Concat([scanHistory.Result, threatHistory.Result]).ToArray();
+            AppendWorkflowOutput(string.Join("\n\n", checks.Select(check => check.Name + " / " + check.State + "\n" + check.Detail)));
+            bool needsAttention = checks.Any(check => check.State is CheckState.Attention or CheckState.Unknown);
+            string summary = needsAttention ? "Defender overview needs review" : "Defender overview collected";
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Defender, Environment.MachineName, DateTimeOffset.UtcNow,
+                summary, checks, [], "Read-only Defender overview. No scan, remediation, exclusion, policy or security setting was changed."),
+                "Microsoft Defender overview");
+            Report(summary);
+            SetScanLight(needsAttention ? "attention" : "ready", summary);
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or OperationCanceledException or TimeoutException)
+        {
+            AppendWorkflowOutput("Defender overview could not complete: " + error.Message);
+            SetScanLight("incomplete", "Defender overview is incomplete.");
+        }
+        finally
+        {
+            readCancellation = null;
+            workflowOutputActive = false;
+            SourcesList.IsEnabled = true;
+            SearchBox.IsEnabled = true;
+            SetCaptureBusy(false);
+            ModeLabel.Text = "WORKFLOW ENDED";
+            if (closeAfterOperation) Close();
+        }
+    }
+
     private DefenderScanType SelectedDefenderScan() => DefenderScanChoice.SelectedIndex switch
     {
         1 => DefenderScanType.Quick,

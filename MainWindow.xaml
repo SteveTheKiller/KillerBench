@@ -531,7 +531,10 @@
               </ComboBox>
               <CheckBox x:Name="DefenderScanConsent" Content="Start the selected scan when I press GO" Margin="0,5,0,0" IsEnabled="False" Checked="OnDefenderScanConsentChanged" Unchecked="OnDefenderScanConsentChanged"/>
               <TextBlock Text="Without confirmation, GO previews eligibility. A scan never changes exclusions or policy, and interrupted requests are not repeated automatically." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
-              <Button Content="Check interrupted scan" Click="OnRecoverDefenderScan" HorizontalAlignment="Left" Margin="0,5,0,0" ToolTip="Read current scan history without starting another scan."/>
+              <WrapPanel Margin="0,5,0,0">
+                <Button Content="View Defender overview" Click="OnViewDefenderOverview" Margin="0,0,6,0" ToolTip="Open a read-only report of protection, scan timing and aggregate threat history."/>
+                <Button Content="Check interrupted scan" Click="OnRecoverDefenderScan" ToolTip="Read current scan history without starting another scan."/>
+              </WrapPanel>
             </StackPanel>
             <StackPanel x:Name="FirewallProfileSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="Enable selected Windows Firewall profiles" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,4"/>

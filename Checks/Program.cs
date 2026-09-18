@@ -1059,6 +1059,8 @@ internal static class Program
                 ((StackPanel)window.FindName("CleanupSettings")).Visibility == Visibility.Collapsed, "Security choices replace cleanup choices");
             var defenderScanChoice = (ComboBox)window.FindName("DefenderScanChoice");
             var defenderScanConsent = (CheckBox)window.FindName("DefenderScanConsent");
+            Require(FindButtons(window).Any(button => Equals(button.Content, "View Defender overview") && button.IsVisible),
+                "Defender workflow exposes a read-only overview report action");
             Require(defenderScanChoice.SelectedIndex == 0 && defenderScanConsent.IsChecked == false && !defenderScanConsent.IsEnabled,
                 "Defender scan controls default to diagnosis only without execution consent");
             defenderScanChoice.SelectedIndex = 1;
