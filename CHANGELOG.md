@@ -1,5 +1,6 @@
 # Changelog
 
+- Show bounded collected evidence in readable reports when a read-only workflow finds no problem.
 - Add browser extension inventory to the standard read-only Maintenance workflow and report path.
 - Open the exact focused repair workflow from a single-repair report finding.
 - Link full-scan reports to safe Maintenance options without selecting an action.

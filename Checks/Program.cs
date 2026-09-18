@@ -145,6 +145,15 @@ internal static class Program
             Require(window.FindName("MainWorkflow") is ComboBox { SelectedItem: WorkflowDefinition { Kind: WorkflowKind.BrowserExtensions } } &&
                 window.FindName("MainAutoRepair") is CheckBox { IsChecked: not true, IsEnabled: false },
                 "Installed-applications handoff routes browser review through GO without repair consent");
+            var browserReport = new WorkflowResult(WorkflowKind.BrowserExtensions, "smoke", DateTimeOffset.UtcNow,
+                "Browser extension identities reviewed; no browser or extension changed",
+                [new("Browser extension inventory", CheckState.Information, "1 extension identity collected."),
+                 new("Fixture browser extension: fixture-extension", CheckState.Information, "Profile: Default. Identity only.")], [], "smoke-journal.json");
+            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [browserReport]);
+            window.UpdateLayout();
+            Require(FindTextBlocks(window).Any(block => block.Text == "Collected information") &&
+                FindTextBlocks(window).Any(block => block.Text.Contains("fixture-extension", StringComparison.Ordinal)),
+                "Readable reports retain bounded informational browser evidence when no problem was found");
             Console.WriteLine("PASS: WPF workbench geometry, zoom containment, PEEK monitor bounds and safe report navigation.");
             return 0;
         }
@@ -1406,6 +1415,14 @@ internal static class Program
             if (child is Button button) yield return button;
             foreach (var nested in FindButtons(child)) yield return nested;
         }
+    }
+
+    private static IEnumerable<TextBlock> FindTextBlocks(DependencyObject parent)
+    {
+        if (parent is TextBlock block) yield return block;
+        int children = VisualTreeHelper.GetChildrenCount(parent);
+        for (int index = 0; index < children; index++)
+            foreach (TextBlock nested in FindTextBlocks(VisualTreeHelper.GetChild(parent, index))) yield return nested;
     }
 
     private static void Require(bool condition, string message)

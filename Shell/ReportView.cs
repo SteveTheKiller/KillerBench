@@ -77,6 +77,19 @@ public partial class MainWindow
         if (additionalReviewItems > 0)
             ReportContent.Children.Add(Body($"{additionalReviewItems} additional review items are retained in Console and the exported report.", 12, new Thickness(0, 0, 0, 12), "MutedTextBrush"));
 
+        var information = result.Checks.Where(check => check.EffectiveState == CheckState.Information)
+            .OrderBy(check => check.Name, StringComparer.Ordinal).ToArray();
+        if (problems.Length == 0 && reviewRecipes.Length == 0 && information.Length > 0)
+        {
+            ReportContent.Children.Add(Heading("Collected information", 18));
+            const int maximumVisibleInformationItems = 12;
+            foreach (var check in information.Take(maximumVisibleInformationItems))
+                ReportContent.Children.Add(Card(check.Name, "Information", check.Detail,
+                    "Recorded as evidence only. No action is selected."));
+            if (information.Length > maximumVisibleInformationItems)
+                ReportContent.Children.Add(Body($"{information.Length - maximumVisibleInformationItems} additional informational items are retained in Console and the exported report.", 12, new Thickness(0, 0, 0, 12), "MutedTextBrush"));
+        }
+
         ReportContent.Children.Add(Heading("Actions taken", 18));
         if (result.Repairs.Count == 0)
             ReportContent.Children.Add(Body("No repair was executed in this workflow.", 13, new Thickness(0, 0, 0, 12)));
