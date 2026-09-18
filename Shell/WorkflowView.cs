@@ -52,6 +52,7 @@ public partial class MainWindow
         DefenderScanConsent.IsChecked = false;
         DefenderScanConsent.IsEnabled = DefenderScanChoice?.SelectedIndex > 0;
         if (MainAutoRepair is not null) MainAutoRepair.IsChecked = false;
+        OnWorkflowOptionsChanged(sender, e);
     }
 
     private void OnDefenderScanConsentChanged(object sender, System.Windows.RoutedEventArgs e)

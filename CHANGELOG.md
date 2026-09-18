@@ -6,6 +6,7 @@
 - Order report findings by actionability before general attention and incomplete evidence.
 - Keep exported HTML and text report triage in the same order as the app.
 - Start standard-user diagnostics without an elevation prompt while retaining repair-specific administrator gates.
+- Disable generic automatic repair immediately when a separate Defender scan is selected.
 - Place Diagnostics beside Repair and use a clear UI font for category buttons.
 - Open on Diagnostics and keep Repair as the explicit next step.
 - Clarify the diagnostic-first workflow with explicit primary action labels.
