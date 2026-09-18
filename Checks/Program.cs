@@ -222,6 +222,14 @@ internal static class Program
             Require(FindTextBlocks(window).Any(block => block.Text == "Blocked print job review report") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("No print job was canceled", StringComparison.Ordinal)),
                 "Blocked print-job discovery has a readable report before any cancellation is considered");
+            var updatePlanReport = new WorkflowResult(WorkflowKind.AvailableUpdates, "smoke", DateTimeOffset.UtcNow,
+                "One or more selected updates need review before installation can be considered.",
+                [new("Update: Fixture driver", CheckState.Attention, "Allow updates that may require a later restart to include this update. No automatic restart is planned."),
+                 new("Installation boundary", CheckState.Information, "This is a preview only. No update was downloaded or installed, no license was accepted, and no restart was scheduled.")], [], "read-only");
+            typeof(KillerBench.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [updatePlanReport, "Windows Update plan"]);
+            Require(FindTextBlocks(window).Any(block => block.Text == "Windows Update plan report") &&
+                FindTextBlocks(window).Any(block => block.Text.Contains("No update was downloaded or installed", StringComparison.Ordinal)),
+                "Update previews have a readable report that preserves the no-installation boundary");
             Console.WriteLine("PASS: WPF workbench geometry, zoom containment, PEEK monitor bounds and safe report navigation.");
             return 0;
         }

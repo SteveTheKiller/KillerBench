@@ -373,8 +373,18 @@ public partial class MainWindow
             var selected = AvailableUpdateList.SelectedItems.Cast<AvailableUpdate>().Select(u => new UpdateSelection(Guid.Parse(u.Id), u.Revision)).ToArray();
             var plan = UpdatePlanning.Create(availableUpdateResult, selected,
                 new(UpdateAllowRestart.IsChecked == true, UpdateAllowFeatureUpgrade.IsChecked == true));
-            RegisterSource(new TextEvidence("Update plan " + DateTime.Now.ToString("HHmmss"), plan.Format().Split('\n'), false));
-            Report(plan.Eligible ? "Selected updates passed planning checks. No installation started." : "Review the blockers in the update plan.");
+            BeginWorkflowOutput(WorkflowKind.AvailableUpdates);
+            AppendWorkflowOutput(plan.Format());
+            var checks = plan.Updates.Select(item => new WorkflowCheck("Update: " + item.Update.Title,
+                item.Eligible ? CheckState.Information : CheckState.Attention,
+                item.Eligible ? "Planning checks passed for this exact update identity and revision. Execution will search again before any installation." : string.Join(" ", item.Blockers)))
+                .Append(new WorkflowCheck("Installation boundary", CheckState.Information,
+                    "This is a preview only. No update was downloaded or installed, no license was accepted, and no restart was scheduled."))
+                .ToArray();
+            string status = plan.Eligible ? "Selected updates passed planning checks. No installation started." : "One or more selected updates need review before installation can be considered.";
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.AvailableUpdates, Environment.MachineName, DateTimeOffset.UtcNow,
+                status, checks, [], "Read-only Windows Update plan. No execution journal was written."), "Windows Update plan");
+            Report(status);
         }
         catch (ArgumentException error) { Report(error.Message); }
     }
@@ -387,8 +397,21 @@ public partial class MainWindow
         try
         {
             var plan = ThirdPartyUpdatePlanning.Create(thirdPartyUpdateResult, selection);
-            RegisterSource(new TextEvidence("Application update plan " + DateTime.Now.ToString("HHmmss"), plan.Format().Split('\n'), false));
-            Report(plan.Eligible ? "The exact application update passed preview checks. No update started." : "Review the blockers in the application update plan.");
+            BeginWorkflowOutput(WorkflowKind.AvailableUpdates);
+            AppendWorkflowOutput(plan.Format());
+            var checks = new[]
+            {
+                new WorkflowCheck("Selected application", plan.Eligible ? CheckState.Information : CheckState.Attention,
+                    "Package: " + plan.Selection.Id + ". Source: " + plan.Selection.Source + ". Target version: " + plan.Selection.TargetVersion + "."),
+                new WorkflowCheck("Planning result", plan.Eligible ? CheckState.Information : CheckState.Attention,
+                    plan.Eligible ? "Fresh discovery found the exact package and target version." : string.Join(" ", plan.Blockers)),
+                new WorkflowCheck("Installation boundary", CheckState.Information,
+                    "This is a preview only. No application update was downloaded or installed, and no restart was scheduled.")
+            };
+            string status = plan.Eligible ? "The exact application update passed preview checks. No update started." : "The selected application update needs review before installation can be considered.";
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.AvailableUpdates, Environment.MachineName, DateTimeOffset.UtcNow,
+                status, checks, [], "Read-only third-party application update plan. No execution journal was written."), "Application update plan");
+            Report(status);
         }
         catch (ArgumentException error) { Report(error.Message); }
     }
