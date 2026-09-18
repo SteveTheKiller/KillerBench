@@ -645,13 +645,14 @@ public partial class MainWindow
                     "\n\n" + reconciliation.Detail + "\n\nRecord: " +
                     (reconciliation.ArchivePath ?? reconciliation.PendingPath) +
                     "\nNo package removal request was sent.";
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("MACE package reconciliation " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
+                string journal = reconciliation.ArchivePath ?? reconciliation.PendingPath;
+                bool verified = reconciliation.Outcome is MacePackageRemovalReconciliationOutcome.Verified or
+                    MacePackageRemovalReconciliationOutcome.NotApplied or MacePackageRemovalReconciliationOutcome.NoPendingRecord;
+                RegisterGuardedActionReport(WorkflowKind.Mace, "MACE package reconciliation",
+                    "MACE package removal reconciliation / " + reconciliation.Outcome, output, reconciliation.Detail, journal, verified,
+                    "Review the selected package and current installed state before requesting another removal.");
                 SetMaceReview(null);
-                Report(reconciliation.Detail);
-                SetScanLight(reconciliation.Outcome is MacePackageRemovalReconciliationOutcome.Verified or
-                    MacePackageRemovalReconciliationOutcome.NotApplied or MacePackageRemovalReconciliationOutcome.NoPendingRecord
-                    ? "ready" : "attention", reconciliation.Detail);
+                SetScanLight(verified ? "ready" : "attention", reconciliation.Detail);
                 return;
             }
             if (macePackageRemovalRequested)
@@ -665,12 +666,14 @@ public partial class MainWindow
                     "\nPackage: " + selected.Identity + "\n\n" + removal.Detail +
                     "\n\nRecord: " + (removal.JournalPath ?? removal.PendingPath ?? "No change record created.") +
                     "\nNo other package, user data, credential, policy or folder action was requested.";
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("MACE package removal " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
+                string journal = removal.JournalPath ?? removal.PendingPath ?? "No change record created.";
+                bool verified = removal.Outcome == MacePackageRemovalOutcome.Verified;
+                RegisterGuardedActionReport(WorkflowKind.Mace, "MACE package removal",
+                    "MACE package removal / " + removal.Outcome, output, removal.Detail, journal, verified,
+                    "Verify the selected application no longer appears, then test Windows before requesting another removal.");
                 MacePackageRemovalConsent.IsChecked = false;
                 SetMaceReview(null);
-                Report(removal.Detail);
-                SetScanLight(removal.Outcome == MacePackageRemovalOutcome.Verified ? "ready" : "attention", removal.Detail);
+                SetScanLight(verified ? "ready" : "attention", removal.Detail);
                 return;
             }
             if (servicingMonitorOptions is not null)
