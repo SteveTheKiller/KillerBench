@@ -2,6 +2,7 @@
 
 - Add separate raw console and formatted workflow report views with prioritized findings and exact next actions, including exports.
 - Name technical output and readable report views directly in the workspace.
+- Replace automatic sample evidence with a diagnostic-first welcome state.
 - Order report findings by actionability before general attention and incomplete evidence.
 - Keep exported HTML and text report triage in the same order as the app.
 - Start standard-user diagnostics without an elevation prompt while retaining repair-specific administrator gates.

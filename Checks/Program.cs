@@ -1063,7 +1063,7 @@ internal static class Program
                 var caption = (Grid)window.FindName("CaptionBar");
                 var captionPoint = caption.TranslatePoint(new Point(caption.ActualWidth / 2, caption.ActualHeight / 2), window);
                 Require(ReferenceEquals(window.InputHitTest(captionPoint), caption), "Empty title bar receives drag input in " + theme);
-                Require(text.Text.Contains("SYNTHETIC SAMPLE"), "Theme switch retains evidence");
+                Require(text.Text.Contains("START HERE"), "Theme switch retains startup guidance");
                 Require(text.Foreground is SolidColorBrush brush && window.TryFindResource("ConsoleTextBrush") is SolidColorBrush consoleText && brush.Color == consoleText.Color,
                     "Console output follows the active theme");
                 foreach (string key in new[] { "PrimaryBrush", "TextBrush", "PaneBrush", "ControlCornerRadius", "SliderTrack", "WindowEdgeThickness", "ConsoleSurfaceBrush", "ConsoleTextBrush", "ConsoleBorderBrush", "ConsoleShadowEffect" })
@@ -1113,7 +1113,11 @@ internal static class Program
             Require(((Border)window.FindName("LeftPanel")).Style == window.FindResource("Panel"), "Tool sidebar uses the family pane style");
             Require(((TextBox)window.FindName("PathBox")).Padding.Top <= 3, "Compact text input padding");
             window.UpdateLayout();
-            Require(text.Text.Contains("SYNTHETIC SAMPLE"), "Sample explicitly labeled");
+            Require(text.Text.Contains("START HERE") && ((ListBox)window.FindName("SourcesList")).Items.Count == 0,
+                "Startup explains the diagnostic flow without pretending that sample evidence is machine evidence");
+            FindButtons(window).Single(button => Equals(button.Content, "Load sample")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(text.Text.Contains("SYNTHETIC SAMPLE") && ((ListBox)window.FindName("SourcesList")).Items.Count == 1,
+                "Sample evidence loads only after the user explicitly requests it");
             ((TextBox)window.FindName("SearchBox")).Text = "error";
             var find = FindButtons(window).Single(b => Equals(b.Content, "FIND"));
             find.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));

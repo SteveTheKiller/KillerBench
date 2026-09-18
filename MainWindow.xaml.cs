@@ -19,7 +19,7 @@ public partial class MainWindow : Window
         ApplyWorkflowOptionCatalog();
         InitializeShell();
         InitializeNavigation();
-        LoadSample();
+        ShowWelcome();
         if (App.DemoMode)
         {
             ModeLabel.Text = "DEMO MODE / SYNTHETIC MACHINE";
@@ -37,6 +37,28 @@ public partial class MainWindow : Window
             OnCancel(this, new RoutedEventArgs());
             Report("Closing after the active operation stops. An actual repair must finish its current command.");
         };
+    }
+
+    private void ShowWelcome()
+    {
+        evidence = null;
+        sources.Clear();
+        SourcesList.Items.Clear();
+        SearchBox.Clear();
+        EvidenceTitle.Text = "Start here";
+        EvidenceBox.Text = "KILLERBENCH / START HERE\n\n" +
+            "1. Choose a diagnostic area.\n" +
+            "2. Select Run diagnosis.\n" +
+            "3. Read the readable report for problems and the next safe step.\n\n" +
+            "Raw output appears here while work is running. Repair remains off until you explicitly approve it.";
+        CoverageLabel.Text = "No scan has run. A clean report starts with the selected diagnostic workflow.";
+        ModeLabel.Text = "READY / DIAGNOSTICS";
+        SessionLabel.Text = "No sources yet";
+        CaptureInfo.Text = "Run diagnosis to collect current evidence, or load a saved capture or sample.";
+        SourceInfo.Text = "No evidence loaded. Run diagnosis, open a saved capture, or load sample evidence.";
+        FindingsSummary.Text = "No findings yet. A report appears after the selected diagnostic workflow finishes.";
+        FindingCards.Children.Clear();
+        Report("Ready. Run diagnosis to collect current evidence.");
     }
 
     private void LoadSample()
