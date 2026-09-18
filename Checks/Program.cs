@@ -734,6 +734,8 @@ internal static class Program
                         var recipePanel = (Expander)window.FindName("RecipeSelectionPanel");
                         var toggle = (CheckBox)window.FindName("CustomizeRecipes");
                         var choices = (ListBox)window.FindName("RecipeSelectionList");
+                        Require(choices.ItemContainerStyle is not null && ((ListBox)window.FindName("DiagnosticAreaList")).ItemContainerStyle is not null,
+                            "Advanced check lists use the themed list-row template");
                         recipePanel.IsExpanded = true;
                         toggle.IsChecked = true;
                         choices.UnselectAll();

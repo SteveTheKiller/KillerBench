@@ -737,7 +737,7 @@
                 <ListBox x:Name="DiagnosticAreaList" SelectionMode="Multiple" MaxHeight="180" Visibility="Collapsed"
                          Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextBrush}"
                          IsEnabled="{Binding IsChecked, ElementName=FocusDiagnosticAreas}" SelectionChanged="OnDiagnosticAreasChanged"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Diagnostic areas">
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemContainerStyle="{StaticResource SourceItem}" AutomationProperties.Name="Diagnostic areas">
                   <ListBox.ItemTemplate><DataTemplate>
                     <CheckBox Content="{Binding Title}" ToolTip="{Binding Description}"
                               IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Mode=TwoWay}"/>
@@ -751,7 +751,7 @@
                     <Button Content="None" Padding="8,2" Margin="4,0,0,0" Click="OnClearRecipes" AutomationProperties.Name="Clear recipe checks"/>
                   </StackPanel>
                 </DockPanel>
-                <ListBox x:Name="RecipeSelectionList" Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextBrush}" SelectionMode="Multiple" MaxHeight="180" IsEnabled="{Binding IsChecked, ElementName=CustomizeRecipes}" SelectionChanged="OnRecipeSelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Recipe checks">
+                <ListBox x:Name="RecipeSelectionList" Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextBrush}" SelectionMode="Multiple" MaxHeight="180" IsEnabled="{Binding IsChecked, ElementName=CustomizeRecipes}" SelectionChanged="OnRecipeSelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemContainerStyle="{StaticResource SourceItem}" AutomationProperties.Name="Recipe checks">
                   <ListBox.GroupStyle>
                     <GroupStyle>
                       <GroupStyle.HeaderTemplate>
