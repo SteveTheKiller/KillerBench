@@ -9,6 +9,31 @@ namespace KillerBench;
 public partial class MainWindow
 {
     private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, ScheduledTaskInspectionReport> taskInspectionReports = new();
+
+    private static WorkflowResult BuildTaskInspectionWorkflowReport(ScheduledTaskInspectionReport inspection)
+    {
+        var checks = new List<WorkflowCheck>
+        {
+            new("Task identity", CheckState.Information, "Draft target: " + inspection.Plan.Identity.FullName + ". No task was registered or run."),
+            new("Executable", inspection.Executable is null || inspection.Executable.RequiresReview ? CheckState.Unknown : CheckState.Information,
+                inspection.Executable?.ImageReview ?? "Executable inspection was not completed."),
+            new("Signature", inspection.Signature?.Status == "Valid" ? CheckState.Information : inspection.Signature is null ? CheckState.Unknown : CheckState.Attention,
+                inspection.Signature is null ? "Signature observation was not completed." : "Recorded status: " + inspection.Signature.Status + ". " + inspection.Signature.Detail),
+            new("Task account", inspection.Account?.Sid is null ? CheckState.Unknown : CheckState.Information,
+                inspection.Account?.Detail ?? "Task account observation was not completed."),
+            new("Task conflict", inspection.Conflict?.State switch
+                {
+                    ScheduledTaskConflictState.ExistingTask => CheckState.Attention,
+                    ScheduledTaskConflictState.NotObserved => CheckState.Information,
+                    _ => CheckState.Unknown
+                }, inspection.Conflict?.Detail ?? "Task conflict observation was not completed.")
+        };
+        if (inspection.Incomplete) checks.Add(new WorkflowCheck("Inspection coverage", CheckState.Unknown,
+            inspection.Failure ?? "The inspection did not complete."));
+        return new WorkflowResult(WorkflowKind.ScheduledTasks, Environment.MachineName, inspection.InspectedUtc,
+            inspection.Incomplete ? "Task inspection incomplete" : "Task inspection complete", checks, [],
+            "Read-only scheduled-task inspection. No task journal was written.");
+    }
     private void OnTaskDraftLoaded(object sender, RoutedEventArgs e)
     {
         if (string.IsNullOrWhiteSpace(TaskDraftStartDate.Text))
@@ -260,8 +285,14 @@ public partial class MainWindow
         { Signature = signature, ExistingDefinition = definition, Incomplete = !completed, Failure = failure };
         var inspectionSource = new TextEvidence("Task draft: " + plan.Identity.FullName,
             inspection.Format().Split('\n'), false);
+        var report = BuildTaskInspectionWorkflowReport(inspection);
         taskInspectionReports.Add(inspectionSource, inspection);
+        workflowSummaries.Add(inspectionSource, report);
+        workflowReportTitles.Add(inspectionSource, "Scheduled task inspection");
         RegisterSource(inspectionSource);
+        ShowEvidence();
+        RenderNamedWorkflowReport(report, "Scheduled task inspection");
+        SetOutputView(report: true);
         Report(completed ? "Task draft inspected. No task was created or run." : "Partial task inspection retained. No task was created or run.");
         SetScanLight("incomplete", "Draft inspection only; task execution is not verified.");
         }
