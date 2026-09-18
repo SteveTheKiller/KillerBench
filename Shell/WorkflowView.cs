@@ -1459,13 +1459,15 @@ public partial class MainWindow
         {
             string detail = "Workflow not completed: " + error.Message;
             AppendWorkflowOutput(detail);
-            string retained = EvidenceBox.Text;
             workflowOutputActive = false;
             string guidance = autoRepair || applyTime || applyPrivacyClipboardHistory || applyPrivacyBoolean || CleanupRemove.IsChecked == true
                 ? "Repair completion is unverified. Review the retained output and operation journal before another attempt."
                 : "Diagnostic coverage is incomplete. This result does not establish current system health.";
-            RegisterSource(new TextEvidence(kind + " interruption " + DateTime.Now.ToString("HHmmss"),
-                ("WORKFLOW / OUTCOME UNVERIFIED\n" + detail + "\n" + guidance + "\n\nRETAINED LIVE OUTPUT\n" + retained).Split('\n'), false));
+            RegisterWorkflowResult(new WorkflowResult(kind, Environment.MachineName, DateTimeOffset.UtcNow,
+                "Workflow not completed", [new WorkflowCheck("Workflow outcome", CheckState.Unknown, detail),
+                new WorkflowCheck("Recommended next step", CheckState.Information, guidance)], [],
+                "Workflow interruption. Review the retained console output and any operation journal before retrying."),
+                "Workflow interrupted");
             SetScanLight("incomplete", detail);
         }
         finally
