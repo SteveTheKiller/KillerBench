@@ -1212,7 +1212,9 @@ internal static class Program
             TaskDraftUiChecks.Run(window);
             typeof(KillerBench.MainWindow).GetMethod("BeginWorkflowOutput", flags)!.Invoke(window, [WorkflowKind.SystemFiles]);
             typeof(KillerBench.MainWindow).GetMethod("AppendWorkflowOutput", flags)!.Invoke(window, ["Verification 42% complete"]);
-            Require(text.Text.Contains("Verification 42% complete") && !text.Text.Contains("SYNTHETIC SAMPLE"), "Live output replaces sample evidence");
+            Require(text.Text.Contains("Verification 42% complete") && !text.Text.Contains("SYNTHETIC SAMPLE") &&
+                ((TextBlock)window.FindName("CoverageLabel")).Text.Contains("browse tools and export earlier reports", StringComparison.Ordinal),
+                "Live output replaces sample evidence while retaining navigation and earlier report export guidance");
             Require(!((TextBox)window.FindName("SearchBox")).IsEnabled, "Search cannot replace live output");
             Capture(window, Path.Combine(scratch, "live-workflow.png"));
             var completedWorkflow = new WorkflowResult(WorkflowKind.Services, "fixture", DateTimeOffset.UtcNow, "Needs attention",

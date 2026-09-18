@@ -279,7 +279,7 @@ public partial class MainWindow
         SearchBox.IsEnabled = false;
         EvidenceTitle.Text = kind + " / Live";
         EvidenceBox.Text = $"{kind} / RUNNING\nTHIS PC: {Environment.MachineName}\n\nStarting live checks...\n";
-        CoverageLabel.Text = "Live output. Stop waits for the current servicing command.";
+        CoverageLabel.Text = "Live output. You can browse tools and export earlier reports. Stop waits for the current servicing command.";
     }
 
     private void AppendWorkflowOutput(string message)
