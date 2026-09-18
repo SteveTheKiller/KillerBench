@@ -220,18 +220,23 @@ public partial class MainWindow
                 SetScanLight(result.Verified ? "ready" : "incomplete", result.Detail);
                 return;
             }
-            RegisterSource(new TextEvidence("BitLocker " + DateTime.Now.ToString("HHmmss"),
-                new[] { result.Detail }.Concat(result.Lines).ToArray(), false));
-            Report(result.Detail);
+            AppendWorkflowOutput(string.Join("\n", new[] { result.Detail }.Concat(result.Lines)));
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.BitLocker, Environment.MachineName, DateTimeOffset.UtcNow,
+                result.Verified ? "BitLocker protector discovery completed" : "BitLocker protector discovery incomplete",
+                [new WorkflowCheck("BitLocker recovery protectors", result.Verified ? CheckState.Information : CheckState.Unknown, result.Detail)], [],
+                "Read-only BitLocker protector discovery. No recovery password or machine setting was changed."),
+                "BitLocker recovery protectors");
             SetScanLight(result.Verified ? "ready" : "incomplete", result.Detail);
         }
         catch (Exception error) when (error is OperationCanceledException or IOException or InvalidDataException or UnauthorizedAccessException or
             InvalidOperationException or NotSupportedException or TimeoutException or System.Security.SecurityException or System.ComponentModel.Win32Exception)
         {
             const string detail = "BitLocker operation ended without a verified outcome. Review the selected operation and saved journal before retrying.";
+            AppendWorkflowOutput(detail);
             workflowOutputActive = false;
-            RegisterSource(new TextEvidence("BitLocker interruption " + DateTime.Now.ToString("HHmmss"), [detail], false));
-            Report(detail);
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.BitLocker, Environment.MachineName, DateTimeOffset.UtcNow,
+                "BitLocker operation not completed", [new WorkflowCheck("BitLocker operation", CheckState.Unknown, detail)], [],
+                "Review the retained console output and any BitLocker operation journal before retrying."), "BitLocker operation");
             SetScanLight("incomplete", detail);
             protectorVolume = null;
             BitLockerProtectorChoice.ItemsSource = null;
