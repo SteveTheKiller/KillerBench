@@ -150,7 +150,7 @@ if (args.Length > 0 && args[0] is "scan" or "open") return await CaptureCommands
 
 if (args.Length == 0 || args is ["help"] or ["--help"] or ["-h"])
 {
-    Console.WriteLine("KillerBench command-line workbench. Diagnostics are read-only by default; every machine change requires --execute and its command-specific safeguards.");
+    Console.WriteLine("KillerBench command-line Windows maintenance workbench. Diagnostics are read-only by default; every machine change requires --execute and its command-specific safeguards.");
     Console.WriteLine("killerbench-cli workflow-options [WORKFLOW [--set KEY=VALUE ...]] (show or validate host-neutral controls; no scan or repair)");
     Console.WriteLine("killerbench-cli backup-events (VSS and volsnap history; JSON evidence; no changes)");
     Console.WriteLine("killerbench-cli servicing-monitor [--refresh 1..60] [--samples 1..120] [--skip-events] [--skip-history] [--skip-services] [--skip-restart] [--skip-setup] [--skip-compatibility] [--skip-readiness] [--skip-transfers] [--skip-delivery-optimization] [--skip-installer] [--skip-scheduled-task] (read-only PEEK servicing activity snapshots)");

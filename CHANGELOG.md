@@ -1,5 +1,6 @@
 # Changelog
 
+- Identify KillerBench as the Windows maintenance workbench across the desktop, CLI and guide.
 - Link actionable readable reports to the safe Repair workspace without approving a repair.
 - Make `killerbench-cli help` open the complete command catalog with its safety boundary.
 - Add separate raw console and formatted workflow report views with prioritized findings and exact next actions, including exports.

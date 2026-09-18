@@ -94,6 +94,8 @@ internal static class Program
                 "Zoom content remains clipped to the workbench window");
             Require(window.FindName("ServicingMonitorSamples") is Slider { Minimum: 1, Maximum: 120, Value: 3 },
                 "PEEK desktop controls expose the shared one through 120 snapshot range");
+            Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
+                "Desktop subtitle identifies the full maintenance scope");
             var actionable = new WorkflowResult(WorkflowKind.Services, "smoke", DateTimeOffset.UtcNow, "Needs attention",
                 [new("Service repair", CheckState.Repairable, "Fixture repair option", RepairKind.SystemFiles)], [], "smoke-journal.json");
             typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [actionable]);
