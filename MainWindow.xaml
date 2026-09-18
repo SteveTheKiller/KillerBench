@@ -218,7 +218,7 @@
               <Button x:Name="ReviewBrowserExtensions" Content="Review browser extensions" Click="OnReviewBrowserExtensions" HorizontalAlignment="Left" Margin="0,6,0,0" ToolTip="Read Chrome, Edge, Brave and Firefox extension identities. No browser, extension or policy is changed."/>
             </StackPanel>
             <StackPanel x:Name="MaceSettings" Visibility="Collapsed" Margin="0,0,0,8">
-              <TextBlock Text="Choose exactly what to review. GO inventories registrations and shows consequences. Removal is not available yet." TextWrapping="Wrap"/>
+              <TextBlock Text="Choose exactly what to review. GO inventories registrations and shows consequences. Package removal has its own guarded control." TextWrapping="Wrap"/>
               <ComboBox x:Name="MaceScopeChoice" SelectedIndex="0" Margin="0,6,0,6" AutomationProperties.Name="MACE account scope" SelectionChanged="OnMaceOptionChanged">
                 <ComboBoxItem Content="Running account"/><ComboBoxItem Content="All users and new users"/>
               </ComboBox>
@@ -232,11 +232,15 @@
               <CheckBox x:Name="MaceRemoveData" Content="Remove selected applications' profile data" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
               <CheckBox x:Name="MaceRemoveCredentials" Content="Remove selected applications' cached credentials" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
               <CheckBox x:Name="MaceRestoreFolders" Content="Review OneDrive folder locations for restoration" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
-              <TextBlock Text="These choices are recorded in the review only. No process, application, package, file, credential, folder location, registry value or user data changes." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="GO records these choices in a review only. No process, application, package, file, credential, folder location, registry value or user data changes." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
               <TextBlock Text="Supported package plan" Foreground="{DynamicResource DimTextBrush}" Margin="0,8,0,0"/>
-              <ComboBox x:Name="MacePackageSelection" DisplayMemberPath="Label" Margin="0,4,0,4" AutomationProperties.Name="Supported MACE package candidate"/>
+              <ComboBox x:Name="MacePackageSelection" DisplayMemberPath="Label" Margin="0,4,0,4" AutomationProperties.Name="Supported MACE package candidate" SelectionChanged="OnMacePackageSelectionChanged"/>
               <Button x:Name="MaceReviewPackage" Content="Check selected package" Click="OnReviewMacePackage" IsEnabled="False" HorizontalAlignment="Left"/>
               <TextBlock x:Name="MacePackageHint" Text="Run GO to find supported current-account package candidates." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <TextBlock Text="Destructive package removal" Foreground="{DynamicResource DangerRed}" Margin="0,8,0,0"/>
+              <CheckBox x:Name="MacePackageRemovalConsent" Content="I understand that this removes only the selected package after fresh safeguards pass" Checked="OnMacePackageRemovalConsentChanged" Unchecked="OnMacePackageRemovalConsentChanged"/>
+              <Button x:Name="MaceRemovePackage" Content="REMOVE SELECTED PACKAGE" Click="OnRemoveMacePackage" IsEnabled="False" HorizontalAlignment="Left" Margin="0,4,0,0" Background="{DynamicResource DangerRed}" Foreground="White" ToolTip="Requires an eligible review, this confirmation, a second confirmation, and fresh exact evidence before requesting removal."/>
+              <TextBlock Text="This red control is separate from GO. It removes one exact, unprotected development package for the running account only. The final request is recorded and never retried automatically." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="OrcaSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="Choose the Outlook edition, account scope and exact reset areas. GO reviews them. For running-account caches only, enable retention to move the caches under recovery names after fresh checks." TextWrapping="Wrap"/>

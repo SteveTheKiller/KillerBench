@@ -27,6 +27,7 @@
 - Expand the focused Update Orchestrator workflow with exact task, current activity and combined readiness evidence.
 - Add combined readiness conclusions across peripheral, association, discovery, font-cache and evidence-backed feature-service workflows.
 - Correct MACE preserved-data eligibility so ordinary installed Store/MSIX packages remain blocked and only loose-file development packages can use the Windows preservation boundary.
+- Add MACE package removal behind a separate red desktop control with consent, confirmation, fresh safeguards, durable records and no automatic retry.
 
 ## [0.1.0] - Unreleased
 

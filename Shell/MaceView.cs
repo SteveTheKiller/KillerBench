@@ -7,6 +7,7 @@ public partial class MainWindow
 {
     private sealed record MacePackageChoice(string Label, string Identity);
     private MaceRemovalReview? maceReview;
+    private bool macePackageRemovalRequested;
 
     private void OnMaceOptionChanged(object sender, RoutedEventArgs e)
     {
@@ -33,10 +34,27 @@ public partial class MainWindow
         MacePackageSelection.ItemsSource = choices;
         MacePackageSelection.SelectedIndex = choices.Length == 1 ? 0 : -1;
         MaceReviewPackage.IsEnabled = choices.Length > 0;
+        MacePackageRemovalConsent.IsChecked = false;
         MacePackageHint.Text = choices.Length == 0
             ? "Run GO to find supported current-account package candidates."
             : choices.Length + " supported package candidate" + (choices.Length == 1 ? "" : "s") +
                 " found. Select one to review the final safeguards.";
+        RefreshMacePackageRemoval();
+    }
+
+    private void OnMacePackageSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        MacePackageRemovalConsent.IsChecked = false;
+        RefreshMacePackageRemoval();
+    }
+
+    private void OnMacePackageRemovalConsentChanged(object sender, RoutedEventArgs e) => RefreshMacePackageRemoval();
+
+    private void RefreshMacePackageRemoval()
+    {
+        bool eligible = maceReview is not null && MacePackageSelection.SelectedItem is MacePackageChoice selected &&
+            MacePackageRemoval.Evaluate(maceReview, selected.Identity).Eligible;
+        MaceRemovePackage.IsEnabled = eligible && MacePackageRemovalConsent.IsChecked == true && readCancellation is null;
     }
 
     private void OnReviewMacePackage(object sender, RoutedEventArgs e)
@@ -50,11 +68,31 @@ public partial class MainWindow
         MacePackageRemovalEligibility eligibility = MacePackageRemoval.Evaluate(maceReview, selected.Identity);
         string text = "MACE PACKAGE PLAN / " + (eligibility.Eligible ? "ELIGIBLE" : "BLOCKED") +
             "\n" + selected.Label + "\nPackage: " + selected.Identity + "\n\n" + eligibility.Detail +
-            "\n\nRun GO again to refresh evidence. Native package removal is not connected.";
+            "\n\nGO stays review-only. The separate red removal control requires its own confirmation and repeats fresh exact evidence before one request.";
         RegisterSource(new TextEvidence("MACE package plan " + DateTime.Now.ToString("HHmmss"),
             text.Split('\n'), false));
         Report(eligibility.Eligible
-            ? "Exact package safeguards passed. Removal remains unavailable."
+            ? "Exact package safeguards passed. The separate red control is available after its confirmation is selected."
             : eligibility.Detail);
+        RefreshMacePackageRemoval();
+    }
+
+    private async void OnRemoveMacePackage(object sender, RoutedEventArgs e)
+    {
+        if (readCancellation is not null || MacePackageSelection.SelectedItem is not MacePackageChoice selected ||
+            maceReview is null || !MacePackageRemoval.Evaluate(maceReview, selected.Identity).Eligible ||
+            MacePackageRemovalConsent.IsChecked != true)
+        {
+            RefreshMacePackageRemoval();
+            return;
+        }
+        MessageBoxResult confirmation = MessageBox.Show(this,
+            "Remove this exact current-account package?\n\n" + selected.Identity +
+            "\n\nKillerBench will repeat the safeguard review, record the request, send one removal request, and verify the package inventory. It will not retry automatically.",
+            "Confirm MACE package removal", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+        if (confirmation != MessageBoxResult.Yes) return;
+        macePackageRemovalRequested = true;
+        try { await RunWorkflowAsync(); }
+        finally { macePackageRemovalRequested = false; }
     }
 }

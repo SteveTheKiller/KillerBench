@@ -321,6 +321,12 @@ public partial class MainWindow
             try { maceOptions.Validate(); }
             catch (ArgumentException error) { Report(error.Message); return; }
         }
+        if (macePackageRemovalRequested && (kind != WorkflowKind.Mace ||
+            MacePackageSelection.SelectedItem is not MacePackageChoice || MacePackageRemovalConsent.IsChecked != true))
+        {
+            Report("The separate MACE removal control requires one selected package and its confirmation.");
+            return;
+        }
         var orcaOptions = new OrcaReviewOptions(
             OrcaModeChoice.SelectedIndex switch { 0 => OrcaOutlookMode.New, 1 => OrcaOutlookMode.Classic, _ => OrcaOutlookMode.Both },
             OrcaScopeChoice.SelectedIndex == 1 ? OrcaScope.AllUsers : OrcaScope.RunningAccount,
@@ -593,6 +599,25 @@ public partial class MainWindow
         {
             string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Workflows");
             var progress = new Progress<string>(AppendWorkflowOutput);
+            if (macePackageRemovalRequested)
+            {
+                var selected = (MacePackageChoice)MacePackageSelection.SelectedItem;
+                string maceFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "KillerBench", "MacePackageRemoval");
+                var removal = await Task.Run(() => MacePackageRemoval.RunAsync(maceOptions, selected.Identity,
+                    true, maceFolder, new WindowsMacePackageRemovalHost(), progress, stop.Token));
+                string output = "MACE PACKAGE REMOVAL / " + removal.Outcome.ToString().ToUpperInvariant() +
+                    "\nPackage: " + selected.Identity + "\n\n" + removal.Detail +
+                    "\n\nRecord: " + (removal.JournalPath ?? removal.PendingPath ?? "No change record created.") +
+                    "\nNo other package, user data, credential, policy or folder action was requested.";
+                workflowOutputActive = false;
+                RegisterSource(new TextEvidence("MACE package removal " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
+                MacePackageRemovalConsent.IsChecked = false;
+                SetMaceReview(null);
+                Report(removal.Detail);
+                SetScanLight(removal.Outcome == MacePackageRemovalOutcome.Verified ? "ready" : "attention", removal.Detail);
+                return;
+            }
             if (servicingMonitorOptions is not null)
             {
                 var snapshots = await Task.Run(() => ServicingActivityMonitor.ObserveAsync(

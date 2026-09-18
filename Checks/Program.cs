@@ -690,16 +690,21 @@ internal static class Program
                             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
                         setMaceReview.Invoke(window, [MacePackageRemovalChecks.CreateReview(packagePresent: true)]);
                         var selection = (ComboBox)window.FindName("MacePackageSelection");
+                        var removalConsent = (CheckBox)window.FindName("MacePackageRemovalConsent");
+                        var removePackage = (Button)window.FindName("MaceRemovePackage");
                         Require(selection.Items.Count == 1 && selection.SelectedIndex == 0 &&
-                            ((Button)window.FindName("MaceReviewPackage")).IsEnabled,
+                            ((Button)window.FindName("MaceReviewPackage")).IsEnabled && !removePackage.IsEnabled,
                             "One supported exact package is presented as one selected plan choice");
                         ((Button)window.FindName("MaceReviewPackage")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                         Require(text.Text.Contains("MACE PACKAGE PLAN / ELIGIBLE") &&
-                            text.Text.Contains("Native package removal is not connected"),
-                            "MACE package plan appears in the primary evidence display without removal");
+                            text.Text.Contains("GO stays review-only"),
+                            "MACE package plan remains separate from the destructive action");
+                        removalConsent.IsChecked = true;
+                        Require(removePackage.IsEnabled, "The red MACE package action needs explicit consent after an eligible review");
                         ((CheckBox)window.FindName("MaceOutlook")).IsChecked = true;
-                        Require(selection.Items.Count == 0 && !((Button)window.FindName("MaceReviewPackage")).IsEnabled,
-                            "Changing a MACE selection clears stale package eligibility");
+                        Require(selection.Items.Count == 0 && !((Button)window.FindName("MaceReviewPackage")).IsEnabled &&
+                            !removePackage.IsEnabled && removalConsent.IsChecked != true,
+                            "Changing a MACE selection clears stale package eligibility and destructive consent");
                         ((ListBox)window.FindName("SourcesList")).SelectedIndex = 0;
                     }
                     if (tool.Kind == WorkflowKind.Orca)
