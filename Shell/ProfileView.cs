@@ -91,13 +91,16 @@ public partial class MainWindow
         }
         catch (OperationCanceledException)
         {
-            AppendWorkflowOutput("Profile backup recovery stopped. No copy or removal was retried.");
+            ShowProfileBackupIncomplete("Profile backup recovery",
+                "Profile backup recovery stopped. No copy or removal was retried.",
+                "Use Check interrupted backup when the saved evidence is available.");
             SetScanLight("incomplete", "Backup recovery stopped.");
         }
         catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException or InvalidOperationException or
             NotSupportedException or TimeoutException or ArgumentException)
         {
-            AppendWorkflowOutput("Profile backup recovery unavailable: " + error.Message);
+            ShowProfileBackupIncomplete("Profile backup recovery", "Profile backup recovery unavailable: " + error.Message,
+                "Confirm the saved backup evidence, then run the recovery check again.");
             SetScanLight("incomplete", "Backup recovery unavailable.");
         }
         finally { EndProfileBackupOperation(); }
@@ -121,9 +124,8 @@ public partial class MainWindow
             if (!plan.ReviewPassed || plan.Targets.Count != 1)
             {
                 string blockers = plan.Blockers.Count == 0 ? "The selected profile is no longer eligible for backup verification." : string.Join("\n", plan.Blockers);
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("Profile backup review " + DateTime.Now.ToString("HHmmss"),
-                    ("PROFILE BACKUP / BLOCKED\n" + blockers + "\n\nNo backup files were created and no profile was copied or removed.").Split('\n'), false));
+                ShowProfileBackupIncomplete("Profile backup verification", blockers + " No backup files were created and no profile was copied or removed.",
+                    "Refresh the selected profile evidence before attempting another verification.");
                 Report("Profile backup verification blocked by fresh profile evidence.");
                 SetScanLight("attention", "Profile backup verification blocked.");
                 return;
@@ -151,13 +153,16 @@ public partial class MainWindow
         }
         catch (OperationCanceledException)
         {
-            AppendWorkflowOutput("Profile backup verification stopped. No profile was copied or removed.");
+            ShowProfileBackupIncomplete("Profile backup verification",
+                "Profile backup verification stopped. No profile was copied or removed.",
+                "Check the copied backup again when its evidence is available.");
             SetScanLight("incomplete", "Backup verification stopped.");
         }
         catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException or InvalidOperationException or
             NotSupportedException or TimeoutException or ArgumentException)
         {
-            AppendWorkflowOutput("Profile backup verification unavailable: " + error.Message);
+            ShowProfileBackupIncomplete("Profile backup verification", "Profile backup verification unavailable: " + error.Message,
+                "Confirm the source and copied backup paths, then try verification again.");
             SetScanLight("incomplete", "Backup verification unavailable.");
         }
         finally { EndProfileBackupOperation(); }
