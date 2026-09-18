@@ -117,6 +117,9 @@ public static class WorkflowReport
             result.Kind == WorkflowKind.Input ?
                 (result.Checks.Any(CheckNeedsReview) ? "Use the reported device name, ID and code to review its connection and approved driver in Device Manager. Missing driver inventory is not proof that a driver is absent. " : "No configuration fault was reported in the collected scopes. Test the affected keyboard, mouse or HID function directly. ") +
                 "No input was captured and no device reset or driver change was performed." :
+            result.Kind == WorkflowKind.Defender ?
+                (result.Checks.Any(CheckNeedsReview) ? "Review each flagged Defender control in Windows Security and compare it with the intended endpoint-security policy. Confirm the active security product and policy owner before changing anything. " : "No Defender control in this overview needs immediate review. Compare the retained settings with the intended endpoint-security policy. ") +
+                "No scan, remediation, exclusion, policy or security setting was changed." :
             result.Status == "Needs attention" ? "Review the unresolved findings below. No broader repair has been selected automatically." :
             result.Kind == WorkflowKind.AvailableUpdates ? "Review the returned update list. Installation is not enabled by this discovery workflow." :
             result.Kind == WorkflowKind.Cleanup ? "Review the estimate before selecting permanent removal. Preview did not remove files." :

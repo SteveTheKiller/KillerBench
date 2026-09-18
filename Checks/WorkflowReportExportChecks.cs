@@ -24,6 +24,12 @@ internal static class WorkflowReportExportChecks
             WorkflowReport.Format(result).Contains("NEXT: " + WorkflowReport.NextAction(result)),
             "Report next action uses the same decision without rebuilding formatted output.");
 
+        var defender = new WorkflowResult(WorkflowKind.Defender, "FIXTURE-PC", DateTimeOffset.UtcNow,
+            "Defender overview needs review", [new("Real-time protection", CheckState.Attention, "Disabled in fixture evidence.")], [], "fixture-journal.json");
+        Require(WorkflowReport.NextAction(defender).Contains("Windows Security") &&
+            WorkflowReport.NextAction(defender).Contains("No scan, remediation, exclusion, policy or security setting was changed"),
+            "Defender reports direct review to Windows Security without implying a security action");
+
         string diagnostic = WorkflowReportExport.BuildHtml(result, WorkflowReportScope.Diagnostics, "Dark");
         Require(diagnostic.StartsWith("<!DOCTYPE html>", StringComparison.Ordinal) && diagnostic.Contains("Diagnostic report") &&
             diagnostic.Contains("<h2>Start here</h2>") && diagnostic.Contains("Review the unresolved findings below") &&
