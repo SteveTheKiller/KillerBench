@@ -96,6 +96,14 @@ internal static class Program
                 "PEEK desktop controls expose the shared one through 120 snapshot range");
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
                 "Desktop subtitle identifies the full maintenance scope");
+            var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            typeof(KillerBench.MainWindow).GetMethod("SetCaptureBusy", flags)!.Invoke(window, [true]);
+            Require(window.FindName("CategoryList") is ListBox { IsEnabled: true } &&
+                window.FindName("CategoryWorkflow") is ComboBox { IsEnabled: true } &&
+                window.FindName("ExportReportButton") is Button { IsEnabled: true } &&
+                window.FindName("MainGo") is Button { IsEnabled: false },
+                "Live work keeps category navigation and report export available while preventing another run");
+            typeof(KillerBench.MainWindow).GetMethod("SetCaptureBusy", flags)!.Invoke(window, [false]);
             var actionable = new WorkflowResult(WorkflowKind.CommonProblems, "smoke", DateTimeOffset.UtcNow, "Needs attention",
                 [new("Service repair", CheckState.Repairable, "Fixture repair option", RepairKind.SystemFiles),
                  new("Collected system detail", CheckState.Information, "Fixture informational evidence")], [], "smoke-journal.json");
