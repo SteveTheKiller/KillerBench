@@ -5,6 +5,7 @@
 - Keep exported HTML and text report triage in the same order as the app.
 - Start standard-user diagnostics without an elevation prompt while retaining repair-specific administrator gates.
 - Place Diagnostics beside Repair and use a clear UI font for category buttons.
+- Clarify the diagnostic-first workflow with explicit primary action labels.
 - Avoid rebuilding full workflow output when opening the readable report.
 - Repair and focus the isolated rendered UI-test launcher.
 - Replace the fixed CRT console with a theme-aware smoked-glass output pane.

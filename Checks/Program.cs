@@ -599,6 +599,13 @@ internal static class Program
                 categories.ItemContainerGenerator.ContainerFromIndex(0) is ListBoxItem { FontFamily.Source: "Segoe UI", FontWeight: var categoryWeight } &&
                 categoryWeight == FontWeights.SemiBold,
                 "Primary categories place Diagnostics beside Repair in a clear UI face while keeping Network separate and BitLocker under Security");
+            var mainAction = (Button)window.FindName("MainGo");
+            var automaticRepair = (CheckBox)window.FindName("MainAutoRepair");
+            Require(mainAction.Content is "Run diagnosis" && mainAction.ToolTip is string { Length: > 0 },
+                "Primary action states that the default workflow is diagnostic and produces a readable report");
+            automaticRepair.IsChecked = true;
+            Require(mainAction.Content is "Run repair", "Primary action changes only after explicit repair approval");
+            automaticRepair.IsChecked = false;
             var reachableTools = new HashSet<WorkflowKind>();
             window.UpdateLayout();
             var stableWindowSize = new Size(window.ActualWidth, window.ActualHeight);

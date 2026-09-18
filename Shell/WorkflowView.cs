@@ -210,6 +210,18 @@ public partial class MainWindow
         { MainAutoRepair.IsEnabled = false; MainAutoRepair.IsChecked = false; }
         if (servicingMonitor || packages || tasks || computerName || (storage && !storageRepair && !storageOptimization) || (systemRestore && !systemRestoreCreate) || cleanup || updates || privacy || bitlocker || profiles || timePreview || searchRebuild || eventChannelEnable || selectedPrinter || selectedPrintJob || mace || depot || beam || debloat) MainAutoRepair.IsChecked = false;
         else if (CleanupRemove is not null) CleanupRemove.IsChecked = false;
+        UpdateMainActionLabel();
+    }
+
+    private void OnMainAutoRepairChanged(object sender, System.Windows.RoutedEventArgs e) => UpdateMainActionLabel();
+
+    private void UpdateMainActionLabel()
+    {
+        bool repairRequested = MainAutoRepair?.IsChecked == true;
+        MainGo.Content = repairRequested ? "Run repair" : "Run diagnosis";
+        MainGo.ToolTip = repairRequested
+            ? "Run the selected checks and only the explicitly approved repairs. A report opens when the workflow finishes."
+            : "Run the selected read-only checks and open a readable report.";
     }
 
     private void OnSystemRestoreOptionChanged(object sender, System.Windows.RoutedEventArgs e)

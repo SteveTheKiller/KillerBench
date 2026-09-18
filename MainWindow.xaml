@@ -723,9 +723,9 @@
               <CheckBox x:Name="ComputerRenameConsent" Content="Rename this workgroup PC after fresh checks" Margin="0,4,0,0"/>
               <TextBlock Text="GO reviews the name and current identity. With the rename option selected, only a standalone workgroup PC with clear prerequisites is eligible. KillerBench never restarts Windows." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
             </StackPanel>
-            <CheckBox x:Name="MainAutoRepair" Content="Auto-repair confirmed issues" Margin="0,8,0,8"/>
+            <CheckBox x:Name="MainAutoRepair" Content="Auto-repair confirmed issues" Margin="0,8,0,8" Checked="OnMainAutoRepairChanged" Unchecked="OnMainAutoRepairChanged"/>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-              <Button x:Name="MainGo" Content="GO" Style="{StaticResource PrimaryButton}" Click="OnMainGo" Width="100" Margin="0,0,8,0"/>
+              <Button x:Name="MainGo" Content="Run diagnosis" Style="{StaticResource PrimaryButton}" Click="OnMainGo" Width="128" Margin="0,0,8,0" ToolTip="Run the selected read-only checks and open a readable report."/>
               <Button x:Name="CancelButton" Content="Stop" Click="OnCancel" IsEnabled="False" ToolTip="Stop after the current command (Esc)" Width="72"/>
             </StackPanel>
             <Expander x:Name="RecipeSelectionPanel" Header="Choose checks (advanced)" Foreground="{DynamicResource TextBrush}" Visibility="Collapsed" Margin="0,0,0,6">
