@@ -23,8 +23,9 @@ function Read-RecipeCli([string]$Arguments, [string]$Command = 'recipes') {
 foreach ($argument in @('', 'common-problems', 'update', 'files', 'vitals', 'backup-services')) {
     $result = Read-RecipeCli $argument
     if ($result.Exit -ne 0 -or $result.Error.Length -ne 0) { throw "Catalog failed: $argument" }
-    $recipes = @($result.Output | ConvertFrom-Json)
-    $expected = switch ($argument) { '' {114} 'common-problems' {96} 'update' {9} 'files' {1} 'vitals' {0} 'backup-services' {4} }
+    $parsedRecipes = $result.Output | ConvertFrom-Json
+    $recipes = @($parsedRecipes)
+    $expected = switch ($argument) { '' {115} 'common-problems' {96} 'update' {9} 'files' {1} 'vitals' {0} 'backup-services' {4} }
     if ($recipes.Count -ne $expected) { throw "Unexpected scope count: $argument" }
     foreach ($recipe in $recipes) {
         if (-not $recipe.Id -or -not $recipe.VerificationScope -or -not $recipe.Effects -or [TimeSpan]::Parse($recipe.InspectionTimeout).TotalMinutes -ne 65) { throw 'Missing recipe metadata.' }
