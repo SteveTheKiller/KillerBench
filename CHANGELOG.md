@@ -41,6 +41,7 @@
 - Add read-only uninstall-command and install-location presence flags to installed-application inventory and comparisons.
 - Add read-only fixed-root review for an exact, user-named application folder without traversal or deletion.
 - Add a standalone read-only startup registration and boot or logon task review to the CLI.
+- Add read-only Chromium browser-extension identity inventory for Chrome, Edge and Brave.
 - Added one bounded Certificates conclusion across personal-certificate validity and cache-only local chain evidence, using direct read-only store access for reliable validity collection.
 - Added one bounded Windows Activation conclusion across current licensing and sanitized Software Protection history.
 - Added one bounded Storage Spaces conclusion across pool and virtual-disk health evidence.
