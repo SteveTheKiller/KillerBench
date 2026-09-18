@@ -985,9 +985,10 @@ public partial class MainWindow
                         "\nQueue: " + selectedQueue + "\n" + selection.Detail +
                         "\nRecord: " + (selection.RecordPath ?? "No operation record created.") +
                         "\n\nNo queue, port, driver or job was changed. Printing was not tested.";
-                    workflowOutputActive = false;
-                    RegisterSource(new TextEvidence("Default printer: " + selectedQueue, selectionOutput.Split('\n'), false));
-                    Report(selection.Detail);
+                    bool verified = selection.Outcome == DefaultPrinterSelectionOutcome.Verified;
+                    RegisterGuardedActionReport(WorkflowKind.Printing, "Default printer", "Default printer / " + selection.Outcome,
+                        selectionOutput, selection.Detail, selection.RecordPath ?? "No operation record created.", verified,
+                        "Test printing to the selected queue before making another printer change.");
                     SetScanLight(selection.Outcome == DefaultPrinterSelectionOutcome.Verified ? "ready" :
                         selection.Outcome == DefaultPrinterSelectionOutcome.Blocked ? "attention" : "incomplete", selection.Detail);
                     return;
