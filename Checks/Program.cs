@@ -1398,6 +1398,14 @@ internal static class Program
                 ((ComboBox)window.FindName("EventChannelChoice")).Items.Count == EventLogCapacityDiagnostics.Channels.Count &&
                 ((CheckBox)window.FindName("EventChannelEnableConsent")).IsChecked == false,
                 "Event Log exposes one exact-channel selector with explicit enablement confirmation");
+            mainChoices.SelectedItem = WorkflowCatalog.All.Single(definition => definition.Kind == WorkflowKind.Mace);
+            Pump();
+            var maceRemoval = (Button)window.FindName("MaceRemovePackage");
+            Require(((StackPanel)window.FindName("MaceSettings")).Visibility == Visibility.Visible &&
+                !maceRemoval.IsEnabled && Equals(maceRemoval.Content, "REMOVE SELECTED PACKAGE") &&
+                ((CheckBox)window.FindName("MacePackageRemovalConsent")).IsChecked != true &&
+                (maceRemoval.ToolTip?.ToString()?.Contains("second confirmation") ?? false),
+                "MACE keeps package removal as a separate disabled control until review, consent, and final confirmation");
             mainChoices.SelectedItem = WorkflowCatalog.All.Single(definition => definition.Kind == WorkflowKind.WindowsUpdate);
             Pump();
             ((CheckBox)window.FindName("RepairConsent")).IsChecked = true;
