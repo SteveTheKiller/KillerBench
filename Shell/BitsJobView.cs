@@ -161,31 +161,35 @@ public partial class MainWindow
                 ModeLabel.Text = "SELECTED TRANSFER / RECOVERY";
                 var recovery = await Task.Run(() => BitsRetryReconciliation.RunAsync(folder, id,
                     new WindowsBitsRetryHost(), progress: progress, token: stop.Token));
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("Transfer recovery " + DateTime.Now.ToString("HHmmss"),
-                    new[] { "BITS RETRY RECOVERY / " + recovery.Outcome, id.ToString(), recovery.Detail,
-                        "Record: " + (recovery.ArchivePath ?? recovery.PendingPath), "No retry was requested during recovery." }, false));
+                RegisterGuardedActionReport(WorkflowKind.BackgroundTransfers, "Background transfer retry",
+                    "Background transfer retry recovery / " + recovery.Outcome,
+                    string.Join("\n", new[] { "BITS RETRY RECOVERY / " + recovery.Outcome, id.ToString(), recovery.Detail,
+                        "Record: " + (recovery.ArchivePath ?? recovery.PendingPath), "No retry was requested during recovery." }),
+                    recovery.Detail, recovery.ArchivePath ?? recovery.PendingPath,
+                    recovery.Outcome == BitsRetryReconciliationOutcome.TransferReported,
+                    "Review the transfer's current state and owning application before another retry.");
                 SetBitsInventory(null);
-                Report(recovery.Detail);
                 SetScanLight(recovery.Outcome == BitsRetryReconciliationOutcome.TransferReported ? "ready" : "incomplete", recovery.Detail);
                 return;
             }
             var result = await Task.Run(() => BitsRetry.RunAsync(inventory, id, new WindowsBitsRetryHost(), new BitsRetryJournal(folder), stop.Token, progress));
-            workflowOutputActive = false;
-            RegisterSource(new TextEvidence("Transfer retry " + DateTime.Now.ToString("HHmmss"),
-                new[] { "BITS RETRY / " + result.Outcome, id.ToString(), result.Detail, "Journal: " + folder, "Application completion is unverified. Existing attempts remain guarded." }, false));
+            RegisterGuardedActionReport(WorkflowKind.BackgroundTransfers, "Background transfer retry",
+                "Background transfer retry / " + result.Outcome,
+                string.Join("\n", new[] { "BITS RETRY / " + result.Outcome, id.ToString(), result.Detail,
+                    "Journal: " + folder, "Application completion is unverified. Existing attempts remain guarded." }),
+                result.Detail, folder, result.Outcome == BitsRetryOutcome.TransferReported,
+                "Review the transfer's current state and owning application before another retry.");
             SetBitsInventory(null);
-            Report(result.Detail);
-            SetScanLight("incomplete", result.Detail);
+            SetScanLight(result.Outcome == BitsRetryOutcome.TransferReported ? "ready" : "incomplete", result.Detail);
         }
         catch (Exception error) when (error is OperationCanceledException or System.IO.IOException or System.IO.InvalidDataException or UnauthorizedAccessException or InvalidOperationException or NotSupportedException or TimeoutException or System.ComponentModel.Win32Exception or System.Security.SecurityException)
         {
             string detail = "Retry outcome unavailable: " + error.Message;
-            AppendWorkflowOutput(detail);
-            workflowOutputActive = false;
-            RegisterSource(new TextEvidence("Transfer interruption " + DateTime.Now.ToString("HHmmss"),
-                new[] { "BITS RETRY / OUTCOME UNVERIFIED", "Selected transfer: " + id, detail,
-                    "Journal: " + folder, "A request may still be active. Review the saved attempt and owning application before another retry. Application completion remains unverified." }, false));
+            RegisterGuardedActionReport(WorkflowKind.BackgroundTransfers, "Background transfer retry",
+                "Background transfer retry / outcome unverified",
+                string.Join("\n", new[] { "BITS RETRY / OUTCOME UNVERIFIED", "Selected transfer: " + id, detail,
+                    "Journal: " + folder, "A request may still be active. Review the saved attempt and owning application before another retry. Application completion remains unverified." }),
+                detail, folder, false, "Review the saved attempt and owning application before another retry.");
             SetScanLight("incomplete", "Retry outcome unverified. Review retained evidence.");
         }
         finally
