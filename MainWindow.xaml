@@ -1,0 +1,968 @@
+<Window x:Class="KillerBench.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        xmlns:core="clr-namespace:KillerBench.Engine;assembly=KillerBench.Engine"
+        Title="KillerBench" Icon="Assets/AppIcon.png" Width="1480" Height="800" MinWidth="1400" MinHeight="650"
+        WindowStyle="None" ResizeMode="CanResize" SizeToContent="Manual" Background="{DynamicResource BackgroundBrush}"
+        Foreground="{DynamicResource TextBrush}" FontFamily="Segoe UI" FontSize="13"
+        AllowDrop="True" Drop="OnDrop" PreviewDragOver="OnDragOver" PreviewKeyDown="OnKeyDown">
+  <shell:WindowChrome.WindowChrome><shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0"/></shell:WindowChrome.WindowChrome>
+  <Border BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="{DynamicResource WindowEdgeThickness}">
+  <Grid x:Name="RootGrid">
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="24"/></Grid.RowDefinitions>
+    <Border x:Name="WorkspaceGrain" Grid.Row="1" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>
+    <Grid x:Name="CaptionBar" Background="Transparent" Height="{DynamicResource TitleBarHeight}" MouseLeftButtonDown="OnCaptionDrag">
+      <Border Background="{DynamicResource TitleBarBrush}" IsHitTestVisible="False"/>
+      <Border Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>
+      <StackPanel x:Name="LogoBar" Orientation="Horizontal" Margin="{DynamicResource TitleBarPadding}" VerticalAlignment="Center" PreviewMouseWheel="OnAppScale" ToolTip="{DynamicResource Str_ToolTip_Scroll_here_to_resize_the_interface}">
+        <Image x:Name="TitlebarIcon" Source="Assets/AppIcon.png" Width="24" Height="24" Margin="0,0,8,0" RenderOptions.BitmapScalingMode="HighQuality" AutomationProperties.Name="KillerBench icon. Scroll to zoom the interface."/>
+        <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="22" Visibility="{DynamicResource WordmarkVisibility}"><Run Text="Killer" Foreground="{DynamicResource ChromeTextBrush}"/><Run Text="Bench" Foreground="{DynamicResource AccentLogo}" FontWeight="Bold"/></TextBlock>
+        <TextBlock Text="KillerBench" FontFamily="{DynamicResource ChromeFontFamily}" Foreground="{DynamicResource ChromeTextBrush}" FontWeight="Bold" Visibility="{DynamicResource PlainTitleVisibility}"/>
+        <TextBlock Text="{DynamicResource Str_Text_DIAGNOSTIC_WORKBENCH}" FontFamily="Consolas" FontSize="10" Foreground="{DynamicResource ChromeTextBrush}" VerticalAlignment="Center" Margin="18,0,0,0"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+        <Button Style="{StaticResource ChromeButton}" Content="&#xE921;" Click="OnMinimize" ToolTip="{DynamicResource Str_ToolTip_Minimize}"/>
+        <Button x:Name="MaximizeButton" Style="{StaticResource ChromeButton}" Content="&#xE922;" Click="OnMaximize" ToolTip="{DynamicResource Str_ToolTip_Maximize_or_restore}"/>
+        <Button Style="{StaticResource ChromeCloseButton}" Content="&#xE8BB;" Click="OnClose" ToolTip="{DynamicResource Str_ToolTip_Close}"/>
+      </StackPanel>
+    </Grid>
+    <Grid x:Name="ZoomViewport" Grid.Row="1" ClipToBounds="True">
+    <Grid x:Name="ScaleHost" Margin="4,4,4,0">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="{Binding ActualWidth, ElementName=LeftPanel}"/><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+      <Grid.RowDefinitions><RowDefinition Height="*"/></Grid.RowDefinitions>
+      <Grid x:Name="SidebarRail" Grid.Column="1" Panel.ZIndex="1">
+        <Button x:Name="SidebarButton" Style="{StaticResource RailButton}" Content="&#xE76B;" FontSize="12" VerticalAlignment="Top" Margin="2,10,0,0" Click="OnToggleSources" ToolTip="{DynamicResource Str_ToolTip_Toggle_sources_F2}"/>
+        <StackPanel Style="{StaticResource RailButtonHost}" VerticalAlignment="Bottom">
+          <Button x:Name="ActivityButton" Style="{StaticResource RailButton}" Content="&#xE756;" Click="OnToggleActivity" ToolTip="{DynamicResource Str_ToolTip_Toggle_activity_log_F3}" Margin="0,0,0,6"/>
+          <Button Style="{StaticResource RailButton}" Content="?" FontFamily="Consolas" FontSize="18" Click="OnShortcuts" ToolTip="{DynamicResource Str_ToolTip_Keyboard_shortcuts_F1}" Margin="0,0,0,6"><Button.Template><ControlTemplate TargetType="Button"><Border Background="Transparent"><TextBlock Text="?" FontFamily="Segoe UI" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource TextBrush}" TextOptions.TextFormattingMode="Display" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Button.Template></Button>
+          <Button x:Name="LangButton" Style="{StaticResource RailButton}" Content="&#xF2B7;" Click="OnLanguages" ToolTip="{DynamicResource Str_ToolTip_Language}" Margin="0,0,0,6"/>
+<Button x:Name="ThemeButton" Style="{StaticResource RailButton}" Content="&#xE790;" Click="OnThemes" ToolTip="{DynamicResource Str_ToolTip_Choose_app_theme}" Margin="0,0,0,8"><Button.ContextMenu><ContextMenu x:Name="ThemeFlyout">
+                                
+                                <ContextMenu.Template>
+                                    <ControlTemplate TargetType="ContextMenu">
+                                        <Grid>
+                                            <Border Style="{StaticResource FlyoutCard}">
+                                                <Grid>
+                                                    <ItemsPresenter/>
+                                                    <Border Style="{StaticResource FlyoutGrain}"/>
+                                                </Grid>
+                                            </Border>
+                                            <Border IsHitTestVisible="False" Margin="22,18,22,26"
+                                                    BorderBrush="{DynamicResource BevelLightBrush}" BorderThickness="{DynamicResource BevelLightThickness}"/>
+                                            <Border IsHitTestVisible="False" Margin="22,18,22,26"
+                                                    BorderBrush="{DynamicResource BevelDarkBrush}"  BorderThickness="{DynamicResource BevelDarkThickness}"/>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </ContextMenu.Template>
+                                <ContextMenu.ItemContainerStyle>
+                                    <Style TargetType="MenuItem" BasedOn="{StaticResource PanelMenuItem}"/>
+                                </ContextMenu.ItemContainerStyle>
+                                <Grid Margin="12,10,3,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                
+                                <StackPanel x:Name="ThemeSubmenu" MinWidth="150" Grid.Column="0">
+                                    <RadioButton x:Name="ThemeDarkRadio"
+                                                 Content="{DynamicResource Str_Theme_Dark}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Dark" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeLightRadio"
+                                                 Content="{DynamicResource Str_Theme_Light}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Light" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeHCRadio"
+                                                 Content="{DynamicResource Str_Theme_Black}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Black" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="Theme98SERadio"
+                                                 Content="{DynamicResource Str_Theme_SE98}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Retro98" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeBloodRadio"
+                                                 Content="{DynamicResource Str_Theme_Blood}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Blood" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeGreedRadio"
+                                                 Content="{DynamicResource Str_Theme_Greed}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Greed" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeCyanoticRadio"
+                                                 Content="{DynamicResource Str_Theme_Cyanotic}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Cyanotic" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeEctoplasmRadio"
+                                                 Content="{DynamicResource Str_Theme_Ectoplasm}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Ectoplasm" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeDecayRadio"
+                                                 Content="{DynamicResource Str_Theme_Decay}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Decay" Checked="OnThemeSelected"/>
+                                    
+                                    <RadioButton x:Name="ThemeMalaiseRadio"
+                                                 Content="{DynamicResource Str_Theme_Malaise}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Malaise" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeSepulchreRadio"
+                                                 Content="{DynamicResource Str_Theme_Sepulchre}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Sepulchre" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeDeliriumRadio"
+                                                 Content="{DynamicResource Str_Theme_Delirium}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Delirium" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeMourningRadio"
+                                                 Content="{DynamicResource Str_Theme_Mourning}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Mourning" Checked="OnThemeSelected"/>
+
+                                    
+                                    
+                                    
+                                    
+                                </StackPanel>
+                                    <Grid x:Name="AccentStripHost" Grid.Column="1" Width="0" ClipToBounds="True">
+                                        <Border Width="1" HorizontalAlignment="Left" Margin="0,6"
+                                                Background="{DynamicResource MenuBorderBrush}"/>
+                                        <Grid x:Name="AccentStrip" Margin="7,6,2,6">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/><RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/><RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/><RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <Border x:Name="AccentStripDot0" Grid.Row="0" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
+                                            <Border x:Name="AccentStripDot1" Grid.Row="1" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
+                                            <Border x:Name="AccentStripDot2" Grid.Row="2" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
+                                            <Border x:Name="AccentStripDot3" Grid.Row="3" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
+                                            <Border x:Name="AccentStripDot4" Grid.Row="4" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
+                                            <Border x:Name="AccentStripDot5" Grid.Row="5" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0" MouseLeftButtonUp="OnAccentSelected"/>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </ContextMenu></Button.ContextMenu></Button>
+        </StackPanel>
+      </Grid>
+      <Grid Grid.ColumnSpan="3" x:Name="ContentPane">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <Border x:Name="LeftPanel" Width="370" Grid.RowSpan="2" Style="{StaticResource Panel}" Margin="0" ClipToBounds="True">
+<Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+<Border Padding="10">
+          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer.Resources>
+              <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                <Setter Property="ContentTemplate"><Setter.Value><DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap" MaxWidth="280"/></DataTemplate></Setter.Value></Setter>
+              </Style>
+            </ScrollViewer.Resources>
+          <StackPanel>
+            <TextBlock x:Name="CategoryTitle" Text="Diagnostics" FontFamily="{DynamicResource WordmarkFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="22" Margin="0,0,0,4"/>
+            <TextBlock x:Name="CategoryDescription" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,8"/>
+            <WrapPanel Margin="0,0,0,6">
+              <ComboBox x:Name="MainWorkflow" ItemsSource="{x:Static core:WorkflowCatalog.All}" DisplayMemberPath="Title" SelectedIndex="0" Visibility="Collapsed" SelectionChanged="OnWorkflowOptionsChanged"/>
+              <ComboBox x:Name="CategoryWorkflow" DisplayMemberPath="Title" Width="260" AutomationProperties.Name="Tool in selected category" Margin="0,0,8,0" SelectionChanged="OnCategoryWorkflowSelected"/>
+            </WrapPanel>
+            <StackPanel x:Name="ServicingMonitorSettings" Visibility="Collapsed" Margin="0,0,0,8">
+              <TextBlock Text="Watch Windows Update and Setup activity. This monitor is read-only and does not decide that activity is stuck." TextWrapping="Wrap"/>
+              <TextBlock Margin="0,6,0,0"><Run Text="Refresh every "/><Run Text="{Binding ElementName=ServicingMonitorRefresh, Path=Value, StringFormat={}{0:0}}"/><Run Text=" seconds"/></TextBlock>
+              <Slider x:Name="ServicingMonitorRefresh" Minimum="1" Maximum="60" Value="3" TickFrequency="1" IsSnapToTickEnabled="True"/>
+              <TextBlock Margin="0,6,0,0"><Run Text="Snapshots: "/><Run Text="{Binding ElementName=ServicingMonitorSamples, Path=Value, StringFormat={}{0:0}}"/></TextBlock>
+              <Slider x:Name="ServicingMonitorSamples" Minimum="1" Maximum="120" Value="3" TickFrequency="1" IsSnapToTickEnabled="True"/>
+              <CheckBox x:Name="ServicingMonitorEvents" Content="Recent Windows Update events" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorHistory" Content="Windows Update history" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorServices" Content="Servicing service states" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorRestart" Content="Restart indicators" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorSetup" Content="Panther setup activity" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorCompatibility" Content="Setup compatibility blocks" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorReadiness" Content="Storage, power, and BitLocker readiness" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorTransfers" Content="Current-account background transfers" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorDeliveryOptimization" Content="Delivery Optimization activity" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorInstaller" Content="Windows Installer activity" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorScheduledTask" Content="Windows Update scheduled task" IsChecked="True"/>
+            </StackPanel>
+            <StackPanel x:Name="SearchSettings" Visibility="Collapsed" Margin="0,0,0,8">
+              <CheckBox x:Name="SearchIndexRebuildConsent" Content="Rebuild the Windows Search index" Checked="OnSearchIndexRebuildChanged" Unchecked="OnSearchIndexRebuildChanged"/>
+              <TextBlock Text="Stops Windows Search, retains the current index, starts a fresh index, and verifies the service and both directories. The retained index is not deleted automatically." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="AppPackageSettings" Visibility="Collapsed" Margin="0,0,0,8">
+              <TextBlock Text="Choose the account scope, then press GO to refresh packages. All users requires administrator access." TextWrapping="Wrap"/>
+              <ComboBox x:Name="AppPackageScopeChoice" SelectedIndex="0" Margin="0,6,0,0" SelectionChanged="OnAppPackageScopeChanged" AutomationProperties.Name="Package inventory account scope">
+                <ComboBoxItem Content="Running account"/>
+                <ComboBoxItem Content="All users"/>
+              </ComboBox>
+              <ComboBox x:Name="AppPackageSelection" DisplayMemberPath="Name" Margin="0,6,0,6" AutomationProperties.Name="Registered package to review"/>
+              <CheckBox x:Name="IncludeProvisionedPackages" Content="Include packages for new users" ToolTip="Also reads packages provisioned in the Windows image. Requires administrator access." Margin="0,0,0,6"/>
+              <Button Content="Review selected package" Click="OnReviewAppPackage" HorizontalAlignment="Left"/>
+            </StackPanel>
+            <StackPanel x:Name="InstalledApplicationSettings" Visibility="Collapsed" Margin="0,0,0,8">
+              <TextBlock Text="Choose which registrations to collect. Running account means the account executing KillerBench." TextWrapping="Wrap"/>
+              <ComboBox x:Name="InstalledApplicationScopeChoice" SelectedIndex="0" SelectionChanged="OnApplicationScopeChanged" Margin="0,6,0,0" AutomationProperties.Name="Installed application registry scope">
+                <ComboBoxItem Content="Machine-wide"/>
+                <ComboBoxItem Content="Running account"/>
+              </ComboBox>
+              <Button x:Name="SaveApplicationInventory" Content="Save inventory..." Click="OnSaveApplicationInventory" IsEnabled="False" HorizontalAlignment="Left" Margin="0,6,0,0" ToolTip="Save registrations from the last completed collection, including any coverage limits."/>
+              <Button x:Name="CompareApplicationInventories" Content="Compare saved inventories..." Click="OnCompareApplicationInventories" HorizontalAlignment="Left" Margin="0,6,0,0" ToolTip="Choose before and after installed-apps JSON files. No applications are changed."/>
+            </StackPanel>
+            <StackPanel x:Name="MaceSettings" Visibility="Collapsed" Margin="0,0,0,8">
+              <TextBlock Text="Choose exactly what to review. GO inventories registrations and shows consequences. Removal is not available yet." TextWrapping="Wrap"/>
+              <ComboBox x:Name="MaceScopeChoice" SelectedIndex="0" Margin="0,6,0,6" AutomationProperties.Name="MACE account scope" SelectionChanged="OnMaceOptionChanged">
+                <ComboBoxItem Content="Running account"/><ComboBoxItem Content="All users and new users"/>
+              </ComboBox>
+              <TextBlock Text="Applications" Foreground="{DynamicResource DimTextBrush}"/>
+              <CheckBox x:Name="MaceOneDrive" Content="OneDrive" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
+              <CheckBox x:Name="MaceOutlook" Content="Outlook" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
+              <CheckBox x:Name="MaceOffice" Content="Office / Microsoft 365" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
+              <CheckBox x:Name="MaceProject" Content="Microsoft Project" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
+              <CheckBox x:Name="MaceTeams" Content="Microsoft Teams" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
+              <TextBlock Text="Future removal choices" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <CheckBox x:Name="MaceRemoveData" Content="Remove selected applications' profile data" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
+              <CheckBox x:Name="MaceRemoveCredentials" Content="Remove selected applications' cached credentials" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
+              <CheckBox x:Name="MaceRestoreFolders" Content="Review OneDrive folder locations for restoration" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
+              <TextBlock Text="These choices are recorded in the review only. No process, application, package, file, credential, folder location, registry value or user data changes." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="Supported package plan" Foreground="{DynamicResource DimTextBrush}" Margin="0,8,0,0"/>
+              <ComboBox x:Name="MacePackageSelection" DisplayMemberPath="Label" Margin="0,4,0,4" AutomationProperties.Name="Supported MACE package candidate"/>
+              <Button x:Name="MaceReviewPackage" Content="Check selected package" Click="OnReviewMacePackage" IsEnabled="False" HorizontalAlignment="Left"/>
+              <TextBlock x:Name="MacePackageHint" Text="Run GO to find supported current-account package candidates." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="OrcaSettings" Visibility="Collapsed" Margin="0,0,0,8">
+              <TextBlock Text="Choose the Outlook edition, account scope and exact reset areas. GO reviews them. For running-account caches only, enable retention to move the caches under recovery names after fresh checks." TextWrapping="Wrap"/>
+              <ComboBox x:Name="OrcaModeChoice" SelectedIndex="2" Margin="0,6,0,4" AutomationProperties.Name="ORCA Outlook edition" SelectionChanged="OnOrcaOptionChanged">
+                <ComboBoxItem Content="New Outlook"/><ComboBoxItem Content="Classic Outlook"/><ComboBoxItem Content="Both"/>
+              </ComboBox>
+              <ComboBox x:Name="OrcaScopeChoice" SelectedIndex="0" Margin="0,0,0,6" AutomationProperties.Name="ORCA account scope" SelectionChanged="OnOrcaOptionChanged">
+                <ComboBoxItem Content="Running account"/><ComboBoxItem Content="All users"/>
+              </ComboBox>
+              <TextBlock Text="Reset areas" Foreground="{DynamicResource DimTextBrush}"/>
+              <CheckBox x:Name="OrcaClearCaches" Content="Outlook caches" IsChecked="True" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
+              <CheckBox x:Name="OrcaResetProfiles" Content="Profile and discovery settings" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
+              <CheckBox x:Name="OrcaResetAuthentication" Content="Authentication state" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
+              <CheckBox x:Name="OrcaDeleteOst" Content="Classic Outlook OST files" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
+              <CheckBox x:Name="OrcaRemoveAddIns" Content="Classic Outlook add-ins" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
+              <CheckBox x:Name="OrcaReinstallNew" Content="Reinstall New Outlook" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
+              <TextBlock Text="Only cache retention is available. Profiles, OST files, credentials, add-ins, packages, settings and retained caches are never removed." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="DepotSettings" Visibility="Collapsed" Margin="0,0,0,8">
+              <TextBlock Text="Select applications and configuration groups for a provisioning review. Nothing is selected or installed automatically." TextWrapping="Wrap"/>
+              <TextBlock Text="Applications" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <WrapPanel>
+                <CheckBox x:Name="DepotMicrosoft365" Content="Microsoft 365"/><CheckBox x:Name="DepotOneDrive" Content="OneDrive"/>
+                <CheckBox x:Name="DepotTeams" Content="Teams"/><CheckBox x:Name="DepotChrome" Content="Chrome"/>
+                <CheckBox x:Name="DepotAcrobat" Content="Acrobat Reader"/><CheckBox x:Name="DepotZoom" Content="Zoom"/>
+                <CheckBox x:Name="DepotSevenZip" Content="7-Zip"/>
+              </WrapPanel>
+              <TextBlock Text="Configuration" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <WrapPanel>
+                <CheckBox x:Name="DepotUpdates" Content="Windows updates"/><CheckBox x:Name="DepotComputerName" Content="Computer name"/>
+                <CheckBox x:Name="DepotLocalAdmin" Content="Local administrator"/><CheckBox x:Name="DepotAdminReview" Content="Administrator review"/>
+                <CheckBox x:Name="DepotExtensions" Content="Browser extensions"/><CheckBox x:Name="DepotCleanup" Content="Cleanup"/>
+                <CheckBox x:Name="DepotEdge" Content="Edge"/><CheckBox x:Name="DepotPrivacy" Content="Privacy"/>
+                <CheckBox x:Name="DepotTaskbar" Content="Taskbar"/><CheckBox x:Name="DepotStartMenu" Content="Start menu"/>
+                <CheckBox x:Name="DepotNotifications" Content="Notifications"/>
+              </WrapPanel>
+              <TextBlock Text="Review only. No download, installation, account, update, cleanup, policy, registry, service, profile or restart action." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="BeamSettings" Visibility="Collapsed" Margin="0,0,0,8">
+              <TextBlock Text="Build a review of one Intune Win32 package and its explicit device targets. GO validates the plan only." TextWrapping="Wrap"/>
+              <TextBlock Text="Installer source" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <ComboBox x:Name="BeamSourceKindChoice" SelectedIndex="0" AutomationProperties.Name="BEAM installer source type">
+                <ComboBoxItem Content="Local EXE or MSI path"/><ComboBoxItem Content="HTTPS download URL"/>
+              </ComboBox>
+              <TextBox x:Name="BeamSource" Margin="0,4,0,0" MaxLength="32768" AutomationProperties.Name="BEAM installer path or HTTPS URL"/>
+              <ComboBox x:Name="BeamInstallerTypeChoice" SelectedIndex="0" Margin="0,4,0,0" AutomationProperties.Name="BEAM installer type">
+                <ComboBoxItem Content="EXE"/><ComboBoxItem Content="MSI"/>
+              </ComboBox>
+              <TextBlock Text="App name" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBox x:Name="BeamAppName" MaxLength="256" AutomationProperties.Name="BEAM Intune app name"/>
+              <TextBlock Text="Publisher" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBox x:Name="BeamPublisher" MaxLength="256" Text="BEAM" AutomationProperties.Name="BEAM publisher"/>
+              <TextBlock Text="Install switches" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBox x:Name="BeamInstallSwitches" MaxLength="2048" AutomationProperties.Name="BEAM install switches" ToolTip="MSI uses /qn when this is blank. EXE runs without switches when blank."/>
+              <TextBlock Text="Target hostnames" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBox x:Name="BeamTargets" MaxLength="32000" AutomationProperties.Name="BEAM comma separated target hostnames" ToolTip="Separate hostnames with commas. IP addresses cannot match Intune devices."/>
+              <TextBlock Text="Tenant domain" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBox x:Name="BeamTenantDomain" MaxLength="253" AutomationProperties.Name="BEAM tenant domain" ToolTip="Example: contoso.onmicrosoft.com. No administrator email or credential is retained."/>
+              <TextBlock Text="Review only. No sign-in, download, packaging, upload, application or group change, assignment, device sync or installation." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="DebloatSettings" Visibility="Collapsed" Margin="0,0,0,8">
+              <TextBlock Text="Choose exactly what to review, then press GO. Nothing is selected automatically." TextWrapping="Wrap"/>
+              <ComboBox x:Name="DebloatScopeChoice" SelectedIndex="0" Margin="0,6,0,4" AutomationProperties.Name="DEBLOAT user scope">
+                <ComboBoxItem Content="Running account"/><ComboBoxItem Content="All profiles and default user"/>
+              </ComboBox>
+              <WrapPanel>
+                <CheckBox x:Name="DebloatRecallAi" Content="Recall and AI"/><CheckBox x:Name="DebloatTelemetry" Content="Telemetry and reporting"/>
+                <CheckBox x:Name="DebloatSearch" Content="Search and suggestions"/><CheckBox x:Name="DebloatConsumer" Content="Consumer content"/>
+                <CheckBox x:Name="DebloatStart" Content="Taskbar and Start"/><CheckBox x:Name="DebloatNotifications" Content="Notifications"/>
+                <CheckBox x:Name="DebloatEdge" Content="Edge"/><CheckBox x:Name="DebloatPower" Content="High performance power"/>
+                <CheckBox x:Name="DebloatTimers" Content="Sleep and display timers"/><CheckBox x:Name="DebloatHibernation" Content="Hibernation"/>
+                <CheckBox x:Name="DebloatOfficeLanguages" Content="Office languages"/><CheckBox x:Name="DebloatHp" Content="HP software"/>
+                <CheckBox x:Name="DebloatDell" Content="Dell software"/><CheckBox x:Name="DebloatAsusAcer" Content="ASUS and Acer software"/>
+                <CheckBox x:Name="DebloatLenovo" Content="Lenovo software"/><CheckBox x:Name="DebloatThirdParty" Content="Third-party apps"/>
+                <CheckBox x:Name="DebloatVendorData" Content="Vendor data"/>
+              </WrapPanel>
+              <ComboBox x:Name="DebloatOfficeCulture" SelectedIndex="0" Margin="0,6,0,0" IsEnabled="{Binding IsChecked, ElementName=DebloatOfficeLanguages}" AutomationProperties.Name="Office language to retain">
+                <ComboBoxItem Content="Choose Office language to retain" Tag=""/>
+                <ComboBoxItem Content="English (United States)" Tag="en-us"/><ComboBoxItem Content="English (United Kingdom)" Tag="en-gb"/>
+                <ComboBoxItem Content="French" Tag="fr-fr"/><ComboBoxItem Content="German" Tag="de-de"/><ComboBoxItem Content="Spanish" Tag="es-es"/>
+                <ComboBoxItem Content="Italian" Tag="it-it"/><ComboBoxItem Content="Portuguese (Brazil)" Tag="pt-br"/><ComboBoxItem Content="Dutch" Tag="nl-nl"/>
+                <ComboBoxItem Content="Japanese" Tag="ja-jp"/><ComboBoxItem Content="Korean" Tag="ko-kr"/>
+                <ComboBoxItem Content="Chinese (Simplified)" Tag="zh-cn"/><ComboBoxItem Content="Chinese (Traditional)" Tag="zh-tw"/>
+              </ComboBox>
+              <Grid Margin="0,6,0,0" IsEnabled="{Binding IsChecked, ElementName=DebloatTimers}">
+                <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
+                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                <TextBlock Grid.ColumnSpan="2" Text="Requested timer minutes. Zero means Never." Foreground="{DynamicResource MutedTextBrush}"/>
+                <ComboBox x:Name="DebloatSleepAc" Grid.Row="1" Grid.Column="0" SelectedIndex="0" Margin="0,4,3,0" AutomationProperties.Name="Sleep timeout on AC"><ComboBoxItem Content="Sleep AC: Never" Tag="0"/><ComboBoxItem Content="Sleep AC: 15" Tag="15"/><ComboBoxItem Content="Sleep AC: 30" Tag="30"/><ComboBoxItem Content="Sleep AC: 60" Tag="60"/><ComboBoxItem Content="Sleep AC: 120" Tag="120"/></ComboBox>
+                <ComboBox x:Name="DebloatSleepDc" Grid.Row="1" Grid.Column="1" SelectedIndex="3" Margin="3,4,0,0" AutomationProperties.Name="Sleep timeout on battery"><ComboBoxItem Content="Sleep battery: Never" Tag="0"/><ComboBoxItem Content="Sleep battery: 15" Tag="15"/><ComboBoxItem Content="Sleep battery: 30" Tag="30"/><ComboBoxItem Content="Sleep battery: 60" Tag="60"/><ComboBoxItem Content="Sleep battery: 120" Tag="120"/></ComboBox>
+                <ComboBox x:Name="DebloatDisplayAc" Grid.Row="2" Grid.Column="0" SelectedIndex="3" Margin="0,4,3,0" AutomationProperties.Name="Display timeout on AC"><ComboBoxItem Content="Display AC: Never" Tag="0"/><ComboBoxItem Content="Display AC: 15" Tag="15"/><ComboBoxItem Content="Display AC: 30" Tag="30"/><ComboBoxItem Content="Display AC: 60" Tag="60"/><ComboBoxItem Content="Display AC: 120" Tag="120"/></ComboBox>
+                <ComboBox x:Name="DebloatDisplayDc" Grid.Row="2" Grid.Column="1" SelectedIndex="1" Margin="3,4,0,0" AutomationProperties.Name="Display timeout on battery"><ComboBoxItem Content="Display battery: Never" Tag="0"/><ComboBoxItem Content="Display battery: 15" Tag="15"/><ComboBoxItem Content="Display battery: 30" Tag="30"/><ComboBoxItem Content="Display battery: 60" Tag="60"/><ComboBoxItem Content="Display battery: 120" Tag="120"/></ComboBox>
+              </Grid>
+              <TextBlock Text="GO action" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <ComboBox x:Name="DebloatActionChoice" SelectedIndex="0" AutomationProperties.Name="DEBLOAT GO action">
+                <ComboBoxItem Content="Review selected areas only"/>
+                <ComboBoxItem Content="Activate existing High performance plan"/>
+                <ComboBoxItem Content="Apply the four selected power timers"/>
+                <ComboBoxItem Content="Disable hibernation"/>
+              </ComboBox>
+              <TextBlock Text="Power changes require their matching area as the only selection. Managed settings and user data remain protected. All other areas are review only." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="BitsSettings" Visibility="Collapsed" Margin="0,0,0,8">
+              <TextBlock Text="GO reads transfer jobs. All users requires administrator access. No transfers are changed." TextWrapping="Wrap"/>
+              <ComboBox x:Name="BitsScopeChoice" SelectedIndex="0" SelectionChanged="OnBitsScopeChanged" Margin="0,6,0,6" AutomationProperties.Name="BITS account scope">
+                <ComboBoxItem Content="Running account"/><ComboBoxItem Content="All users"/>
+              </ComboBox>
+              <ComboBox x:Name="BitsSelection" SelectionChanged="OnBitsSelectionChanged" Margin="0,0,0,6" AutomationProperties.Name="Exact BITS job to review"/>
+              <Button Content="Review selected transfer" Click="OnReviewBitsJob" HorizontalAlignment="Left"/>
+              <Button Content="Observe selected transfer" Click="OnObserveBitsJob" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Compare two snapshots five seconds apart. No transfer changes."/>
+              <TextBlock Text="Retry may resume network transfers for the selected job. Review its owning application first. Suspended jobs are preserved; completion is not guaranteed." TextWrapping="Wrap" Margin="0,6,0,4"/>
+              <TextBlock x:Name="BitsRetryAvailability" Text="Collect and select a running-account job to review retry availability." TextWrapping="Wrap" Margin="0,0,0,4"/>
+              <CheckBox x:Name="BitsRetryConsent" IsEnabled="False" Content="Request retry for this selected job"/>
+              <Button x:Name="BitsRetryButton" IsEnabled="False" Content="Retry selected transfer" Click="OnRetryBitsJob" HorizontalAlignment="Left" Margin="0,4,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="PrinterSettings" Visibility="Collapsed" Margin="0,0,0,8">
+              <Button Content="Find local printers" Click="OnDiscoverPrinters" HorizontalAlignment="Left"/>
+              <ComboBox x:Name="PrinterQueues" Margin="0,6,0,6" SelectionChanged="OnPrinterSelectionChanged" AutomationProperties.Name="Local printer queue"/>
+              <CheckBox x:Name="PrinterMakeDefault" Content="Repair a missing or conflicting default with this queue" IsEnabled="False" Margin="0,0,0,6" Click="OnPrinterDefaultChanged"/>
+              <Button Content="Find blocked print jobs" Click="OnDiscoverPrintJobs" HorizontalAlignment="Left"/>
+              <ComboBox x:Name="PrintJobChoice" Margin="0,6,0,6" SelectionChanged="OnPrintJobSelectionChanged" AutomationProperties.Name="Exact blocked print job"/>
+              <CheckBox x:Name="PrintJobCancelConsent" Content="Cancel only this selected job" IsEnabled="False" Margin="0,0,0,6" Click="OnPrintJobCancelChanged"/>
+              <Button Content="Check interrupted job cancellation" Click="OnRecoverPrintJobCancellation" HorizontalAlignment="Left" Margin="0,0,0,6"/>
+              <Button Content="Use general printing checks" Click="OnGeneralPrinting" HorizontalAlignment="Left" Margin="0,0,0,6"/>
+              <TextBlock Text="GO checks the selected queue. A selected Error or Blocked job can be canceled only after separate confirmation. Every other observed job must remain queued. The default repair is limited to missing or conflicting defaults. With no selection, GO runs general printing checks." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+            </StackPanel>
+            <StackPanel x:Name="InstallerSettings" Visibility="Collapsed" Margin="0,0,0,8">
+              <TextBlock Text="Optional MSI application"/>
+              <StackPanel Orientation="Horizontal" Margin="0,4,0,4">
+                <Button x:Name="FindMsiProductsButton" Content="Find installed MSI apps" Click="OnFindMsiProducts" Margin="0,0,6,0"/>
+                <ComboBox x:Name="InstallerProductScopeChoice" SelectedIndex="0" Width="120" SelectionChanged="OnInstallerProductScopeChanged" AutomationProperties.Name="MSI application registry scope">
+                  <ComboBoxItem Content="This PC"/><ComboBoxItem Content="This account"/>
+                </ComboBox>
+              </StackPanel>
+              <ComboBox x:Name="InstallerProductChoice" Margin="0,0,0,4" SelectionChanged="OnInstallerProductSelected" AutomationProperties.Name="Installed MSI application"/>
+              <TextBlock Text="Exact product code"/>
+              <TextBox x:Name="InstallerProductCode" Margin="0,4,0,4" MaxLength="38" AutomationProperties.Name="Optional braced MSI product code" ToolTip="Example: {00000000-0000-0000-0000-000000000000}"/>
+              <TextBlock Text="Leave blank for general Installer checks. GO checks the selected product. Automatic repair remains off unless you separately enable it, and only a freshly confirmed broken registration is eligible." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+            </StackPanel>
+            <StackPanel x:Name="TimeSettings" Visibility="Collapsed" Margin="0,0,0,6">
+              <ComboBox x:Name="TimeSourceChoice" SelectedIndex="0" Width="240" HorizontalAlignment="Left" SelectionChanged="OnWorkflowOptionsChanged" AutomationProperties.Name="Time source">
+                <ComboBoxItem Content="Keep configured source"/>
+                <ComboBoxItem Content="Domain hierarchy"/>
+                  <ComboBoxItem Content="Custom NTP peers"/>
+              </ComboBox>
+                <TextBox x:Name="TimePeers" Width="340" HorizontalAlignment="Left" TextChanged="OnTimePeersChanged" AutomationProperties.Name="NTP peers separated by spaces" ToolTip="Up to eight NTP hostnames or IP addresses, separated by spaces"/>
+                <CheckBox x:Name="TimeApply" Content="Apply selected source and synchronize (can change the clock)" Margin="0,6,0,6"/>
+                <Button Content="Check interrupted time change" Click="OnRecoverTime" HorizontalAlignment="Left" Margin="0,0,0,6" ToolTip="Verify recorded settings without retrying a change"/>
+                <TextBlock Text="GO previews source changes unless Apply is selected. Domain hierarchy is limited to a domain member that is not a domain controller. Every change requires fresh policy, role and elevation checks. No automatic rollback." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+            </StackPanel>
+            <StackPanel x:Name="ProfileSettings" Visibility="Collapsed" Margin="0,0,0,6">
+              <TextBlock Text="Minimum days since last use (review only):"/>
+              <Slider x:Name="ProfileAge" Minimum="1" Maximum="3650" Value="90" TickFrequency="1" IsSnapToTickEnabled="True" Width="240" HorizontalAlignment="Left"/>
+              <TextBlock Text="{Binding ElementName=ProfileAge, Path=Value, StringFormat={}{0:0} days}"/>
+              <CheckBox x:Name="ProfileDependencyCheck" Content="Check service and scheduled-task dependencies" IsChecked="True"/>
+              <Expander x:Name="ProfileSelectionExpander" Header="Select profiles after review" Foreground="{DynamicResource TextBrush}">
+                <StackPanel>
+                  <ListBox x:Name="ProfileSelection" SelectionMode="Multiple" DisplayMemberPath="Path" MaxHeight="120" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}"/>
+                  <Button Content="Preview selected profiles" Click="OnPreviewProfiles" HorizontalAlignment="Left"/>
+                </StackPanel>
+              </Expander>
+              <Expander Header="Back up and verify a profile" Foreground="{DynamicResource TextBrush}" Margin="0,4,0,0">
+                <StackPanel>
+                  <TextBlock Text="Select exactly one reviewed profile. To make a new backup, type a new local NTFS folder that does not exist. To inspect an existing copy, choose its folder. KillerBench never deletes the profile." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+                  <DockPanel Margin="0,5,0,4" LastChildFill="True">
+                    <Button Content="Browse" Click="OnBrowseProfileBackup" DockPanel.Dock="Right" Margin="5,0,0,0"/>
+                    <TextBox x:Name="ProfileBackupPath" AutomationProperties.Name="Profile backup folder" ToolTip="A new absent local NTFS folder for copying, or an existing copied profile folder for verification"/>
+                  </DockPanel>
+                  <WrapPanel>
+                    <Button x:Name="CopyProfileBackupButton" Content="Copy and verify" Click="OnCopyProfileBackup" Margin="0,0,5,4" ToolTip="Copy the selected unloaded profile once into a new empty local NTFS folder, then verify every regular file"/>
+                    <Button x:Name="CreateProfileBackupArtifactButton" Content="Create verification files" Click="OnCreateProfileBackupArtifact" Margin="0,0,5,4" ToolTip="Compare the selected live profile with the existing copied folder, then create its manifest and receipt"/>
+                    <Button x:Name="VerifyProfileBackupButton" Content="Verify copied backup" Click="OnVerifyProfileBackup" Margin="0,0,5,4" ToolTip="Verify the existing manifest and receipt against both the live profile and copied folder"/>
+                    <Button x:Name="RecoverProfileBackupButton" Content="Check interrupted backup" Click="OnRecoverProfileBackup" Margin="0,0,0,4" ToolTip="Verify a pending backup without copying files again"/>
+                  </WrapPanel>
+                  <TextBlock Text="Verification compares the complete regular-file set, lengths and SHA-256 hashes. It does not prove permissions, alternate streams, encrypted files, application state or restore behavior." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+                </StackPanel>
+              </Expander>
+            </StackPanel>
+            <StackPanel x:Name="CleanupSettings" Visibility="Collapsed" Margin="0,0,0,6">
+              <WrapPanel>
+                <CheckBox x:Name="CleanupUserTemp" Content="Current user temporary files" IsChecked="True" Margin="0,0,14,0"/>
+                <CheckBox x:Name="CleanupWindowsTemp" Content="Windows temporary files" Margin="0,0,14,0"/>
+                <CheckBox x:Name="CleanupSystemTemp" Content="Windows SystemTemp files" Margin="0,0,14,0" ToolTip="The standard Windows SystemTemp folder only. Recent, protected and in-use files are skipped. Administrator access is normally required."/>
+                <CheckBox x:Name="CleanupShaderCaches" Content="Current user shader caches" ToolTip="D3D, AMD DxCache and NVIDIA GLCache. Rebuilding caches may cause initial rendering delays. In-use and recent files are skipped."/>
+                <CheckBox x:Name="CleanupBrowserCaches" Content="Current user browser caches" Margin="14,0,0,0" ToolTip="Default Chrome, Edge, Brave, Firefox and Opera cache folders. Cookies, logins and bookmarks are outside these targets. Custom locations are not searched."/>
+                <CheckBox x:Name="CleanupOfficeCaches" Content="Current user Office caches" Margin="14,0,0,0" ToolTip="Standard OfficeFileCache and OTele folders only. Open or recent files are skipped. Office may rebuild cache files after cleanup."/>
+                <CheckBox x:Name="CleanupThumbnailCache" Content="Current user thumbnail cache" Margin="14,0,0,0" ToolTip="Windows thumbnail database files only. Explorer history, recent items and saved searches are excluded. Windows rebuilds thumbnails as folders are viewed."/>
+                <CheckBox x:Name="CleanupIconCache" Content="Current user icon cache" Margin="14,0,0,0" ToolTip="Windows icon database files only. Explorer history, recent items and saved searches are excluded. Windows rebuilds icons as needed."/>
+                <CheckBox x:Name="CleanupErrorReports" Content="Archived Windows error reports" Margin="14,0,0,0" ToolTip="Current-user Windows Error Reporting archive and queue only. Removing these files discards local historical crash evidence."/>
+                <CheckBox x:Name="CleanupCrashDumps" Content="Application crash dumps" Margin="14,0,0,0" ToolTip="Current-user CrashDumps folder only. Removing dumps discards diagnostic evidence that may be needed to investigate application failures."/>
+                <CheckBox x:Name="CleanupWindowsMinidumps" Content="Windows crash minidumps" Margin="14,0,0,0" ToolTip="Windows Minidump folder only. Administrator access is normally required. MEMORY.DMP is excluded. Removing minidumps discards diagnostic evidence."/>
+                <CheckBox x:Name="CleanupDeliveryOptimization" Content="Delivery Optimization cache" Margin="14,0,0,0" ToolTip="Standard Windows Delivery Optimization cache only. Recent, protected and in-use files are skipped. Removed content may need to be downloaded again."/>
+                <CheckBox x:Name="CleanupRecycleBin" Content="Current user Recycle Bin" Margin="14,0,0,0" ToolTip="All-or-nothing across the current Windows shell Recycle Bin. The age setting does not apply. Execution is blocked when the reported item count exceeds the selected limit."/>
+              </WrapPanel>
+              <WrapPanel Margin="0,6,0,0">
+                <TextBlock Text="Minimum age (days)" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <Slider x:Name="CleanupAge" Minimum="1" Maximum="365" Value="7" TickFrequency="1" IsSnapToTickEnabled="True" Width="180" AutomationProperties.Name="Minimum cleanup age in days"/>
+                <TextBlock Text="{Binding Value, ElementName=CleanupAge, StringFormat={}{0:0}}" VerticalAlignment="Center" Margin="8,0,0,0"/>
+              </WrapPanel>
+              <TextBlock Text="Maximum files per target" Margin="0,6,0,0"/>
+              <WrapPanel><Slider x:Name="CleanupLimit" Minimum="100" Maximum="10000" Value="100" TickFrequency="100" IsSnapToTickEnabled="True" Width="180" AutomationProperties.Name="Maximum cleanup files per target"/>
+                <TextBlock Text="{Binding Value, ElementName=CleanupLimit, StringFormat={}{0:N0}}" VerticalAlignment="Center" Margin="8,0,0,0"/></WrapPanel>
+              <TextBlock Text="Previous Windows installation" Foreground="{DynamicResource DimTextBrush}" Margin="0,8,0,0"/>
+              <CheckBox x:Name="CleanupPreviousWindows" Content="Remove Windows rollback capability and let Windows clean the previous installation" Checked="OnPreviousWindowsChanged" Unchecked="OnPreviousWindowsChanged" ToolTip="Runs separately from file cleanup. Uses the supported DISM rollback-removal request and never recursively deletes Windows.old."/>
+              <CheckBox x:Name="CleanupPreviousWindowsBackup" Content="I backed up any files and settings I need from the previous installation" Margin="14,0,0,0" IsEnabled="{Binding IsChecked, ElementName=CleanupPreviousWindows}"/>
+              <CheckBox x:Name="CleanupRemove" Content="Perform the selected permanent cleanup after fresh checks" Margin="0,6,0,0"/>
+              <TextBlock Text="Unchecked: preview only. Permanent cleanup cannot be undone. Previous Windows installation removal must run by itself and requires backup confirmation." Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="UpdateSettings" Visibility="Collapsed" Margin="0,0,0,6">
+              <TextBlock Text="Update source"/>
+              <ComboBox x:Name="UpdateSourceChoice" SelectedIndex="0" AutomationProperties.Name="Update source" Margin="0,0,0,4">
+                <ComboBoxItem Content="Configured source"/>
+                <ComboBoxItem Content="Windows Update"/>
+                <ComboBoxItem Content="Microsoft Update (if registered)"/>
+              </ComboBox>
+              <WrapPanel>
+                <CheckBox x:Name="UpdateSoftware" Content="Software updates" IsChecked="True" Checked="OnUpdateDiscoverySelectionChanged" Unchecked="OnUpdateDiscoverySelectionChanged" Margin="0,0,14,0"/>
+                <CheckBox x:Name="UpdateDrivers" Content="Drivers" Checked="OnUpdateDiscoverySelectionChanged" Unchecked="OnUpdateDiscoverySelectionChanged" Margin="0,0,14,0"/>
+                <CheckBox x:Name="UpdateThirdParty" Content="Third-party apps"/>
+              </WrapPanel>
+              <TextBlock Text="GO searches only the selected existing source. It does not register a service or change policy. Select updates below to preview or install. No automatic restart." Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+              <Border x:Name="UpdateStoreRecoveryPanel" Visibility="Collapsed" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="7" Margin="0,7,0,2">
+                <StackPanel>
+                  <TextBlock Text="UPDATE DATABASE RECOVERY" Foreground="{DynamicResource AccentBrush}" FontFamily="Consolas" FontSize="10"/>
+                  <TextBlock x:Name="UpdateStoreRecoveryStatus" TextWrapping="Wrap" Margin="0,3,0,4"/>
+                  <CheckBox x:Name="UpdateStoreRecoveryConsent" Content="Retain the old database and rebuild Windows Update data" Checked="OnUpdateStoreRecoveryConsentChanged" Unchecked="OnUpdateStoreRecoveryConsentChanged"/>
+                  <WrapPanel Margin="0,4,0,0">
+                    <Button x:Name="UpdateStoreResetButton" Content="Preview recovery" Click="OnUpdateStoreReset"/>
+                    <Button x:Name="UpdateStoreReconcileButton" Content="Check interrupted recovery" Click="OnRecoverUpdateStore" Margin="6,0,0,0"/>
+                  </WrapPanel>
+                </StackPanel>
+              </Border>
+              <Expander Header="Select updates after discovery" Foreground="{DynamicResource TextBrush}" Margin="0,4,0,0">
+                <StackPanel>
+                  <TextBlock Text="Filter update titles"/>
+                  <TextBox x:Name="UpdateTitleFilter" MaxLength="256" TextChanged="OnUpdateFilterChanged" AutomationProperties.Name="Filter update titles"/>
+                  <CheckBox x:Name="UpdateDownloadedOnly" Content="Already downloaded only" Checked="OnUpdateFilterChanged" Unchecked="OnUpdateFilterChanged" Margin="0,4,0,4"/>
+                  <TextBlock Text="Update product"/>
+                  <ComboBox x:Name="UpdateProductFilter" DisplayMemberPath="Name" SelectedValuePath="Id" SelectionChanged="OnUpdateFilterChanged" AutomationProperties.Name="Update product" ToolTip="Products offered by the configured update source" Margin="0,0,0,4"/>
+                  <TextBlock Text="Update classification"/>
+                  <ComboBox x:Name="UpdateClassificationFilter" DisplayMemberPath="Name" SelectedValuePath="Id" SelectionChanged="OnUpdateFilterChanged" AutomationProperties.Name="Update classification" Margin="0,0,0,4"/>
+                  <TextBlock x:Name="UpdateFilterCount" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+                  <ListBox x:Name="AvailableUpdateList" SelectionChanged="OnUpdateSelectionChanged" SelectionMode="Multiple" DisplayMemberPath="Title" MaxHeight="160" MinHeight="40" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}"/>
+                  <WrapPanel Margin="0,4,0,0">
+                    <CheckBox x:Name="UpdateAllowRestart" Content="Include updates that may need a restart" Checked="OnUpdateSelectionChanged" Unchecked="OnUpdateSelectionChanged" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <CheckBox x:Name="UpdateAllowFeatureUpgrade" Content="Allow one offered Windows feature upgrade" Checked="OnUpdateSelectionChanged" Unchecked="OnUpdateSelectionChanged" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <Button x:Name="UpdatePreviewButton" Content="Preview selected" IsEnabled="False" Click="OnPreviewUpdates"/>
+                    <Button x:Name="UpdateInstallButton" Content="Install selected" IsEnabled="False" Click="OnInstallUpdates" Margin="6,0,0,0"/>
+                  </WrapPanel>
+                  <TextBlock x:Name="UpdateSelectionStatus" Text="Select updates to review their installation requirements." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+                </StackPanel>
+              </Expander>
+              <Button Content="Check interrupted update" Click="OnRecoverUpdates" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Verify a previous update before clearing its guard. Never installs or retries an update."/>
+              <Expander Header="Select a third-party app after discovery" Foreground="{DynamicResource TextBrush}" Margin="0,6,0,0">
+                <StackPanel>
+                  <TextBlock x:Name="ThirdPartyUpdateCount" Text="Select Third-party apps, then press GO." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+                  <ListBox x:Name="ThirdPartyUpdateList" SelectionChanged="OnThirdPartyUpdateSelectionChanged" SelectionMode="Single" DisplayMemberPath="Name" MaxHeight="120" MinHeight="40" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" AutomationProperties.Name="Third-party application update candidates"/>
+                  <TextBlock Text="Target version" Margin="0,4,0,0"/>
+                  <ComboBox x:Name="ThirdPartyUpdateVersion" SelectionChanged="OnThirdPartyUpdateSelectionChanged" AutomationProperties.Name="Third-party application target version"/>
+                  <CheckBox x:Name="ThirdPartyUpdateAgreements" Content="Accept the selected package and source agreements" Checked="OnThirdPartyUpdateSelectionChanged" Unchecked="OnThirdPartyUpdateSelectionChanged" Margin="0,5,0,0"/>
+                  <WrapPanel Margin="0,4,0,0">
+                    <Button x:Name="ThirdPartyUpdatePreview" Content="Preview selected" IsEnabled="False" Click="OnPreviewThirdPartyUpdate"/>
+                    <Button x:Name="ThirdPartyUpdateInstall" Content="Install selected" IsEnabled="False" Click="OnInstallThirdPartyUpdate" Margin="6,0,0,0"/>
+                  </WrapPanel>
+                  <TextBlock x:Name="ThirdPartyUpdateStatus" Text="One exact package, source and version per operation. No automatic restart." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+                  <Button Content="Check interrupted app update" Click="OnRecoverThirdPartyUpdate" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Verify the exact installed version without retrying the update."/>
+                </StackPanel>
+              </Expander>
+            </StackPanel>
+            <StackPanel x:Name="SecuritySettings" Visibility="Collapsed" Margin="0,0,0,6">
+              <TextBlock Text="Include with Defender signature checks:" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,4"/>
+              <WrapPanel>
+                <CheckBox x:Name="SecurityTpm" Content="TPM readiness" IsChecked="True" Margin="0,0,14,0"/>
+                <CheckBox x:Name="SecurityBoot" Content="Secure Boot" IsChecked="True" Margin="0,0,14,0"/>
+                <CheckBox x:Name="SecurityVirtualization" Content="VBS, memory integrity and Credential Guard" IsChecked="True"/>
+              </WrapPanel>
+              <TextBlock Text="GO action" Foreground="{DynamicResource DimTextBrush}" Margin="0,8,0,3"/>
+              <ComboBox x:Name="DefenderScanChoice" SelectedIndex="0" SelectionChanged="OnDefenderScanOptionChanged" AutomationProperties.Name="Microsoft Defender scan action">
+                <ComboBoxItem Content="Diagnosis only" Tag="None"/>
+                <ComboBoxItem Content="Quick scan" Tag="Quick"/>
+                <ComboBoxItem Content="Full scan" Tag="Full"/>
+              </ComboBox>
+              <CheckBox x:Name="DefenderScanConsent" Content="Start the selected scan when I press GO" Margin="0,5,0,0" IsEnabled="False" Checked="OnDefenderScanConsentChanged" Unchecked="OnDefenderScanConsentChanged"/>
+              <TextBlock Text="Without confirmation, GO previews eligibility. A scan never changes exclusions or policy, and interrupted requests are not repeated automatically." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <Button Content="Check interrupted scan" Click="OnRecoverDefenderScan" HorizontalAlignment="Left" Margin="0,5,0,0" ToolTip="Read current scan history without starting another scan."/>
+            </StackPanel>
+            <StackPanel x:Name="FirewallProfileSettings" Visibility="Collapsed" Margin="0,0,0,6">
+              <TextBlock Text="Enable selected Windows Firewall profiles" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,4"/>
+              <WrapPanel>
+                <CheckBox x:Name="FirewallDomainProfile" Content="Domain" Checked="OnFirewallProfileSelectionChanged" Unchecked="OnFirewallProfileSelectionChanged" Margin="0,0,14,0"/>
+                <CheckBox x:Name="FirewallPrivateProfile" Content="Private" Checked="OnFirewallProfileSelectionChanged" Unchecked="OnFirewallProfileSelectionChanged" Margin="0,0,14,0"/>
+                <CheckBox x:Name="FirewallPublicProfile" Content="Public" Checked="OnFirewallProfileSelectionChanged" Unchecked="OnFirewallProfileSelectionChanged"/>
+              </WrapPanel>
+              <CheckBox x:Name="FirewallProfileApply" Content="Apply selected local profiles after fresh policy checks" Checked="OnFirewallProfileApplyChanged" Margin="0,5,0,0"/>
+              <TextBlock Text="Unchecked runs the normal firewall diagnosis. Managed, enabled, missing or ambiguous profile settings are preserved. Rules, default actions and logging settings are not changed." Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="PrivacySettings" Visibility="Collapsed" Margin="0,0,0,6">
+              <TextBlock Text="Choose areas to inspect. Separate guarded controls are available for Clipboard and supported account settings, including camera and microphone access." Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,0,0,4"/>
+              <ListBox x:Name="PrivacyAreas" ItemsSource="{x:Static core:PrivacyCatalog.All}" SelectionMode="Multiple" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" MaxHeight="140" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Privacy areas to inspect">
+                <ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
+                <ListBox.ItemTemplate><DataTemplate>
+                  <CheckBox Content="{Binding Title}" ToolTip="{Binding Impact}" Width="190" IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Mode=TwoWay}"/>
+                </DataTemplate></ListBox.ItemTemplate>
+              </ListBox>
+              <WrapPanel Margin="0,4,0,0">
+                <StackPanel Margin="0,0,8,0">
+                  <TextBlock Text="Clipboard history"/>
+                  <ComboBox x:Name="PrivacyClipboardHistoryChoice" SelectedIndex="0" Width="170" SelectionChanged="OnPrivacyClipboardHistoryChanged" AutomationProperties.Name="Clipboard history action">
+                    <ComboBoxItem Content="Inspect only" Tag="Inspect"/>
+                    <ComboBoxItem Content="Turn on" Tag="On"/>
+                    <ComboBoxItem Content="Turn off" Tag="Off"/>
+                  </ComboBox>
+                </StackPanel>
+                <CheckBox x:Name="PrivacyClipboardHistoryApply" Content="Apply when I press GO" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+              </WrapPanel>
+              <WrapPanel Margin="0,6,0,0">
+                <StackPanel Margin="0,0,8,0">
+                  <TextBlock Text="Privacy setting"/>
+                  <ComboBox x:Name="PrivacyBooleanSettingChoice" ItemsSource="{x:Static core:PrivacyBooleanSettingCatalog.All}" DisplayMemberPath="Title" SelectedIndex="0" Width="170" SelectionChanged="OnPrivacyBooleanSettingChanged" AutomationProperties.Name="Privacy setting"/>
+                </StackPanel>
+                <StackPanel Margin="0,0,8,0">
+                  <TextBlock Text="Action"/>
+                  <ComboBox x:Name="PrivacyBooleanActionChoice" SelectedIndex="0" Width="120" SelectionChanged="OnPrivacyBooleanSettingChanged" AutomationProperties.Name="Privacy setting action">
+                    <ComboBoxItem Content="Inspect only" Tag="Inspect"/>
+                    <ComboBoxItem Content="Turn on" Tag="On"/>
+                    <ComboBoxItem Content="Turn off" Tag="Off"/>
+                  </ComboBox>
+                </StackPanel>
+                <CheckBox x:Name="PrivacyBooleanApply" Content="Apply when I press GO" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+              </WrapPanel>
+              <TextBlock Text="Applying changes only this account. Matching policy, machine-wide device access, per-application exceptions, diagnostic collection and stored clipboard contents are preserved. Verified journals support guarded undo." Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,3,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="BitLockerSettings" Visibility="Collapsed" Margin="0,0,0,6">
+              <TextBlock Text="GO inspects by default. Backup, encryption and protection resume each require the matching confirmation below." Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,0,0,4"/>
+              <WrapPanel>
+                <StackPanel Margin="0,0,8,4"><TextBlock Text="Volume"/><TextBox x:Name="BitLockerVolume" Text="C:" TextChanged="OnBitLockerBackupChanged" Width="60" AutomationProperties.Name="BitLocker volume"/></StackPanel>
+                <StackPanel Margin="0,0,8,4"><TextBlock Text="Operation"/><ComboBox x:Name="BitLockerOperationChoice" ItemsSource="{x:Static core:BitLockerChoices.Operations}" SelectedIndex="0" SelectionChanged="OnBitLockerBackupChanged" Width="160" AutomationProperties.Name="BitLocker operation"/></StackPanel>
+                <StackPanel Margin="0,0,8,4"><TextBlock Text="Encryption"/><ComboBox x:Name="BitLockerEncryptionChoice" ItemsSource="{x:Static core:BitLockerChoices.EncryptionMethods}" SelectedIndex="2" Width="140" AutomationProperties.Name="BitLocker encryption method"/></StackPanel>
+                <StackPanel Margin="0,0,8,4"><TextBlock Text="Recovery backup"/><ComboBox x:Name="BitLockerDestination" ItemsSource="{x:Static core:BitLockerChoices.Destinations}" SelectedIndex="0" SelectionChanged="OnBitLockerBackupChanged" Width="160" AutomationProperties.Name="Recovery backup destination"/></StackPanel>
+                <CheckBox x:Name="BitLockerUsedSpace" Content="Used space only" VerticalAlignment="Center"/>
+              </WrapPanel>
+              <TextBlock Text="Backup file (for File destination)"/>
+              <DockPanel>
+                <Button DockPanel.Dock="Right" Content="Browse..." Click="OnChooseRecoveryBackup" Margin="4,0,0,0" AutomationProperties.Name="Choose recovery backup file"/>
+                <TextBox x:Name="BitLockerBackupPath" TextChanged="OnBitLockerBackupChanged" ToolTip="For file backup, enter a full path outside the protected volume." AutomationProperties.Name="Recovery backup file path"/>
+              </DockPanel>
+              <Button Content="Find recovery protectors" Click="OnFindRecoveryProtectors" Margin="0,4,0,4"/>
+              <ComboBox x:Name="BitLockerProtectorChoice" SelectionChanged="OnBitLockerBackupChanged" AutomationProperties.Name="Existing recovery protector"/>
+              <CheckBox x:Name="BitLockerBackupConsent" Content="Write selected recovery backup when I press GO" Margin="0,4,0,4"/>
+              <CheckBox x:Name="BitLockerEncryptConsent" Content="Back up the selected recovery key, then start encryption when I press GO" Click="OnBitLockerEncryptConsentChanged" Margin="0,0,0,4"/>
+              <CheckBox x:Name="BitLockerResumeConsent" Content="Resume protection on this fully encrypted volume when I press GO" Click="OnBitLockerResumeConsentChanged" Margin="0,0,0,4"/>
+              <TextBlock Text="Encryption requires an existing TPM protector, the selected recovery-password protector and a new verified backup file outside the protected volume. Existing protectors and managed policy are preserved." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+            </StackPanel>
+            <TextBlock x:Name="ComponentCleanupSettings" Visibility="Collapsed" Margin="0,0,0,6" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Text="GO checks whether Windows recommends cleanup. Optional cleanup removes superseded components immediately; no automatic undo or restart. Reclaimed space is not measured."/>
+            <StackPanel x:Name="TaskSettings" Visibility="Collapsed" Margin="0,0,0,6">
+              <Expander x:Name="TaskDraftExpander" Header="New task draft" Loaded="OnTaskDraftLoaded">
+                <StackPanel Margin="0,6,0,6">
+                  <TextBlock Text="Task folder"/><TextBox x:Name="TaskDraftFolder" Text="\KillerBench\"/>
+                  <TextBlock Text="Task name"/><TextBox x:Name="TaskDraftName"/>
+                  <TextBlock Text="Executable path"/><TextBox x:Name="TaskDraftExecutable"/>
+                  <TextBlock Text="Arguments"/><TextBox x:Name="TaskDraftArguments"/>
+                  <TextBlock Text="Working directory (optional)"/><TextBox x:Name="TaskDraftDirectory"/>
+                  <TextBlock Text="Schedule"/>
+                  <ComboBox x:Name="TaskDraftSchedule" SelectedIndex="0" SelectionChanged="OnTaskDraftScheduleChanged"><ComboBoxItem Content="Daily"/><ComboBoxItem Content="Weekly"/><ComboBoxItem Content="Monthly"/><ComboBoxItem Content="Startup"/></ComboBox>
+                  <TextBlock Text="Time (HH:mm, unused for startup)"/><TextBox x:Name="TaskDraftTime" Text="09:00"/>
+                  <TextBlock Text="Calendar time zone"/><ComboBox x:Name="TaskDraftZone" DisplayMemberPath="DisplayName" SelectedValuePath="Id"/>
+                  <StackPanel x:Name="TaskDraftWeekly" Visibility="Collapsed"><TextBlock Text="Select weekdays (Ctrl-click for multiple)"/><ListBox x:Name="TaskDraftWeekdays" SelectionMode="Multiple" MaxHeight="110"/></StackPanel>
+                  <StackPanel x:Name="TaskDraftMonthly" Visibility="Collapsed"><TextBlock Text="Select month days (Ctrl-click for multiple)"/><ListBox x:Name="TaskDraftMonthDays" SelectionMode="Multiple" MaxHeight="110"/><CheckBox x:Name="TaskDraftLastDay" Content="Last day instead of selected days"/></StackPanel>
+                  <TextBlock Text="Account mode"/>
+                  <ComboBox x:Name="TaskDraftAccountMode" SelectedIndex="0"><ComboBoxItem Content="Interactive user"/><ComboBoxItem Content="Local System"/></ComboBox>
+                  <TextBlock Text="User account (System uses S-1-5-18)"/><TextBox x:Name="TaskDraftUser"/>
+                  <CheckBox x:Name="TaskDraftHighest" Content="Highest privileges"/>
+                  <TextBlock Text="Execution limit (minutes, 1 to 4320)"/><TextBox x:Name="TaskDraftMinutes" Text="60"/>
+                  <TextBlock Text="If a previous run is still active"/><ComboBox x:Name="TaskDraftOverlap" SelectedIndex="0"><ComboBoxItem Content="Skip the new run"/><ComboBoxItem Content="Queue the new run"/><ComboBoxItem Content="Run both at once"/><ComboBoxItem Content="Stop the previous run"/></ComboBox>
+                  <Button Content="Review draft" Click="OnReviewTaskDraft" HorizontalAlignment="Left" Margin="0,6,0,0"/>
+                  <Button Content="Inspect draft on this PC" Click="OnInspectTaskDraft" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Read executable identity and visible task conflicts without registering or running anything"/>
+                  <Button Content="Save new draft..." Click="OnSaveTaskDraft" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Save to a new JSON file; existing files are preserved"/>
+                  <TextBlock Text="XML start date (YYYY-MM-DD)" Margin="0,6,0,0"/>
+                  <TextBox x:Name="TaskDraftStartDate" ToolTip="Local calendar start boundary; startup triggers do not use this date"/>
+                  <Button Content="Export disabled task XML..." Click="OnExportTaskXml" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Export a new review file using the local calendar time zone. No task is registered or run; existing files are preserved"/>
+                  <CheckBox x:Name="TaskRegistrationConsent" Content="Create this disabled Local System task after fresh checks" Margin="0,8,0,0" Checked="OnTaskRegistrationConsentChanged" Unchecked="OnTaskRegistrationConsentChanged" AutomationProperties.Name="Allow disabled task registration"/>
+                  <Button x:Name="TaskRegistrationButton" Content="Preview registration" Click="OnRegisterTaskDraft" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Preview by default. Creation requires the separate confirmation, elevation, a valid signed executable, an existing folder and an absent exact target."/>
+                  <Button x:Name="TaskRegistrationRecoveryButton" Content="Check interrupted registration" Click="OnRecoverTaskRegistration" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Read the current exact task definition and close a matching pending guard. Never retries, enables, runs, replaces or deletes a task."/>
+                </StackPanel>
+              </Expander>
+              <Button Content="Review saved task plan..." Click="OnReviewTaskPlan" HorizontalAlignment="Left" ToolTip="Open a task-plan JSON file for review only"/>
+              <Button Content="Review recovery records..." Click="OnReviewTaskJournal" HorizontalAlignment="Left" ToolTip="Select one record or an intent/completion pair. Review never changes a task or allows a retry."/>
+              <TextBlock Text="GO inventories existing tasks. Registration is separate, creates only a disabled task and never runs, replaces or deletes a task." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="EventLogSettings" Visibility="Collapsed" Margin="0,0,0,6">
+              <TextBlock Text="Diagnostic channel" Margin="0,0,0,4"/>
+              <ComboBox x:Name="EventChannelChoice" SelectedIndex="0" SelectionChanged="OnEventChannelOptionChanged" AutomationProperties.Name="Diagnostic event channel">
+                <ComboBoxItem Content="System" Tag="System"/>
+                <ComboBoxItem Content="Application" Tag="Application"/>
+                <ComboBoxItem Content="Setup" Tag="Setup"/>
+                <ComboBoxItem Content="Windows Update Client / Operational" Tag="Microsoft-Windows-WindowsUpdateClient/Operational"/>
+              </ComboBox>
+              <CheckBox x:Name="EventChannelEnableConsent" Content="Enable this channel after fresh checks" Margin="0,4,0,0" Checked="OnEventChannelOptionChanged" Unchecked="OnEventChannelOptionChanged" AutomationProperties.Name="Enable selected diagnostic event channel"/>
+              <TextBlock Text="GO always inspects all four channels. This option changes only the exact selected disabled, unmanaged channel and verifies that every other reported channel setting stayed unchanged." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="NetworkSettings" Visibility="Collapsed" Margin="0,0,0,6">
+              <TextBlock Text="Hostname lookup (optional)" Margin="0,0,0,4"/>
+              <TextBox x:Name="NetworkLookupHost" AutomationProperties.Name="Optional hostname to resolve"/>
+              <TextBlock Text="TCP destination (optional)" Margin="0,6,0,4"/>
+              <TextBox x:Name="NetworkTcpHost" AutomationProperties.Name="Optional TCP hostname or IP address"/>
+              <TextBlock Text="TCP port" Margin="0,4,0,4"/>
+              <TextBox x:Name="NetworkTcpPort" AutomationProperties.Name="TCP destination port"/>
+              <TextBlock Text="Timeout per lookup or connection (seconds)" Margin="0,6,0,4"/>
+              <DockPanel>
+                <TextBlock DockPanel.Dock="Right" Text="{Binding Value, ElementName=NetworkTimeoutSeconds, StringFormat={}{0:0}}" Margin="8,0,0,0"/>
+                <Slider x:Name="NetworkTimeoutSeconds" Minimum="1" Maximum="60" Value="10" TickFrequency="1" IsSnapToTickEnabled="True" AutomationProperties.Name="Network timeout in seconds"/>
+              </DockPanel>
+              <TextBlock Text="Enter both destination and port to test a connection. No application data is sent." TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <TextBlock Text="Leave blank to skip. Uses your configured resolver; no DNS settings are changed." TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="AudioSettings" Visibility="Collapsed" Margin="0,0,0,6">
+              <TextBlock Text="Default endpoint scope" Margin="0,0,0,4"/>
+              <ComboBox x:Name="AudioDirectionChoice" SelectedIndex="0" SelectionChanged="OnWorkflowOptionsChanged" AutomationProperties.Name="Audio endpoint direction">
+                <ComboBoxItem Content="Input and output" Tag="All"/>
+                <ComboBoxItem Content="Output" Tag="Output"/>
+                <ComboBoxItem Content="Input" Tag="Input"/>
+              </ComboBox>
+              <TextBlock Text="Windows role" Margin="0,6,0,4"/>
+              <ComboBox x:Name="AudioRoleChoice" SelectedIndex="0" SelectionChanged="OnWorkflowOptionsChanged" AutomationProperties.Name="Audio endpoint role">
+                <ComboBoxItem Content="All roles" Tag="All"/>
+                <ComboBoxItem Content="Console" Tag="Console"/>
+                <ComboBoxItem Content="Multimedia" Tag="Multimedia"/>
+                <ComboBoxItem Content="Communications" Tag="Communications"/>
+              </ComboBox>
+              <TextBlock Text="GO still checks every audio device and driver. These controls limit the default endpoint details shown." TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="SystemRestoreSettings" Visibility="Collapsed" Margin="0,0,0,6">
+              <CheckBox x:Name="SystemRestoreCreate" Content="Prepare one restore point" Margin="0,0,0,6" AutomationProperties.Name="Prepare one System Restore point" Checked="OnSystemRestoreOptionChanged" Unchecked="OnSystemRestoreOptionChanged"/>
+              <TextBlock Text="Description"/>
+              <TextBox x:Name="SystemRestoreDescription" Text="Before KillerBench maintenance" MaxLength="64" IsEnabled="{Binding IsChecked, ElementName=SystemRestoreCreate}" TextChanged="OnSystemRestoreDescriptionChanged" AutomationProperties.Name="Restore point description"/>
+              <TextBlock Text="Reason" Margin="0,6,0,4"/>
+              <ComboBox x:Name="SystemRestoreReasonChoice" SelectedIndex="0" IsEnabled="{Binding IsChecked, ElementName=SystemRestoreCreate}" SelectionChanged="OnSystemRestoreReasonChanged" AutomationProperties.Name="Restore point reason">
+                <ComboBoxItem Content="System settings change" Tag="ModifySettings"/>
+                <ComboBoxItem Content="Application installation" Tag="ApplicationInstall"/>
+                <ComboBoxItem Content="Device driver installation" Tag="DeviceDriverInstall"/>
+              </ComboBox>
+              <TextBlock Text="GO lists existing points unless this option is selected. Select automatic action below to request one point after fresh checks. Windows frequency limits and protection policy are preserved." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="StorageSettings" Visibility="Collapsed" Margin="0,0,0,6">
+              <TextBlock Text="Volume to check"/>
+              <ComboBox x:Name="StorageVolumeChoice" AutomationProperties.Name="Filesystem check volume"/>
+              <TextBlock Text="Checks this NTFS volume plus disk and controller devices across the PC. Device findings are not mapped to this volume. No repair or restart is scheduled." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <CheckBox x:Name="StorageRepairReview" Content="Review filesystem repair" Margin="0,8,0,4" AutomationProperties.Name="Review filesystem repair eligibility" Checked="OnStorageRepairConsentChanged" Unchecked="OnStorageRepairConsentChanged"/>
+              <ComboBox x:Name="StorageRepairModeChoice" SelectedIndex="0" IsEnabled="{Binding IsChecked, ElementName=StorageRepairReview}" AutomationProperties.Name="Filesystem repair mode" SelectionChanged="OnStorageRepairModeChanged">
+                <ComboBoxItem Content="Spot repair" Tag="SpotFix"/>
+                <ComboBoxItem Content="Offline scan and repair" Tag="OfflineScanAndFix"/>
+              </ComboBox>
+              <CheckBox x:Name="StorageAllowDismount" Content="Allow a non-system volume to go offline" Margin="0,4,0,0" IsEnabled="{Binding IsChecked, ElementName=StorageRepairReview}" AutomationProperties.Name="Allow non-system volume dismount during repair" Checked="OnStorageRepairConsentChanged" Unchecked="OnStorageRepairConsentChanged"/>
+              <CheckBox x:Name="StorageBackupConfirmed" Content="Important data on this volume is backed up" Margin="0,4,0,0" IsEnabled="{Binding IsChecked, ElementName=StorageRepairReview}" AutomationProperties.Name="Confirm filesystem repair backup" Checked="OnStorageRepairConsentChanged" Unchecked="OnStorageRepairConsentChanged"/>
+              <CheckBox x:Name="StorageOptimizationReview" Content="Analyze drive optimization" Margin="0,8,0,4" AutomationProperties.Name="Analyze drive optimization" Checked="OnStorageOptimizationChanged" Unchecked="OnStorageOptimizationChanged"/>
+              <ComboBox x:Name="StorageOptimizationModeChoice" SelectedIndex="0" IsEnabled="{Binding IsChecked, ElementName=StorageOptimizationReview}" AutomationProperties.Name="Drive optimization method" SelectionChanged="OnStorageOptimizationModeChanged">
+                <ComboBoxItem Content="Windows recommended" Tag="Recommended"/>
+                <ComboBoxItem Content="Retrim solid-state storage" Tag="ReTrim"/>
+                <ComboBoxItem Content="Defragment hard disk" Tag="Defragment"/>
+              </ComboBox>
+              <TextBlock Text="GO always collects current evidence first. Filesystem repair and drive optimization are separate choices. Optimization requires a confirmed media type and never changes schedules or restarts Windows." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+            </StackPanel>
+            <StackPanel x:Name="ComputerNameSettings" Visibility="Collapsed" Margin="0,0,0,6">
+              <TextBlock Text="Proposed computer name"/>
+              <TextBox x:Name="ProposedComputerName" MaxLength="63" TextChanged="OnProposedComputerNameChanged" AutomationProperties.Name="Proposed computer name"/>
+              <CheckBox x:Name="ComputerRenameConsent" Content="Rename this workgroup PC after fresh checks" Margin="0,4,0,0"/>
+              <TextBlock Text="GO reviews the name and current identity. With the rename option selected, only a standalone workgroup PC with clear prerequisites is eligible. KillerBench never restarts Windows." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+            </StackPanel>
+            <CheckBox x:Name="MainAutoRepair" Content="Auto-repair confirmed issues" Margin="0,8,0,8"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+              <Button x:Name="MainGo" Content="GO" Style="{StaticResource PrimaryButton}" Click="OnMainGo" Width="100" Margin="0,0,8,0"/>
+              <Button x:Name="CancelButton" Content="Stop" Click="OnCancel" IsEnabled="False" ToolTip="Stop after the current command (Esc)" Width="72"/>
+            </StackPanel>
+            <Expander x:Name="RecipeSelectionPanel" Header="Choose checks (advanced)" Foreground="{DynamicResource TextBrush}" Visibility="Collapsed" Margin="0,0,0,6">
+              <StackPanel>
+                <CheckBox x:Name="CustomizeRecipes" Content="Use selected recipe checks" Checked="OnRecipeSelectionChanged" Unchecked="OnRecipeSelectionChanged"/>
+                <CheckBox x:Name="FocusDiagnosticAreas" Content="Diagnostic areas only (no repairs)" Margin="0,4,0,4" Checked="OnDiagnosticAreasChanged" Unchecked="OnDiagnosticAreasChanged"/>
+                <CheckBox x:Name="ShowDetailedDiagnosticAreas" Content="Show individual evidence areas" Margin="14,0,0,4" Visibility="Collapsed"
+                          Checked="OnDiagnosticDetailChanged" Unchecked="OnDiagnosticDetailChanged"/>
+                <ListBox x:Name="DiagnosticAreaList" SelectionMode="Multiple" MaxHeight="180" Visibility="Collapsed"
+                         Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextBrush}"
+                         IsEnabled="{Binding IsChecked, ElementName=FocusDiagnosticAreas}" SelectionChanged="OnDiagnosticAreasChanged"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Diagnostic areas">
+                  <ListBox.ItemTemplate><DataTemplate>
+                    <CheckBox Content="{Binding Title}" ToolTip="{Binding Description}"
+                              IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Mode=TwoWay}"/>
+                  </DataTemplate></ListBox.ItemTemplate>
+                </ListBox>
+                <TextBlock x:Name="DiagnosticAreaSummary" TextWrapping="Wrap" Margin="0,4,0,4"/>
+                <DockPanel Margin="0,2,0,2" IsEnabled="{Binding IsChecked, ElementName=CustomizeRecipes}">
+                  <TextBlock Text="Recipe checks" VerticalAlignment="Center"/>
+                  <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                    <Button Content="All" Padding="8,2" Margin="4,0,0,0" Click="OnSelectAllRecipes" AutomationProperties.Name="Select all recipe checks"/>
+                    <Button Content="None" Padding="8,2" Margin="4,0,0,0" Click="OnClearRecipes" AutomationProperties.Name="Clear recipe checks"/>
+                  </StackPanel>
+                </DockPanel>
+                <ListBox x:Name="RecipeSelectionList" Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextBrush}" SelectionMode="Multiple" MaxHeight="180" IsEnabled="{Binding IsChecked, ElementName=CustomizeRecipes}" SelectionChanged="OnRecipeSelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Recipe checks">
+                  <ListBox.GroupStyle>
+                    <GroupStyle>
+                      <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                          <TextBlock Text="{Binding Name}" FontFamily="Consolas" FontSize="11" Foreground="{DynamicResource PrimaryBrush}" Margin="2,7,2,3"/>
+                        </DataTemplate>
+                      </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                  </ListBox.GroupStyle>
+                  <ListBox.ItemTemplate><DataTemplate>
+                    <CheckBox Content="{Binding Title}" ToolTip="{Binding Effects}"
+                              IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Mode=TwoWay}"/>
+                  </DataTemplate></ListBox.ItemTemplate>
+                </ListBox>
+                <TextBlock x:Name="RecipeSelectionSummary" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                <Expander Header="What these repairs can change" Foreground="{DynamicResource TextBrush}" Margin="0,4,0,0">
+                  <ScrollViewer MaxHeight="180" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <TextBlock x:Name="RecipeEffectsSummary" TextWrapping="Wrap"/>
+                  </ScrollViewer>
+                </Expander>
+              </StackPanel>
+            </Expander>
+            <Expander x:Name="AdvancedTools" Header="Advanced: logs and manual repairs" Foreground="{DynamicResource MutedTextBrush}">
+          <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+            <DockPanel Margin="0,0,0,6">
+              <TextBlock Text="{DynamicResource Str_Text_TEXT_LOG_INSPECTOR}" FontFamily="Consolas" FontSize="11" VerticalAlignment="Center"/>
+              <TextBlock x:Name="ModeLabel" Text="{DynamicResource Str_Text_SAMPLE_MODE}" Foreground="{DynamicResource PrimaryBrush}" FontFamily="Consolas" FontSize="11" HorizontalAlignment="Right"/>
+            </DockPanel>
+            <DockPanel Grid.Row="1">
+              <Button x:Name="OpenButton" DockPanel.Dock="Right" Content="{DynamicResource Str_Content_Open_log}" Style="{StaticResource PrimaryButton}" Padding="10,3" Click="OnOpen" ToolTip="{DynamicResource Str_ToolTip_Open_text_log_Ctrl_O}" Margin="4,0,0,0"/>
+              <TextBox x:Name="PathBox" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Text_log_path}" ToolTip="{DynamicResource Str_ToolTip_Paste_a_text_log_path_or_drop_a_file_into_the_window}" VerticalContentAlignment="Center"/>
+            </DockPanel>
+            <StackPanel Grid.Row="2" Margin="0,6,0,0">
+              <WrapPanel>
+                <Button x:Name="ScanButton" Content="{DynamicResource Str_ScanUpdate}" Style="{StaticResource PrimaryButton}" Click="OnScan" ToolTip="{DynamicResource Str_ScanUpdateTip}" Margin="0,0,6,0"/>
+                <Button x:Name="OpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture" Margin="0,0,6,0"/>
+                <Button Content="Open workflow" Click="OnOpenWorkflowJournal" Margin="0,0,6,0" ToolTip="Review a saved workflow journal without running checks or repairs."/>
+                <Button x:Name="SaveCaptureButton" Content="{DynamicResource Str_SaveCapture}" Click="OnSaveCapture" IsEnabled="False"/>
+                <Button Content="Workflows" Click="OnWorkflows" Margin="6,0,0,0"/>
+                <Button Content="Repairs" Click="OnRepairs" Margin="6,0,0,0"/>
+              </WrapPanel>
+              <TextBlock x:Name="CaptureInfo" Text="{DynamicResource Str_CaptureScope}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="Knowledge reference" Margin="0,10,0,4" Foreground="{DynamicResource PrimaryBrush}"/>
+              <TextBox x:Name="KnowledgeContext" AutomationProperties.Name="Knowledge product context" ToolTip="Product or error-code namespace from the pack"/>
+              <TextBox x:Name="KnowledgeCode" AutomationProperties.Name="Knowledge code or search text" ToolTip="An exact code for lookup, or text to search within the selected context" Margin="0,4,0,4"/>
+              <Button Content="Open pack and look up code" Click="OnKnowledgeLookup" HorizontalAlignment="Left"/>
+              <Button x:Name="KnowledgeSearchButton" Content="Open pack and search text" Tag="search" Click="OnKnowledgeLookup" HorizontalAlignment="Left" Margin="0,4,0,0"/>
+              <Button Content="Compare pack revisions" Click="OnKnowledgeCompare" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Choose current and candidate files to review changes. No pack is installed."/>
+              <Button Content="Look up Windows system code" Click="OnWindowsCodeLookup" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Use the code field with the installed Windows message table; no pack needed"/>
+              <Button Content="Look up Device Manager code" Click="OnDeviceCodeLookup" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Use the code field with the built-in Device Manager problem-code reference; no pack needed"/>
+            </StackPanel>
+          </Grid></Expander></StackPanel></ScrollViewer>
+        </Border></Grid>
+</Border>
+        <Grid x:Name="ConsoleBank" Grid.Column="2">
+          <Grid.ColumnDefinitions><ColumnDefinition Width="*" MinWidth="680"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+          <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+      <ListBox x:Name="CategoryList" Grid.Row="0" Margin="0,0,0,8" Background="Transparent" BorderThickness="0" SelectionChanged="OnCategorySelected" AutomationProperties.Name="Tool categories" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Title}" TextWrapping="NoWrap" TextAlignment="Center"/></DataTemplate></ListBox.ItemTemplate>
+        <ListBox.ItemsPanel><ItemsPanelTemplate><UniformGrid Rows="1"/></ItemsPanelTemplate></ListBox.ItemsPanel>
+        <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}">
+          <Setter Property="Margin" Value="3,0"/><Setter Property="MinHeight" Value="42"/><Setter Property="FontSize" Value="18"/>
+          <Setter Property="FontFamily" Value="{DynamicResource WordmarkFont}"/><Setter Property="FontWeight" Value="Normal"/><Setter Property="TextOptions.TextFormattingMode" Value="Display"/><Setter Property="HorizontalContentAlignment" Value="Center"/><Setter Property="VerticalContentAlignment" Value="Center"/>
+          <Setter Property="Background" Value="{DynamicResource PaneBrush}"/>
+          <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
+            <Border x:Name="CategoryFace" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="3">
+              <Grid>
+                <Border CornerRadius="2" IsHitTestVisible="False"><Border.Background><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#55FFFFFF" Offset="0"/><GradientStop Color="#08FFFFFF" Offset="0.45"/><GradientStop Color="#55000000" Offset="1"/></LinearGradientBrush></Border.Background></Border>
+                <ContentPresenter Margin="6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsSelected" Value="True">
+                <Setter TargetName="CategoryFace" Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                <Setter Property="Foreground" Value="#151515"/>
+                <Setter TargetName="CategoryFace" Property="BorderBrush" Value="#FFFFD6"/>
+              </Trigger>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="CategoryFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/></Trigger>
+              <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="CategoryFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate></Setter.Value></Setter>
+        </Style></ListBox.ItemContainerStyle>
+      </ListBox>
+          <Border Grid.Row="1" Style="{StaticResource Panel}">
+<Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+<Border Padding="6">
+            <Grid>
+              <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+              <Expander Grid.Row="4" Header="Session sources" Foreground="{DynamicResource TextBrush}" Margin="0,8,0,0">
+                <Grid Height="140">
+                  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                  <DockPanel><Button DockPanel.Dock="Right" Content="Load sample" Click="OnSample"/><TextBlock x:Name="SessionLabel" VerticalAlignment="Center"/></DockPanel>
+                  <ListBox x:Name="SourcesList" Grid.Row="1" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" SelectionChanged="OnSourceSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Evidence_sources}"/>
+                  <Border x:Name="SourceFadeTop" Style="{StaticResource SidebarFadeTop}" IsHitTestVisible="False"/>
+                  <Border x:Name="SourceFadeBottom" Style="{StaticResource SidebarFadeBottom}" IsHitTestVisible="False"/>
+                </Grid>
+              </Expander>
+              <DockPanel Margin="0,0,0,6">
+                <Button x:Name="DetailsButton" DockPanel.Dock="Right" Content="Display / details" Click="OnToggleDetails" ToolTip="{DynamicResource Str_ToolTip_Toggle_inspector_F4}" Padding="10,4"/>
+                <TextBlock x:Name="EvidenceTitle" Text="{DynamicResource Str_Text_Evidence}" FontFamily="{DynamicResource WordmarkFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,12,0"/>
+              </DockPanel>
+              <DockPanel Grid.Row="1" Margin="0,0,0,6">
+                <Button DockPanel.Dock="Right" Content="{DynamicResource Str_Content_FIND}" Click="OnFind" ToolTip="{DynamicResource Str_ToolTip_Filter_evidence_lines_Enter_in_search}" Margin="4,0,0,0"/>
+                <TextBox x:Name="SearchBox" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Filter_evidence}" ToolTip="{DynamicResource Str_ToolTip_Filter_loaded_lines_Clear_to_show_all_lines}" VerticalContentAlignment="Center" KeyDown="OnSearchKey"/>
+              </DockPanel>
+              <Border x:Name="ConsoleBezel" Grid.Row="2" BorderBrush="#30202020" BorderThickness="1" CornerRadius="4" Padding="0,0,0,3">
+                <Border.Background><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#303030" Offset="0"/><GradientStop Color="#282828" Offset="1"/></LinearGradientBrush></Border.Background>
+                <Grid><Grid.RowDefinitions><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                <Border x:Name="ConsoleGlass" Background="{DynamicResource ConsoleSurfaceBrush}" BorderThickness="0" CornerRadius="3" Padding="5" ClipToBounds="True">
+                <Grid>
+                  <TextBox x:Name="EvidenceBox" IsReadOnly="True" AcceptsReturn="True" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource ConsolePhosphorBrush}" FontFamily="Consolas" FontSize="14" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Evidence_with_original_line_numbers}"/>
+                  <Rectangle x:Name="Scanlines" IsHitTestVisible="False" Opacity="0.10"><Rectangle.Fill><DrawingBrush TileMode="Tile" Viewport="0,0,4,4" ViewportUnits="Absolute"><DrawingBrush.Drawing><GeometryDrawing Brush="Black" Geometry="M0,0 L4,0 4,1 0,1Z"/></DrawingBrush.Drawing></DrawingBrush></Rectangle.Fill></Rectangle>
+                  <Border CornerRadius="9" IsHitTestVisible="False" Opacity="{Binding Value, ElementName=GlowSlider}"><Border.Background><RadialGradientBrush Center="0.5,0.45" GradientOrigin="0.5,0.45" RadiusX="0.7" RadiusY="0.75"><GradientStop Color="#00FFFFFF" Offset="0.45"/><GradientStop Color="#D0000000" Offset="1"/></RadialGradientBrush></Border.Background></Border>
+                  <Border CornerRadius="9" IsHitTestVisible="False" Opacity="{Binding Value, ElementName=GlowSlider}"><Border.Background><LinearGradientBrush StartPoint="0,0" EndPoint="0.4,1"><GradientStop Color="#65FFFFFF" Offset="0"/><GradientStop Color="#00FFFFFF" Offset="0.3"/></LinearGradientBrush></Border.Background></Border>
+                </Grid>
+                </Border>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,6,0">
+                  <StackPanel.Resources><Style TargetType="Button" BasedOn="{StaticResource ArcadeButton}"><Setter Property="Width" Value="24"/><Setter Property="Height" Value="24"/><Setter Property="Margin" Value="0,0,4,0"/></Style></StackPanel.Resources>
+                  <Button Background="#FFCA80" Tag="Amber" Click="OnPreset" ToolTip="Amber phosphor" AutomationProperties.Name="Amber phosphor"/>
+                  <Button Background="#71FF91" Tag="Green" Click="OnPreset" ToolTip="Green phosphor" AutomationProperties.Name="Green phosphor"/>
+                  <Button Background="#E6EAF0" Tag="White" Click="OnPreset" ToolTip="White phosphor" AutomationProperties.Name="White phosphor"/>
+                </StackPanel>
+                </Grid>
+              </Border>
+              <TextBlock x:Name="CoverageLabel" Grid.Row="3" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,10,0,0"/>
+            </Grid>
+          </Border></Grid>
+</Border>
+          <Border x:Name="DetailsPanel" Grid.Column="1" Grid.RowSpan="2" Width="270" Style="{StaticResource Panel}" Margin="4,0,0,0" ClipToBounds="True">
+<Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+<Border Padding="0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+              <StackPanel Width="236" HorizontalAlignment="Left" Margin="8">
+                <TextBlock Text="{DynamicResource Str_Text_INSPECTOR}" Style="{StaticResource SectionLabel}"/>
+                <StackPanel x:Name="RepairPanel" Visibility="Collapsed" Margin="0,0,0,12">
+                  <ComboBox x:Name="RepairChoice" SelectedIndex="0" SelectionChanged="OnRepairChoice" AutomationProperties.Name="Repair action">
+                    <ComboBoxItem Content="Component store (DISM)"/><ComboBoxItem Content="System files (SFC)"/>
+                  </ComboBox>
+                  <TextBox x:Name="RepairPreview" IsReadOnly="True" TextWrapping="Wrap" MaxHeight="250" VerticalScrollBarVisibility="Auto" Margin="0,8,0,8"/>
+                  <CheckBox x:Name="RepairConsent" Content="Run this repair on this PC"/>
+                  <Button x:Name="RepairRun" Content="GO" IsEnabled="{Binding IsChecked, ElementName=RepairConsent}" Click="OnRunRepair" Margin="0,8,0,0" ToolTip="Run the previewed repair on this PC; administrator rights required"/>
+                </StackPanel>
+                <WrapPanel Margin="0,0,0,14"><Button Content="{DynamicResource Str_Findings}" Click="OnFindingsTab" Margin="0,0,6,0"/><Button Content="{DynamicResource Str_Content_Display}" Click="OnDisplayTab" Margin="0,0,6,0"/><Button Content="{DynamicResource Str_Content_Source}" Click="OnSourceTab"/></WrapPanel>
+                <WrapPanel Margin="0,0,0,10"><Button x:Name="DemoButton" Content="{DynamicResource Str_LoadDemo}" Click="OnDemo" Margin="0,0,6,0"/><Button Content="{DynamicResource Str_ExportReport}" Click="OnExportReport" ToolTip="{DynamicResource Str_ExportContents}"/></WrapPanel>
+                <StackPanel x:Name="FindingsPanel" Visibility="Collapsed"><TextBlock x:Name="FindingsSummary" TextWrapping="Wrap"/><StackPanel x:Name="FindingCards"/></StackPanel>
+                <StackPanel x:Name="DisplaySettings">
+                  <TextBlock Text="{DynamicResource Str_Text_Console_phosphor}" FontSize="17" Margin="0,0,0,6"/>
+                  <Button Content="{DynamicResource Str_Content_CRISP_EFFECTS_OFF}" Tag="Crisp" Click="OnPreset" Margin="0,0,0,20"/>
+                  <TextBlock Text="{DynamicResource Str_Text_SCANLINES}" Style="{StaticResource SectionLabel}"/><Slider x:Name="ScanlineSlider" Minimum="0" Maximum="0.25" Value="0.10" ValueChanged="OnDisplayChanged" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Scanline_strength}" Margin="0,0,0,18"/>
+                  <TextBlock Text="{DynamicResource Str_Text_PHOSPHOR_GLOW}" Style="{StaticResource SectionLabel}"/><Slider x:Name="GlowSlider" Minimum="0" Maximum="1" Value="0.20" ValueChanged="OnDisplayChanged" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Phosphor_glow}" Margin="0,0,0,18"/>
+                  <TextBlock Text="{DynamicResource Str_Text_TEXT_SIZE}" Style="{StaticResource SectionLabel}"/><Slider x:Name="SizeSlider" Minimum="12" Maximum="24" Value="14" ValueChanged="OnDisplayChanged" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Console_text_size}"/>
+                  <TextBlock Text="{DynamicResource Str_Text_Console_appearance_is_independent_of_the_app_theme}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,16,0,0"/>
+                </StackPanel>
+                <StackPanel x:Name="SourceDetails" Visibility="Collapsed"><TextBlock Text="{DynamicResource Str_Text_Selected_evidence}" FontSize="17" Margin="0,0,0,6"/><TextBox x:Name="SourceInfo" IsReadOnly="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent"/><TextBlock Text="{DynamicResource Str_RecordedEvidence}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,16,0,0"/></StackPanel>
+              </StackPanel>
+            </ScrollViewer>
+          </Border></Grid>
+</Border>
+        </Grid>
+        <Border x:Name="ActivityPanel" Grid.Column="2" Grid.Row="1" Style="{StaticResource Panel}" Height="124" Margin="0,4,0,0">
+<Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+<Border Padding="6">
+          <DockPanel>
+            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6"><Button DockPanel.Dock="Right" Content="{DynamicResource Str_Content_Hide}" Click="OnToggleActivity" Padding="6,2" ToolTip="{DynamicResource Str_ToolTip_Toggle_activity_log_F3}"/><Button x:Name="ExportActivityButton" DockPanel.Dock="Right" Content="{DynamicResource Str_ExportActivity}" Click="OnExportActivity" Padding="6,2" Margin="0,0,6,0" ToolTip="{DynamicResource Str_ExportActivityHint}" AutomationProperties.Name="{DynamicResource Str_ExportActivityHint}"/><TextBlock Text="{DynamicResource Str_Text_SESSION_ACTIVITY}" FontFamily="Consolas" FontSize="11" Foreground="{DynamicResource DimTextBrush}"/></DockPanel>
+            <TextBox x:Name="ActivityLog" IsReadOnly="True" FontFamily="Consolas" FontSize="11" Background="Transparent" BorderThickness="0" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Session_activity_log}"/>
+          </DockPanel>
+        </Border></Grid>
+</Border>
+      </Grid>
+    </Grid>
+    </Grid>
+    <Border Grid.Row="2" Background="{DynamicResource BackgroundBrush}" Panel.ZIndex="-1"/>
+    <Grid Grid.Row="2">
+      <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <Border Grid.ColumnSpan="2" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>
+      <Border x:Name="ScanLight" Width="9" Height="9" CornerRadius="5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,0,0,0" Background="#3FA95F" BorderThickness="1" BorderBrush="#40000000" ToolTip="Ready. No scan performed."/>
+      <TextBlock x:Name="StatusLabel" Text="{DynamicResource Str_Text_Ready}" FontFamily="Consolas" FontSize="11.5" Foreground="{DynamicResource TextFooter}" VerticalAlignment="Center" Margin="22,0,12,0" TextTrimming="CharacterEllipsis"/>
+      <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,28,0" VerticalAlignment="Center"><TextBlock x:Name="ThemeStatus" FontFamily="Consolas" FontSize="10.5" Foreground="{DynamicResource TextFooter}" Text="v0.1.0" Margin="0,0,12,0" Cursor="Hand" MouseLeftButtonUp="OnAbout" ToolTip="About KillerBench"/><TextBlock Text="&#x00A9; 2026 Steve the Killer" FontFamily="Consolas" FontSize="10.5" Foreground="{DynamicResource TextFooter}"/></StackPanel>
+      <Canvas Grid.ColumnSpan="2" Width="13" Height="13" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,4,4" IsHitTestVisible="False">
+        <Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="9" Canvas.Top="1"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="5" Canvas.Top="5"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="9" Canvas.Top="5"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="1" Canvas.Top="9"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="5" Canvas.Top="9"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="9" Canvas.Top="9"/>
+      </Canvas>
+    </Grid>
+    <Grid x:Name="AboutOverlay" Grid.RowSpan="3" Panel.ZIndex="9000" Background="#88000000" Visibility="Collapsed" MouseLeftButtonDown="OnAboutBackdrop">
+      <Grid HorizontalAlignment="Center" VerticalAlignment="Center" MouseLeftButtonDown="OnAboutCard">
+        <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="{DynamicResource PanelCornerRadius}" IsHitTestVisible="False">
+          <Border.Effect><DropShadowEffect Color="Black" BlurRadius="26" ShadowDepth="5" Direction="270" Opacity="{DynamicResource FlyoutShadowOpacity}"/></Border.Effect>
+        </Border>
+        <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}">
+          <Grid>
+            <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+            <Button Content="&#xE8BB;" Style="{StaticResource ChromeCloseButton}" Click="OnAboutClose" HorizontalAlignment="Right" VerticalAlignment="Top" Panel.ZIndex="2" Width="{DynamicResource AboutCloseWidth}" Height="{DynamicResource AboutCloseHeight}" Margin="{DynamicResource AboutCloseMargin}"/>
+            <StackPanel Margin="18,10,18,18">
+              <Grid Margin="0,4,0,14" Width="{Binding ActualWidth, ElementName=AboutInfoGrid}">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <Image Source="Assets/AppIcon.png" Width="58" Height="58" Margin="0,0,15,0" RenderOptions.BitmapScalingMode="HighQuality">
+                  <Image.Effect><DropShadowEffect Color="Black" BlurRadius="12" ShadowDepth="3" Direction="270" Opacity="{DynamicResource IconShadowOpacity}"/></Image.Effect>
+                </Image>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                  <TextBlock FontFamily="{DynamicResource WordmarkFont}" Cursor="Hand" MouseLeftButtonUp="OnAboutWebsite" ToolTip="killerbench.net"><Run Text="Killer" FontSize="22" Foreground="{DynamicResource TextBrush}"/><Run Text="Bench" FontSize="28.6" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/></TextBlock>
+                  <TextBlock FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap">A deterministic Windows diagnostic and repair workbench. A <Hyperlink NavigateUri="https://killertools.net" RequestNavigate="OnAboutLink" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None">GPLv3 Killer Tools</Hyperlink> utility.</TextBlock>
+                </StackPanel>
+              </Grid>
+              <Grid x:Name="AboutInfoGrid">
+                <Border Background="{DynamicResource PaneBrush}" CornerRadius="{DynamicResource ControlCornerRadius}" IsHitTestVisible="False">
+                  <Border.Effect><DropShadowEffect Color="Black" BlurRadius="14" ShadowDepth="2" Direction="270" Opacity="{DynamicResource FlyoutShadowOpacity}"/></Border.Effect>
+                </Border>
+                <Border IsHitTestVisible="False" CornerRadius="{DynamicResource ControlCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+                <Border Background="Transparent" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="14,12,14,4">
+                  <StackPanel>
+                    <StackPanel Margin="0,0,0,10"><TextBlock Text="VERSION" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><Grid Margin="0,1,0,0"><TextBlock x:Name="AboutVersionBlock" Foreground="{DynamicResource PrimaryBrush}" FontFamily="Consolas" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Bottom" Cursor="Hand" MouseLeftButtonUp="OnAboutRelease"/><TextBlock x:Name="AboutReleaseDateBlock" Foreground="{DynamicResource MutedTextBrush}" FontFamily="Consolas" FontSize="11" FontStyle="Italic" HorizontalAlignment="Right" VerticalAlignment="Bottom"/></Grid></StackPanel>
+                    <StackPanel Margin="0,0,0,10"><TextBlock Text="PUBLISHER" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><TextBlock x:Name="AboutPublisherBlock" FontSize="12" TextWrapping="Wrap"/><TextBlock x:Name="AboutAkaBlock" Visibility="Collapsed" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,3,0,0">AKA <Hyperlink NavigateUri="https://thekiller.net" RequestNavigate="OnAboutLink" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None"><Run x:Name="AboutAkaRun"/></Hyperlink></TextBlock></StackPanel>
+                    <StackPanel Margin="0,0,0,10"><TextBlock Text="THUMBPRINT" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><TextBlock x:Name="AboutThumbprintBlock" FontFamily="Consolas" FontSize="11" TextWrapping="Wrap"/></StackPanel>
+                    <StackPanel Margin="0,0,0,10"><TextBlock Text="EXE SHA-256" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><TextBlock x:Name="AboutSha256Block" FontFamily="Consolas" FontSize="11" TextWrapping="NoWrap"/></StackPanel>
+                    <StackPanel Margin="0,0,0,10"><TextBlock Text="KNOWLEDGE DATABASES" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><TextBlock x:Name="AboutDatabaseInfo" FontFamily="Consolas" FontSize="11" TextWrapping="Wrap"/><Button x:Name="AboutDatabaseUpdate" Content="Update databases" Click="OnAboutDatabaseUpdate" HorizontalAlignment="Left" Margin="0,7,0,0"/><TextBlock x:Name="AboutDatabaseStatus" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,5,0,0"/></StackPanel>
+                  </StackPanel>
+                </Border>
+              </Grid>
+            </StackPanel>
+          </Grid>
+        </Border>
+      </Grid>
+    </Grid>
+    <Border x:Name="ShortcutsOverlay" Grid.RowSpan="3" Panel.ZIndex="9000" Background="#B0000000" Visibility="Collapsed">
+      <Border Style="{StaticResource Panel}" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="330">
+<Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+<Border Padding="24">
+        <StackPanel><TextBlock Text="{DynamicResource Str_Text_Keyboard_shortcuts}" FontSize="20" Margin="0,0,0,16"/><TextBlock x:Name="ShortcutsText" FontFamily="Consolas" LineHeight="26"/><Button Content="{DynamicResource Str_Content_Close}" Click="OnShortcuts" Margin="0,16,0,0"/></StackPanel>
+      </Border></Grid>
+</Border>
+    </Border>
+  </Grid>
+  </Border>
+</Window>

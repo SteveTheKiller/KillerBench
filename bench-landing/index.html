@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="KillerBench is a Windows diagnostic workbench in development. Inspect saved logs, follow evidence, and investigate without AI.">
+<meta property="og:title" content="KillerBench | Diagnostic Workbench">
+<meta property="og:description" content="Local evidence. Clear findings. A diagnostic workbench in development.">
+<meta property="og:image" content="https://killerbench.net/og-image.png">
+<meta property="og:url" content="https://killerbench.net/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://killerbench.net/">
+<title>KillerBench | Diagnostic Workbench</title>
+<link rel="stylesheet" href="family.css?v=2">
+<link rel="stylesheet" href="bench.css?v=2">
+<link rel="stylesheet" href="feature-carousel.css?v=2">
+<script defer src="bench.js?v=2"></script>
+<script defer src="feature-carousel.js?v=2"></script>
+</head>
+<body>
+<header class="topbar">
+  <a class="tb-home" href="index.html"><img class="wm-logo tb-wm" src="brand/killerbench-logo-dark-orange.svg" alt="KillerBench"></a>
+  <span class="tb-spacer"></span>
+<nav class="tb-nav"><a href="#workbench">Workbench</a><a href="#features">Features</a><a href="engine/index.html">Engine</a><a href="#about">About</a></nav>
+<div class="tgrp" role="group" aria-label="Theme">
+<button class="swatch sw-dark"     data-theme="dark"     title="Dark"></button>
+<button class="swatch sw-light"    data-theme="light"    title="Light"></button>
+<button class="swatch sw-hc"       data-theme="hc"       title="Black"></button>
+<button class="swatch sw-blood"    data-theme="blood"    title="Blood"></button>
+<button class="swatch sw-greed"    data-theme="greed"    title="Greed"></button>
+<button class="swatch sw-cyanotic" data-theme="cyanotic" title="Cyanotic"></button>
+<button class="swatch sw-ectoplasm" data-theme="ectoplasm" title="Ectoplasm"></button>
+<button class="swatch sw-decay" data-theme="decay" title="Decay"></button>
+<button class="swatch sw-malaise" data-theme="malaise" title="Malaise"></button>
+<button class="swatch sw-sepulchre" data-theme="sepulchre" title="Sepulchre"></button>
+<button class="swatch sw-delirium" data-theme="delirium" title="Delirium"></button>
+<button class="swatch sw-mourning" data-theme="mourning" title="Mourning"></button>
+</div>
+<div class="acc-fly accent-switch" id="accentSwitch">
+<button class="acc-toggle" id="accentToggle" aria-haspopup="true" aria-expanded="false" title="Accent color"></button>
+<div class="acc-pop" id="accentPop" hidden role="group" aria-label="Accent color">
+<span class="acc-pop-label" >accent:</span>
+<button class="acc" data-accent="red"    style="background:#DD504B;color:#DD504B" title="Red"></button>
+<button class="acc" data-accent="orange" style="background:#E8962C;color:#E8962C" title="Orange"></button>
+<button class="acc" data-accent="green"  style="background:#1EA54C;color:#1EA54C" title="Green"></button>
+<button class="acc" data-accent="teal"   style="background:#1FB8A8;color:#1FB8A8" title="Teal"></button>
+<button class="acc" data-accent="blue"   style="background:#50AEE8;color:#50AEE8" title="Blue"></button>
+<button class="acc" data-accent="purple" style="background:#B982E3;color:#B982E3" title="Purple"></button>
+</div>
+</div>
+</header>
+<div class="shell"><main class="content"><div class="content-scroll"><div class="content-inner">
+  <section class="hero">
+    <p class="eyebrow">IN DEVELOPMENT / WINDOWS DIAGNOSTIC WORKBENCH</p>
+    <img class="wm-logo hero-mark" src="brand/killerbench-logo-dark-orange.svg" alt="KillerBench">
+    <h1>Follow the evidence.</h1>
+    <p class="intro">Turn saved Windows logs into an investigation you can follow. Inspect the source, review a finding, and jump to the exact line behind it.</p>
+    <p class="release-note">The first prototype is taking shape. Public downloads are not available yet.</p>
+    <a class="btn" href="#workbench">Explore the workbench</a>
+  </section>
+  <section id="workbench" class="bench-pane">
+    <p class="eyebrow">01 / EVIDENCE DISPLAY</p>
+    <h2>Old-school display. Traceable findings.</h2>
+    <div class="console" role="img" aria-label="Illustrative amber console showing a synthetic servicing finding">
+      <p>KILLERBENCH / SYNTHETIC EXAMPLE</p>
+      <p>01&nbsp; Imported saved CBS text log</p>
+      <p>02&nbsp; Parsed servicing entries</p>
+      <p>03&nbsp; Source files reported missing: 0x800F081F</p>
+      <p>04&nbsp; Evidence retained. Original line linked.</p>
+      <p class="console-note">RECORDED EVENT / NOT A CURRENT HEALTH VERDICT</p>
+    </div>
+    <p class="caption">Illustrative output, not a scan of your computer.</p>
+  </section>
+  <section class="features" id="features"><h2>Inside the workbench</h2><div class="feature-grid">
+    <article class="feature-card"><p class="eyebrow">02 / AVAILABLE IN THE PROTOTYPE</p><h3>From log to finding</h3><p>Saved text-log import, initial CBS and Setup rules, source-line navigation, and JSON reports. The KillerBench.Engine and CLI share the desktop's analysis.</p></article>
+    <article class="feature-card"><p class="eyebrow">03 / LOCAL BY DESIGN</p><h3>No AI required</h3><p>The current prototype analyzes supplied files locally. Findings show their evidence and limitations. No background agent or cloud analysis is required.</p></article>
+    <article class="feature-card"><p class="eyebrow">04 / STILL TO COME</p><h3>A workbench that grows</h3><p>Live collection, broader diagnostic coverage, and selected repairs are future work. The current prototype does not execute repairs or certify machine health.</p></article>
+  </div></section>
+  <section class="bench-pane" id="about"><h2>Part of the Killer Tools family</h2><p>The familiar textured surfaces, typewriter wordmark, and theme controls, with an amber evidence console built for long troubleshooting sessions.</p><a href="https://killertools.net">Explore Killer Tools</a></section>
+</div></div></main><aside class="sidebar"><div class="sb-empty">KillerBench<br>In development</div><a class="sb-art" href="#workbench"><img src="og-image.png" alt="KillerBench diagnostic workbench artwork"></a><div class="sb-empty">Local evidence.<br>Traceable findings.<br>No AI required.</div></aside></div>
+<footer class="statusbar"><span class="left">In development &middot; Part of <a href="https://killertools.net">killertools.net</a></span><span class="right">&copy; 2026 <b><a href="https://thekiller.net">Steve the Killer</a></b></span></footer>
+</body>
+</html>

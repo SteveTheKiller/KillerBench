@@ -1,0 +1,33 @@
+using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
+
+namespace KillerBench.Engine;
+
+internal static class RecoveryRecordFiles
+{
+    internal static FileStream OpenLocked(string path)
+    {
+        var handle = CreateFileW(path, 0x80010000, 1, IntPtr.Zero, 3, 0x00200000, IntPtr.Zero);
+        if (handle.IsInvalid) { handle.Dispose(); throw new IOException("Recovery evidence could not be locked."); }
+        try { return new FileStream(handle, FileAccess.Read); }
+        catch { handle.Dispose(); throw; }
+    }
+
+    internal static void Archive(FileStream stream, string destination)
+    {
+        byte[] name = System.Text.Encoding.Unicode.GetBytes(Path.GetFullPath(destination));
+        int lengthOffset = IntPtr.Size == 8 ? 16 : 8;
+        int nameOffset = lengthOffset + 4;
+        byte[] info = new byte[nameOffset + name.Length + 2];
+        BitConverter.GetBytes(name.Length).CopyTo(info, lengthOffset);
+        name.CopyTo(info, nameOffset);
+        if (!SetFileInformationByHandle(stream.SafeFileHandle, 3, info, (uint)info.Length))
+            throw new IOException("Verified recovery evidence could not be archived.", Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error()));
+    }
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern SafeFileHandle CreateFileW(string name, uint access, uint share, IntPtr security, uint creation, uint flags, IntPtr template);
+    [DllImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool SetFileInformationByHandle(SafeFileHandle handle, int kind, byte[] info, uint size);
+}

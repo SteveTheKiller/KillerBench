@@ -1,0 +1,8 @@
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+
+# Private working artwork, including source files and exports.
+/brand/

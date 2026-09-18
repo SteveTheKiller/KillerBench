@@ -1,0 +1,54 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="FamilyFlyouts.xaml"/></ResourceDictionary.MergedDictionaries>
+  <SolidColorBrush x:Key="ConsolePhosphorBrush" Color="#FFCA80"/>
+  <SolidColorBrush x:Key="ConsoleSurfaceBrush" Color="#100D09"/>
+  <Style x:Key="ArcadeButton" TargetType="Button">
+    <Setter Property="Width" Value="42"/><Setter Property="Height" Value="42"/><Setter Property="Margin" Value="0,0,10,0"/><Setter Property="Cursor" Value="Hand"/>
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
+      <Grid>
+        <Ellipse Fill="#171717" Stroke="#080808" StrokeThickness="2"/>
+        <Ellipse Margin="4,4,4,2" Fill="#080808"/>
+        <Grid x:Name="Cap" Margin="5,3,5,7">
+          <Ellipse Fill="{TemplateBinding Background}"/>
+          <Ellipse><Ellipse.Fill><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#80FFFFFF" Offset="0"/><GradientStop Color="#00FFFFFF" Offset="0.45"/><GradientStop Color="#60000000" Offset="1"/></LinearGradientBrush></Ellipse.Fill></Ellipse>
+          <Ellipse Margin="3" Stroke="#50FFFFFF" StrokeThickness="1"/>
+        </Grid>
+        <Ellipse x:Name="FocusRing" Stroke="{DynamicResource TextBrush}" StrokeThickness="1" Margin="1" Visibility="Collapsed"/>
+      </Grid>
+      <ControlTemplate.Triggers>
+        <Trigger Property="IsPressed" Value="True"><Setter TargetName="Cap" Property="Margin" Value="5,6,5,4"/></Trigger>
+        <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="FocusRing" Property="Visibility" Value="Visible"/></Trigger>
+      </ControlTemplate.Triggers>
+    </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="Button" BasedOn="{StaticResource SurfaceButton}"><Setter Property="Padding" Value="8,3"/><Setter Property="MinHeight" Value="26"/></Style>
+  <Style TargetType="TextBox" BasedOn="{StaticResource DarkTextBox}"><Setter Property="Padding" Value="5,3"/><Setter Property="MinHeight" Value="26"/></Style>
+  <Style x:Key="Panel" TargetType="Border">
+    <Setter Property="Background" Value="{DynamicResource PaneBrush}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource PaneBorderBrush}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="CornerRadius" Value="{DynamicResource PanelCornerRadius}"/>
+    <Setter Property="Effect" Value="{DynamicResource PaneShadowEffect}"/>
+  </Style>
+  <Style x:Key="SectionLabel" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="Consolas"/>
+    <Setter Property="FontSize" Value="11"/>
+    <Setter Property="Foreground" Value="{DynamicResource DimTextBrush}"/>
+    <Setter Property="Margin" Value="0,0,0,10"/>
+  </Style>
+  <Style x:Key="SourceItem" TargetType="ListBoxItem">
+    <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+    <Setter Property="Padding" Value="10,9"/>
+    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
+      <Border x:Name="Face" Background="Transparent" Padding="{TemplateBinding Padding}">
+        <ContentPresenter/>
+      </Border>
+      <ControlTemplate.Triggers>
+        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Face" Property="Background" Value="{DynamicResource RowHoverBrush}"/></Trigger>
+        <Trigger Property="IsSelected" Value="True"><Setter TargetName="Face" Property="Background" Value="{DynamicResource SelectionBg}"/><Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/></Trigger>
+        <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="Face" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/><Setter TargetName="Face" Property="BorderThickness" Value="1"/></Trigger>
+      </ControlTemplate.Triggers>
+    </ControlTemplate></Setter.Value></Setter>
+  </Style>
+</ResourceDictionary>

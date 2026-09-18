@@ -1,0 +1,37 @@
+.engine-shell{grid-template-columns:260px minmax(0,1fr)}
+.engine-sidebar{display:flex;flex-direction:column;min-width:0;overflow:auto}
+.engine-sidebar .sb-tabs{flex:0 0 auto}
+.docs-nav{padding:8px 7px 18px}
+.docs-nav-group{margin-bottom:14px}
+.docs-nav-label{display:block;padding:6px 10px 5px;color:var(--muted);font:10px Consolas,monospace;text-transform:uppercase;letter-spacing:.8px}
+.docs-nav a{display:block;padding:8px 10px;border-left:2px solid transparent;border-radius:0 4px 4px 0;color:var(--text2);font-size:13px}
+.docs-nav a:hover{background:color-mix(in srgb,var(--accent) 9%,transparent);color:var(--text)}
+.docs-nav a.on{border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
+.page-outline{padding:4px 0 3px 15px}
+.page-outline a{padding:4px 8px;border-left:1px solid var(--pane-border);border-radius:0;color:var(--muted);font-size:11px}
+.engine-doc-wrap{max-width:980px;margin:0 auto;padding:24px 34px 48px}
+.engine-doc-hero{display:flex;align-items:center;gap:18px;margin:0 0 18px;padding:18px 20px;background:var(--modal) url('../grain.png') repeat;border:1px solid var(--pane-border);border-top:2px solid var(--tab-edge);border-radius:6px;box-shadow:0 10px 26px rgba(0,0,0,.24)}
+.engine-doc-hero .wm-logo{width:min(360px,80vw);height:auto}
+.engine-doc{background:var(--modal) url('../grain.png') repeat;border:1px solid var(--pane-border);border-top:2px solid var(--tab-edge);border-radius:6px;padding:28px 34px;box-shadow:0 12px 30px rgba(0,0,0,.28);line-height:1.65;color:var(--text2)}
+.engine-doc h1,.engine-doc h2,.engine-doc h3{font-family:KillerScan,'Courier New',monospace;font-weight:normal;color:var(--accent);line-height:1.25}
+.engine-doc h1{margin:0 0 14px;font-size:29px}
+.engine-doc h2{margin:32px 0 10px;padding-top:5px;font-size:20px;border-top:1px solid var(--pane-border)}
+.engine-doc h3{margin:24px 0 8px;font-size:16px}
+.engine-doc p{margin:0 0 15px}
+.engine-doc .doc-lede{font-size:16px;color:var(--text)}
+.engine-doc ul,.engine-doc ol{margin:8px 0 18px;padding-left:25px}
+.engine-doc li{margin:5px 0}
+.engine-doc code{font-family:Consolas,monospace;color:var(--accent);background:var(--panel);border:1px solid var(--pane-border);border-radius:4px;padding:1px 5px}
+.engine-doc pre{margin:14px 0 20px;padding:16px 18px;overflow:auto;background:#100d09;color:#ffca80;border:1px solid #514331;border-radius:6px;box-shadow:inset 0 0 20px #0007;font:13px/1.6 Consolas,monospace}
+.engine-doc pre code{padding:0;border:0;background:transparent;color:inherit}
+.engine-doc table{width:100%;margin:14px 0 22px;border-collapse:collapse;font-size:13px}
+.engine-doc th,.engine-doc td{padding:9px 11px;border:1px solid var(--pane-border);text-align:left;vertical-align:top}
+.engine-doc th{background:color-mix(in srgb,var(--accent) 12%,var(--panel));color:var(--text)}
+.engine-doc tbody tr:nth-child(even){background:color-mix(in srgb,var(--panel) 72%,transparent)}
+.doc-pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.doc-pager a{display:flex;flex-direction:column;gap:3px;padding:12px 14px;background:var(--modal) url('../grain.png') repeat;border:1px solid var(--pane-border);border-radius:6px}
+.doc-pager a:last-child{text-align:right;align-items:flex-end}
+.doc-pager small{color:var(--muted);font:10px Consolas,monospace;text-transform:uppercase;letter-spacing:.8px}
+.doc-error{padding:18px;border:1px solid #a63f3f;border-radius:6px;background:rgba(166,63,63,.12)}
+@media(max-width:900px){.engine-shell{grid-template-columns:1fr}.engine-sidebar{display:block;position:static;max-height:none}.docs-nav{display:flex;gap:5px;overflow-x:auto;padding:8px}.docs-nav-group{display:contents}.docs-nav-label,.page-outline{display:none}.docs-nav a{white-space:nowrap;border-left:0;border-radius:4px;padding:7px 10px}.engine-doc-wrap{padding:18px 16px 38px}}
+@media(max-width:560px){.engine-doc{padding:22px 18px}.engine-doc h1{font-size:24px}.engine-doc table{display:block;overflow-x:auto}.doc-pager{grid-template-columns:1fr}.doc-pager a:last-child{text-align:left;align-items:flex-start}}

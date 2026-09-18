@@ -1,0 +1,51 @@
+using System.Xml;
+
+namespace KillerBench.Engine;
+
+public static class WmiActivityEvents
+{
+    private const string Channel = "Microsoft-Windows-WMI-Activity/Operational";
+    private const string Provider = "Microsoft-Windows-WMI-Activity";
+
+    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default)
+    {
+        token.ThrowIfCancellationRequested();
+        if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("WMI Activity event collection requires Windows.");
+        var step = new RepairStep("wevtutil.exe", ["qe", Channel,
+            "/q:*[System[TimeCreated[timediff(@SystemTime) <= 604800000]]]",
+            "/rd:true", "/c:201", "/f:xml", "/e:Events", "/uni:false"], true);
+        return Interpret(await BoundedTool.RunAsync(step, TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false), token);
+    }
+
+    public static WorkflowCheck Interpret(ToolResult evidence, CancellationToken token = default)
+    {
+        ArgumentNullException.ThrowIfNull(evidence);
+        token.ThrowIfCancellationRequested();
+        const string name = "Recent WMI activity events";
+        if (evidence.ExitCode != 0 || evidence.TimedOut || evidence.Truncated || !string.IsNullOrWhiteSpace(evidence.Error))
+            return new(name, CheckState.Unknown, "WMI activity history is unavailable or incomplete. No repository, provider, client or repair state was inferred.", Evidence: evidence);
+        try
+        {
+            var retained = EventEvidence.FromXml(Channel, evidence.Output).Evidence
+                ?? throw new InvalidDataException("Missing WMI activity evidence.");
+            var report = EventEvidence.Analyze(retained, token);
+            bool duplicate = report.Timeline.Select(item => (item.Timestamp, item.EventId, item.Message)).Distinct().Count() != report.Timeline.Count;
+            bool invalid = report.Partial || report.ParsedLines != retained.Lines.Length || duplicate ||
+                report.Timeline.Any(item => item.Component != Provider);
+            var problems = report.Timeline.Where(item => item.Component == Provider && item.Level is "1" or "2" or "3").ToArray();
+            var patterns = problems.GroupBy(item => (item.EventId, item.Level))
+                .OrderByDescending(group => group.Count()).ThenBy(group => group.Key.EventId).ThenBy(group => group.Key.Level).ToArray();
+            string recordWord = report.ParsedLines == 1 ? "record" : "records";
+            string detail = $"Last 7 days, newest first: {report.ParsedLines} {recordWord} retained; {problems.Length} warning, error or critical records. Counts are records, not unique clients, queries or failures.";
+            if (patterns.Length > 0) detail += "\n" + string.Join("\n", patterns.Take(8).Select(group => $"Event {group.Key.EventId}, level {group.Key.Level}: {group.Count()} records."));
+            if (patterns.Length > 8) detail += $"\n{patterns.Length - 8} additional event/level patterns remain in raw evidence.";
+            if (problems.Length > 0) detail += "\n" + string.Join("\n", problems.Take(8).Select(item => item.Timestamp + " | " + item.Message));
+            detail += "\nRaw event payload can contain account names, process IDs, namespaces, queries and provider details. Historical records do not establish current repository, namespace, provider or client state. Correlate exact records with current provider checks and the originating application. No repository salvage, service start, provider registration or client change is selected from these records.";
+            if (retained.Truncated) detail += "\nThe 200-event limit omitted older records; counts cover retained evidence only.";
+            else if (invalid) detail += "\nSome records were malformed, duplicated or unexpected; coverage is incomplete.";
+            return new(name, invalid ? CheckState.Unknown : problems.Length > 0 ? CheckState.Attention : CheckState.Information, detail, Evidence: evidence);
+        }
+        catch (Exception error) when (error is XmlException or InvalidDataException)
+        { return new(name, CheckState.Unknown, "WMI activity event XML could not be interpreted. Current repository, provider and client state remain unverified.", Evidence: evidence); }
+    }
+}

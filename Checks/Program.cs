@@ -1,0 +1,1273 @@
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using KillerBench.Engine;
+
+internal static class Program
+{
+    [STAThread]
+    private static int Main(string[] args)
+    {
+        try
+        {
+            if (args.Length == 0) return RunChecks(includeUi: false);
+            if (args is ["--only", "workflow-report-export"])
+            {
+                WorkflowReportExportChecks.Run();
+                return 0;
+            }
+            if (args is ["--only", "workflow-options"])
+            {
+                WorkflowOptionCatalogChecks.Run();
+                return 0;
+            }
+            if (args is ["--only", "servicing-monitor"])
+            {
+                ServicingActivityMonitorChecks.RunAsync().GetAwaiter().GetResult();
+                return 0;
+            }
+            if (args is ["--only", "recipes"])
+            {
+                string scratch = Path.Combine(Path.GetTempPath(), "KillerBench-checks-" + Guid.NewGuid().ToString("N"));
+                Directory.CreateDirectory(scratch);
+                try { RecipeChecks.RunAsync(scratch).GetAwaiter().GetResult(); }
+                finally { Directory.Delete(scratch, true); }
+                return 0;
+            }
+            if (args is ["--only", "native-validation"])
+            {
+                NativeValidationCatalogChecks.Run();
+                NativeValidationEvidenceChecks.Run();
+                NativeValidationReportChecks.Run();
+                return 0;
+            }
+            if (args is ["--only", "ui-smoke"])
+                return RunUiSmoke();
+            if (args is ["--only", "workflow"])
+            {
+                string scratch = Path.Combine(Path.GetTempPath(), "KillerBench-checks-" + Guid.NewGuid().ToString("N"));
+                Directory.CreateDirectory(scratch);
+                try { WorkflowChecks.RunAsync(scratch).GetAwaiter().GetResult(); }
+                finally { Directory.Delete(scratch, true); }
+                return 0;
+            }
+            throw new ArgumentException("Use no arguments for all non-UI checks, or --only workflow-report-export, workflow-options, servicing-monitor, recipes, native-validation or workflow. UI smoke tests require an isolated desktop.");
+        }
+        catch (Exception error) { Console.Error.WriteLine(error); return 1; }
+    }
+
+    private static int RunUiSmoke()
+    {
+        IsolatedDesktop.Verify();
+        var application = new Application();
+        SynchronizationContext.SetSynchronizationContext(new System.Windows.Threading.DispatcherSynchronizationContext(application.Dispatcher));
+        application.Resources.MergedDictionaries.Add(new ResourceDictionary
+        { Source = new Uri("/KillerBench;component/Themes/Black.xaml", UriKind.Relative) });
+        application.Resources.MergedDictionaries.Add(new ResourceDictionary
+        { Source = new Uri("/KillerBench;component/Controls/Controls.xaml", UriKind.Relative) });
+        application.Resources.MergedDictionaries.Add(new ResourceDictionary
+        { Source = new Uri("/KillerBench;component/Themes/Instrument.xaml", UriKind.Relative) });
+        application.Resources.MergedDictionaries.Add(new ResourceDictionary
+        { Source = new Uri("/KillerBench;component/Strings/en-US.xaml", UriKind.Relative) });
+        KillerBench.Services.ThemeManager.Initialize();
+        var window = new KillerBench.MainWindow
+        {
+            WindowStartupLocation = WindowStartupLocation.Manual,
+            ShowActivated = false,
+            ShowInTaskbar = false,
+            Left = SystemParameters.VirtualScreenLeft - 2000,
+            Top = SystemParameters.VirtualScreenTop
+        };
+        try
+        {
+            window.Show();
+            window.UpdateLayout();
+            Require(window.Width == 1480 && window.Height == 800 && window.MinWidth == 1400 && window.MinHeight == 650 &&
+                window.SizeToContent == SizeToContent.Manual, "Workbench window keeps its fixed wide geometry");
+            Require(window.FindName("ZoomViewport") is FrameworkElement { ClipToBounds: true },
+                "Zoom content remains clipped to the workbench window");
+            Require(window.FindName("ServicingMonitorSamples") is Slider { Minimum: 1, Maximum: 120, Value: 3 },
+                "PEEK desktop controls expose the shared one through 120 snapshot range");
+            Console.WriteLine("PASS: WPF workbench geometry, zoom containment and PEEK monitor bounds.");
+            return 0;
+        }
+        finally
+        {
+            window.Close();
+            application.Shutdown();
+        }
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+    private static int RunChecks(bool includeUi)
+    {
+        string scratch = Path.Combine(Path.GetTempPath(), "KillerBench-checks-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(scratch);
+        try
+        {
+            CheckEvidence(scratch).GetAwaiter().GetResult();
+            DemoWorkflowChecks.Run();
+            InvestigationChecks.Run();
+            ServicingLogChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            ServicingActivityMonitorChecks.RunAsync().GetAwaiter().GetResult();
+            ReliabilityHistoryChecks.Run();
+            ReliabilityOperationalCorrelationChecks.Run();
+            HardwareErrorEventChecks.Run();
+            SetupApiDriverInstallChecks.Run();
+            DriverHistoryOperationalCorrelationChecks.Run();
+            SystemRestoreChecks.Run();
+            SystemRestoreOperationalCorrelationChecks.Run();
+            SystemRestoreCreationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            WindowsRecoveryChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            WindowsRecoveryPartitionChecks.Run();
+            WindowsRecoveryReconciliationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            WmiRecoveryGateChecks.RunAsync().GetAwaiter().GetResult();
+            TimeRecoveryGateChecks.RunAsync().GetAwaiter().GetResult();
+            CertificateChecks.Run();
+            TaskRuntimeChecks.Run();
+            OptimizeDrivesDiagnosticChecks.Run();
+            VolumeOptimizationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            SearchEventChecks.Run();
+            AppDeploymentEventChecks.Run();
+            AccountBrokerEventChecks.Run();
+            WindowsUpdateEventChecks.Run();
+            WindowsUpdateActivityChecks.Run();
+            UserProfileEventChecks.Run();
+            DeviceSetupEventChecks.Run();
+            KernelPnpEventChecks.Run();
+            WmiActivityEventChecks.Run();
+            WmiHistoricalCorrelationChecks.Run();
+            DefenderEventChecks.Run();
+            DefenderThreatSummaryChecks.Run();
+            DefenderScanHistoryChecks.Run();
+            DefenderScanExecutionChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            DefenderProtectionChecks.Run();
+            UacPolicyChecks.Run();
+            AppLockerPolicyChecks.Run();
+            RemoteDesktopDiagnosticChecks.Run();
+            RemoteDesktopEventChecks.Run();
+            DiagnosticPolicyEventChecks.Run();
+            WinRmEventChecks.Run();
+            WinRmListenerChecks.Run();
+            WirelessEventChecks.Run();
+            WiredAuthenticationEventChecks.Run();
+            DhcpClientEventChecks.RunAsync().GetAwaiter().GetResult();
+            DhcpOperationalCorrelationChecks.Run();
+            DnsClientEventChecks.RunAsync().GetAwaiter().GetResult();
+            TcpSettingChecks.RunAsync().GetAwaiter().GetResult();
+            NetworkOffloadChecks.RunAsync().GetAwaiter().GetResult();
+            WinsockCatalogChecks.RunAsync().GetAwaiter().GetResult();
+            WinsockNamespaceChecks.RunAsync().GetAwaiter().GetResult();
+            WinsockProviderFileChecks.RunAsync().GetAwaiter().GetResult();
+            WinsockReadinessCorrelationChecks.Run();
+            StoreInstallEventChecks.Run();
+            SearchCatalogChecks.Run();
+            SearchOperationalCorrelationChecks.Run();
+            SearchIndexRebuildChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            FileSignatureChecks.Run();
+            TaskDefinitionChecks.Run();
+            TaskPlanCommandChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            WindowsTaskRegistrationHostChecks.Run();
+            TaskRegistrationRecoveryChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            PrintJobChecks.RunAsync().GetAwaiter().GetResult();
+            PrintJobCancellationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            DefaultPrinterChecks.Run();
+            DefaultPrinterSelectionChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            PrinterPortChecks.RunAsync().GetAwaiter().GetResult();
+            PrintQueueEventCorrelationChecks.Run();
+            PrintingEnvironmentCorrelationChecks.Run();
+            PrintingOperationalCorrelationChecks.Run();
+            PrintServiceOperationalEventChecks.RunAsync().GetAwaiter().GetResult();
+            PrintPolicyChecks.Run();
+            PrintRenderingPolicyChecks.Run();
+            PrinterEndpointChecks.Run();
+            PrinterEndpointReachabilityChecks.RunAsync().GetAwaiter().GetResult();
+            PrinterDriverFileChecks.RunAsync().GetAwaiter().GetResult();
+            PrintExtensionChecks.Run();
+            PrintExtensionFileChecks.RunAsync().GetAwaiter().GetResult();
+            PrintSpoolerFailureEventChecks.RunAsync().GetAwaiter().GetResult();
+            WindowsInstallerFailureEventChecks.RunAsync().GetAwaiter().GetResult();
+            WindowsUpdateServiceFailureEventChecks.RunAsync().GetAwaiter().GetResult();
+            DeliveryOptimizationServiceFailureEventChecks.RunAsync().GetAwaiter().GetResult();
+            ServicingServiceFailureEventChecks.RunAsync().GetAwaiter().GetResult();
+            ServicingServiceStateChecks.RunAsync().GetAwaiter().GetResult();
+            ServicingChainCorrelationChecks.Run();
+            WindowsUpdateOperationalCorrelationChecks.Run();
+            InstallerEngineFileChecks.RunAsync().GetAwaiter().GetResult();
+            WindowsUpdateEngineFileChecks.RunAsync().GetAwaiter().GetResult();
+            InstallerServiceRegistrationChecks.Run();
+            PrintSpoolDirectoryChecks.Run();
+            PrintSpoolDirectoryReconciliationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            DeviceProblemCodeChecks.Run();
+            WorkflowJournalChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            CrashDumpChecks.Run(scratch);
+            MinidumpAnalyzerChecks.Run(scratch);
+            CrashIncidentCorrelationChecks.Run();
+            AppPackageChecks.Run();
+            ProvisionedPackageChecks.Run();
+            InstalledApplicationChecks.Run();
+            MacePlanningChecks.Run();
+            MacePackageRemovalChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            OrcaPlanningChecks.Run();
+            OrcaCacheResetChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            PreviousWindowsInstallationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            DepotPlanningChecks.Run();
+            BeamPlanningChecks.Run(scratch);
+            DebloatPlanningChecks.Run();
+            DebloatPowerPlanExecutionChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            DebloatPowerTimerExecutionChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            DebloatHibernationExecutionChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            DebloatPowerReconciliationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            ApplicationInventoryFileChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            BackupServiceChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            FirewallServiceChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            WirelessChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            FirewallProfileChecks.Run();
+            FirewallLoggingChecks.Run();
+            FirewallRuleSummaryChecks.Run();
+            FirewallEventChecks.RunAsync().GetAwaiter().GetResult();
+            FirewallServiceFailureEventChecks.RunAsync().GetAwaiter().GetResult();
+            NetworkServiceFailureEventChecks.RunAsync().GetAwaiter().GetResult();
+            StorageServiceFailureEventChecks.RunAsync().GetAwaiter().GetResult();
+            BackupServiceFailureEventChecks.RunAsync().GetAwaiter().GetResult();
+            BackupOperationalCorrelationChecks.Run();
+            SystemStabilityOperationalCorrelationChecks.Run();
+            SecurityOperationalCorrelationChecks.Run();
+            ApplicationDeploymentOperationalCorrelationChecks.Run();
+            ApplicationStabilityCorrelationChecks.Run();
+            ScheduledTaskOperationalCorrelationChecks.Run();
+            AppPackageOperationalCorrelationChecks.Run();
+            DeviceOperationalCorrelationChecks.Run();
+            InstalledApplicationOperationalCorrelationChecks.Run();
+            CertificateOperationalCorrelationChecks.Run();
+            WindowsActivationOperationalCorrelationChecks.Run();
+            StorageSpacesOperationalCorrelationChecks.Run();
+            StartupPerformanceOperationalCorrelationChecks.Run();
+            HardwareOperationalCorrelationChecks.Run();
+            FeatureServiceFailureEventChecks.RunAsync().GetAwaiter().GetResult();
+            PlatformServiceFailureEventChecks.RunAsync().GetAwaiter().GetResult();
+            InfrastructureServiceFailureEventChecks.RunAsync().GetAwaiter().GetResult();
+            FirewallProfileEnableChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            NetworkProfileChecks.Run();
+            NcsiPolicyChecks.RunAsync().GetAwaiter().GetResult();
+            NetworkFirewallCorrelationChecks.Run();
+            SmbShareChecks.Run();
+            SmbServerConfigurationChecks.Run();
+            SmbClientConfigurationChecks.Run();
+            FileSharingOperationalCorrelationChecks.Run();
+            SmbConnectionChecks.Run();
+            FontRegistrationChecks.Run();
+            BackupEventChecks.Run();
+            VssWriterChecks.Run();
+            VssProviderChecks.RunAsync().GetAwaiter().GetResult();
+            ShadowCopyChecks.RunAsync().GetAwaiter().GetResult();
+            WindowsBackupSummaryChecks.RunAsync().GetAwaiter().GetResult();
+            FileHistoryEventChecks.RunAsync().GetAwaiter().GetResult();
+            FileHistoryStatusChecks.RunAsync().GetAwaiter().GetResult();
+            BitsChecks.Run();
+            BitsOperationalCorrelationChecks.Run();
+            WindowsUpdateServiceOperationalCorrelationChecks.Run();
+            CryptographicServiceOperationalCorrelationChecks.Run();
+            ModulesInstallerOperationalCorrelationChecks.Run();
+            WindowsUpdateMedicOperationalCorrelationChecks.Run();
+            UpdateOrchestratorOperationalCorrelationChecks.Run();
+            DiagnosticPolicyOperationalCorrelationChecks.Run();
+            WindowsErrorReportingOperationalCorrelationChecks.Run();
+            EventCollectorOperationalCorrelationChecks.Run();
+            RemoteAccessOperationalCorrelationChecks.Run();
+            RemoteDesktopOperationalCorrelationChecks.Run();
+            WinRmOperationalCorrelationChecks.Run();
+            SecurityCenterOperationalCorrelationChecks.Run();
+            NetworkConnectionsOperationalCorrelationChecks.Run();
+            FocusedNetworkManagementCorrelationChecks.Run();
+            NetworkSetupOperationalCorrelationChecks.Run();
+            FocusedStorageServiceOperationalCorrelationChecks.Run();
+            BitsObservationChecks.RunAsync().GetAwaiter().GetResult();
+            BitsRetryChecks.RunAsync().GetAwaiter().GetResult();
+            WindowsBitsRetryChecks.RunAsync().GetAwaiter().GetResult();
+            BitsRetryJournalChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            BitsRetryReconciliationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            ActivityExportChecks.Run();
+            WorkflowReportExportChecks.Run();
+            ServiceInventoryChecks.Run();
+            ServiceBinaryChecks.Run();
+            ServicePathQuotingChecks.Run();
+            ServiceLogonChecks.Run();
+            ServiceStartupConfigurationChecks.Run();
+            ServiceDependencyConfigurationChecks.Run();
+            ServiceDllChecks.Run();
+            ServiceTransitionChecks.Run();
+            ServiceRecoveryPolicyChecks.Run();
+            ServiceTriggerChecks.RunAsync().GetAwaiter().GetResult();
+            ServiceEventChecks.Run();
+            ServiceEventCorrelationChecks.Run();
+            ServiceOperationalCorrelationChecks.Run();
+            FocusedServiceOperationalCorrelationChecks.Run(scratch);
+            PeripheralOperationalCorrelationChecks.Run(scratch);
+            OperationalCorrelationExpansionChecks.Run();
+            SystemFilesOperationalCorrelationChecks.Run(scratch);
+            FocusedWindowsUpdateOperationalCorrelationChecks.Run(scratch);
+            FocusedDefenderOperationalCorrelationChecks.Run();
+            FocusedBackupOperationalCorrelationChecks.Run();
+            DiagnosticReadinessSummaryChecks.Run();
+            EventChannelChecks.Run();
+            EventChannelEnableChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            EventLogCapacityChecks.RunAsync().GetAwaiter().GetResult();
+            EventLogOperationalCorrelationChecks.Run();
+            TimeOperationalCorrelationChecks.Run();
+            EventCollectorSubscriptionChecks.Run();
+            VpnProfileChecks.Run();
+            SecurityProductChecks.Run();
+            EventArchiveChecks.Run();
+            EventXmlImportChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            EvidenceBatchChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            ServiceDependencyChecks.Run();
+            ServiceStartPrerequisiteChecks.Run();
+            ProxyChecks.Run();
+            DnsServerChecks.Run();
+            DnsClientConfigurationChecks.Run();
+            DnsNrptPolicyChecks.RunAsync().GetAwaiter().GetResult();
+            NetworkPathCorrelationChecks.Run();
+            DnsOperationalCorrelationChecks.Run();
+            GatewayReachabilityChecks.RunAsync().GetAwaiter().GetResult();
+            NetworkConnectivityCorrelationChecks.Run();
+            NetworkOperationalCorrelationChecks.Run();
+            IpAddressChecks.Run();
+            InstallerSecurityPolicyChecks.Run();
+            InstallerLoggingChecks.Run();
+            WindowsCapabilityChecks.RunAsync().GetAwaiter().GetResult();
+            MsiCacheChecks.Run();
+            MsiSourceChecks.Run();
+            ServiceObservationChecks.RunAsync().GetAwaiter().GetResult();
+            DeliveryOptimizationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            DeliveryOptimizationActivityChecks.RunAsync().GetAwaiter().GetResult();
+            DeliveryOptimizationPolicyChecks.Run();
+            DeliveryOptimizationOperationalCorrelationChecks.Run();
+            UpdateCacheChecks.RunAsync().GetAwaiter().GetResult();
+            UpdatePolicyChecks.Run();
+            FeatureUpdatePolicyChecks.Run();
+            UpdatePolicySurfaceChecks.Run();
+            UpdateRestartPolicyChecks.Run();
+            ComponentRepairSourceChecks.Run();
+            UpdateServiceChecks.Run();
+            WindowsUpdateScheduledTaskChecks.Run();
+            WindowsUpdateErrorChecks.Run();
+            WindowsSetupErrorChecks.Run();
+            WindowsErrorReferenceChecks.Run();
+            WindowsInstallerErrorChecks.Run();
+            UpdateHistoryChecks.Run();
+            InstalledHotfixChecks.Run();
+            UpdateExecutionContextChecks.Run();
+            UpdateApplicabilityChecks.Run();
+            UpdateFailureFollowupChecks.RunAsync().GetAwaiter().GetResult();
+            UpdateDataStoreResetChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            ServicingPackageChecks.Run();
+            OptionalFeatureChecks.Run();
+            ServicingTransitionCorrelationChecks.Run();
+            ServicingRepairExecutionChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            RestartDiagnosticChecks.Run();
+            PendingFileOperationChecks.Run();
+            ComputerRenameChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            WindowsLicensingChecks.Run();
+            SoftwareProtectionEventChecks.Run();
+            InstallerActivityChecks.Run();
+            InstallerPendingOperationCorrelationChecks.Run();
+            InstallerOutcomeCorrelationChecks.Run();
+            InstallationEnvironmentCorrelationChecks.Run();
+            InstallerOperationalCorrelationChecks.Run();
+            MsiProductChecks.Run();
+            MsiRepairChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            InstallerRegistrationRepairChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            DnsChecks.RunAsync().GetAwaiter().GetResult();
+            DnsCacheRecoveryChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            DnsClientCacheChecks.RunAsync().GetAwaiter().GetResult();
+            TcpChecks.RunAsync().GetAwaiter().GetResult();
+            NetworkTargetDiagnosisChecks.Run();
+            RouteChecks.Run();
+            RoutePriorityChecks.RunAsync().GetAwaiter().GetResult();
+            IpInterfaceConfigurationChecks.RunAsync().GetAwaiter().GetResult();
+            DhcpLeaseDiagnosticChecks.RunAsync().GetAwaiter().GetResult();
+            NeighborCacheChecks.RunAsync().GetAwaiter().GetResult();
+            AdapterBindingChecks.RunAsync().GetAwaiter().GetResult();
+            AdapterStatisticsChecks.RunAsync().GetAwaiter().GetResult();
+            PrinterDriverModelChecks.RunAsync().GetAwaiter().GetResult();
+            ReservedStorageChecks.RunAsync().GetAwaiter().GetResult();
+            StorageSensePolicyChecks.Run();
+            StorageSenseTaskChecks.Run();
+            DiskCleanupTaskChecks.Run();
+            DiskDiagnosticTaskChecks.Run();
+            DiskDiagnosticEventChecks.Run();
+            StorageJobChecks.RunAsync().GetAwaiter().GetResult();
+            PhysicalDiskChecks.Run();
+            PhysicalDiskCorrelationChecks.Run();
+            StorageEnvironmentCorrelationChecks.Run();
+            StorageOperationalCorrelationChecks.Run();
+            HostsFileChecks.Run();
+            StorageDispatchChecks.RunAsync().GetAwaiter().GetResult();
+            PageFileChecks.RunAsync().GetAwaiter().GetResult();
+            FileSystemRepairExecutionChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            KnowledgeChecks.Run();
+            KnowledgeActivationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            KnowledgeUpdateChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            KnowledgeHttpSourceChecks.RunAsync().GetAwaiter().GetResult();
+            string captureFixture = CaptureChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            RepairChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            WorkflowChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            FullSystemScanChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            CommonDiagnosticChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            RecipeChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            WorkflowOptionCatalogChecks.Run();
+            NativeValidationCatalogChecks.Run();
+            NativeValidationEvidenceChecks.Run();
+            NativeValidationReportChecks.Run();
+            ComponentCleanupChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            ComponentCleanupReconciliationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            ServicingRepairReconciliationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            ServiceStartReconciliationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            WmiRepositoryReconciliationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            TimeSynchronizationReconciliationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            TimeConfigurationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            NativeToolChecks.RunAsync().GetAwaiter().GetResult();
+            DhcpChecks.RunAsync().GetAwaiter().GetResult();
+            DhcpLeaseReconciliationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            PrintResumeChecks.RunAsync().GetAwaiter().GetResult();
+            PrintQueueReconciliationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            RecoveryChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            PrinterOfflineChecks.RunAsync().GetAwaiter().GetResult();
+            PrinterOfflineReconciliationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            PrinterConditionChecks.RunAsync().GetAwaiter().GetResult();
+            PrinterQueueAttributeChecks.RunAsync().GetAwaiter().GetResult();
+            VitalsChecks.Run();
+            MemoryDiagnosticResultChecks.Run();
+            StorageReliabilityChecks.Run();
+            ShadowStorageChecks.RunAsync().GetAwaiter().GetResult();
+            DiskQuotaChecks.RunAsync().GetAwaiter().GetResult();
+            NtfsSelfHealingChecks.RunAsync().GetAwaiter().GetResult();
+            DeleteNotificationChecks.RunAsync().GetAwaiter().GetResult();
+            TcpPortPressureChecks.RunAsync().GetAwaiter().GetResult();
+            StorageTopologyChecks.Run();
+            StorageVolumeCapacityCorrelationChecks.Run();
+            StorageEventCorrelationChecks.Run();
+            StorageSpacesChecks.Run();
+            BootPerformanceEventChecks.Run();
+            StartupApplicationChecks.Run();
+            StartupOperationalCorrelationChecks.Run();
+            VolumeDirtyChecks.Run();
+            FoxitChecks.Run();
+            TaskScheduleChecks.Run();
+            TaskXmlChecks.Run();
+            CleanupChecks.Run(scratch);
+            BitLockerChecks.RunAsync().GetAwaiter().GetResult();
+            BitLockerProtectionResumeChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            BitLockerEncryptionChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            AudioDeviceChecks.Run();
+            DefaultAudioEndpointChecks.Run();
+            AudioOperationalCorrelationChecks.Run();
+            DefenderChecks.RunAsync().GetAwaiter().GetResult();
+            DefenderRefreshReconciliationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            SecurityChecks.Run();
+            PrivacyChecks.Run();
+            PrivacyClipboardHistoryChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            PrivacyBooleanSettingChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            ProfilePlanningChecks.Run();
+            ProfileRegistrationChecks.Run();
+            ProfileOperationalCorrelationChecks.Run();
+            ProfileBackupCopyChecks.Run();
+            ProfileRemovalChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            UpdateDiscoveryChecks.RunAsync().GetAwaiter().GetResult();
+            ThirdPartyUpdateChecks.RunAsync().GetAwaiter().GetResult();
+            ThirdPartyUpdateExecutionChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            UpdateExecutionChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            var fixture = new TextEvidence("synthetic.log", ["ordinary error text", "HRESULT 0x800f081f", "again 0X800F081F and 0x00000000", "ignore 0x123 and 0x123456789"], true);
+            var analysis = LogAnalyzer.Analyze(fixture);
+            Require(analysis.SourceTruncated && analysis.Observations.Count == 2, "Preserve coverage and reject malformed codes");
+            var observed = analysis.Observations.Single(code => code.Code == "0x800F081F");
+            Require(observed.Occurrences == 2 && observed.Evidence.Select(e => e.LineNumber).SequenceEqual(new[] { 2, 3 }), "Normalize codes and preserve evidence locations");
+            Require(LogAnalyzer.Analyze(new("clean", ["error alone is not a code"], false)).Observations.Count == 0, "No invented findings from generic error text");
+            var bounded = LogAnalyzer.Analyze(new("many", Enumerable.Range(0, 300).Select(i => $"0x{i:X8}").ToArray(), false));
+            Require(bounded.Observations.Count == 256 && bounded.ObservationsTruncated, "Bound distinct observations");
+            var repeats = LogAnalyzer.Analyze(new("repeat", Enumerable.Repeat("0x80000001", 20).ToArray(), false));
+            Require(repeats.Observations[0].Occurrences == 20 && repeats.Observations[0].Evidence.Count == 8, "Count beyond retained reference limit");
+            try { LogAnalyzer.Analyze(fixture, new CancellationToken(true)); throw new Exception("Cancellation ignored"); }
+            catch (OperationCanceledException) { }
+            File.WriteAllLines(Path.Combine(scratch, "analysis.log"), fixture.Lines);
+            var imported = LogAnalyzer.AnalyzeFileAsync(Path.Combine(scratch, "analysis.log")).GetAwaiter().GetResult();
+            Require(imported.Observations.Single(code => code.Code == observed.Code).Occurrences == observed.Occurrences, "File and in-memory APIs agree");
+            if (!includeUi)
+            {
+                Console.WriteLine("Non-UI checks passed. Window creation and resizing were skipped.");
+                return 0;
+            }
+            IsolatedDesktop.Verify();
+            var application = new Application();
+            SynchronizationContext.SetSynchronizationContext(new System.Windows.Threading.DispatcherSynchronizationContext(application.Dispatcher));
+            application.Resources.MergedDictionaries.Add(new ResourceDictionary
+            { Source = new Uri("/KillerBench;component/Themes/Black.xaml", UriKind.Relative) });
+            application.Resources.MergedDictionaries.Add(new ResourceDictionary
+            { Source = new Uri("/KillerBench;component/Controls/Controls.xaml", UriKind.Relative) });
+            application.Resources.MergedDictionaries.Add(new ResourceDictionary
+            { Source = new Uri("/KillerBench;component/Themes/Instrument.xaml", UriKind.Relative) });
+            application.Resources.MergedDictionaries.Add(new ResourceDictionary
+            { Source = new Uri("/KillerBench;component/Strings/en-US.xaml", UriKind.Relative) });
+            KillerBench.Services.ThemeManager.Initialize();
+            Require(KillerBench.Services.ThemeManager.Current == KillerBench.Services.Theme.Dark && KillerBench.Services.ThemeManager.AccentChoiceFor(KillerBench.Services.Theme.Dark) == KillerBench.Services.Accent.Orange, "Fresh default must be Dark/Amber using Orange");
+            var window = new KillerBench.MainWindow();
+            var updateSnapshotField = typeof(KillerBench.MainWindow).GetField("availableUpdateResult", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            var filteredUpdate = new AvailableUpdate("74ba239e-08d2-45bd-b285-b0d35610ca60", 1, "Fixture driver", "Driver", true, true);
+            updateSnapshotField.SetValue(window, new UpdateSearchResult(new(true, true), [filteredUpdate, filteredUpdate with { Title = "Other", Downloaded = false }], false, "fixture"));
+            var updateFilter = (TextBox)window.FindName("UpdateTitleFilter");
+            var updateList = (ListBox)window.FindName("AvailableUpdateList");
+            updateFilter.Text = "driver";
+            Require(updateList.Items.Count == 1 && Equals(updateList.Items[0], filteredUpdate), "Update title filter changes visible choices");
+            updateList.SelectedIndex = 0;
+            Require(((Button)window.FindName("UpdatePreviewButton")).IsEnabled && !((Button)window.FindName("UpdateInstallButton")).IsEnabled,
+                "Unknown installation metadata permits preview but blocks installation");
+            updateFilter.Text = "";
+            Require(updateList.Items.Count == 2 && updateList.SelectedItems.Count == 0, "Changing update filter clears hidden installation selections");
+            ((CheckBox)window.FindName("UpdateDownloadedOnly")).IsChecked = true;
+            Require(updateList.Items.Count == 1, "Downloaded-only checkbox filters update choices");
+            var eligibleUpdate = filteredUpdate with { Behavior = new(false, 0, 1, false, [new("3689bdc8-b205-4af4-8d4a-a63924c5e9d5", "Fixture")]) };
+            updateSnapshotField.SetValue(window, new UpdateSearchResult(new(true, true), [eligibleUpdate], false, "fixture"));
+            updateFilter.Text = "Fixture";
+            updateList.SelectedIndex = 0;
+            var allowRestart = (CheckBox)window.FindName("UpdateAllowRestart");
+            var allowFeatureUpgrade = (CheckBox)window.FindName("UpdateAllowFeatureUpgrade");
+            Require(!((Button)window.FindName("UpdateInstallButton")).IsEnabled, "Restart-required update is blocked until included");
+            allowRestart.IsChecked = true;
+            Require(!((Button)window.FindName("UpdateInstallButton")).IsEnabled, "Feature upgrade remains blocked without its separate confirmation");
+            allowFeatureUpgrade.IsChecked = true;
+            Require(((Button)window.FindName("UpdateInstallButton")).IsEnabled, "One offered feature upgrade enables installation after both confirmations");
+            allowFeatureUpgrade.IsChecked = false;
+            allowRestart.IsChecked = false;
+            Require(!((Button)window.FindName("UpdateInstallButton")).IsEnabled, "Removing restart consent immediately disables installation");
+            var thirdPartyCandidate = new ThirdPartyUpdateCandidate("Vendor.Tool", "Vendor Tool", "1.0", "winget", ["2.0", "1.5"]);
+            var setThirdPartyResult = typeof(KillerBench.MainWindow).GetMethod("SetThirdPartyUpdateResult", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            setThirdPartyResult.Invoke(window, [new ThirdPartyUpdateResult(true, "1.11.0", true, 1, [thirdPartyCandidate], "fixture")]);
+            var thirdPartyList = (ListBox)window.FindName("ThirdPartyUpdateList");
+            thirdPartyList.SelectedIndex = 0;
+            Require(((ComboBox)window.FindName("ThirdPartyUpdateVersion")).SelectedItem as string == "2.0" &&
+                ((Button)window.FindName("ThirdPartyUpdatePreview")).IsEnabled && !((Button)window.FindName("ThirdPartyUpdateInstall")).IsEnabled,
+                "Third-party application selection defaults to an offered version and requires agreement acceptance");
+            ((CheckBox)window.FindName("ThirdPartyUpdateAgreements")).IsChecked = true;
+            Require(((Button)window.FindName("ThirdPartyUpdateInstall")).IsEnabled,
+                "Exact eligible third-party selection enables installation only after agreement acceptance");
+            setThirdPartyResult.Invoke(window, [null]);
+            updateSnapshotField.SetValue(window, null);
+            ((CheckBox)window.FindName("UpdateDownloadedOnly")).IsChecked = false;
+            Require(window.Width / window.Height > 1.8, "Workbench opens in a wide layout");
+            window.WindowStartupLocation = WindowStartupLocation.Manual;
+            window.ShowActivated = false;
+            window.ShowInTaskbar = false;
+            window.Left = SystemParameters.VirtualScreenLeft - Math.Max(window.Width, window.MinWidth) - 200;
+            window.Top = SystemParameters.VirtualScreenTop;
+            IsolatedDesktop.Verify();
+            window.Show();
+            var text = (TextBox)window.FindName("EvidenceBox");
+            window.UpdateLayout();
+            Require(window.Left + window.ActualWidth < SystemParameters.VirtualScreenLeft && !window.ShowActivated && !window.ShowInTaskbar,
+                "UI validation stays outside the desktop without activation or a taskbar entry");
+            var controlBank = (FrameworkElement)window.FindName("LeftPanel");
+            var consoleBank = (FrameworkElement)window.FindName("ConsoleBank");
+            var controlOrigin = controlBank.TranslatePoint(new Point(), window);
+            var consoleOrigin = consoleBank.TranslatePoint(new Point(), window);
+            var rail = (FrameworkElement)window.FindName("SidebarRail");
+            var railOrigin = rail.TranslatePoint(new Point(), window);
+            Require(railOrigin.X >= controlOrigin.X + controlBank.ActualWidth - 1 &&
+                railOrigin.X + rail.ActualWidth <= consoleOrigin.X + 1,
+                "Icon rail remains entirely between the tool sidebar and main pane");
+            Require(consoleOrigin.X >= controlOrigin.X + controlBank.ActualWidth && Math.Abs(consoleOrigin.Y - controlOrigin.Y) < 1,
+                "Control bank sits beside the console, not above it");
+            var categories = (ListBox)window.FindName("CategoryList");
+            var categoryOrigin = categories.TranslatePoint(new Point(), window);
+            Require(categoryOrigin.X >= controlOrigin.X + controlBank.ActualWidth && categories.ActualHeight < 65,
+                "Compact category buttons occupy only the middle pane beside the tool sidebar");
+            Require(Grid.GetColumnSpan(categories) == 1 && Grid.GetRowSpan((FrameworkElement)window.FindName("DetailsPanel")) == 2,
+                "Category bank excludes the inspector column");
+            var categoryTools = (ComboBox)window.FindName("CategoryWorkflow");
+            var allTools = (ComboBox)window.FindName("MainWorkflow");
+            var reachableTools = new HashSet<WorkflowKind>();
+            window.UpdateLayout();
+            var stableWindowSize = new Size(window.ActualWidth, window.ActualHeight);
+            var stableWorkspace = (FrameworkElement)window.FindName("ScaleHost");
+            var stableWorkspaceSize = new Size(stableWorkspace.ActualWidth, stableWorkspace.ActualHeight);
+            double stableConsoleHeight = consoleBank.ActualHeight;
+            Require(((System.Windows.Controls.Border)window.FindName("ConsoleBezel")).BorderThickness == new Thickness(1) &&
+                ((System.Windows.Controls.Border)window.FindName("ConsoleGlass")).BorderThickness == new Thickness(0), "CRT uses a single thin outline");
+            for (int categoryIndex = 0; categoryIndex < categories.Items.Count; categoryIndex++)
+            {
+                categories.SelectedIndex = categoryIndex;
+                foreach (WorkflowDefinition tool in categoryTools.Items.Cast<WorkflowDefinition>().ToArray())
+                {
+                    reachableTools.Add(tool.Kind);
+                    categoryTools.SelectedItem = tool;
+                    window.UpdateLayout();
+                    if (tool.Kind == WorkflowKind.BackgroundTransfers)
+                    {
+                        Require(((StackPanel)window.FindName("BitsSettings")).IsVisible && !((CheckBox)window.FindName("MainAutoRepair")).IsEnabled, "BITS review options appear without automatic transfer changes");
+                        var bitsRaw = new ToolResult(0, "{\"scope\":\"CurrentAccount\",\"complete\":true,\"jobs\":[{\"id\":\"75a7703d-f0b2-441f-963c-600211b83772\",\"name\":\"Fixture transfer\",\"state\":\"Suspended\",\"error\":\"\"}]}", "", false);
+                        window.GetType().GetMethod("SetBitsInventory", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.Invoke(window, [BitsDiagnostics.Parse(bitsRaw)]);
+                        ((ComboBox)window.FindName("BitsSelection")).SelectedIndex = 0;
+                        FindButtons(window).Single(button => Equals(button.Content, "Review selected transfer")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Require(text.Text.Contains("75a7703d-f0b2-441f-963c-600211b83772") && text.Text.Contains("may be intentional"), "BITS review retains exact target and suspension semantics");
+                        Capture(window, Path.Combine(scratch, "bits-review.png"));
+                        var retryConsent = (CheckBox)window.FindName("BitsRetryConsent");
+                        Require(retryConsent.IsChecked != true, "BITS retry starts without consent");
+                        Require(!retryConsent.IsEnabled && !((Button)window.FindName("BitsRetryButton")).IsEnabled,
+                            "Suspended snapshot disables retry controls before execution");
+                        ((Button)window.FindName("BitsRetryButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Require(((ComboBox)window.FindName("BitsSelection")).IsEnabled, "Unconfirmed retry does not start work");
+                        retryConsent.IsChecked = true;
+                        ((ComboBox)window.FindName("BitsScopeChoice")).SelectedIndex = 1;
+                        Require(((ComboBox)window.FindName("BitsSelection")).Items.Count == 0, "BITS scope change clears stale selection");
+                        ((ComboBox)window.FindName("BitsScopeChoice")).SelectedIndex = 0;
+                        ((ListBox)window.FindName("SourcesList")).SelectedIndex = 0;
+                    }
+                    if (tool.Kind == WorkflowKind.InstalledApps)
+                    {
+                        Require(((StackPanel)window.FindName("InstalledApplicationSettings")).IsVisible && !((CheckBox)window.FindName("MainAutoRepair")).IsEnabled, "Application scope options visible without repair");
+                        ((ComboBox)window.FindName("InstalledApplicationScopeChoice")).SelectedIndex = 1;
+                        window.UpdateLayout();
+                        Capture(window, Path.Combine(scratch, "application-scope.png"));
+                        ((ComboBox)window.FindName("InstalledApplicationScopeChoice")).SelectedIndex = 0;
+                        var setApplications = window.GetType().GetMethod("SetApplicationInventory", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
+                        setApplications.Invoke(window, [InstalledApplications.Interpret(new ToolResult(0, "{\"complete\":true,\"applications\":[]}", "", false))]);
+                        Require(((Button)window.FindName("SaveApplicationInventory")).IsEnabled, "Collected inventory can be saved");
+                        ((ComboBox)window.FindName("InstalledApplicationScopeChoice")).SelectedIndex = 1;
+                        Require(!((Button)window.FindName("SaveApplicationInventory")).IsEnabled, "Changing scope clears stale inventory export");
+                        ((ComboBox)window.FindName("InstalledApplicationScopeChoice")).SelectedIndex = 0;
+                        string inventoryFile = Path.Combine(scratch, "application-inventory.json");
+                        var inventoryEvidence = new ToolResult(0, "{\"scope\":\"Machine\",\"complete\":true,\"applications\":[]}", "", false);
+                        File.WriteAllText(inventoryFile, System.Text.Json.JsonSerializer.Serialize(new { Evidence = inventoryEvidence }, KillerBench.Engine.Capture.JsonOptions));
+                        var compareMethod = window.GetType().GetMethod("CompareApplicationFilesAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
+                        var comparisonTask = (Task)compareMethod.Invoke(window, [inventoryFile, inventoryFile])!;
+                        var deadline = DateTime.UtcNow.AddSeconds(35);
+                        while (!comparisonTask.IsCompleted && DateTime.UtcNow < deadline) Pump();
+                        Require(comparisonTask.IsCompleted, "Desktop comparison completes within its bound");
+                        comparisonTask.GetAwaiter().GetResult();
+                        Require(text.Text.Contains("0 registration differences") && text.Text.Contains("not verified machine or account identity"), "Desktop comparison shows differences and provenance limits");
+                        Capture(window, Path.Combine(scratch, "application-comparison.png"));
+                        string comparisonText = text.Text;
+                        comparisonTask = (Task)compareMethod.Invoke(window, [inventoryFile, inventoryFile + ".missing"])!;
+                        deadline = DateTime.UtcNow.AddSeconds(35);
+                        while (!comparisonTask.IsCompleted && DateTime.UtcNow < deadline) Pump();
+                        Require(comparisonTask.IsCompleted, "Invalid comparison completes");
+                        comparisonTask.GetAwaiter().GetResult();
+                        Require(text.Text == comparisonText && ((Button)window.FindName("CompareApplicationInventories")).IsEnabled, "Unreadable comparison preserves evidence and restores controls");
+                        ((ListBox)window.FindName("SourcesList")).SelectedIndex = 0;
+                    }
+                    if (tool.Kind == WorkflowKind.AppPackages)
+                    {
+                        Require(((StackPanel)window.FindName("AppPackageSettings")).IsVisible && !((CheckBox)window.FindName("MainAutoRepair")).IsEnabled,
+                            "Package selection appears without auto-repair controls");
+                        const string packageJson = "{\"complete\":true,\"packages\":[{\"name\":\"Fixture\",\"fullName\":\"Fixture_1\",\"familyName\":\"Fixture\",\"framework\":false,\"nonRemovable\":true,\"developmentMode\":false,\"dependencies\":[]}]}";
+                        var inventory = AppPackageInventory.Interpret(AppPackageScope.CurrentAccount, new ToolResult(0, packageJson, "", false));
+                        var setInventory = window.GetType().GetMethod("SetAppPackageInventory", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
+                        setInventory.Invoke(window, [inventory]);
+                        ((ComboBox)window.FindName("AppPackageSelection")).SelectedIndex = 0;
+                        FindButtons(window).Single(button => Equals(button.Content, "Review selected package")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Require(text.Text.Contains("Fixture_1") && text.Text.Contains("non-removable") && text.Text.Contains("RETAINED SNAPSHOT"),
+                            "Selected package review retains exact identity, protection and snapshot limitations");
+                        Capture(window, Path.Combine(scratch, "package-review.png"));
+                        ((ComboBox)window.FindName("AppPackageScopeChoice")).SelectedIndex = 1;
+                        Require(((ComboBox)window.FindName("AppPackageSelection")).Items.Count == 0, "Changing account scope clears retained package selection");
+                        ((ComboBox)window.FindName("AppPackageScopeChoice")).SelectedIndex = 0;
+                        setInventory.Invoke(window, [null]);
+                        Require(((ComboBox)window.FindName("AppPackageSelection")).Items.Count == 0, "Package refresh clears old selections");
+                        ((ListBox)window.FindName("SourcesList")).SelectedIndex = 0;
+                    }
+                    if (tool.Kind == WorkflowKind.Mace)
+                    {
+                        Require(((StackPanel)window.FindName("MaceSettings")).IsVisible &&
+                            !((CheckBox)window.FindName("MainAutoRepair")).IsEnabled,
+                            "MACE choices remain review-only in the main workflow");
+                        var setMaceReview = window.GetType().GetMethod("SetMaceReview",
+                            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
+                        setMaceReview.Invoke(window, [MacePackageRemovalChecks.CreateReview(packagePresent: true)]);
+                        var selection = (ComboBox)window.FindName("MacePackageSelection");
+                        Require(selection.Items.Count == 1 && selection.SelectedIndex == 0 &&
+                            ((Button)window.FindName("MaceReviewPackage")).IsEnabled,
+                            "One supported exact package is presented as one selected plan choice");
+                        ((Button)window.FindName("MaceReviewPackage")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        Require(text.Text.Contains("MACE PACKAGE PLAN / ELIGIBLE") &&
+                            text.Text.Contains("Native package removal is not connected"),
+                            "MACE package plan appears in the primary evidence display without removal");
+                        ((CheckBox)window.FindName("MaceOutlook")).IsChecked = true;
+                        Require(selection.Items.Count == 0 && !((Button)window.FindName("MaceReviewPackage")).IsEnabled,
+                            "Changing a MACE selection clears stale package eligibility");
+                        ((ListBox)window.FindName("SourcesList")).SelectedIndex = 0;
+                    }
+                    if (tool.Kind == WorkflowKind.Orca)
+                    {
+                        var orcaRepair = (CheckBox)window.FindName("MainAutoRepair");
+                        var orcaScope = (ComboBox)window.FindName("OrcaScopeChoice");
+                        var orcaProfiles = (CheckBox)window.FindName("OrcaResetProfiles");
+                        Require(((StackPanel)window.FindName("OrcaSettings")).IsVisible && orcaRepair.IsEnabled &&
+                            orcaRepair.IsChecked != true, "ORCA cache-only running-account choice exposes guarded retention without initial consent");
+                        orcaRepair.IsChecked = true;
+                        orcaScope.SelectedIndex = 1;
+                        Require(!orcaRepair.IsEnabled && orcaRepair.IsChecked != true,
+                            "ORCA all-user review disables cache retention and clears prior consent");
+                        orcaScope.SelectedIndex = 0;
+                        Require(orcaRepair.IsEnabled, "ORCA running-account cache-only choice restores guarded retention");
+                        orcaRepair.IsChecked = true;
+                        orcaProfiles.IsChecked = true;
+                        Require(!orcaRepair.IsEnabled && orcaRepair.IsChecked != true,
+                            "ORCA mixed reset areas remain review-only and clear prior consent");
+                        orcaProfiles.IsChecked = false;
+                        Require(orcaRepair.IsEnabled, "Returning to ORCA cache-only review restores guarded retention");
+                    }
+                    if (tool.Kind == WorkflowKind.CommonProblems)
+                    {
+                        var recipePanel = (Expander)window.FindName("RecipeSelectionPanel");
+                        var toggle = (CheckBox)window.FindName("CustomizeRecipes");
+                        var choices = (ListBox)window.FindName("RecipeSelectionList");
+                        recipePanel.IsExpanded = true;
+                        toggle.IsChecked = true;
+                        choices.UnselectAll();
+                        choices.SelectedItems.Add(choices.Items.Cast<RepairRecipe>().Single(recipe => recipe.Id == "windows.system-files"));
+                        window.UpdateLayout();
+                        Require(((TextBlock)window.FindName("RecipeSelectionSummary")).Text.StartsWith("1 selected; 2 checks") &&
+                            ((CheckBox)window.FindName("MainAutoRepair")).IsChecked != true, "Advanced selection explains prerequisites and leaves repairs off");
+                        var effects = (TextBlock)window.FindName("RecipeEffectsSummary");
+                        Require(effects.Text.Contains(Repairs.Plan(RepairKind.SystemFiles).Effects) &&
+                            effects.Text.Contains(Repairs.Plan(RepairKind.ComponentStore).Effects) && !effects.Text.Contains("waiting print jobs"),
+                            "Selected repair review includes prerequisite effects without unrelated actions");
+                        var effectsPanel = (Expander)((ScrollViewer)effects.Parent).Parent;
+                        effectsPanel.IsExpanded = true;
+                        window.UpdateLayout();
+                        Capture(window, Path.Combine(scratch, "recipe-selection.png"));
+                        choices.UnselectAll();
+                        Require(effects.Text == "No recipe repairs selected.", "Empty selection clears the repair-effects review");
+                        toggle.IsChecked = false;
+                        Require(effects.Text.Contains("waiting print jobs"), "Full recipe review restores all action effects");
+                        effectsPanel.IsExpanded = false;
+                        recipePanel.IsExpanded = false;
+                        window.UpdateLayout();
+                    }
+                    if (tool.Kind == WorkflowKind.AvailableUpdates)
+                    {
+                        var updateExpander = (Expander)((FrameworkElement)updateList.Parent).Parent;
+                        updateExpander.IsExpanded = true;
+                        window.UpdateLayout();
+                        Capture(window, Path.Combine(scratch, "update-selection.png"));
+                        updateExpander.IsExpanded = false;
+                        window.UpdateLayout();
+                    }
+                    Require(((FrameworkElement)window.FindName("TaskSettings")).IsVisible == (tool.Kind == WorkflowKind.ScheduledTasks),
+                        "Saved task-plan review appears only for Scheduled tasks");
+                    Require(((FrameworkElement)window.FindName("NetworkSettings")).IsVisible == (tool.Kind == WorkflowKind.Network),
+                        "Hostname options appear only for Network");
+                    Require(new Size(window.ActualWidth, window.ActualHeight) == stableWindowSize &&
+                        new Size(stableWorkspace.ActualWidth, stableWorkspace.ActualHeight) == stableWorkspaceSize,
+                        "Switching tools preserves window and workspace dimensions: " + tool.Kind);
+                    Require(Math.Abs(consoleBank.ActualHeight - stableConsoleHeight) < 1,
+                        "Tool content does not resize the main console row: " + tool.Kind);
+                }
+                Require(Equals(categoryTools.SelectedItem, allTools.SelectedItem), "Category selection preserves workflow identity");
+            }
+            Require(reachableTools.Count == WorkflowCatalog.All.Count, "Every workflow is reachable through a category");
+            Require(((CheckBox)window.FindName("TaskRegistrationConsent")).IsChecked == false &&
+                ((Button)window.FindName("TaskRegistrationButton")).Content is "Preview registration",
+                "Desktop task registration defaults to preview and requires separate create consent");
+            Require(((Button)window.FindName("TaskRegistrationRecoveryButton")).Content is "Check interrupted registration",
+                "Desktop exposes exact read-only task registration recovery beside the draft");
+            Require(((Button)window.FindName("MainGo")).IsEnabled && !((Button)window.FindName("CancelButton")).IsEnabled, "Navigation does not run a workflow");
+            categories.SelectedIndex = 0;
+            Require(!((Expander)window.FindName("AdvancedTools")).IsExpanded, "Advanced tools start tucked away");
+            Capture(window, Path.Combine(scratch, "simple-start.png"));
+            var titleIcon = (Image)window.FindName("TitlebarIcon");
+            Require(window.Icon is not null && titleIcon.Source is not null, "Window and titlebar use packaged icon resources");
+            var zoomHost = (FrameworkElement)window.FindName("ScaleHost");
+            var zoomViewport = (Grid)window.FindName("ZoomViewport");
+            var zoomMethod = typeof(KillerBench.MainWindow).GetMethod("ApplyAppScale", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            foreach (double scale in new[] { 0.7, 1.0, 1.5, 2.5 })
+            {
+                zoomMethod.Invoke(window, [scale]);
+                Pump();
+                Require(zoomHost.LayoutTransform.Value.IsIdentity && Math.Abs(((TextBox)window.FindName("EvidenceBox")).FontSize - ((Slider)window.FindName("SizeSlider")).Value * scale) < 0.001 &&
+                    Math.Abs(titleIcon.ActualWidth - 24) < 0.1 && Math.Abs(controlBank.ActualWidth - 370) < 0.1,
+                    "Zoom scales content without squeezing the sidebar or moving titlebar controls");
+                Require(new Size(window.ActualWidth, window.ActualHeight) == stableWindowSize &&
+                    zoomHost.ActualWidth <= zoomViewport.ActualWidth && zoomHost.ActualHeight <= zoomViewport.ActualHeight,
+                    "Every zoom level preserves the window and fits its workspace");
+                if (scale == 2.5)
+                {
+                    Capture(window, Path.Combine(scratch, "zoom-250.png"));
+                }
+            }
+            zoomMethod.Invoke(window, [1.0]);
+            Pump();
+            titleIcon.RaiseEvent(new System.Windows.Input.MouseWheelEventArgs(System.Windows.Input.Mouse.PrimaryDevice, Environment.TickCount, 120)
+                { RoutedEvent = System.Windows.Input.Mouse.PreviewMouseWheelEvent });
+            Require(Math.Abs(((TextBox)window.FindName("EvidenceBox")).FontSize - ((Slider)window.FindName("SizeSlider")).Value * 1.02) < 0.001 &&
+                Equals(typeof(KillerBench.MainWindow).Assembly.GetType("KillerBench.Services.Preferences")!
+                    .GetMethod("Get", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!.Invoke(null, ["AppScale"]), "1.02"),
+                "Wheel over titlebar icon changes and persists zoom");
+            titleIcon.RaiseEvent(new System.Windows.Input.MouseWheelEventArgs(System.Windows.Input.Mouse.PrimaryDevice, Environment.TickCount, -120)
+                { RoutedEvent = System.Windows.Input.Mouse.PreviewMouseWheelEvent });
+            Pump();
+            Require(Math.Abs(((TextBox)window.FindName("EvidenceBox")).FontSize - ((Slider)window.FindName("SizeSlider")).Value) < 0.001, "Reverse wheel restores zoom");
+            Capture(window, Path.Combine(scratch, "icon-and-zoom.png"));
+            var workflowPicker = (ComboBox)window.FindName("MainWorkflow");
+            workflowPicker.SelectedIndex = (int)WorkflowKind.Printing;
+            var printerQueues = (ComboBox)window.FindName("PrinterQueues");
+            printerQueues.ItemsSource = new[] { "Synthetic local printer" };
+            printerQueues.SelectedIndex = 0;
+            window.UpdateLayout();
+            Require(((StackPanel)window.FindName("PrinterSettings")).Visibility == Visibility.Visible &&
+                ((CheckBox)window.FindName("MainAutoRepair")).IsEnabled &&
+                ((CheckBox)window.FindName("MainAutoRepair")).IsChecked == false &&
+                ((CheckBox)window.FindName("MainAutoRepair")).Content.ToString()!.Contains("waiting jobs"),
+                "Selected printer exposes optional repair with explicit effects and no initial consent");
+            Capture(window, Path.Combine(scratch, "printer-options.png"));
+            ((CheckBox)window.FindName("MainAutoRepair")).IsChecked = true;
+            FindButtons(window).Single(b => Equals(b.Content, "Use general printing checks")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(printerQueues.SelectedIndex == -1 && ((CheckBox)window.FindName("MainAutoRepair")).IsChecked == false,
+                "Explicit general-printing action clears selected scope and repair consent");
+            Require(((CheckBox)window.FindName("MainAutoRepair")).IsEnabled, "Clearing printer selection restores general workflow controls");
+            workflowPicker.SelectedIndex = (int)WorkflowKind.Cleanup;
+            window.UpdateLayout();
+            Require(((StackPanel)window.FindName("CleanupSettings")).Visibility == Visibility.Visible &&
+                !((CheckBox)window.FindName("MainAutoRepair")).IsEnabled, "Cleanup exposes settings and disables mutation");
+            Capture(window, Path.Combine(scratch, "cleanup-options.png"));
+            Require(((CheckBox)window.FindName("CleanupShaderCaches")).IsChecked == false, "Shader cleanup remains optional");
+            Require(((CheckBox)window.FindName("CleanupOfficeCaches")).IsChecked == false, "Office cache cleanup remains optional");
+            Require(((CheckBox)window.FindName("CleanupThumbnailCache")).IsChecked == false, "Thumbnail cache cleanup remains optional");
+            Require(((CheckBox)window.FindName("CleanupIconCache")).IsChecked == false, "Icon cache cleanup remains optional");
+            Require(((CheckBox)window.FindName("CleanupErrorReports")).IsChecked == false, "Error-report cleanup remains optional");
+            Require(((CheckBox)window.FindName("CleanupCrashDumps")).IsChecked == false, "Crash-dump cleanup remains optional");
+            Require(((CheckBox)window.FindName("CleanupWindowsMinidumps")).IsChecked == false, "Windows minidump cleanup remains optional");
+            workflowPicker.SelectedIndex = (int)WorkflowKind.Defender;
+            window.UpdateLayout();
+            Require(((StackPanel)window.FindName("SecuritySettings")).Visibility == Visibility.Visible &&
+                ((StackPanel)window.FindName("CleanupSettings")).Visibility == Visibility.Collapsed, "Security choices replace cleanup choices");
+            var defenderScanChoice = (ComboBox)window.FindName("DefenderScanChoice");
+            var defenderScanConsent = (CheckBox)window.FindName("DefenderScanConsent");
+            Require(defenderScanChoice.SelectedIndex == 0 && defenderScanConsent.IsChecked == false && !defenderScanConsent.IsEnabled,
+                "Defender scan controls default to diagnosis only without execution consent");
+            defenderScanChoice.SelectedIndex = 1;
+            Require(defenderScanConsent.IsEnabled && defenderScanConsent.IsChecked == false && !((CheckBox)window.FindName("MainAutoRepair")).IsEnabled,
+                "Selecting a Defender scan enables separate consent and disables generic automatic repair");
+            defenderScanConsent.IsChecked = true;
+            defenderScanChoice.SelectedIndex = 2;
+            Require(defenderScanConsent.IsChecked == false, "Changing Defender scan type clears execution consent");
+            Capture(window, Path.Combine(scratch, "security-options.png"));
+            workflowPicker.SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == WorkflowKind.FirewallServices);
+            window.UpdateLayout();
+            var firewallSettings = (StackPanel)window.FindName("FirewallProfileSettings");
+            var firewallPrivate = (CheckBox)window.FindName("FirewallPrivateProfile");
+            var firewallApply = (CheckBox)window.FindName("FirewallProfileApply");
+            Require(firewallSettings.Visibility == Visibility.Visible && firewallApply.IsChecked == false,
+                "Firewall workflow exposes separate unchecked profile consent");
+            firewallPrivate.IsChecked = true;
+            firewallApply.IsChecked = true;
+            Require(((CheckBox)window.FindName("MainAutoRepair")).IsChecked == false,
+                "Firewall profile consent remains separate from automatic service repair");
+            firewallPrivate.IsChecked = false;
+            Require(firewallApply.IsChecked == false, "Changing firewall profile targets clears consent");
+            workflowPicker.SelectedIndex = (int)WorkflowKind.AvailableUpdates;
+            window.UpdateLayout();
+            Require(((StackPanel)window.FindName("UpdateSettings")).Visibility == Visibility.Visible && !((CheckBox)window.FindName("MainAutoRepair")).IsEnabled, "Update discovery exposes choices without enabling installation");
+            var updateSoftware = (CheckBox)window.FindName("UpdateSoftware");
+            var updateDrivers = (CheckBox)window.FindName("UpdateDrivers");
+            var updateSource = (ComboBox)window.FindName("UpdateSourceChoice");
+            updateSource.SelectedIndex = 2;
+            updateSoftware.IsChecked = false;
+            Require(!updateSource.IsEnabled && updateSource.SelectedIndex == 0, "Third-party-only discovery disables the unused Windows Update source");
+            updateDrivers.IsChecked = true;
+            Require(updateSource.IsEnabled, "Selecting drivers restores the Windows Update source");
+            updateDrivers.IsChecked = false;
+            updateSoftware.IsChecked = true;
+            Capture(window, Path.Combine(scratch, "update-options.png"));
+            workflowPicker.SelectedIndex = (int)WorkflowKind.Privacy;
+            window.UpdateLayout();
+            Require(((StackPanel)window.FindName("PrivacySettings")).Visibility == Visibility.Visible && !((CheckBox)window.FindName("MainAutoRepair")).IsEnabled, "Privacy exposes read-only selections");
+            var privacyAreas = (ListBox)window.FindName("PrivacyAreas");
+            Require(privacyAreas.Items.Count == PrivacyCatalog.All.Count && privacyAreas.SelectedItems.Count == 0, "Privacy areas start unselected");
+            var cameraChoice = PrivacyCatalog.All.Single(c => c.Area == PrivacyArea.Camera);
+            privacyAreas.SelectedItems.Add(cameraChoice);
+            window.UpdateLayout();
+            Require(privacyAreas.SelectedItems.Count == 1 && privacyAreas.SelectedItems[0] is PrivacyChoice { Area: PrivacyArea.Camera }, "Privacy selection remains isolated");
+            Capture(window, Path.Combine(scratch, "privacy-options.png"));
+            workflowPicker.SelectedIndex = (int)WorkflowKind.BitLocker;
+            window.UpdateLayout();
+            Require(((StackPanel)window.FindName("BitLockerSettings")).Visibility == Visibility.Visible && !((CheckBox)window.FindName("MainAutoRepair")).IsEnabled, "BitLocker exposes preview options without automatic encryption");
+            Require(((ComboBox)window.FindName("BitLockerEncryptionChoice")).SelectedItem is BitLockerEncryption.XtsAes128 && ((ComboBox)window.FindName("BitLockerDestination")).SelectedItem is RecoveryDestination.None, "BitLocker preview defaults");
+            Capture(window, Path.Combine(scratch, "bitlocker-options.png"));
+            workflowPicker.SelectedIndex = (int)WorkflowKind.ComponentCleanup;
+            window.UpdateLayout();
+            Require(((TextBlock)window.FindName("ComponentCleanupSettings")).Visibility == Visibility.Visible && ((CheckBox)window.FindName("MainAutoRepair")).Content is "Run recommended cleanup", "Component cleanup exposes its maintenance choice");
+            Capture(window, Path.Combine(scratch, "component-options.png"));
+            workflowPicker.SelectedIndex = (int)WorkflowKind.Storage;
+            window.UpdateLayout();
+            Require(((StackPanel)window.FindName("StorageSettings")).Visibility == Visibility.Visible &&
+                ((ComboBox)window.FindName("StorageVolumeChoice")).SelectedIndex == 0 &&
+                !((CheckBox)window.FindName("MainAutoRepair")).IsEnabled, "Storage exposes volume selection without automatic repair");
+            var storageReview = (CheckBox)window.FindName("StorageRepairReview");
+            var storageMode = (ComboBox)window.FindName("StorageRepairModeChoice");
+            var storageDismount = (CheckBox)window.FindName("StorageAllowDismount");
+            Require(storageReview.IsChecked != true && storageMode.SelectedIndex == 0 && !storageMode.IsEnabled && !storageDismount.IsEnabled,
+                "Filesystem repair review is explicit and defaults to spot repair");
+            storageReview.IsChecked = true;
+            window.UpdateLayout();
+            var storageAutoRepair = (CheckBox)window.FindName("MainAutoRepair");
+            Require(storageMode.IsEnabled && storageDismount.IsEnabled && storageAutoRepair.IsEnabled && storageAutoRepair.IsChecked != true,
+                "Filesystem review options expose guarded repair without preselecting it");
+            storageAutoRepair.IsChecked = true;
+            storageDismount.IsChecked = true;
+            window.UpdateLayout();
+            Require(storageAutoRepair.IsChecked != true, "Changing filesystem repair consent clears execution consent");
+            Capture(window, Path.Combine(scratch, "storage-options.png"));
+            var storageChoice = (ComboBox)window.FindName("StorageVolumeChoice");
+            storageChoice.ItemsSource = new[] { "Windows volume", "Z:" };
+            storageChoice.SelectedIndex = 1;
+            workflowPicker.SelectedIndex = (int)WorkflowKind.ComponentCleanup;
+            workflowPicker.SelectedIndex = (int)WorkflowKind.Storage;
+            window.UpdateLayout();
+            Require(storageChoice.SelectedItem is "Z:", "Refreshing drive choices never silently changes the selected target");
+            workflowPicker.SelectedIndex = (int)WorkflowKind.Profiles;
+            window.UpdateLayout();
+            Require(((StackPanel)window.FindName("ProfileSettings")).Visibility == Visibility.Visible && !((CheckBox)window.FindName("MainAutoRepair")).IsEnabled, "Profile review exposes options without automatic deletion");
+            Require(((Slider)window.FindName("ProfileAge")).Value == 90, "Profile age defaults to 90 days");
+            Capture(window, Path.Combine(scratch, "profile-options.png"));
+            workflowPicker.SelectedIndex = (int)WorkflowKind.ComputerName;
+            window.UpdateLayout();
+            Require(((StackPanel)window.FindName("ComputerNameSettings")).Visibility == Visibility.Visible &&
+                !((CheckBox)window.FindName("MainAutoRepair")).IsEnabled, "Computer name review exposes input without rename consent");
+            var proposedName = (TextBox)window.FindName("ProposedComputerName");
+            proposedName.Text = "invalid name";
+            string evidenceBeforeName = ((TextBox)window.FindName("EvidenceBox")).Text;
+            ((Button)window.FindName("MainGo")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            window.UpdateLayout();
+            Require(((TextBox)window.FindName("EvidenceBox")).Text == evidenceBeforeName && ((Button)window.FindName("MainGo")).IsEnabled,
+                "Invalid computer name does not begin collection or replace evidence");
+            proposedName.Text = "OFFICE-PC";
+            Capture(window, Path.Combine(scratch, "computer-name-options.png"));
+            if (Environment.GetEnvironmentVariable("KILLERBENCH_CHECK_NAME_LIVE") == "1")
+            {
+                proposedName.Text = Environment.MachineName;
+                ((Button)window.FindName("MainGo")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                var deadline = DateTime.UtcNow.AddSeconds(40);
+                while (!((Button)window.FindName("MainGo")).IsEnabled && DateTime.UtcNow < deadline) Pump();
+                string nameOutput = ((TextBox)window.FindName("EvidenceBox")).Text;
+                Require(((Button)window.FindName("MainGo")).IsEnabled && nameOutput.Contains("Name review completed; no rename performed") &&
+                    nameOutput.Contains("Current name: " + Environment.MachineName), "Live desktop name review completes and restores GO");
+                Capture(window, Path.Combine(scratch, "computer-name-result.png"));
+                Console.WriteLine("PASS: opt-in native read-only computer name review through desktop GO.");
+                typeof(KillerBench.MainWindow).GetMethod("OnSample", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [window, new RoutedEventArgs()]);
+            }
+            var mainWorkflowForTime = (ComboBox)window.FindName("MainWorkflow");
+            var previousWorkflowForTime = mainWorkflowForTime.SelectedItem;
+            mainWorkflowForTime.SelectedItem = WorkflowCatalog.All.Single(w => w.Kind == WorkflowKind.TimeService);
+            var timeSource = (ComboBox)window.FindName("TimeSourceChoice");
+            timeSource.SelectedIndex = 2;
+            ((TextBox)window.FindName("TimePeers")).Text = "time.example.test";
+            Require(((StackPanel)window.FindName("TimeSettings")).Visibility == Visibility.Visible &&
+                ((TextBox)window.FindName("TimePeers")).IsEnabled && !((CheckBox)window.FindName("MainAutoRepair")).IsEnabled,
+                "Custom time source exposes peer input and blocks automatic mutation");
+            Capture(window, Path.Combine(scratch, "time-options.png"));
+            var timeApply = (CheckBox)window.FindName("TimeApply");
+            Require(timeApply.IsEnabled && timeApply.IsChecked == false, "Custom time changes require separate unchecked consent");
+            timeApply.IsChecked = true;
+            ((TextBox)window.FindName("TimePeers")).Text = "other.example.test";
+            Require(timeApply.IsChecked == false, "Changing time targets clears consent");
+            timeApply.IsChecked = true;
+            timeSource.SelectedIndex = 1;
+            Require(timeApply.IsEnabled && timeApply.IsChecked == false && !((TextBox)window.FindName("TimePeers")).IsEnabled,
+                "Domain hierarchy requires separate consent without peer input");
+            timeSource.SelectedIndex = 0;
+            Require(!((TextBox)window.FindName("TimePeers")).IsEnabled && ((CheckBox)window.FindName("MainAutoRepair")).IsEnabled,
+                "Existing time source restores normal workflow");
+            mainWorkflowForTime.SelectedItem = previousWorkflowForTime;
+            var profileList = (ListBox)window.FindName("ProfileSelection");
+            var profileFixture = new ProfileSnapshot("S-1-5-21-1-2-3-1001", @"C:\Users\Fixture", false, false, DateTimeOffset.UtcNow.AddDays(-120), false);
+            profileList.ItemsSource = new[] { profileFixture, profileFixture with { Sid = "S-1-5-21-1-2-3-1002", Path = @"C:\Users\SecondFixture" } };
+            profileList.SelectedItems.Add(profileFixture);
+            ((Expander)window.FindName("ProfileSelectionExpander")).IsExpanded = true;
+            window.UpdateLayout();
+            Require(profileList.SelectedItems.Count == 1 && ReferenceEquals(profileList.SelectedItem, profileFixture), "Profile selection preserves the exact record");
+            Capture(window, Path.Combine(scratch, "profile-selection.png"));
+            profileList.ItemsSource = null;
+            workflowPicker.SelectedIndex = 0;
+            ((Expander)window.FindName("AdvancedTools")).IsExpanded = true;
+            ((Button)window.FindName("DetailsButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ((Button)window.FindName("ActivityButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Pump();
+            foreach (var theme in Enum.GetValues<KillerBench.Services.Theme>())
+            {
+                KillerBench.Services.ThemeManager.Apply(theme);
+                window.UpdateLayout();
+                double paneOpacity = (double)window.FindResource("PaneShadowOpacity");
+                Require(paneOpacity == 0 ? window.TryFindResource("PaneShadowEffect") is null : window.TryFindResource("PaneShadowEffect") is System.Windows.Media.Effects.DropShadowEffect effect && effect.Opacity == paneOpacity, "Pane shadow follows theme, including flat themes");
+                var caption = (Grid)window.FindName("CaptionBar");
+                var captionPoint = caption.TranslatePoint(new Point(caption.ActualWidth / 2, caption.ActualHeight / 2), window);
+                Require(ReferenceEquals(window.InputHitTest(captionPoint), caption), "Empty title bar receives drag input in " + theme);
+                Require(text.Text.Contains("SYNTHETIC SAMPLE"), "Theme switch retains evidence");
+                Require(text.Foreground is SolidColorBrush brush && brush.Color == Color.FromRgb(255, 202, 128), "Console phosphor independent of app theme");
+                foreach (string key in new[] { "PrimaryBrush", "TextBrush", "PaneBrush", "ControlCornerRadius", "SliderTrack", "WindowEdgeThickness" })
+                    Require(window.TryFindResource(key) is not null, "Missing theme token: " + key);
+                var snapshot = new RenderTargetBitmap((int)window.ActualWidth, (int)window.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+                snapshot.Render(window);
+                var png = new PngBitmapEncoder();
+                png.Frames.Add(BitmapFrame.Create(snapshot));
+                using var file = File.Create(Path.Combine(scratch, theme + ".png"));
+                png.Save(file);
+            }
+            KillerBench.Services.ThemeManager.Apply(KillerBench.Services.Theme.Black);
+            foreach (var family in new[] { KillerBench.Services.Theme.Dark, KillerBench.Services.Theme.Light, KillerBench.Services.Theme.Black, KillerBench.Services.Theme.Retro98 })
+                foreach (var accent in Enum.GetValues<KillerBench.Services.Accent>())
+                {
+                    KillerBench.Services.ThemeManager.Apply(family);
+                    KillerBench.Services.ThemeManager.ApplyAccent(family, accent);
+                    window.UpdateLayout();
+                    Require(KillerBench.Services.ThemeManager.AccentChoiceFor(family) == accent, "Accent selection retained");
+                }
+            KillerBench.Services.ThemeManager.ApplyAccent(KillerBench.Services.Theme.Black, KillerBench.Services.Accent.Green);
+            KillerBench.Services.ThemeManager.Apply(KillerBench.Services.Theme.Black);
+            ((Button)window.FindName("DetailsButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ((Button)window.FindName("DetailsButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ((Button)window.FindName("SidebarButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ((Button)window.FindName("SidebarButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ((Button)window.FindName("ActivityButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(((Border)window.FindName("ActivityPanel")).Visibility == Visibility.Collapsed, "Activity hides independently");
+            ((Button)window.FindName("ActivityButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ((Button)window.FindName("ThemeButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(((Button)window.FindName("ThemeButton")).ContextMenu.IsOpen, "Theme menu opens");
+            Pump();
+            Capture(((Button)window.FindName("ThemeButton")).ContextMenu, Path.Combine(scratch, "theme-menu.png"));
+            ((Button)window.FindName("ThemeButton")).ContextMenu.IsOpen = false;
+            ((Button)window.FindName("LangButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Pump();
+            var languages = ((Button)window.FindName("LangButton")).ContextMenu;
+            Capture(languages, Path.Combine(scratch, "language-menu.png"));
+            Require(((StackPanel)languages.Items[0]).Children.OfType<RadioButton>().Count() == 15, "All 15 languages visible");
+            languages.IsOpen = false;
+            foreach (var locale in Enum.GetValues<KillerBench.Services.Locale>())
+            {
+                KillerBench.Services.LocaleManager.Apply(locale);
+                Require((string)application.FindResource("Str_Content_Open_log") == "Open log", "English fallback across all locales");
+            }
+            KillerBench.Services.LocaleManager.Apply(KillerBench.Services.Locale.EnUS);
+            Require(((Border)window.FindName("LeftPanel")).Style == window.FindResource("Panel"), "Tool sidebar uses the family pane style");
+            Require(((TextBox)window.FindName("PathBox")).Padding.Top <= 3, "Compact text input padding");
+            window.UpdateLayout();
+            Require(text.Text.Contains("SYNTHETIC SAMPLE"), "Sample explicitly labeled");
+            ((TextBox)window.FindName("SearchBox")).Text = "error";
+            var find = FindButtons(window).Single(b => Equals(b.Content, "FIND"));
+            find.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(text.Text.Contains("6  [10:42:06]") && !text.Text.Contains("Sample servicing"), "UI search retains source lines");
+            ((TextBox)window.FindName("SearchBox")).Clear();
+            find.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            foreach (string preset in new[] { "Green", "White", "Crisp", "Amber" })
+            {
+                FindButtons(window).Single(b => Equals(b.Tag, preset)).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                if (preset == "Crisp") Require(text.Effect is null, "Crisp disables glow");
+            }
+            window.UpdateLayout();
+            var bitmap = new RenderTargetBitmap((int)window.ActualWidth, (int)window.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(window);
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bitmap));
+            string preview = Path.Combine(scratch, "KillerBench-preview.png");
+            using (var output = File.Create(preview)) encoder.Save(output);
+            var advanced = (Expander)window.FindName("AdvancedTools");
+            advanced.IsExpanded = true;
+            window.UpdateLayout();
+            var windowsLookup = FindButtons(window).Single(b => Equals(b.Content, "Look up Windows system code"));
+            var knowledgeCode = (TextBox)window.FindName("KnowledgeCode");
+            string beforeLookup = text.Text;
+            ((Button)window.FindName("KnowledgeSearchButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(text.Text == beforeLookup, "Empty reference search preserves evidence without opening a picker");
+            var referenceDay = new DateOnly(2026, 9, 13);
+            var searchEntry = new KnowledgeEntry("fixture", "5", "Fixture title", "Fixture explanation", "https://example.com/reference", referenceDay, "Fixture product");
+            var searchCatalog = KnowledgeCatalog.Read(System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(
+                new KnowledgePack(1, "fixture", 1, referenceDay, "Synthetic", [searchEntry])));
+            var formatSearch = typeof(KillerBench.MainWindow).GetMethod("FormatKnowledgeSearch", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!;
+            var searchEvidence = (TextEvidence)formatSearch.Invoke(null, [searchCatalog, "fixture", "Fixture", new KnowledgeSearchResult(2, [searchEntry])])!;
+            Require(searchEvidence.Truncated && searchEvidence.Lines.Any(line => line.Contains("Showing 1 of 2")) &&
+                searchEvidence.Lines.Any(line => line.Contains("https://example.com/reference")) &&
+                searchEvidence.Lines.Any(line => line.Contains("Narrow the search")), "Desktop search retains provenance and omitted-result guidance");
+            var emptySearch = (TextEvidence)formatSearch.Invoke(null, [searchCatalog, "fixture", "absent", new KnowledgeSearchResult(0, [])])!;
+            Require(!emptySearch.Truncated && emptySearch.Lines.Any(line => line.Contains("No reference text matches")), "Empty reference search is explicit");
+            knowledgeCode.Text = "not-a-code";
+            windowsLookup.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(text.Text == beforeLookup, "Invalid Windows code preserves existing evidence");
+            knowledgeCode.Text = "0x5";
+            windowsLookup.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(text.Text.Contains("Code: 5 (0x5)") && text.Text.Contains("WINDOWS SYSTEM MESSAGE"),
+                "Windows lookup button replaces sample with code reference");
+            knowledgeCode.Text = "0x80240034";
+            windowsLookup.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(text.Text.Contains("WINDOWS UPDATE RESULT CODE") && text.Text.Contains("WU_E_DOWNLOAD_FAILED") &&
+                text.Text.Contains("BITS"), "Windows lookup adds the shared Windows Update reference and diagnostic route");
+            knowledgeCode.Text = "0xFFFFFFFF";
+            windowsLookup.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(text.Text.Contains("No system message found for this code."), "Unknown Windows code is explicitly unresolved");
+            knowledgeCode.Clear();
+            advanced.IsExpanded = false;
+            ((Button)window.FindName("DemoButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            for (int attempt = 0; attempt < 30 && ((TextBlock)window.FindName("EvidenceTitle")).Text != "CBS.log"; attempt++) Pump();
+            Require(((StackPanel)window.FindName("FindingCards")).Children.Count == 2, "Demo import populates two findings");
+            Require(((StackPanel)window.FindName("FindingsPanel")).Visibility == Visibility.Visible, "Findings opens after import");
+            window.UpdateLayout();
+            Require(FindButtons(window).Count(b => Equals(b.Content, "Show evidence")) == 2, "One evidence action per finding");
+            FindButtons(window).First(b => Equals(b.Tag, "KB-CBS-001")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(text.SelectedText.Contains("0x800f081f"), "Finding opens and selects original evidence line");
+            find.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(text.Text.StartsWith("1  SYNTHETIC DEMO"), "Find restores complete evidence view after context");
+            KillerBench.Services.ThemeManager.Apply(KillerBench.Services.Theme.Dark);
+            Pump();
+            Capture(window, Path.Combine(scratch, "investigation.png"));
+            string installerFixture = Path.Combine(scratch, "installer-actions.log");
+            File.WriteAllLines(installerFixture, ["MSI (s) (EC:BC) [12:34:56:123]: Starting action",
+                "Synthetic package context", "Action ended 12:34:56: InstallFiles. Return value 3.",
+                "MSI (s) (EC:BC) [12:34:56:124]: MainEngineThread is returning 1603"]);
+            ((TextBox)window.FindName("PathBox")).Text = installerFixture;
+            ((Button)window.FindName("OpenButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            for (int attempt = 0; attempt < 60 && ((TextBlock)window.FindName("EvidenceTitle")).Text != "installer-actions.log"; attempt++) Pump();
+            Require(((TextBlock)window.FindName("EvidenceTitle")).Text == "installer-actions.log" &&
+                ((StackPanel)window.FindName("FindingCards")).Children.Count == 2, "MSI import populates action and main-engine findings");
+            window.UpdateLayout();
+            FindButtons(window).Single(b => Equals(b.Tag, "KB-MSI-ACTION")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(text.SelectedText.Contains("InstallFiles. Return value 3.") && text.Text.Contains("Synthetic package context"),
+                "MSI evidence action selects the failed action while displaying surrounding context");
+            Capture(window, Path.Combine(scratch, "installer-action-evidence.png"));
+            var activityPanel = (Border)window.FindName("ActivityPanel");
+            activityPanel.Visibility = Visibility.Visible;
+            window.UpdateLayout();
+            var activityExport = (Button)window.FindName("ExportActivityButton");
+            Require(activityExport.IsVisible && activityExport.IsEnabled && activityExport.ActualWidth > 0,
+                "Session activity exposes an enabled export button");
+            Capture(window, Path.Combine(scratch, "activity-export.png"));
+            ((TextBox)window.FindName("PathBox")).Text = captureFixture;
+            ((Button)window.FindName("OpenButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            for (int attempt = 0; attempt < 60 && ((TextBlock)window.FindName("EvidenceTitle")).Text != "Windows Update capture"; attempt++) Pump();
+            Require(((TextBlock)window.FindName("EvidenceTitle")).Text == "Windows Update capture", "Saved capture opens through app workflow");
+            Require(((Button)window.FindName("SaveCaptureButton")).IsEnabled, "Capture save available");
+            Require(((StackPanel)window.FindName("FindingCards")).Children.Count == 2, "Capture overview groups CBS and event findings");
+            FindButtons(window).First(b => Equals(b.Tag, "KB-CBS-001")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(text.SelectedText.Contains("0x800f081f"), "Capture finding selects the correct source line");
+            ((ListBox)window.FindName("SourcesList")).SelectedIndex = ((ListBox)window.FindName("SourcesList")).Items.Count - 1;
+            IsolatedDesktop.Verify();
+            Require(window.Left + window.ActualWidth < SystemParameters.VirtualScreenLeft,
+                "Screenshot fixtures remain outside the desktop");
+            Capture(window, Path.Combine(scratch, "capture.png"));
+            var grain = (Border)window.FindName("WorkspaceGrain");
+            Require(grain.Margin.Top == 0 && Grid.GetRow(grain) == 1 && grain.ActualHeight >= ((Grid)window.FindName("ScaleHost")).ActualHeight, "Workspace grain covers margin below title bar");
+            Require(window.TryFindResource("PaneShadowEffect") is System.Windows.Media.Effects.DropShadowEffect { BlurRadius: 16, ShadowDepth: 5 }, "Family pane shadow geometry");
+            var panel = new Border { Style = (Style)window.FindResource("Panel") };
+            window.UpdateLayout();
+            Require(ReferenceEquals(panel.BorderBrush, window.FindResource("PaneBorderBrush")), "Pane uses family border resource");
+            FindButtons(window).Single(b => Equals(b.Content, "Repairs")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Pump();
+            Require(!((Button)window.FindName("RepairRun")).IsEnabled, "Repair requires explicit consent");
+            Require(((TextBox)window.FindName("RepairPreview")).Text.Contains("TARGET: THIS PC") && ((TextBox)window.FindName("RepairPreview")).Text.Contains("/RestoreHealth"), "Repair preview names target and action");
+            ((CheckBox)window.FindName("RepairConsent")).IsChecked = true;
+            ((ComboBox)window.FindName("RepairChoice")).SelectedIndex = 1;
+            Require(((CheckBox)window.FindName("RepairConsent")).IsChecked == false, "Changing action clears consent");
+            Capture(window, Path.Combine(scratch, "repairs.png"));
+            FindButtons(window).Single(b => Equals(b.Content, "Workflows")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Pump();
+            Require(((Button)window.FindName("RepairRun")).IsEnabled && ((ComboBox)window.FindName("RepairChoice")).Items.Count == Enum.GetValues<WorkflowKind>().Length, "All workflows support diagnosis without repair consent");
+            var mainChoices = (ComboBox)window.FindName("MainWorkflow");
+            var advancedChoices = (ComboBox)window.FindName("RepairChoice");
+            Require(mainChoices.SelectedItem?.ToString() == "Windows Update" && WorkflowCatalog.All.Select(x => x.Kind).SequenceEqual(Enum.GetValues<WorkflowKind>()), "Workflow display text and enum ordering remain stable");
+            Require(mainChoices.Items.Count == advancedChoices.Items.Count && mainChoices.Items.Cast<WorkflowDefinition>().Select(c => c.Title).SequenceEqual(advancedChoices.Items.Cast<ComboBoxItem>().Select(c => (string)c.Content)), "Main and advanced workflows have identical selection order");
+            mainChoices.SelectedItem = WorkflowCatalog.All.Single(definition => definition.Kind == WorkflowKind.EventLog);
+            Pump();
+            Require(((StackPanel)window.FindName("EventLogSettings")).Visibility == Visibility.Visible &&
+                ((ComboBox)window.FindName("EventChannelChoice")).Items.Count == EventLogCapacityDiagnostics.Channels.Count &&
+                ((CheckBox)window.FindName("EventChannelEnableConsent")).IsChecked == false,
+                "Event Log exposes one exact-channel selector with explicit enablement confirmation");
+            mainChoices.SelectedItem = WorkflowCatalog.All.Single(definition => definition.Kind == WorkflowKind.WindowsUpdate);
+            Pump();
+            ((CheckBox)window.FindName("RepairConsent")).IsChecked = true;
+            ((ComboBox)window.FindName("RepairChoice")).SelectedIndex = 2;
+            Pump();
+            Require(((Button)window.FindName("RepairRun")).IsEnabled && ((CheckBox)window.FindName("RepairConsent")).IsChecked == false, "Workflow selection clears auto-repair but retains diagnose action");
+            Capture(window, Path.Combine(scratch, "workflows.png"));
+            var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            TaskDraftUiChecks.Run(window);
+            typeof(KillerBench.MainWindow).GetMethod("BeginWorkflowOutput", flags)!.Invoke(window, [WorkflowKind.SystemFiles]);
+            typeof(KillerBench.MainWindow).GetMethod("AppendWorkflowOutput", flags)!.Invoke(window, ["Verification 42% complete"]);
+            Require(text.Text.Contains("Verification 42% complete") && !text.Text.Contains("SYNTHETIC SAMPLE"), "Live output replaces sample evidence");
+            Require(!((TextBox)window.FindName("SearchBox")).IsEnabled, "Search cannot replace live output");
+            Capture(window, Path.Combine(scratch, "live-workflow.png"));
+            var completedWorkflow = new WorkflowResult(WorkflowKind.Services, "fixture", DateTimeOffset.UtcNow, "Needs attention",
+                [new("Example service", CheckState.Attention, "Service needs review")], [], "fixture-journal.json");
+            typeof(KillerBench.MainWindow).GetMethod("RegisterWorkflowResult", flags)!.Invoke(window, [completedWorkflow]);
+            var outcomeLabel = (TextBlock)window.FindName("CoverageLabel");
+            Require(outcomeLabel.Text.Contains("Needs attention | 1 checks | 0 repairs run") && !outcomeLabel.Text.Contains("0 findings"),
+                "Workflow result summary uses recorded checks instead of log-rule findings");
+            ((TextBox)window.FindName("SearchBox")).Text = "no matching report text";
+            typeof(KillerBench.MainWindow).GetMethod("ShowEvidence", flags)!.Invoke(window, null);
+            Require(outcomeLabel.Text.Contains("Needs attention") && outcomeLabel.Text.Contains("0 matching report lines"),
+                "Filtering does not replace the recorded workflow outcome");
+            ((TextBox)window.FindName("SearchBox")).Clear();
+            typeof(KillerBench.MainWindow).GetMethod("ShowEvidence", flags)!.Invoke(window, null);
+            Capture(window, Path.Combine(scratch, "workflow-outcome.png"));
+            window.Close();
+            Console.WriteLine("PASS: UI construction, sample labeling, search, CRT effects, all 13 themes, panels, and theme menu.");
+            Console.WriteLine("Preview: " + preview);
+            return 0;
+        }
+        catch (Exception error) { Console.Error.WriteLine(error); return 1; }
+    }
+
+    private static async Task CheckEvidence(string scratch)
+    {
+        string path = Path.Combine(scratch, "sample.log");
+        await File.WriteAllTextAsync(path, "first\r\nERROR example\rthird\nfourth");
+        var evidence = await TextEvidence.ReadAsync(path, CancellationToken.None);
+        Require(evidence.Lines.Length == 4 && !evidence.Truncated, "Mixed newline handling");
+        string filtered = evidence.Excerpt("error", out int matches);
+        Require(matches == 1 && filtered.StartsWith("2  ERROR"), "Case-insensitive search and original line number");
+        await File.WriteAllTextAsync(path, new string('a', TextEvidence.MaximumCharacters + 20));
+        evidence = await TextEvidence.ReadAsync(path, CancellationToken.None);
+        Require(evidence.Truncated && evidence.Lines[0].Length == TextEvidence.MaximumCharacters, "Oversized source bounded and marked");
+        using var cancel = new CancellationTokenSource();
+        cancel.Cancel();
+        try { await TextEvidence.ReadAsync(path, cancel.Token); throw new Exception("Cancellation ignored"); }
+        catch (OperationCanceledException) { }
+        await File.WriteAllBytesAsync(path, [65, 0, 66, 0, 67]);
+        try { await TextEvidence.ReadAsync(path, CancellationToken.None); throw new Exception("Binary input accepted"); }
+        catch (InvalidDataException) { }
+        var many = new TextEvidence("synthetic", Enumerable.Repeat("line", 3000).ToArray(), false);
+        Require(many.Excerpt("", out matches).Contains("Display limited") && matches == 3000, "Display bound is explicit");
+        Console.WriteLine("PASS: newlines, search references, source bound, cancellation, binary rejection, display bound.");
+    }
+
+    private static IEnumerable<Button> FindButtons(DependencyObject parent)
+    {
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, i);
+            if (child is Button button) yield return button;
+            foreach (var nested in FindButtons(child)) yield return nested;
+        }
+    }
+
+    private static void Require(bool condition, string message)
+    { if (!condition) throw new Exception(message); }
+
+    private static void Pump()
+    {
+        var frame = new System.Windows.Threading.DispatcherFrame();
+        var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
+        timer.Tick += (_, _) => { timer.Stop(); frame.Continue = false; };
+        timer.Start();
+        System.Windows.Threading.Dispatcher.PushFrame(frame);
+    }
+    private static void Capture(FrameworkElement visual, string path)
+    {
+        visual.UpdateLayout();
+        var bitmap = new RenderTargetBitmap((int)Math.Ceiling(visual.ActualWidth), (int)Math.Ceiling(visual.ActualHeight),96,96,PixelFormats.Pbgra32);
+        bitmap.Render(visual);
+        var encoder = new PngBitmapEncoder();
+        encoder.Frames.Add(BitmapFrame.Create(bitmap));
+        using var file = File.Create(path);
+        encoder.Save(file);
+    }
+}

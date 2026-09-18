@@ -1,0 +1,63 @@
+{
+  "SchemaVersion": 1,
+  "Id": "windows-win32-starter",
+  "Revision": 1,
+  "PublishedOn": "2026-09-12",
+  "License": "Original KillerBench summaries, subject to the project license. Microsoft documentation is linked as the factual source; its prose is not redistributed.",
+  "Entries": [
+    {
+      "Context": "win32",
+      "Code": "2",
+      "Title": "File lookup failed",
+      "Explanation": "The requested file could not be located. Confirm the exact path used by the failing operation.",
+      "SourceUrl": "https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-",
+      "VerifiedOn": "2026-09-12",
+      "AppliesTo": "Win32 system error return values. Not automatically equivalent to HRESULT, Windows Update, installer or vendor-specific codes."
+    },
+    {
+      "Context": "win32",
+      "Code": "3",
+      "Title": "Path lookup failed",
+      "Explanation": "The requested path could not be located. Check the path and its parent directories.",
+      "SourceUrl": "https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-",
+      "VerifiedOn": "2026-09-12",
+      "AppliesTo": "Win32 system error return values. Not automatically equivalent to HRESULT, Windows Update, installer or vendor-specific codes."
+    },
+    {
+      "Context": "win32",
+      "Code": "5",
+      "Title": "Operation denied",
+      "Explanation": "The operation was denied access. Identify the target resource and execution identity before considering permission changes.",
+      "SourceUrl": "https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-",
+      "VerifiedOn": "2026-09-12",
+      "AppliesTo": "Win32 system error return values. Not automatically equivalent to HRESULT, Windows Update, installer or vendor-specific codes."
+    },
+    {
+      "Context": "win32",
+      "Code": "32",
+      "Title": "File sharing conflict",
+      "Explanation": "Another process is using the file in a way that conflicts with this operation. Identify the owner before attempting a retry.",
+      "SourceUrl": "https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-",
+      "VerifiedOn": "2026-09-12",
+      "AppliesTo": "Win32 system error return values. Not automatically equivalent to HRESULT, Windows Update, installer or vendor-specific codes."
+    },
+    {
+      "Context": "win32",
+      "Code": "53",
+      "Title": "Network path unavailable",
+      "Explanation": "The requested network path could not be found. Confirm the intended server and share before investigating connectivity.",
+      "SourceUrl": "https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-",
+      "VerifiedOn": "2026-09-12",
+      "AppliesTo": "Win32 system error return values. Not automatically equivalent to HRESULT, Windows Update, installer or vendor-specific codes."
+    },
+    {
+      "Context": "win32",
+      "Code": "87",
+      "Title": "Invalid argument",
+      "Explanation": "The operation received a parameter it could not accept. Inspect the arguments and the failing API's requirements.",
+      "SourceUrl": "https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-",
+      "VerifiedOn": "2026-09-12",
+      "AppliesTo": "Win32 system error return values. Not automatically equivalent to HRESULT, Windows Update, installer or vendor-specific codes."
+    }
+  ]
+}
