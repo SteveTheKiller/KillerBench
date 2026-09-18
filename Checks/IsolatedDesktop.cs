@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 internal static class IsolatedDesktop
 {
-    public static int Run()
+    public static int Run(string childArguments = "--isolated-ui")
     {
         RequireAppClosed();
         const uint readObjects = 0x0001, createWindow = 0x0002, createMenu = 0x0004, writeObjects = 0x0080;
@@ -19,7 +19,7 @@ internal static class IsolatedDesktop
                 command += "\"" + typeof(IsolatedDesktop).Assembly.Location + "\" ";
             var startup = new StartupInfo { Size = Marshal.SizeOf<StartupInfo>(), Desktop = name,
                 Flags = 0x100, Input = GetStdHandle(-10), Output = GetStdHandle(-11), Error = GetStdHandle(-12) };
-            if (!CreateProcessW(executable, new System.Text.StringBuilder(command + "--isolated-ui"), 0, 0, true,
+            if (!CreateProcessW(executable, new System.Text.StringBuilder(command + childArguments), 0, 0, true,
                 0x08000000, 0, null, ref startup, out var process))
                 throw new Win32Exception(Marshal.GetLastWin32Error(), "Cannot launch isolated UI tests.");
             try
