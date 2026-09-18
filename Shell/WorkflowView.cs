@@ -1007,18 +1007,19 @@ public partial class MainWindow
                     var repair = await Task.Run(() => Repairs.RunAsync(RepairKind.PrinterOffline, folder, progress, stop.Token,
                         selectedPrinterQueues: [selectedQueue]));
                     bool verified = Repairs.IsVerified(repair);
-                    workflowOutputActive = false;
-                    RegisterSource(new TextEvidence("Printer: " + selectedQueue,
-                        new[] { "SELECTED PRINTER / REPAIR", selectedQueue, check.Detail, repair.Status,
-                            "Journal: " + repair.JournalPath, "Physical printer health was not tested. Jobs were not deleted." }, false));
-                    Report(repair.Status + ". Journal: " + repair.JournalPath);
+                    string output = string.Join("\n", new[] { "SELECTED PRINTER / REPAIR", selectedQueue, check.Detail, repair.Status,
+                        "Journal: " + repair.JournalPath, "Physical printer health was not tested. Jobs were not deleted." });
+                    RegisterGuardedActionReport(WorkflowKind.Printing, "Selected printer", "Selected printer offline setting",
+                        output, repair.Status, repair.JournalPath, verified,
+                        "Test printing to the selected queue before making another printer change.");
                     SetScanLight(verified ? "ready" : "incomplete", repair.Status);
                     return;
                 }
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("Printer: " + selectedQueue,
-                    new[] { "SELECTED PRINTER / READ ONLY", selectedQueue, check.State.ToString(), check.Detail, "No printer settings changed. Physical printer health was not tested." }, false));
-                Report("Selected printer check completed. No settings changed.");
+                string readOnlyOutput = string.Join("\n", new[] { "SELECTED PRINTER / READ ONLY", selectedQueue,
+                    check.State.ToString(), check.Detail, "No printer settings changed. Physical printer health was not tested." });
+                AppendWorkflowOutput(readOnlyOutput);
+                RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Printing, Environment.MachineName, DateTimeOffset.UtcNow,
+                    "Selected printer check completed", [check], [], "Read-only selected-printer check. No change journal was created."), "Selected printer");
                 SetScanLight(check.State == CheckState.Clear ? "ready" : "incomplete", "Selected queue settings only.");
                 return;
             }
