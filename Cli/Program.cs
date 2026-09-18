@@ -313,7 +313,7 @@ if (args.Length == 0 || args is ["help"] or ["--help"] or ["-h"])
     Console.WriteLine("killerbench-cli smb-connections (read-only active protocol negotiation; remote identities excluded)");
     Console.WriteLine("killerbench-cli font-registrations (read-only bounded machine and current-user registration and file-presence check)");
     Console.WriteLine("killerbench-cli defender-threats (aggregate threat history, current active flags and severity IDs; sensitive details excluded; no action)");
-    Console.WriteLine("killerbench-cli defender-scan-history (read-only quick and full scan timing and overdue status; sensitive details excluded; no scan)");
+    Console.WriteLine("killerbench-cli defender-scan-history [--report] (read-only quick and full scan timing and overdue status; sensitive details excluded; no scan)");
     Console.WriteLine("killerbench-cli defender-scan Quick|Full [--execute] [--report] (preview by default; one explicit guarded Microsoft Defender scan)");
     Console.WriteLine("killerbench-cli defender-scan-recover [--report] (read-only reconciliation without starting another scan)");
     Console.WriteLine("killerbench-cli defender-protection (read-only protection preferences and recognized policy surfaces; sensitive details excluded; no changes)");

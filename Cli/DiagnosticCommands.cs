@@ -23,6 +23,7 @@ internal static class DiagnosticCommands
             }
         }
         bool allBitsUsers = command == "bits-jobs" && args is [_, "--all-users"];
+        bool defenderScanReport = command == "defender-scan-history" && args is [_, "--report"];
         List<string>? crashKnowledgePaths = null;
         bool invalidCrashKnowledge = false;
         if (command == "crash-review" && args.Length > 1)
@@ -42,9 +43,9 @@ internal static class DiagnosticCommands
             try { volume = StorageDiagnostics.NormalizeVolume(args[1]); }
             catch (ArgumentException) { }
         }
-        if (volumeCommand ? volume is null : invalidCrashKnowledge || args.Length != 1 && !allBitsUsers && selectedScopes is null && crashKnowledgePaths is null)
+        if (volumeCommand ? volume is null : invalidCrashKnowledge || args.Length != 1 && !allBitsUsers && !defenderScanReport && selectedScopes is null && crashKnowledgePaths is null)
         {
-            Console.Error.WriteLine(command == "crash-review" ? "Usage: crash-review [--knowledge PACK_PATH ...] (up to 32 packs; read-only crash and optional exact code-reference review)" : command == "bits-jobs" ? "Usage: bits-jobs [--all-users] (read-only transfer evidence)" : volumeCommand ? $"Usage: {command} DRIVE: (read-only selected-volume evidence; JSON output)" : $"Usage: {command} (read-only diagnostic; JSON evidence; no options)");
+            Console.Error.WriteLine(command == "crash-review" ? "Usage: crash-review [--knowledge PACK_PATH ...] (up to 32 packs; read-only crash and optional exact code-reference review)" : command == "bits-jobs" ? "Usage: bits-jobs [--all-users] (read-only transfer evidence)" : command == "defender-scan-history" ? "Usage: defender-scan-history [--report] (read-only scan timing and overdue review)" : volumeCommand ? $"Usage: {command} DRIVE: (read-only selected-volume evidence; JSON output)" : $"Usage: {command} (read-only diagnostic; JSON evidence; no options)");
             return 2;
         }
         using var stop = new CancellationTokenSource();
@@ -832,7 +833,7 @@ internal static class DiagnosticCommands
             {
                 Console.Error.WriteLine("Reading Microsoft Defender quick and full scan timing and overdue status. Threat identities, paths, accounts and file contents are excluded. No scan or security action will run.");
                 var history = await DefenderScanHistory.CheckAsync(stop.Token);
-                Console.WriteLine(JsonSerializer.Serialize(history, Capture.JsonOptions));
+                Console.WriteLine(defenderScanReport ? FormatDefenderScanHistory(history) : JsonSerializer.Serialize(history, Capture.JsonOptions));
                 return history.State == CheckState.Information ? 0 : 3;
             }
             if (command == "defender-protection")
@@ -917,6 +918,31 @@ internal static class DiagnosticCommands
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or NotSupportedException or System.ComponentModel.Win32Exception)
         { Console.Error.WriteLine("Diagnostic unavailable: " + error.Message); return 1; }
         finally { Console.CancelKeyPress -= cancel; }
+    }
+
+    private static string FormatDefenderScanHistory(WorkflowCheck history)
+    {
+        ArgumentNullException.ThrowIfNull(history);
+        string next = history.State switch
+        {
+            CheckState.Attention => "Review the intended endpoint-security schedule and ownership. This check did not request a scan.",
+            CheckState.Information => "Review the recorded timing with your endpoint-security schedule. No scan is selected.",
+            _ => "Repeat this read-only check when Defender scan history is available. Do not infer threat status from incomplete timing evidence."
+        };
+        return string.Join(Environment.NewLine,
+        [
+            "MICROSOFT DEFENDER SCAN HISTORY",
+            "Outcome: " + history.State,
+            "",
+            "WHAT WAS FOUND",
+            history.Detail,
+            "",
+            "NEXT STEP",
+            next,
+            "",
+            "SCOPE AND LIMITS",
+            "This read-only timing review does not start a scan, alter Defender settings, inspect threat identities, or establish that the computer is free of threats."
+        ]);
     }
     private sealed class DiagnosticProgress : IProgress<string>
     {
