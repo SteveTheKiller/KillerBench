@@ -30,6 +30,7 @@
 - Add MACE package removal behind a separate red desktop control with consent, confirmation, fresh safeguards, durable records and no automatic retry.
 - Add desktop reconciliation for interrupted MACE package removal without repeating the request.
 - Add CLI reconciliation for interrupted MACE package removal without adding a removal command.
+- Add a repeatable self-contained Windows x64 single-file publish profile.
 
 ## [0.1.0] - Unreleased
 
