@@ -207,6 +207,8 @@ namespace KillerBench.Services
                 d["PaneShadowEffect"] = shadow;
             }
             else d["PaneShadowEffect"] = null;
+
+            ApplyConsoleTokens(d);
             SetIfAbsent(d, "BarShadowOpacity", 0.38);
             SetIfAbsent(d, "FlyoutShadowOpacity", 0.55);
             SetIfAbsent(d, "WindowFrameThickness", new Thickness(0));
@@ -214,6 +216,64 @@ namespace KillerBench.Services
 
         private static System.Windows.Media.SolidColorBrush Transparent() =>
             new(System.Windows.Media.Colors.Transparent);
+
+        private static void ApplyConsoleTokens(ResourceDictionary d)
+        {
+            var background = BrushColor(d, "BackgroundBrush", System.Windows.Media.Colors.Black);
+            var primary = BrushColor(d, "PrimaryBrush", System.Windows.Media.Colors.White);
+            var smoke = Mix(background, System.Windows.Media.Colors.Black, 0.72);
+            var text = EnsureContrast(primary, smoke, 4.5);
+            var borderColor = Mix(primary, smoke, 0.52);
+            var surface = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(235, smoke.R, smoke.G, smoke.B));
+            var foreground = new System.Windows.Media.SolidColorBrush(text);
+            var border = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(170, borderColor.R, borderColor.G, borderColor.B));
+            surface.Freeze();
+            foreground.Freeze();
+            border.Freeze();
+            d["ConsoleSurfaceBrush"] = surface;
+            d["ConsoleTextBrush"] = foreground;
+            d["ConsoleBorderBrush"] = border;
+            var shadow = new System.Windows.Media.Effects.DropShadowEffect
+            { Color = System.Windows.Media.Colors.Black, BlurRadius = 18, ShadowDepth = 5, Direction = 270, Opacity = 0.42 };
+            shadow.Freeze();
+            d["ConsoleShadowEffect"] = shadow;
+        }
+
+        private static System.Windows.Media.Color BrushColor(ResourceDictionary d, string key, System.Windows.Media.Color fallback) =>
+            d[key] is System.Windows.Media.SolidColorBrush brush ? brush.Color : fallback;
+
+        private static System.Windows.Media.Color Mix(System.Windows.Media.Color source, System.Windows.Media.Color destination, double amount) =>
+            System.Windows.Media.Color.FromRgb(
+                (byte)Math.Round(source.R + (destination.R - source.R) * amount),
+                (byte)Math.Round(source.G + (destination.G - source.G) * amount),
+                (byte)Math.Round(source.B + (destination.B - source.B) * amount));
+
+        private static System.Windows.Media.Color EnsureContrast(System.Windows.Media.Color foreground, System.Windows.Media.Color background, double minimum)
+        {
+            var result = foreground;
+            var destination = Luminance(background) < 0.5 ? System.Windows.Media.Colors.White : System.Windows.Media.Colors.Black;
+            for (int attempt = 0; attempt < 12 && ContrastRatio(result, background) < minimum; attempt++)
+                result = Mix(result, destination, 0.18);
+            return result;
+        }
+
+        private static double ContrastRatio(System.Windows.Media.Color first, System.Windows.Media.Color second)
+        {
+            double firstLuminance = Luminance(first);
+            double secondLuminance = Luminance(second);
+            return (Math.Max(firstLuminance, secondLuminance) + 0.05) / (Math.Min(firstLuminance, secondLuminance) + 0.05);
+        }
+
+        private static double Luminance(System.Windows.Media.Color color)
+        {
+            static double Linear(byte channel)
+            {
+                double value = channel / 255.0;
+                return value <= 0.04045 ? value / 12.92 : Math.Pow((value + 0.055) / 1.055, 2.4);
+            }
+
+            return 0.2126 * Linear(color.R) + 0.7152 * Linear(color.G) + 0.0722 * Linear(color.B);
+        }
 
         private static System.Windows.Media.SolidColorBrush Hex(string hex) =>
             new((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(hex));

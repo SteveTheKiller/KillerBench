@@ -599,8 +599,9 @@ internal static class Program
             var stableWorkspace = (FrameworkElement)window.FindName("ScaleHost");
             var stableWorkspaceSize = new Size(stableWorkspace.ActualWidth, stableWorkspace.ActualHeight);
             double stableConsoleHeight = consoleBank.ActualHeight;
-            Require(((System.Windows.Controls.Border)window.FindName("ConsoleBezel")).BorderThickness == new Thickness(1) &&
-                ((System.Windows.Controls.Border)window.FindName("ConsoleGlass")).BorderThickness == new Thickness(0), "CRT uses a single thin outline");
+            Require(window.FindName("ConsolePane") is System.Windows.Controls.Border { BorderThickness: var consoleBorderThickness, Effect: System.Windows.Media.Effects.DropShadowEffect } &&
+                consoleBorderThickness == new Thickness(1) && window.FindName("Scanlines") is null && window.FindName("GlowSlider") is null,
+                "Console uses one smoked-glass pane with a shadow and no CRT controls");
             for (int categoryIndex = 0; categoryIndex < categories.Items.Count; categoryIndex++)
             {
                 categories.SelectedIndex = categoryIndex;
@@ -1042,8 +1043,9 @@ internal static class Program
                 var captionPoint = caption.TranslatePoint(new Point(caption.ActualWidth / 2, caption.ActualHeight / 2), window);
                 Require(ReferenceEquals(window.InputHitTest(captionPoint), caption), "Empty title bar receives drag input in " + theme);
                 Require(text.Text.Contains("SYNTHETIC SAMPLE"), "Theme switch retains evidence");
-                Require(text.Foreground is SolidColorBrush brush && brush.Color == Color.FromRgb(255, 202, 128), "Console phosphor independent of app theme");
-                foreach (string key in new[] { "PrimaryBrush", "TextBrush", "PaneBrush", "ControlCornerRadius", "SliderTrack", "WindowEdgeThickness" })
+                Require(text.Foreground is SolidColorBrush brush && window.TryFindResource("ConsoleTextBrush") is SolidColorBrush consoleText && brush.Color == consoleText.Color,
+                    "Console output follows the active theme");
+                foreach (string key in new[] { "PrimaryBrush", "TextBrush", "PaneBrush", "ControlCornerRadius", "SliderTrack", "WindowEdgeThickness", "ConsoleSurfaceBrush", "ConsoleTextBrush", "ConsoleBorderBrush", "ConsoleShadowEffect" })
                     Require(window.TryFindResource(key) is not null, "Missing theme token: " + key);
                 var snapshot = new RenderTargetBitmap((int)window.ActualWidth, (int)window.ActualHeight, 96, 96, PixelFormats.Pbgra32);
                 snapshot.Render(window);

@@ -37,10 +37,6 @@ public partial class MainWindow
         };
         ThemeManager.ThemeChanged += RefreshTheme;
         Closed += (_, _) => { ThemeManager.ThemeChanged -= RefreshTheme; knowledgeUpdateCancellation?.Cancel(); };
-        string preset = Preferences.Get("Phosphor") ?? "Amber";
-        phosphor = preset switch { "Green" => Color.FromRgb(133, 255, 167), "White" or "Crisp" => Color.FromRgb(231, 239, 236), _ => Color.FromRgb(255, 202, 128) };
-        ScanlineSlider.Value = ReadNumber("Scanlines", 0.10, 0, 0.25);
-        GlowSlider.Value = ReadNumber("Glow", 0.20, 0, 1);
         SizeSlider.Value = ReadNumber("ConsoleSize", 14, 12, 24);
         appScale = ReadNumber("AppScale", 1, 0.7, 2.5);
         ApplyAppScale(appScale);
@@ -55,8 +51,6 @@ public partial class MainWindow
     private void SaveDisplayPreferences()
     {
         if (!shellReady) return;
-        Preferences.Set("Scanlines", ScanlineSlider.Value.ToString(CultureInfo.InvariantCulture));
-        Preferences.Set("Glow", GlowSlider.Value.ToString(CultureInfo.InvariantCulture));
         Preferences.Set("ConsoleSize", SizeSlider.Value.ToString(CultureInfo.InvariantCulture));
     }
 

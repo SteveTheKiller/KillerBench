@@ -2,8 +2,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Effects;
 using KillerBench.Engine;
 
 namespace KillerBench;
@@ -14,7 +12,6 @@ public partial class MainWindow : Window
     private CancellationTokenSource? readCancellation;
     private readonly KnowledgeCatalogCollection sessionKnowledgeCatalogs = new();
     private bool closeAfterOperation;
-    private Color phosphor = Color.FromRgb(255, 202, 128);
 
     public MainWindow()
     {
@@ -156,28 +153,9 @@ public partial class MainWindow : Window
 
     private void ApplyDisplay()
     {
-        if (EvidenceBox is null || GlowSlider is null || SizeSlider is null) return;
-        Resources["ConsolePhosphorBrush"] = new SolidColorBrush(phosphor);
-        Scanlines.Opacity = ScanlineSlider.Value;
+        if (EvidenceBox is null || SizeSlider is null) return;
         EvidenceBox.FontSize = SizeSlider.Value * appScale;
-        EvidenceBox.Effect = GlowSlider.Value == 0 ? null : new DropShadowEffect
-        { Color = phosphor, BlurRadius = 5, ShadowDepth = 0, Opacity = GlowSlider.Value };
         SaveDisplayPreferences();
-    }
-
-    private void OnPreset(object sender, RoutedEventArgs e)
-    {
-        string preset = (string)((Button)sender).Tag;
-        Services.Preferences.Set("Phosphor", preset);
-        phosphor = preset switch
-        {
-            "Green" => Color.FromRgb(133, 255, 167),
-            "White" or "Crisp" => Color.FromRgb(231, 239, 236),
-            _ => Color.FromRgb(255, 202, 128)
-        };
-        ScanlineSlider.Value = preset == "Crisp" ? 0 : 0.10;
-        GlowSlider.Value = preset == "Crisp" ? 0 : 0.20;
-        ApplyDisplay();
     }
 
     private async void OnOpen(object sender, RoutedEventArgs e) => await OpenEvidenceAsync();

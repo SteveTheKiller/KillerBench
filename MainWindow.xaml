@@ -854,24 +854,8 @@
                 <Button DockPanel.Dock="Right" Content="{DynamicResource Str_Content_FIND}" Click="OnFind" ToolTip="{DynamicResource Str_ToolTip_Filter_evidence_lines_Enter_in_search}" Margin="4,0,0,0"/>
                 <TextBox x:Name="SearchBox" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Filter_evidence}" ToolTip="{DynamicResource Str_ToolTip_Filter_loaded_lines_Clear_to_show_all_lines}" VerticalContentAlignment="Center" KeyDown="OnSearchKey"/>
               </DockPanel>
-              <Border x:Name="ConsoleBezel" Grid.Row="2" BorderBrush="#30202020" BorderThickness="1" CornerRadius="4" Padding="0,0,0,3">
-                <Border.Background><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#303030" Offset="0"/><GradientStop Color="#282828" Offset="1"/></LinearGradientBrush></Border.Background>
-                <Grid><Grid.RowDefinitions><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                <Border x:Name="ConsoleGlass" Background="{DynamicResource ConsoleSurfaceBrush}" BorderThickness="0" CornerRadius="3" Padding="5" ClipToBounds="True">
-                <Grid>
-                  <TextBox x:Name="EvidenceBox" IsReadOnly="True" AcceptsReturn="True" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource ConsolePhosphorBrush}" FontFamily="Consolas" FontSize="14" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Evidence_with_original_line_numbers}"/>
-                  <Rectangle x:Name="Scanlines" IsHitTestVisible="False" Opacity="0.10"><Rectangle.Fill><DrawingBrush TileMode="Tile" Viewport="0,0,4,4" ViewportUnits="Absolute"><DrawingBrush.Drawing><GeometryDrawing Brush="Black" Geometry="M0,0 L4,0 4,1 0,1Z"/></DrawingBrush.Drawing></DrawingBrush></Rectangle.Fill></Rectangle>
-                  <Border CornerRadius="9" IsHitTestVisible="False" Opacity="{Binding Value, ElementName=GlowSlider}"><Border.Background><RadialGradientBrush Center="0.5,0.45" GradientOrigin="0.5,0.45" RadiusX="0.7" RadiusY="0.75"><GradientStop Color="#00FFFFFF" Offset="0.45"/><GradientStop Color="#D0000000" Offset="1"/></RadialGradientBrush></Border.Background></Border>
-                  <Border CornerRadius="9" IsHitTestVisible="False" Opacity="{Binding Value, ElementName=GlowSlider}"><Border.Background><LinearGradientBrush StartPoint="0,0" EndPoint="0.4,1"><GradientStop Color="#65FFFFFF" Offset="0"/><GradientStop Color="#00FFFFFF" Offset="0.3"/></LinearGradientBrush></Border.Background></Border>
-                </Grid>
-                </Border>
-                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,6,0">
-                  <StackPanel.Resources><Style TargetType="Button" BasedOn="{StaticResource ArcadeButton}"><Setter Property="Width" Value="24"/><Setter Property="Height" Value="24"/><Setter Property="Margin" Value="0,0,4,0"/></Style></StackPanel.Resources>
-                  <Button Background="#FFCA80" Tag="Amber" Click="OnPreset" ToolTip="Amber phosphor" AutomationProperties.Name="Amber phosphor"/>
-                  <Button Background="#71FF91" Tag="Green" Click="OnPreset" ToolTip="Green phosphor" AutomationProperties.Name="Green phosphor"/>
-                  <Button Background="#E6EAF0" Tag="White" Click="OnPreset" ToolTip="White phosphor" AutomationProperties.Name="White phosphor"/>
-                </StackPanel>
-                </Grid>
+              <Border x:Name="ConsolePane" Grid.Row="2" Background="{DynamicResource ConsoleSurfaceBrush}" BorderBrush="{DynamicResource ConsoleBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="5" ClipToBounds="True" Effect="{DynamicResource ConsoleShadowEffect}">
+                <TextBox x:Name="EvidenceBox" IsReadOnly="True" AcceptsReturn="True" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource ConsoleTextBrush}" FontFamily="Consolas" FontSize="14" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Evidence_with_original_line_numbers}"/>
               </Border>
               <TextBlock x:Name="CoverageLabel" Grid.Row="3" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,10,0,0"/>
             </Grid>
@@ -895,12 +879,9 @@
                 <WrapPanel Margin="0,0,0,10"><Button x:Name="DemoButton" Content="{DynamicResource Str_LoadDemo}" Click="OnDemo" Margin="0,0,6,0"/></WrapPanel>
                 <StackPanel x:Name="FindingsPanel" Visibility="Collapsed"><TextBlock x:Name="FindingsSummary" TextWrapping="Wrap"/><StackPanel x:Name="FindingCards"/></StackPanel>
                 <StackPanel x:Name="DisplaySettings">
-                  <TextBlock Text="{DynamicResource Str_Text_Console_phosphor}" FontSize="17" Margin="0,0,0,6"/>
-                  <Button Content="{DynamicResource Str_Content_CRISP_EFFECTS_OFF}" Tag="Crisp" Click="OnPreset" Margin="0,0,0,20"/>
-                  <TextBlock Text="{DynamicResource Str_Text_SCANLINES}" Style="{StaticResource SectionLabel}"/><Slider x:Name="ScanlineSlider" Minimum="0" Maximum="0.25" Value="0.10" ValueChanged="OnDisplayChanged" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Scanline_strength}" Margin="0,0,0,18"/>
-                  <TextBlock Text="{DynamicResource Str_Text_PHOSPHOR_GLOW}" Style="{StaticResource SectionLabel}"/><Slider x:Name="GlowSlider" Minimum="0" Maximum="1" Value="0.20" ValueChanged="OnDisplayChanged" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Phosphor_glow}" Margin="0,0,0,18"/>
+                  <TextBlock Text="Console" FontSize="17" Margin="0,0,0,14"/>
                   <TextBlock Text="{DynamicResource Str_Text_TEXT_SIZE}" Style="{StaticResource SectionLabel}"/><Slider x:Name="SizeSlider" Minimum="12" Maximum="24" Value="14" ValueChanged="OnDisplayChanged" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Console_text_size}"/>
-                  <TextBlock Text="{DynamicResource Str_Text_Console_appearance_is_independent_of_the_app_theme}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,16,0,0"/>
+                  <TextBlock Text="Colors follow the active theme." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,16,0,0"/>
                 </StackPanel>
                 <StackPanel x:Name="SourceDetails" Visibility="Collapsed"><TextBlock Text="{DynamicResource Str_Text_Selected_evidence}" FontSize="17" Margin="0,0,0,6"/><TextBox x:Name="SourceInfo" IsReadOnly="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent"/><TextBlock Text="{DynamicResource Str_RecordedEvidence}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,16,0,0"/></StackPanel>
               </StackPanel>

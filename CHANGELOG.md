@@ -1,5 +1,6 @@
 # Changelog
 
+- Replace the fixed CRT console with a theme-aware smoked-glass output pane.
 - Make Network a primary category and move BitLocker into Security.
 - Expand offline CBS, CSI and Windows Setup analysis with reviewed code guidance, informational Setup outcomes, clear partial-evidence CLI exits and recipe-based restart reporting.
 - Add shared validation, visible redacted plan summaries and read-only execution of option-rich workflow plans, including exact storage, printing, MSI repair, Windows Time source, Event Log channel, Firewall profile and computer-name reviews.
