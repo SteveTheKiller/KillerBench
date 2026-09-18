@@ -28,7 +28,8 @@ public static class ApplicationInventoryComparison
             if (previous is null) changes.Add(new(ApplicationRegistrationChange.Added, null, next));
             else if (next is null) changes.Add(new(ApplicationRegistrationChange.Removed, previous, null));
             else if (!string.Equals(previous.Version, next.Version, StringComparison.Ordinal)) changes.Add(new(ApplicationRegistrationChange.VersionChanged, previous, next));
-            else if (!string.Equals(previous.Name, next.Name, StringComparison.Ordinal) || !string.Equals(previous.Publisher, next.Publisher, StringComparison.Ordinal))
+            else if (!string.Equals(previous.Name, next.Name, StringComparison.Ordinal) || !string.Equals(previous.Publisher, next.Publisher, StringComparison.Ordinal) ||
+                previous.HasUninstallCommand != next.HasUninstallCommand || previous.HasInstallLocation != next.HasInstallLocation)
                 changes.Add(new(ApplicationRegistrationChange.MetadataChanged, previous, next));
         }
         return new(true, first.Scope, changes.AsReadOnly(), "Structural registry differences only. Comparable means complete matching registry scopes, not verified machine or account identity. The caller must establish that snapshots belong to the same machine and account before treating differences as changes over time. Added or removed registrations do not prove successful installation or uninstallation. No system changes performed.");

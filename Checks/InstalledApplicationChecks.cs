@@ -4,7 +4,7 @@ internal static class InstalledApplicationChecks
 {
     internal static void Run()
     {
-        const string row = "{\"view\":\"Registry64\",\"key\":\"fixture\",\"name\":\"Fixture\",\"version\":null,\"publisher\":null}";
+        const string row = "{\"view\":\"Registry64\",\"key\":\"fixture\",\"name\":\"Fixture\",\"version\":null,\"publisher\":null,\"hasUninstallCommand\":true,\"hasInstallLocation\":false}";
         var raw = new ToolResult(0, "{\"complete\":true,\"applications\":[" + row + "]}", "", false);
         var result = InstalledApplications.Interpret(raw);
         var empty = InstalledApplications.Interpret(raw with { Output = "{\"complete\":true,\"applications\":[]}" });
@@ -12,9 +12,11 @@ internal static class InstalledApplicationChecks
         var removal = ApplicationInventoryComparison.Compare(result, empty);
         var version = ApplicationInventoryComparison.Compare(result, InstalledApplications.Interpret(raw with { Output = raw.Output.Replace("\"version\":null", "\"version\":\"2.0\"") }));
         var metadata = ApplicationInventoryComparison.Compare(result, InstalledApplications.Interpret(raw with { Output = raw.Output.Replace("\"publisher\":null", "\"publisher\":\"Vendor\"") }));
+        var capability = ApplicationInventoryComparison.Compare(result, InstalledApplications.Interpret(raw with { Output = raw.Output.Replace("\"hasInstallLocation\":false", "\"hasInstallLocation\":true") }));
         if (!addition.Comparable || addition.Differences.Single().Change != ApplicationRegistrationChange.Added ||
             removal.Differences.Single().Change != ApplicationRegistrationChange.Removed || version.Differences.Single().Change != ApplicationRegistrationChange.VersionChanged ||
-            metadata.Differences.Single().Change != ApplicationRegistrationChange.MetadataChanged || ApplicationInventoryComparison.Compare(result, result).Differences.Count != 0)
+            metadata.Differences.Single().Change != ApplicationRegistrationChange.MetadataChanged || capability.Differences.Single().Change != ApplicationRegistrationChange.MetadataChanged ||
+            ApplicationInventoryComparison.Compare(result, result).Differences.Count != 0)
             throw new Exception("Application registration comparison lost a change or invented one.");
         if (ApplicationInventoryComparison.Compare(result, result with { Evidence = raw with { TimedOut = true } }).Comparable)
             throw new Exception("Incomplete inventory established a comparison.");
@@ -32,12 +34,13 @@ internal static class InstalledApplicationChecks
             throw new Exception("Installed application workflow lost evidence or exposed a repair.");
         var failed = InstalledApplications.Describe(result with { Evidence = raw with { TimedOut = true } });
         if (failed.Count != 1 || failed[0].State != CheckState.Unknown) throw new Exception("Failed application inventory claimed coverage.");
-        if (!result.Complete || result.Applications.Single().Key != "fixture" || result.Evidence != raw)
+        if (!result.Complete || result.Applications.Single().Key != "fixture" || !result.Applications.Single().HasUninstallCommand || result.Applications.Single().HasInstallLocation || result.Evidence != raw)
             throw new Exception("Installed application evidence lost identity.");
         var views = InstalledApplications.Interpret(raw with { Output = raw.Output.Replace("[" + row + "]", "[" + row + "," + row.Replace("Registry64", "Registry32") + "]") });
         if (!views.Complete || views.Applications.Count != 2) throw new Exception("Distinct registry views were collapsed.");
         foreach (var invalid in new[] { raw with { Error = "Denied" }, raw with { TimedOut = true }, raw with { Truncated = true },
             raw with { Output = "{}" }, raw with { Output = raw.Output.Replace("Registry64", "Unknown") },
+            raw with { Output = raw.Output.Replace(",\"hasInstallLocation\":false", "") },
             raw with { Output = raw.Output.Replace("[" + row + "]", "[" + row + "," + row + "]") },
             raw with { Output = raw.Output.Replace("\"complete\":true", "\"complete\":true,\"complete\":true") } })
             if (InstalledApplications.Interpret(invalid).Complete) throw new Exception("Incomplete installed applications claimed complete coverage.");

@@ -25,7 +25,7 @@ internal static class AppPackageCommands
             {
                 var applications = await InstalledApplications.ReadAsync(currentAccount ? InstalledApplicationScope.CurrentAccount : InstalledApplicationScope.Machine, stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(new { applications.Scope, applications.Applications, applications.Complete, applications.Evidence,
-                    Note = "Uninstall registrations in the selected registry scope. CurrentAccount means the executing account. Other accounts, portable apps, actual operation and managed ownership are not evaluated. Registrations can be stale. No installers or uninstall commands executed." }, Capture.JsonOptions));
+                    Note = "Uninstall registrations in the selected registry scope. Command and install-location availability are presence flags only: command text and paths are not exposed or executed. CurrentAccount means the executing account. Other accounts, portable apps, actual operation and managed ownership are not evaluated. Registrations can be stale. No installers or uninstall commands executed." }, Capture.JsonOptions));
                 return applications.Complete ? 0 : 3;
             }
             if (provisioned)

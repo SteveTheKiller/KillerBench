@@ -2,7 +2,8 @@ using System.Text.Json;
 
 namespace KillerBench.Engine;
 
-public sealed record InstalledApplication(string View, string Key, string Name, string? Version, string? Publisher);
+public sealed record InstalledApplication(string View, string Key, string Name, string? Version, string? Publisher,
+    bool HasUninstallCommand = false, bool HasInstallLocation = false);
 public enum InstalledApplicationScope { Machine, CurrentAccount }
 public sealed record InstalledApplicationInventory(IReadOnlyList<InstalledApplication> Applications, bool Complete, ToolResult Evidence)
 {
@@ -23,7 +24,7 @@ public static class InstalledApplications
                 "CurrentAccount means the executing account. Other accounts and portable apps are excluded. Registrations can be stale; operation, ownership and removal eligibility are unverified. No installers executed.", Evidence: observed.Evidence)
         };
         checks.AddRange(observed.Applications.Select(app => new WorkflowCheck(app.Name, CheckState.Information,
-            $"Identity: {(observed.Scope == InstalledApplicationScope.Machine ? "HKLM" : "HKCU")}/{app.View}/{app.Key}. Version: {app.Version ?? "not reported"}. Publisher: {app.Publisher ?? "not reported"}. Registration only; no application changes.")));
+            $"Identity: {(observed.Scope == InstalledApplicationScope.Machine ? "HKLM" : "HKCU")}/{app.View}/{app.Key}. Version: {app.Version ?? "not reported"}. Publisher: {app.Publisher ?? "not reported"}. Uninstall command registered: {(app.HasUninstallCommand ? "yes" : "no")}. Install location registered: {(app.HasInstallLocation ? "yes" : "no")}. Registration only; no application changes.")));
         return checks.AsReadOnly();
     }
 
@@ -41,7 +42,7 @@ public static class InstalledApplications
             "if($null -ne $root){$names=$root.GetSubKeyNames(); if($names.Count -gt 4096){$complete=$false}; " +
             "foreach($name in ($names | Sort-Object | Select-Object -First 4096)){ $key=$null; try { $key=$root.OpenSubKey($name); " +
             "if($null -eq $key){$complete=$false;continue}; $display=$key.GetValue('DisplayName'); " +
-            "if($display -is [string] -and -not [string]::IsNullOrWhiteSpace($display)){ $items.Add([pscustomobject]@{view=$view;key=$name;name=$display;version=$key.GetValue('DisplayVersion');publisher=$key.GetValue('Publisher')}) } " +
+            "if($display -is [string] -and -not [string]::IsNullOrWhiteSpace($display)){ $uninstall=$key.GetValue('UninstallString'); $location=$key.GetValue('InstallLocation'); $items.Add([pscustomobject]@{view=$view;key=$name;name=$display;version=$key.GetValue('DisplayVersion');publisher=$key.GetValue('Publisher');hasUninstallCommand=($uninstall -is [string] -and -not [string]::IsNullOrWhiteSpace($uninstall));hasInstallLocation=($location -is [string] -and -not [string]::IsNullOrWhiteSpace($location))}) } " +
             "} catch{$complete=$false} finally{if($null -ne $key){$key.Dispose()}} } } " +
             "} catch{$complete=$false} finally{if($null -ne $root){$root.Dispose()};if($null -ne $base){$base.Dispose()}} }; " +
             "[pscustomobject]@{scope='" + scope + "';complete=$complete;applications=@($items.ToArray())}|ConvertTo-Json -Depth 3 -Compress";
@@ -77,10 +78,11 @@ public static class InstalledApplications
                     if (!Unique(row)) { complete = false; continue; }
                     string? view = row.GetProperty("view").GetString(), key = row.GetProperty("key").GetString(), name = row.GetProperty("name").GetString(),
                         version = row.GetProperty("version").GetString(), publisher = row.GetProperty("publisher").GetString();
+                    bool hasUninstallCommand = row.GetProperty("hasUninstallCommand").GetBoolean(), hasInstallLocation = row.GetProperty("hasInstallLocation").GetBoolean();
                     if (view is not ("Registry32" or "Registry64") || !Valid(key) || key!.Contains('\\') || !Valid(name) ||
                         (version is not null && !Valid(version)) || (publisher is not null && !Valid(publisher)) || !seen.Add(view + "\\" + key))
                     { complete = false; continue; }
-                    applications.Add(new(view, key, name!, version, publisher));
+                    applications.Add(new(view, key, name!, version, publisher, hasUninstallCommand, hasInstallLocation));
                 }
                 catch (Exception error) when (error is InvalidOperationException or KeyNotFoundException) { complete = false; }
             }

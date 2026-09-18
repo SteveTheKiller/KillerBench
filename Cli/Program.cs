@@ -200,7 +200,7 @@ if (args.Length == 0 || args is ["--help"] or ["-h"])
     Console.WriteLine("killerbench-cli investigate-batch FILE [FILE ...] (up to 12 files; JSON Lines; exit 3 for failed or partial imports)");
     Console.WriteLine("killerbench-cli app-packages [--all-users] (registered Appx/MSIX inventory only; no removal)");
     Console.WriteLine("killerbench-cli provisioned-packages (packages staged for new users in local Windows; no removal)");
-    Console.WriteLine("killerbench-cli installed-apps [--current-user] (uninstall registrations; no removal)");
+    Console.WriteLine("killerbench-cli installed-apps [--current-user] (uninstall registrations and capability flags; no removal)");
     Console.WriteLine("killerbench-cli installed-apps-compare BEFORE.json AFTER.json (saved inventory registration differences; no machine changes)");
     Console.WriteLine("killerbench-cli workflow app-packages [--all-users] [--include-provisioned] [--json] (inventory only)");
     Console.WriteLine("killerbench-cli app-package-review FULL_NAME [--all-users] (exact target and dependent packages; no removal)");
