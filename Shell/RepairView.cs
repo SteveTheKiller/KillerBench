@@ -64,6 +64,7 @@ public partial class MainWindow
         if (workflowMode) { await RunWorkflowAsync(); return; }
         if (readCancellation is not null || RepairConsent.IsChecked != true) return;
         var kind = RepairChoice.SelectedIndex == 1 ? RepairKind.SystemFiles : RepairKind.ComponentStore;
+        var workflowKind = kind == RepairKind.SystemFiles ? WorkflowKind.SystemFiles : WorkflowKind.ComponentCleanup;
         using var stop = new CancellationTokenSource();
         readCancellation = stop;
         repairRunning = true;
@@ -71,37 +72,56 @@ public partial class MainWindow
         RepairPanel.IsEnabled = false;
         RepairChoice.IsEnabled = false;
         ModeLabel.Text = "REPAIR / THIS PC";
-        Report("Repair requested for this PC. Stop waits for the current command; it does not kill servicing.");
+        BeginWorkflowOutput(workflowKind);
+        AppendWorkflowOutput("Repair requested for this PC. Stop waits for the current command; it does not kill servicing.");
         try
         {
             string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Repairs");
-            var progress = new Progress<string>(message => { if (!string.IsNullOrWhiteSpace(message)) Report(message); });
+            var progress = new Progress<string>(message => { if (!string.IsNullOrWhiteSpace(message)) AppendWorkflowOutput(message); });
             var execution = await Task.Run(() => ServicingRepairExecution.RunAsync(kind, folder,
                 new WindowsWorkflowHost(), progress, stop.Token));
             if (execution.Repair is null)
             {
                 RepairPreview.Text = Repairs.Preview(kind) + "\n\nFRESH EVIDENCE: " + execution.Eligibility.Detail +
                     "\n\nRESULT: No repair was run.";
-                Report("Fresh evidence did not authorize the selected repair. No servicing command was run.");
+                AppendWorkflowOutput(RepairPreview.Text);
+                RegisterWorkflowResult(new WorkflowResult(workflowKind, Environment.MachineName, DateTimeOffset.UtcNow,
+                    "Repair not authorized",
+                    [new WorkflowCheck("Fresh servicing evidence", execution.Eligibility.State, execution.Eligibility.Detail),
+                     new WorkflowCheck("Change boundary", CheckState.Information,
+                        "No servicing command was run because fresh evidence did not authorize this repair.")], [],
+                    "No Windows servicing repair was requested."), "Windows servicing repair");
                 SetScanLight("attention", execution.Eligibility.Detail);
                 return;
             }
             var result = execution.Repair;
             RepairPreview.Text = Repairs.Preview(kind) + "\n\nFRESH EVIDENCE: " + execution.Eligibility.Detail +
                 "\n\nRESULT: " + result.Status + "\nJournal: " + result.JournalPath;
-            Report(result.Status + ". Journal: " + result.JournalPath);
-            SetScanLight(result.Status.StartsWith("Verification reported") ? "ready" : "attention", result.Status);
-            var text = new TextEvidence("Repair result " + DateTime.Now.ToString("HHmmss"),
-                (RepairPreview.Text + "\n\n" + string.Join("\n", result.Steps.Select(s => s.Step.Tool + "\n" + s.Result.Output + "\n" + s.Result.Error)))
-                .Replace("\r\n", "\n").Replace('\r', '\n').Split('\n'), false);
-            reports.Add(text, Investigation.Analyze(text) with { Limitation = "Recorded repair execution. Refer to the journal for commands, outputs and verification status." });
-            RegisterSource(text);
-            OnRepairs(this, new RoutedEventArgs());
-            RepairPreview.Text += "\n\nRESULT: " + result.Status + "\nJournal: " + result.JournalPath;
+            string output = RepairPreview.Text + "\n\n" + string.Join("\n", result.Steps.Select(s => s.Step.Tool + "\n" + s.Result.Output + "\n" + s.Result.Error));
+            bool verified = Repairs.IsVerified(result);
+            RegisterGuardedActionReport(workflowKind, "Windows servicing repair", Repairs.Plan(kind).Title,
+                output, result.Status, result.JournalPath, verified,
+                "Review Windows health again before selecting another servicing action.", result.RequiresRestart,
+                "Restart Windows, then rerun the selected servicing check.");
+            SetScanLight(verified ? "ready" : "attention", result.Status);
         }
-        catch (OperationCanceledException) { Report("Repair stopped before execution."); }
+        catch (OperationCanceledException)
+        {
+            const string detail = "Repair stopped before completion. No additional servicing command was requested.";
+            AppendWorkflowOutput(detail);
+            RegisterWorkflowResult(new WorkflowResult(workflowKind, Environment.MachineName, DateTimeOffset.UtcNow,
+                "Repair requires review", [new WorkflowCheck("Windows servicing repair", CheckState.Unknown, detail)], [],
+                "Servicing repair did not reach a verified outcome."), "Windows servicing repair");
+        }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or NotSupportedException or System.Security.SecurityException)
-        { RepairPreview.Text += "\n\nNot completed: " + error.Message; Report(error.Message); }
+        {
+            string detail = "Repair not completed: " + error.Message;
+            RepairPreview.Text += "\n\n" + detail;
+            AppendWorkflowOutput(detail);
+            RegisterWorkflowResult(new WorkflowResult(workflowKind, Environment.MachineName, DateTimeOffset.UtcNow,
+                "Repair requires review", [new WorkflowCheck("Windows servicing repair", CheckState.Unknown, detail)], [],
+                "Servicing repair did not reach a verified outcome."), "Windows servicing repair");
+        }
         finally
         {
             readCancellation = null;
