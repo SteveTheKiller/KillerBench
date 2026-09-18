@@ -956,11 +956,12 @@ public partial class MainWindow
                     "\nQueue: " + cancellation.QueueName + "\nJob ID: " + cancellation.JobId + "\n" + cancellation.Detail +
                     "\nRecord: " + (cancellation.RecordPath ?? "No operation record created.") +
                     "\n\nNo queue purge, spooler restart or printer setting change was requested.";
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("Print job " + cancellation.JobId,
-                    cancellationOutput.Split('\n'), false));
+                bool verified = cancellation.Outcome == PrintJobCancellationOutcome.Verified;
+                RegisterGuardedActionReport(WorkflowKind.Printing, "Print job cancellation",
+                    "Print job cancellation / " + cancellation.Outcome, cancellationOutput, cancellation.Detail,
+                    cancellation.RecordPath ?? "No operation record created.", verified,
+                    "Confirm the document was resubmitted or the queue is clear before making another print change.");
                 PrintJobCancelConsent.IsChecked = false;
-                Report(cancellation.Detail);
                 SetScanLight(cancellation.Outcome == PrintJobCancellationOutcome.Verified ? "ready" :
                     cancellation.Outcome == PrintJobCancellationOutcome.Blocked ? "attention" : "incomplete",
                     cancellation.Detail);
