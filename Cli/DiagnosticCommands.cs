@@ -23,7 +23,7 @@ internal static class DiagnosticCommands
             }
         }
         bool allBitsUsers = command == "bits-jobs" && args is [_, "--all-users"];
-        bool defenderReport = command is "defender-scan-history" or "defender-threats" && args is [_, "--report"];
+        bool defenderReport = command is "defender-scan-history" or "defender-threats" or "defender-protection" && args is [_, "--report"];
         List<string>? crashKnowledgePaths = null;
         bool invalidCrashKnowledge = false;
         if (command == "crash-review" && args.Length > 1)
@@ -45,7 +45,7 @@ internal static class DiagnosticCommands
         }
         if (volumeCommand ? volume is null : invalidCrashKnowledge || args.Length != 1 && !allBitsUsers && !defenderReport && selectedScopes is null && crashKnowledgePaths is null)
         {
-            Console.Error.WriteLine(command == "crash-review" ? "Usage: crash-review [--knowledge PACK_PATH ...] (up to 32 packs; read-only crash and optional exact code-reference review)" : command == "bits-jobs" ? "Usage: bits-jobs [--all-users] (read-only transfer evidence)" : command == "defender-scan-history" ? "Usage: defender-scan-history [--report] (read-only scan timing and overdue review)" : command == "defender-threats" ? "Usage: defender-threats [--report] (read-only aggregate threat review)" : volumeCommand ? $"Usage: {command} DRIVE: (read-only selected-volume evidence; JSON output)" : $"Usage: {command} (read-only diagnostic; JSON evidence; no options)");
+            Console.Error.WriteLine(command == "crash-review" ? "Usage: crash-review [--knowledge PACK_PATH ...] (up to 32 packs; read-only crash and optional exact code-reference review)" : command == "bits-jobs" ? "Usage: bits-jobs [--all-users] (read-only transfer evidence)" : command == "defender-scan-history" ? "Usage: defender-scan-history [--report] (read-only scan timing and overdue review)" : command == "defender-threats" ? "Usage: defender-threats [--report] (read-only aggregate threat review)" : command == "defender-protection" ? "Usage: defender-protection [--report] (read-only protection review)" : volumeCommand ? $"Usage: {command} DRIVE: (read-only selected-volume evidence; JSON output)" : $"Usage: {command} (read-only diagnostic; JSON evidence; no options)");
             return 2;
         }
         using var stop = new CancellationTokenSource();
@@ -840,7 +840,7 @@ internal static class DiagnosticCommands
             {
                 Console.Error.WriteLine("Reading Microsoft Defender protection preferences and recognized machine policy value names. Exclusions, protected folders, file contents and policy values are excluded. No security setting will change.");
                 var protection = await DefenderProtectionDiagnostics.CheckAsync(stop.Token);
-                Console.WriteLine(JsonSerializer.Serialize(protection, Capture.JsonOptions));
+                Console.WriteLine(defenderReport ? FormatDefenderProtection(protection) : JsonSerializer.Serialize(protection, Capture.JsonOptions));
                 return protection.All(check => check.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
             if (command == "installer-activity")
@@ -968,6 +968,31 @@ internal static class DiagnosticCommands
             "SCOPE AND LIMITS",
             "This aggregate read-only review does not expose threat identities, paths, users or files. It does not scan, quarantine, remove, restore or exclude anything."
         ]);
+    }
+
+    private static string FormatDefenderProtection(IReadOnlyList<WorkflowCheck> protection)
+    {
+        ArgumentNullException.ThrowIfNull(protection);
+        int attention = protection.Count(check => check.State == CheckState.Attention);
+        int unknown = protection.Count(check => check.State == CheckState.Unknown);
+        string next = attention > 0
+            ? "Review the stated controls against the intended security baseline and effective policy. No setting change starts from this report."
+            : unknown > 0
+                ? "Repeat this read-only review when complete Defender evidence is available. Do not infer effective protection from incomplete evidence."
+                : "Review this snapshot with the intended security baseline. No setting change starts from this report.";
+        var lines = new List<string>
+        {
+            "MICROSOFT DEFENDER PROTECTION",
+            "Controls reviewed: " + protection.Count,
+            "Needs review: " + attention,
+            "Incomplete: " + unknown,
+            "",
+            "WHAT WAS FOUND"
+        };
+        lines.AddRange(protection.Select(check => check.Name + " [" + check.State + "]\n" + check.Detail));
+        lines.AddRange(["", "NEXT STEP", next, "", "SCOPE AND LIMITS",
+            "This read-only review does not change Defender preferences, exclusions, policy, protected folders, files, scans, remediation or signature state."]);
+        return string.Join(Environment.NewLine, lines);
     }
     private sealed class DiagnosticProgress : IProgress<string>
     {
