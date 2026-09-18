@@ -31,17 +31,16 @@ Suggested layout:
 
 The displays are views of structured data, not separate command shells. Console presentation must not require executing arbitrary text.
 
-## CRT appearance
+## Console appearance
 
-Separate console appearance from the application theme. Proposed console presets are Amber Phosphor, Green Phosphor, White Phosphor, and Crisp.
+Use one smoked-glass console pane that follows the active application theme. Keep raw operational output separate from the readable workflow report.
 
-- Adjust scanline strength and glow independently.
-- Keep effects inside the console surfaces.
+- Keep the glass and shadow treatment inside the console surface.
 - Preserve crisp text selection, copying, searching, and scrolling.
-- Provide an effects-off mode and readable scaling.
+- Provide readable scaling.
 - Do not animate flicker, distort text geometry, or delay real output to imitate old hardware.
 - Show severity through labels and symbols as well as color.
-- Persist appearance separately from investigation data.
+- Use reports to lead with specific next actions and limit the visible triage list without losing exported detail.
 
 Use semantic product resources for console colors and effects without redefining shared family tokens. Preserve F1 for shortcuts and F12 for About. Use one binding table for shortcuts and their displayed labels.
 
@@ -66,7 +65,7 @@ Each supported repair needs prerequisites, a concrete preview of its actions and
 ## Initial implementation sequence
 
 1. Create a Windows WPF shell and a separate diagnostic core, using app-owned family resources.
-2. Implement the instrument layout and CRT appearance controls with clearly labeled sample data.
+2. Implement the instrument layout and theme-aware console output with clearly labeled sample data.
 3. Open saved text evidence and provide source selection, search, and line references.
 4. Add source-specific parsers and meaningful tests using synthetic or explicitly approved sanitized fixtures.
 5. Add bounded read-only collectors and cancellation, requesting elevation only for operations that need it.

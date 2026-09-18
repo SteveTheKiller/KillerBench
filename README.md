@@ -9,6 +9,6 @@ A Windows diagnostic, repair, and maintenance workbench.
 - **Diagnostics:** Deterministic checks, live console output, saved captures, and execution journals. No AI required.
 - **Repairs:** Supported actions use prerequisite checks and verification. Coverage is still expanding.
 - **Engine:** The KillerBench.Engine, usable separately from the desktop app, with CLI support.
-- **Interface:** Retro CRT console, 13 themes, and configurable console colors.
+- **Interface:** Modern smoked-glass console and readable reports that follow the active theme across 13 themes.
 
 [Website](https://killerbench.net)
