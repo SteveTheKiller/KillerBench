@@ -1328,12 +1328,15 @@ public partial class MainWindow
                 string targets = reset?.Targets is { Count: > 0 }
                     ? "\nCaches: " + string.Join(", ", reset.Targets.Select(target => target.Label))
                     : "";
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("ORCA cache reset " + DateTime.Now.ToString("HHmmss"),
-                    ("ORCA / OUTLOOK CACHE RESET\nOutcome: " + outcome + targets + "\n\n" + detail +
-                    "\n\nRetained cache locations are recorded only in the local recovery journal.").Split('\n'), false));
-                Report(detail);
-                SetScanLight(outcome is "Verified" or "NotChanged" or "NoPendingRecord" ? "ready" : "attention", detail);
+                string journal = reset?.JournalPath ?? recovery?.ArchivePath ?? recovery?.PendingPath ?? "No change journal created.";
+                string output = "ORCA / OUTLOOK CACHE RESET\nOutcome: " + outcome + targets + "\n\n" + detail +
+                    "\n\nJournal: " + journal +
+                    "\nRetained cache locations are recorded only in the local recovery journal.";
+                bool verified = outcome is "Verified" or "NotChanged" or "NoPendingRecord";
+                RegisterGuardedActionReport(WorkflowKind.Orca, "Outlook cache reset", "Outlook cache reset / " + outcome,
+                    output, detail, journal, verified,
+                    "Open Outlook and test the affected account before selecting another profile or cache action.");
+                SetScanLight(verified ? "ready" : "attention", detail);
                 return;
             }
             var host = new WindowsWorkflowHost { NetworkTimeout = networkTimeout, BitsAllUsers = bitsAllUsers, BitsSelectedJobId = BitsSelection.SelectedItem is Guid selectedBitsJob ? selectedBitsJob : null, TimeOptions = timeOptions, ApplicationScope = applicationScope, MaceOptions = maceOptions, OrcaOptions = orcaOptions, DepotOptions = depotOptions, BeamOptions = beamOptions, DebloatOptions = debloatOptions, IncludeProvisionedPackages = includeProvisioned, PackageScope = packageScope, NetworkEndpoint = networkEndpoint, NetworkLookupHost = networkLookupHost, MsiProductCode = msiProductCode, ProposedComputerName = proposedName, StorageVolume = storageVolume, CheckProfileDependencies = profileDependencies, ProfileMinimumDays = profileDays, CleanupOptions = cleanupOptions, SecurityOptions = securityOptions, AudioEndpointSelection = audioSelection, UpdateOptions = updateOptions, IncludeThirdPartyUpdates = UpdateThirdParty.IsChecked == true, PrivacyOptions = privacyOptions, BitLockerOptions = bitlockerOptions, BitLockerRecoveryProtector = string.Equals(protectorVolume, bitlockerOptions.Volume, StringComparison.OrdinalIgnoreCase) && BitLockerProtectorChoice.SelectedItem is Guid selectedProtector ? selectedProtector : null, EventChannel = selectedEventChannel, KnowledgeCatalogs = sessionKnowledgeCatalogs, Progress = progress };
