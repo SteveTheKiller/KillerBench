@@ -215,6 +215,7 @@
               </ComboBox>
               <Button x:Name="SaveApplicationInventory" Content="Save inventory..." Click="OnSaveApplicationInventory" IsEnabled="False" HorizontalAlignment="Left" Margin="0,6,0,0" ToolTip="Save registrations from the last completed collection, including any coverage limits."/>
               <Button x:Name="CompareApplicationInventories" Content="Compare saved inventories..." Click="OnCompareApplicationInventories" HorizontalAlignment="Left" Margin="0,6,0,0" ToolTip="Choose before and after installed-apps JSON files. No applications are changed."/>
+              <Button x:Name="ReviewBrowserExtensions" Content="Review browser extensions" Click="OnReviewBrowserExtensions" HorizontalAlignment="Left" Margin="0,6,0,0" ToolTip="Read Chrome, Edge and Brave extension identities. No browser, extension or policy is changed."/>
             </StackPanel>
             <StackPanel x:Name="MaceSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="Choose exactly what to review. GO inventories registrations and shows consequences. Removal is not available yet." TextWrapping="Wrap"/>

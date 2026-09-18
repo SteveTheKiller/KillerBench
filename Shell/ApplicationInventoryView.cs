@@ -21,6 +21,38 @@ public partial class MainWindow
         if (SaveApplicationInventory is not null) SetApplicationInventory(null);
     }
 
+    private async void OnReviewBrowserExtensions(object sender, RoutedEventArgs e)
+    {
+        if (readCancellation is not null) return;
+        using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+        readCancellation = cancellation;
+        ReviewBrowserExtensions.IsEnabled = false;
+        CancelButton.IsEnabled = true;
+        Report("Reviewing browser extension identities...");
+        try
+        {
+            BrowserExtensionReviewResult result = await Task.Run(() => BrowserExtensionReview.Read(cancellation.Token));
+            var text = new StringBuilder("BROWSER EXTENSION REVIEW\n");
+            text.AppendLine("Coverage: " + (result.Complete ? "Complete" : "Incomplete"));
+            text.AppendLine("Extension identities: " + result.Extensions.Count).AppendLine();
+            foreach (BrowserExtensionIdentity extension in result.Extensions)
+                text.AppendLine(extension.Browser + " | " + extension.Profile + " | " + extension.ExtensionId);
+            text.AppendLine().AppendLine(result.Detail);
+            RegisterSource(new TextEvidence("Browser extensions " + DateTime.Now.ToString("HHmmss"), text.ToString().Replace("\r\n", "\n").Split('\n'), !result.Complete));
+            ModeLabel.Text = "BROWSER EXTENSION REVIEW";
+            Report(result.Complete ? "Browser extension review complete. No browser or extension changed." : "Browser extension review is incomplete. No browser or extension changed.");
+        }
+        catch (OperationCanceledException) { Report("Browser extension review stopped or timed out."); }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException or NotSupportedException)
+        { Report("Browser extension review unavailable: " + error.Message); }
+        finally
+        {
+            readCancellation = null;
+            ReviewBrowserExtensions.IsEnabled = true;
+            CancelButton.IsEnabled = false;
+        }
+    }
+
     private async void OnSaveApplicationInventory(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null || applicationInventory is not { } inventory) return;

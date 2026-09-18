@@ -209,6 +209,7 @@ internal static class Program
             ProvisionedPackageChecks.Run();
             InstalledApplicationChecks.Run();
             ApplicationFolderReviewChecks.Run();
+            BrowserExtensionReviewChecks.Run(scratch);
             MacePlanningChecks.Run();
             MacePackageRemovalChecks.RunAsync(scratch).GetAwaiter().GetResult();
             OrcaPlanningChecks.Run();
@@ -628,6 +629,7 @@ internal static class Program
                     if (tool.Kind == WorkflowKind.InstalledApps)
                     {
                         Require(((StackPanel)window.FindName("InstalledApplicationSettings")).IsVisible && !((CheckBox)window.FindName("MainAutoRepair")).IsEnabled, "Application scope options visible without repair");
+                        Require(window.FindName("ReviewBrowserExtensions") is Button { IsEnabled: true }, "Browser extension review is available from installed applications");
                         ((ComboBox)window.FindName("InstalledApplicationScopeChoice")).SelectedIndex = 1;
                         window.UpdateLayout();
                         Capture(window, Path.Combine(scratch, "application-scope.png"));
