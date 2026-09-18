@@ -23,7 +23,8 @@ internal static class DiagnosticCommands
             }
         }
         bool allBitsUsers = command == "bits-jobs" && args is [_, "--all-users"];
-        bool defenderReport = command is "defender-scan-history" or "defender-threats" or "defender-protection" && args is [_, "--report"];
+        bool defenderOverview = command == "defender-overview";
+        bool defenderReport = command is "defender-scan-history" or "defender-threats" or "defender-protection" or "defender-overview" && args is [_, "--report"];
         List<string>? crashKnowledgePaths = null;
         bool invalidCrashKnowledge = false;
         if (command == "crash-review" && args.Length > 1)
@@ -45,7 +46,7 @@ internal static class DiagnosticCommands
         }
         if (volumeCommand ? volume is null : invalidCrashKnowledge || args.Length != 1 && !allBitsUsers && !defenderReport && selectedScopes is null && crashKnowledgePaths is null)
         {
-            Console.Error.WriteLine(command == "crash-review" ? "Usage: crash-review [--knowledge PACK_PATH ...] (up to 32 packs; read-only crash and optional exact code-reference review)" : command == "bits-jobs" ? "Usage: bits-jobs [--all-users] (read-only transfer evidence)" : command == "defender-scan-history" ? "Usage: defender-scan-history [--report] (read-only scan timing and overdue review)" : command == "defender-threats" ? "Usage: defender-threats [--report] (read-only aggregate threat review)" : command == "defender-protection" ? "Usage: defender-protection [--report] (read-only protection review)" : volumeCommand ? $"Usage: {command} DRIVE: (read-only selected-volume evidence; JSON output)" : $"Usage: {command} (read-only diagnostic; JSON evidence; no options)");
+            Console.Error.WriteLine(command == "crash-review" ? "Usage: crash-review [--knowledge PACK_PATH ...] (up to 32 packs; read-only crash and optional exact code-reference review)" : command == "bits-jobs" ? "Usage: bits-jobs [--all-users] (read-only transfer evidence)" : command == "defender-scan-history" ? "Usage: defender-scan-history [--report] (read-only scan timing and overdue review)" : command == "defender-threats" ? "Usage: defender-threats [--report] (read-only aggregate threat review)" : command == "defender-protection" ? "Usage: defender-protection [--report] (read-only protection review)" : command == "defender-overview" ? "Usage: defender-overview [--report] (read-only Defender protection, scan timing and aggregate threat review)" : volumeCommand ? $"Usage: {command} DRIVE: (read-only selected-volume evidence; JSON output)" : $"Usage: {command} (read-only diagnostic; JSON evidence; no options)");
             return 2;
         }
         using var stop = new CancellationTokenSource();
@@ -822,6 +823,17 @@ internal static class DiagnosticCommands
                 Console.WriteLine(JsonSerializer.Serialize(licensing, Capture.JsonOptions));
                 return licensing.State == CheckState.Clear ? 0 : 3;
             }
+            if (defenderOverview)
+            {
+                Console.Error.WriteLine("Reading Defender protection controls, scan timing and aggregate threat history. Exclusions, threat identities, paths, accounts, files and policy values are excluded. No scan, remediation or security setting will change.");
+                var protectionTask = DefenderProtectionDiagnostics.CheckAsync(stop.Token);
+                var historyTask = DefenderScanHistory.CheckAsync(stop.Token);
+                var threatsTask = DefenderThreatSummary.CheckAsync(stop.Token);
+                await Task.WhenAll(protectionTask, historyTask, threatsTask);
+                WorkflowCheck[] overview = protectionTask.Result.Concat([historyTask.Result, threatsTask.Result]).ToArray();
+                Console.WriteLine(defenderReport ? FormatDefenderOverview(overview) : JsonSerializer.Serialize(overview, Capture.JsonOptions));
+                return overview.All(check => check.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
+            }
             if (command == "defender-threats")
             {
                 Console.Error.WriteLine("Reading aggregate Microsoft Defender threat history and current active flags. Names, paths, resources, accounts and process details are excluded. No security action will run.");
@@ -992,6 +1004,31 @@ internal static class DiagnosticCommands
         lines.AddRange(protection.Select(check => check.Name + " [" + check.State + "]\n" + check.Detail));
         lines.AddRange(["", "NEXT STEP", next, "", "SCOPE AND LIMITS",
             "This read-only review does not change Defender preferences, exclusions, policy, protected folders, files, scans, remediation or signature state."]);
+        return string.Join(Environment.NewLine, lines);
+    }
+
+    private static string FormatDefenderOverview(IReadOnlyList<WorkflowCheck> overview)
+    {
+        ArgumentNullException.ThrowIfNull(overview);
+        int attention = overview.Count(check => check.State == CheckState.Attention);
+        int unknown = overview.Count(check => check.State == CheckState.Unknown);
+        string next = attention > 0
+            ? "Review the stated security findings with the authorized security owner. No scan, remediation or setting change starts from this report."
+            : unknown > 0
+                ? "Repeat this read-only overview when complete Defender evidence is available."
+                : "Review this snapshot against the intended endpoint-security baseline. No action starts from this report.";
+        var lines = new List<string>
+        {
+            "MICROSOFT DEFENDER OVERVIEW",
+            "Checks completed: " + overview.Count,
+            "Needs review: " + attention,
+            "Incomplete: " + unknown,
+            "",
+            "WHAT WAS FOUND"
+        };
+        lines.AddRange(overview.Select(check => check.Name + " [" + check.State + "]\n" + check.Detail));
+        lines.AddRange(["", "NEXT STEP", next, "", "SCOPE AND LIMITS",
+            "This read-only overview does not start a scan, alter Defender settings, inspect exclusions or policy values, expose threat identities, or remediate any file."]);
         return string.Join(Environment.NewLine, lines);
     }
     private sealed class DiagnosticProgress : IProgress<string>
