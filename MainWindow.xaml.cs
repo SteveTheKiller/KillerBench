@@ -47,9 +47,10 @@ public partial class MainWindow : Window
         SearchBox.Clear();
         EvidenceTitle.Text = "Start here";
         EvidenceBox.Text = "KILLERBENCH / START HERE\n\n" +
-            "1. Choose a diagnostic area.\n" +
+            "1. Full system scan is selected by default and starts with read-only checks.\n" +
             "2. Select Run diagnosis.\n" +
-            "3. Read the readable report for problems and the next safe step.\n\n" +
+            "3. Read the readable report for problems and the next safe step.\n" +
+            "4. Open Repair only when you are ready to review a focused recovery option.\n\n" +
             "Raw output appears here while work is running. Repair remains off until you explicitly approve it.";
         CoverageLabel.Text = "No scan has run. A clean report starts with the selected diagnostic workflow.";
         ModeLabel.Text = "READY / DIAGNOSTICS";

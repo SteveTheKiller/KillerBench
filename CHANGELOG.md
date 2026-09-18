@@ -1,5 +1,6 @@
 # Changelog
 
+- Explain the safe Full system scan default and focused Repair handoff at startup.
 - Put the diagnosis-first Full system scan in Diagnostics and reserve Repair for focused recovery workflows.
 - Identify KillerBench as the Windows maintenance workbench across the desktop, CLI and guide.
 - Link actionable readable reports to the safe Repair workspace without approving a repair.

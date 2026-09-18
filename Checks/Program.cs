@@ -589,8 +589,9 @@ internal static class Program
             window.UpdateLayout();
             Require(window.Left + window.ActualWidth < SystemParameters.VirtualScreenLeft && !window.ShowActivated && !window.ShowInTaskbar,
                 "UI validation stays outside the desktop without activation or a taskbar entry");
-            Require(text.Text.Contains("START HERE") && ((ListBox)window.FindName("SourcesList")).Items.Count == 0,
-                "Startup explains the diagnostic flow without pretending that sample evidence is machine evidence");
+            Require(text.Text.Contains("START HERE") && text.Text.Contains("Full system scan is selected by default") &&
+                ((ListBox)window.FindName("SourcesList")).Items.Count == 0,
+                "Startup explains the diagnostic-first full scan without pretending that sample evidence is machine evidence");
             var controlBank = (FrameworkElement)window.FindName("LeftPanel");
             var consoleBank = (FrameworkElement)window.FindName("ConsoleBank");
             var controlOrigin = controlBank.TranslatePoint(new Point(), window);
