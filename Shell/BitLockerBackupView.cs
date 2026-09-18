@@ -74,7 +74,7 @@ public partial class MainWindow
                 protectorVolume = volume;
                 BitLockerProtectorChoice.ItemsSource = inventory.Protectors.Where(p => p.Type == "RecoveryPassword").Select(p => p.Id).ToArray();
             }
-            return (inventory.Complete ? "Protector discovery complete. Select a recovery protector before backup." : "Protector discovery incomplete. Backup selection unavailable.",
+            return new BitLockerOperationOutcome(inventory.Complete ? "Protector discovery complete. Select a recovery protector before backup." : "Protector discovery incomplete. Backup selection unavailable.",
                 inventory.Complete, inventory.Protectors.Select(p => p.Id + " / " + p.Type).ToArray());
         });
     }
@@ -99,13 +99,19 @@ public partial class MainWindow
                     new Progress<string>(AppendWorkflowOutput));
                 protectorVolume = null;
                 BitLockerProtectorChoice.ItemsSource = null;
-                return (recovery.Detail, recovery.Outcome == BitLockerBackupReconciliationOutcome.Verified,
-                    new[] { "Protector: " + protector, "Record: " + (recovery.ArchivePath ?? recovery.PendingPath), "No recovery file was written during this check." });
+                return new BitLockerOperationOutcome(recovery.Detail, recovery.Outcome == BitLockerBackupReconciliationOutcome.Verified,
+                    ["Protector: " + protector, "Record: " + (recovery.ArchivePath ?? recovery.PendingPath), "No recovery file was written during this check."],
+                    "BitLocker recovery backup", "BitLocker recovery backup / " + recovery.Outcome,
+                    recovery.ArchivePath ?? recovery.PendingPath,
+                    "Store the verified recovery backup securely before making another BitLocker change.");
             }
             var result = await BitLockerBackupExecution.RunAsync(options, protector, folder, host, token, new Progress<string>(AppendWorkflowOutput));
             protectorVolume = null;
             BitLockerProtectorChoice.ItemsSource = null;
-            return (result.Status, result.Receipt is { Verified: true }, new[] { "Protector: " + protector, "Journal: " + result.JournalPath });
+            return new BitLockerOperationOutcome(result.Status, result.Receipt is { Verified: true },
+                ["Protector: " + protector, "Journal: " + result.JournalPath],
+                "BitLocker recovery backup", "BitLocker recovery backup", result.JournalPath,
+                "Store the verified recovery backup securely before making another BitLocker change.");
         });
     }
 
@@ -138,10 +144,13 @@ public partial class MainWindow
             string after = result.After is null ? "After: unavailable" :
                 "After: " + result.After.VolumeStatus + ", protection " + result.After.ProtectionStatus +
                 ", " + result.After.Protectors.Count + " protector identities";
-            return (result.Detail, result.Outcome == BitLockerProtectionResumeOutcome.Verified,
+            return new BitLockerOperationOutcome(result.Detail, result.Outcome == BitLockerProtectionResumeOutcome.Verified,
                 ["Volume: " + result.Volume, "Outcome: " + result.Outcome, before, after,
                     "Journal: " + (result.JournalPath ?? "none"),
-                    "No encryption method, protector, recovery destination, policy or restart setting was changed."]);
+                    "No encryption method, protector, recovery destination, policy or restart setting was changed."],
+                "BitLocker protection", "BitLocker protection / " + result.Outcome,
+                result.JournalPath ?? "No operation journal created.",
+                "Confirm BitLocker protection is active before making another BitLocker change.");
         });
     }
 
@@ -177,14 +186,20 @@ public partial class MainWindow
                 "Before: " + result.Before.VolumeStatus + ", " + result.Before.EncryptionPercentage + "% encrypted, " + result.Before.EncryptionMethod;
             string after = result.After is null ? "After: unavailable" :
                 "After: " + result.After.VolumeStatus + ", " + result.After.EncryptionPercentage + "% encrypted, " + result.After.EncryptionMethod;
-            return (result.Detail, result.Outcome == BitLockerEncryptionOutcome.Started,
+            return new BitLockerOperationOutcome(result.Detail, result.Outcome == BitLockerEncryptionOutcome.Started,
                 ["Volume: " + result.Volume, "Outcome: " + result.Outcome, before, after,
                     "Recovery backup: " + (result.Backup?.Verified == true ? "verified" : "not verified"),
-                    "Journal: " + (result.JournalPath ?? "none")]);
+                    "Journal: " + (result.JournalPath ?? "none")],
+                "BitLocker encryption", "BitLocker encryption / " + result.Outcome,
+                result.JournalPath ?? "No operation journal created.",
+                "Monitor encryption progress in Windows before making another BitLocker change.");
         });
     }
 
-    private async Task RunBitLockerOperationAsync(Func<CancellationToken, Task<(string Detail, bool Verified, string[] Lines)>> operation)
+    private sealed record BitLockerOperationOutcome(string Detail, bool Verified, string[] Lines,
+        string? ReportTitle = null, string? ActionName = null, string? Journal = null, string? NextAction = null);
+
+    private async Task RunBitLockerOperationAsync(Func<CancellationToken, Task<BitLockerOperationOutcome>> operation)
     {
         using var stop = new CancellationTokenSource();
         readCancellation = stop;
@@ -197,6 +212,14 @@ public partial class MainWindow
         {
             var result = await operation(stop.Token);
             workflowOutputActive = false;
+            if (result.ReportTitle is not null && result.ActionName is not null && result.Journal is not null && result.NextAction is not null)
+            {
+                RegisterGuardedActionReport(WorkflowKind.BitLocker, result.ReportTitle, result.ActionName,
+                    string.Join("\n", new[] { result.Detail }.Concat(result.Lines)), result.Detail, result.Journal,
+                    result.Verified, result.NextAction);
+                SetScanLight(result.Verified ? "ready" : "incomplete", result.Detail);
+                return;
+            }
             RegisterSource(new TextEvidence("BitLocker " + DateTime.Now.ToString("HHmmss"),
                 new[] { result.Detail }.Concat(result.Lines).ToArray(), false));
             Report(result.Detail);
