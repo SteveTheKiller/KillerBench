@@ -7,6 +7,7 @@ public partial class MainWindow
 {
     private bool workflowOutputActive;
     private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, WorkflowResult> workflowSummaries = new();
+    private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, string> workflowReportTitles = new();
 
     private void RegisterWorkflowResult(WorkflowResult result, string? reportTitle = null)
     {
@@ -15,6 +16,7 @@ public partial class MainWindow
         var text = new TextEvidence("Workflow " + DateTime.Now.ToString("HHmmss"), EvidenceBox.Text.Replace("\r\n", "\n").Split('\n'), false);
         reports.Add(text, Investigation.Analyze(text) with { Limitation = "Live workflow results. See the workflow journal for decisions and repair verification." });
         workflowSummaries.Add(text, result);
+        if (!string.IsNullOrWhiteSpace(reportTitle)) workflowReportTitles.Add(text, reportTitle);
         workflowOutputActive = false;
         RegisterSource(text);
         RepairPreview.Text = summary;

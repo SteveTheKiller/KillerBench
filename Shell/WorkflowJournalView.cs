@@ -47,6 +47,7 @@ public partial class MainWindow
             var report = BuildHistoricalWorkflowReport(review);
             historicalWorkflows.Add(source, review);
             workflowSummaries.Add(source, report);
+            workflowReportTitles.Add(source, "Saved workflow");
             RegisterSource(source);
             ShowEvidence();
             ModeLabel.Text = "SAVED WORKFLOW / HISTORICAL";

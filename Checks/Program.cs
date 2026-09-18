@@ -1425,7 +1425,7 @@ internal static class Program
             Capture(window, Path.Combine(scratch, "live-workflow.png"));
             var completedWorkflow = new WorkflowResult(WorkflowKind.Services, "fixture", DateTimeOffset.UtcNow, "Needs attention",
                 [new("Example service", CheckState.Attention, "Service needs review")], [], "fixture-journal.json");
-            typeof(KillerBench.MainWindow).GetMethod("RegisterWorkflowResult", flags)!.Invoke(window, [completedWorkflow]);
+            typeof(KillerBench.MainWindow).GetMethod("RegisterWorkflowResult", flags)!.Invoke(window, [completedWorkflow, "Focused service review"]);
             var outcomeLabel = (TextBlock)window.FindName("CoverageLabel");
             Require(outcomeLabel.Text.Contains("Needs attention | 1 checks | 0 repairs run") && !outcomeLabel.Text.Contains("0 findings"),
                 "Workflow result summary uses recorded checks instead of log-rule findings");
@@ -1433,6 +1433,9 @@ internal static class Program
                 window.FindName("ConsolePane") is Border { Visibility: Visibility.Collapsed } &&
                 ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>().Any(card => card.Child is StackPanel),
                 "Completed workflows open a separate formatted report instead of replacing the console");
+            typeof(KillerBench.MainWindow).GetMethod("OnSourceSelected", flags)!.Invoke(window, [window, null]);
+            Require(((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Focused service review report"),
+                "Reopening a workflow source retains its focused readable report title");
             FindButtons(window).Single(button => Equals(button.Content, "Console")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(window.FindName("ConsolePane") is Border { Visibility: Visibility.Visible } && text.Text.Contains("Verification 42% complete"),
                 "Console retains the raw live output after a report is created");
