@@ -210,6 +210,7 @@ internal static class Program
             InstalledApplicationChecks.Run();
             ApplicationFolderReviewChecks.Run();
             BrowserExtensionReviewChecks.Run(scratch);
+            FileReviewChecks.RunAsync(scratch).GetAwaiter().GetResult();
             MacePlanningChecks.Run();
             MacePackageRemovalChecks.RunAsync(scratch).GetAwaiter().GetResult();
             OrcaPlanningChecks.Run();
