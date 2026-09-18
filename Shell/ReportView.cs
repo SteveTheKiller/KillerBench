@@ -55,6 +55,7 @@ public partial class MainWindow
         if (HasRepairAvailable(result)) ReportContent.Children.Add(RepairNavigationButton(result));
         if (HasMaintenanceOptions(result)) ReportContent.Children.Add(MaintenanceNavigationButton());
         if (HasSecurityOptions(result)) ReportContent.Children.Add(SecurityNavigationButton(result.Kind));
+        if (HasNetworkOptions(result)) ReportContent.Children.Add(NetworkNavigationButton());
 
         ReportContent.Children.Add(Heading("What needs attention", 18));
         var problems = result.Checks.Where(check => check.EffectiveState is CheckState.Attention or CheckState.Repairable or CheckState.Unknown)
@@ -189,6 +190,25 @@ public partial class MainWindow
         return button;
     }
 
+    private Button NetworkNavigationButton()
+    {
+        var button = new Button
+        {
+            Content = "Review network options",
+            ToolTip = "Open the Network workspace. No network setting or repair is selected, approved or started.",
+            HorizontalAlignment = HorizontalAlignment.Left,
+            Margin = new Thickness(0, 0, 0, 14)
+        };
+        button.SetResourceReference(Button.StyleProperty, "SurfaceButton");
+        button.Click += (_, _) =>
+        {
+            MainAutoRepair.IsChecked = false;
+            CategoryList.SelectedItem = ToolCategories.Single(category => category.Title == "Network");
+            MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == WorkflowKind.Network);
+        };
+        return button;
+    }
+
     private static bool HasRepairAvailable(WorkflowResult result) =>
         result.Checks.Any(check => check.EffectiveState == CheckState.Repairable && check.Repair is not null) ||
         result.Recipes.Any(recipe => recipe.EffectiveOutcome == RecipeOutcome.RepairAvailable &&
@@ -226,6 +246,9 @@ public partial class MainWindow
 
     private static bool HasSecurityOptions(WorkflowResult result) =>
         result.Kind == WorkflowKind.Defender && result.Summary.ReviewItems > 0;
+
+    private static bool HasNetworkOptions(WorkflowResult result) =>
+        result.Kind == WorkflowKind.Network && result.Summary.ReviewItems > 0;
 
     private TextBlock Heading(string text, double size)
     {

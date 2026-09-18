@@ -1478,6 +1478,15 @@ internal static class Program
             Require(categories.SelectedItem?.ToString() == "Security" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Defender } &&
                 automaticRepair.IsChecked != true,
                 "Defender reports open Security options without selecting a scan or security action");
+            var networkWorkflow = new WorkflowResult(WorkflowKind.Network, "fixture", DateTimeOffset.UtcNow, "Needs attention",
+                [new("Network fixture", CheckState.Attention, "Network review required.")], [], "fixture-journal.json");
+            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [networkWorkflow]);
+            var networkNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review network options"));
+            networkNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Pump();
+            Require(categories.SelectedItem?.ToString() == "Network" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Network } &&
+                automaticRepair.IsChecked != true,
+                "Network reports open Network options without selecting a repair");
             Capture(window, Path.Combine(scratch, "workflow-outcome.png"));
             window.Close();
             Console.WriteLine("PASS: UI construction, sample labeling, console and report output, all 13 themes, panels, and theme menu.");
