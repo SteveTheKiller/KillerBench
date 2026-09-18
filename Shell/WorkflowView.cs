@@ -1231,13 +1231,24 @@ public partial class MainWindow
                 string outcome = recovery?.Outcome.ToString() ?? removal!.Outcome.ToString();
                 string detail = recovery?.Detail ?? removal!.Detail;
                 string journal = recovery?.ArchivePath ?? recovery?.PendingPath ?? removal?.JournalPath ?? "No change journal created.";
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("Previous Windows installation " + DateTime.Now.ToString("HHmmss"),
-                    ("PREVIOUS WINDOWS INSTALLATION / " + outcome.ToUpperInvariant() + "\n\n" + detail +
+                string output = "PREVIOUS WINDOWS INSTALLATION / " + outcome.ToUpperInvariant() + "\n\n" + detail +
                     "\n\nJournal: " + journal +
-                    "\nKillerBench did not recursively delete Windows.old and did not restart Windows.").Split('\n'), false));
-                Report(detail);
-                SetScanLight(outcome is "Preview" or "Verified" or "NotChanged" or "NoPendingRecord" ? "ready" : "attention", detail);
+                    "\nKillerBench did not recursively delete Windows.old and did not restart Windows.";
+                bool actionSelected = recovery is not null || CleanupRemove.IsChecked == true;
+                if (actionSelected)
+                {
+                    bool verified = outcome == "Verified";
+                    RegisterGuardedActionReport(WorkflowKind.Cleanup, "Previous Windows installation",
+                        "Previous Windows rollback removal / " + outcome, output, detail, journal, verified,
+                        "Confirm Windows no longer offers rollback before selecting another permanent cleanup action.");
+                    SetScanLight(verified ? "ready" : "attention", detail);
+                    return;
+                }
+                AppendWorkflowOutput(output);
+                RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Cleanup, Environment.MachineName, DateTimeOffset.UtcNow,
+                    "Previous Windows installation preview", [new WorkflowCheck("Windows rollback capability", CheckState.Information, detail)], [], journal),
+                    "Previous Windows installation");
+                SetScanLight("ready", detail);
                 return;
             }
             if (kind == WorkflowKind.Cleanup && CleanupRemove.IsChecked == true)
