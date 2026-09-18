@@ -595,8 +595,10 @@ internal static class Program
                 "Category bank leads to the report workspace with a visible export action and no inspector sidebar");
             var categoryTools = (ComboBox)window.FindName("CategoryWorkflow");
             var allTools = (ComboBox)window.FindName("MainWorkflow");
-            Require(categories.Items.Cast<object>().Select(category => category.ToString()).SequenceEqual(["Diagnostics", "Network", "Repair", "Maintenance", "Security"]),
-                "Primary categories keep Network separate and place BitLocker under Security");
+            Require(categories.Items.Cast<object>().Select(category => category.ToString()).SequenceEqual(["Diagnostics", "Repair", "Network", "Maintenance", "Security"]) &&
+                categories.ItemContainerGenerator.ContainerFromIndex(0) is ListBoxItem { FontFamily.Source: "Segoe UI", FontWeight: var categoryWeight } &&
+                categoryWeight == FontWeights.SemiBold,
+                "Primary categories place Diagnostics beside Repair in a clear UI face while keeping Network separate and BitLocker under Security");
             var reachableTools = new HashSet<WorkflowKind>();
             window.UpdateLayout();
             var stableWindowSize = new Size(window.ActualWidth, window.ActualHeight);
