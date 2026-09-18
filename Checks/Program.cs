@@ -166,6 +166,20 @@ internal static class Program
                 FindTextBlocks(window).Any(block => block.Text == "Application folder review report") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("No folder contents were read or changed", StringComparison.Ordinal)),
                 "Application-folder review opens a formatted read-only report without exposing folder contents");
+            string emptyFolder = Path.Combine(Path.GetTempPath(), "KillerBench-ui-smoke-" + Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(emptyFolder);
+            try
+            {
+                ((ComboBox)window.FindName("MainWorkflow")).SelectedItem = WorkflowCatalog.All.Single(workflow => workflow.Kind == WorkflowKind.Storage);
+                ((TextBox)window.FindName("FileReviewFolder")).Text = emptyFolder;
+                ((Button)window.FindName("ReviewDuplicatesButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                for (int attempt = 0; attempt < 12 && !FindTextBlocks(window).Any(block => block.Text == "Duplicate file review report"); attempt++) Pump();
+                Require(window.FindName("ReportPane") is Border { Visibility: Visibility.Visible } &&
+                    FindTextBlocks(window).Any(block => block.Text == "Duplicate file review report") &&
+                    FindTextBlocks(window).Any(block => block.Text.Contains("No files changed", StringComparison.Ordinal)),
+                    "Duplicate-file review opens a formatted read-only report");
+            }
+            finally { Directory.Delete(emptyFolder); }
             Console.WriteLine("PASS: WPF workbench geometry, zoom containment, PEEK monitor bounds and safe report navigation.");
             return 0;
         }

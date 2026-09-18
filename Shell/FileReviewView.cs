@@ -44,6 +44,8 @@ public partial class MainWindow
                 foreach (DuplicateFileGroup group in result.Groups)
                     text.AppendLine(group.Files.Count + " files | " + group.Length + " bytes | " + group.Sha256).AppendJoin('\n', group.Files.Select(file => "  " + file.Path)).AppendLine();
                 summary = text.AppendLine().Append(result.Detail).ToString();
+                CompleteFileReview("Duplicate file review", complete, summary,
+                    result.FilesExamined, "Duplicate groups", result.Groups.Count);
             }
             else
             {
@@ -52,11 +54,9 @@ public partial class MainWindow
                 var text = new StringBuilder("LARGE FILE REVIEW\nFolder: " + result.Root + "\nFiles examined: " + result.FilesExamined + "\nLarge files: " + result.Files.Count + "\n\n");
                 foreach (LargeFile file in result.Files) text.AppendLine(file.Length + " bytes | " + file.LastWriteTimeUtc.ToString("O") + " | " + file.Path);
                 summary = text.AppendLine().Append(result.Detail).ToString();
+                CompleteFileReview("Large file review", complete, summary,
+                    result.FilesExamined, "Large files", result.Files.Count);
             }
-            workflowOutputActive = false;
-            RegisterSource(new TextEvidence((duplicates ? "Duplicate files " : "Large files ") + DateTime.Now.ToString("HHmmss"), summary.Split('\n'), !complete));
-            Report(complete ? "Folder review complete. No files changed." : "Folder review is incomplete. No files changed.");
-            SetScanLight(complete ? "ready" : "incomplete", StatusLabel.Text);
         }
         catch (OperationCanceledException) { AppendWorkflowOutput("Folder review stopped. No files changed."); }
         catch (Exception error) when (error is ArgumentException or DirectoryNotFoundException or IOException or UnauthorizedAccessException)
@@ -71,5 +71,24 @@ public partial class MainWindow
             ReviewLargeFilesButton.IsEnabled = true;
             CancelButton.IsEnabled = false;
         }
+    }
+
+    private void CompleteFileReview(string title, bool complete, string rawOutput, int filesExamined,
+        string resultLabel, int resultCount)
+    {
+        AppendWorkflowOutput(rawOutput);
+        var checks = new[]
+        {
+            new WorkflowCheck("Files examined", CheckState.Information, filesExamined + " files were examined in the selected folder."),
+            new WorkflowCheck(resultLabel, resultCount == 0 ? CheckState.Clear : CheckState.Attention,
+                resultCount == 0 ? "No matching files were identified." : resultCount + " matching result" + (resultCount == 1 ? " was" : "s were") + " identified. Review the raw output before choosing any action."),
+            new WorkflowCheck("Review coverage", complete ? CheckState.Clear : CheckState.Unknown,
+                complete ? "The selected folder review completed within its safety limits." : "The selected folder review was incomplete. Results do not establish that every file was examined.")
+        };
+        string status = complete ? title + " complete. No files changed." : title + " is incomplete. No files changed.";
+        RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Storage, Environment.MachineName, DateTimeOffset.UtcNow,
+            status, checks, [], "Read-only file review. No journal was written."), title);
+        Report(status);
+        SetScanLight(complete ? "ready" : "incomplete", status);
     }
 }
