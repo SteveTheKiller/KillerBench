@@ -241,8 +241,15 @@ public partial class MainWindow
             string journal = await ProfileReview.SavePlanAsync(plan, folder, days, stop.Token);
             string summary = "PROFILE PLAN / SNAPSHOT REVIEW\n" + string.Join("\n", plan.Targets.Select(p => p.Path + " | " + p.Sid)) +
                 "\n\n" + (plan.ReviewPassed ? "Snapshot review passed. No deletion authorized." : string.Join("\n", plan.Blockers)) + "\n" + plan.Limitation;
-            workflowOutputActive = false;
-            RegisterSource(new TextEvidence("Profile plan " + DateTime.Now.ToString("HHmmss"), summary.Split('\n'), false));
+            AppendWorkflowOutput(summary);
+            string reviewDetail = plan.ReviewPassed
+                ? "Snapshot review passed. No profile deletion was authorized."
+                : plan.Blockers.Count == 0 ? "The profile review did not produce complete evidence." : string.Join(" ", plan.Blockers);
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Profiles, Environment.MachineName, DateTimeOffset.UtcNow,
+                plan.ReviewPassed ? "Profile review complete" : "Profile review requires attention",
+                [new WorkflowCheck("Profile snapshot review", plan.ReviewPassed ? CheckState.Information : CheckState.Unknown, reviewDetail),
+                 new WorkflowCheck("Change boundary", CheckState.Information,
+                    "This is a review only. No profile was copied or removed.")], [], journal), "Profile review");
             Report("Profile plan saved: " + journal + ". No profiles changed.");
             SetScanLight(plan.ReviewPassed ? "ready" : "incomplete", "Profile review only. No profiles changed.");
         }
