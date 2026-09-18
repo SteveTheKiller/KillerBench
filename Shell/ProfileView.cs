@@ -53,22 +53,23 @@ public partial class MainWindow
             string note = result.Status == "Blocked"
                 ? "Fresh eligibility or destination checks blocked the backup before a verified copy completed. The source profile was not removed."
                 : "The backup did not reach verified completion. The destination and pending evidence were preserved, and the source profile was not removed.";
-            string summary = "PROFILE BACKUP COPY / " + result.Status.ToUpperInvariant() + "\n" + note +
-                "\nJournal: " + result.JournalPath + "\n\nUse Check interrupted backup before attempting another copy.";
-            workflowOutputActive = false;
-            RegisterSource(new TextEvidence("Profile backup copy " + DateTime.Now.ToString("HHmmss"), summary.Split('\n'), false));
+            ShowProfileBackupIncomplete("Profile backup copy", note + " Journal: " + result.JournalPath,
+                "Use Check interrupted backup before attempting another copy.");
             Report(note);
             SetScanLight("attention", note);
         }
         catch (OperationCanceledException)
         {
-            AppendWorkflowOutput("Profile backup stopped. The destination and pending evidence were preserved. No profile was removed.");
+            ShowProfileBackupIncomplete("Profile backup copy",
+                "Profile backup stopped. The destination and pending evidence were preserved. No profile was removed.",
+                "Use Check interrupted backup before attempting another copy.");
             SetScanLight("incomplete", "Profile backup stopped with verification incomplete.");
         }
         catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException or InvalidOperationException or
             NotSupportedException or TimeoutException or ArgumentException)
         {
-            AppendWorkflowOutput("Profile backup unavailable: " + error.Message);
+            ShowProfileBackupIncomplete("Profile backup copy", "Profile backup unavailable: " + error.Message,
+                "Confirm the destination and profile evidence, then try the backup again.");
             SetScanLight("incomplete", "Profile backup unavailable.");
         }
         finally { EndProfileBackupOperation(); }
@@ -177,6 +178,17 @@ public partial class MainWindow
                 "No profile was removed. Verification does not prove restore behavior or every copied profile attribute.")], [],
             "Profile backup verification result. No profile removal was requested."), title);
         SetScanLight(result.Verified ? "ready" : "attention", note);
+    }
+
+    private void ShowProfileBackupIncomplete(string title, string detail, string nextStep)
+    {
+        AppendWorkflowOutput(title.ToUpperInvariant() + " / INCOMPLETE\n" + detail + "\n\n" + nextStep);
+        RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Profiles, Environment.MachineName, DateTimeOffset.UtcNow,
+            title + " requires review",
+            [new WorkflowCheck(title, CheckState.Unknown, detail),
+             new WorkflowCheck("Change boundary", CheckState.Information,
+                "No profile was removed. Existing backup and pending evidence were preserved.")], [],
+            "Profile backup did not reach verified completion. No profile removal was requested."), title);
     }
 
     private void BeginProfileBackupOperation(CancellationTokenSource stop, string mode)
