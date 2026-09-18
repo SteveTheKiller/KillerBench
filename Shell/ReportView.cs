@@ -53,7 +53,7 @@ public partial class MainWindow
         ReportContent.Children.Add(Card("Recommended next step", "", NextAction(result),
             "No action starts from this report. Review the selected workflow controls before confirming a repair."));
         if (HasRepairAvailable(result)) ReportContent.Children.Add(RepairNavigationButton(result));
-        if (HasMaintenanceOptions(result)) ReportContent.Children.Add(MaintenanceNavigationButton());
+        if (HasMaintenanceOptions(result)) ReportContent.Children.Add(MaintenanceNavigationButton(result.Kind));
         if (HasSecurityOptions(result)) ReportContent.Children.Add(SecurityNavigationButton(result.Kind));
         if (HasNetworkOptions(result)) ReportContent.Children.Add(NetworkNavigationButton());
 
@@ -151,7 +151,7 @@ public partial class MainWindow
             MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(workflow => workflow.Kind == kind);
     }
 
-    private Button MaintenanceNavigationButton()
+    private Button MaintenanceNavigationButton(WorkflowKind workflow)
     {
         var button = new Button
         {
@@ -161,14 +161,15 @@ public partial class MainWindow
             Margin = new Thickness(0, 0, 0, 14)
         };
         button.SetResourceReference(Button.StyleProperty, "SurfaceButton");
-        button.Click += OnReviewMaintenanceOptions;
+        button.Click += (_, _) =>
+        {
+            MainAutoRepair.IsChecked = false;
+            CategoryList.SelectedItem = ToolCategories.Single(category => category.Title == "Maintenance");
+            WorkflowKind target = ToolCategories.Single(category => category.Title == "Maintenance").Tools.Contains(workflow)
+                ? workflow : WorkflowKind.Cleanup;
+            MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == target);
+        };
         return button;
-    }
-
-    private void OnReviewMaintenanceOptions(object sender, RoutedEventArgs e)
-    {
-        MainAutoRepair.IsChecked = false;
-        CategoryList.SelectedItem = ToolCategories.Single(category => category.Title == "Maintenance");
     }
 
     private Button SecurityNavigationButton(WorkflowKind workflow)
@@ -242,7 +243,8 @@ public partial class MainWindow
     }
 
     private static bool HasMaintenanceOptions(WorkflowResult result) =>
-        result.Kind == WorkflowKind.CommonProblems && result.Summary.ReviewItems > 0;
+        result.Summary.ReviewItems > 0 && (result.Kind == WorkflowKind.CommonProblems ||
+            ToolCategories.Single(category => category.Title == "Maintenance").Tools.Contains(result.Kind));
 
     private static bool HasSecurityOptions(WorkflowResult result) =>
         result.Kind == WorkflowKind.Defender && result.Summary.ReviewItems > 0;
