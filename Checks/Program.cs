@@ -1,4 +1,5 @@
 using System.IO;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -1445,6 +1446,20 @@ internal static class Program
             Require(window.FindName("ReportPane") is Border { Visibility: Visibility.Visible } &&
                 ((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Start here"),
                 "Report view leads with a distinct next-action section");
+            using var historicalRecord = JsonDocument.Parse(JsonSerializer.Serialize(completedWorkflow, KillerBench.Engine.Capture.JsonOptions));
+            var historicalSnapshot = new WorkflowJournalSnapshot("fixture-history.json", "fixture", "Services", "Needs attention",
+                DateTimeOffset.UtcNow, 1, 0, historicalRecord.RootElement.Clone());
+            var historicalReport = (WorkflowResult)typeof(KillerBench.MainWindow).GetMethod("BuildHistoricalWorkflowReport", flags)!
+                .Invoke(null, [historicalSnapshot])!;
+            Require(historicalReport.Status == "Historical evidence - current verification required" &&
+                historicalReport.JournalPath == "fixture-history.json" && historicalReport.Actions.Count == 0 &&
+                historicalReport.Checks.Any(check => check.Name == "Current health" && check.State == CheckState.Unknown),
+                "Historical workflow review is a readable current-health-unknown report without an action replay");
+            typeof(KillerBench.MainWindow).GetMethod("RenderNamedWorkflowReport", flags)!.Invoke(window, [historicalReport, "Saved workflow"]);
+            Require(((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Saved workflow report") &&
+                ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>().Any(card => card.Child is StackPanel panel &&
+                    panel.Children.OfType<TextBlock>().Any(block => block.Text == "Current health")),
+                "Historical workflow evidence opens the readable report instead of raw JSON only");
             var largeWorkflow = completedWorkflow with
             {
                 Checks = Enumerable.Range(1, 16).Select(index => new WorkflowCheck("Review item " + index,

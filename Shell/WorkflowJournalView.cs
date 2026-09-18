@@ -9,6 +9,22 @@ namespace KillerBench;
 public partial class MainWindow
 {
     private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, WorkflowJournalSnapshot> historicalWorkflows = new();
+
+    private static WorkflowResult BuildHistoricalWorkflowReport(WorkflowJournalSnapshot review)
+    {
+        var kind = Enum.Parse<WorkflowKind>(review.Kind);
+        string coverage = review.CheckCount + " recorded check" + (review.CheckCount == 1 ? "" : "s") +
+            " and " + review.RepairCount + " recorded repair" + (review.RepairCount == 1 ? "" : "s") + ".";
+        return new WorkflowResult(kind, review.Machine, review.StartedUtc,
+            "Historical evidence - current verification required",
+            [
+                new WorkflowCheck("Current health", CheckState.Unknown, review.Scope),
+                new WorkflowCheck("Recorded status", CheckState.Information, "The saved workflow recorded: " + review.RecordedStatus + "."),
+                new WorkflowCheck("Recorded coverage", CheckState.Information, coverage),
+                new WorkflowCheck("Source file", CheckState.Information, review.Source)
+            ], [], review.Source);
+    }
+
     private async void OnOpenWorkflowJournal(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
@@ -28,10 +44,14 @@ public partial class MainWindow
                 "\nRecorded checks: " + review.CheckCount + " | Recorded repairs: " + review.RepairCount +
                 "\nSource: " + review.Source + "\n\n" + JsonSerializer.Serialize(review.Record, Capture.JsonOptions);
             var source = new TextEvidence(review.Source, text.Split('\n'), false);
+            var report = BuildHistoricalWorkflowReport(review);
             historicalWorkflows.Add(source, review);
+            workflowSummaries.Add(source, report);
             RegisterSource(source);
             ShowEvidence();
             ModeLabel.Text = "SAVED WORKFLOW / HISTORICAL";
+            RenderNamedWorkflowReport(report, "Saved workflow");
+            SetOutputView(report: true);
             Report("Saved workflow loaded. Recorded outcomes have not been reverified.");
         }
         catch (Exception error) when (error is OperationCanceledException or IOException or InvalidDataException or
