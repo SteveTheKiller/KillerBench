@@ -34,8 +34,15 @@ public partial class MainWindow
                 "Outcome: " + result.Outcome + "\n" + result.Detail +
                 (string.IsNullOrWhiteSpace(result.PendingPath) ? "" : "\nRecovery record: " + result.PendingPath) +
                 "\n\nThreat identities, paths, exclusions and file contents are not included. KillerBench does not change remediation settings.";
-            workflowOutputActive = false;
-            RegisterSource(new TextEvidence("Defender scan " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
+            AppendWorkflowOutput(output);
+            CheckState state = result.Outcome is DefenderScanOutcome.Preview or DefenderScanOutcome.Verified ? CheckState.Clear :
+                result.Outcome is DefenderScanOutcome.Blocked or DefenderScanOutcome.Inconclusive ? CheckState.Unknown : CheckState.Information;
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Defender, Environment.MachineName, DateTimeOffset.UtcNow,
+                result.Detail,
+                [new WorkflowCheck(type + " scan outcome", state, result.Detail),
+                 new WorkflowCheck("Remediation boundary", CheckState.Information,
+                    "KillerBench did not change Defender remediation settings, exclusions, policy, threats, or files.")], [],
+                "Defender scan result. Review the Defender console for threat details when applicable."), "Microsoft Defender scan");
             Report(result.Detail);
             SetScanLight(result.Outcome is DefenderScanOutcome.Preview or DefenderScanOutcome.Verified ? "ready" :
                 result.Outcome == DefenderScanOutcome.Started ? "running" : "attention", result.Detail);
@@ -77,8 +84,15 @@ public partial class MainWindow
                 "KillerBench", "Repairs", "DefenderScan");
             var result = await DefenderScanExecution.ReconcileAsync(folder, new WindowsDefenderScanHost(), stop.Token);
             string output = "MICROSOFT DEFENDER / SCAN RECOVERY\nOutcome: " + result.Outcome + "\n" + result.Detail;
-            workflowOutputActive = false;
-            RegisterSource(new TextEvidence("Defender scan recovery " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
+            AppendWorkflowOutput(output);
+            CheckState state = result.Outcome == DefenderScanOutcome.Verified ? CheckState.Clear :
+                result.Outcome == DefenderScanOutcome.Started ? CheckState.Information : CheckState.Unknown;
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Defender, Environment.MachineName, DateTimeOffset.UtcNow,
+                result.Detail,
+                [new WorkflowCheck("Recovery result", state, result.Detail),
+                 new WorkflowCheck("Change boundary", CheckState.Information,
+                    "This recovery check did not start another scan or change Defender remediation settings, exclusions, policy, threats, or files.")], [],
+                "Read-only Defender scan recovery check. No additional scan was requested."), "Microsoft Defender scan recovery");
             Report(result.Detail);
             SetScanLight(result.Outcome == DefenderScanOutcome.Verified ? "ready" :
                 result.Outcome == DefenderScanOutcome.Started ? "running" : "attention", result.Detail);
