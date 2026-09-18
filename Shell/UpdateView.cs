@@ -180,8 +180,22 @@ public partial class MainWindow
                 "\nRetained store: " + (result.RetainedStorePath ?? "No store retained in preview or blocked result.") +
                 "\nJournal: " + (result.JournalPath ?? "No execution journal created.") +
                 "\nNo update was installed and Windows was not restarted.";
-            workflowOutputActive = false;
-            RegisterSource(new TextEvidence("Update database recovery " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
+            if (execute)
+                RegisterGuardedActionReport(WorkflowKind.AvailableUpdates, "Windows Update database recovery", "Windows Update database recovery",
+                    output, result.Detail, result.JournalPath ?? "No execution journal created.", result.Outcome == UpdateDataStoreResetOutcome.Verified,
+                    "Review the completed recovery and run Available updates again before considering any installation.");
+            else
+            {
+                AppendWorkflowOutput(output);
+                CheckState state = result.Outcome == UpdateDataStoreResetOutcome.Preview ? CheckState.Information :
+                    result.Outcome == UpdateDataStoreResetOutcome.Blocked ? CheckState.Attention : CheckState.Unknown;
+                RegisterWorkflowResult(new WorkflowResult(WorkflowKind.AvailableUpdates, Environment.MachineName, DateTimeOffset.UtcNow,
+                    result.Detail,
+                    [new WorkflowCheck("Database recovery preview", state, result.Detail),
+                     new WorkflowCheck("Change boundary", CheckState.Information,
+                        "Preview did not stop services, retain the update store, install updates or restart Windows.")], [],
+                    "Read-only Windows Update database recovery preview. No execution journal was written."), "Windows Update database recovery");
+            }
             Report(result.Detail);
             SetScanLight(result.Outcome is UpdateDataStoreResetOutcome.Verified or UpdateDataStoreResetOutcome.Preview
                 ? "ready" : result.Outcome == UpdateDataStoreResetOutcome.Blocked ? "attention" : "incomplete", result.Detail);
@@ -228,8 +242,17 @@ public partial class MainWindow
                 new WindowsUpdateDataStoreResetHost(), progress, stop.Token));
             string output = "WINDOWS UPDATE DATABASE RECONCILIATION / " + result.Outcome + "\n" + result.Detail +
                 "\nNo service or directory change was repeated.";
-            workflowOutputActive = false;
-            RegisterSource(new TextEvidence("Update database reconciliation " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
+            AppendWorkflowOutput(output);
+            CheckState state = result.Outcome is UpdateDataStoreReconciliationOutcome.Verified or
+                UpdateDataStoreReconciliationOutcome.NotChanged or UpdateDataStoreReconciliationOutcome.NoPendingRecord
+                ? CheckState.Clear : CheckState.Unknown;
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.AvailableUpdates, Environment.MachineName, DateTimeOffset.UtcNow,
+                result.Detail,
+                [new WorkflowCheck("Database recovery reconciliation", state, result.Detail),
+                 new WorkflowCheck("Change boundary", CheckState.Information,
+                    "This reconciliation did not stop services, retain a directory, install updates or restart Windows.")], [],
+                "Read-only Windows Update database recovery reconciliation. No service or directory change was repeated."),
+                "Windows Update database reconciliation");
             Report(result.Detail);
             SetScanLight(result.Outcome is UpdateDataStoreReconciliationOutcome.Verified or
                 UpdateDataStoreReconciliationOutcome.NotChanged or UpdateDataStoreReconciliationOutcome.NoPendingRecord
