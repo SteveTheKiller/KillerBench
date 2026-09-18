@@ -696,10 +696,12 @@ public partial class MainWindow
                     "\nChannel: " + (string.IsNullOrWhiteSpace(eventResult.Channel) ? selectedEventChannel : eventResult.Channel) +
                     "\n" + eventResult.Detail + "\nRecord: " + (eventResult.RecordPath ?? "No change record created.") +
                     "\n\nExisting events, permissions, retention, automatic backup, maximum size and every other channel were preserved. Event delivery was not tested.";
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("Event channel " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
+                bool verified = eventResult.Outcome == EventChannelEnableOutcome.Verified;
+                RegisterGuardedActionReport(WorkflowKind.EventLog, "Diagnostic event channel",
+                    "Diagnostic event channel / " + eventResult.Outcome,
+                    output, eventResult.Detail, eventResult.RecordPath ?? "No change record created.", verified,
+                    "Review the channel's events and retention policy before changing another diagnostic setting.");
                 EventChannelEnableConsent.IsChecked = false;
-                Report(eventResult.Detail);
                 SetScanLight(eventResult.Outcome == EventChannelEnableOutcome.Verified ? "ready" :
                     eventResult.Outcome == EventChannelEnableOutcome.Blocked ? "attention" : "incomplete", eventResult.Detail);
                 return;
