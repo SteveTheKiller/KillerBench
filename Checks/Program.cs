@@ -204,6 +204,15 @@ internal static class Program
             Require(FindTextBlocks(window).Any(block => block.Text == "Package snapshot review report") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("No package removal is available or authorized", StringComparison.Ordinal)),
                 "Selected package reviews have a readable report without a removal action");
+            var transferReport = new WorkflowResult(WorkflowKind.BackgroundTransfers, "smoke", DateTimeOffset.UtcNow,
+                "Transfer snapshot reviewed. No job changes performed.",
+                [new("Selected transfer", CheckState.Information, "Name: Fixture transfer. Owner: current account. State: Suspended."),
+                 new("Snapshot review", CheckState.Information, "The job is suspended and may be intentional."),
+                 new("Change boundary", CheckState.Information, "No transfer was resumed, completed, canceled, deleted, or reassigned.")], [], "read-only");
+            typeof(KillerBench.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [transferReport, "Background transfer review"]);
+            Require(FindTextBlocks(window).Any(block => block.Text == "Background transfer review report") &&
+                FindTextBlocks(window).Any(block => block.Text.Contains("No transfer was resumed", StringComparison.Ordinal)),
+                "Background transfer reviews have a readable report that preserves the no-change boundary");
             Console.WriteLine("PASS: WPF workbench geometry, zoom containment, PEEK monitor bounds and safe report navigation.");
             return 0;
         }

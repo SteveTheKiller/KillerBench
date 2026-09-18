@@ -47,8 +47,21 @@ public partial class MainWindow
         string text = "BITS JOB REVIEW / RETAINED SNAPSHOT\n" + id + "\nScope: " + review.Scope +
             "\nName: " + selected?.Name + "\nOwner: " + selected?.Owner + "\nState: " + selected?.State +
             "\nError: " + selected?.Error + "\n\n" + string.Join("\n", review.Notes);
-        RegisterSource(new TextEvidence("Transfer review " + DateTime.Now.ToString("HHmmss"), text.Split('\n'), false));
-        Report("Transfer snapshot reviewed. No job changes performed.");
+        BeginWorkflowOutput(WorkflowKind.BackgroundTransfers);
+        AppendWorkflowOutput(text);
+        var checks = new[]
+        {
+            new WorkflowCheck("Selected transfer", CheckState.Information,
+                "Name: " + (selected?.Name ?? "Not reported") + ". Owner: " + (selected?.Owner ?? "Not reported") + ". State: " + (selected?.State ?? "Not reported") + "."),
+            new WorkflowCheck("Snapshot review", selected is null ? CheckState.Unknown : CheckState.Information,
+                selected is null ? "The selected transfer was not found in the retained snapshot. Refresh the transfer list before relying on it." : string.Join(" ", review.Notes)),
+            new WorkflowCheck("Change boundary", CheckState.Information,
+                "This is a retained snapshot review only. No transfer was resumed, completed, canceled, deleted, or reassigned.")
+        };
+        const string status = "Transfer snapshot reviewed. No job changes performed.";
+        RegisterWorkflowResult(new WorkflowResult(WorkflowKind.BackgroundTransfers, Environment.MachineName, DateTimeOffset.UtcNow,
+            status, checks, [], "Read-only transfer snapshot review. No journal was written."), "Background transfer review");
+        Report(status);
     }
 
     private async void OnObserveBitsJob(object sender, RoutedEventArgs e)
@@ -88,7 +101,21 @@ public partial class MainWindow
                 "FIRST EVIDENCE", result.BeforeEvidence.Output, result.BeforeEvidence.Error,
                 "SECOND EVIDENCE", result.AfterEvidence.Output, result.AfterEvidence.Error
             }, result.BeforeEvidence.Truncated || result.AfterEvidence.Truncated));
-            Report(comparison.Detail);
+            bool complete = !result.BeforeEvidence.Truncated && !result.AfterEvidence.Truncated &&
+                string.IsNullOrWhiteSpace(result.BeforeEvidence.Error) && string.IsNullOrWhiteSpace(result.AfterEvidence.Error);
+            var checks = new[]
+            {
+                new WorkflowCheck("Selected transfer", CheckState.Information, "The same transfer was observed twice: " + id + "."),
+                new WorkflowCheck("Observation result", CheckState.Information, comparison.Detail),
+                new WorkflowCheck("Observation coverage", complete ? CheckState.Clear : CheckState.Unknown,
+                    complete ? "Both retained snapshots completed without reported truncation or collection errors." : "One or both retained snapshots were incomplete. Review Console evidence before drawing a conclusion."),
+                new WorkflowCheck("Change boundary", CheckState.Information,
+                    "No transfer was changed. Retry remains a separate guarded action that requires fresh eligibility and explicit consent.")
+            };
+            const string status = "Transfer observed twice. No job changed. Review the result and detailed evidence before considering a retry.";
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.BackgroundTransfers, Environment.MachineName, DateTimeOffset.UtcNow,
+                status, checks, [], "Read-only two-snapshot transfer observation. No retry journal was written."), "Background transfer observation");
+            Report(status);
             SetScanLight("incomplete", "Observation only. Transfer completion and machine health remain unverified.");
         }
         catch (Exception error) when (error is OperationCanceledException or System.IO.IOException or System.IO.InvalidDataException or UnauthorizedAccessException or NotSupportedException or InvalidOperationException)

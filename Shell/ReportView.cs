@@ -103,7 +103,7 @@ public partial class MainWindow
         ReportContent.Children.Add(Heading("Scope and limits", 18));
         ReportContent.Children.Add(Body(title is null
             ? "This report covers only the checks selected for this workflow. Historical evidence does not by itself prove a current fault or authorize a repair."
-            : "This review covers one exact folder name at five fixed local roots. Folder contents were not read, and a matching folder does not establish ownership or authorize deletion.", 12, new Thickness(0, 0, 0, 4)));
+            : "This focused report summarizes retained evidence from the selected review. It does not by itself establish a current fault, ownership, or authority to make a change.", 12, new Thickness(0, 0, 0, 4)));
     }
 
     private Border Card(string title, string state, string detail, string action)
