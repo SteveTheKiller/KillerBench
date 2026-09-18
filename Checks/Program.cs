@@ -94,7 +94,19 @@ internal static class Program
                 "Zoom content remains clipped to the workbench window");
             Require(window.FindName("ServicingMonitorSamples") is Slider { Minimum: 1, Maximum: 120, Value: 3 },
                 "PEEK desktop controls expose the shared one through 120 snapshot range");
-            Console.WriteLine("PASS: WPF workbench geometry, zoom containment and PEEK monitor bounds.");
+            var actionable = new WorkflowResult(WorkflowKind.Services, "smoke", DateTimeOffset.UtcNow, "Needs attention",
+                [new("Service repair", CheckState.Repairable, "Fixture repair option", RepairKind.SystemFiles)], [], "smoke-journal.json");
+            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [actionable]);
+            typeof(KillerBench.MainWindow).GetMethod("SetOutputView", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [true]);
+            window.UpdateLayout();
+            var repairNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review repair options"));
+            repairNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            window.UpdateLayout();
+            Require(window.FindName("CategoryList") is ListBox { SelectedItem: not null } categories && categories.SelectedItem.ToString() == "Repair" &&
+                window.FindName("MainWorkflow") is ComboBox { SelectedItem: WorkflowDefinition { Kind: WorkflowKind.CommonProblems } } &&
+                window.FindName("MainAutoRepair") is CheckBox { IsChecked: not true },
+                "Actionable reports lead to unapproved Repair options");
+            Console.WriteLine("PASS: WPF workbench geometry, zoom containment, PEEK monitor bounds and safe report-to-repair navigation.");
             return 0;
         }
         finally
@@ -1306,6 +1318,14 @@ internal static class Program
                 .Select(card => ((StackPanel)card.Child).Children.OfType<TextBlock>().First().Text).ToArray();
             Require(cardTitles.Take(4).SequenceEqual(["Recommended next step", "Repairable item", "Attention item", "Unknown item"]),
                 "Report orders actionable findings before attention and incomplete evidence");
+            var repairNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review repair options"));
+            categories.SelectedItem = categories.Items.Cast<object>().Single(category => category.ToString() == "Diagnostics");
+            Pump();
+            repairNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Pump();
+            Require(categories.SelectedItem?.ToString() == "Repair" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.CommonProblems } &&
+                automaticRepair.IsChecked != true && window.FindName("ReportPane") is Border { Visibility: Visibility.Visible },
+                "Actionable reports open safe Repair options without approving or starting a repair");
             Capture(window, Path.Combine(scratch, "workflow-outcome.png"));
             window.Close();
             Console.WriteLine("PASS: UI construction, sample labeling, console and report output, all 13 themes, panels, and theme menu.");

@@ -50,6 +50,7 @@ public partial class MainWindow
         ReportContent.Children.Add(Heading("Start here", 18));
         ReportContent.Children.Add(Card("Recommended next step", "", NextAction(result),
             "No action starts from this report. Review the selected workflow controls before confirming a repair."));
+        if (HasRepairAvailable(result)) ReportContent.Children.Add(RepairNavigationButton());
 
         ReportContent.Children.Add(Heading("What needs attention", 18));
         var problems = result.Checks.Where(check => check.EffectiveState is CheckState.Attention or CheckState.Repairable or CheckState.Unknown)
@@ -99,6 +100,30 @@ public partial class MainWindow
         card.SetResourceReference(Border.BorderBrushProperty, "PaneBorderBrush");
         return card;
     }
+
+    private Button RepairNavigationButton()
+    {
+        var button = new Button
+        {
+            Content = "Review repair options",
+            ToolTip = "Open the Repair workspace. No repair is selected, approved or started.",
+            HorizontalAlignment = HorizontalAlignment.Left,
+            Margin = new Thickness(0, 0, 0, 14)
+        };
+        button.SetResourceReference(Button.StyleProperty, "SurfaceButton");
+        button.Click += OnReviewRepairOptions;
+        return button;
+    }
+
+    private void OnReviewRepairOptions(object sender, RoutedEventArgs e)
+    {
+        MainAutoRepair.IsChecked = false;
+        CategoryList.SelectedItem = ToolCategories.Single(category => category.Title == "Repair");
+    }
+
+    private static bool HasRepairAvailable(WorkflowResult result) =>
+        result.Checks.Any(check => check.EffectiveState == CheckState.Repairable && check.Repair is not null) ||
+        result.Recipes.Any(recipe => recipe.EffectiveOutcome == RecipeOutcome.RepairAvailable && recipe.Repair is not null);
 
     private TextBlock Heading(string text, double size)
     {
