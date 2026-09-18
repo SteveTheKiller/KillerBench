@@ -230,6 +230,14 @@ internal static class Program
             Require(FindTextBlocks(window).Any(block => block.Text == "Windows Update plan report") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("No update was downloaded or installed", StringComparison.Ordinal)),
                 "Update previews have a readable report that preserves the no-installation boundary");
+            var applicationRecoveryReport = new WorkflowResult(WorkflowKind.AvailableUpdates, "smoke", DateTimeOffset.UtcNow,
+                "No interrupted application update record was found.",
+                [new("Recovery result", CheckState.Clear, "No interrupted application update record was found."),
+                 new("Change boundary", CheckState.Information, "This recovery check did not install, retry, remove, or change an application update.")], [], "read-only");
+            typeof(KillerBench.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [applicationRecoveryReport, "Application update recovery"]);
+            Require(FindTextBlocks(window).Any(block => block.Text == "Application update recovery report") &&
+                FindTextBlocks(window).Any(block => block.Text.Contains("did not install, retry, remove", StringComparison.Ordinal)),
+                "Application update recovery has a readable no-retry report");
             Console.WriteLine("PASS: WPF workbench geometry, zoom containment, PEEK monitor bounds and safe report navigation.");
             return 0;
         }

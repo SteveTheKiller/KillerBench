@@ -484,8 +484,15 @@ public partial class MainWindow
                 new WindowsThirdPartyUpdateExecutionHost(), stop.Token));
             string output = "THIRD-PARTY APPLICATION UPDATE RECOVERY / " + result.Outcome + "\n" + result.Detail +
                 "\nPending record: " + result.PendingPath + "\nNo update or retry was requested.";
-            workflowOutputActive = false;
-            RegisterSource(new TextEvidence("Application update recovery " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
+            AppendWorkflowOutput(output);
+            var state = result.Outcome is ThirdPartyUpdateRecoveryOutcome.Verified or ThirdPartyUpdateRecoveryOutcome.NoPendingRecord
+                ? CheckState.Clear : CheckState.Unknown;
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.AvailableUpdates, Environment.MachineName, DateTimeOffset.UtcNow,
+                result.Detail,
+                [new WorkflowCheck("Recovery result", state, result.Detail),
+                 new WorkflowCheck("Change boundary", CheckState.Information,
+                    "This recovery check did not install, retry, remove, or change an application update.")], [],
+                "Read-only third-party update recovery check. No retry journal was written."), "Application update recovery");
             Report(result.Detail);
             SetScanLight(result.Outcome is ThirdPartyUpdateRecoveryOutcome.Verified or ThirdPartyUpdateRecoveryOutcome.NoPendingRecord
                 ? "ready" : "incomplete", result.Detail);
