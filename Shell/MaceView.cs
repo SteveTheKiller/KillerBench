@@ -70,11 +70,20 @@ public partial class MainWindow
         string text = "MACE PACKAGE PLAN / " + (eligibility.Eligible ? "ELIGIBLE" : "BLOCKED") +
             "\n" + selected.Label + "\nPackage: " + selected.Identity + "\n\n" + eligibility.Detail +
             "\n\nGO stays review-only. The separate red removal control requires its own confirmation and repeats fresh exact evidence before one request.";
-        RegisterSource(new TextEvidence("MACE package plan " + DateTime.Now.ToString("HHmmss"),
-            text.Split('\n'), false));
-        Report(eligibility.Eligible
+        BeginWorkflowOutput(WorkflowKind.Mace);
+        AppendWorkflowOutput(text);
+        string status = eligibility.Eligible
             ? "Exact package safeguards passed. The separate red control is available after its confirmation is selected."
-            : eligibility.Detail);
+            : eligibility.Detail;
+        var checks = new[]
+        {
+            new WorkflowCheck("Selected package safeguards", eligibility.Eligible ? CheckState.Information : CheckState.Unknown, eligibility.Detail),
+            new WorkflowCheck("Removal boundary", CheckState.Information,
+                "GO remains review-only. Any removal requires the separate red control, its own consent and a second confirmation after fresh safeguards pass.")
+        };
+        RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Mace, Environment.MachineName, DateTimeOffset.UtcNow,
+            status, checks, [], "Read-only MACE package plan. No journal was written."), "MACE package plan");
+        Report(status);
         RefreshMacePackageRemoval();
     }
 
