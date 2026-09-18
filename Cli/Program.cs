@@ -45,6 +45,7 @@ if (args.Length > 0 && args[0] == "crash-dumps") return await DiagnosticCommands
 if (args.Length > 0 && args[0] == "minidump-analyze") return await DiagnosticCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "crash-config") return await DiagnosticCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "installed-apps-compare") return await ApplicationCompareCommands.RunAsync(args);
+if (args.Length > 0 && args[0] == "duplicate-files") return await DuplicateFileCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "backup-events") return await DiagnosticCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "backup-summary") return await DiagnosticCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "file-history-status") return await DiagnosticCommands.RunAsync(args);
