@@ -150,12 +150,13 @@ public partial class MainWindow
             string output = "PRINT JOB RECOVERY / " + result.Outcome.ToString().ToUpperInvariant() +
                 "\n" + result.Detail + "\nRecord: " + (result.RecordPath ?? "No operation record created.") +
                 "\n\nCancellation was not repeated.";
-            workflowOutputActive = false;
-            RegisterSource(new TextEvidence("Print job recovery", output.Split('\n'), false));
-            Report(result.Detail);
-            SetScanLight(result.Outcome is PrintJobCancellationOutcome.Verified or
-                PrintJobCancellationOutcome.NotApplied or PrintJobCancellationOutcome.NoPending
-                    ? "ready" : "incomplete", result.Detail);
+            bool verified = result.Outcome is PrintJobCancellationOutcome.Verified or
+                PrintJobCancellationOutcome.NotApplied or PrintJobCancellationOutcome.NoPending;
+            RegisterGuardedActionReport(WorkflowKind.Printing, "Print job cancellation",
+                "Print job cancellation recovery / " + result.Outcome, output, result.Detail,
+                result.RecordPath ?? "No operation record created.", verified,
+                "Confirm the queue is clear or resubmit the document before making another print change.");
+            SetScanLight(verified ? "ready" : "incomplete", result.Detail);
         }
         catch (OperationCanceledException) { Report("Print-job recovery stopped. Cancellation was not repeated."); }
         catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException or
