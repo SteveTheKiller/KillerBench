@@ -1,5 +1,6 @@
 # Changelog
 
+- Make Network a primary category and move BitLocker into Security.
 - Expand offline CBS, CSI and Windows Setup analysis with reviewed code guidance, informational Setup outcomes, clear partial-evidence CLI exits and recipe-based restart reporting.
 - Add shared validation, visible redacted plan summaries and read-only execution of option-rich workflow plans, including exact storage, printing, MSI repair, Windows Time source, Event Log channel, Firewall profile and computer-name reviews.
 - Add exact BitLocker backup, encryption and protection-resume confirmations to shared workflow options with mutual-exclusion and prerequisite validation.

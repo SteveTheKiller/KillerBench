@@ -591,6 +591,8 @@ internal static class Program
                 "Category bank leads to the report workspace with a visible export action and no inspector sidebar");
             var categoryTools = (ComboBox)window.FindName("CategoryWorkflow");
             var allTools = (ComboBox)window.FindName("MainWorkflow");
+            Require(categories.Items.Cast<object>().Select(category => category.ToString()).SequenceEqual(["Diagnostics", "Network", "Repair", "Maintenance", "Security"]),
+                "Primary categories keep Network separate and place BitLocker under Security");
             var reachableTools = new HashSet<WorkflowKind>();
             window.UpdateLayout();
             var stableWindowSize = new Size(window.ActualWidth, window.ActualHeight);
@@ -781,6 +783,12 @@ internal static class Program
                 Require(Equals(categoryTools.SelectedItem, allTools.SelectedItem), "Category selection preserves workflow identity");
             }
             Require(reachableTools.Count == WorkflowCatalog.All.Count, "Every workflow is reachable through a category");
+            categories.SelectedItem = categories.Items.Cast<object>().Single(category => category.ToString() == "Network");
+            Require(categoryTools.Items.Cast<WorkflowDefinition>().Select(tool => tool.Kind).SequenceEqual([WorkflowKind.Network]),
+                "Network is available as its own primary category");
+            categories.SelectedItem = categories.Items.Cast<object>().Single(category => category.ToString() == "Security");
+            Require(categoryTools.Items.Cast<WorkflowDefinition>().Any(tool => tool.Kind == WorkflowKind.BitLocker),
+                "BitLocker is available from Security");
             Require(((CheckBox)window.FindName("TaskRegistrationConsent")).IsChecked == false &&
                 ((Button)window.FindName("TaskRegistrationButton")).Content is "Preview registration",
                 "Desktop task registration defaults to preview and requires separate create consent");
@@ -793,7 +801,7 @@ internal static class Program
                 ((ListBox)window.FindName("CategoryList")).IsEnabled && ((ComboBox)window.FindName("CategoryWorkflow")).IsEnabled &&
                 ((Button)window.FindName("ExportReportButton")).IsEnabled,
                 "A running scan keeps Stop, navigation and report export available while preventing another GO action");
-            categories.SelectedIndex = 2;
+            categories.SelectedItem = categories.Items.Cast<object>().Single(category => category.ToString() == "Maintenance");
             Pump();
             Require(((ComboBox)window.FindName("MainWorkflow")).SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Cleanup },
                 "A running scan can open another category without starting another operation");
