@@ -208,6 +208,7 @@ internal static class Program
             AppPackageChecks.Run();
             ProvisionedPackageChecks.Run();
             InstalledApplicationChecks.Run();
+            ApplicationFolderReviewChecks.Run();
             MacePlanningChecks.Run();
             MacePackageRemovalChecks.RunAsync(scratch).GetAwaiter().GetResult();
             OrcaPlanningChecks.Run();
