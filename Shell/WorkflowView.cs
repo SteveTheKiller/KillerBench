@@ -21,6 +21,18 @@ public partial class MainWindow
         RenderNamedWorkflowReport(result, reportTitle);
         SetOutputView(report: true);
     }
+
+    private void RegisterGuardedActionReport(WorkflowKind kind, string reportTitle, string actionName, string output,
+        string detail, string journal, bool verified, string verifiedNextAction)
+    {
+        AppendWorkflowOutput(output);
+        var action = new WorkflowAction(actionName, verified ? "Verified" : "Review required", detail,
+            verified ? verifiedNextAction : "Review the local change journal and current state before retrying.", verified);
+        RegisterWorkflowResult(new WorkflowResult(kind, Environment.MachineName, DateTimeOffset.UtcNow,
+            verified ? "Guarded action verified" : "Guarded action requires review",
+            [new WorkflowCheck("Guarded action outcome", verified ? CheckState.Information : CheckState.Unknown, detail)], [], journal)
+        { Actions = [action] }, reportTitle);
+    }
     private void OnTimePeersChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
     {
         if (TimeApply is not null) TimeApply.IsChecked = false;
@@ -900,9 +912,10 @@ public partial class MainWindow
                 string output = "WINDOWS FIREWALL PROFILES / " + firewall.Outcome + "\nSelected: " + string.Join(", ", firewall.Profiles) +
                     "\n" + firewall.Detail + "\nRecord: " + (firewall.RecordPath ?? "No change record created.") +
                     "\n\nRules, default actions, logging and managed policy were preserved.";
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("Firewall profiles " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
-                Report(firewall.Detail);
+                bool verified = firewall.Outcome == FirewallProfileEnableOutcome.Verified;
+                RegisterGuardedActionReport(WorkflowKind.FirewallServices, "Windows Firewall profiles", "Windows Firewall profiles / " + firewall.Outcome,
+                    output, firewall.Detail, firewall.RecordPath ?? "No change record created.", verified,
+                    "Test the affected network connection and review firewall policy before making another change.");
                 SetScanLight(firewall.Outcome == FirewallProfileEnableOutcome.Verified ? "ready" :
                     firewall.Outcome == FirewallProfileEnableOutcome.Blocked ? "attention" : "incomplete", firewall.Detail);
                 return;
