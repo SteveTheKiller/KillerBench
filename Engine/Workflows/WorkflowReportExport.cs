@@ -36,7 +36,8 @@ public static class WorkflowReportExport
         string nextAction = WorkflowReport.NextAction(result);
         var verdicts = result.Checks.Where(IsReadinessVerdict).ToArray();
         var detailedChecks = result.Checks.Where(check => !IsReadinessVerdict(check)).ToArray();
-        var problemChecks = detailedChecks.Where(c => c.EffectiveState is CheckState.Repairable or CheckState.Attention or CheckState.Unknown).ToArray();
+        var problemChecks = detailedChecks.Where(c => c.EffectiveState is CheckState.Repairable or CheckState.Attention or CheckState.Unknown)
+            .OrderBy(check => ReviewPriority(check.EffectiveState)).ThenBy(check => check.Name, StringComparer.Ordinal).ToArray();
         var otherChecks = detailedChecks.Except(problemChecks).ToArray();
         var sb = new StringBuilder();
         sb.AppendLine("<!DOCTYPE html><html lang='en' class='theme-" + theme + "'><head><meta charset='utf-8'/><meta name='viewport' content='width=device-width,initial-scale=1'/>");
@@ -68,7 +69,8 @@ public static class WorkflowReportExport
             sb.AppendLine("<section class='panel'><h2>Actions and results</h2>");
             if (result.Repairs.Count == 0) sb.AppendLine("<p>No repair was executed in this workflow.</p>");
             foreach (var repair in result.Repairs) RepairCard(sb, repair);
-            foreach (var recipe in result.Recipes.Where(r => r.Repair is null && r.EffectiveOutcome != RecipeOutcome.Clear))
+            foreach (var recipe in result.Recipes.Where(r => r.Repair is null && r.EffectiveOutcome != RecipeOutcome.Clear)
+                .OrderBy(recipe => ReviewPriority(recipe.EffectiveOutcome)).ThenBy(recipe => recipe.RecipeId, StringComparer.Ordinal))
                 sb.Append("<article class='item'><h3>").Append(E(Humanize(recipe.RecipeId))).Append("</h3><span class='badge'>").Append(E(Humanize(recipe.EffectiveOutcome.ToString()))).Append("</span><div class='label'>Result</div><div class='text'>").Append(E(recipe.Detail)).AppendLine("</div></article>");
             sb.AppendLine("</section>");
         }
@@ -100,7 +102,8 @@ public static class WorkflowReportExport
         }
         sb.AppendLine().AppendLine("PROBLEMS AND REVIEW ITEMS");
         var detailedChecks = result.Checks.Where(check => !IsReadinessVerdict(check)).ToArray();
-        var problems = detailedChecks.Where(c => c.EffectiveState is CheckState.Repairable or CheckState.Attention or CheckState.Unknown).ToArray();
+        var problems = detailedChecks.Where(c => c.EffectiveState is CheckState.Repairable or CheckState.Attention or CheckState.Unknown)
+            .OrderBy(check => ReviewPriority(check.EffectiveState)).ThenBy(check => check.Name, StringComparer.Ordinal).ToArray();
         if (problems.Length == 0) sb.AppendLine("No problem was established in the completed checks.");
         foreach (var check in problems) TextCheck(sb, check);
         if (scope == WorkflowReportScope.DiagnosticsAndRepairs)
@@ -154,6 +157,23 @@ public static class WorkflowReportExport
     private static void TextCheck(StringBuilder sb, WorkflowCheck check) => sb.AppendLine().AppendLine(check.Name + " [" + Humanize(check.EffectiveState.ToString()) + "]").AppendLine(check.Detail).AppendLine("Suggested action: " + (check.Repair is null ? "Review the evidence and stated limits." : Repairs.Plan(check.Repair.Value).Effects));
     private static void TextVerdict(StringBuilder sb, WorkflowCheck check) => sb.AppendLine().AppendLine(check.Name + " [" + Humanize(check.EffectiveState.ToString()) + "]").AppendLine(check.Detail);
     private static bool IsReadinessVerdict(WorkflowCheck check) => check.Repair is null && check.Name.EndsWith(" readiness verdict", StringComparison.Ordinal);
+    private static int ReviewPriority(CheckState state) => state switch
+    {
+        CheckState.Repairable => 0,
+        CheckState.Attention => 1,
+        CheckState.Unknown => 2,
+        _ => 3
+    };
+    private static int ReviewPriority(RecipeOutcome outcome) => outcome switch
+    {
+        RecipeOutcome.RepairAvailable => 0,
+        RecipeOutcome.RestartRequired => 1,
+        RecipeOutcome.Repaired => 2,
+        RecipeOutcome.Unknown => 3,
+        RecipeOutcome.Blocked => 4,
+        RecipeOutcome.Canceled => 5,
+        _ => 6
+    };
     private static string StepLabel(RepairStepResult step) => !step.CommandDispatched ? "Command plan (not dispatched)" : step.Step.Verification ? "Verification" : "Action";
     private static string Describe(RepairStepResult step) => !step.CommandDispatched
         ? "Not dispatched. Final eligibility changed or the operation was skipped before Windows received this command."

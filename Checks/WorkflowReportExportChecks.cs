@@ -62,6 +62,22 @@ internal static class WorkflowReportExportChecks
             text.Contains("Verification:") && text.Contains("Command plan (not dispatched): sfc.exe /scannow") &&
             text.Contains("Outcome: Not dispatched. Final eligibility changed") && !text.Contains(result.JournalPath) && !text.Contains(skipped.JournalPath),
             "Text report retains readable sections without exposing the journal path");
+        var prioritized = result with
+        {
+            Checks =
+            [
+                new("Unknown item", CheckState.Unknown, "Fixture incomplete item"),
+                new("Attention item", CheckState.Attention, "Fixture attention item"),
+                new("Repairable item", CheckState.Repairable, "Fixture repairable item", RepairKind.SystemFiles)
+            ]
+        };
+        string prioritizedHtml = WorkflowReportExport.BuildHtml(prioritized, WorkflowReportScope.Diagnostics);
+        string prioritizedText = WorkflowReportExport.BuildText(prioritized, WorkflowReportScope.Diagnostics);
+        Require(prioritizedHtml.IndexOf("Repairable item", StringComparison.Ordinal) < prioritizedHtml.IndexOf("Attention item", StringComparison.Ordinal) &&
+            prioritizedHtml.IndexOf("Attention item", StringComparison.Ordinal) < prioritizedHtml.IndexOf("Unknown item", StringComparison.Ordinal) &&
+            prioritizedText.IndexOf("Repairable item", StringComparison.Ordinal) < prioritizedText.IndexOf("Attention item", StringComparison.Ordinal) &&
+            prioritizedText.IndexOf("Attention item", StringComparison.Ordinal) < prioritizedText.IndexOf("Unknown item", StringComparison.Ordinal),
+            "HTML and text reports order actionable findings before attention and incomplete evidence");
         try { WorkflowReportExport.BuildHtml(result, WorkflowReportScope.Diagnostics, "unknown"); throw new Exception("Unknown theme was accepted."); }
         catch (ArgumentException) { }
         try { WorkflowReportExport.BuildHtml(result, WorkflowReportScope.Diagnostics, "dark", "unknown"); throw new Exception("Unknown accent was accepted."); }
