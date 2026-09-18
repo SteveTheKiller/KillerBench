@@ -1037,9 +1037,10 @@ public partial class MainWindow
                         string recoverySummary = "TIME SOURCE RECOVERY / " + recovery.Outcome.ToString().ToUpperInvariant() + "\n" + recovery.Detail +
                             "\nPending record: " + recovery.PendingPath + "\nArchived record: " + (recovery.ArchivedPath ?? "None") +
                             "\nNo clock or source settings changed.";
-                        workflowOutputActive = false;
-                        RegisterSource(new TextEvidence("Time source recovery", recoverySummary.Split('\n'), false));
-                        Report(recovery.Detail);
+                        RegisterGuardedActionReport(WorkflowKind.TimeService, "Windows Time source",
+                            "Windows Time source recovery / " + recovery.Outcome, recoverySummary, recovery.Detail,
+                            recovery.ArchivedPath ?? recovery.PendingPath, recovery.Resolved,
+                            "Confirm the selected time source and synchronization status before making another time change.");
                         SetScanLight(recovery.Resolved ? "ready" : "incomplete", recovery.Detail);
                         return;
                     }
@@ -1051,18 +1052,20 @@ public partial class MainWindow
                         "\nAfter mode: " + (configured.After?.LocalMode ?? "Unavailable") +
                         "\nAfter peers: " + (configured.After?.LocalPeers ?? "Unavailable") +
                         "\nJournal: " + configured.Journal;
-                    workflowOutputActive = false;
-                    RegisterSource(new TextEvidence("Time source result", timeSummary.Split('\n'), false));
-                    Report(configured.Status + ". Journal: " + configured.Journal);
+                    RegisterGuardedActionReport(WorkflowKind.TimeService, "Windows Time source",
+                        "Windows Time source / " + configured.Status, timeSummary, configured.Detail, configured.Journal,
+                        configured.Status == "Verified",
+                        "Confirm the selected time source and synchronization status before making another time change.");
                     SetScanLight(configured.Status == "Verified" ? "ready" : "incomplete", configured.Detail);
                     return;
                 }
                 string output = plan.Format() + "\n\nLocally stored mode: " + (preview.Environment.LocalMode ?? "Unavailable") +
                     "\nLocally stored peers: " + (preview.Environment.LocalPeers ?? "Unavailable") +
                     "\nPolicy or domain configuration may override these local values.";
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("Time source preview", output.Split('\n'), false));
-                Report("Time-source preview completed. No clock or source settings changed.");
+                AppendWorkflowOutput(output);
+                RegisterWorkflowResult(new WorkflowResult(WorkflowKind.TimeService, Environment.MachineName, DateTimeOffset.UtcNow,
+                    "Windows Time source preview", [TimeConfigurationDiagnostics.AssessSelection(timeOptions, preview.Environment, plan)], [],
+                    "Read-only time-source preview. No change journal was created."), "Windows Time source");
                 SetScanLight(plan.ReviewPassed ? "ready" : "incomplete", "Preview only. No settings changed.");
                 return;
             }
