@@ -51,6 +51,7 @@ public partial class MainWindow
         ReportContent.Children.Add(Card("Recommended next step", "", NextAction(result),
             "No action starts from this report. Review the selected workflow controls before confirming a repair."));
         if (HasRepairAvailable(result)) ReportContent.Children.Add(RepairNavigationButton());
+        if (HasMaintenanceOptions(result)) ReportContent.Children.Add(MaintenanceNavigationButton());
 
         ReportContent.Children.Add(Heading("What needs attention", 18));
         var problems = result.Checks.Where(check => check.EffectiveState is CheckState.Attention or CheckState.Repairable or CheckState.Unknown)
@@ -121,9 +122,32 @@ public partial class MainWindow
         CategoryList.SelectedItem = ToolCategories.Single(category => category.Title == "Repair");
     }
 
+    private Button MaintenanceNavigationButton()
+    {
+        var button = new Button
+        {
+            Content = "Review maintenance options",
+            ToolTip = "Open the Maintenance workspace. No cleanup, update, profile or task action is selected or started.",
+            HorizontalAlignment = HorizontalAlignment.Left,
+            Margin = new Thickness(0, 0, 0, 14)
+        };
+        button.SetResourceReference(Button.StyleProperty, "SurfaceButton");
+        button.Click += OnReviewMaintenanceOptions;
+        return button;
+    }
+
+    private void OnReviewMaintenanceOptions(object sender, RoutedEventArgs e)
+    {
+        MainAutoRepair.IsChecked = false;
+        CategoryList.SelectedItem = ToolCategories.Single(category => category.Title == "Maintenance");
+    }
+
     private static bool HasRepairAvailable(WorkflowResult result) =>
         result.Checks.Any(check => check.EffectiveState == CheckState.Repairable && check.Repair is not null) ||
         result.Recipes.Any(recipe => recipe.EffectiveOutcome == RecipeOutcome.RepairAvailable && recipe.Repair is not null);
+
+    private static bool HasMaintenanceOptions(WorkflowResult result) =>
+        result.Kind == WorkflowKind.CommonProblems && result.Summary.ReviewItems > 0;
 
     private TextBlock Heading(string text, double size)
     {

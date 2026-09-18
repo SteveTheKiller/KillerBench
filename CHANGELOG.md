@@ -1,5 +1,6 @@
 # Changelog
 
+- Link full-scan reports to safe Maintenance options without selecting an action.
 - State the full-scan repair boundary directly in CLI help.
 - Explain the safe Full system scan default and focused Repair handoff at startup.
 - Put the diagnosis-first Full system scan in Diagnostics and reserve Repair for focused recovery workflows.

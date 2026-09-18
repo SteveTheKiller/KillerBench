@@ -96,19 +96,26 @@ internal static class Program
                 "PEEK desktop controls expose the shared one through 120 snapshot range");
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
                 "Desktop subtitle identifies the full maintenance scope");
-            var actionable = new WorkflowResult(WorkflowKind.Services, "smoke", DateTimeOffset.UtcNow, "Needs attention",
+            var actionable = new WorkflowResult(WorkflowKind.CommonProblems, "smoke", DateTimeOffset.UtcNow, "Needs attention",
                 [new("Service repair", CheckState.Repairable, "Fixture repair option", RepairKind.SystemFiles)], [], "smoke-journal.json");
             typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [actionable]);
             typeof(KillerBench.MainWindow).GetMethod("SetOutputView", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [true]);
             window.UpdateLayout();
             var repairNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review repair options"));
+            var maintenanceNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review maintenance options"));
             repairNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             window.UpdateLayout();
             Require(window.FindName("CategoryList") is ListBox { SelectedItem: not null } categories && categories.SelectedItem.ToString() == "Repair" &&
                 window.FindName("MainWorkflow") is ComboBox { SelectedItem: WorkflowDefinition { Kind: WorkflowKind.CoreWindowsServices } } &&
                 window.FindName("MainAutoRepair") is CheckBox { IsChecked: not true },
                 "Actionable reports lead to unapproved Repair options");
-            Console.WriteLine("PASS: WPF workbench geometry, zoom containment, PEEK monitor bounds and safe report-to-repair navigation.");
+            maintenanceNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            window.UpdateLayout();
+            Require(window.FindName("CategoryList") is ListBox { SelectedItem: not null } maintenanceCategories && maintenanceCategories.SelectedItem.ToString() == "Maintenance" &&
+                window.FindName("MainWorkflow") is ComboBox { SelectedItem: WorkflowDefinition { Kind: WorkflowKind.Cleanup } } &&
+                window.FindName("MainAutoRepair") is CheckBox { IsChecked: not true, IsEnabled: false },
+                "Full-scan reports lead to unapproved Maintenance options");
+            Console.WriteLine("PASS: WPF workbench geometry, zoom containment, PEEK monitor bounds and safe report navigation.");
             return 0;
         }
         finally
