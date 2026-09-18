@@ -1,5 +1,6 @@
 # Changelog
 
+- Make `killerbench-cli help` open the complete command catalog with its safety boundary.
 - Add separate raw console and formatted workflow report views with prioritized findings and exact next actions, including exports.
 - Name technical output and readable report views directly in the workspace.
 - Replace automatic sample evidence with a diagnostic-first welcome state.
