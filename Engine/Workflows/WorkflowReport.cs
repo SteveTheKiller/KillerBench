@@ -5,13 +5,7 @@ namespace KillerBench.Engine;
 public static class WorkflowReport
 {
     public static string NextAction(WorkflowResult result, bool commandLine = false)
-    {
-        const string prefix = "NEXT: ";
-        string line = Format(result, commandLine).Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries)
-            .FirstOrDefault(candidate => candidate.StartsWith(prefix, StringComparison.Ordinal)) ?? "";
-        return line.Length > prefix.Length ? line[prefix.Length..] :
-            "Review the completed checks before selecting any repair.";
-    }
+        => BuildNextAction(result, commandLine, result.Summary);
 
     public static string Format(WorkflowResult result, bool commandLine = false)
     {
@@ -89,6 +83,17 @@ public static class WorkflowReport
             text.AppendLine();
         }
         }
+        string next = BuildNextAction(result, commandLine, summary);
+        text.Insert(nextPosition, "NEXT: " + next + Environment.NewLine);
+        text.AppendLine("Repairs run: " + result.Repairs.Count);
+        text.AppendLine("Journal: " + result.JournalPath);
+        text.AppendLine("Results apply only to checked scopes. Complete feature operation remains untested.");
+        return text.ToString();
+    }
+
+    private static string BuildNextAction(WorkflowResult result, bool commandLine, WorkflowSummary summary)
+    {
+        static bool CheckNeedsReview(WorkflowCheck check) => check.EffectiveState is not (CheckState.Clear or CheckState.Information);
         string next = result.RequiresRestart ? "Restart when convenient, then run this workflow again to verify and continue." :
             result.Status.StartsWith("Stopped", StringComparison.Ordinal) ? "Review the saved journal before starting another repair; the previous operation may be incomplete." :
             Enum.IsDefined(result.Kind) && Workflows.Scopes(result.Kind).Length > 0 && result.Checks.Any(c => c.Name == "Administrator" && c.State == CheckState.Attention) ?
@@ -127,10 +132,6 @@ public static class WorkflowReport
                 "Some checks could not determine a result. Review the incomplete evidence below and repeat those checks before selecting a repair.",
             _ => next
         };
-        text.Insert(nextPosition, "NEXT: " + next + Environment.NewLine);
-        text.AppendLine("Repairs run: " + result.Repairs.Count);
-        text.AppendLine("Journal: " + result.JournalPath);
-        text.AppendLine("Results apply only to checked scopes. Complete feature operation remains untested.");
-        return text.ToString();
+        return next;
     }
 }

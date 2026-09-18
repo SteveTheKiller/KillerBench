@@ -1,6 +1,7 @@
 # Changelog
 
 - Add separate raw console and formatted workflow report views with prioritized findings and exact next actions, including exports.
+- Avoid rebuilding full workflow output when opening the readable report.
 - Repair and focus the isolated rendered UI-test launcher.
 - Replace the fixed CRT console with a theme-aware smoked-glass output pane.
 - Make Network a primary category and move BitLocker into Security.

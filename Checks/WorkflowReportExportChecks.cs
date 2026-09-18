@@ -20,6 +20,10 @@ internal static class WorkflowReportExportChecks
             Recipes = [new("windows.system-files", 1, RecipeOutcome.Repaired, problem, repair, "Repair completed and verified.")]
         };
 
+        Require(WorkflowReport.NextAction(result) == "Review the unresolved findings below. No broader repair has been selected automatically." &&
+            WorkflowReport.Format(result).Contains("NEXT: " + WorkflowReport.NextAction(result)),
+            "Report next action uses the same decision without rebuilding formatted output.");
+
         string diagnostic = WorkflowReportExport.BuildHtml(result, WorkflowReportScope.Diagnostics, "Dark");
         Require(diagnostic.StartsWith("<!DOCTYPE html>", StringComparison.Ordinal) && diagnostic.Contains("Diagnostic report") &&
             diagnostic.Contains("<h2>Start here</h2>") && diagnostic.Contains("Review the unresolved findings below") &&
