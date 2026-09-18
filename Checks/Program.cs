@@ -793,6 +793,15 @@ internal static class Program
                 ((ListBox)window.FindName("CategoryList")).IsEnabled && ((ComboBox)window.FindName("CategoryWorkflow")).IsEnabled &&
                 ((Button)window.FindName("ExportReportButton")).IsEnabled,
                 "A running scan keeps Stop, navigation and report export available while preventing another GO action");
+            categories.SelectedIndex = 2;
+            Pump();
+            Require(((ComboBox)window.FindName("MainWorkflow")).SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Cleanup },
+                "A running scan can open another category without starting another operation");
+            var busyTools = (ComboBox)window.FindName("CategoryWorkflow");
+            busyTools.SelectedItem = busyTools.Items.Cast<WorkflowDefinition>().Single(tool => tool.Kind == WorkflowKind.AvailableUpdates);
+            Pump();
+            Require(((ComboBox)window.FindName("MainWorkflow")).SelectedItem is WorkflowDefinition { Kind: WorkflowKind.AvailableUpdates },
+                "A running scan can browse another tool without enabling another GO action");
             setCaptureBusy.Invoke(window, [false]);
             categories.SelectedIndex = 0;
             Require(!((Expander)window.FindName("AdvancedTools")).IsExpanded, "Advanced tools start tucked away");
