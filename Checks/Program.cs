@@ -593,6 +593,9 @@ internal static class Program
             Require(Grid.GetColumnSpan(categories) == 1 && ((FrameworkElement)window.FindName("DetailsPanel")).Visibility == Visibility.Collapsed &&
                 ((Button)window.FindName("ExportReportButton")).Visibility == Visibility.Visible,
                 "Category bank leads to the report workspace with a visible export action and no inspector sidebar");
+            Require(window.FindName("ConsoleViewButton") is Button { Content: "Raw output" } &&
+                window.FindName("ReportViewButton") is Button { Content: "Readable report" },
+                "Output view controls distinguish technical evidence from the readable report");
             var categoryTools = (ComboBox)window.FindName("CategoryWorkflow");
             var allTools = (ComboBox)window.FindName("MainWorkflow");
             Require(categories.Items.Cast<object>().Select(category => category.ToString()).SequenceEqual(["Diagnostics", "Repair", "Network", "Maintenance", "Security"]) &&

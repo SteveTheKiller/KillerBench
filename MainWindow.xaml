@@ -849,8 +849,8 @@
               <DockPanel Margin="0,0,0,6">
                 <Button x:Name="ExportReportButton" DockPanel.Dock="Right" Content="{DynamicResource Str_ExportReport}" Click="OnExportReport" ToolTip="{DynamicResource Str_ExportContents}" Padding="10,4"/>
                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-                  <Button x:Name="ConsoleViewButton" Content="Console" Click="OnConsoleView" Padding="10,4"/>
-                  <Button x:Name="ReportViewButton" Content="Report" Click="OnReportView" IsEnabled="False" Padding="10,4" Margin="6,0,0,0"/>
+                  <Button x:Name="ConsoleViewButton" Content="Raw output" Click="OnConsoleView" Padding="10,4" ToolTip="Technical activity and retained evidence." AutomationProperties.Name="Show raw technical output"/>
+                  <Button x:Name="ReportViewButton" Content="Readable report" Click="OnReportView" IsEnabled="False" Padding="10,4" Margin="6,0,0,0" ToolTip="Problems, actions and recommended next steps." AutomationProperties.Name="Show readable report"/>
                 </StackPanel>
                 <TextBlock x:Name="EvidenceTitle" Text="{DynamicResource Str_Text_Evidence}" FontFamily="{DynamicResource WordmarkFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="12,0,12,0"/>
               </DockPanel>
