@@ -774,9 +774,9 @@ public partial class MainWindow
                 string output = title + "\n" + detail +
                     "\nJournal: " + (journal ?? "No change journal created.") +
                     "\n\nMachine policy, Clipboard sync and stored clipboard contents were preserved.";
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("Clipboard history " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
-                Report(detail);
+                RegisterGuardedActionReport(WorkflowKind.Privacy, "Clipboard history", title, output, detail,
+                    journal ?? "No change journal created.", verified,
+                    "Review Clipboard history behavior before changing another privacy setting.");
                 SetScanLight(verified ? "ready" : "attention", detail);
                 return;
             }
@@ -812,9 +812,9 @@ public partial class MainWindow
                 string output = title + "\n" + detail +
                     "\nJournal: " + (journal ?? "No change journal created.") +
                     "\n\nMatching policy and unrelated privacy settings were preserved.";
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence(privacyBooleanDefinition.Title + " " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
-                Report(detail);
+                RegisterGuardedActionReport(WorkflowKind.Privacy, privacyBooleanDefinition.Title, title, output, detail,
+                    journal ?? "No change journal created.", verified,
+                    "Review the setting's behavior before changing another privacy setting.");
                 SetScanLight(verified ? "ready" : "attention", detail);
                 return;
             }
