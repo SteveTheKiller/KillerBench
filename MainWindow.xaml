@@ -817,7 +817,7 @@
           <Setter Property="FontFamily" Value="{DynamicResource WordmarkFont}"/><Setter Property="FontWeight" Value="Normal"/><Setter Property="TextOptions.TextFormattingMode" Value="Display"/><Setter Property="HorizontalContentAlignment" Value="Center"/><Setter Property="VerticalContentAlignment" Value="Center"/>
           <Setter Property="Background" Value="{DynamicResource PaneBrush}"/>
           <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
-            <Border x:Name="CategoryFace" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="3">
+            <Border x:Name="CategoryFace" Background="{DynamicResource PaneBrush}" CornerRadius="3">
               <Grid>
                 <Border CornerRadius="2" IsHitTestVisible="False"><Border.Background><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#55FFFFFF" Offset="0"/><GradientStop Color="#08FFFFFF" Offset="0.45"/><GradientStop Color="#55000000" Offset="1"/></LinearGradientBrush></Border.Background></Border>
                 <ContentPresenter Margin="6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -827,10 +827,7 @@
               <Trigger Property="IsSelected" Value="True">
                 <Setter TargetName="CategoryFace" Property="Background" Value="{DynamicResource PrimaryBrush}"/>
                 <Setter Property="Foreground" Value="#151515"/>
-                <Setter TargetName="CategoryFace" Property="BorderBrush" Value="#FFFFD6"/>
               </Trigger>
-              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="CategoryFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/></Trigger>
-              <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="CategoryFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/></Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate></Setter.Value></Setter>
         </Style></ListBox.ItemContainerStyle>

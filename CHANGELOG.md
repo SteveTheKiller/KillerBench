@@ -31,6 +31,7 @@
 - Add desktop reconciliation for interrupted MACE package removal without repeating the request.
 - Add CLI reconciliation for interrupted MACE package removal without adding a removal command.
 - Add a repeatable framework-dependent Windows x64 single-file publish profile.
+- Remove the bright border around category buttons.
 
 ## [0.1.0] - Unreleased
 
