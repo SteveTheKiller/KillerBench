@@ -3,6 +3,8 @@
 - Add separate raw console and formatted workflow report views with prioritized findings and exact next actions, including exports.
 - Order report findings by actionability before general attention and incomplete evidence.
 - Keep exported HTML and text report triage in the same order as the app.
+- Start standard-user diagnostics without an elevation prompt while retaining repair-specific administrator gates.
+- Place Diagnostics beside Repair and use a clear UI font for category buttons.
 - Avoid rebuilding full workflow output when opening the readable report.
 - Repair and focus the isolated rendered UI-test launcher.
 - Replace the fixed CRT console with a theme-aware smoked-glass output pane.
