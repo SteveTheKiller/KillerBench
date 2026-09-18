@@ -386,12 +386,14 @@ public partial class MainWindow
         {
             string detail = "Update operation not completed: " + error.Message;
             AppendWorkflowOutput(detail);
-            workflowOutputActive = false;
-            var lines = new List<string> { "UPDATE INSTALLATION / OUTCOME UNVERIFIED", detail,
-                "Recovery records: " + folder, "Selected identities:" };
-            lines.AddRange(selections.Select(selection => selection.Id + " revision " + selection.Revision));
-            lines.Add("An installation may have started. Review the saved journal and verify the pending operation before another attempt. No automatic retry was requested.");
-            RegisterSource(new TextEvidence("Update interruption " + DateTime.Now.ToString("HHmmss"), lines.ToArray(), false));
+            var action = new WorkflowAction("Windows Update installation", "Review required", detail,
+                "Check the interrupted update result and saved journal before another installation attempt.", false);
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.AvailableUpdates, Environment.MachineName, DateTimeOffset.UtcNow,
+                "Windows Update outcome unverified",
+                [new WorkflowCheck("Interrupted update installation", CheckState.Unknown, detail),
+                 new WorkflowCheck("Change boundary", CheckState.Information,
+                    "The exact installation outcome could not be established. No automatic retry was requested.")], [], folder)
+            { Actions = [action] }, "Windows Update installation");
             SetScanLight("incomplete", "Update outcome unverified. Review the retained session result.");
         }
         finally
@@ -508,7 +510,16 @@ public partial class MainWindow
             InvalidOperationException or NotSupportedException or OperationCanceledException or ArgumentException or
             System.ComponentModel.Win32Exception or System.Security.SecurityException)
         {
-            AppendWorkflowOutput("Application update not completed: " + error.Message);
+            string detail = "Application update not completed: " + error.Message;
+            AppendWorkflowOutput(detail);
+            var action = new WorkflowAction("Application update", "Review required", detail,
+                "Check the interrupted application update and saved journal before another update attempt.", false);
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.AvailableUpdates, Environment.MachineName, DateTimeOffset.UtcNow,
+                "Application update outcome unverified",
+                [new WorkflowCheck("Interrupted application update", CheckState.Unknown, detail),
+                 new WorkflowCheck("Change boundary", CheckState.Information,
+                    "The exact update outcome could not be established. No automatic retry was requested.")], [], ThirdPartyUpdateFolder())
+            { Actions = [action] }, "Application update");
             SetScanLight("incomplete", "Application update outcome is unverified. Check the interrupted operation before another attempt.");
         }
         finally
