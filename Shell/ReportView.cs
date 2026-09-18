@@ -32,11 +32,13 @@ public partial class MainWindow
         SetOutputView(report: false);
     }
 
-    private void RenderWorkflowReport(WorkflowResult result)
+    private void RenderWorkflowReport(WorkflowResult result) => RenderNamedWorkflowReport(result, null);
+
+    private void RenderNamedWorkflowReport(WorkflowResult result, string? title)
     {
         reportAvailable = true;
         ReportContent.Children.Clear();
-        ReportContent.Children.Add(Heading(WorkflowCatalog.All.Single(workflow => workflow.Kind == result.Kind).Title + " report", 22));
+        ReportContent.Children.Add(Heading((title ?? WorkflowCatalog.All.Single(workflow => workflow.Kind == result.Kind).Title) + " report", 22));
         ReportContent.Children.Add(Body(result.Status + " | " + result.StartedUtc.ToString("g"), 12, new Thickness(0, 0, 0, 14)));
 
         var summary = result.Summary;
@@ -69,8 +71,8 @@ public partial class MainWindow
         int visibleRecipes = Math.Min(reviewRecipes.Length, maximumVisibleReviewItems - visibleProblems);
         foreach (var recipe in reviewRecipes.Take(visibleRecipes))
         {
-            string title = RecipeCatalog.All.FirstOrDefault(item => item.Id == recipe.RecipeId)?.Title ?? recipe.RecipeId;
-            ReportContent.Children.Add(Card(title, DescribeRecipeOutcome(recipe), recipe.Detail,
+            string recipeTitle = RecipeCatalog.All.FirstOrDefault(item => item.Id == recipe.RecipeId)?.Title ?? recipe.RecipeId;
+            ReportContent.Children.Add(Card(recipeTitle, DescribeRecipeOutcome(recipe), recipe.Detail,
                 recipe.Repair is null ? "Review the recorded outcome before selecting another action." : Repairs.Plan(recipe.Repair.Kind).Effects));
         }
         int additionalReviewItems = problems.Length + reviewRecipes.Length - visibleProblems - visibleRecipes;
@@ -99,7 +101,9 @@ public partial class MainWindow
                 repair.RequiresRestart ? "Restart Windows, then rerun the affected workflow to verify." : "Test the affected feature and review the report before any further change."));
 
         ReportContent.Children.Add(Heading("Scope and limits", 18));
-        ReportContent.Children.Add(Body("This report covers only the checks selected for this workflow. Historical evidence does not by itself prove a current fault or authorize a repair.", 12, new Thickness(0, 0, 0, 4)));
+        ReportContent.Children.Add(Body(title is null
+            ? "This report covers only the checks selected for this workflow. Historical evidence does not by itself prove a current fault or authorize a repair."
+            : "This review covers one exact folder name at five fixed local roots. Folder contents were not read, and a matching folder does not establish ownership or authorize deletion.", 12, new Thickness(0, 0, 0, 4)));
     }
 
     private Border Card(string title, string state, string detail, string action)

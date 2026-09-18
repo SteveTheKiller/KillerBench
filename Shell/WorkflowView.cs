@@ -8,7 +8,7 @@ public partial class MainWindow
     private bool workflowOutputActive;
     private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, WorkflowResult> workflowSummaries = new();
 
-    private void RegisterWorkflowResult(WorkflowResult result)
+    private void RegisterWorkflowResult(WorkflowResult result, string? reportTitle = null)
     {
         string summary = WorkflowReport.Format(result);
         AppendWorkflowOutput("Workflow completed: " + result.Status + ". Read the Report view for findings and next actions.");
@@ -18,7 +18,7 @@ public partial class MainWindow
         workflowOutputActive = false;
         RegisterSource(text);
         RepairPreview.Text = summary;
-        RenderWorkflowReport(result);
+        RenderNamedWorkflowReport(result, reportTitle);
         SetOutputView(report: true);
     }
     private void OnTimePeersChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)

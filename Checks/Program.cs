@@ -158,6 +158,14 @@ internal static class Program
             Require(FindTextBlocks(window).Any(block => block.Text == "Collected information") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("fixture-extension", StringComparison.Ordinal)),
                 "Readable reports retain bounded informational browser evidence when no problem was found");
+            ((ComboBox)window.FindName("MainWorkflow")).SelectedItem = WorkflowCatalog.All.Single(workflow => workflow.Kind == WorkflowKind.InstalledApps);
+            ((TextBox)window.FindName("ApplicationFolderName")).Text = "KillerBenchUiSmokeFolder";
+            ((Button)window.FindName("ReviewApplicationFoldersButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            for (int attempt = 0; attempt < 12 && !FindTextBlocks(window).Any(block => block.Text == "Application folder review report"); attempt++) Pump();
+            Require(window.FindName("ReportPane") is Border { Visibility: Visibility.Visible } &&
+                FindTextBlocks(window).Any(block => block.Text == "Application folder review report") &&
+                FindTextBlocks(window).Any(block => block.Text.Contains("No folder contents were read or changed", StringComparison.Ordinal)),
+                "Application-folder review opens a formatted read-only report without exposing folder contents");
             Console.WriteLine("PASS: WPF workbench geometry, zoom containment, PEEK monitor bounds and safe report navigation.");
             return 0;
         }

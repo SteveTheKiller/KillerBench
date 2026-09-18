@@ -216,6 +216,11 @@
               <Button x:Name="SaveApplicationInventory" Content="Save inventory..." Click="OnSaveApplicationInventory" IsEnabled="False" HorizontalAlignment="Left" Margin="0,6,0,0" ToolTip="Save registrations from the last completed collection, including any coverage limits."/>
               <Button x:Name="CompareApplicationInventories" Content="Compare saved inventories..." Click="OnCompareApplicationInventories" HorizontalAlignment="Left" Margin="0,6,0,0" ToolTip="Choose before and after installed-apps JSON files. No applications are changed."/>
               <Button x:Name="ReviewBrowserExtensions" Content="Review browser extensions" Click="OnReviewBrowserExtensions" HorizontalAlignment="Left" Margin="0,6,0,0" ToolTip="Read Chrome, Edge, Brave and Firefox extension identities. No browser, extension or policy is changed."/>
+              <TextBlock Text="Exact application folder name" Margin="0,8,0,0"/>
+              <DockPanel Margin="0,4,0,0" LastChildFill="False">
+                <TextBox x:Name="ApplicationFolderName" Width="150" AutomationProperties.Name="Exact application folder name" ToolTip="One folder name only. Five fixed locations are checked without reading contents."/>
+                <Button x:Name="ReviewApplicationFoldersButton" Content="Review folders" Click="OnReviewApplicationFolders" Margin="6,0,0,0" ToolTip="Read-only review of five exact application-folder locations. No contents, paths or files are shown or changed."/>
+              </DockPanel>
             </StackPanel>
             <StackPanel x:Name="MaceSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="Choose exactly what to review. GO inventories registrations and shows consequences. Package removal has its own guarded control." TextWrapping="Wrap"/>

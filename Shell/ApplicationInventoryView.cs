@@ -29,6 +29,46 @@ public partial class MainWindow
         Report("Browser extensions selected. Press GO to create a read-only report.");
     }
 
+    private async void OnReviewApplicationFolders(object sender, RoutedEventArgs e)
+    {
+        if (readCancellation is not null) return;
+        string folderName = ApplicationFolderName.Text.Trim();
+        if (folderName.Length == 0) { Report("Enter one exact application folder name to review."); return; }
+        using var stop = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+        readCancellation = stop;
+        ReviewApplicationFoldersButton.IsEnabled = false;
+        CancelButton.IsEnabled = true;
+        BeginWorkflowOutput(WorkflowKind.InstalledApps);
+        AppendWorkflowOutput("Reviewing five exact application-folder locations. No folder contents will be read or changed.");
+        try
+        {
+            ApplicationFolderReviewResult review = await Task.Run(() => ApplicationFolderReview.Review(folderName, token: stop.Token), stop.Token);
+            var checks = review.Locations.Select(location => new WorkflowCheck(location.Area,
+                location.State == "Unavailable" ? CheckState.Unknown : location.State == "Absent" ? CheckState.Clear : CheckState.Information,
+                location.Detail)).ToArray();
+            string status = review.Complete
+                ? "Application folder review complete. No folder contents were read or changed."
+                : "Application folder review incomplete. No folder contents were read or changed.";
+            AppendWorkflowOutput(review.Detail);
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.InstalledApps, Environment.MachineName, DateTimeOffset.UtcNow,
+                status, checks, [], "Read-only application folder review. No journal was written."), "Application folder review");
+            Report(status);
+            SetScanLight(review.Complete ? "ready" : "incomplete", status);
+        }
+        catch (OperationCanceledException) { AppendWorkflowOutput("Application folder review stopped. Nothing was changed."); }
+        catch (Exception error) when (error is ArgumentException or InvalidOperationException or IOException or UnauthorizedAccessException or NotSupportedException)
+        { AppendWorkflowOutput("Application folder review unavailable: " + error.Message); }
+        finally
+        {
+            readCancellation = null;
+            workflowOutputActive = false;
+            SourcesList.IsEnabled = true;
+            SearchBox.IsEnabled = true;
+            ReviewApplicationFoldersButton.IsEnabled = true;
+            CancelButton.IsEnabled = false;
+        }
+    }
+
     private async void OnSaveApplicationInventory(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null || applicationInventory is not { } inventory) return;
