@@ -93,8 +93,10 @@ public partial class MainWindow
         }
 
         ReportContent.Children.Add(Heading("Actions taken", 18));
-        if (result.Repairs.Count == 0)
+        if (result.Actions.Count == 0 && result.Repairs.Count == 0)
             ReportContent.Children.Add(Body("No repair was executed in this workflow.", 13, new Thickness(0, 0, 0, 12)));
+        foreach (var action in result.Actions)
+            ReportContent.Children.Add(Card(action.Name, action.Status, action.Detail, action.NextAction));
         foreach (var repair in result.Repairs)
             ReportContent.Children.Add(Card(Repairs.Plan(repair.Kind).Title, repair.Status,
                 Repairs.IsVerified(repair) ? "The recorded follow-up step verified this repair." : "This action is not verified. Review its recorded outcome before taking another action.",

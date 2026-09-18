@@ -25,7 +25,7 @@ public static class WorkflowReport
             !(recipe.EffectiveOutcome == RecipeOutcome.Repaired && recipe.Repair is not null &&
               recipe.Check?.Repair == recipe.Repair.Kind && Repairs.IsVerified(recipe.Repair));
         text.AppendLine("Review items: " + (standalone.Count(CheckNeedsReview) + result.Recipes.Count(RecipeNeedsReview)) +
-            " | Repairs run: " + result.Repairs.Count);
+            " | Actions recorded: " + (result.Actions.Count + result.Repairs.Count));
         int nextPosition = text.Length;
         text.AppendLine();
         foreach (bool needsReview in new[] { true, false })
@@ -85,7 +85,14 @@ public static class WorkflowReport
         }
         string next = BuildNextAction(result, commandLine, summary);
         text.Insert(nextPosition, "NEXT: " + next + Environment.NewLine);
-        text.AppendLine("Repairs run: " + result.Repairs.Count);
+        foreach (var action in result.Actions)
+        {
+            text.AppendLine("Action: " + action.Name + " - " + action.Status);
+            text.AppendLine(action.Detail);
+            text.AppendLine("Next: " + action.NextAction);
+            text.AppendLine();
+        }
+        text.AppendLine("Actions recorded: " + (result.Actions.Count + result.Repairs.Count));
         text.AppendLine("Journal: " + result.JournalPath);
         text.AppendLine("Results apply only to checked scopes. Complete feature operation remains untested.");
         return text.ToString();
@@ -95,6 +102,7 @@ public static class WorkflowReport
     {
         static bool CheckNeedsReview(WorkflowCheck check) => check.EffectiveState is not (CheckState.Clear or CheckState.Information);
         string next = result.RequiresRestart ? "Restart when convenient, then run this workflow again to verify and continue." :
+            result.Actions.Count > 0 ? result.Actions[^1].NextAction :
             result.Status.StartsWith("Stopped", StringComparison.Ordinal) ? "Review the saved journal before starting another repair; the previous operation may be incomplete." :
             Enum.IsDefined(result.Kind) && Workflows.Scopes(result.Kind).Length > 0 && result.Checks.Any(c => c.Name == "Administrator" && c.State == CheckState.Attention) ?
                 (commandLine ? "Open an administrator terminal and rerun this workflow to complete its checks. " : "Run KillerBench as administrator, then select this check and press GO again. ") +

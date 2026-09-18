@@ -877,9 +877,14 @@ public partial class MainWindow
                 }
                 string output = title + "\n" + detail + "\nJournal: " + (journal ?? "No change journal created.") +
                     "\n\nApplies only to the selected power action. No other DEBLOAT area was changed.";
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("DEBLOAT power " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
-                Report(detail);
+                AppendWorkflowOutput(output);
+                var action = new WorkflowAction(title, verified ? "Verified" : "Review required", detail,
+                    verified ? "Review the completed action and test the computer's power behavior before making another change."
+                        : "Review the local change journal and current power state before retrying.", verified);
+                RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Debloat, Environment.MachineName, DateTimeOffset.UtcNow,
+                    verified ? "Power action verified" : "Power action requires review",
+                    [new WorkflowCheck("Guarded DEBLOAT power action", verified ? CheckState.Information : CheckState.Unknown,
+                        detail)], [], journal ?? "No change journal created.") { Actions = [action] }, "DEBLOAT power action");
                 SetScanLight(verified ? "ready" : "attention", detail);
                 return;
             }

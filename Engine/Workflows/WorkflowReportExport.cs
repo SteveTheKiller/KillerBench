@@ -67,7 +67,8 @@ public static class WorkflowReportExport
         if (scope == WorkflowReportScope.DiagnosticsAndRepairs)
         {
             sb.AppendLine("<section class='panel'><h2>Actions and results</h2>");
-            if (result.Repairs.Count == 0) sb.AppendLine("<p>No repair was executed in this workflow.</p>");
+            if (result.Actions.Count == 0 && result.Repairs.Count == 0) sb.AppendLine("<p>No repair was executed in this workflow.</p>");
+            foreach (var action in result.Actions) ActionCard(sb, action);
             foreach (var repair in result.Repairs) RepairCard(sb, repair);
             foreach (var recipe in result.Recipes.Where(r => r.Repair is null && r.EffectiveOutcome != RecipeOutcome.Clear)
                 .OrderBy(recipe => ReviewPriority(recipe.EffectiveOutcome)).ThenBy(recipe => recipe.RecipeId, StringComparer.Ordinal))
@@ -109,7 +110,10 @@ public static class WorkflowReportExport
         if (scope == WorkflowReportScope.DiagnosticsAndRepairs)
         {
             sb.AppendLine().AppendLine("ACTIONS AND RESULTS");
-            if (result.Repairs.Count == 0) sb.AppendLine("No repair was executed in this workflow.");
+            if (result.Actions.Count == 0 && result.Repairs.Count == 0) sb.AppendLine("No repair was executed in this workflow.");
+            foreach (var action in result.Actions)
+                sb.AppendLine().AppendLine(action.Name).AppendLine("Result: " + action.Status)
+                    .AppendLine(action.Detail).AppendLine("Next: " + action.NextAction);
             foreach (var repair in result.Repairs)
             {
                 sb.AppendLine().AppendLine(Repairs.Plan(repair.Kind).Title).AppendLine("Result: " + repair.Status);
@@ -154,6 +158,10 @@ public static class WorkflowReportExport
                 .Append(E(Describe(step))).Append("</div></details>");
         sb.Append("<div class='label'>Result</div><div class='text'>").Append(E(Repairs.IsVerified(repair) ? "Verified by the recorded follow-up step." : repair.RequiresRestart ? "Restart required. Verification must be repeated after restart." : "Not verified. Review the recorded outcome before taking another action.")).AppendLine("</div></article>");
     }
+    private static void ActionCard(StringBuilder sb, WorkflowAction action) => sb.Append("<article class='item'><h3>")
+        .Append(E(action.Name)).Append("</h3><span class='badge'>").Append(E(action.Status))
+        .Append("</span><div class='label'>Outcome</div><div class='text'>").Append(E(action.Detail))
+        .Append("</div><div class='label'>Next</div><div class='text'>").Append(E(action.NextAction)).AppendLine("</div></article>");
     private static void TextCheck(StringBuilder sb, WorkflowCheck check) => sb.AppendLine().AppendLine(check.Name + " [" + Humanize(check.EffectiveState.ToString()) + "]").AppendLine(check.Detail).AppendLine("Suggested action: " + (check.Repair is null ? "Review the evidence and stated limits." : Repairs.Plan(check.Repair.Value).Effects));
     private static void TextVerdict(StringBuilder sb, WorkflowCheck check) => sb.AppendLine().AppendLine(check.Name + " [" + Humanize(check.EffectiveState.ToString()) + "]").AppendLine(check.Detail);
     private static bool IsReadinessVerdict(WorkflowCheck check) => check.Repair is null && check.Name.EndsWith(" readiness verdict", StringComparison.Ordinal);

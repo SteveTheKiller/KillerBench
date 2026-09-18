@@ -14,10 +14,12 @@ public sealed record WorkflowCheck(string Name, CheckState State, string Detail,
         (Evidence is { ExitCode: not 0 } or { TimedOut: true } or { Truncated: true } || !string.IsNullOrWhiteSpace(Evidence?.Error))
         ? CheckState.Unknown : State;
 }
+public sealed record WorkflowAction(string Name, string Status, string Detail, string NextAction, bool Verified);
 public sealed record WorkflowResult(WorkflowKind Kind, string Machine, DateTimeOffset StartedUtc,
     string Status, IReadOnlyList<WorkflowCheck> Checks, IReadOnlyList<RepairResult> Repairs, string JournalPath)
 {
     public IReadOnlyList<RecipeResult> Recipes { get; init; } = [];
+    public IReadOnlyList<WorkflowAction> Actions { get; init; } = [];
     public bool RequiresRestart => Repairs.Any(r => r.RequiresRestart) || Recipes.Any(recipe => recipe.Outcome == RecipeOutcome.RestartRequired);
     public WorkflowSummary Summary => WorkflowSummary.From(this);
     public WorkflowRecoveryPlan RecoveryPlan => WorkflowRecoveryPlan.From(this);
@@ -32,7 +34,7 @@ public sealed record WorkflowResult(WorkflowKind Kind, string Machine, DateTimeO
         if (Status == "Needs attention" || Checks.Count == 0 || Summary.ReviewItems > 0 ||
             Checks.Any(check => check.State == CheckState.Clear && (check.Evidence is { ExitCode: not 0 } or { TimedOut: true } or { Truncated: true } ||
                 !string.IsNullOrWhiteSpace(check.Evidence?.Error))) || Recipes.Any(recipe => recipe.ExecutionUncertain) ||
-            Repairs.Any(repair => !KillerBench.Engine.Repairs.IsVerified(repair))) return 3;
+            Repairs.Any(repair => !KillerBench.Engine.Repairs.IsVerified(repair)) || Actions.Any(action => !action.Verified)) return 3;
         return 0;
     }
 }

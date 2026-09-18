@@ -55,6 +55,17 @@ internal static class WorkflowReportExportChecks
         Require(WorkflowReportExport.BuildHtml(result with { Repairs = [restartRepair] }, WorkflowReportScope.DiagnosticsAndRepairs).Contains("Restart required</h2>"),
             "A conventional repair restart requirement is visible in the full HTML report");
 
+        var guardedAction = new WorkflowAction("POWER TIMERS / VERIFIED", "Verified",
+            "Fresh evidence confirms the selected timer values on the same active plan.",
+            "Review the completed action and test power behavior before making another change.", true);
+        var actionResult = result with { Repairs = [], Recipes = [], Actions = [guardedAction], Status = "Power action verified" };
+        string actionHtml = WorkflowReportExport.BuildHtml(actionResult, WorkflowReportScope.DiagnosticsAndRepairs);
+        string actionText = WorkflowReportExport.BuildText(actionResult, WorkflowReportScope.DiagnosticsAndRepairs);
+        Require(WorkflowReport.NextAction(actionResult) == guardedAction.NextAction &&
+            actionHtml.Contains(guardedAction.Name) && actionHtml.Contains(guardedAction.Detail) &&
+            actionText.Contains(guardedAction.Name) && actionText.Contains("Result: Verified"),
+            "Guarded action reports retain the action, verification outcome and next step in the readable exports");
+
         string text = WorkflowReportExport.BuildText(result, WorkflowReportScope.DiagnosticsAndRepairs);
         Require(text.Contains("START HERE") && text.Contains("Review the unresolved findings below") &&
             text.Contains("PROBLEMS AND REVIEW ITEMS") && text.Contains("ACTIONS AND RESULTS") &&
