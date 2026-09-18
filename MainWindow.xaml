@@ -698,6 +698,19 @@
                 <ComboBoxItem Content="Defragment hard disk" Tag="Defragment"/>
               </ComboBox>
               <TextBlock Text="GO always collects current evidence first. Filesystem repair and drive optimization are separate choices. Optimization requires a confirmed media type and never changes schedules or restarts Windows." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <Expander Header="Review selected folder" Foreground="{DynamicResource TextBrush}" Margin="0,8,0,0">
+                <StackPanel>
+                  <TextBlock Text="Find duplicate files or large files in one selected local folder. Both reviews are read-only and never select files for deletion." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+                  <DockPanel Margin="0,5,0,4" LastChildFill="True">
+                    <Button Content="Browse" Click="OnBrowseFileReviewFolder" DockPanel.Dock="Right" Margin="5,0,0,0"/>
+                    <TextBox x:Name="FileReviewFolder" AutomationProperties.Name="Folder to review for duplicate and large files" ToolTip="One local folder. Reparse points and inaccessible content are excluded."/>
+                  </DockPanel>
+                  <WrapPanel>
+                    <Button x:Name="ReviewDuplicatesButton" Content="Find duplicates" Click="OnReviewDuplicates" Margin="0,0,6,0" ToolTip="Read-only SHA-256 duplicate review"/>
+                    <Button x:Name="ReviewLargeFilesButton" Content="Find large files" Click="OnReviewLargeFiles" ToolTip="Read-only review for files of at least 100 MB"/>
+                  </WrapPanel>
+                </StackPanel>
+              </Expander>
             </StackPanel>
             <StackPanel x:Name="ComputerNameSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="Proposed computer name"/>
