@@ -240,6 +240,7 @@
               <TextBlock Text="Destructive package removal" Foreground="{DynamicResource DangerRed}" Margin="0,8,0,0"/>
               <CheckBox x:Name="MacePackageRemovalConsent" Content="I understand that this removes only the selected package after fresh safeguards pass" Checked="OnMacePackageRemovalConsentChanged" Unchecked="OnMacePackageRemovalConsentChanged"/>
               <Button x:Name="MaceRemovePackage" Content="REMOVE SELECTED PACKAGE" Click="OnRemoveMacePackage" IsEnabled="False" HorizontalAlignment="Left" Margin="0,4,0,0" Background="{DynamicResource DangerRed}" Foreground="White" ToolTip="Requires an eligible review, this confirmation, a second confirmation, and fresh exact evidence before requesting removal."/>
+              <Button x:Name="MaceReconcilePackage" Content="Check interrupted removal" Click="OnReconcileMacePackage" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Checks a prior MACE package-removal record without sending another removal request."/>
               <TextBlock Text="This red control is separate from GO. It removes one exact, unprotected development package for the running account only. The final request is recorded and never retried automatically." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="OrcaSettings" Visibility="Collapsed" Margin="0,0,0,8">

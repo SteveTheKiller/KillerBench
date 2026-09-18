@@ -316,10 +316,15 @@ public partial class MainWindow
             (MaceTeams.IsChecked == true ? MaceTargets.Teams : MaceTargets.None),
             MaceScopeChoice.SelectedIndex == 1 ? MaceScope.AllUsers : MaceScope.RunningAccount,
             MaceRemoveData.IsChecked != true, MaceRemoveCredentials.IsChecked != true, MaceRestoreFolders.IsChecked == true);
-        if (kind == WorkflowKind.Mace)
+        if (kind == WorkflowKind.Mace && !macePackageReconciliationRequested)
         {
             try { maceOptions.Validate(); }
             catch (ArgumentException error) { Report(error.Message); return; }
+        }
+        if (macePackageReconciliationRequested && kind != WorkflowKind.Mace)
+        {
+            Report("MACE reconciliation is available only from the MACE workflow.");
+            return;
         }
         if (macePackageRemovalRequested && (kind != WorkflowKind.Mace ||
             MacePackageSelection.SelectedItem is not MacePackageChoice || MacePackageRemovalConsent.IsChecked != true))
@@ -599,6 +604,25 @@ public partial class MainWindow
         {
             string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Workflows");
             var progress = new Progress<string>(AppendWorkflowOutput);
+            if (macePackageReconciliationRequested)
+            {
+                string maceFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "KillerBench", "MacePackageRemoval");
+                var reconciliation = await Task.Run(() => MacePackageRemoval.ReconcileAsync(maceFolder,
+                    new WindowsMacePackageRemovalHost(), stop.Token));
+                string output = "MACE PACKAGE REMOVAL / RECONCILIATION " + reconciliation.Outcome.ToString().ToUpperInvariant() +
+                    "\n\n" + reconciliation.Detail + "\n\nRecord: " +
+                    (reconciliation.ArchivePath ?? reconciliation.PendingPath) +
+                    "\nNo package removal request was sent.";
+                workflowOutputActive = false;
+                RegisterSource(new TextEvidence("MACE package reconciliation " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
+                SetMaceReview(null);
+                Report(reconciliation.Detail);
+                SetScanLight(reconciliation.Outcome is MacePackageRemovalReconciliationOutcome.Verified or
+                    MacePackageRemovalReconciliationOutcome.NotApplied or MacePackageRemovalReconciliationOutcome.NoPendingRecord
+                    ? "ready" : "attention", reconciliation.Detail);
+                return;
+            }
             if (macePackageRemovalRequested)
             {
                 var selected = (MacePackageChoice)MacePackageSelection.SelectedItem;

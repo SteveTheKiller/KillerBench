@@ -28,6 +28,7 @@
 - Add combined readiness conclusions across peripheral, association, discovery, font-cache and evidence-backed feature-service workflows.
 - Correct MACE preserved-data eligibility so ordinary installed Store/MSIX packages remain blocked and only loose-file development packages can use the Windows preservation boundary.
 - Add MACE package removal behind a separate red desktop control with consent, confirmation, fresh safeguards, durable records and no automatic retry.
+- Add desktop reconciliation for interrupted MACE package removal without repeating the request.
 
 ## [0.1.0] - Unreleased
 

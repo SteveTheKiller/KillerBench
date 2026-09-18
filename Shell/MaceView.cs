@@ -8,6 +8,7 @@ public partial class MainWindow
     private sealed record MacePackageChoice(string Label, string Identity);
     private MaceRemovalReview? maceReview;
     private bool macePackageRemovalRequested;
+    private bool macePackageReconciliationRequested;
 
     private void OnMaceOptionChanged(object sender, RoutedEventArgs e)
     {
@@ -94,5 +95,13 @@ public partial class MainWindow
         macePackageRemovalRequested = true;
         try { await RunWorkflowAsync(); }
         finally { macePackageRemovalRequested = false; }
+    }
+
+    private async void OnReconcileMacePackage(object sender, RoutedEventArgs e)
+    {
+        if (readCancellation is not null) return;
+        macePackageReconciliationRequested = true;
+        try { await RunWorkflowAsync(); }
+        finally { macePackageReconciliationRequested = false; }
     }
 }

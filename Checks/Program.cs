@@ -692,9 +692,10 @@ internal static class Program
                         var selection = (ComboBox)window.FindName("MacePackageSelection");
                         var removalConsent = (CheckBox)window.FindName("MacePackageRemovalConsent");
                         var removePackage = (Button)window.FindName("MaceRemovePackage");
+                        var reconcilePackage = (Button)window.FindName("MaceReconcilePackage");
                         Require(selection.Items.Count == 1 && selection.SelectedIndex == 0 &&
-                            ((Button)window.FindName("MaceReviewPackage")).IsEnabled && !removePackage.IsEnabled,
-                            "One supported exact package is presented as one selected plan choice");
+                            ((Button)window.FindName("MaceReviewPackage")).IsEnabled && !removePackage.IsEnabled && reconcilePackage.IsEnabled,
+                            "One supported exact package is presented as one selected plan choice with separate removal recovery");
                         ((Button)window.FindName("MaceReviewPackage")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                         Require(text.Text.Contains("MACE PACKAGE PLAN / ELIGIBLE") &&
                             text.Text.Contains("GO stays review-only"),
