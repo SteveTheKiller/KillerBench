@@ -89,9 +89,8 @@ public partial class MainWindow
                 return inventory;
             }, TimeSpan.FromSeconds(5), stop.Token));
             stop.Token.ThrowIfCancellationRequested();
-            workflowOutputActive = false;
             var comparison = result.Comparison;
-            RegisterSource(new TextEvidence("Transfer observation " + DateTime.Now.ToString("HHmmss"), new[]
+            string observationOutput = string.Join("\n", new[]
             {
                 "BITS / TWO-SNAPSHOT OBSERVATION", "Selected transfer: " + id,
                 "First collected: " + result.FirstCollected.ToString("O"), "Second collected: " + result.SecondCollected.ToString("O"),
@@ -100,7 +99,8 @@ public partial class MainWindow
                 "No job changed. Existing retry guards remain in place.", "",
                 "FIRST EVIDENCE", result.BeforeEvidence.Output, result.BeforeEvidence.Error,
                 "SECOND EVIDENCE", result.AfterEvidence.Output, result.AfterEvidence.Error
-            }, result.BeforeEvidence.Truncated || result.AfterEvidence.Truncated));
+            });
+            AppendWorkflowOutput(observationOutput);
             bool complete = !result.BeforeEvidence.Truncated && !result.AfterEvidence.Truncated &&
                 string.IsNullOrWhiteSpace(result.BeforeEvidence.Error) && string.IsNullOrWhiteSpace(result.AfterEvidence.Error);
             var checks = new[]
