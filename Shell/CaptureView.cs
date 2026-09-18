@@ -11,6 +11,23 @@ public partial class MainWindow
     private CaptureSession? capture;
     private string? capturePath;
 
+    private static WorkflowResult BuildCaptureWorkflowReport(CaptureSession session, IReadOnlyList<DiagnosticFinding> findings,
+        bool partial)
+    {
+        var checks = new List<WorkflowCheck>
+        {
+            new("Capture coverage", partial ? CheckState.Unknown : CheckState.Information,
+                partial ? "Some requested evidence could not be collected or analyzed completely. Current update health is unknown." :
+                    "The selected log snapshots were collected and analyzed. They do not establish current update health.")
+        };
+        checks.AddRange(findings.Select(finding => new WorkflowCheck(finding.Title,
+            finding.Severity == "Information" ? CheckState.Information : CheckState.Attention,
+            finding.Explanation + " Next: " + finding.NextStep)));
+        return new WorkflowResult(WorkflowKind.WindowsUpdate, session.Machine, session.StartedUtc,
+            findings.Count == 0 ? "Windows Update capture reviewed" : "Windows Update capture needs review", checks, [],
+            "Read-only Windows Update capture. No repair journal was written.");
+    }
+
     private void SetCaptureBusy(bool busy)
     {
         MainGo.IsEnabled = !busy;
@@ -112,7 +129,13 @@ public partial class MainWindow
         reports.Add(overview, new("1", overview.Source, "Windows Update capture", analyzed.Values.Sum(r => r.LinesAnalyzed),
             analyzed.Values.Sum(r => r.ParsedLines), session.Partial || analyzed.Values.Any(r => r.Partial), [], findings,
             LogAnalyzer.Analyze(overview), "Grouped findings retain their original source references. No current-health verdict."));
+        var workflowReport = BuildCaptureWorkflowReport(session, findings,
+            session.Partial || analyzed.Values.Any(report => report.Partial));
+        workflowSummaries.Add(overview, workflowReport);
+        workflowReportTitles.Add(overview, "Windows Update capture");
         RegisterSource(overview);
+        RenderNamedWorkflowReport(workflowReport, "Windows Update capture");
+        SetOutputView(report: true);
         SaveCaptureButton.IsEnabled = true;
         CaptureInfo.Text = $"{session.Machine} | {session.Elevation} | {session.StartedUtc.ToLocalTime():g} | {session.Sources.Count(s => s.Evidence is not null)}/{session.Sources.Count} sources | {findings.Length} findings";
         OnFindingsTab(this, new RoutedEventArgs());

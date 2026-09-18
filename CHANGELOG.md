@@ -1,5 +1,6 @@
 # Changelog
 
+- Open Windows Update captures in the readable report view with coverage and retained log findings.
 - Summarize read-only scheduled-task inspections in the readable report view.
 - Open saved workflow journals in the readable report view with an explicit historical-evidence boundary and retained focused titles.
 - Show bounded collected evidence in readable reports when a read-only workflow finds no problem.
