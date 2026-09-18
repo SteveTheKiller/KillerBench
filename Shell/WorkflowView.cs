@@ -1093,14 +1093,22 @@ public partial class MainWindow
                     SetThirdPartyUpdateResult(thirdPartyDiscovery);
                 }
                 ApplyUpdateFilter();
-                workflowOutputActive = false;
                 if (discovery is not null)
-                    RegisterSource(new TextEvidence("Available updates " + DateTime.Now.ToString("HHmmss"), discovery.Format().Split('\n'), false));
+                    AppendWorkflowOutput(discovery.Format());
                 if (thirdPartyDiscovery is not null)
-                    RegisterSource(new TextEvidence("Third-party updates " + DateTime.Now.ToString("HHmmss"), thirdPartyDiscovery.Format().Split('\n'), false));
+                    AppendWorkflowOutput(thirdPartyDiscovery.Format());
                 bool incomplete = discovery?.Partial == true || thirdPartyDiscovery is { ProviderAvailable: false } || thirdPartyDiscovery is { Complete: false };
-                Report(incomplete ? "Discovery is incomplete. Review the retained evidence before preparing an installation." :
-                    "Discovery completed. Select a Windows update or one third-party application version to preview.");
+                var checks = new List<WorkflowCheck>();
+                if (discovery is not null)
+                    checks.Add(new WorkflowCheck("Windows Update discovery", discovery.Partial ? CheckState.Unknown : CheckState.Information,
+                        discovery.Detail + " Returned " + discovery.Updates.Count + " update candidates."));
+                if (thirdPartyDiscovery is not null)
+                    checks.Add(new WorkflowCheck("Third-party application update discovery",
+                        !thirdPartyDiscovery.ProviderAvailable || !thirdPartyDiscovery.Complete ? CheckState.Unknown : CheckState.Information,
+                        thirdPartyDiscovery.Detail + " Returned " + thirdPartyDiscovery.Candidates.Count + " application update candidates."));
+                string status = incomplete ? "Update discovery incomplete" : "Update discovery completed";
+                RegisterWorkflowResult(new WorkflowResult(WorkflowKind.AvailableUpdates, Environment.MachineName, DateTimeOffset.UtcNow,
+                    status, checks, [], "Read-only update discovery. No update installation journal was created."), "Available updates");
                 SetScanLight(incomplete ? "incomplete" : "ready", "Update discovery ended. No installation performed.");
                 return;
             }
