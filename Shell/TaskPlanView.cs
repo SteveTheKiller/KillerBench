@@ -307,7 +307,14 @@ public partial class MainWindow
             string output = "TASK RECOVERY / " + review.State + "\n" + review.Detail +
                 "\nNo task changed. Retry is not authorized by this record.\n\n" +
                 (review.RecordedEvidence is { } recorded ? JsonSerializer.Serialize(recorded, Capture.JsonOptions) : "No validated record available.");
-            RegisterSource(new TextEvidence("Task recovery: " + string.Join(" + ", picker.FileNames.Select(System.IO.Path.GetFileName)), output.Split('\n'), false));
+            BeginWorkflowOutput(WorkflowKind.ScheduledTasks);
+            AppendWorkflowOutput(output);
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.ScheduledTasks, Environment.MachineName, DateTimeOffset.UtcNow,
+                "Task recovery record reviewed",
+                [new WorkflowCheck("Historical recovery evidence", CheckState.Unknown, review.Detail),
+                 new WorkflowCheck("Change boundary", CheckState.Information,
+                    "No task changed. This historical record does not authorize retry.")], [],
+                "Historical task recovery evidence only. Current task state is unverified."), "Task recovery record");
             SetScanLight("incomplete", "Historical recovery evidence; current task state is unverified.");
             Report("Task recovery review: " + review.State + ". No task changed.");
         }
