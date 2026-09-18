@@ -737,10 +737,10 @@ public partial class MainWindow
                     "\nRetained index: " + (retained ?? "See the journal when an index was retained.") +
                     "\nJournal: " + (journal ?? "No change journal created.") +
                     "\n\nNo retained index was deleted and no Search policy, indexed location or startup mode was changed.";
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("Search index " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
+                RegisterGuardedActionReport(WorkflowKind.Search, "Windows Search index", title, output, detail,
+                    journal ?? "No change journal created.", verified,
+                    "Test Search after indexing settles before making another change.");
                 SearchIndexRebuildConsent.IsChecked = false;
-                Report(detail);
                 SetScanLight(verified ? "ready" : "attention", detail);
                 return;
             }
