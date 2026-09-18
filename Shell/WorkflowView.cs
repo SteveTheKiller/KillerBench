@@ -1110,7 +1110,8 @@ public partial class MainWindow
                     "KillerBench", "SystemRestore");
                 var restoreHost = new WindowsSystemRestoreCreationHost();
                 SystemRestoreCreationResult restore;
-                if (File.Exists(Path.Combine(restoreFolder, "system-restore-create.pending.json")))
+                bool hasPendingRestore = File.Exists(Path.Combine(restoreFolder, "system-restore-create.pending.json"));
+                if (hasPendingRestore)
                     restore = await Task.Run(() => SystemRestoreCreation.ReconcileAsync(restoreFolder, restoreHost, progress, stop.Token));
                 else
                     restore = await Task.Run(() => SystemRestoreCreation.RunAsync(restorePointRequest, autoRepair,
@@ -1120,9 +1121,19 @@ public partial class MainWindow
                     "\nExisting points observed: " + (restore.Before?.Points.Count.ToString() ?? "Not inspected in preview") +
                     "\n\n" + restore.Detail + "\n\nJournal: " + (restore.JournalPath ?? "No change journal created.") +
                     "\nKillerBench did not delete or apply a restore point and did not change System Protection settings.";
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("System Restore point " + DateTime.Now.ToString("HHmmss"), output.Split('\n'), false));
-                Report(restore.Detail);
+                if (autoRepair || hasPendingRestore)
+                {
+                    RegisterGuardedActionReport(WorkflowKind.SystemRestore, "System Restore point",
+                        "System Restore point / " + restore.Outcome, output, restore.Detail,
+                        restore.JournalPath ?? "No change journal created.", restore.Outcome == SystemRestoreCreationOutcome.Verified,
+                        "Confirm the new restore point appears in System Protection before making another machine change.");
+                    SetScanLight(restore.Outcome == SystemRestoreCreationOutcome.Verified ? "ready" : "attention", restore.Detail);
+                    return;
+                }
+                AppendWorkflowOutput(output);
+                RegisterWorkflowResult(new WorkflowResult(WorkflowKind.SystemRestore, Environment.MachineName, DateTimeOffset.UtcNow,
+                    "System Restore point review", [new WorkflowCheck("System Restore point", restore.Outcome == SystemRestoreCreationOutcome.Preview ? CheckState.Information : CheckState.Attention, restore.Detail)], [],
+                    restore.JournalPath ?? "No change journal created."), "System Restore point");
                 SetScanLight(restore.Outcome is SystemRestoreCreationOutcome.Verified or SystemRestoreCreationOutcome.Preview ? "ready" : "attention", restore.Detail);
                 return;
             }
