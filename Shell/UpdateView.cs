@@ -487,8 +487,20 @@ public partial class MainWindow
             var progress = new Progress<string>(AppendWorkflowOutput);
             var result = await Task.Run(() => ThirdPartyUpdateExecution.RunAsync(selection, true, ThirdPartyUpdateFolder(),
                 new WindowsThirdPartyUpdateExecutionHost(), progress, stop.Token));
-            workflowOutputActive = false;
-            RegisterSource(new TextEvidence("Application update " + DateTime.Now.ToString("HHmmss"), result.Format().Split('\n'), false));
+            AppendWorkflowOutput(result.Format());
+            bool verified = result.GetExitCode() == 0;
+            string detail = result.Outcome?.Detail ?? result.Status;
+            var action = new WorkflowAction("Application update", verified ? "Verified" : "Review required", detail,
+                verified ? "Test the updated application and restart Windows only if the vendor requires it." :
+                    "Review the application state and saved journal before another update attempt.", verified);
+            RegisterWorkflowResult(new WorkflowResult(WorkflowKind.AvailableUpdates, Environment.MachineName, DateTimeOffset.UtcNow,
+                result.Status,
+                [new WorkflowCheck("Selected application", verified ? CheckState.Information : CheckState.Unknown,
+                    "Package: " + selection.Id + ". Source: " + selection.Source + ". Target version: " + selection.TargetVersion + "."),
+                 new WorkflowCheck("Update result", verified ? CheckState.Information : CheckState.Unknown, detail),
+                 new WorkflowCheck("Restart boundary", CheckState.Information,
+                    "KillerBench did not request an automatic reboot.")], [], result.JournalPath)
+            { Actions = [action] }, "Application update");
             Report(result.Status + ". Journal: " + result.JournalPath);
             SetScanLight(result.GetExitCode() == 0 ? "ready" : "incomplete", result.Status + ". Review the application update result.");
         }
