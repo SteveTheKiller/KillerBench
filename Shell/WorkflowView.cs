@@ -1404,10 +1404,13 @@ public partial class MainWindow
                         new WindowsMsiRepairHost(), progress, stop.Token));
                     string reviewOutput = "MSI PRODUCT REPAIR / INTERRUPTED OPERATION\nOutcome: " + reconciliation.Outcome +
                         "\n" + reconciliation.Detail + "\nRecord: " + (reconciliation.ArchivePath ?? reconciliation.PendingPath);
-                    workflowOutputActive = false;
-                    RegisterSource(new TextEvidence("MSI repair review " + DateTime.Now.ToString("HHmmss"),
-                        reviewOutput.Split('\n'), false));
-                    Report(reconciliation.Detail);
+                    bool reconciliationRequiresRestart = reconciliation.Outcome == MsiRepairReconciliationOutcome.RestartRequired;
+                    RegisterGuardedActionReport(WorkflowKind.Installer, "Windows Installer product repair",
+                        "Windows Installer product repair recovery / " + reconciliation.Outcome, reviewOutput,
+                        reconciliation.Detail, reconciliation.ArchivePath ?? reconciliation.PendingPath,
+                        reconciliation.Outcome == MsiRepairReconciliationOutcome.Verified,
+                        "Test the repaired application before making another Windows Installer change.", reconciliationRequiresRestart,
+                        "Restart Windows, then return to this report to reconcile the selected Installer repair.");
                     SetScanLight(reconciliation.Outcome == MsiRepairReconciliationOutcome.Verified ? "ready" : "attention",
                         reconciliation.Detail);
                     return;
@@ -1417,9 +1420,12 @@ public partial class MainWindow
                 string msiOutput = "MSI PRODUCT REPAIR\nProduct: " + msiRepair.ProductCode +
                     "\nOutcome: " + msiRepair.Outcome + "\n" + msiRepair.Detail +
                     "\nJournal: " + (msiRepair.JournalPath ?? "No repair journal created.");
-                workflowOutputActive = false;
-                RegisterSource(new TextEvidence("MSI repair " + DateTime.Now.ToString("HHmmss"), msiOutput.Split('\n'), false));
-                Report(msiRepair.Detail);
+                bool repairRequiresRestart = msiRepair.Outcome == MsiRepairOutcome.RestartRequired;
+                RegisterGuardedActionReport(WorkflowKind.Installer, "Windows Installer product repair",
+                    "Windows Installer product repair / " + msiRepair.Outcome, msiOutput, msiRepair.Detail,
+                    msiRepair.JournalPath ?? "No repair journal created.", msiRepair.Outcome == MsiRepairOutcome.Verified,
+                    "Test the repaired application before making another Windows Installer change.", repairRequiresRestart,
+                    "Restart Windows, then return to this report to reconcile the selected Installer repair.");
                 SetScanLight(msiRepair.Outcome == MsiRepairOutcome.Verified ? "ready" : "attention", msiRepair.Detail);
                 return;
             }
