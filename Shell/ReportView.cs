@@ -50,7 +50,7 @@ public partial class MainWindow
         ReportContent.Children.Add(Heading("Start here", 18));
         ReportContent.Children.Add(Card("Recommended next step", "", NextAction(result),
             "No action starts from this report. Review the selected workflow controls before confirming a repair."));
-        if (HasRepairAvailable(result)) ReportContent.Children.Add(RepairNavigationButton());
+        if (HasRepairAvailable(result)) ReportContent.Children.Add(RepairNavigationButton(result));
         if (HasMaintenanceOptions(result)) ReportContent.Children.Add(MaintenanceNavigationButton());
 
         ReportContent.Children.Add(Heading("What needs attention", 18));
@@ -102,24 +102,32 @@ public partial class MainWindow
         return card;
     }
 
-    private Button RepairNavigationButton()
+    private Button RepairNavigationButton(WorkflowResult result)
     {
+        WorkflowKind? target = RepairNavigationTarget(result);
+        string targetTitle = target is { } kind
+            ? WorkflowCatalog.All.Single(workflow => workflow.Kind == kind).Title
+            : "Repair";
         var button = new Button
         {
-            Content = "Review repair options",
-            ToolTip = "Open the Repair workspace. No repair is selected, approved or started.",
+            Content = target is null ? "Review repair options" : "Review " + targetTitle + " repair",
+            ToolTip = target is null
+                ? "Open the Repair workspace. No repair is selected, approved or started."
+                : "Open the focused " + targetTitle + " repair workflow. No repair is selected, approved or started.",
             HorizontalAlignment = HorizontalAlignment.Left,
             Margin = new Thickness(0, 0, 0, 14)
         };
         button.SetResourceReference(Button.StyleProperty, "SurfaceButton");
-        button.Click += OnReviewRepairOptions;
+        button.Click += (_, _) => OnReviewRepairOptions(target);
         return button;
     }
 
-    private void OnReviewRepairOptions(object sender, RoutedEventArgs e)
+    private void OnReviewRepairOptions(WorkflowKind? target)
     {
         MainAutoRepair.IsChecked = false;
         CategoryList.SelectedItem = ToolCategories.Single(category => category.Title == "Repair");
+        if (target is { } kind)
+            MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(workflow => workflow.Kind == kind);
     }
 
     private Button MaintenanceNavigationButton()
@@ -144,7 +152,35 @@ public partial class MainWindow
 
     private static bool HasRepairAvailable(WorkflowResult result) =>
         result.Checks.Any(check => check.EffectiveState == CheckState.Repairable && check.Repair is not null) ||
-        result.Recipes.Any(recipe => recipe.EffectiveOutcome == RecipeOutcome.RepairAvailable && recipe.Repair is not null);
+        result.Recipes.Any(recipe => recipe.EffectiveOutcome == RecipeOutcome.RepairAvailable &&
+            (recipe.Repair is not null || recipe.Check?.Repair is not null ||
+             RecipeCatalog.All.Any(item => item.Id == recipe.RecipeId)));
+
+    private static WorkflowKind? RepairNavigationTarget(WorkflowResult result)
+    {
+        var targets = result.Checks
+            .Where(check => check.EffectiveState == CheckState.Repairable && check.Repair is not null)
+            .Select(check => check.Repair!.Value)
+            .Concat(result.Recipes.Where(recipe => recipe.EffectiveOutcome == RecipeOutcome.RepairAvailable)
+                .Select(recipe => recipe.Check?.Repair ?? RecipeCatalog.All.FirstOrDefault(item => item.Id == recipe.RecipeId)?.Action)
+                .Where(repair => repair is not null)
+                .Select(repair => repair!.Value))
+            .Select(RepairWorkflow)
+            .Where(kind => kind is not null)
+            .Select(kind => kind!.Value)
+            .Distinct()
+            .ToArray();
+        return targets.Length == 1 ? targets[0] : null;
+    }
+
+    private static WorkflowKind? RepairWorkflow(RepairKind repair)
+    {
+        foreach (WorkflowKind kind in ToolCategories.Single(category => category.Title == "Repair").Tools)
+        {
+            if (Workflows.Scopes(kind).Contains(repair)) return kind;
+        }
+        return null;
+    }
 
     private static bool HasMaintenanceOptions(WorkflowResult result) =>
         result.Kind == WorkflowKind.CommonProblems && result.Summary.ReviewItems > 0;

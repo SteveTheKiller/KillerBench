@@ -101,20 +101,38 @@ internal static class Program
             typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [actionable]);
             typeof(KillerBench.MainWindow).GetMethod("SetOutputView", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [true]);
             window.UpdateLayout();
-            var repairNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review repair options"));
+            var repairNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review System files repair"));
             var maintenanceNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review maintenance options"));
             repairNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             window.UpdateLayout();
             Require(window.FindName("CategoryList") is ListBox { SelectedItem: not null } categories && categories.SelectedItem.ToString() == "Repair" &&
-                window.FindName("MainWorkflow") is ComboBox { SelectedItem: WorkflowDefinition { Kind: WorkflowKind.CoreWindowsServices } } &&
+                window.FindName("MainWorkflow") is ComboBox { SelectedItem: WorkflowDefinition { Kind: WorkflowKind.SystemFiles } } &&
                 window.FindName("MainAutoRepair") is CheckBox { IsChecked: not true },
-                "Actionable reports lead to unapproved Repair options");
+                "Single-repair reports lead to their focused unapproved Repair option");
             maintenanceNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             window.UpdateLayout();
             Require(window.FindName("CategoryList") is ListBox { SelectedItem: not null } maintenanceCategories && maintenanceCategories.SelectedItem.ToString() == "Maintenance" &&
                 window.FindName("MainWorkflow") is ComboBox { SelectedItem: WorkflowDefinition { Kind: WorkflowKind.Cleanup } } &&
                 window.FindName("MainAutoRepair") is CheckBox { IsChecked: not true, IsEnabled: false },
                 "Full-scan reports lead to unapproved Maintenance options");
+            var mixed = new WorkflowResult(WorkflowKind.CommonProblems, "smoke", DateTimeOffset.UtcNow, "Needs attention",
+                [new("File repair", CheckState.Repairable, "Fixture repair option", RepairKind.SystemFiles),
+                 new("Print repair", CheckState.Repairable, "Fixture repair option", RepairKind.PrintSpooler)], [], "smoke-journal.json");
+            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [mixed]);
+            window.UpdateLayout();
+            Require(FindButtons(window).Any(button => Equals(button.Content, "Review repair options")) &&
+                !FindButtons(window).Any(button => Equals(button.Content, "Review System files repair")),
+                "Mixed repair reports retain a broader Repair handoff instead of guessing");
+            string systemFilesRecipe = RecipeCatalog.ForWorkflow(WorkflowKind.CommonProblems)
+                .Single(recipe => recipe.Action == RepairKind.SystemFiles).Id;
+            var recipeOnly = new WorkflowResult(WorkflowKind.CommonProblems, "smoke", DateTimeOffset.UtcNow, "Needs attention", [], [], "smoke-journal.json")
+            {
+                Recipes = [new RecipeResult(systemFilesRecipe, 1, RecipeOutcome.RepairAvailable, null, null, "Fixture repair option")]
+            };
+            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [recipeOnly]);
+            window.UpdateLayout();
+            Require(FindButtons(window).Any(button => Equals(button.Content, "Review System files repair")),
+                "Recipe-only repair reports identify their focused Repair workflow");
             Console.WriteLine("PASS: WPF workbench geometry, zoom containment, PEEK monitor bounds and safe report navigation.");
             return 0;
         }

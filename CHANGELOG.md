@@ -1,5 +1,6 @@
 # Changelog
 
+- Open the exact focused repair workflow from a single-repair report finding.
 - Link full-scan reports to safe Maintenance options without selecting an action.
 - State the full-scan repair boundary directly in CLI help.
 - Explain the safe Full system scan default and focused Repair handoff at startup.
