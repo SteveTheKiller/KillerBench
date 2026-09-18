@@ -47,24 +47,31 @@ public partial class MainWindow
         AddMetric(metrics, "Checked", result.Checks.Count);
         ReportContent.Children.Add(metrics);
 
+        ReportContent.Children.Add(Heading("Start here", 18));
+        ReportContent.Children.Add(Card("Recommended next step", "", NextAction(result),
+            "No action starts from this report. Review the selected workflow controls before confirming a repair."));
+
         ReportContent.Children.Add(Heading("What needs attention", 18));
         var problems = result.Checks.Where(check => check.EffectiveState is CheckState.Attention or CheckState.Repairable or CheckState.Unknown).ToArray();
-        if (problems.Length == 0)
+        var reviewRecipes = result.Recipes.Where(recipe => recipe.EffectiveOutcome is not RecipeOutcome.Clear).ToArray();
+        const int maximumVisibleReviewItems = 12;
+        int visibleProblems = Math.Min(problems.Length, maximumVisibleReviewItems);
+        if (problems.Length == 0 && reviewRecipes.Length == 0)
             ReportContent.Children.Add(Body("No problem was established in the completed checks. Review incomplete coverage before treating the computer as healthy.", 13, new Thickness(0, 0, 0, 12)));
-        foreach (var check in problems)
+        foreach (var check in problems.Take(visibleProblems))
             ReportContent.Children.Add(Card(check.Name, check.EffectiveState.ToString(), check.Detail,
                 check.Repair is null ? "Review the retained evidence and stated limits." : Repairs.Plan(check.Repair.Value).Effects));
 
-        var reviewRecipes = result.Recipes.Where(recipe => recipe.EffectiveOutcome is not RecipeOutcome.Clear).ToArray();
-        foreach (var recipe in reviewRecipes)
+        int visibleRecipes = Math.Min(reviewRecipes.Length, maximumVisibleReviewItems - visibleProblems);
+        foreach (var recipe in reviewRecipes.Take(visibleRecipes))
         {
             string title = RecipeCatalog.All.FirstOrDefault(item => item.Id == recipe.RecipeId)?.Title ?? recipe.RecipeId;
             ReportContent.Children.Add(Card(title, DescribeRecipeOutcome(recipe), recipe.Detail,
                 recipe.Repair is null ? "Review the recorded outcome before selecting another action." : Repairs.Plan(recipe.Repair.Kind).Effects));
         }
-
-        ReportContent.Children.Add(Heading("What to do next", 18));
-        ReportContent.Children.Add(Card("Recommended next step", "", NextAction(result), "No action starts from this report. Use the selected workflow controls to review or confirm a repair."));
+        int additionalReviewItems = problems.Length + reviewRecipes.Length - visibleProblems - visibleRecipes;
+        if (additionalReviewItems > 0)
+            ReportContent.Children.Add(Body($"{additionalReviewItems} additional review items are retained in Console and the exported report.", 12, new Thickness(0, 0, 0, 12), "MutedTextBrush"));
 
         ReportContent.Children.Add(Heading("Actions taken", 18));
         if (result.Repairs.Count == 0)
@@ -128,11 +135,12 @@ public partial class MainWindow
         _ => "Needs attention"
     };
 
-    private static string NextAction(WorkflowResult result) => result.RequiresRestart
-        ? "Restart Windows, then rerun the affected workflow to verify the recorded result."
-        : result.RecoveryPlan.Action == RecoveryNextAction.ReviewInterruptedRun
-            ? "Review the saved workflow journal before starting another repair."
-            : result.Summary.ReviewItems > 0
-                ? "Review the items above. No broader repair has been selected automatically."
-                : "Test the affected feature to confirm normal operation.";
+    private static string NextAction(WorkflowResult result)
+    {
+        const string prefix = "NEXT: ";
+        string line = WorkflowReport.Format(result).Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries)
+            .FirstOrDefault(candidate => candidate.StartsWith(prefix, StringComparison.Ordinal)) ?? "";
+        return line.Length > prefix.Length ? line[prefix.Length..] :
+            "Review the completed checks before selecting any repair.";
+    }
 }

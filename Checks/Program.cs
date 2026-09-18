@@ -1257,8 +1257,8 @@ internal static class Program
             typeof(KillerBench.MainWindow).GetMethod("ShowEvidence", flags)!.Invoke(window, null);
             FindButtons(window).Single(button => Equals(button.Content, "Report")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(window.FindName("ReportPane") is Border { Visibility: Visibility.Visible } &&
-                ((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "What to do next"),
-                "Report view gives the user a distinct next-action section");
+                ((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Start here"),
+                "Report view leads with a distinct next-action section");
             Capture(window, Path.Combine(scratch, "workflow-outcome.png"));
             window.Close();
             Console.WriteLine("PASS: UI construction, sample labeling, console and report output, all 13 themes, panels, and theme menu.");
