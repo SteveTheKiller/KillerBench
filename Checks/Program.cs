@@ -604,8 +604,13 @@ internal static class Program
                 "Primary categories place Diagnostics beside Repair in a clear UI face while keeping Network separate and BitLocker under Security");
             var mainAction = (Button)window.FindName("MainGo");
             var automaticRepair = (CheckBox)window.FindName("MainAutoRepair");
-            Require(mainAction.Content is "Run diagnosis" && mainAction.ToolTip is string { Length: > 0 },
-                "Primary action states that the default workflow is diagnostic and produces a readable report");
+            Require(categories.SelectedItem?.ToString() == "Diagnostics" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Vitals } &&
+                mainAction.Content is "Run diagnosis" && mainAction.ToolTip is string { Length: > 0 },
+                "KillerBench opens on Diagnostics and states that the default workflow produces a readable report");
+            categories.SelectedItem = categories.Items.Cast<object>().Single(category => category.ToString() == "Repair");
+            Pump();
+            Require(allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.CommonProblems } && automaticRepair.IsEnabled,
+                "Repair stays directly beside Diagnostics and requires a separate explicit approval");
             automaticRepair.IsChecked = true;
             Require(mainAction.Content is "Run repair", "Primary action changes only after explicit repair approval");
             automaticRepair.IsChecked = false;

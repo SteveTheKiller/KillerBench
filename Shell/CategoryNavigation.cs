@@ -24,7 +24,7 @@ public partial class MainWindow
     private void InitializeNavigation()
     {
         CategoryList.ItemsSource = ToolCategories;
-        CategoryList.SelectedIndex = 1;
+        CategoryList.SelectedIndex = 0;
     }
 
     private void OnCategorySelected(object sender, SelectionChangedEventArgs e)
