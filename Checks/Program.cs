@@ -1259,6 +1259,16 @@ internal static class Program
             Require(window.FindName("ReportPane") is Border { Visibility: Visibility.Visible } &&
                 ((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Start here"),
                 "Report view leads with a distinct next-action section");
+            var largeWorkflow = completedWorkflow with
+            {
+                Checks = Enumerable.Range(1, 16).Select(index => new WorkflowCheck("Review item " + index,
+                    CheckState.Attention, "Fixture attention item")).ToArray()
+            };
+            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [largeWorkflow]);
+            var reportContent = (StackPanel)window.FindName("ReportContent");
+            Require(reportContent.Children.OfType<Border>().Count() == 13 &&
+                reportContent.Children.OfType<TextBlock>().Any(block => block.Text.Contains("4 additional review items")),
+                "Report caps the visible triage list while retaining the remaining review items");
             Capture(window, Path.Combine(scratch, "workflow-outcome.png"));
             window.Close();
             Console.WriteLine("PASS: UI construction, sample labeling, console and report output, all 13 themes, panels, and theme menu.");
