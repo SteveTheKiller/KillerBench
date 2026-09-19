@@ -31,7 +31,7 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | profile.temporary | ProfileList .bak entry, folder rename, permissions | registry.subkeys ProfileList for .bak (profile.temporary-detect recipe) | Manual rename with guidance; automated rename is a later explicit option | Next sign-in loads the normal profile | pack |
 | profile.corrupt-cannot-load | User Profile Service failure, NTUSER.DAT locked or damaged | User Profile Service events, profile inventory | User Profile Service start (profiles.user-profile-service) | Service running; sign-in untested | pack |
 | profile.stale-accounts | Old local profiles consuming space | Profiles (PRUNE) workflow | Backup then remove selected profile (explicit, guarded) | Profile absent from registry and disk | workflow |
-| signin.hello-pin-broken | NGC container damaged, TPM reset | Windows Hello state read | Remove NGC container (explicit option) | Container recreated at next PIN setup | planned |
+| signin.hello-pin-broken | NGC container damaged, TPM reset | Windows Hello sign-in options | Out: removing the NGC container signs every account on the PC out of Windows Hello and needs SYSTEM ownership of the folder; guidance points at Sign-in options and, when that fails, the documented manual reset | n/a | out (destructive, per-machine impact) |
 | signin.credential-prompts-repeat | Cached credentials stale, Credential Manager service, Office identity | Credential Manager service, WAM and Microsoft account services, Outlook credential review (MACE) | Service starts (security.credential-manager-service, accounts.web-account-manager-service, accounts.microsoft-account-sign-in-service) | Service running | pack |
 | signin.domain-trust-broken | Secure channel broken, machine password mismatch | domain.secure-channel probe (identity.secure-channel recipe) | Manual: Test-ComputerSecureChannel -Repair with domain credentials; automated repair needs a credential-carrying explicit option | Secure channel test True | pack |
 | signin.group-policy-not-applying | GP client service, secure channel, connectivity to DC, SYSVOL access | Group Policy Client service, secure channel, hours since computer policy applied (identity.group-policy-age) | Service start (core.group-policy-client-service) | Service running; policy age under 24 h | pack |
@@ -61,7 +61,7 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | update.feature-update-blocked | Policy, compatibility hold, disk space, TPM | Feature update policy diagnostics, applicability, capacity | None automatic; WURSA upgrade path is explicit | n/a | workflow (detect) |
 | update.medic-tampered | WaaSMedic service missing or disabled | Focused Medic workflow | Service start under focused authorization | Service running | pack + workflow |
 | update.managed-source-unreachable | WSUS/policy source down | Update policy surface, component repair source policy | None automatic | n/a | diag |
-| update.driver-update-broke-device | Bad driver via WU | Driver install history, device problems | Roll back driver (explicit option) | Device problem code 0 | planned |
+| update.driver-update-broke-device | Bad driver via WU | Driver Install History workflow, devices.problem-devices | Out for the rollback itself: Windows exposes driver rollback only through Device Manager; the device restart recipe covers a reload | n/a | workflow (detect), out (rollback needs Device Manager) |
 
 ## 5. Storage and file system
 
@@ -73,7 +73,7 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | storage.spaces-degraded | Storage Spaces pool or virtual disk unhealthy | Storage Spaces workflow | None automatic | n/a | diag |
 | storage.storage-service-down | Storage Service stopped | Service check | Service start (storage.service) | Service running | pack |
 | storage.optimize-service-down | Optimize Drives service stopped | Service check | Service start (storage.optimize-drives-service) | Service running | pack |
-| storage.usb-drive-not-mounting | Drive letter conflict, offline disk, partition issue | Disk inventory with offline and no-letter volumes | Assign letter or bring online (explicit) | Volume mounted | planned |
+| storage.usb-drive-not-mounting | Missing drive letter, offline disk, unformatted partition | volume.unlettered (storage.unlettered-volumes recipe), Plug and Play and Storage services | Set-Partition -NewDriveLetter (storage.assign-letter, explicit with disk, partition and letter options) | No unlettered data volume remains | pack |
 | storage.recycle-bin-corrupt | $Recycle.Bin damaged | Cleanup workflow recycle bin | Empty current shell recycle bin (explicit) | Folder state | workflow |
 | storage.storage-sense-policy | Managed Storage Sense settings | Storage Sense policy diagnostics | None automatic | n/a | diag |
 
@@ -91,14 +91,14 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | network.file-sharing-inbound-fails | Server service, firewall rule, discovery services | File Sharing workflow, SMB server configuration, Function Discovery services | Service starts (network.smb-server, network.function-discovery-*) | Service running | pack |
 | network.vpn-fails | Remote Access Connection Manager, profile, split tunnel | VPN profile diagnostics, remote access service | Service start (network.remote-access-service) | Service running | pack |
 | network.proxy-wrong | WinHTTP proxy, user proxy, PAC, WinHTTP AutoProxy service | Proxy diagnostics | Service start (network.winhttp-autoproxy-service); proxy reset is explicit | Service running | pack (service), planned (reset) |
-| network.winsock-corrupt | LSP catalog damage | Winsock catalog and provider file diagnostics | netsh winsock reset (explicit, restart) | Catalog default after restart | planned |
+| network.winsock-corrupt | LSP catalog damage | Winsock catalog and provider file diagnostics | None automatic: the catalog inventory has no reliable local signal that separates corruption from an unusual but valid LSP set, so a reset would be a guess; netsh winsock reset stays a manual step after the Network workflow evidence is reviewed | n/a | diag |
 | network.adapter-missing | Disabled adapter, driver problem code | netadapter.disabled-physical (network.disabled-adapters recipe), Device Problems workflow | Enable-NetAdapter for the named adapter (network.adapter-enable, explicit option with adapter=NAME) | Adapter admin status Up | pack |
 | network.ipv6-broken | IP Helper stopped, transition tech | IP Helper check, interface config | Service start (network.ip-helper) | Service running | pack |
 | network.discovery-off | Network profile Public, discovery services | Network profile diagnostics, discovery services | Service starts (pack); profile change is explicit | Service running | pack |
 | network.port-exhaustion | Dynamic port range consumed | TCP port pressure diagnostics | None automatic | n/a | diag |
 | network.gateway-unreachable | Cable, switch, gateway down | Gateway reachability probe | None automatic | n/a | diag |
 | network.ncsi-false-no-internet | NCSI probe blocked by policy or proxy | NCSI policy diagnostics | None automatic | n/a | diag |
-| network.mtu-black-hole | MTU below 1280 on IPv6, VPN | Interface MTU diagnostics | Set MTU (explicit) | Interface value | planned |
+| network.mtu-black-hole | MTU below 1280 on IPv6, VPN | netip.mtu for the named interface (network.mtu-set recipe) | Set-NetIPInterface -NlMtuBytes (explicit with interface, family and mtu options) | Interface reports the requested MTU | pack |
 
 ## 7. Firewall and security
 
@@ -126,15 +126,15 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | printing.spool-folder-missing | Spool directory absent | Spool directory diagnostics | Recreate default directory (printing.spool-directory) | Directory present | workflow |
 | printing.driver-missing | Queue points at unregistered driver | Printer drivers diagnostic | Out: driver install needs vendor package | n/a | diag |
 | printing.print-nightmare-policy | RestrictDriverInstallationToAdministrators, point-and-print | Print policy and rendering policy diagnostics | None automatic | n/a | diag |
-| printing.spooler-crashes | Bad driver, corrupt spool files | PrintService events | Clear spool files after stopping spooler (explicit, journaled) | Spool folder empty, spooler running | planned |
+| printing.spooler-crashes | Bad driver, corrupt spool files | file.count of the spool folder (printing.spool-clear recipe), PrintService events | Stop spooler, retain spool files, start spooler (spooler.clear-spool, explicit) | Spooler running afterwards | pack |
 
 ## 9. Audio
 
 | Symptom | Likely causes in order | Detect | Repair | Verify | Status |
 | --- | --- | --- | --- | --- | --- |
 | audio.no-sound | Audio services, wrong endpoint, muted, driver | Audio workflow; audio chain | Service starts (pack) | Service running | pack |
-| audio.wrong-device | Default endpoint changed | Default audio endpoints | Set default endpoint (explicit) | Endpoint id | planned |
-| audio.crackling | Driver, enhancements, sample rate | Audio device inventory | Disable enhancements (explicit) | Setting | planned |
+| audio.wrong-device | Default endpoint changed | Default audio endpoints | Out: Windows has no supported API for setting the default endpoint (IPolicyConfig is undocumented) and decision 0005 rules out a dependency; guidance points at Sound settings | n/a | out (no supported API) |
+| audio.crackling | Driver, enhancements, sample rate | Audio device inventory | Out: audio enhancement and format settings live in per-device property stores with vendor-specific keys; guidance points at the device properties | n/a | out (vendor-specific settings) |
 | audio.microphone-blocked | Privacy setting denies microphone | Privacy (SHADE) microphone review | Allow microphone (explicit) | Registry value | workflow |
 
 ## 10. Display, graphics and input
@@ -155,7 +155,7 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | Symptom | Likely causes in order | Detect | Repair | Verify | Status |
 | --- | --- | --- | --- | --- | --- |
 | devices.usb-not-detected | Plug and Play, Device Install, driver, hub power | Device problems, service chain | Service starts (pack) | Service running | pack |
-| devices.problem-code | Driver missing, code 10/28/43 | Device Problems workflow | Reinstall driver from driver store (explicit) | Problem code 0 | planned |
+| devices.problem-code | Driver missing, code 10/28/43 | pnp.problem-devices (devices.problem-devices recipe), Device Problems workflow | pnputil /restart-device (devices.restart-device, explicit with instance option); a driver package is the vendor's | Device reports OK | pack |
 | bluetooth.missing | Bluetooth Support service, radio, driver | Bluetooth workflow | Service start (devices.bluetooth-support) | Service running | pack |
 | devices.camera-not-working | Frame Server service, privacy setting | Camera workflow, privacy review | Service start (devices.camera-frame-server); allow camera (explicit) | Service running | pack + workflow |
 | devices.scanner-not-found | Image Acquisition service | Service check | Service start (devices.image-acquisition-service) | Service running | pack |
@@ -171,14 +171,14 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | power.hibernation-file-space | hiberfil.sys large | Hibernation state | Disable hibernation (power.hibernation-disable, explicit) | File absent | workflow |
 | power.wrong-plan | Balanced when performance expected | Active plan | High performance plan (explicit) | Active plan | workflow |
 | power.service-down | Power service stopped | Service check | Service start (core.power-service) | Service running | pack |
-| power.battery-drains | Wake timers, background apps | Power report | None automatic | n/a | planned (diag) |
+| power.battery-drains | Wake timers, background apps | powercfg.wake-timers (power.wake-timers recipe) | None automatic; owners are named for the person to disable | n/a | pack |
 
 ## 13. Applications
 
 | Symptom | Likely causes in order | Detect | Repair | Verify | Status |
 | --- | --- | --- | --- | --- | --- |
 | store.apps-fail | AppX deployment, App Readiness, State Repository, licensing services | App Packages workflow; service chain | Service starts (pack) | Service running | pack |
-| store.package-corrupt | Package registration damaged | App package operational history | Re-register package (explicit) | Package status OK | planned |
+| store.package-corrupt | Package registration damaged | appx.status for the named package (apps.package-reregister recipe), app platform services | Add-AppxPackage -Register from the install location (explicit with package option) | Package reports Ok | pack |
 | apps.crash-on-launch | Faulting module, missing runtime | Application history, WER | None automatic; crash reference | n/a | diag |
 | installer.msi-fails | Windows Installer service, registration, policy | Installer workflow | Service start (pack); /regserver (installer.registration, explicit); exact product repair (installer.msi-product, explicit) | Service running, product state | pack + workflow |
 | apps.outlook-slow-or-stuck | Cache file bloat, profile | Outlook cache review (ORCA) | Retain and reset selected cache (applications.outlook-cache-reset, explicit) | Cache absent, retained copy exists | workflow |
@@ -238,7 +238,7 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | shell.explorer-crashes | Shell extension, corrupt icon cache | Application history, shell events | Icon cache cleanup (Cleanup workflow) | Cache rebuilt | workflow (partial) |
 | shell.start-menu-broken | StateRepository, AppX, ShellExperienceHost | State Repository service, App Packages | Service start (applications.state-repository-service) | Service running | pack |
 | shell.taskbar-unresponsive | Same plus Explorer hang | process.running explorer (shell.explorer-restart recipe) | Restart Explorer (explicit option; closes File Explorer windows) | Explorer process running after restart | pack |
-| shell.quick-access-broken | Automatic destinations corrupt | File inventory | Clear automatic destinations (explicit) | Files recreated | planned |
+| shell.quick-access-broken | Automatic destinations corrupt | file.count of AutomaticDestinations (shell.quick-access-reset recipe) | Retain the jump-list files to the KillerBench retained folder (explicit) | Folder empty until Explorer rebuilds it | pack |
 
 ## 19. Hardware errors and stability
 
@@ -274,10 +274,10 @@ The Engine.Core model is platform-neutral. When a Linux or macOS provider exists
 Update these when rows change. A row counts once by its first status token.
 
 - rows: 150
-- pack: 71
-- workflow: 37
-- diag: 22
-- planned: 12
-- out: 8
+- pack: 78
+- workflow: 38
+- diag: 23
+- planned: 0
+- out: 11
 
 The loop is finished when `planned` is zero and every remaining `diag` row states why no safe automatic repair exists.

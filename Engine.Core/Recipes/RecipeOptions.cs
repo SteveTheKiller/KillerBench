@@ -17,6 +17,9 @@ public static class RecipeOptions
         foreach (var parameters in AllParameters(recipe))
             foreach (string value in parameters.Values)
                 foreach (Match match in Reference.Matches(value ?? "")) names.Add(match.Groups[1].Value);
+        foreach (var probe in new[] { recipe.Detect, recipe.Verify }.Concat(recipe.Preconditions ?? []))
+            foreach (var clause in probe?.Expect?.Clauses ?? [])
+                foreach (Match match in Reference.Matches(clause?.Value ?? "")) names.Add(match.Groups[1].Value);
         return names;
     }
 
@@ -66,7 +69,14 @@ public static class RecipeOptions
     }
 
     private static ProbeSpec Substitute(ProbeSpec probe, IReadOnlyDictionary<string, string> values) =>
-        probe with { Parameters = Substitute(probe.Parameters, values) };
+        probe with
+        {
+            Parameters = Substitute(probe.Parameters, values),
+            Expect = new ExpectSpec(probe.Expect.Clauses.Select(clause => clause with { Value = Replace(clause.Value, values) }).ToArray())
+        };
+
+    private static string Replace(string? text, IReadOnlyDictionary<string, string> values) =>
+        Reference.Replace(text ?? "", match => values.TryGetValue(match.Groups[1].Value, out string? value) ? value : match.Value);
 
     private static ActionSpec Substitute(ActionSpec action, IReadOnlyDictionary<string, string> values) =>
         action with { Parameters = Substitute(action.Parameters, values) };
