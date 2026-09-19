@@ -16,13 +16,20 @@ public static class WindowsPrimitiveLibrary
         .AddProbe(new WindowsBcdBootSequenceProbe())
         .AddProbe(new WindowsProcessRunningProbe())
         .AddProbe(new WindowsTopCpuProbe())
+        .AddProbe(new WindowsTopMemoryProbe())
+        .AddProbe(new WindowsDiskBusyProbe())
+        .AddProbe(new WindowsVssWritersProbe())
+        .AddProbe(new WindowsShadowStorageProbe())
         .AddProbe(new WindowsSecureChannelProbe())
         .AddProbe(new WindowsEntraStatusProbe())
         .AddProbe(new WindowsGroupPolicyAgeProbe())
+        .AddProbe(new WindowsDisabledAdaptersProbe())
+        .AddProbe(new WindowsAdapterPowerSavingProbe())
         .AddAction(new WindowsServiceStartAction())
         .AddAction(new WindowsRegistrySetDwordAction())
         .AddAction(new WindowsBcdSafebootClearAction())
         .AddAction(new WindowsMemoryDiagnosticScheduleAction())
         .AddAction(new WindowsExplorerStartAction())
-        .AddAction(new WindowsExplorerRestartAction());
+        .AddAction(new WindowsExplorerRestartAction())
+        .AddAction(new WindowsAdapterPowerSavingDisableAction());
 }

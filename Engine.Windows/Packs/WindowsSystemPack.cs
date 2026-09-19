@@ -80,6 +80,76 @@ public static class WindowsSystemPack
             MayRequireRestart = true,
             Limitations = "The test result is not read back by this recipe."
         },
+        new RecipeDefinition("performance.high-memory", 1, "One process holds most of the memory", "Performance",
+            "Largest working set as a share of physical memory; the process is named, not judged",
+            new ProbeSpec("process.top-memory", None, new ExpectSpec(
+            [
+                new ExpectClause("greater-than", "40", ProbeVerdict.Attention) { Detail = "One process holds more than 40% of physical memory. Browsers and databases can be legitimate; a process that keeps growing is a leak and needs a restart or its vendor." },
+                new ExpectClause("any", "", ProbeVerdict.Clear)
+            ])) { Name = "Memory sample" })
+        {
+            Symptoms = ["perf.high-memory"],
+            Limitations = "Working set is a snapshot; committed memory, paging and total pressure are reported by the Vitals workflow."
+        },
+        new RecipeDefinition("performance.disk-busy", 1, "Physical disks are saturated", "Performance",
+            "Average physical disk busy time over three one-second samples",
+            new ProbeSpec("disk.busy-percent", new Dictionary<string, string> { ["samples"] = "3" }, new ExpectSpec(
+            [
+                new ExpectClause("greater-than", "90", ProbeVerdict.Attention) { Detail = "Physical disks are busy more than 90% of the time. Check the Storage workflow for disk health, then Windows Search indexing, antivirus scans and Windows Update activity." },
+                new ExpectClause("any", "", ProbeVerdict.Clear)
+            ])) { Name = "Disk sample" })
+        {
+            Symptoms = ["perf.disk-100-percent"],
+            Limitations = "A short sample can miss bursts and does not identify the process responsible."
+        },
+        new RecipeDefinition("backup.vss-writers", 1, "VSS writers in a failed state", "Backup",
+            "vssadmin writer states only; backup success is not tested",
+            new ProbeSpec("vss.unstable-writers", None, new ExpectSpec(
+            [
+                new ExpectClause("equals", "0", ProbeVerdict.Clear),
+                new ExpectClause("any", "", ProbeVerdict.Attention) { Detail = "One or more VSS writers are not stable. Restarting the service that owns each failed writer usually clears it; the writer list in the evidence names them." }
+            ])) { Name = "VSS writers" })
+        {
+            Symptoms = ["backup.vss-writer-failed"],
+            RequiresElevation = true,
+            Limitations = "The owning service is not restarted automatically because several writers share services that host other features."
+        },
+        new RecipeDefinition("backup.shadow-storage", 1, "Shadow storage near its limit", "Backup",
+            "Used versus maximum shadow storage per association",
+            new ProbeSpec("vss.shadowstorage-percent", None, new ExpectSpec(
+            [
+                new ExpectClause("less-than", "90", ProbeVerdict.Clear),
+                new ExpectClause("any", "", ProbeVerdict.Attention) { Detail = "Shadow storage is at or above 90% of its maximum, so new snapshots will delete the oldest ones or fail. Raise the limit with vssadmin resize shadowstorage after confirming free space." }
+            ])) { Name = "Shadow storage" })
+        {
+            Symptoms = ["backup.shadow-storage-full"],
+            RequiresElevation = true,
+            Limitations = "Resizing is not automated; it depends on free space the person must confirm."
+        },
+        new RecipeDefinition("apps.pdf-association", 1, "PDF file association", "Applications",
+            "The current account's chosen PDF handler is reported",
+            new ProbeSpec("registry.value", new Dictionary<string, string> { ["hive"] = "HKCU", ["key"] = @"Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\UserChoice", ["name"] = "ProgId" }, new ExpectSpec(
+            [
+                new ExpectClause("present", "", ProbeVerdict.Information),
+                new ExpectClause("absent", "", ProbeVerdict.Information) { Detail = "No PDF handler has been chosen for this account, so the Windows default applies. Choose one in Settings, Apps, Default apps; Windows protects the choice from programs that try to set it silently." },
+                new ExpectClause("any", "", ProbeVerdict.Unknown)
+            ])) { Name = "PDF handler" })
+        {
+            Symptoms = ["apps.file-association-wrong"],
+            Limitations = "Windows signs the user choice; changing it programmatically is not supported, so the recipe only reports it."
+        },
+        new RecipeDefinition("apps.http-association", 1, "Default browser association", "Applications",
+            "The current account's chosen http handler is reported",
+            new ProbeSpec("registry.value", new Dictionary<string, string> { ["hive"] = "HKCU", ["key"] = @"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice", ["name"] = "ProgId" }, new ExpectSpec(
+            [
+                new ExpectClause("present", "", ProbeVerdict.Information),
+                new ExpectClause("absent", "", ProbeVerdict.Information) { Detail = "No default browser has been chosen for this account, so the Windows default applies. Choose one in Settings, Apps, Default apps." },
+                new ExpectClause("any", "", ProbeVerdict.Unknown)
+            ])) { Name = "http handler" })
+        {
+            Symptoms = ["apps.default-apps-reset"],
+            Limitations = "Windows signs the user choice; changing it programmatically is not supported, so the recipe only reports it."
+        },
         new RecipeDefinition("shell.explorer-restart", 1, "Restart the Windows shell", "Windows",
             "An explorer.exe process exists after the restart; open File Explorer windows are closed",
             new ProbeSpec("process.running", new Dictionary<string, string> { ["name"] = "explorer" }, new ExpectSpec(

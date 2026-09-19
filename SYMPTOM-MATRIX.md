@@ -43,8 +43,8 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | Symptom | Likely causes in order | Detect | Repair | Verify | Status |
 | --- | --- | --- | --- | --- | --- |
 | perf.high-cpu | Runaway process, indexing, antivirus scan, WMI provider host | process.top-cpu three-second sample (performance.high-cpu recipe) | None automatic; the busiest process is named for the person to judge | n/a | pack |
-| perf.high-memory | Memory leak, too many startup apps, low physical RAM | Vitals memory availability, top consumers | None automatic | n/a | workflow (vitals), planned (consumers) |
-| perf.disk-100-percent | Superfetch/SysMain, indexing, failing disk, Windows Search | Disk queue sample, disk health, Search indexer state | Service stop is not automated; guidance | n/a | planned |
+| perf.high-memory | Memory leak, too many startup apps, low physical RAM | process.top-memory snapshot (performance.high-memory recipe), Vitals | None automatic; the largest process is named | n/a | pack |
+| perf.disk-100-percent | Failing disk, SysMain, indexing, Windows Search, antivirus | disk.busy-percent typeperf sample (performance.disk-busy recipe), Storage Service | None automatic; guidance points at disk health first | n/a | pack |
 | perf.slow-after-login | Startup apps, delayed services, roaming profile, mapped drives | Startup Applications workflow, Startup Performance | Disable selected startup entries (explicit) | Next-boot timing | workflow (detect), planned (repair) |
 | perf.slow-file-explorer | Quick access history, thumbnail cache, network locations offline | Cleanup workflow thumbnail cache, mapped drive reachability | Thumbnail and icon cache cleanup (Cleanup workflow) | Cache files absent | workflow |
 | perf.thermal-throttling | Dust, failed fan, power plan | Power plan review, thermal zone read | High performance plan (power.high-performance-plan, explicit) | Active plan matches | workflow |
@@ -85,14 +85,14 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | network.limited-apipa | DHCP server unreachable, adapter | IP address diagnostics APIPA detection | DHCP renew (network.dhcp-lease) | Non-APIPA address | workflow |
 | network.dns-fails | DNS client service, cache poison, NRPT, hosts file, bad server | DNS client, hosts file, NRPT, DNS server diagnostics | DNS cache flush | Selected hostname resolves | workflow |
 | network.wifi-missing | WLAN service, radio off, driver | WLAN AutoConfig check | Service start (network.wireless) | Service running | pack |
-| network.wifi-drops | Power management on adapter, driver, roaming | Adapter statistics, wireless events | Disable adapter power saving (explicit) | Setting value | planned |
+| network.wifi-drops | Power management on adapter, driver, roaming | netadapter.power-saving for the Wi-Fi adapter (network.wifi-power-saving recipe), WLAN service | Disable adapter power saving (explicit option) | AllowComputerToTurnOffDevice Disabled | pack |
 | network.wired-auth | Wired AutoConfig, 802.1X profile, certificate | Wired AutoConfig check, events | Service start (network.wired-authentication) | Service running | pack |
 | network.shares-unreachable | Workstation service, DNS, SMB1 expectation, credentials, firewall | SMB client configuration and connections, Workstation service | Service start (network.workstation) | Service running | pack |
 | network.file-sharing-inbound-fails | Server service, firewall rule, discovery services | File Sharing workflow, SMB server configuration, Function Discovery services | Service starts (network.smb-server, network.function-discovery-*) | Service running | pack |
 | network.vpn-fails | Remote Access Connection Manager, profile, split tunnel | VPN profile diagnostics, remote access service | Service start (network.remote-access-service) | Service running | pack |
 | network.proxy-wrong | WinHTTP proxy, user proxy, PAC, WinHTTP AutoProxy service | Proxy diagnostics | Service start (network.winhttp-autoproxy-service); proxy reset is explicit | Service running | pack (service), planned (reset) |
 | network.winsock-corrupt | LSP catalog damage | Winsock catalog and provider file diagnostics | netsh winsock reset (explicit, restart) | Catalog default after restart | planned |
-| network.adapter-missing | Driver problem code, disabled adapter | Device problems, adapter bindings | Enable adapter (explicit) | Adapter Up | planned |
+| network.adapter-missing | Disabled adapter, driver problem code | netadapter.disabled-physical (network.disabled-adapters recipe), Device Problems workflow | Manual enable with guidance; per-adapter explicit enable once recipe options exist | Adapter enabled | pack |
 | network.ipv6-broken | IP Helper stopped, transition tech | IP Helper check, interface config | Service start (network.ip-helper) | Service running | pack |
 | network.discovery-off | Network profile Public, discovery services | Network profile diagnostics, discovery services | Service starts (pack); profile change is explicit | Service running | pack |
 | network.port-exhaustion | Dynamic port range consumed | TCP port pressure diagnostics | None automatic | n/a | diag |
@@ -185,8 +185,8 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | apps.office-click-to-run-broken | ClickToRun service or install | Office Click-to-Run inventory | None automatic | n/a | diag |
 | apps.foxit-outdated | Old version, updater setting | Foxit inventory (FACTS) | None automatic | n/a | diag |
 | apps.browser-extension-unwanted | Sideloaded or policy extension | Browser Extensions workflow | None automatic | n/a | diag |
-| apps.file-association-wrong | UserChoice hash reset, app default lost | UserChoice inventory for common types | Out: Windows protects associations; guidance | n/a | planned (diag) |
-| apps.default-apps-reset | Same | Same | Same | n/a | planned (diag) |
+| apps.file-association-wrong | UserChoice hash reset, app default lost | registry.value .pdf UserChoice ProgId (apps.pdf-association recipe) | Manual: Windows signs the user choice | n/a | pack |
+| apps.default-apps-reset | Same | registry.value http UserChoice ProgId (apps.http-association recipe) | Manual: Windows signs the user choice | n/a | pack |
 | apps.mace-removal | Unwanted preinstalled packages | MACE workflow | Remove selected package for current account (explicit) | Package absent | workflow |
 
 ## 14. Time and licensing
@@ -210,9 +210,9 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | Symptom | Likely causes in order | Detect | Repair | Verify | Status |
 | --- | --- | --- | --- | --- | --- |
 | backup.fails | VSS, provider, backup services, writers | Backup Services workflow; service chain | Service starts (pack) | Service running | pack |
-| backup.vss-writer-failed | Writer in failed state | VSS writer state | Restart owning service (explicit) | Writer stable | planned |
+| backup.vss-writer-failed | Writer in failed state, VSS services | vss.unstable-writers (backup.vss-writers recipe), VSS and provider services | Service starts; owning-service restart is manual with guidance | Writers stable | pack |
 | backup.restore-point-missing | System Restore disabled, frequency policy | System Restore workflow | Create restore point (windows.restore-point, explicit) | New point in inventory | workflow |
-| backup.shadow-storage-full | Shadow storage limit | vssadmin list shadowstorage | Resize (explicit) | Storage limit | planned |
+| backup.shadow-storage-full | Shadow storage limit | vss.shadowstorage-percent (backup.shadow-storage recipe) | Manual resize with guidance | Use under 90% of maximum | pack |
 
 ## 17. Diagnostics infrastructure and core services
 
@@ -274,10 +274,10 @@ The Engine.Core model is platform-neutral. When a Linux or macOS provider exists
 Update these when rows change. A row counts once by its first status token.
 
 - rows: 150
-- pack: 63
-- workflow: 38
+- pack: 71
+- workflow: 37
 - diag: 22
-- planned: 19
+- planned: 12
 - out: 8
 
 The loop is finished when `planned` is zero and every remaining `diag` row states why no safe automatic repair exists.

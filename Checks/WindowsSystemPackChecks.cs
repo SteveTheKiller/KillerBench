@@ -50,6 +50,37 @@ internal static class WindowsSystemPackChecks
         Verdict(cpu, new PrimitiveResult(true, "85.0", ""), ProbeVerdict.Attention, "cpu high");
         Verdict(cpu, new PrimitiveResult(true, "12.5", ""), ProbeVerdict.Clear, "cpu normal");
 
+        // Disk, VSS and adapter interpretation.
+        var disk = pack.Recipes.Single(r => r.Id == "performance.disk-busy");
+        const string typeperf = "\"(PDH-CSV 4.0)\",\"\\\\PC\\PhysicalDisk(_Total)\\% Disk Time\"\r\n\"09/18/2026 20:00:01.000\",\"95.5\"\r\n\"09/18/2026 20:00:02.000\",\"97.0\"\r\nExiting, please wait...\r\nThe command completed successfully.\r\n";
+        Verdict(disk, WindowsDiskBusyProbe.Interpret(new ToolResult(0, typeperf, "", false)), ProbeVerdict.Attention, "disk saturated");
+        Verdict(disk, WindowsDiskBusyProbe.Interpret(new ToolResult(0, typeperf.Replace("95.5", "3.0").Replace("97.0", "5.0"), "", false)), ProbeVerdict.Clear, "disk idle");
+        Verdict(disk, WindowsDiskBusyProbe.Interpret(new ToolResult(0, "no samples here", "", false)), ProbeVerdict.Unknown, "typeperf no samples");
+        var writers = pack.Recipes.Single(r => r.Id == "backup.vss-writers");
+        const string vssWriters = "Writer name: 'System Writer'\r\n   Writer Id: {e8132975-6f93-4464-a53e-1050253ae220}\r\n   State: [1] Stable\r\n   Last error: No error\r\n\r\nWriter name: 'Registry Writer'\r\n   State: [5] Waiting for completion\r\n";
+        Verdict(writers, WindowsVssWritersProbe.Interpret(new ToolResult(0, vssWriters, "", false)), ProbeVerdict.Clear, "writers stable");
+        Verdict(writers, WindowsVssWritersProbe.Interpret(new ToolResult(0, vssWriters.Replace("[5] Waiting for completion", "[8] Failed"), "", false)), ProbeVerdict.Attention, "writer failed");
+        Verdict(writers, WindowsVssWritersProbe.Interpret(new ToolResult(0, "Writer name: 'Orphan'\r\n", "", false)), ProbeVerdict.Unknown, "writer without state");
+        Verdict(writers, WindowsVssWritersProbe.Interpret(new ToolResult(1, "", "denied", false)), ProbeVerdict.Unknown, "vssadmin denied");
+        var storage = pack.Recipes.Single(r => r.Id == "backup.shadow-storage");
+        const string shadow = "Shadow Copy Storage association\r\n   For volume: (C:)\\\\?\\Volume{1}\\\r\n   Shadow Copy Storage volume: (C:)\\\\?\\Volume{1}\\\r\n   Used Shadow Copy Storage space: 9.5 GB (4%)\r\n   Allocated Shadow Copy Storage space: 10 GB (4%)\r\n   Maximum Shadow Copy Storage space: 10 GB (4%)\r\n";
+        Verdict(storage, WindowsShadowStorageProbe.Interpret(new ToolResult(0, shadow, "", false)), ProbeVerdict.Attention, "shadow storage nearly full");
+        Verdict(storage, WindowsShadowStorageProbe.Interpret(new ToolResult(0, shadow.Replace("9.5 GB (4%)", "1 GB (1%)"), "", false)), ProbeVerdict.Clear, "shadow storage roomy");
+        Verdict(storage, WindowsShadowStorageProbe.Interpret(new ToolResult(0, shadow.Replace("Maximum Shadow Copy Storage space: 10 GB (4%)", "Maximum Shadow Copy Storage space: UNBOUNDED (100%)"), "", false)), ProbeVerdict.Clear, "shadow storage unbounded");
+        Verdict(storage, WindowsShadowStorageProbe.Interpret(new ToolResult(0, "No items found that satisfy the query.", "", false)), ProbeVerdict.Clear, "no shadow storage");
+        Verdict(storage, WindowsShadowStorageProbe.Interpret(new ToolResult(0, shadow.Replace("9.5 GB (4%)", "lots"), "", false)), ProbeVerdict.Unknown, "shadow storage unparsable");
+        var network = WindowsNetworkPack.Build();
+        var networkValidation = RecipePackValidation.Validate(network, library);
+        if (!networkValidation.IsValid) throw new Exception("Network pack is invalid: " + string.Join("; ", networkValidation.Issues.Select(i => i.RecipeId + ": " + i.Message)));
+        var adapters = network.Recipes.Single(r => r.Id == "network.disabled-adapters");
+        Verdict(adapters, WindowsDisabledAdaptersProbe.Interpret(new ToolResult(0, "Ethernet|Up|Up\r\nWi-Fi|Disconnected|Up\r\n", "", false)), ProbeVerdict.Clear, "adapters enabled");
+        Verdict(adapters, WindowsDisabledAdaptersProbe.Interpret(new ToolResult(0, "Ethernet|Disabled|Down\r\n", "", false)), ProbeVerdict.Attention, "adapter disabled");
+        Verdict(adapters, WindowsDisabledAdaptersProbe.Interpret(new ToolResult(0, "garbage line\r\n", "", false)), ProbeVerdict.Unknown, "adapter line garbage");
+        var wifi = network.Recipes.Single(r => r.Id == "network.wifi-power-saving");
+        Verdict(wifi, WindowsAdapterPowerSavingProbe.Interpret(new ToolResult(0, "Enabled\r\n", "", false)), ProbeVerdict.Repairable, "wifi power saving on");
+        Verdict(wifi, WindowsAdapterPowerSavingProbe.Interpret(new ToolResult(0, "Disabled\r\n", "", false)), ProbeVerdict.Clear, "wifi power saving off");
+        Verdict(wifi, WindowsAdapterPowerSavingProbe.Interpret(new ToolResult(1, "", "No MSFT_NetAdapterPowerManagementSettingData objects found", false)), ProbeVerdict.Unknown, "wifi adapter absent");
+
         // Live read-only probes: dsregcmd and a CPU sample.
         var liveEntra = await new WindowsEntraStatusProbe().ObserveAsync(new Dictionary<string, string>(), TimeSpan.FromSeconds(20), CancellationToken.None);
         if (!liveEntra.Complete && !liveEntra.TimedOut && string.IsNullOrEmpty(liveEntra.Error)) throw new Exception("Live dsregcmd probe returned an inconsistent result.");
