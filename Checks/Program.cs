@@ -271,6 +271,7 @@ internal static class Program
             WindowsSettingsPackChecks.RunAsync().GetAwaiter().GetResult();
             SymptomTriageChecks.RunAsync().GetAwaiter().GetResult();
             SymptomMatrixChecks.Run();
+            NativeScenarioRunnerChecks.RunAsync().GetAwaiter().GetResult();
             DemoWorkflowChecks.Run();
             InvestigationChecks.Run();
             ServicingLogChecks.RunAsync(scratch).GetAwaiter().GetResult();
