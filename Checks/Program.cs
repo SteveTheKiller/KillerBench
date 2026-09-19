@@ -266,6 +266,7 @@ internal static class Program
         try
         {
             CheckEvidence(scratch).GetAwaiter().GetResult();
+            RecipePackChecks.RunAsync().GetAwaiter().GetResult();
             DemoWorkflowChecks.Run();
             InvestigationChecks.Run();
             ServicingLogChecks.RunAsync(scratch).GetAwaiter().GetResult();

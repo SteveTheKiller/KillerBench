@@ -10,4 +10,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Engine.Core/KillerBench.Engine.Core.csproj" />
+  </ItemGroup>
 </Project>
