@@ -268,6 +268,7 @@ internal static class Program
             CheckEvidence(scratch).GetAwaiter().GetResult();
             RecipePackChecks.RunAsync().GetAwaiter().GetResult();
             WindowsServicePackChecks.RunAsync().GetAwaiter().GetResult();
+            WindowsSettingsPackChecks.RunAsync().GetAwaiter().GetResult();
             SymptomTriageChecks.RunAsync().GetAwaiter().GetResult();
             SymptomMatrixChecks.Run();
             DemoWorkflowChecks.Run();

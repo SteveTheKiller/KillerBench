@@ -21,14 +21,14 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | boot.winre-missing | WinRE disabled or image missing | Windows Recovery workflow | reagentc /enable (windows.recovery-environment) | reagentc /info Enabled | workflow |
 | boot.bcd-damaged | Corrupt BCD, missing bootmgr | Not detectable from a running Windows session beyond BCD read | Out: requires offline recovery media | n/a | out (offline repair) |
 | boot.bugcheck | Driver fault, hardware fault, storage failure | Reliability History, Hardware Errors, crash dump configuration and minidump inventory | None automatic; bug-check reference lookup | n/a | diag |
-| boot.safe-mode-stuck | bcdedit safeboot flag left set | BCD read of safeboot value | Clear safeboot flag (explicit option) | BCD value absent | planned |
-| boot.fast-startup-corruption | Hybrid boot with stale kernel session | Power configuration read | Disable Fast Startup (explicit option) | HiberbootEnabled = 0 | planned |
+| boot.safe-mode-stuck | bcdedit safeboot flag left set | bcd.safeboot probe (boot.safeboot-clear recipe) | bcdedit /deletevalue {current} safeboot | safeboot value absent | pack |
+| boot.fast-startup-corruption | Hybrid boot with stale kernel session | registry.value HiberbootEnabled (power.fast-startup-disable recipe) | Set HiberbootEnabled to 0 (explicit option, prior value journaled, rollback declared) | HiberbootEnabled reads 0 | pack |
 
 ## 2. Sign-in and user profiles
 
 | Symptom | Likely causes in order | Detect | Repair | Verify | Status |
 | --- | --- | --- | --- | --- | --- |
-| profile.temporary | ProfileList .bak entry, folder rename, permissions | ProfileList registry inventory for .bak and State flags | Rename .bak entry back (explicit, journaled) | Next sign-in loads the normal profile | planned |
+| profile.temporary | ProfileList .bak entry, folder rename, permissions | registry.subkeys ProfileList for .bak (profile.temporary-detect recipe) | Manual rename with guidance; automated rename is a later explicit option | Next sign-in loads the normal profile | pack |
 | profile.corrupt-cannot-load | User Profile Service failure, NTUSER.DAT locked or damaged | User Profile Service events, profile inventory | User Profile Service start (profiles.user-profile-service) | Service running; sign-in untested | pack |
 | profile.stale-accounts | Old local profiles consuming space | Profiles (PRUNE) workflow | Backup then remove selected profile (explicit, guarded) | Profile absent from registry and disk | workflow |
 | signin.hello-pin-broken | NGC container damaged, TPM reset | Windows Hello state read | Remove NGC container (explicit option) | Container recreated at next PIN setup | planned |
@@ -141,7 +141,7 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 
 | Symptom | Likely causes in order | Detect | Repair | Verify | Status |
 | --- | --- | --- | --- | --- | --- |
-| display.black-screen-after-login | Explorer not starting, display driver TDR | Display workflow, shell events | Restart Explorer (explicit) | Explorer process present | planned |
+| display.black-screen-after-login | Explorer not starting, display driver TDR | process.running explorer (shell.explorer-start recipe) | Start explorer.exe when absent; never terminates a running shell | Explorer process present | pack |
 | display.tdr-resets | GPU driver timeouts | Display events | None automatic | n/a | diag |
 | display.wrong-resolution-scaling | Driver missing, scaling override | Display device inventory | None automatic | n/a | diag |
 | display.fonts-broken | Font cache service or corrupt cache | Font Cache service, font registration | Service start (display.font-cache-service); rebuild cache (explicit) | Service running | pack |
@@ -274,10 +274,10 @@ The Engine.Core model is platform-neutral. When a Linux or macOS provider exists
 Update these when rows change. A row counts once by its first status token.
 
 - rows: 150
-- pack: 54
+- pack: 58
 - workflow: 38
 - diag: 22
-- planned: 28
+- planned: 24
 - out: 8
 
 The loop is finished when `planned` is zero and every remaining `diag` row states why no safe automatic repair exists.

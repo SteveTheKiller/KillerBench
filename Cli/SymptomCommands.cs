@@ -40,7 +40,7 @@ internal static class SymptomCommands
                 Console.CancelKeyPress += (_, e) => { e.Cancel = true; stop.Cancel(); };
                 string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Triage");
                 var journal = new FileRecipeJournal(Path.Combine(folder, "triage-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss") + "-" + Guid.NewGuid().ToString("N")[..8] + ".jsonl"));
-                var runner = new GoalRunner(catalog, [WindowsServicePack.Build()], WindowsPrimitiveLibrary.Create(), journal);
+                var runner = new GoalRunner(catalog, WindowsPacks.All(), WindowsPrimitiveLibrary.Create(), journal);
                 var options = new GoalRunOptions
                 {
                     AuthorizeRepair = repair,

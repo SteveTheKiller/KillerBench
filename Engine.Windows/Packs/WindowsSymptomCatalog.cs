@@ -15,6 +15,7 @@ public static class WindowsSymptomCatalog
     {
         var symptoms = new List<Symptom>();
         var trees = new List<TriageTree>();
+        var available = WindowsPacks.RecipeIds();
 
         Add("printing.nothing-prints", "Nothing prints", "Printing",
             "Print jobs never reach the printer or sit in the queue, on every printer or on one printer.",
@@ -158,6 +159,12 @@ public static class WindowsSymptomCatalog
         Service("notifications.broken", "Notifications and COM events fail", "Windows services", "Notifications never appear or apps report event-system errors.", ["notifications not working", "com+ event system"], "Run the System Notifications workflow.", "notifications.com-event-system", "notifications.system-event-notification");
         Service("shell.start-menu-broken", "Start menu does not open", "Windows services", "Start, search box or settings fail to open.", ["start menu broken", "start menu not opening"], "Run the App Packages workflow for the StateRepository and shell packages.", "applications.state-repository-service");
 
+        // Settings pack symptoms.
+        Service("boot.fast-startup-corruption", "Problems that only a full restart fixes", "Windows", "Devices, network or performance issues persist through shutdown but clear after Restart, which points at Fast Startup carrying a stale kernel session.", ["fast startup", "restart fixes it but shutdown doesn't", "hiberboot"], "Disabling Fast Startup is an explicit option in the Power workflow; it makes every shutdown a full shutdown.", "power.fast-startup-disable");
+        Service("boot.safe-mode-stuck", "Windows keeps booting into Safe Mode", "Windows", "Every boot lands in Safe Mode although nobody selected it.", ["stuck in safe mode", "boots to safe mode", "safeboot"], "If the flag returns, open msconfig and clear Safe boot on the Boot tab.", "boot.safeboot-clear");
+        Service("profile.temporary", "Signed in with a temporary profile", "Applications", "Windows reports you have been signed in with a temporary profile and desktop files are missing.", ["temporary profile", "temp profile", "signed in with a temporary profile", "files missing after sign in"], "Sign the account out, rename the .bak ProfileList entry back to its SID name after removing the duplicate, then sign in again. Run the Profiles workflow first to confirm the account's SID.", "profile.temporary-detect");
+        Service("display.black-screen-after-login", "Black screen with a cursor after sign-in", "Devices", "Sign-in completes but no desktop or taskbar appears.", ["black screen after login", "no desktop", "no taskbar", "explorer not starting"], "If Explorer is running but the desktop is blank, review the display driver in the Display workflow and check for a second monitor set as primary.", "shell.explorer-start");
+
         return new SymptomCatalog(SymptomCatalog.CurrentSchemaVersion, CatalogId, 1, WindowsPrimitiveLibrary.Platform, "Windows symptoms", symptoms, trees);
 
         void Service(string id, string title, string area, string description, string[] aliases, string guidance, params string[] recipeIds) =>
@@ -175,9 +182,8 @@ public static class WindowsSymptomCatalog
 
         (IReadOnlyList<TriageNode> Nodes, string Root)? ServiceChain(params string[] recipeIds)
         {
-            var available = WindowsServicePack.SourceRecipes.Select(recipe => recipe.Id).ToHashSet(StringComparer.Ordinal);
             var unknown = recipeIds.Where(id => !available.Contains(id)).ToArray();
-            if (unknown.Length > 0) throw new InvalidOperationException("Symptom catalog references recipes outside the service pack: " + string.Join(", ", unknown));
+            if (unknown.Length > 0) throw new InvalidOperationException("Symptom catalog references recipes outside the built-in packs: " + string.Join(", ", unknown));
             var known = recipeIds;
             var nodes = new List<TriageNode>();
             for (int i = 0; i < known.Length; i++)
@@ -200,7 +206,7 @@ public static class WindowsSymptomCatalog
             }
             nodes.Add(new TriageNode("authorize", TriageNodeKind.Terminal) { Terminal = TriageTerminal.NeedsHuman, Guidance = "A repair is available. Run again with repairs authorized to apply it." });
             nodes.Add(new TriageNode("restart", TriageNodeKind.Terminal) { Terminal = TriageTerminal.NeedsHuman, Guidance = "Restart Windows, then run this symptom again." });
-            nodes.Add(new TriageNode("handoff", TriageNodeKind.Terminal) { Terminal = TriageTerminal.NeedsHuman, Guidance = "The automated service checks did not resolve the symptom." });
+            nodes.Add(new TriageNode("handoff", TriageNodeKind.Terminal) { Terminal = TriageTerminal.NeedsHuman, Guidance = "The automated checks did not resolve the symptom." });
             return (nodes, "r1");
         }
     }

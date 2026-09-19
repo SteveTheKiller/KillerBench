@@ -48,7 +48,7 @@ internal static class PackCommands
         }
     }
 
-    private static IReadOnlyList<RecipePack> BuiltIn() => [WindowsServicePack.Build()];
+    private static IReadOnlyList<RecipePack> BuiltIn() => WindowsPacks.All();
 
     private static void Report(RecipePackValidationResult validation)
     {

@@ -10,5 +10,12 @@ public static class WindowsPrimitiveLibrary
     public static PrimitiveLibrary Create() => new PrimitiveLibrary(Platform)
         .AddProbe(new WindowsServiceCheckProbe())
         .AddProbe(new WindowsServiceRunningProbe())
-        .AddAction(new WindowsServiceStartAction());
+        .AddProbe(new WindowsRegistryValueProbe())
+        .AddProbe(new WindowsRegistrySubkeysProbe())
+        .AddProbe(new WindowsBcdSafebootProbe())
+        .AddProbe(new WindowsProcessRunningProbe())
+        .AddAction(new WindowsServiceStartAction())
+        .AddAction(new WindowsRegistrySetDwordAction())
+        .AddAction(new WindowsBcdSafebootClearAction())
+        .AddAction(new WindowsExplorerStartAction());
 }

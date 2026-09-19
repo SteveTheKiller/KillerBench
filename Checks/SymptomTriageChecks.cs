@@ -147,7 +147,7 @@ internal static class SymptomTriageChecks
 
         // Built-in Windows catalog against the built-in pack and library.
         var windows = WindowsSymptomCatalog.Build();
-        var windowsValidation = SymptomCatalogValidation.Validate(windows, [WindowsServicePack.Build()], WindowsPrimitiveLibrary.Create());
+        var windowsValidation = SymptomCatalogValidation.Validate(windows, WindowsPacks.All(), WindowsPrimitiveLibrary.Create());
         if (!windowsValidation.IsValid) throw new Exception("Windows symptom catalog is invalid: " + string.Join("; ", windowsValidation.Issues.Select(i => i.Subject + ": " + i.Message)));
         if (windows.Symptoms.Count < 15 || windows.Symptoms.Count(symptom => symptom.TreeId is not null) < 14) throw new Exception("Windows symptom catalog is incomplete.");
         if (windows.Search("no sound").FirstOrDefault()?.Id != "audio.no-sound" || windows.Search("can't print").FirstOrDefault()?.Id != "printing.nothing-prints")
