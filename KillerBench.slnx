@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="KillerBench.csproj" />
   <Project Path="Engine/KillerBench.Engine.csproj" />
+  <Project Path="Engine.Windows/KillerBench.Engine.Windows.csproj" />
   <Project Path="Cli/KillerBench.Cli.csproj" />
   <Project Path="Checks/KillerBench.Checks.csproj" />
 </Solution>

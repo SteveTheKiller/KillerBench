@@ -7,5 +7,8 @@
     <AssemblyName>killerbench-cli</AssemblyName>
     <Version>0.1.0</Version>
   </PropertyGroup>
-  <ItemGroup><ProjectReference Include="../Engine/KillerBench.Engine.csproj" /></ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Engine/KillerBench.Engine.csproj" />
+    <ProjectReference Include="../Engine.Windows/KillerBench.Engine.Windows.csproj" />
+  </ItemGroup>
 </Project>
