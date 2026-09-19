@@ -50,8 +50,19 @@ public sealed record RecipeDefinition(
     public TimeSpan ExecutionTimeout { get; init; } = TimeSpan.FromMinutes(30);
     /// <summary>What the recipe explicitly does not prove, shown with every result.</summary>
     public string Limitations { get; init; } = "";
+    /// <summary>Values the caller supplies at run time. Probe and action parameters reference them as ${name}.</summary>
+    public IReadOnlyList<RecipeOption> Options { get; init; } = [];
 
     public bool DiagnosticOnly => Action is null;
+}
+
+/// <summary>One caller-supplied value. Required options with no default must be supplied before any probe runs.</summary>
+public sealed record RecipeOption(string Name, string Description)
+{
+    public bool Required { get; init; } = true;
+    /// <summary>Regular expression the whole value must match. Null accepts any non-empty value.</summary>
+    public string? Pattern { get; init; }
+    public string? Default { get; init; }
 }
 
 /// <summary>A read-only observation made through a named primitive with parameters, and how its result maps to a verdict.</summary>

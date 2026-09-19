@@ -51,6 +51,27 @@ public sealed class WindowsDisabledAdaptersProbe : IProbePrimitive
     });
 }
 
+/// <summary>Reports one physical adapter's administrative status. Value is Up or Down.</summary>
+public sealed class WindowsAdapterAdminStatusProbe : IProbePrimitive
+{
+    public string Name => "netadapter.admin-status";
+    public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [WindowsNetAdapterPrimitives.NameParameter];
+    private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
+        "& { param([string]$name) $a=@(Get-NetAdapter -Name $name -Physical -ErrorAction Stop); if($a.Count -ne 1){throw 'Exact physical adapter not found.'}; [string]$a[0].AdminStatus }";
+
+    public async Task<PrimitiveResult> ObserveAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, CancellationToken token)
+    {
+        ArgumentNullException.ThrowIfNull(parameters);
+        if (!OperatingSystem.IsWindows()) return PrimitiveResult.Unavailable("Adapter inspection requires Windows.");
+        return Interpret(await WindowsNetAdapterPrimitives.RunAsync(Script, token, parameters["name"]).ConfigureAwait(false));
+    }
+
+    public static PrimitiveResult Interpret(ToolResult result) => WindowsNetAdapterPrimitives.Lines(result, "Get-NetAdapter", lines =>
+        lines.Length == 1 && lines[0] is "Up" or "Down"
+            ? new PrimitiveResult(true, lines[0], lines[0]) { Detail = lines[0] == "Up" ? "The adapter is enabled." : "The adapter is administratively disabled." }
+            : PrimitiveResult.Unavailable("Adapter status output was not recognized."));
+}
+
 /// <summary>Reports whether Windows may turn off one adapter to save power. Value is Enabled or Disabled.</summary>
 public sealed class WindowsAdapterPowerSavingProbe : IProbePrimitive
 {

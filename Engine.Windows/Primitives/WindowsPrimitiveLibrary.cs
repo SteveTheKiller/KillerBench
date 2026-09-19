@@ -24,6 +24,7 @@ public static class WindowsPrimitiveLibrary
         .AddProbe(new WindowsEntraStatusProbe())
         .AddProbe(new WindowsGroupPolicyAgeProbe())
         .AddProbe(new WindowsDisabledAdaptersProbe())
+        .AddProbe(new WindowsAdapterAdminStatusProbe())
         .AddProbe(new WindowsAdapterPowerSavingProbe())
         .AddAction(new WindowsServiceStartAction())
         .AddAction(new WindowsRegistrySetDwordAction())
@@ -31,5 +32,6 @@ public static class WindowsPrimitiveLibrary
         .AddAction(new WindowsMemoryDiagnosticScheduleAction())
         .AddAction(new WindowsExplorerStartAction())
         .AddAction(new WindowsExplorerRestartAction())
+        .AddAction(new WindowsAdapterEnableAction())
         .AddAction(new WindowsAdapterPowerSavingDisableAction());
 }

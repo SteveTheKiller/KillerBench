@@ -37,6 +37,10 @@ public sealed record GoalRunOptions
     public IProgress<string>? Progress { get; init; }
     /// <summary>Answers questions by node id or by option key. Null or an unanswered question ends the walk as NeedsHuman with the open question recorded.</summary>
     public Func<TriageNode, TriageQuestion, CancellationToken, Task<string?>>? Answer { get; init; }
+    /// <summary>Recipe option values by option name, offered to every recipe that declares that name.</summary>
+    public IReadOnlyDictionary<string, string>? RecipeOptions { get; init; }
+    /// <summary>Confirms recipes that require explicit options. Applies to every such recipe in the walk, so callers should pair it with a narrow symptom.</summary>
+    public bool ExplicitOptionsConfirmed { get; init; }
 }
 
 /// <summary>
@@ -116,7 +120,13 @@ public sealed class GoalRunner(SymptomCatalog catalog, IReadOnlyList<RecipePack>
                             return Report(GoalOutcome.Unresolved, "Recipe '" + node.RecipeId + "' is not loaded. The catalog and packs disagree.");
                         bool authorize = options.AuthorizeRepair && repairs < options.MaximumRepairs;
                         options.Progress?.Report("Triage step " + index + ": " + recipe.Title);
-                        var result = await recipeRunner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = authorize, Elevated = options.Elevated, Progress = options.Progress }, runToken).ConfigureAwait(false);
+                        var declared = recipe.Options.Select(option => option.Name).ToHashSet(StringComparer.Ordinal);
+                        var supplied = options.RecipeOptions?.Where(pair => declared.Contains(pair.Key)).ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
+                        var result = await recipeRunner.RunAsync(recipe, new RecipeRunOptions
+                        {
+                            AuthorizeRepair = authorize, Elevated = options.Elevated, Progress = options.Progress,
+                            Options = supplied is { Count: > 0 } ? supplied : null, ExplicitOptionsConfirmed = options.ExplicitOptionsConfirmed
+                        }, runToken).ConfigureAwait(false);
                         var outcome = result.EffectiveOutcome;
                         if (result.Action is { Dispatched: true }) repairs++;
                         switch (outcome)

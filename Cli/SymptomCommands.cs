@@ -4,7 +4,8 @@ using KillerBench.Engine.Core;
 
 internal static class SymptomCommands
 {
-    private const string Usage = "Usage: symptom list | symptom search TEXT | symptom run SYMPTOM_ID [--repair] [--answer NODE=KEY]... [--json] (detect only unless --repair; --repair applies pack recipes once each with fresh rechecks)";
+    private const string Usage = "Usage: symptom list | symptom search TEXT | symptom run SYMPTOM_ID [--repair] [--explicit] [--option NAME=VALUE]... [--answer NODE=KEY]... [--json] " +
+        "(detect only unless --repair; --repair applies automatic pack recipes once each with fresh rechecks; --explicit additionally confirms recipes that require explicit options)";
 
     internal static async Task<int> RunAsync(string[] args)
     {
@@ -26,15 +27,19 @@ internal static class SymptomCommands
             case "run" when args.Length >= 3:
             {
                 string id = args[2];
-                bool repair = false, json = false;
+                bool repair = false, json = false, explicitOptions = false;
                 var answers = new Dictionary<string, string>(StringComparer.Ordinal);
+                var recipeOptions = new Dictionary<string, string>(StringComparer.Ordinal);
                 for (int i = 3; i < args.Length; i++)
                 {
                     if (args[i] == "--repair") repair = true;
+                    else if (args[i] == "--explicit") explicitOptions = true;
                     else if (args[i] == "--json") json = true;
                     else if (args[i] == "--answer" && i + 1 < args.Length && args[i + 1].Split('=', 2) is [var node, var key]) { answers[node] = key; i++; }
+                    else if (args[i] == "--option" && i + 1 < args.Length && args[i + 1].Split('=', 2) is [var name, var value]) { recipeOptions[name] = value; i++; }
                     else { Console.Error.WriteLine(Usage); return 2; }
                 }
+                if (explicitOptions && !repair) { Console.Error.WriteLine("--explicit requires --repair."); return 2; }
                 if (catalog.FindSymptom(id) is null) { Console.Error.WriteLine("Unknown symptom '" + id + "'. Use symptom list or symptom search."); return 2; }
                 using var stop = new CancellationTokenSource();
                 Console.CancelKeyPress += (_, e) => { e.Cancel = true; stop.Cancel(); };
@@ -46,7 +51,9 @@ internal static class SymptomCommands
                     AuthorizeRepair = repair,
                     Elevated = IsElevated(),
                     Progress = json ? null : new Progress<string>(line => Console.Error.WriteLine(line)),
-                    Answer = (node, _, _) => Task.FromResult(answers.GetValueOrDefault(node.Id))
+                    Answer = (node, _, _) => Task.FromResult(answers.GetValueOrDefault(node.Id)),
+                    RecipeOptions = recipeOptions.Count == 0 ? null : recipeOptions,
+                    ExplicitOptionsConfirmed = explicitOptions
                 };
                 var report = await runner.RunAsync(id, options, stop.Token).ConfigureAwait(false);
                 if (json) { Console.WriteLine(JsonSerializer.Serialize(report, RecipePackJson.Options)); }

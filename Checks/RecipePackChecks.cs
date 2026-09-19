@@ -116,9 +116,72 @@ internal static class RecipePackChecks
         if (!Expectation.Matches(new ExpectClause("absent", "", ProbeVerdict.Clear), null) || Expectation.Matches(new ExpectClause("equals", "", ProbeVerdict.Clear), null))
             throw new Exception("Absent handling misbehaved.");
 
+        // Options: declarations, references, resolution, substitution and runner gating.
+        await OptionsAsync(library);
+
         // Runner: clear, unauthorized, blocked, recheck cleared, repaired, unverified, not dispatched, timeout, canceled, elevation.
         await RunnerAsync();
         Console.WriteLine("PASS: recipe pack schema, validation, strict JSON, expectation evaluation and runner paths; fixtures only.");
+    }
+
+    private static async Task OptionsAsync(PrimitiveLibrary library)
+    {
+        var option = new RecipeOption("target", "Service to check") { Pattern = "[A-Za-z0-9_-]+" };
+        var recipe = ServiceRecipe() with
+        {
+            Id = "test.option-service",
+            Options = [option],
+            RequiresExplicitOptions = true,
+            Detect = new ProbeSpec("service.state", new Dictionary<string, string> { ["name"] = "${target}" }, ExpectSpec.ClearWhenEquals("Running")),
+            Preconditions = [],
+            Action = new ActionSpec("service.start", new Dictionary<string, string> { ["name"] = "${target}" }),
+            Verify = null
+        };
+        var packValidation = RecipePackValidation.Validate(Pack(recipe), library);
+        if (!packValidation.IsValid) throw new Exception("Recipe with options reported issues: " + string.Join("; ", packValidation.Issues.Select(i => i.Message)));
+        if (!RecipeOptions.References(recipe).SetEquals(new[] { "target" })) throw new Exception("Option references were not detected.");
+        Check(Pack(recipe with { Options = [option with { Name = "Bad Name" }] }), "short lower-case", "Bad option name");
+        Check(Pack(recipe with { Options = [option, option] }), "Duplicate option", "Duplicate option");
+        Check(Pack(recipe with { Options = [option with { Pattern = "(" }] }), "invalid pattern", "Invalid option pattern");
+        Check(Pack(recipe with { Options = [option with { Default = "bad name!" }] }), "default that does not match", "Default outside pattern");
+        Check(Pack(recipe with { Options = [] }), "no matching option declaration", "Undeclared reference");
+        Check(Pack(recipe with { RequiresExplicitOptions = false }), "must declare RequiresExplicitOptions", "Required option without explicit flag");
+        if (!RecipePackValidation.Validate(Pack(recipe with { RequiresExplicitOptions = false, Options = [option with { Default = "Spooler" }] }), library).IsValid)
+            throw new Exception("An option with a default was rejected without the explicit flag.");
+
+        var problems = RecipeOptions.Resolve(recipe, null, out _);
+        if (problems.Count != 1 || !problems[0].Contains("required")) throw new Exception("Missing required option was not reported.");
+        if (RecipeOptions.Resolve(recipe, new Dictionary<string, string> { ["target"] = "bad name!" }, out _).Count != 1) throw new Exception("Option pattern was not enforced at run time.");
+        if (RecipeOptions.Resolve(recipe, new Dictionary<string, string> { ["target"] = "Spooler", ["extra"] = "x" }, out _).Count != 1) throw new Exception("Unknown option was accepted.");
+        if (RecipeOptions.Resolve(recipe, new Dictionary<string, string> { ["target"] = "Spooler" }, out var values).Count != 0 || values["target"] != "Spooler") throw new Exception("Valid option did not resolve.");
+        var applied = RecipeOptions.Apply(recipe, values);
+        if (applied.Detect.Parameters["name"] != "Spooler" || applied.Action!.Parameters["name"] != "Spooler") throw new Exception("Option substitution did not reach the parameters.");
+        if (recipe.Detect.Parameters["name"] != "${target}") throw new Exception("Substitution mutated the original recipe.");
+        var defaulted = RecipeOptions.Resolve(recipe with { Options = [option with { Default = "Spooler", Required = false }] }, null, out var defaults);
+        if (defaulted.Count != 0 || defaults["target"] != "Spooler") throw new Exception("Option default was not applied.");
+
+        var seen = new List<string>();
+        var start = new FakeAction("service.start", parameters => { seen.Add(parameters["name"]); return new ActionResult(true, true, "ok"); });
+        string state = "Stopped";
+        var runner = new RecipeRunner(new PrimitiveLibrary("Test")
+            .AddProbe(new FakeProbe("service.state", parameters => new PrimitiveResult(true, parameters["name"] == "Spooler" ? state : "Running", "")))
+            .AddAction(start), new MemoryRecipeJournal());
+        var needsOptions = await runner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true, Elevated = true });
+        if (needsOptions.Outcome != RecipeRunOutcome.RepairAvailable || needsOptions.Probes.Count != 0) throw new Exception("Missing options did not stop before probing: " + needsOptions.Outcome);
+        var badOptions = await runner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true, Elevated = true, Options = new Dictionary<string, string> { ["target"] = "bad name!" }, ExplicitOptionsConfirmed = true });
+        if (badOptions.Outcome != RecipeRunOutcome.Blocked || badOptions.Probes.Count != 0) throw new Exception("Invalid options did not block before probing.");
+        var unconfirmed = await runner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true, Elevated = true, Options = new Dictionary<string, string> { ["target"] = "Spooler" } });
+        if (unconfirmed.Outcome != RecipeRunOutcome.RepairAvailable || seen.Count != 0) throw new Exception("Unconfirmed explicit recipe dispatched.");
+        state = "Stopped";
+        var confirmed = await runner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true, Elevated = true, Options = new Dictionary<string, string> { ["target"] = "Spooler" }, ExplicitOptionsConfirmed = true });
+        if (confirmed.Outcome != RecipeRunOutcome.NeedsAttention || seen.SequenceEqual(new[] { "Spooler" }) == false) throw new Exception("Confirmed explicit recipe did not dispatch with the substituted target: " + confirmed.Outcome + " " + confirmed.Detail);
+
+        static void Check(RecipePack broken, string fragment, string what)
+        {
+            var result = RecipePackValidation.Validate(broken);
+            if (!result.Issues.Any(issue => issue.Message.Contains(fragment, StringComparison.Ordinal)))
+                throw new Exception(what + " was accepted. Issues: " + string.Join("; ", result.Issues.Select(i => i.Message)));
+        }
     }
 
     private static async Task RunnerAsync()

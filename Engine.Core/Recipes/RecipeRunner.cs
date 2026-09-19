@@ -22,6 +22,10 @@ public sealed record RecipeRunOptions
     /// <summary>Whether the current session is elevated. The runner never elevates on its own.</summary>
     public bool Elevated { get; init; }
     public IProgress<string>? Progress { get; init; }
+    /// <summary>Values for the recipe's declared options. Unknown names are rejected before any probe runs.</summary>
+    public IReadOnlyDictionary<string, string>? Options { get; init; }
+    /// <summary>Confirms a recipe that declares RequiresExplicitOptions. Without it such a recipe only reports RepairAvailable.</summary>
+    public bool ExplicitOptionsConfirmed { get; init; }
 }
 
 /// <summary>
@@ -40,6 +44,15 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
         var probes = new List<ProbeOutcome>();
         RecipeRunResult Result(RecipeRunOutcome outcome, string detail, ActionResult? action = null, bool uncertain = false) =>
             new(recipe.Id, recipe.Version, outcome, detail, probes.AsReadOnly()) { Action = action, ExecutionUncertain = uncertain };
+
+        var problems = RecipeOptions.Resolve(recipe, options.Options, out var optionValues);
+        if (problems.Count > 0)
+        {
+            if (!recipe.RequiresExplicitOptions || options.ExplicitOptionsConfirmed || options.Options is { Count: > 0 })
+                return Result(RecipeRunOutcome.Blocked, "Options are incomplete or invalid: " + string.Join(" ", problems) + " Nothing was inspected or changed.");
+            return Result(RecipeRunOutcome.RepairAvailable, "This recipe needs options before it can run: " + string.Join(" ", problems));
+        }
+        recipe = RecipeOptions.Apply(recipe, optionValues);
 
         try
         {
@@ -62,8 +75,9 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
                 return Result(RecipeRunOutcome.NeedsAttention, detect.Evaluation.Detail + " This recipe is diagnostic only.");
             if (!options.AuthorizeRepair)
                 return Result(RecipeRunOutcome.RepairAvailable, detect.Evaluation.Detail + " Repair available: " + Describe(recipe.Action));
-            if (recipe.RequiresExplicitOptions)
-                return Result(RecipeRunOutcome.RepairAvailable, detect.Evaluation.Detail + " This repair requires explicit options and confirmation.");
+            if (recipe.RequiresExplicitOptions && !options.ExplicitOptionsConfirmed)
+                return Result(RecipeRunOutcome.RepairAvailable, detect.Evaluation.Detail + " This repair requires explicit confirmation" +
+                    (recipe.Options.Count == 0 ? "." : " and options: " + string.Join(", ", recipe.Options.Select(option => option.Name + (option.Required ? "" : " (optional)"))) + "."));
             if (recipe.RequiresElevation && !options.Elevated)
                 return Result(RecipeRunOutcome.Blocked, "Administrator access is required for this repair. No change was made.");
             var action = library.FindAction(recipe.Action.Primitive)

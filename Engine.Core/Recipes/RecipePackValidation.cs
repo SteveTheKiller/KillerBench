@@ -61,6 +61,28 @@ public static class RecipePackValidation
             }
             if (recipe.Action is null && recipe.Risk != RecipeRisk.ReadOnly) Issue(id, "Diagnostic-only recipes must declare ReadOnly risk.");
             if (recipe.Action is not null && recipe.Risk == RecipeRisk.ReadOnly) Issue(id, "A recipe with an action cannot declare ReadOnly risk.");
+            var optionNames = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var option in recipe.Options ?? [])
+            {
+                if (option is null) { Issue(id, "An option entry is null."); continue; }
+                if (!RecipeOptions.IsValidName(option.Name)) Issue(id, "Option name '" + option.Name + "' must be a short lower-case identifier.");
+                else if (!optionNames.Add(option.Name)) Issue(id, "Duplicate option '" + option.Name + "'.");
+                if (string.IsNullOrWhiteSpace(option.Description)) Issue(id, "Option '" + option.Name + "' needs a description.");
+                if (option.Pattern is not null)
+                {
+                    try
+                    {
+                        _ = new Regex(option.Pattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
+                        if (option.Default is not null && !Regex.IsMatch(option.Default, "^(?:" + option.Pattern + ")$", RegexOptions.None, TimeSpan.FromMilliseconds(100)))
+                            Issue(id, "Option '" + option.Name + "' has a default that does not match its pattern.");
+                    }
+                    catch (ArgumentException) { Issue(id, "Option '" + option.Name + "' has an invalid pattern."); }
+                }
+            }
+            foreach (string reference in RecipeOptions.References(recipe))
+                if (!optionNames.Contains(reference)) Issue(id, "Parameter reference ${" + reference + "} has no matching option declaration.");
+            if ((recipe.Options?.Count ?? 0) > 0 && recipe.Options!.Any(option => option is { Required: true, Default: null }) && !recipe.RequiresExplicitOptions)
+                Issue(id, "A recipe with required options must declare RequiresExplicitOptions.");
             foreach (string symptom in recipe.Symptoms ?? [])
                 if (!IsValidRecipeId(symptom)) Issue(id, "Symptom reference '" + symptom + "' must be a lower-case dotted identifier.");
             foreach (string dependency in recipe.Dependencies ?? [])
@@ -127,7 +149,7 @@ public static class RecipePackValidation
         {
             supplied.TryGetValue(parameter.Name, out string? value);
             if (parameter.Required && string.IsNullOrEmpty(value)) { issue(id, role + ": parameter '" + parameter.Name + "' is required."); continue; }
-            if (value is not null && parameter.Pattern is not null &&
+            if (value is not null && parameter.Pattern is not null && !value.Contains("${", StringComparison.Ordinal) &&
                 !Regex.IsMatch(value, "^(?:" + parameter.Pattern + ")$", RegexOptions.None, TimeSpan.FromMilliseconds(100)))
                 issue(id, role + ": parameter '" + parameter.Name + "' does not match its allowed pattern.");
         }

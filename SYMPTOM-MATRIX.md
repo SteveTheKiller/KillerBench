@@ -92,7 +92,7 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | network.vpn-fails | Remote Access Connection Manager, profile, split tunnel | VPN profile diagnostics, remote access service | Service start (network.remote-access-service) | Service running | pack |
 | network.proxy-wrong | WinHTTP proxy, user proxy, PAC, WinHTTP AutoProxy service | Proxy diagnostics | Service start (network.winhttp-autoproxy-service); proxy reset is explicit | Service running | pack (service), planned (reset) |
 | network.winsock-corrupt | LSP catalog damage | Winsock catalog and provider file diagnostics | netsh winsock reset (explicit, restart) | Catalog default after restart | planned |
-| network.adapter-missing | Disabled adapter, driver problem code | netadapter.disabled-physical (network.disabled-adapters recipe), Device Problems workflow | Manual enable with guidance; per-adapter explicit enable once recipe options exist | Adapter enabled | pack |
+| network.adapter-missing | Disabled adapter, driver problem code | netadapter.disabled-physical (network.disabled-adapters recipe), Device Problems workflow | Enable-NetAdapter for the named adapter (network.adapter-enable, explicit option with adapter=NAME) | Adapter admin status Up | pack |
 | network.ipv6-broken | IP Helper stopped, transition tech | IP Helper check, interface config | Service start (network.ip-helper) | Service running | pack |
 | network.discovery-off | Network profile Public, discovery services | Network profile diagnostics, discovery services | Service starts (pack); profile change is explicit | Service running | pack |
 | network.port-exhaustion | Dynamic port range consumed | TCP port pressure diagnostics | None automatic | n/a | diag |

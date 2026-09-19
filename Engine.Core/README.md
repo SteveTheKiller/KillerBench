@@ -19,6 +19,7 @@ A pack is UTF-8 JSON (`RecipePackJson`) holding one platform's recipes. Each rec
 - `Verify`: the probe evaluated after the action. Absent means Detect is reused.
 - `Rollback`: an undo action, present only when a real undo exists.
 - `Risk`, `RequiresElevation`, `RequiresExplicitOptions`, `MayRequireRestart`, timeouts, `VerificationScope` and `Limitations`.
+- `Options`: caller-supplied values (name, description, pattern, default). Parameters reference them as `${name}`; `RecipeOptions.Resolve` validates them and `Apply` substitutes them before any probe runs. A recipe with a required option must declare `RequiresExplicitOptions`, and such a recipe runs only when the caller passes `ExplicitOptionsConfirmed`.
 
 `RecipePackValidation` rejects malformed ids, duplicate ids, dependency cycles, unknown operators, invalid regular expressions, unknown primitives, parameters outside a primitive's declared pattern, and recipes whose declared risk or elevation is lower than the primitive they call.
 
