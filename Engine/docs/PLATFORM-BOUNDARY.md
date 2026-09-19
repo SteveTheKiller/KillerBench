@@ -14,6 +14,10 @@ Both provider projects stay on `net10.0` rather than `net10.0-windows` so `kille
 
 `WorkflowKind` and `RepairKind` remain in core for now. They are catalog identifiers, not platform APIs, and 184 files carry about 2,400 references to them. Replacing them with string identifiers is deferred to phase B, where declarative recipe packs introduce string recipe IDs and the enums become a Windows-pack alias table. Phase A only moves compilation units.
 
+## Provider registry
+
+Core never constructs a platform host. `PlatformProviders` in core holds factories that a provider assembly registers at startup: `WindowsEngine.Register()` is called first thing in the desktop app, the CLI and the Checks runner. Core code that previously wrote `new WindowsWorkflowHost()` now calls `PlatformProviders.CreateWorkflowHost(progress)`; the same applies to `CreateServicingRepairCommandHost()`. An unregistered call throws `PlatformNotSupportedException` with the registration instruction. Callers that pass an explicit host are unaffected.
+
 ## Migration rules
 
 1. Move one host or collector at a time with `git mv`, then build the solution and run the full Checks suite before the next move.

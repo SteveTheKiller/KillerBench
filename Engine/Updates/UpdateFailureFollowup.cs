@@ -123,7 +123,7 @@ public static class UpdateFailureFollowup
         UpdateDiagnosticArea.ManagedUpdatePolicy => [UpdatePolicyDiagnostics.Check()],
         UpdateDiagnosticArea.UpdateDataStore => [await UpdateServiceDiagnostics.CheckAsync(token).ConfigureAwait(false),
             await UpdateHistoryDiagnostics.CheckAsync(token).ConfigureAwait(false)],
-        UpdateDiagnosticArea.ComponentServicing => [await new WindowsWorkflowHost().CheckIntegrityAsync(RepairKind.ComponentStore, null, token).ConfigureAwait(false)],
+        UpdateDiagnosticArea.ComponentServicing => [await PlatformProviders.CreateWorkflowHost().CheckIntegrityAsync(RepairKind.ComponentStore, null, token).ConfigureAwait(false)],
         _ => throw new ArgumentOutOfRangeException(nameof(area))
     };
 

@@ -20,7 +20,7 @@ public static class NetworkSnapshot
             var status = OperationalStatus.Unknown;
             links.Add(ReadLink(adapter.Name, () => status = adapter.OperationalStatus));
             if (status != OperationalStatus.Up) continue;
-            checks.Add(WindowsWorkflowHost.ReadNetworkConfiguration(adapter.Name, () =>
+            checks.Add(NetworkAssessment.ReadNetworkConfiguration(adapter.Name, () =>
             {
                 var properties = adapter.GetIPProperties();
                 return (properties.UnicastAddresses.Select(a => a.Address.ToString()).ToArray(),
@@ -74,6 +74,6 @@ public static class NetworkSnapshot
         var evidence = new ToolResult(0, JsonSerializer.Serialize(snapshot, Capture.JsonOptions), "", false);
         if (snapshot.Addresses is null || snapshot.Gateways is null || snapshot.Dns is null)
             return new(snapshot.Name, CheckState.Unknown, "Adapter configuration is incomplete. No repair selected.", Evidence: evidence);
-        return WindowsWorkflowHost.AssessNetwork(snapshot.Name, snapshot.Addresses, snapshot.Gateways, snapshot.Dns) with { Evidence = evidence };
+        return NetworkAssessment.AssessNetwork(snapshot.Name, snapshot.Addresses, snapshot.Gateways, snapshot.Dns) with { Evidence = evidence };
     }
 }

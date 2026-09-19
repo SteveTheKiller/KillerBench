@@ -482,7 +482,7 @@ public sealed class WindowsRepairHost : IRepairHost
             InstallerDiagnostics.RequireReady();
         if (selectedKind is RepairKind.ComponentStore or RepairKind.SystemFiles && !step.Verification)
             return ServicingRepairExecution.RunCommandAsync(selectedKind.Value, step,
-                new WindowsServicingRepairCommandHost(), progress, cancellationToken);
+                PlatformProviders.CreateServicingRepairCommandHost(), progress, cancellationToken);
         return step.Tool == PrintSpoolDirectoryRecovery.Tool ? PrintSpoolDirectoryRecovery.ExecuteAsync(step, progress, cancellationToken)
             : Repairs.Plan(RepairKind.ComponentCleanup).Steps.Any(s => s.Tool == step.Tool && s.Verification == step.Verification && s.Arguments.SequenceEqual(step.Arguments)) ? ComponentCleanup.ExecuteAsync(step, progress, cancellationToken)
             : Repairs.Plan(RepairKind.DeliveryOptimization).Steps.Any(s => s.Tool == step.Tool && s.Verification == step.Verification && s.Arguments.SequenceEqual(step.Arguments)) ? DeliveryOptimizationRecovery.ExecuteAsync(step, progress, cancellationToken)

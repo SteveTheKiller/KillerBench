@@ -13,6 +13,7 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         DemoMode = e.Args.Any(IsDemoArgument);
+        KillerBench.Engine.WindowsEngine.Register();
         Services.Preferences.Load();
         Services.ThemeManager.GetSetting = Services.Preferences.Get;
         Services.ThemeManager.SetSetting = Services.Preferences.Set;

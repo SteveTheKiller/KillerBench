@@ -11,6 +11,7 @@ internal static class Program
     [STAThread]
     private static int Main(string[] args)
     {
+        WindowsEngine.Register();
         try
         {
             if (args.Length == 0) return RunChecks(includeUi: false);
