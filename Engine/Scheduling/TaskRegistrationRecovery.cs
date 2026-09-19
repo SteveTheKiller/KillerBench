@@ -26,12 +26,6 @@ public interface ITaskRegistrationRecoveryHost
     Task<ScheduledTaskDefinitionResult> ReadAsync(ScheduledTaskIdentity target, CancellationToken token);
 }
 
-public sealed class WindowsTaskRegistrationRecoveryHost : ITaskRegistrationRecoveryHost
-{
-    public Task<ScheduledTaskDefinitionResult> ReadAsync(ScheduledTaskIdentity target, CancellationToken token) =>
-        ScheduledTaskDefinition.ReadAsync(target, token);
-}
-
 /// <summary>Reconciles an interrupted create-only request by inspection. It never creates, changes, runs or removes a task.</summary>
 public static class TaskRegistrationRecovery
 {
@@ -85,7 +79,7 @@ public static class TaskRegistrationRecovery
 
         stop.Token.ThrowIfCancellationRequested();
         Report(progress, "Reading the exact current disabled task definition without changing it.");
-        host ??= new WindowsTaskRegistrationRecoveryHost();
+        host ??= PlatformProviders.Create<ITaskRegistrationRecoveryHost>();
         var observed = await Required(host.ReadAsync(plan.Identity, stop.Token), stop.Token).ConfigureAwait(false);
         evidence.Add(observed.Evidence);
         if (!plan.Identity.Matches(observed.Target) || observed.Xml is null || !TaskRegistration.Complete(observed.Evidence))

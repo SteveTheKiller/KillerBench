@@ -8,7 +8,10 @@ public static class WindowsEngine
 {
     public const string Platform = "Windows";
 
-    public static void Register() => PlatformProviders.Register(Platform,
-        progress => new WindowsWorkflowHost { Progress = progress },
-        () => new WindowsServicingRepairCommandHost());
+    public static void Register()
+    {
+        PlatformProviders.RegisterPlatform(Platform, progress => new WindowsWorkflowHost { Progress = progress });
+        PlatformProviders.Register<IServicingRepairCommandHost>(() => new WindowsServicingRepairCommandHost());
+        PlatformProviders.Register<ITaskRegistrationRecoveryHost>(() => new WindowsTaskRegistrationRecoveryHost());
+    }
 }
