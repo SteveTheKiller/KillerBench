@@ -31,7 +31,7 @@ public static class WindowsServicePrimitives
         string raw = check.Detail + (evidence is null ? "" : "\n" + evidence.Output + (string.IsNullOrWhiteSpace(evidence.Error) ? "" : "\n" + evidence.Error));
         if (check.EffectiveState == CheckState.Unknown && !complete)
             return new PrimitiveResult(false, null, raw, check.Detail) { TimedOut = evidence?.TimedOut ?? false, Truncated = evidence?.Truncated ?? false };
-        return new PrimitiveResult(true, check.EffectiveState.ToString(), raw);
+        return new PrimitiveResult(true, check.EffectiveState.ToString(), raw) { Detail = check.Detail };
     }
 
     internal static string Name(IReadOnlyDictionary<string, string> parameters) =>

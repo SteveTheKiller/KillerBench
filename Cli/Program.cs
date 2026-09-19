@@ -2,6 +2,7 @@ using System.Text.Json;
 using KillerBench.Engine;
 WindowsEngine.Register();
 if (args.Length > 0 && args[0] == "pack") return await PackCommands.RunAsync(args);
+if (args.Length > 0 && args[0] == "symptom") return await SymptomCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "servicing-monitor") return await ServicingMonitorCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "task-definition") return await TaskDefinitionCommands.RunAsync(args);
 if (args.Length > 0 && args[0] is "restore-point" or "restore-point-recover") return await SystemRestoreCommands.RunAsync(args);

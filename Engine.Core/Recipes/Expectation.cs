@@ -18,7 +18,7 @@ public static class Expectation
         {
             if (clause is null) continue;
             if (Matches(clause, result.Value))
-                return new(clause.Verdict, clause.Detail ?? Describe(clause, result.Value), clause);
+                return new(clause.Verdict, clause.Detail ?? result.Detail ?? Describe(clause, result.Value), clause);
         }
         return new(ProbeVerdict.Unknown, "Observed value '" + (result.Value ?? "<absent>") + "' matched no expectation clause.", null);
     }

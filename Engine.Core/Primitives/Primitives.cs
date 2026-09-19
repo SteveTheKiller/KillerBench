@@ -5,6 +5,8 @@ public sealed record PrimitiveResult(bool Complete, string? Value, string Raw, s
 {
     public bool TimedOut { get; init; }
     public bool Truncated { get; init; }
+    /// <summary>Human-readable explanation of the observation, used when the matched expectation clause has no detail of its own.</summary>
+    public string? Detail { get; init; }
     public static PrimitiveResult Unavailable(string error) => new(false, null, "", error);
 }
 

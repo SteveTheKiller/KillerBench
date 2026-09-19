@@ -105,6 +105,10 @@ internal static class RecipePackChecks
         if (incomplete.Verdict != ProbeVerdict.Unknown) throw new Exception("Incomplete evidence was not Unknown.");
         var timedOut = Expectation.Evaluate(ExpectSpec.ClearWhenEquals("Running"), new PrimitiveResult(true, "Running", "") { TimedOut = true });
         if (timedOut.Verdict != ProbeVerdict.Unknown) throw new Exception("Timed-out evidence was not Unknown.");
+        var detailed = Expectation.Evaluate(ExpectSpec.ClearWhenEquals("Running"), new PrimitiveResult(true, "Running", "") { Detail = "Service is running." });
+        if (detailed.Detail != "Service is running.") throw new Exception("Primitive detail was not carried into the evaluation.");
+        var clauseDetail = Expectation.Evaluate(new ExpectSpec([new ExpectClause("any", "", ProbeVerdict.Clear) { Detail = "Clause wins." }]), new PrimitiveResult(true, "x", "") { Detail = "Primitive." });
+        if (clauseDetail.Detail != "Clause wins.") throw new Exception("Clause detail did not take precedence.");
         var noMatch = Expectation.Evaluate(new ExpectSpec([new ExpectClause("equals", "Running", ProbeVerdict.Clear)]), new PrimitiveResult(true, "Stopped", ""));
         if (noMatch.Verdict != ProbeVerdict.Unknown) throw new Exception("Unmatched value was not Unknown.");
         if (!Expectation.Matches(new ExpectClause("less-than", "10", ProbeVerdict.Clear), "9.5") || Expectation.Matches(new ExpectClause("less-than", "10", ProbeVerdict.Clear), "x"))
