@@ -1,5 +1,11 @@
 # Changelog
 
+- Add symptom triage: a Windows symptom catalog, `symptom` CLI commands and a goal runner that reports what was repaired, ruled out and left unresolved.
+- Add the platform-neutral Engine.Core with declarative recipe packs, a whitelisted primitive library and a journaled recipe runner.
+- Generate the Windows service pack from the recipe catalog and add registry, BCD and shell primitives with a settings pack; `pack` CLI commands export and validate packs.
+- Add a gated native fault-injection runner and VM script that write validation records for service recipes.
+- Add the symptom coverage matrix with consistency checks.
+- Move the Windows hosts into Engine.Windows behind a provider registry.
 - Open Windows Update captures in the readable report view with coverage and retained log findings.
 - Summarize read-only scheduled-task inspections in the readable report view.
 - Open saved workflow journals in the readable report view with an explicit historical-evidence boundary and retained focused titles.
