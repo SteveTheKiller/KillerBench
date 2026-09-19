@@ -33,16 +33,16 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | profile.stale-accounts | Old local profiles consuming space | Profiles (PRUNE) workflow | Backup then remove selected profile (explicit, guarded) | Profile absent from registry and disk | workflow |
 | signin.hello-pin-broken | NGC container damaged, TPM reset | Windows Hello state read | Remove NGC container (explicit option) | Container recreated at next PIN setup | planned |
 | signin.credential-prompts-repeat | Cached credentials stale, Credential Manager service, Office identity | Credential Manager service, WAM and Microsoft account services, Outlook credential review (MACE) | Service starts (security.credential-manager-service, accounts.web-account-manager-service, accounts.microsoft-account-sign-in-service) | Service running | pack |
-| signin.domain-trust-broken | Secure channel broken, machine password mismatch | Test-ComputerSecureChannel and nltest /sc_query | Test-ComputerSecureChannel -Repair (explicit, needs domain credentials) | Secure channel query succeeds | planned |
-| signin.group-policy-not-applying | GP client service, connectivity to DC, SYSVOL access | Group Policy Client service, gpresult summary | Service start (core.group-policy-client-service) | Service running | pack (service), planned (gpresult) |
+| signin.domain-trust-broken | Secure channel broken, machine password mismatch | domain.secure-channel probe (identity.secure-channel recipe) | Manual: Test-ComputerSecureChannel -Repair with domain credentials; automated repair needs a credential-carrying explicit option | Secure channel test True | pack |
+| signin.group-policy-not-applying | GP client service, secure channel, connectivity to DC, SYSVOL access | Group Policy Client service, secure channel, hours since computer policy applied (identity.group-policy-age) | Service start (core.group-policy-client-service) | Service running; policy age under 24 h | pack |
 | signin.no-user-manager | User Manager service stopped | Service check | Service start (core.user-manager-service) | Service running | pack |
-| signin.entra-join-broken | Device registration state broken | dsregcmd /status parse | None automatic; guidance to leave and rejoin | n/a | planned (diag) |
+| signin.entra-join-broken | Missing primary refresh token, broken device registration, account broker services | entra.status probe (identity.entra-token recipe), WAM and Microsoft account services | Service starts; token refresh and rejoin are manual with guidance | Join YES with token YES | pack |
 
 ## 3. Performance
 
 | Symptom | Likely causes in order | Detect | Repair | Verify | Status |
 | --- | --- | --- | --- | --- | --- |
-| perf.high-cpu | Runaway process, indexing, antivirus scan, WMI provider host | Bounded process CPU sample with top consumers | None automatic; identify and hand off | n/a | planned |
+| perf.high-cpu | Runaway process, indexing, antivirus scan, WMI provider host | process.top-cpu three-second sample (performance.high-cpu recipe) | None automatic; the busiest process is named for the person to judge | n/a | pack |
 | perf.high-memory | Memory leak, too many startup apps, low physical RAM | Vitals memory availability, top consumers | None automatic | n/a | workflow (vitals), planned (consumers) |
 | perf.disk-100-percent | Superfetch/SysMain, indexing, failing disk, Windows Search | Disk queue sample, disk health, Search indexer state | Service stop is not automated; guidance | n/a | planned |
 | perf.slow-after-login | Startup apps, delayed services, roaming profile, mapped drives | Startup Applications workflow, Startup Performance | Disable selected startup entries (explicit) | Next-boot timing | workflow (detect), planned (repair) |
@@ -237,7 +237,7 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | search.no-results | Search service stopped, index corrupt | Search workflow | Service start (search.service); index rebuild (search.index-rebuild, explicit) | Service running, index directory | pack + workflow |
 | shell.explorer-crashes | Shell extension, corrupt icon cache | Application history, shell events | Icon cache cleanup (Cleanup workflow) | Cache rebuilt | workflow (partial) |
 | shell.start-menu-broken | StateRepository, AppX, ShellExperienceHost | State Repository service, App Packages | Service start (applications.state-repository-service) | Service running | pack |
-| shell.taskbar-unresponsive | Same plus Explorer hang | Same | Restart Explorer (explicit) | Explorer process | planned |
+| shell.taskbar-unresponsive | Same plus Explorer hang | process.running explorer (shell.explorer-restart recipe) | Restart Explorer (explicit option; closes File Explorer windows) | Explorer process running after restart | pack |
 | shell.quick-access-broken | Automatic destinations corrupt | File inventory | Clear automatic destinations (explicit) | Files recreated | planned |
 
 ## 19. Hardware errors and stability
@@ -245,7 +245,7 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | Symptom | Likely causes in order | Detect | Repair | Verify | Status |
 | --- | --- | --- | --- | --- | --- |
 | hardware.whea-errors | CPU, memory, PCIe faults | Hardware Errors workflow | Out: hardware | n/a | diag |
-| hardware.memory-suspect | ECC or random crashes | Reliability history | Schedule Windows Memory Diagnostic (explicit, restart) | Scheduled | planned |
+| hardware.memory-suspect | ECC or random crashes | bcd.bootsequence probe (hardware.memory-diagnostic recipe) | Schedule Windows Memory Diagnostic (explicit option, restart) | Boot sequence names {memdiag} | pack |
 | hardware.unexpected-shutdowns | Power loss, thermal, bug check | Shutdown history | None automatic | n/a | diag |
 | hardware.driver-install-failed | SetupAPI failures | Driver Install History workflow | None automatic | n/a | diag |
 
@@ -274,10 +274,10 @@ The Engine.Core model is platform-neutral. When a Linux or macOS provider exists
 Update these when rows change. A row counts once by its first status token.
 
 - rows: 150
-- pack: 58
+- pack: 63
 - workflow: 38
 - diag: 22
-- planned: 24
+- planned: 19
 - out: 8
 
 The loop is finished when `planned` is zero and every remaining `diag` row states why no safe automatic repair exists.

@@ -13,9 +13,16 @@ public static class WindowsPrimitiveLibrary
         .AddProbe(new WindowsRegistryValueProbe())
         .AddProbe(new WindowsRegistrySubkeysProbe())
         .AddProbe(new WindowsBcdSafebootProbe())
+        .AddProbe(new WindowsBcdBootSequenceProbe())
         .AddProbe(new WindowsProcessRunningProbe())
+        .AddProbe(new WindowsTopCpuProbe())
+        .AddProbe(new WindowsSecureChannelProbe())
+        .AddProbe(new WindowsEntraStatusProbe())
+        .AddProbe(new WindowsGroupPolicyAgeProbe())
         .AddAction(new WindowsServiceStartAction())
         .AddAction(new WindowsRegistrySetDwordAction())
         .AddAction(new WindowsBcdSafebootClearAction())
-        .AddAction(new WindowsExplorerStartAction());
+        .AddAction(new WindowsMemoryDiagnosticScheduleAction())
+        .AddAction(new WindowsExplorerStartAction())
+        .AddAction(new WindowsExplorerRestartAction());
 }
