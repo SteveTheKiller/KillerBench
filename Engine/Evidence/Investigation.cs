@@ -28,6 +28,9 @@ public static partial class Investigation
     [GeneratedRegex(@"\b0x[0-9a-f]{8}\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex ErrorCodePattern();
 
+    [GeneratedRegex(@"\b(?<result>0x[0-9a-f]{8})\s*-\s*(?<extend>0x[0-5]00[0-9a-f]{2})\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex SetupCodePairPattern();
+
     public static async Task<InvestigationReport> AnalyzeFileAsync(string path, CancellationToken cancellationToken = default)
         => Path.GetExtension(path).Equals(".evtx", StringComparison.OrdinalIgnoreCase)
             ? EventArchive.Analyze(await EventArchive.ReadAsync(path, cancellationToken).ConfigureAwait(false), cancellationToken)
@@ -104,10 +107,18 @@ public static partial class Investigation
             }
             if (isSetup)
             {
+                var pairs = SetupCodePairPattern().Matches(entry.Message)
+                    .Select(match => (Result: match.Groups["result"].Value.ToUpperInvariant(), Extend: match.Groups["extend"].Value.ToUpperInvariant()))
+                    .Distinct().Where(pair => IsKnownSetupCode(pair.Result) && TryDescribeSetupExtendCode(pair.Extend, out _, out _)).ToArray();
                 var setupCodes = ErrorCodePattern().Matches(entry.Message).Select(m => m.Value.ToUpperInvariant())
                     .Distinct().Where(IsKnownSetupCode).ToArray();
                 if (setupCodes.Length == 0) Add("SETUP-ERROR", entry);
-                else foreach (string code in setupCodes) Add("SETUP-" + code, entry);
+                else foreach (string code in setupCodes)
+                {
+                    var matchingPairs = pairs.Where(pair => pair.Result == code).ToArray();
+                    if (matchingPairs.Length == 0) Add("SETUP-" + code, entry);
+                    else foreach (var pair in matchingPairs) Add("SETUP-" + code + "-" + pair.Extend, entry);
+                }
             }
         }
         var findings = new List<DiagnosticFinding>();
@@ -166,18 +177,74 @@ public static partial class Investigation
     private static string SetupSeverity(string key)
     {
         if (!key.StartsWith("SETUP-0X", StringComparison.Ordinal)) return "Warning";
-        return uint.TryParse(key.AsSpan(8), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out uint value)
+        return uint.TryParse(key.AsSpan(8, 8), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out uint value)
             && WindowsSetupErrorCatalog.Find(value) is { RequiresReview: false } ? "Information" : "Warning";
     }
 
     private static (string Id, string Title, string Explanation, string Next, string Url) SetupCatalogDescription(string code)
     {
-        if (!uint.TryParse(code.AsSpan(2), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out uint value)
+        string resultCode = code[..10];
+        if (!uint.TryParse(resultCode.AsSpan(2), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out uint value)
             || WindowsSetupErrorCatalog.Find(value) is not { } reference)
             throw new InvalidOperationException("Setup finding did not have a reviewed error-code reference.");
 
-        return ("KB-SETUP-" + code[2..], "Windows Setup result " + reference.Symbol + " recorded",
-            "A Windows Setup error entry contains " + reference.Symbol + " (" + code + "). " + reference.Meaning,
+        string suffix = code.Length == 18 && TryDescribeSetupExtendCode(code[11..], out string phase, out string operation)
+            ? " The companion extend code " + code[11..] + " records the " + phase + " phase and " + operation + " operation."
+            : "";
+        return ("KB-SETUP-" + code[2..].Replace("-0X", "-", StringComparison.Ordinal), "Windows Setup result " + reference.Symbol + " recorded",
+            "A Windows Setup error entry contains " + reference.Symbol + " (" + resultCode + "). " + reference.Meaning + suffix,
             reference.DiagnosticScope + " Confirm whether a later Setup attempt succeeded before planning a repair.", SetupReference);
+    }
+
+    private static bool TryDescribeSetupExtendCode(string code, out string phase, out string operation)
+    {
+        phase = code.Length == 7 ? code[2] switch
+        {
+            '0' => "unknown",
+            '1' => "downlevel",
+            '2' => "Safe OS",
+            '3' => "first boot",
+            '4' => "OOBE boot",
+            '5' => "uninstall",
+            _ => ""
+        } : "";
+        operation = code.Length == 7 ? code[^2..] switch
+        {
+            "00" => "unknown",
+            "01" => "copy payload",
+            "02" => "download updates",
+            "03" => "install updates",
+            "04" => "install recovery environment",
+            "05" => "install recovery image",
+            "06" => "replicate optional components",
+            "07" => "install drivers",
+            "08" => "prepare Safe OS",
+            "09" => "prepare rollback",
+            "0A" => "prepare first boot",
+            "0B" => "prepare OOBE boot",
+            "0C" => "apply image",
+            "0D" => "migrate data",
+            "0E" => "set product key",
+            "0F" => "add unattended settings",
+            "10" => "add driver",
+            "11" => "enable feature",
+            "12" => "disable feature",
+            "13" => "register asynchronous process",
+            "14" => "register synchronous process",
+            "15" => "create file",
+            "16" => "create registry data",
+            "17" => "boot",
+            "18" => "sysprep",
+            "19" => "OOBE",
+            "1A" => "begin first boot",
+            "1B" => "end first boot",
+            "1C" => "begin OOBE boot",
+            "1D" => "end OOBE boot",
+            "1E" => "pre-OOBE",
+            "1F" => "post-OOBE",
+            "20" => "add provisioning package",
+            _ => ""
+        } : "";
+        return phase.Length > 0 && operation.Length > 0;
     }
 }

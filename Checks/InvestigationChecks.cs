@@ -210,6 +210,16 @@ internal static class InvestigationChecks
         Check(setupCatalogFinding.RuleId == "KB-SETUP-C1900208" && setupCatalogFinding.Title.Contains("MOSETUP_E_COMPAT_INSTALLREQ_BLOCK") &&
             setupCatalogFinding.NextStep.Contains("CompatData", StringComparison.Ordinal) && setupCatalogFinding.Evidence.Single().LineNumber == 1,
             "Setup log analysis routes reviewed Setup codes without selecting a repair");
+        var setupPairFinding = Investigation.Analyze(new("setuperr.log", [setup.Replace("800f081f", "C1900101 - 0x20017")], false)).Findings.Single();
+        Check(setupPairFinding.RuleId == "KB-SETUP-C1900101-20017" && setupPairFinding.Explanation.Contains("Safe OS phase") &&
+            setupPairFinding.Explanation.Contains("boot operation") && setupPairFinding.Evidence.Single().LineNumber == 1,
+            "Setup result and extend-code pairs retain reviewed phase and operation context");
+        foreach (string invalidPair in new[] { "C1900101 - 0x60017", "C1900101 - 0x20117", "C1900101 - 0x20021" })
+        {
+            var fallback = Investigation.Analyze(new("setuperr.log", [setup.Replace("800f081f", invalidPair)], false)).Findings.Single();
+            Check(fallback.RuleId == "KB-SETUP-C1900101" && !fallback.Explanation.Contains("companion extend code"),
+                "Unknown Setup extend codes do not receive invented phase or operation guidance");
+        }
         Check(Investigation.Analyze(new("setupact.log", [setup.Replace("800f081f", "C1900210")], false)).Findings.Single().Severity == "Information",
             "Informational Setup results remain distinct from repair-review findings");
         Check(Investigation.Analyze(new("random.log", [setup], false)).Findings.Count == 0, "Require setup source identity");
@@ -221,7 +231,7 @@ internal static class InvestigationChecks
         catch (OperationCanceledException) { }
         using var json = JsonDocument.Parse(Investigation.ToJson(report));
         Check(json.RootElement.GetProperty("findings").GetArrayLength() == 2 && json.RootElement.GetProperty("source").GetString() == "CBS.log", "Export retains findings and provenance");
-        Console.WriteLine("PASS: CBS/Setup rules, catalog-backed code guidance, negative cases, timestamps, partial input, reference bounds, cancellation, JSON report.");
+        Console.WriteLine("PASS: CBS/Setup rules, catalog-backed result and extend-code guidance, negative cases, timestamps, partial input, reference bounds, cancellation, JSON report.");
     }
     private static void Check(bool value, string message) { if (!value) throw new Exception(message); }
 }
