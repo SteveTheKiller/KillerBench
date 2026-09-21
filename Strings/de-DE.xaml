@@ -1,5 +1,5 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-  <!-- Reused approved family translations. Missing keys use the English base. -->
+  <!-- Complete locale resource set. -->
   <sys:String x:Key="Str_ToolTip_Minimize">Minimieren</sys:String>
   <sys:String x:Key="Str_ToolTip_Close">Schließen</sys:String>
   <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">Tastenkürzel (F1)</sys:String>

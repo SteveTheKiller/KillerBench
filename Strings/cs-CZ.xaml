@@ -53,7 +53,7 @@
   <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Přepnout zdroje (F2)</sys:String>
   <sys:String x:Key="Str_ToolTip_Toggle_activity_log_F3">Přepnout deník aktivit (F3)</sys:String>
   <sys:String x:Key="Str_ToolTip_Choose_app_theme">Vybrat vzhled aplikace</sys:String>
-  <sys:String x:Key="Str_Text_TEXT_LOG_INSPECTOR">WINDOWS UPDATE / LOG WORKBENCH</sys:String>
+  <sys:String x:Key="Str_Text_TEXT_LOG_INSPECTOR">PRACOVIŠTĚ WINDOWS UPDATE / PROTOKOLŮ</sys:String>
   <sys:String x:Key="Str_Text_SAMPLE_MODE">REŽIM UKÁZKY</sys:String>
   <sys:String x:Key="Str_Content_Open_log">Otevřít log</sys:String>
   <sys:String x:Key="Str_ToolTip_Open_text_log_Ctrl_O">Otevřít textový log (Ctrl+O)</sys:String>
@@ -184,7 +184,7 @@
   <sys:String x:Key="Str_Depot_AdministratorReview">Kontrola administrátora</sys:String>
   <sys:String x:Key="Str_Depot_Cleanup">Úklid</sys:String>
   <sys:String x:Key="Str_Depot_Taskbar">Panel úloh</sys:String>
-  <sys:String x:Key="Str_Depot_StartMenu">Start menu</sys:String>
+  <sys:String x:Key="Str_Depot_StartMenu">Nabídka Start</sys:String>
   <sys:String x:Key="Str_Depot_Notifications">Oznámení</sys:String>
   <sys:String x:Key="Str_Depot_Boundary">Pouze kontrola. Žádné stahování, instalace, účet, aktualizace, úklid, zásada, registr, služba, profil nebo restartování.</sys:String>
   <sys:String x:Key="Str_Beam_Description">Vytvořit kontrolu jednoho Intune Win32 balíčku a jeho explicitních cílových zařízení. GO ověřuje pouze plán.</sys:String>
@@ -292,7 +292,7 @@
   <sys:String x:Key="Str_EventLog_Boundary">GO vždy kontroluje všechny čtyři kanály. Tato možnost mění pouze přesně vybraný zakázaný, nespravovaný kanál a ověřuje, že všechny ostatní hlášené nastavení kanálů zůstalo nezměněno.</sys:String>
   <sys:String x:Key="Str_Network_Hostname">Vyhledávání názvu hostitele (volitelné)</sys:String>
   <sys:String x:Key="Str_Network_Destination">Cílový TCP (volitelné)</sys:String>
-  <sys:String x:Key="Str_Network_Port">TCP port</sys:String>
+  <sys:String x:Key="Str_Network_Port">Port TCP</sys:String>
   <sys:String x:Key="Str_Network_Timeout">Časový limit na vyhledávání nebo připojení (sekundy)</sys:String>
   <sys:String x:Key="Str_Network_ConnectionBoundary">Zadejte jak cíl, tak port pro otestování připojení. Nejsou odesílána žádná aplikační data.</sys:String>
   <sys:String x:Key="Str_Network_DnsBoundary">Nechte prázdné pro přeskočení. Použije se váš nakonfigurovaný resolver; žádná nastavení DNS nejsou změněna.</sys:String>
@@ -543,7 +543,7 @@
   <sys:String x:Key="Str_Debloat_DisplayBattery60">Zobrazení baterie: 60</sys:String>
   <sys:String x:Key="Str_Debloat_DisplayBattery120">Zobrazení baterie: 120</sys:String>
   <sys:String x:Key="Str_Debloat_HpSoftware">Software HP</sys:String>
-  <sys:String x:Key="Str_Debloat_DellSoftware">Dell software</sys:String>
+  <sys:String x:Key="Str_Debloat_DellSoftware">Software Dell</sys:String>
   <sys:String x:Key="Str_Debloat_AsusAcerSoftware">Software ASUS a Acer</sys:String>
   <sys:String x:Key="Str_Debloat_LenovoSoftware">Software Lenovo</sys:String>
   <sys:String x:Key="Str_Installer_ProductCodeTip">Příklad: {00000000-0000-0000-0000-000000000000}</sys:String>
