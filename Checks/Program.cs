@@ -1367,7 +1367,17 @@ internal static class Program
             foreach (var locale in Enum.GetValues<KillerBench.Services.Locale>())
             {
                 KillerBench.Services.LocaleManager.Apply(locale);
-                Require((string)application.FindResource("Str_Content_Open_log") == "Open log", "English fallback across all locales");
+                var openLog = (string)application.FindResource("Str_Content_Open_log");
+                Require(locale == KillerBench.Services.Locale.EnUS
+                        ? openLog == "Open log"
+                        : openLog != "Open log",
+                    "Every non-English locale overrides ordinary UI text");
+                if (locale != KillerBench.Services.Locale.EnUS)
+                {
+                    var dictionaries = application.Resources.MergedDictionaries;
+                    Require(dictionaries.Count > 4 && dictionaries[4].Count == dictionaries[3].Count,
+                        "Every non-English locale has complete resource coverage");
+                }
             }
             KillerBench.Services.LocaleManager.Apply(KillerBench.Services.Locale.EnUS);
             Require(((Border)window.FindName("LeftPanel")).Style == window.FindResource("Panel"), "Tool sidebar uses the family pane style");
