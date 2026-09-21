@@ -547,7 +547,7 @@
               <TextBlock Text="Unchecked runs the normal firewall diagnosis. Managed, enabled, missing or ambiguous profile settings are preserved. Rules, default actions and logging settings are not changed." Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="PrivacySettings" Visibility="Collapsed" Margin="0,0,0,6">
-              <TextBlock Text="Choose areas to inspect. Separate guarded controls are available for Clipboard and supported account settings, including camera and microphone access." Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,0,0,4"/>
+              <TextBlock Text="{DynamicResource Str_Privacy_Description}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,0,0,4"/>
               <ListBox x:Name="PrivacyAreas" ItemsSource="{x:Static core:PrivacyCatalog.All}" SelectionMode="Multiple" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" MaxHeight="140" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Privacy areas to inspect">
                 <ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
                 <ListBox.ItemTemplate><DataTemplate>
@@ -556,52 +556,52 @@
               </ListBox>
               <WrapPanel Margin="0,4,0,0">
                 <StackPanel Margin="0,0,8,0">
-                  <TextBlock Text="Clipboard history"/>
+                  <TextBlock Text="{DynamicResource Str_Privacy_ClipboardHistory}"/>
                   <ComboBox x:Name="PrivacyClipboardHistoryChoice" SelectedIndex="0" Width="170" SelectionChanged="OnPrivacyClipboardHistoryChanged" AutomationProperties.Name="Clipboard history action">
-                    <ComboBoxItem Content="Inspect only" Tag="Inspect"/>
-                    <ComboBoxItem Content="Turn on" Tag="On"/>
-                    <ComboBoxItem Content="Turn off" Tag="Off"/>
+                    <ComboBoxItem Content="{DynamicResource Str_Privacy_InspectOnly}" Tag="Inspect"/>
+                    <ComboBoxItem Content="{DynamicResource Str_Privacy_TurnOn}" Tag="On"/>
+                    <ComboBoxItem Content="{DynamicResource Str_Privacy_TurnOff}" Tag="Off"/>
                   </ComboBox>
                 </StackPanel>
-                <CheckBox x:Name="PrivacyClipboardHistoryApply" Content="Apply when I press GO" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+                <CheckBox x:Name="PrivacyClipboardHistoryApply" Content="{DynamicResource Str_Privacy_Apply}" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
               </WrapPanel>
               <WrapPanel Margin="0,6,0,0">
                 <StackPanel Margin="0,0,8,0">
-                  <TextBlock Text="Privacy setting"/>
+                  <TextBlock Text="{DynamicResource Str_Privacy_Setting}"/>
                   <ComboBox x:Name="PrivacyBooleanSettingChoice" ItemsSource="{x:Static core:PrivacyBooleanSettingCatalog.All}" DisplayMemberPath="Title" SelectedIndex="0" Width="170" SelectionChanged="OnPrivacyBooleanSettingChanged" AutomationProperties.Name="Privacy setting"/>
                 </StackPanel>
                 <StackPanel Margin="0,0,8,0">
-                  <TextBlock Text="Action"/>
+                  <TextBlock Text="{DynamicResource Str_Privacy_Action}"/>
                   <ComboBox x:Name="PrivacyBooleanActionChoice" SelectedIndex="0" Width="120" SelectionChanged="OnPrivacyBooleanSettingChanged" AutomationProperties.Name="Privacy setting action">
-                    <ComboBoxItem Content="Inspect only" Tag="Inspect"/>
-                    <ComboBoxItem Content="Turn on" Tag="On"/>
-                    <ComboBoxItem Content="Turn off" Tag="Off"/>
+                    <ComboBoxItem Content="{DynamicResource Str_Privacy_InspectOnly}" Tag="Inspect"/>
+                    <ComboBoxItem Content="{DynamicResource Str_Privacy_TurnOn}" Tag="On"/>
+                    <ComboBoxItem Content="{DynamicResource Str_Privacy_TurnOff}" Tag="Off"/>
                   </ComboBox>
                 </StackPanel>
-                <CheckBox x:Name="PrivacyBooleanApply" Content="Apply when I press GO" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+                <CheckBox x:Name="PrivacyBooleanApply" Content="{DynamicResource Str_Privacy_Apply}" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
               </WrapPanel>
-              <TextBlock Text="Applying changes only this account. Matching policy, machine-wide device access, per-application exceptions, diagnostic collection and stored clipboard contents are preserved. Verified journals support guarded undo." Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,3,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Privacy_Boundary}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,3,0,0"/>
             </StackPanel>
             <StackPanel x:Name="BitLockerSettings" Visibility="Collapsed" Margin="0,0,0,6">
-              <TextBlock Text="GO inspects by default. Backup, encryption and protection resume each require the matching confirmation below." Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,0,0,4"/>
+              <TextBlock Text="{DynamicResource Str_BitLocker_Description}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,0,0,4"/>
               <WrapPanel>
-                <StackPanel Margin="0,0,8,4"><TextBlock Text="Volume"/><TextBox x:Name="BitLockerVolume" Text="C:" TextChanged="OnBitLockerBackupChanged" Width="60" AutomationProperties.Name="BitLocker volume"/></StackPanel>
-                <StackPanel Margin="0,0,8,4"><TextBlock Text="Operation"/><ComboBox x:Name="BitLockerOperationChoice" ItemsSource="{x:Static core:BitLockerChoices.Operations}" SelectedIndex="0" SelectionChanged="OnBitLockerBackupChanged" Width="160" AutomationProperties.Name="BitLocker operation"/></StackPanel>
-                <StackPanel Margin="0,0,8,4"><TextBlock Text="Encryption"/><ComboBox x:Name="BitLockerEncryptionChoice" ItemsSource="{x:Static core:BitLockerChoices.EncryptionMethods}" SelectedIndex="2" Width="140" AutomationProperties.Name="BitLocker encryption method"/></StackPanel>
-                <StackPanel Margin="0,0,8,4"><TextBlock Text="Recovery backup"/><ComboBox x:Name="BitLockerDestination" ItemsSource="{x:Static core:BitLockerChoices.Destinations}" SelectedIndex="0" SelectionChanged="OnBitLockerBackupChanged" Width="160" AutomationProperties.Name="Recovery backup destination"/></StackPanel>
-                <CheckBox x:Name="BitLockerUsedSpace" Content="Used space only" VerticalAlignment="Center"/>
+                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_Volume}"/><TextBox x:Name="BitLockerVolume" Text="C:" TextChanged="OnBitLockerBackupChanged" Width="60" AutomationProperties.Name="BitLocker volume"/></StackPanel>
+                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_Operation}"/><ComboBox x:Name="BitLockerOperationChoice" ItemsSource="{x:Static core:BitLockerChoices.Operations}" SelectedIndex="0" SelectionChanged="OnBitLockerBackupChanged" Width="160" AutomationProperties.Name="BitLocker operation"/></StackPanel>
+                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_Encryption}"/><ComboBox x:Name="BitLockerEncryptionChoice" ItemsSource="{x:Static core:BitLockerChoices.EncryptionMethods}" SelectedIndex="2" Width="140" AutomationProperties.Name="BitLocker encryption method"/></StackPanel>
+                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_RecoveryBackup}"/><ComboBox x:Name="BitLockerDestination" ItemsSource="{x:Static core:BitLockerChoices.Destinations}" SelectedIndex="0" SelectionChanged="OnBitLockerBackupChanged" Width="160" AutomationProperties.Name="Recovery backup destination"/></StackPanel>
+                <CheckBox x:Name="BitLockerUsedSpace" Content="{DynamicResource Str_BitLocker_UsedSpace}" VerticalAlignment="Center"/>
               </WrapPanel>
-              <TextBlock Text="Backup file (for File destination)"/>
+              <TextBlock Text="{DynamicResource Str_BitLocker_BackupFile}"/>
               <DockPanel>
-                <Button DockPanel.Dock="Right" Content="Browse..." Click="OnChooseRecoveryBackup" Margin="4,0,0,0" AutomationProperties.Name="Choose recovery backup file"/>
-                <TextBox x:Name="BitLockerBackupPath" TextChanged="OnBitLockerBackupChanged" ToolTip="For file backup, enter a full path outside the protected volume." AutomationProperties.Name="Recovery backup file path"/>
+                <Button DockPanel.Dock="Right" Content="{DynamicResource Str_BitLocker_Browse}" Click="OnChooseRecoveryBackup" Margin="4,0,0,0" AutomationProperties.Name="Choose recovery backup file"/>
+                <TextBox x:Name="BitLockerBackupPath" TextChanged="OnBitLockerBackupChanged" ToolTip="{DynamicResource Str_BitLocker_BackupPathTip}" AutomationProperties.Name="Recovery backup file path"/>
               </DockPanel>
-              <Button Content="Find recovery protectors" Click="OnFindRecoveryProtectors" Margin="0,4,0,4"/>
+              <Button Content="{DynamicResource Str_BitLocker_FindProtectors}" Click="OnFindRecoveryProtectors" Margin="0,4,0,4"/>
               <ComboBox x:Name="BitLockerProtectorChoice" SelectionChanged="OnBitLockerBackupChanged" AutomationProperties.Name="Existing recovery protector"/>
-              <CheckBox x:Name="BitLockerBackupConsent" Content="Write selected recovery backup when I press GO" Margin="0,4,0,4"/>
-              <CheckBox x:Name="BitLockerEncryptConsent" Content="Back up the selected recovery key, then start encryption when I press GO" Click="OnBitLockerEncryptConsentChanged" Margin="0,0,0,4"/>
-              <CheckBox x:Name="BitLockerResumeConsent" Content="Resume protection on this fully encrypted volume when I press GO" Click="OnBitLockerResumeConsentChanged" Margin="0,0,0,4"/>
-              <TextBlock Text="Encryption requires an existing TPM protector, the selected recovery-password protector and a new verified backup file outside the protected volume. Existing protectors and managed policy are preserved." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+              <CheckBox x:Name="BitLockerBackupConsent" Content="{DynamicResource Str_BitLocker_BackupConsent}" Margin="0,4,0,4"/>
+              <CheckBox x:Name="BitLockerEncryptConsent" Content="{DynamicResource Str_BitLocker_EncryptConsent}" Click="OnBitLockerEncryptConsentChanged" Margin="0,0,0,4"/>
+              <CheckBox x:Name="BitLockerResumeConsent" Content="{DynamicResource Str_BitLocker_ResumeConsent}" Click="OnBitLockerResumeConsentChanged" Margin="0,0,0,4"/>
+              <TextBlock Text="{DynamicResource Str_BitLocker_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
             </StackPanel>
             <TextBlock x:Name="ComponentCleanupSettings" Visibility="Collapsed" Margin="0,0,0,6" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Text="GO checks whether Windows recommends cleanup. Optional cleanup removes superseded components immediately; no automatic undo or restart. Reclaimed space is not measured."/>
             <StackPanel x:Name="TaskSettings" Visibility="Collapsed" Margin="0,0,0,6">

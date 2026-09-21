@@ -1,5 +1,6 @@
 # Changelog
 
+- Route Privacy and BitLocker review, confirmation and preservation boundaries through localizable string resources.
 - Route Time and Profiles review, confirmation, backup and recovery controls through localizable string resources.
 - Route BITS, Printing and Installer review, consent and safety controls through localizable string resources.
 - Route DEBLOAT review areas, guarded power actions and safety boundary through localizable string resources.

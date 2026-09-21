@@ -248,4 +248,27 @@
   <sys:String x:Key="Str_Profile_CheckInterrupted">Check interrupted backup</sys:String>
   <sys:String x:Key="Str_Profile_CheckInterruptedTip">Verify a pending backup without copying files again</sys:String>
   <sys:String x:Key="Str_Profile_VerificationBoundary">Verification compares the complete regular-file set, lengths and SHA-256 hashes. It does not prove permissions, alternate streams, encrypted files, application state or restore behavior.</sys:String>
+  <sys:String x:Key="Str_Privacy_Description">Choose areas to inspect. Separate guarded controls are available for Clipboard and supported account settings, including camera and microphone access.</sys:String>
+  <sys:String x:Key="Str_Privacy_ClipboardHistory">Clipboard history</sys:String>
+  <sys:String x:Key="Str_Privacy_InspectOnly">Inspect only</sys:String>
+  <sys:String x:Key="Str_Privacy_TurnOn">Turn on</sys:String>
+  <sys:String x:Key="Str_Privacy_TurnOff">Turn off</sys:String>
+  <sys:String x:Key="Str_Privacy_Apply">Apply when I press GO</sys:String>
+  <sys:String x:Key="Str_Privacy_Setting">Privacy setting</sys:String>
+  <sys:String x:Key="Str_Privacy_Action">Action</sys:String>
+  <sys:String x:Key="Str_Privacy_Boundary">Applying changes only this account. Matching policy, machine-wide device access, per-application exceptions, diagnostic collection and stored clipboard contents are preserved. Verified journals support guarded undo.</sys:String>
+  <sys:String x:Key="Str_BitLocker_Description">GO inspects by default. Backup, encryption and protection resume each require the matching confirmation below.</sys:String>
+  <sys:String x:Key="Str_BitLocker_Volume">Volume</sys:String>
+  <sys:String x:Key="Str_BitLocker_Operation">Operation</sys:String>
+  <sys:String x:Key="Str_BitLocker_Encryption">Encryption</sys:String>
+  <sys:String x:Key="Str_BitLocker_RecoveryBackup">Recovery backup</sys:String>
+  <sys:String x:Key="Str_BitLocker_UsedSpace">Used space only</sys:String>
+  <sys:String x:Key="Str_BitLocker_BackupFile">Backup file (for File destination)</sys:String>
+  <sys:String x:Key="Str_BitLocker_Browse">Browse...</sys:String>
+  <sys:String x:Key="Str_BitLocker_BackupPathTip">For file backup, enter a full path outside the protected volume.</sys:String>
+  <sys:String x:Key="Str_BitLocker_FindProtectors">Find recovery protectors</sys:String>
+  <sys:String x:Key="Str_BitLocker_BackupConsent">Write selected recovery backup when I press GO</sys:String>
+  <sys:String x:Key="Str_BitLocker_EncryptConsent">Back up the selected recovery key, then start encryption when I press GO</sys:String>
+  <sys:String x:Key="Str_BitLocker_ResumeConsent">Resume protection on this fully encrypted volume when I press GO</sys:String>
+  <sys:String x:Key="Str_BitLocker_Boundary">Encryption requires an existing TPM protector, the selected recovery-password protector and a new verified backup file outside the protected volume. Existing protectors and managed policy are preserved.</sys:String>
 </ResourceDictionary>

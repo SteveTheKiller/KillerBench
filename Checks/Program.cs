@@ -119,6 +119,9 @@ internal static class Program
             Require(window.FindName("TimeRecoverButton") is Button { Content: "Check interrupted time change" } &&
                 window.FindName("CopyProfileBackupButton") is Button { Content: "Copy and verify" },
                 "Time and Profiles controls resolve their localizable English resources");
+            Require(window.FindName("PrivacyBooleanApply") is CheckBox { Content: "Apply when I press GO" } &&
+                window.FindName("BitLockerEncryptConsent") is CheckBox { Content: "Back up the selected recovery key, then start encryption when I press GO" },
+                "Privacy and BitLocker safety controls resolve their localizable English resources");
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
                 "Desktop subtitle identifies the full maintenance scope");
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
