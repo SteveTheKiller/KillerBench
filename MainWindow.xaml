@@ -427,33 +427,33 @@
             </StackPanel>
             <StackPanel x:Name="CleanupSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <WrapPanel>
-                <CheckBox x:Name="CleanupUserTemp" Content="Current user temporary files" IsChecked="True" Margin="0,0,14,0"/>
-                <CheckBox x:Name="CleanupWindowsTemp" Content="Windows temporary files" Margin="0,0,14,0"/>
-                <CheckBox x:Name="CleanupSystemTemp" Content="Windows SystemTemp files" Margin="0,0,14,0" ToolTip="The standard Windows SystemTemp folder only. Recent, protected and in-use files are skipped. Administrator access is normally required."/>
-                <CheckBox x:Name="CleanupShaderCaches" Content="Current user shader caches" ToolTip="D3D, AMD DxCache and NVIDIA GLCache. Rebuilding caches may cause initial rendering delays. In-use and recent files are skipped."/>
-                <CheckBox x:Name="CleanupBrowserCaches" Content="Current user browser caches" Margin="14,0,0,0" ToolTip="Default Chrome, Edge, Brave, Firefox and Opera cache folders. Cookies, logins and bookmarks are outside these targets. Custom locations are not searched."/>
-                <CheckBox x:Name="CleanupOfficeCaches" Content="Current user Office caches" Margin="14,0,0,0" ToolTip="Standard OfficeFileCache and OTele folders only. Open or recent files are skipped. Office may rebuild cache files after cleanup."/>
-                <CheckBox x:Name="CleanupThumbnailCache" Content="Current user thumbnail cache" Margin="14,0,0,0" ToolTip="Windows thumbnail database files only. Explorer history, recent items and saved searches are excluded. Windows rebuilds thumbnails as folders are viewed."/>
-                <CheckBox x:Name="CleanupIconCache" Content="Current user icon cache" Margin="14,0,0,0" ToolTip="Windows icon database files only. Explorer history, recent items and saved searches are excluded. Windows rebuilds icons as needed."/>
-                <CheckBox x:Name="CleanupErrorReports" Content="Archived Windows error reports" Margin="14,0,0,0" ToolTip="Current-user Windows Error Reporting archive and queue only. Removing these files discards local historical crash evidence."/>
-                <CheckBox x:Name="CleanupCrashDumps" Content="Application crash dumps" Margin="14,0,0,0" ToolTip="Current-user CrashDumps folder only. Removing dumps discards diagnostic evidence that may be needed to investigate application failures."/>
-                <CheckBox x:Name="CleanupWindowsMinidumps" Content="Windows crash minidumps" Margin="14,0,0,0" ToolTip="Windows Minidump folder only. Administrator access is normally required. MEMORY.DMP is excluded. Removing minidumps discards diagnostic evidence."/>
-                <CheckBox x:Name="CleanupDeliveryOptimization" Content="Delivery Optimization cache" Margin="14,0,0,0" ToolTip="Standard Windows Delivery Optimization cache only. Recent, protected and in-use files are skipped. Removed content may need to be downloaded again."/>
-                <CheckBox x:Name="CleanupRecycleBin" Content="Current user Recycle Bin" Margin="14,0,0,0" ToolTip="All-or-nothing across the current Windows shell Recycle Bin. The age setting does not apply. Execution is blocked when the reported item count exceeds the selected limit."/>
+                <CheckBox x:Name="CleanupUserTemp" Content="{DynamicResource Str_Cleanup_UserTemp}" IsChecked="True" Margin="0,0,14,0"/>
+                <CheckBox x:Name="CleanupWindowsTemp" Content="{DynamicResource Str_Cleanup_WindowsTemp}" Margin="0,0,14,0"/>
+                <CheckBox x:Name="CleanupSystemTemp" Content="{DynamicResource Str_Cleanup_SystemTemp}" Margin="0,0,14,0" ToolTip="{DynamicResource Str_Cleanup_SystemTempTip}"/>
+                <CheckBox x:Name="CleanupShaderCaches" Content="{DynamicResource Str_Cleanup_ShaderCaches}" ToolTip="{DynamicResource Str_Cleanup_ShaderCachesTip}"/>
+                <CheckBox x:Name="CleanupBrowserCaches" Content="{DynamicResource Str_Cleanup_BrowserCaches}" Margin="14,0,0,0" ToolTip="{DynamicResource Str_Cleanup_BrowserCachesTip}"/>
+                <CheckBox x:Name="CleanupOfficeCaches" Content="{DynamicResource Str_Cleanup_OfficeCaches}" Margin="14,0,0,0" ToolTip="{DynamicResource Str_Cleanup_OfficeCachesTip}"/>
+                <CheckBox x:Name="CleanupThumbnailCache" Content="{DynamicResource Str_Cleanup_ThumbnailCache}" Margin="14,0,0,0" ToolTip="{DynamicResource Str_Cleanup_ThumbnailCacheTip}"/>
+                <CheckBox x:Name="CleanupIconCache" Content="{DynamicResource Str_Cleanup_IconCache}" Margin="14,0,0,0" ToolTip="{DynamicResource Str_Cleanup_IconCacheTip}"/>
+                <CheckBox x:Name="CleanupErrorReports" Content="{DynamicResource Str_Cleanup_ErrorReports}" Margin="14,0,0,0" ToolTip="{DynamicResource Str_Cleanup_ErrorReportsTip}"/>
+                <CheckBox x:Name="CleanupCrashDumps" Content="{DynamicResource Str_Cleanup_CrashDumps}" Margin="14,0,0,0" ToolTip="{DynamicResource Str_Cleanup_CrashDumpsTip}"/>
+                <CheckBox x:Name="CleanupWindowsMinidumps" Content="{DynamicResource Str_Cleanup_WindowsMinidumps}" Margin="14,0,0,0" ToolTip="{DynamicResource Str_Cleanup_WindowsMinidumpsTip}"/>
+                <CheckBox x:Name="CleanupDeliveryOptimization" Content="{DynamicResource Str_Cleanup_DeliveryOptimization}" Margin="14,0,0,0" ToolTip="{DynamicResource Str_Cleanup_DeliveryOptimizationTip}"/>
+                <CheckBox x:Name="CleanupRecycleBin" Content="{DynamicResource Str_Cleanup_RecycleBin}" Margin="14,0,0,0" ToolTip="{DynamicResource Str_Cleanup_RecycleBinTip}"/>
               </WrapPanel>
               <WrapPanel Margin="0,6,0,0">
-                <TextBlock Text="Minimum age (days)" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <TextBlock Text="{DynamicResource Str_Cleanup_MinimumAge}" VerticalAlignment="Center" Margin="0,0,8,0"/>
                 <Slider x:Name="CleanupAge" Minimum="1" Maximum="365" Value="7" TickFrequency="1" IsSnapToTickEnabled="True" Width="180" AutomationProperties.Name="Minimum cleanup age in days"/>
                 <TextBlock Text="{Binding Value, ElementName=CleanupAge, StringFormat={}{0:0}}" VerticalAlignment="Center" Margin="8,0,0,0"/>
               </WrapPanel>
-              <TextBlock Text="Maximum files per target" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Cleanup_MaximumFiles}" Margin="0,6,0,0"/>
               <WrapPanel><Slider x:Name="CleanupLimit" Minimum="100" Maximum="10000" Value="100" TickFrequency="100" IsSnapToTickEnabled="True" Width="180" AutomationProperties.Name="Maximum cleanup files per target"/>
                 <TextBlock Text="{Binding Value, ElementName=CleanupLimit, StringFormat={}{0:N0}}" VerticalAlignment="Center" Margin="8,0,0,0"/></WrapPanel>
-              <TextBlock Text="Previous Windows installation" Foreground="{DynamicResource DimTextBrush}" Margin="0,8,0,0"/>
-              <CheckBox x:Name="CleanupPreviousWindows" Content="Remove Windows rollback capability and let Windows clean the previous installation" Checked="OnPreviousWindowsChanged" Unchecked="OnPreviousWindowsChanged" ToolTip="Runs separately from file cleanup. Uses the supported DISM rollback-removal request and never recursively deletes Windows.old."/>
-              <CheckBox x:Name="CleanupPreviousWindowsBackup" Content="I backed up any files and settings I need from the previous installation" Margin="14,0,0,0" IsEnabled="{Binding IsChecked, ElementName=CleanupPreviousWindows}"/>
-              <CheckBox x:Name="CleanupRemove" Content="Perform the selected permanent cleanup after fresh checks" Margin="0,6,0,0"/>
-              <TextBlock Text="Unchecked: preview only. Permanent cleanup cannot be undone. Previous Windows installation removal must run by itself and requires backup confirmation." Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Cleanup_PreviousWindows}" Foreground="{DynamicResource DimTextBrush}" Margin="0,8,0,0"/>
+              <CheckBox x:Name="CleanupPreviousWindows" Content="{DynamicResource Str_Cleanup_RemovePreviousWindows}" Checked="OnPreviousWindowsChanged" Unchecked="OnPreviousWindowsChanged" ToolTip="{DynamicResource Str_Cleanup_RemovePreviousWindowsTip}"/>
+              <CheckBox x:Name="CleanupPreviousWindowsBackup" Content="{DynamicResource Str_Cleanup_PreviousWindowsBackup}" Margin="14,0,0,0" IsEnabled="{Binding IsChecked, ElementName=CleanupPreviousWindows}"/>
+              <CheckBox x:Name="CleanupRemove" Content="{DynamicResource Str_Cleanup_Remove}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Cleanup_Boundary}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="UpdateSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="Update source"/>

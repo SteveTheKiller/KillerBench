@@ -137,6 +137,10 @@ internal static class Program
                 window.FindName("TaskRegistrationConsent") is CheckBox { Content: "Create this disabled Local System task after fresh checks" } &&
                 window.FindName("TaskRegistrationRecoveryButton") is Button { Content: "Check interrupted registration" },
                 "Scheduled task draft and registration controls resolve their localizable English resources");
+            Require(window.FindName("CleanupSystemTemp") is CheckBox { Content: "Windows SystemTemp files" } &&
+                window.FindName("CleanupPreviousWindows") is CheckBox { Content: "Remove Windows rollback capability and let Windows clean the previous installation" } &&
+                window.FindName("CleanupRemove") is CheckBox { Content: "Perform the selected permanent cleanup after fresh checks" },
+                "Cleanup targets and permanent-action controls resolve their localizable English resources");
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
                 "Desktop subtitle identifies the full maintenance scope");
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
