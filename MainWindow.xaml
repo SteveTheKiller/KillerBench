@@ -266,46 +266,46 @@
               <TextBlock Text="{DynamicResource Str_Orca_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
             </StackPanel>
             <StackPanel x:Name="DepotSettings" Visibility="Collapsed" Margin="0,0,0,8">
-              <TextBlock Text="Select applications and configuration groups for a provisioning review. Nothing is selected or installed automatically." TextWrapping="Wrap"/>
-              <TextBlock Text="Applications" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Depot_Description}" TextWrapping="Wrap"/>
+              <TextBlock Text="{DynamicResource Str_Common_Applications}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
               <WrapPanel>
                 <CheckBox x:Name="DepotMicrosoft365" Content="Microsoft 365"/><CheckBox x:Name="DepotOneDrive" Content="OneDrive"/>
                 <CheckBox x:Name="DepotTeams" Content="Teams"/><CheckBox x:Name="DepotChrome" Content="Chrome"/>
                 <CheckBox x:Name="DepotAcrobat" Content="Acrobat Reader"/><CheckBox x:Name="DepotZoom" Content="Zoom"/>
                 <CheckBox x:Name="DepotSevenZip" Content="7-Zip"/>
               </WrapPanel>
-              <TextBlock Text="Configuration" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Common_Configuration}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
               <WrapPanel>
-                <CheckBox x:Name="DepotUpdates" Content="Windows updates"/><CheckBox x:Name="DepotComputerName" Content="Computer name"/>
-                <CheckBox x:Name="DepotLocalAdmin" Content="Local administrator"/><CheckBox x:Name="DepotAdminReview" Content="Administrator review"/>
-                <CheckBox x:Name="DepotExtensions" Content="Browser extensions"/><CheckBox x:Name="DepotCleanup" Content="Cleanup"/>
+                <CheckBox x:Name="DepotUpdates" Content="{DynamicResource Str_Depot_WindowsUpdates}"/><CheckBox x:Name="DepotComputerName" Content="{DynamicResource Str_Depot_ComputerName}"/>
+                <CheckBox x:Name="DepotLocalAdmin" Content="{DynamicResource Str_Depot_LocalAdministrator}"/><CheckBox x:Name="DepotAdminReview" Content="{DynamicResource Str_Depot_AdministratorReview}"/>
+                <CheckBox x:Name="DepotExtensions" Content="{DynamicResource Str_Apps_ReviewExtensions}"/><CheckBox x:Name="DepotCleanup" Content="{DynamicResource Str_Depot_Cleanup}"/>
                 <CheckBox x:Name="DepotEdge" Content="Edge"/><CheckBox x:Name="DepotPrivacy" Content="Privacy"/>
-                <CheckBox x:Name="DepotTaskbar" Content="Taskbar"/><CheckBox x:Name="DepotStartMenu" Content="Start menu"/>
-                <CheckBox x:Name="DepotNotifications" Content="Notifications"/>
+                <CheckBox x:Name="DepotTaskbar" Content="{DynamicResource Str_Depot_Taskbar}"/><CheckBox x:Name="DepotStartMenu" Content="{DynamicResource Str_Depot_StartMenu}"/>
+                <CheckBox x:Name="DepotNotifications" Content="{DynamicResource Str_Depot_Notifications}"/>
               </WrapPanel>
-              <TextBlock Text="Review only. No download, installation, account, update, cleanup, policy, registry, service, profile or restart action." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Depot_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
             </StackPanel>
             <StackPanel x:Name="BeamSettings" Visibility="Collapsed" Margin="0,0,0,8">
-              <TextBlock Text="Build a review of one Intune Win32 package and its explicit device targets. GO validates the plan only." TextWrapping="Wrap"/>
-              <TextBlock Text="Installer source" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Beam_Description}" TextWrapping="Wrap"/>
+              <TextBlock Text="{DynamicResource Str_Beam_InstallerSource}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
               <ComboBox x:Name="BeamSourceKindChoice" SelectedIndex="0" AutomationProperties.Name="BEAM installer source type">
-                <ComboBoxItem Content="Local EXE or MSI path"/><ComboBoxItem Content="HTTPS download URL"/>
+                <ComboBoxItem Content="{DynamicResource Str_Beam_LocalSource}"/><ComboBoxItem Content="{DynamicResource Str_Beam_HttpsSource}"/>
               </ComboBox>
               <TextBox x:Name="BeamSource" Margin="0,4,0,0" MaxLength="32768" AutomationProperties.Name="BEAM installer path or HTTPS URL"/>
               <ComboBox x:Name="BeamInstallerTypeChoice" SelectedIndex="0" Margin="0,4,0,0" AutomationProperties.Name="BEAM installer type">
                 <ComboBoxItem Content="EXE"/><ComboBoxItem Content="MSI"/>
               </ComboBox>
-              <TextBlock Text="App name" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Beam_AppName}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
               <TextBox x:Name="BeamAppName" MaxLength="256" AutomationProperties.Name="BEAM Intune app name"/>
-              <TextBlock Text="Publisher" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Beam_Publisher}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
               <TextBox x:Name="BeamPublisher" MaxLength="256" Text="BEAM" AutomationProperties.Name="BEAM publisher"/>
-              <TextBlock Text="Install switches" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
-              <TextBox x:Name="BeamInstallSwitches" MaxLength="2048" AutomationProperties.Name="BEAM install switches" ToolTip="MSI uses /qn when this is blank. EXE runs without switches when blank."/>
-              <TextBlock Text="Target hostnames" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
-              <TextBox x:Name="BeamTargets" MaxLength="32000" AutomationProperties.Name="BEAM comma separated target hostnames" ToolTip="Separate hostnames with commas. IP addresses cannot match Intune devices."/>
-              <TextBlock Text="Tenant domain" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
-              <TextBox x:Name="BeamTenantDomain" MaxLength="253" AutomationProperties.Name="BEAM tenant domain" ToolTip="Example: contoso.onmicrosoft.com. No administrator email or credential is retained."/>
-              <TextBlock Text="Review only. No sign-in, download, packaging, upload, application or group change, assignment, device sync or installation." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Beam_InstallSwitches}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBox x:Name="BeamInstallSwitches" MaxLength="2048" AutomationProperties.Name="BEAM install switches" ToolTip="{DynamicResource Str_Beam_InstallSwitchesTip}"/>
+              <TextBlock Text="{DynamicResource Str_Beam_TargetHostnames}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBox x:Name="BeamTargets" MaxLength="32000" AutomationProperties.Name="BEAM comma separated target hostnames" ToolTip="{DynamicResource Str_Beam_TargetHostnamesTip}"/>
+              <TextBlock Text="{DynamicResource Str_Beam_TenantDomain}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBox x:Name="BeamTenantDomain" MaxLength="253" AutomationProperties.Name="BEAM tenant domain" ToolTip="{DynamicResource Str_Beam_TenantDomainTip}"/>
+              <TextBlock Text="{DynamicResource Str_Beam_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
             </StackPanel>
             <StackPanel x:Name="DebloatSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="Choose exactly what to review, then press GO. Nothing is selected automatically." TextWrapping="Wrap"/>
