@@ -156,6 +156,10 @@ internal static class Program
                 window.FindName("ConsoleViewButton") is Button { Content: "Raw output" } &&
                 window.FindName("RepairConsent") is CheckBox { Content: "Run this repair on this PC" },
                 "Advanced selection, knowledge, session and repair controls resolve their localizable English resources");
+            Require(window.FindName("CategoryTitle") is TextBlock { Text: "Diagnostics" } &&
+                window.FindName("ScanLight") is Border { ToolTip: "Ready. No scan performed." } &&
+                window.FindName("AboutDatabaseUpdate") is Button { Content: "Update databases" },
+                "Shell status and About controls resolve their localizable English resources");
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
                 "Desktop subtitle identifies the full maintenance scope");
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;

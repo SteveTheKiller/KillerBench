@@ -1,5 +1,6 @@
 # Changelog
 
+- Route shell status and About metadata controls through localizable string resources.
 - Route advanced check selection, knowledge tools, session views and manual repair consent through localizable string resources.
 - Route Security review, Defender scan and Firewall profile controls through localizable string resources.
 - Route Windows and third-party update discovery, selection, installation and recovery controls through localizable string resources.

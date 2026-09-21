@@ -498,4 +498,12 @@
   <sys:String x:Key="Str_Repair_GoTip">Run the previewed repair on this PC; administrator rights required</sys:String>
   <sys:String x:Key="Str_Display_Console">Console</sys:String>
   <sys:String x:Key="Str_Display_ThemeColors">Colors follow the active theme.</sys:String>
+  <sys:String x:Key="Str_Shell_Diagnostics">Diagnostics</sys:String>
+  <sys:String x:Key="Str_Shell_ReadyNoScan">Ready. No scan performed.</sys:String>
+  <sys:String x:Key="Str_About_Version">VERSION</sys:String>
+  <sys:String x:Key="Str_About_Publisher">PUBLISHER</sys:String>
+  <sys:String x:Key="Str_About_Thumbprint">THUMBPRINT</sys:String>
+  <sys:String x:Key="Str_About_ExeHash">EXE SHA-256</sys:String>
+  <sys:String x:Key="Str_About_KnowledgeDatabases">KNOWLEDGE DATABASES</sys:String>
+  <sys:String x:Key="Str_About_UpdateDatabases">Update databases</sys:String>
 </ResourceDictionary>
