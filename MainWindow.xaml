@@ -194,32 +194,32 @@
               <CheckBox x:Name="ServicingMonitorScheduledTask" Content="{DynamicResource Str_Peek_ScheduledTask}" IsChecked="True"/>
             </StackPanel>
             <StackPanel x:Name="SearchSettings" Visibility="Collapsed" Margin="0,0,0,8">
-              <CheckBox x:Name="SearchIndexRebuildConsent" Content="Rebuild the Windows Search index" Checked="OnSearchIndexRebuildChanged" Unchecked="OnSearchIndexRebuildChanged"/>
-              <TextBlock Text="Stops Windows Search, retains the current index, starts a fresh index, and verifies the service and both directories. The retained index is not deleted automatically." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <CheckBox x:Name="SearchIndexRebuildConsent" Content="{DynamicResource Str_Search_Rebuild}" Checked="OnSearchIndexRebuildChanged" Unchecked="OnSearchIndexRebuildChanged"/>
+              <TextBlock Text="{DynamicResource Str_Search_RebuildDescription}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="AppPackageSettings" Visibility="Collapsed" Margin="0,0,0,8">
-              <TextBlock Text="Choose the account scope, then press GO to refresh packages. All users requires administrator access." TextWrapping="Wrap"/>
+              <TextBlock Text="{DynamicResource Str_Packages_Description}" TextWrapping="Wrap"/>
               <ComboBox x:Name="AppPackageScopeChoice" SelectedIndex="0" Margin="0,6,0,0" SelectionChanged="OnAppPackageScopeChanged" AutomationProperties.Name="Package inventory account scope">
-                <ComboBoxItem Content="Running account"/>
-                <ComboBoxItem Content="All users"/>
+                <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/>
+                <ComboBoxItem Content="{DynamicResource Str_Scope_AllUsers}"/>
               </ComboBox>
               <ComboBox x:Name="AppPackageSelection" DisplayMemberPath="Name" Margin="0,6,0,6" AutomationProperties.Name="Registered package to review"/>
-              <CheckBox x:Name="IncludeProvisionedPackages" Content="Include packages for new users" ToolTip="Also reads packages provisioned in the Windows image. Requires administrator access." Margin="0,0,0,6"/>
-              <Button Content="Review selected package" Click="OnReviewAppPackage" HorizontalAlignment="Left"/>
+              <CheckBox x:Name="IncludeProvisionedPackages" Content="{DynamicResource Str_Packages_IncludeProvisioned}" ToolTip="{DynamicResource Str_Packages_IncludeProvisionedTip}" Margin="0,0,0,6"/>
+              <Button Content="{DynamicResource Str_Packages_ReviewSelected}" Click="OnReviewAppPackage" HorizontalAlignment="Left"/>
             </StackPanel>
             <StackPanel x:Name="InstalledApplicationSettings" Visibility="Collapsed" Margin="0,0,0,8">
-              <TextBlock Text="Choose which registrations to collect. Running account means the account executing KillerBench." TextWrapping="Wrap"/>
+              <TextBlock Text="{DynamicResource Str_Apps_Description}" TextWrapping="Wrap"/>
               <ComboBox x:Name="InstalledApplicationScopeChoice" SelectedIndex="0" SelectionChanged="OnApplicationScopeChanged" Margin="0,6,0,0" AutomationProperties.Name="Installed application registry scope">
-                <ComboBoxItem Content="Machine-wide"/>
-                <ComboBoxItem Content="Running account"/>
+                <ComboBoxItem Content="{DynamicResource Str_Scope_MachineWide}"/>
+                <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/>
               </ComboBox>
-              <Button x:Name="SaveApplicationInventory" Content="Save inventory..." Click="OnSaveApplicationInventory" IsEnabled="False" HorizontalAlignment="Left" Margin="0,6,0,0" ToolTip="Save registrations from the last completed collection, including any coverage limits."/>
-              <Button x:Name="CompareApplicationInventories" Content="Compare saved inventories..." Click="OnCompareApplicationInventories" HorizontalAlignment="Left" Margin="0,6,0,0" ToolTip="Choose before and after installed-apps JSON files. No applications are changed."/>
-              <Button x:Name="ReviewBrowserExtensions" Content="Review browser extensions" Click="OnReviewBrowserExtensions" HorizontalAlignment="Left" Margin="0,6,0,0" ToolTip="Read Chrome, Edge, Brave and Firefox extension identities. No browser, extension or policy is changed."/>
-              <TextBlock Text="Exact application folder name" Margin="0,8,0,0"/>
+              <Button x:Name="SaveApplicationInventory" Content="{DynamicResource Str_Apps_SaveInventory}" Click="OnSaveApplicationInventory" IsEnabled="False" HorizontalAlignment="Left" Margin="0,6,0,0" ToolTip="{DynamicResource Str_Apps_SaveInventoryTip}"/>
+              <Button x:Name="CompareApplicationInventories" Content="{DynamicResource Str_Apps_CompareInventories}" Click="OnCompareApplicationInventories" HorizontalAlignment="Left" Margin="0,6,0,0" ToolTip="{DynamicResource Str_Apps_CompareInventoriesTip}"/>
+              <Button x:Name="ReviewBrowserExtensions" Content="{DynamicResource Str_Apps_ReviewExtensions}" Click="OnReviewBrowserExtensions" HorizontalAlignment="Left" Margin="0,6,0,0" ToolTip="{DynamicResource Str_Apps_ReviewExtensionsTip}"/>
+              <TextBlock Text="{DynamicResource Str_Apps_FolderName}" Margin="0,8,0,0"/>
               <DockPanel Margin="0,4,0,0" LastChildFill="False">
-                <TextBox x:Name="ApplicationFolderName" Width="150" AutomationProperties.Name="Exact application folder name" ToolTip="One folder name only. Five fixed locations are checked without reading contents."/>
-                <Button x:Name="ReviewApplicationFoldersButton" Content="Review folders" Click="OnReviewApplicationFolders" Margin="6,0,0,0" ToolTip="Read-only review of five exact application-folder locations. No contents, paths or files are shown or changed."/>
+                <TextBox x:Name="ApplicationFolderName" Width="150" AutomationProperties.Name="{DynamicResource Str_Apps_FolderName}" ToolTip="{DynamicResource Str_Apps_FolderNameTip}"/>
+                <Button x:Name="ReviewApplicationFoldersButton" Content="{DynamicResource Str_Apps_ReviewFolders}" Click="OnReviewApplicationFolders" Margin="6,0,0,0" ToolTip="{DynamicResource Str_Apps_ReviewFoldersTip}"/>
               </DockPanel>
             </StackPanel>
             <StackPanel x:Name="MaceSettings" Visibility="Collapsed" Margin="0,0,0,8">

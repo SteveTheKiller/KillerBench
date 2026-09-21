@@ -108,4 +108,24 @@
   <sys:String x:Key="Str_Peek_DeliveryOptimization">Delivery Optimization activity</sys:String>
   <sys:String x:Key="Str_Peek_Installer">Windows Installer activity</sys:String>
   <sys:String x:Key="Str_Peek_ScheduledTask">Windows Update scheduled task</sys:String>
+  <sys:String x:Key="Str_Search_Rebuild">Rebuild the Windows Search index</sys:String>
+  <sys:String x:Key="Str_Search_RebuildDescription">Stops Windows Search, retains the current index, starts a fresh index, and verifies the service and both directories. The retained index is not deleted automatically.</sys:String>
+  <sys:String x:Key="Str_Packages_Description">Choose the account scope, then press GO to refresh packages. All users requires administrator access.</sys:String>
+  <sys:String x:Key="Str_Scope_RunningAccount">Running account</sys:String>
+  <sys:String x:Key="Str_Scope_AllUsers">All users</sys:String>
+  <sys:String x:Key="Str_Scope_MachineWide">Machine-wide</sys:String>
+  <sys:String x:Key="Str_Packages_IncludeProvisioned">Include packages for new users</sys:String>
+  <sys:String x:Key="Str_Packages_IncludeProvisionedTip">Also reads packages provisioned in the Windows image. Requires administrator access.</sys:String>
+  <sys:String x:Key="Str_Packages_ReviewSelected">Review selected package</sys:String>
+  <sys:String x:Key="Str_Apps_Description">Choose which registrations to collect. Running account means the account executing KillerBench.</sys:String>
+  <sys:String x:Key="Str_Apps_SaveInventory">Save inventory...</sys:String>
+  <sys:String x:Key="Str_Apps_SaveInventoryTip">Save registrations from the last completed collection, including any coverage limits.</sys:String>
+  <sys:String x:Key="Str_Apps_CompareInventories">Compare saved inventories...</sys:String>
+  <sys:String x:Key="Str_Apps_CompareInventoriesTip">Choose before and after installed-apps JSON files. No applications are changed.</sys:String>
+  <sys:String x:Key="Str_Apps_ReviewExtensions">Review browser extensions</sys:String>
+  <sys:String x:Key="Str_Apps_ReviewExtensionsTip">Read Chrome, Edge, Brave and Firefox extension identities. No browser, extension or policy is changed.</sys:String>
+  <sys:String x:Key="Str_Apps_FolderName">Exact application folder name</sys:String>
+  <sys:String x:Key="Str_Apps_FolderNameTip">One folder name only. Five fixed locations are checked without reading contents.</sys:String>
+  <sys:String x:Key="Str_Apps_ReviewFolders">Review folders</sys:String>
+  <sys:String x:Key="Str_Apps_ReviewFoldersTip">Read-only review of five exact application-folder locations. No contents, paths or files are shown or changed.</sys:String>
 </ResourceDictionary>
