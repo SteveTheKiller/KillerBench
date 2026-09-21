@@ -736,11 +736,11 @@
               <Button x:Name="MainGo" Content="{DynamicResource Str_Main_RunDiagnosis}" Style="{StaticResource PrimaryButton}" Click="OnMainGo" Width="128" Margin="0,0,8,0" ToolTip="{DynamicResource Str_Main_RunDiagnosisTip}"/>
               <Button x:Name="CancelButton" Content="{DynamicResource Str_Main_Stop}" Click="OnCancel" IsEnabled="False" ToolTip="{DynamicResource Str_Main_StopTip}" Width="72"/>
             </StackPanel>
-            <Expander x:Name="RecipeSelectionPanel" Header="Choose checks (advanced)" Foreground="{DynamicResource TextBrush}" Visibility="Collapsed" Margin="0,0,0,6">
+            <Expander x:Name="RecipeSelectionPanel" Header="{DynamicResource Str_Advanced_ChooseChecks}" Foreground="{DynamicResource TextBrush}" Visibility="Collapsed" Margin="0,0,0,6">
               <StackPanel>
-                <CheckBox x:Name="CustomizeRecipes" Content="Use selected recipe checks" Checked="OnRecipeSelectionChanged" Unchecked="OnRecipeSelectionChanged"/>
-                <CheckBox x:Name="FocusDiagnosticAreas" Content="Diagnostic areas only (no repairs)" Margin="0,4,0,4" Checked="OnDiagnosticAreasChanged" Unchecked="OnDiagnosticAreasChanged"/>
-                <CheckBox x:Name="ShowDetailedDiagnosticAreas" Content="Show individual evidence areas" Margin="14,0,0,4" Visibility="Collapsed"
+                <CheckBox x:Name="CustomizeRecipes" Content="{DynamicResource Str_Advanced_SelectedRecipes}" Checked="OnRecipeSelectionChanged" Unchecked="OnRecipeSelectionChanged"/>
+                <CheckBox x:Name="FocusDiagnosticAreas" Content="{DynamicResource Str_Advanced_DiagnosticOnly}" Margin="0,4,0,4" Checked="OnDiagnosticAreasChanged" Unchecked="OnDiagnosticAreasChanged"/>
+                <CheckBox x:Name="ShowDetailedDiagnosticAreas" Content="{DynamicResource Str_Advanced_ShowEvidenceAreas}" Margin="14,0,0,4" Visibility="Collapsed"
                           Checked="OnDiagnosticDetailChanged" Unchecked="OnDiagnosticDetailChanged"/>
                 <ListBox x:Name="DiagnosticAreaList" SelectionMode="Multiple" MaxHeight="180" Visibility="Collapsed"
                          Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextBrush}"
@@ -753,10 +753,10 @@
                 </ListBox>
                 <TextBlock x:Name="DiagnosticAreaSummary" TextWrapping="Wrap" Margin="0,4,0,4"/>
                 <DockPanel Margin="0,2,0,2" IsEnabled="{Binding IsChecked, ElementName=CustomizeRecipes}">
-                  <TextBlock Text="Recipe checks" VerticalAlignment="Center"/>
+                  <TextBlock Text="{DynamicResource Str_Advanced_RecipeChecks}" VerticalAlignment="Center"/>
                   <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                    <Button Content="All" Padding="8,2" Margin="4,0,0,0" Click="OnSelectAllRecipes" AutomationProperties.Name="Select all recipe checks"/>
-                    <Button Content="None" Padding="8,2" Margin="4,0,0,0" Click="OnClearRecipes" AutomationProperties.Name="Clear recipe checks"/>
+                    <Button Content="{DynamicResource Str_Advanced_All}" Padding="8,2" Margin="4,0,0,0" Click="OnSelectAllRecipes" AutomationProperties.Name="Select all recipe checks"/>
+                    <Button Content="{DynamicResource Str_Advanced_None}" Padding="8,2" Margin="4,0,0,0" Click="OnClearRecipes" AutomationProperties.Name="Clear recipe checks"/>
                   </StackPanel>
                 </DockPanel>
                 <ListBox x:Name="RecipeSelectionList" Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextBrush}" SelectionMode="Multiple" MaxHeight="180" IsEnabled="{Binding IsChecked, ElementName=CustomizeRecipes}" SelectionChanged="OnRecipeSelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemContainerStyle="{StaticResource SourceItem}" AutomationProperties.Name="Recipe checks">
@@ -775,14 +775,14 @@
                   </DataTemplate></ListBox.ItemTemplate>
                 </ListBox>
                 <TextBlock x:Name="RecipeSelectionSummary" TextWrapping="Wrap" Margin="0,4,0,0"/>
-                <Expander Header="What these repairs can change" Foreground="{DynamicResource TextBrush}" Margin="0,4,0,0">
+                <Expander Header="{DynamicResource Str_Advanced_RepairEffects}" Foreground="{DynamicResource TextBrush}" Margin="0,4,0,0">
                   <ScrollViewer MaxHeight="180" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <TextBlock x:Name="RecipeEffectsSummary" TextWrapping="Wrap"/>
                   </ScrollViewer>
                 </Expander>
               </StackPanel>
             </Expander>
-            <Expander x:Name="AdvancedTools" Header="Advanced: logs and manual repairs" Foreground="{DynamicResource MutedTextBrush}">
+            <Expander x:Name="AdvancedTools" Header="{DynamicResource Str_Advanced_Tools}" Foreground="{DynamicResource MutedTextBrush}">
           <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <DockPanel Margin="0,0,0,6">
               <TextBlock Text="{DynamicResource Str_Text_TEXT_LOG_INSPECTOR}" FontFamily="Consolas" FontSize="11" VerticalAlignment="Center"/>
@@ -796,20 +796,20 @@
               <WrapPanel>
                 <Button x:Name="ScanButton" Content="{DynamicResource Str_ScanUpdate}" Style="{StaticResource PrimaryButton}" Click="OnScan" ToolTip="{DynamicResource Str_ScanUpdateTip}" Margin="0,0,6,0"/>
                 <Button x:Name="OpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture" Margin="0,0,6,0"/>
-                <Button Content="Open workflow" Click="OnOpenWorkflowJournal" Margin="0,0,6,0" ToolTip="Review a saved workflow journal without running checks or repairs."/>
+                <Button Content="{DynamicResource Str_Advanced_OpenWorkflow}" Click="OnOpenWorkflowJournal" Margin="0,0,6,0" ToolTip="{DynamicResource Str_Advanced_OpenWorkflowTip}"/>
                 <Button x:Name="SaveCaptureButton" Content="{DynamicResource Str_SaveCapture}" Click="OnSaveCapture" IsEnabled="False"/>
-                <Button Content="Workflows" Click="OnWorkflows" Margin="6,0,0,0"/>
-                <Button Content="Repairs" Click="OnRepairs" Margin="6,0,0,0"/>
+                <Button Content="{DynamicResource Str_Advanced_Workflows}" Click="OnWorkflows" Margin="6,0,0,0"/>
+                <Button Content="{DynamicResource Str_Advanced_Repairs}" Click="OnRepairs" Margin="6,0,0,0"/>
               </WrapPanel>
               <TextBlock x:Name="CaptureInfo" Text="{DynamicResource Str_CaptureScope}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
-              <TextBlock Text="Knowledge reference" Margin="0,10,0,4" Foreground="{DynamicResource PrimaryBrush}"/>
-              <TextBox x:Name="KnowledgeContext" AutomationProperties.Name="Knowledge product context" ToolTip="Product or error-code namespace from the pack"/>
-              <TextBox x:Name="KnowledgeCode" AutomationProperties.Name="Knowledge code or search text" ToolTip="An exact code for lookup, or text to search within the selected context" Margin="0,4,0,4"/>
-              <Button Content="Open pack and look up code" Click="OnKnowledgeLookup" HorizontalAlignment="Left"/>
-              <Button x:Name="KnowledgeSearchButton" Content="Open pack and search text" Tag="search" Click="OnKnowledgeLookup" HorizontalAlignment="Left" Margin="0,4,0,0"/>
-              <Button Content="Compare pack revisions" Click="OnKnowledgeCompare" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Choose current and candidate files to review changes. No pack is installed."/>
-              <Button Content="Look up Windows system code" Click="OnWindowsCodeLookup" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Use the code field with the installed Windows message table; no pack needed"/>
-              <Button Content="Look up Device Manager code" Click="OnDeviceCodeLookup" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Use the code field with the built-in Device Manager problem-code reference; no pack needed"/>
+              <TextBlock Text="{DynamicResource Str_Knowledge_Header}" Margin="0,10,0,4" Foreground="{DynamicResource PrimaryBrush}"/>
+              <TextBox x:Name="KnowledgeContext" AutomationProperties.Name="Knowledge product context" ToolTip="{DynamicResource Str_Knowledge_ContextTip}"/>
+              <TextBox x:Name="KnowledgeCode" AutomationProperties.Name="Knowledge code or search text" ToolTip="{DynamicResource Str_Knowledge_CodeTip}" Margin="0,4,0,4"/>
+              <Button Content="{DynamicResource Str_Knowledge_Lookup}" Click="OnKnowledgeLookup" HorizontalAlignment="Left"/>
+              <Button x:Name="KnowledgeSearchButton" Content="{DynamicResource Str_Knowledge_Search}" Tag="search" Click="OnKnowledgeLookup" HorizontalAlignment="Left" Margin="0,4,0,0"/>
+              <Button Content="{DynamicResource Str_Knowledge_Compare}" Click="OnKnowledgeCompare" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Knowledge_CompareTip}"/>
+              <Button Content="{DynamicResource Str_Knowledge_WindowsCode}" Click="OnWindowsCodeLookup" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Knowledge_WindowsCodeTip}"/>
+              <Button Content="{DynamicResource Str_Knowledge_DeviceCode}" Click="OnDeviceCodeLookup" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Knowledge_DeviceCodeTip}"/>
             </StackPanel>
           </Grid></Expander></StackPanel></ScrollViewer>
         </Border></Grid>
@@ -845,10 +845,10 @@
 <Border Padding="6">
             <Grid>
               <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-              <Expander Grid.Row="4" Header="Session sources" Foreground="{DynamicResource TextBrush}" Margin="0,8,0,0">
+              <Expander Grid.Row="4" Header="{DynamicResource Str_Session_Sources}" Foreground="{DynamicResource TextBrush}" Margin="0,8,0,0">
                 <Grid Height="140">
                   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-                  <DockPanel><Button DockPanel.Dock="Right" Content="Load sample" Click="OnSample"/><TextBlock x:Name="SessionLabel" VerticalAlignment="Center"/></DockPanel>
+                  <DockPanel><Button DockPanel.Dock="Right" Content="{DynamicResource Str_Session_LoadSample}" Click="OnSample"/><TextBlock x:Name="SessionLabel" VerticalAlignment="Center"/></DockPanel>
                   <ListBox x:Name="SourcesList" Grid.Row="1" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" SelectionChanged="OnSourceSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Evidence_sources}"/>
                   <Border x:Name="SourceFadeTop" Style="{StaticResource SidebarFadeTop}" IsHitTestVisible="False"/>
                   <Border x:Name="SourceFadeBottom" Style="{StaticResource SidebarFadeBottom}" IsHitTestVisible="False"/>
@@ -857,8 +857,8 @@
               <DockPanel Margin="0,0,0,6">
                 <Button x:Name="ExportReportButton" DockPanel.Dock="Right" Content="{DynamicResource Str_ExportReport}" Click="OnExportReport" ToolTip="{DynamicResource Str_ExportContents}" Padding="10,4"/>
                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-                  <Button x:Name="ConsoleViewButton" Content="Raw output" Click="OnConsoleView" Padding="10,4" ToolTip="Technical activity and retained evidence." AutomationProperties.Name="Show raw technical output"/>
-                  <Button x:Name="ReportViewButton" Content="Readable report" Click="OnReportView" IsEnabled="False" Padding="10,4" Margin="6,0,0,0" ToolTip="Problems, actions and recommended next steps." AutomationProperties.Name="Show readable report"/>
+                  <Button x:Name="ConsoleViewButton" Content="{DynamicResource Str_Session_RawOutput}" Click="OnConsoleView" Padding="10,4" ToolTip="{DynamicResource Str_Session_RawOutputTip}" AutomationProperties.Name="Show raw technical output"/>
+                  <Button x:Name="ReportViewButton" Content="{DynamicResource Str_Session_ReadableReport}" Click="OnReportView" IsEnabled="False" Padding="10,4" Margin="6,0,0,0" ToolTip="{DynamicResource Str_Session_ReadableReportTip}" AutomationProperties.Name="Show readable report"/>
                 </StackPanel>
                 <TextBlock x:Name="EvidenceTitle" Text="{DynamicResource Str_Text_Evidence}" FontFamily="{DynamicResource WordmarkFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="12,0,12,0"/>
               </DockPanel>
@@ -886,19 +886,19 @@
                 <TextBlock Text="{DynamicResource Str_Text_INSPECTOR}" Style="{StaticResource SectionLabel}"/>
                 <StackPanel x:Name="RepairPanel" Visibility="Collapsed" Margin="0,0,0,12">
                   <ComboBox x:Name="RepairChoice" SelectedIndex="0" SelectionChanged="OnRepairChoice" AutomationProperties.Name="Repair action">
-                    <ComboBoxItem Content="Component store (DISM)"/><ComboBoxItem Content="System files (SFC)"/>
+                    <ComboBoxItem Content="{DynamicResource Str_Repair_ComponentStore}"/><ComboBoxItem Content="{DynamicResource Str_Repair_SystemFiles}"/>
                   </ComboBox>
                   <TextBox x:Name="RepairPreview" IsReadOnly="True" TextWrapping="Wrap" MaxHeight="250" VerticalScrollBarVisibility="Auto" Margin="0,8,0,8"/>
-                  <CheckBox x:Name="RepairConsent" Content="Run this repair on this PC"/>
-                  <Button x:Name="RepairRun" Content="GO" IsEnabled="{Binding IsChecked, ElementName=RepairConsent}" Click="OnRunRepair" Margin="0,8,0,0" ToolTip="Run the previewed repair on this PC; administrator rights required"/>
+                  <CheckBox x:Name="RepairConsent" Content="{DynamicResource Str_Repair_Consent}"/>
+                  <Button x:Name="RepairRun" Content="{DynamicResource Str_Repair_Go}" IsEnabled="{Binding IsChecked, ElementName=RepairConsent}" Click="OnRunRepair" Margin="0,8,0,0" ToolTip="{DynamicResource Str_Repair_GoTip}"/>
                 </StackPanel>
                 <WrapPanel Margin="0,0,0,14"><Button Content="{DynamicResource Str_Findings}" Click="OnFindingsTab" Margin="0,0,6,0"/><Button Content="{DynamicResource Str_Content_Display}" Click="OnDisplayTab" Margin="0,0,6,0"/><Button Content="{DynamicResource Str_Content_Source}" Click="OnSourceTab"/></WrapPanel>
                 <WrapPanel Margin="0,0,0,10"><Button x:Name="DemoButton" Content="{DynamicResource Str_LoadDemo}" Click="OnDemo" Margin="0,0,6,0"/></WrapPanel>
                 <StackPanel x:Name="FindingsPanel" Visibility="Collapsed"><TextBlock x:Name="FindingsSummary" TextWrapping="Wrap"/><StackPanel x:Name="FindingCards"/></StackPanel>
                 <StackPanel x:Name="DisplaySettings">
-                  <TextBlock Text="Console" FontSize="17" Margin="0,0,0,14"/>
+                  <TextBlock Text="{DynamicResource Str_Display_Console}" FontSize="17" Margin="0,0,0,14"/>
                   <TextBlock Text="{DynamicResource Str_Text_TEXT_SIZE}" Style="{StaticResource SectionLabel}"/><Slider x:Name="SizeSlider" Minimum="12" Maximum="24" Value="14" ValueChanged="OnDisplayChanged" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Console_text_size}"/>
-                  <TextBlock Text="Colors follow the active theme." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,16,0,0"/>
+                  <TextBlock Text="{DynamicResource Str_Display_ThemeColors}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,16,0,0"/>
                 </StackPanel>
                 <StackPanel x:Name="SourceDetails" Visibility="Collapsed"><TextBlock Text="{DynamicResource Str_Text_Selected_evidence}" FontSize="17" Margin="0,0,0,6"/><TextBox x:Name="SourceInfo" IsReadOnly="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent"/><TextBlock Text="{DynamicResource Str_RecordedEvidence}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,16,0,0"/></StackPanel>
               </StackPanel>

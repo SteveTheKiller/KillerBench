@@ -150,6 +150,12 @@ internal static class Program
                 window.FindName("DefenderScanConsent") is CheckBox { Content: "Start the selected scan when I press GO" } &&
                 window.FindName("FirewallProfileApply") is CheckBox { Content: "Apply selected local profiles after fresh policy checks" },
                 "Security scan and Firewall profile controls resolve their localizable English resources");
+            Require(window.FindName("RecipeSelectionPanel") is Expander { Header: "Choose checks (advanced)" } &&
+                window.FindName("AdvancedTools") is Expander { Header: "Advanced: logs and manual repairs" } &&
+                window.FindName("KnowledgeSearchButton") is Button { Content: "Open pack and search text" } &&
+                window.FindName("ConsoleViewButton") is Button { Content: "Raw output" } &&
+                window.FindName("RepairConsent") is CheckBox { Content: "Run this repair on this PC" },
+                "Advanced selection, knowledge, session and repair controls resolve their localizable English resources");
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
                 "Desktop subtitle identifies the full maintenance scope");
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
