@@ -761,6 +761,29 @@ internal static class Program
             Require(window.FindName("ConsoleViewButton") is Button { Content: "Raw output" } &&
                 window.FindName("ReportViewButton") is Button { Content: "Readable report" },
                 "Output view controls distinguish technical evidence from the readable report");
+            var shortcuts = (Border)window.FindName("ShortcutsOverlay");
+            ((Button)window.FindName("ShortcutButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Pump();
+            ((Button)window.FindName("ShortcutListButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Pump();
+            Require(shortcuts.Visibility == Visibility.Visible &&
+                ((StackPanel)window.FindName("ShortcutListHost")).Children.OfType<Grid>().Count() == 6 &&
+                ((Button)window.FindName("ShortcutButton")).ToolTip?.ToString() == "Keyboard shortcuts (F1)",
+                "Shortcut list and rail tooltip come from the shared binding table");
+            ((Button)window.FindName("ShortcutMapButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Pump();
+            Require(((StackPanel)window.FindName("ShortcutMapHost")).Visibility == Visibility.Visible &&
+                ((StackPanel)window.FindName("ShortcutKeyboardRows")).Children.Count == 5 &&
+                ((Button)window.FindName("ShortcutMapButton")).Tag?.ToString() == "on",
+                "Keyboard view renders the shared bindings and records the selected view");
+            ((Button)window.FindName("ShortcutCtrlButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Pump();
+            Require(((Button)window.FindName("ShortcutCtrlButton")).Tag?.ToString() == "on",
+                "Keyboard map exposes the Ctrl layer for modified shortcuts");
+            Capture(window, Path.Combine(scratch, "shortcut-keyboard.png"));
+            ((Button)window.FindName("ShortcutButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(shortcuts.Visibility == Visibility.Collapsed,
+                "Shortcut rail button closes the overlay without changing the workspace");
             var categoryTools = (ComboBox)window.FindName("CategoryWorkflow");
             var allTools = (ComboBox)window.FindName("MainWorkflow");
             Require(categories.Items.Cast<object>().Select(category => category.ToString()).SequenceEqual(["Diagnostics", "Repair", "Network", "Maintenance", "Security"]) &&

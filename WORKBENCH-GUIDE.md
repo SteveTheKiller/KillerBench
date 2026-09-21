@@ -242,13 +242,13 @@ The default is Dark/Amber, using the existing Orange accent. The paint-roller bu
 
 The language button above the theme picker offers the same 15 languages as KillerShell. Selection persists and the resource system uses English fallback. Translation dictionaries are intentionally empty until the translation pass; selecting another language currently leaves the interface in English.
 
-The left sidebar keeps up to 12 evidence sources for the current session. F2 toggles the sidebar, F3 toggles the separate activity log, and F4 toggles the animated inspector. The inspector switches between display controls and details for the selected source. F1 shows shortcuts. Scroll over the title wordmark to scale the interface.
+The left sidebar keeps up to 12 evidence sources for the current session. F2 toggles the sidebar and F3 toggles the separate activity log. F1 opens the persistent List or Keyboard shortcut view, and F12 opens About. Scroll over the title wordmark to scale the interface.
 
 ## Current scope
 
 Implemented: WPF workbench, app-owned family controls and 13 palettes, custom window chrome, typewriter wordmark, source sidebar, contextual inspector, activity log, synthetic and full demo modes, bounded text, EVTX and event-XML import, search, cancellation, input bounds, theme-aware smoked-glass console output, themed diagnostic and repair reports, PEEK live servicing observation, guarded workflow recipes, CLI access, and local knowledge-pack generation and updates. The diagnostic Engine has no WPF dependency. There are no third-party package references.
 
-Still unfinished: comprehensive CBS or Panther parsing, translated UI text, and the keyboard-map shortcut view. EVTX files can be imported through the evidence picker, and the About card can inspect and update configured knowledge databases. This prototype does not assess overall machine health.
+Still unfinished: comprehensive CBS or Panther parsing and translated UI text. EVTX files can be imported through the evidence picker, and the About card can inspect and update configured knowledge databases. This prototype does not assess overall machine health.
 
 No public release is available. The public repository currently contains the project overview only.
 

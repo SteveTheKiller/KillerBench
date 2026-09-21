@@ -33,7 +33,7 @@
         <Button x:Name="SidebarButton" Style="{StaticResource RailButton}" Content="&#xE76B;" FontSize="12" VerticalAlignment="Top" Margin="2,10,0,0" Click="OnToggleSources" ToolTip="{DynamicResource Str_ToolTip_Toggle_sources_F2}"/>
         <StackPanel Style="{StaticResource RailButtonHost}" VerticalAlignment="Bottom">
           <Button x:Name="ActivityButton" Style="{StaticResource RailButton}" Content="&#xE756;" Click="OnToggleActivity" ToolTip="{DynamicResource Str_ToolTip_Toggle_activity_log_F3}" Margin="0,0,0,6"/>
-          <Button Style="{StaticResource RailButton}" Content="?" FontFamily="Consolas" FontSize="18" Click="OnShortcuts" ToolTip="{DynamicResource Str_ToolTip_Keyboard_shortcuts_F1}" Margin="0,0,0,6"><Button.Template><ControlTemplate TargetType="Button"><Border Background="Transparent"><TextBlock Text="?" FontFamily="Segoe UI" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource TextBrush}" TextOptions.TextFormattingMode="Display" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Button.Template></Button>
+          <Button x:Name="ShortcutButton" Style="{StaticResource RailButton}" Content="?" FontFamily="Consolas" FontSize="18" Click="OnShortcuts" ToolTip="{DynamicResource Str_ToolTip_Keyboard_shortcuts_F1}" Margin="0,0,0,6"><Button.Template><ControlTemplate TargetType="Button"><Border Background="Transparent"><TextBlock Text="?" FontFamily="Segoe UI" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource TextBrush}" TextOptions.TextFormattingMode="Display" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Button.Template></Button>
           <Button x:Name="LangButton" Style="{StaticResource RailButton}" Content="&#xF2B7;" Click="OnLanguages" ToolTip="{DynamicResource Str_ToolTip_Language}" Margin="0,0,0,6"/>
 <Button x:Name="ThemeButton" Style="{StaticResource RailButton}" Content="&#xE790;" Click="OnThemes" ToolTip="{DynamicResource Str_ToolTip_Choose_app_theme}" Margin="0,0,0,8"><Button.ContextMenu><ContextMenu x:Name="ThemeFlyout">
                                 
@@ -969,13 +969,24 @@
         </Border>
       </Grid>
     </Grid>
-    <Border x:Name="ShortcutsOverlay" Grid.RowSpan="3" Panel.ZIndex="9000" Background="#B0000000" Visibility="Collapsed">
-      <Border Style="{StaticResource Panel}" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="330">
-<Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
-<Border Padding="24">
-        <StackPanel><TextBlock Text="{DynamicResource Str_Text_Keyboard_shortcuts}" FontSize="20" Margin="0,0,0,16"/><TextBlock x:Name="ShortcutsText" FontFamily="Consolas" LineHeight="26"/><Button Content="{DynamicResource Str_Content_Close}" Click="OnShortcuts" Margin="0,16,0,0"/></StackPanel>
-      </Border></Grid>
-</Border>
+    <Border x:Name="ShortcutsOverlay" Grid.RowSpan="3" Panel.ZIndex="9000" Background="#B0000000" Visibility="Collapsed" MouseLeftButtonDown="OnShortcutsBackdrop">
+      <Border x:Name="ShortcutCard" Style="{StaticResource Panel}" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="430" MaxWidth="640" MouseLeftButtonDown="OnShortcutsCard">
+        <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+          <Border Padding="24">
+            <StackPanel>
+              <Grid Margin="0,0,0,16"><TextBlock Text="{DynamicResource Str_Text_Keyboard_shortcuts}" FontSize="20" VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button x:Name="ShortcutListButton" Content="{DynamicResource Str_Shortcuts_List}" Click="OnShortcutList" Margin="0,0,6,0"/><Button x:Name="ShortcutMapButton" Content="{DynamicResource Str_Shortcuts_Keyboard}" Click="OnShortcutMap"/></StackPanel>
+              </Grid>
+              <ScrollViewer x:Name="ShortcutListScroll" MaxHeight="520" VerticalScrollBarVisibility="Auto"><StackPanel x:Name="ShortcutListHost"/></ScrollViewer>
+              <StackPanel x:Name="ShortcutMapHost" Visibility="Collapsed">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10"><Button x:Name="ShortcutBaseButton" Content="{DynamicResource Str_Shortcuts_Base}" Click="OnShortcutBase" Margin="0,0,6,0"/><Button x:Name="ShortcutCtrlButton" Content="{DynamicResource Str_Shortcuts_Ctrl}" Click="OnShortcutCtrl"/></StackPanel>
+                <StackPanel x:Name="ShortcutKeyboardRows"/>
+              </StackPanel>
+              <Button Content="{DynamicResource Str_Content_Close}" Click="OnShortcuts" Margin="0,16,0,0"/>
+            </StackPanel>
+          </Border>
+        </Grid>
+      </Border>
     </Border>
   </Grid>
   </Border>

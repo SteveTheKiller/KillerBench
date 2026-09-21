@@ -1,5 +1,6 @@
 # Changelog
 
+- Add the family List and Keyboard shortcut views from one binding table and restore F12 for About.
 - Preserve existing evidence when an application inventory comparison cannot complete and keep sample evidence available within bounded sessions.
 - Add symptom triage: a Windows symptom catalog, `symptom` CLI commands and a goal runner that reports what was repaired, ruled out and left unresolved.
 - Add the platform-neutral Engine.Core with declarative recipe packs, a whitelisted primitive library and a journaled recipe runner.

@@ -20,15 +20,11 @@ public partial class MainWindow
     private bool sourcesOpen = true;
     private double appScale = 1;
     private readonly Dictionary<Control, double> zoomFonts = [];
-    private static readonly (Key Key, string Label)[] bindings =
-    [ (Key.F1, "Keyboard shortcuts"), (Key.F2, "Toggle evidence sources"),
-      (Key.F3, "Toggle activity log") ];
-
     private void InitializeShell()
     {
         GrainTexture.Apply(this);
         Shell.SidebarChrome.WireEdgeFades(SourcesList, SourceFadeTop, SourceFadeBottom);
-        ShortcutsText.Text = string.Join("\n", bindings.Select(b => $"{b.Key,-8}{b.Label}")) + "\nCtrl+O  Open supplied path\nEsc     Close overlay / stop read";
+        InitializeShortcuts();
         SourceInitialized += (_, _) => { DwmChrome.SetRoundedCorners(this, true); DwmChrome.SetThemeBorder(this); };
         StateChanged += (_, _) =>
         {
@@ -196,8 +192,6 @@ public partial class MainWindow
             foreach (var nested in FindZoomControls(element)) yield return nested;
         }
     }
-    private void OnShortcuts(object sender, RoutedEventArgs e) =>
-        ShortcutsOverlay.Visibility = ShortcutsOverlay.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
     private bool HandleShellKey(KeyEventArgs e)
     {
         if (e.Key == Key.Escape && AboutOverlay.Visibility == Visibility.Visible)
@@ -210,6 +204,7 @@ public partial class MainWindow
             case Key.F1: OnShortcuts(this, e); break;
             case Key.F2: OnToggleSources(this, e); break;
             case Key.F3: OnToggleActivity(this, e); break;
+            case Key.F12: _ = ShowAboutAsync(); break;
             default: return false;
         }
         e.Handled = true;

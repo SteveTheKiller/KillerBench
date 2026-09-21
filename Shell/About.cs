@@ -26,6 +26,11 @@ public partial class MainWindow
     private async void OnAbout(object sender, MouseButtonEventArgs e)
     {
         e.Handled = true;
+        await ShowAboutAsync();
+    }
+
+    private async Task ShowAboutAsync()
+    {
         if (AboutOverlay.Visibility == Visibility.Visible) { CloseAbout(); return; }
         ShortcutsOverlay.Visibility = Visibility.Collapsed;
         AboutVersionBlock.Text = "v" + (Assembly.GetExecutingAssembly()
