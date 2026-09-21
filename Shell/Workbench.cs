@@ -65,7 +65,14 @@ public partial class MainWindow
     {
         int old = sources.FindIndex(s => s.Source == item.Source);
         if (old >= 0) { sources.RemoveAt(old); SourcesList.Items.RemoveAt(old); }
-        if (sources.Count >= (capture is null ? 12 : Capture.MaximumSources + 1)) { sources.RemoveAt(0); SourcesList.Items.RemoveAt(0); Report("Oldest source removed from the display limit. Original file and saved capture unchanged."); }
+        if (sources.Count >= (capture is null ? 12 : Capture.MaximumSources + 1))
+        {
+            int remove = sources.FindIndex(source => source.Source != "Synthetic demonstration");
+            if (remove < 0) remove = 0;
+            sources.RemoveAt(remove);
+            SourcesList.Items.RemoveAt(remove);
+            Report("Oldest source removed from the display limit. Original file and saved capture unchanged.");
+        }
         sources.Add(item);
         SourcesList.Items.Add(new ListBoxItem
         {

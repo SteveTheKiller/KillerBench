@@ -1,5 +1,6 @@
 # Changelog
 
+- Preserve existing evidence when an application inventory comparison cannot complete and keep sample evidence available within bounded sessions.
 - Add symptom triage: a Windows symptom catalog, `symptom` CLI commands and a goal runner that reports what was repaired, ruled out and left unresolved.
 - Add the platform-neutral Engine.Core with declarative recipe packs, a whitelisted primitive library and a journaled recipe runner.
 - Generate the Windows service pack from the recipe catalog and add settings, system, network and maintenance packs over registry, BCD, shell, identity, performance, VSS, adapter, device, volume and app package primitives; `pack` CLI commands export and validate packs.

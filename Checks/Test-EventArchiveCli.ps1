@@ -26,8 +26,10 @@ try {
     }
     $body = $stdout.GetAwaiter().GetResult()
     $errors = $stderr.GetAwaiter().GetResult()
-    if ($process.ExitCode -ne 0) { throw "Archive investigation failed: $errors" }
+    if ($process.ExitCode -notin @(0, 3)) { throw "Archive investigation failed: $errors" }
     $report = $body | ConvertFrom-Json
+    $expectedExit = if ($report.Partial) { 3 } else { 0 }
+    if ($process.ExitCode -ne $expectedExit) { throw 'Archive exit code disagrees with its coverage state.' }
     if ($report.Source -ne $archivePath -or $report.Partial -isnot [bool] -or
         $report.ParsedLines -lt 0 -or $report.ParsedLines -gt 200 -or
         @($report.Timeline).Count -ne $report.ParsedLines -or $report.Limitation -notmatch 'no date filter') {

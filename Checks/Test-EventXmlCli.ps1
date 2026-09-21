@@ -24,7 +24,7 @@ function Invoke-Xml([int]$ExpectedExit) {
         $errors = $stderr.GetAwaiter().GetResult()
         if ($process.ExitCode -ne $ExpectedExit) { throw "Unexpected XML exit $($process.ExitCode): $errors" }
         if ((Get-FileHash -LiteralPath $path).Hash -ne $before) { throw 'XML source changed.' }
-        if ($ExpectedExit -eq 0) {
+        if ($ExpectedExit -in @(0, 3)) {
             if ($errors) { throw 'Successful XML analysis reported an error.' }
             return ($output | ConvertFrom-Json)
         }
@@ -39,7 +39,7 @@ if ($report.Source -ne $path -or $report.ParsedLines -ne 1 -or $report.Partial -
     throw 'XML CLI lost finding identity or record reference.'
 }
 [IO.File]::WriteAllText($path, '<Events>' + ($entry * 201) + '</Events>')
-$limited = Invoke-Xml 0
+$limited = Invoke-Xml 3
 if (-not $limited.Partial -or $limited.ParsedLines -ne 200 -or $limited.Findings[0].Occurrences -ne 200) { throw 'XML CLI record cap is not explicit.' }
 foreach ($invalid in @('<Events>', '<Other/>', '<!DOCTYPE Events [<!ENTITY x SYSTEM "file:///unread-fixture">]><Events>&x;</Events>')) {
     [IO.File]::WriteAllText($path, $invalid)

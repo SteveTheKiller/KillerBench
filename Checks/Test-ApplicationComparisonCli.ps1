@@ -5,7 +5,7 @@ $scratch = Join-Path ([IO.Path]::GetTempPath()) ('KillerBench-compare-' + [guid]
 $before = Join-Path $scratch 'before.json'
 $after = Join-Path $scratch 'after.json'
 function Save-Fixture([string]$Path, [string]$Version, [bool]$Complete) {
-    $raw = @{scope='Machine';complete=$Complete;applications=@(@{view='Registry64';key='fixture';name='Fixture';version=$Version;publisher='Vendor'})}|ConvertTo-Json -Depth 5 -Compress
+    $raw = @{scope='Machine';complete=$Complete;applications=@(@{view='Registry64';key='fixture';name='Fixture';version=$Version;publisher='Vendor';hasUninstallCommand=$true;hasInstallLocation=$true})}|ConvertTo-Json -Depth 5 -Compress
     @{Evidence=@{ExitCode=0;Output=$raw;Error='';Truncated=$false;TimedOut=$false}}|ConvertTo-Json -Depth 5 | ForEach-Object {[IO.File]::WriteAllText($Path, $_)}
 }
 Save-Fixture $before '1.0' $true

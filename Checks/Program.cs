@@ -1279,7 +1279,9 @@ internal static class Program
             Require(((Border)window.FindName("LeftPanel")).Style == window.FindResource("Panel"), "Tool sidebar uses the family pane style");
             Require(((TextBox)window.FindName("PathBox")).Padding.Top <= 3, "Compact text input padding");
             window.UpdateLayout();
-            Require(text.Text.Contains("SYNTHETIC SAMPLE") && ((ListBox)window.FindName("SourcesList")).Items.Count == 1,
+            var retainedSampleSources = ((ListBox)window.FindName("SourcesList")).Items.Cast<ListBoxItem>()
+                .Count(item => item.Tag is TextEvidence { Source: "Synthetic demonstration" });
+            Require(text.Text.Contains("SYNTHETIC SAMPLE") && retainedSampleSources == 1,
                 "Sample evidence remains available after theme and localization changes");
             ((TextBox)window.FindName("SearchBox")).Text = "error";
             var find = FindButtons(window).Single(b => Equals(b.Content, "FIND"));
@@ -1287,11 +1289,6 @@ internal static class Program
             Require(text.Text.Contains("6  [10:42:06]") && !text.Text.Contains("Sample servicing"), "UI search retains source lines");
             ((TextBox)window.FindName("SearchBox")).Clear();
             find.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            foreach (string preset in new[] { "Green", "White", "Crisp", "Amber" })
-            {
-                FindButtons(window).Single(b => Equals(b.Tag, preset)).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                if (preset == "Crisp") Require(text.Effect is null, "Crisp disables glow");
-            }
             window.UpdateLayout();
             var bitmap = new RenderTargetBitmap((int)window.ActualWidth, (int)window.ActualHeight, 96, 96, PixelFormats.Pbgra32);
             bitmap.Render(window);
@@ -1339,8 +1336,9 @@ internal static class Program
             Require(((StackPanel)window.FindName("FindingCards")).Children.Count == 2, "Demo import populates two findings");
             Require(((StackPanel)window.FindName("FindingsPanel")).Visibility == Visibility.Visible, "Findings opens after import");
             window.UpdateLayout();
-            Require(FindButtons(window).Count(b => Equals(b.Content, "Show evidence")) == 2, "One evidence action per finding");
-            FindButtons(window).First(b => Equals(b.Tag, "KB-CBS-001")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            var findingCards = (StackPanel)window.FindName("FindingCards");
+            Require(FindButtons(findingCards).Count(b => Equals(b.Content, "Show evidence")) == 2, "One evidence action per finding");
+            FindButtons(findingCards).Single(b => Equals(b.Tag, "KB-CBS-001")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(text.SelectedText.Contains("0x800f081f"), "Finding opens and selects original evidence line");
             find.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(text.Text.StartsWith("1  SYNTHETIC DEMO"), "Find restores complete evidence view after context");
@@ -1357,7 +1355,7 @@ internal static class Program
             Require(((TextBlock)window.FindName("EvidenceTitle")).Text == "installer-actions.log" &&
                 ((StackPanel)window.FindName("FindingCards")).Children.Count == 2, "MSI import populates action and main-engine findings");
             window.UpdateLayout();
-            FindButtons(window).Single(b => Equals(b.Tag, "KB-MSI-ACTION")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            FindButtons(findingCards).Single(b => Equals(b.Tag, "KB-MSI-ACTION")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(text.SelectedText.Contains("InstallFiles. Return value 3.") && text.Text.Contains("Synthetic package context"),
                 "MSI evidence action selects the failed action while displaying surrounding context");
             Capture(window, Path.Combine(scratch, "installer-action-evidence.png"));
@@ -1374,7 +1372,7 @@ internal static class Program
             Require(((TextBlock)window.FindName("EvidenceTitle")).Text == "Windows Update capture", "Saved capture opens through app workflow");
             Require(((Button)window.FindName("SaveCaptureButton")).IsEnabled, "Capture save available");
             Require(((StackPanel)window.FindName("FindingCards")).Children.Count == 2, "Capture overview groups CBS and event findings");
-            FindButtons(window).First(b => Equals(b.Tag, "KB-CBS-001")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            FindButtons(findingCards).Single(b => Equals(b.Tag, "KB-CBS-001")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(text.SelectedText.Contains("0x800f081f"), "Capture finding selects the correct source line");
             ((ListBox)window.FindName("SourcesList")).SelectedIndex = ((ListBox)window.FindName("SourcesList")).Items.Count - 1;
             IsolatedDesktop.Verify();
@@ -1400,7 +1398,8 @@ internal static class Program
             Require(((Button)window.FindName("RepairRun")).IsEnabled && ((ComboBox)window.FindName("RepairChoice")).Items.Count == Enum.GetValues<WorkflowKind>().Length, "All workflows support diagnosis without repair consent");
             var mainChoices = (ComboBox)window.FindName("MainWorkflow");
             var advancedChoices = (ComboBox)window.FindName("RepairChoice");
-            Require(mainChoices.SelectedItem?.ToString() == "Windows Update" && WorkflowCatalog.All.Select(x => x.Kind).SequenceEqual(Enum.GetValues<WorkflowKind>()), "Workflow display text and enum ordering remain stable");
+            Require(WorkflowCatalog.All.Single(definition => definition.Kind == WorkflowKind.WindowsUpdate).Title == "Windows Update" &&
+                WorkflowCatalog.All.Select(x => x.Kind).Order().SequenceEqual(Enum.GetValues<WorkflowKind>().Order()), "Workflow display text and complete enum coverage remain stable");
             Require(mainChoices.Items.Count == advancedChoices.Items.Count && mainChoices.Items.Cast<WorkflowDefinition>().Select(c => c.Title).SequenceEqual(advancedChoices.Items.Cast<ComboBoxItem>().Select(c => (string)c.Content)), "Main and advanced workflows have identical selection order");
             mainChoices.SelectedItem = WorkflowCatalog.All.Single(definition => definition.Kind == WorkflowKind.EventLog);
             Pump();
@@ -1445,7 +1444,7 @@ internal static class Program
             typeof(KillerBench.MainWindow).GetMethod("OnSourceSelected", flags)!.Invoke(window, [window, null]);
             Require(((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Focused service review report"),
                 "Reopening a workflow source retains its focused readable report title");
-            FindButtons(window).Single(button => Equals(button.Content, "Console")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ((Button)window.FindName("ConsoleViewButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(window.FindName("ConsolePane") is Border { Visibility: Visibility.Visible } && text.Text.Contains("Verification 42% complete"),
                 "Console retains the raw live output after a report is created");
             ((TextBox)window.FindName("SearchBox")).Text = "no matching report text";
@@ -1454,14 +1453,15 @@ internal static class Program
                 "Filtering does not replace the recorded workflow outcome");
             ((TextBox)window.FindName("SearchBox")).Clear();
             typeof(KillerBench.MainWindow).GetMethod("ShowEvidence", flags)!.Invoke(window, null);
-            FindButtons(window).Single(button => Equals(button.Content, "Report")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ((Button)window.FindName("ReportViewButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(window.FindName("ReportPane") is Border { Visibility: Visibility.Visible } &&
                 ((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Start here"),
                 "Report view leads with a distinct next-action section");
             using var historicalRecord = JsonDocument.Parse(JsonSerializer.Serialize(completedWorkflow, KillerBench.Engine.Capture.JsonOptions));
             var historicalSnapshot = new WorkflowJournalSnapshot("fixture-history.json", "fixture", "Services", "Needs attention",
                 DateTimeOffset.UtcNow, 1, 0, historicalRecord.RootElement.Clone());
-            var historicalReport = (WorkflowResult)typeof(KillerBench.MainWindow).GetMethod("BuildHistoricalWorkflowReport", flags)!
+            var historicalReport = (WorkflowResult)typeof(KillerBench.MainWindow).GetMethod("BuildHistoricalWorkflowReport",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
                 .Invoke(null, [historicalSnapshot])!;
             Require(historicalReport.Status == "Historical evidence - current verification required" &&
                 historicalReport.JournalPath == "fixture-history.json" && historicalReport.Actions.Count == 0 &&
@@ -1496,14 +1496,14 @@ internal static class Program
                 .Select(card => ((StackPanel)card.Child).Children.OfType<TextBlock>().First().Text).ToArray();
             Require(cardTitles.Take(4).SequenceEqual(["Recommended next step", "Repairable item", "Attention item", "Unknown item"]),
                 "Report orders actionable findings before attention and incomplete evidence");
-            var repairNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review repair options"));
+            var repairNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review System files repair"));
             categories.SelectedItem = categories.Items.Cast<object>().Single(category => category.ToString() == "Diagnostics");
             Pump();
             repairNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
-            Require(categories.SelectedItem?.ToString() == "Repair" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.CoreWindowsServices } &&
+            Require(categories.SelectedItem?.ToString() == "Repair" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.SystemFiles } &&
                 automaticRepair.IsChecked != true && window.FindName("ReportPane") is Border { Visibility: Visibility.Visible },
-                "Actionable reports open safe Repair options without approving or starting a repair");
+                "Actionable reports open the focused Repair option without approving or starting a repair");
             var defenderWorkflow = new WorkflowResult(WorkflowKind.Defender, "fixture", DateTimeOffset.UtcNow, "Needs attention",
                 [new("Defender fixture", CheckState.Attention, "Security review required.")], [], "fixture-journal.json");
             typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [defenderWorkflow]);

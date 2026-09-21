@@ -97,10 +97,10 @@ foreach ($command in @('crash-review', 'bits-jobs', 'backup-events', 'vss-provid
                         }
                     }
                 }
-                $expectedCount = if ($command -eq 'infrastructure-service-events') { 29 } elseif ($command -eq 'platform-service-events') { 22 } elseif ($command -in @('servicing-service-states', 'servicing-service-events', 'network-service-events', 'feature-service-events')) { 6 } elseif ($command -eq 'security-check') { 5 } elseif ($command -in @('event-channels', 'dhcp-events', 'storage-service-events', 'backup-service-events', 'winsock-readiness')) { 4 } elseif ($command -eq 'installer-pending-state') { 3 } elseif ($command -eq 'service-check --all') { 80 } elseif ($command -eq 'vitals-check') { 10 } elseif ($command -eq 'disk-diagnostic') { 6 } elseif ($command -in @('backup-events', 'dns-client-events', 'firewall-service-events', 'service-check Spooler spooler Dhcp', 'proxy-check', 'disk-diagnostic-tasks')) { 2 } else { 1 }
+                $expectedCount = if ($command -eq 'infrastructure-service-events') { 29 } elseif ($command -eq 'platform-service-events') { 23 } elseif ($command -in @('servicing-service-states', 'servicing-service-events', 'network-service-events', 'feature-service-events')) { 6 } elseif ($command -eq 'security-check') { 13 } elseif ($command -in @('event-channels', 'dhcp-events', 'storage-service-events', 'backup-service-events', 'winsock-readiness')) { 4 } elseif ($command -eq 'installer-pending-state') { 3 } elseif ($command -eq 'service-check --all') { 81 } elseif ($command -eq 'vitals-check') { 11 } elseif ($command -eq 'disk-diagnostic') { 6 } elseif ($command -in @('backup-events', 'dns-client-events', 'firewall-service-events', 'service-check Spooler spooler Dhcp', 'proxy-check', 'disk-diagnostic-tasks', 'tcp-port-pressure', 'delete-notifications')) { 2 } else { 1 }
                 if ($command -eq 'crash-review') {
-                    $expectedCount = 5
-                    foreach ($name in @('Crash dump configuration', 'Crash dump files', 'Recent system crash reports', 'Reported dump file matches', 'Recent unexpected shutdowns')) {
+                    $expectedCount = 7
+                    foreach ($name in @('Crash dump configuration', 'Crash dump files', 'Minidump structure', 'Recent system crash reports', 'Reported dump file matches', 'Crash incident correlation', 'Recent unexpected shutdowns')) {
                         if (@($checks | Where-Object Name -eq $name).Count -ne 1) { throw "Crash review lost scope: $name" }
                     }
                 }

@@ -113,6 +113,9 @@ public partial class MainWindow
         readCancellation = cancellation;
         CompareApplicationInventories.IsEnabled = false;
         CancelButton.IsEnabled = true;
+        string previousTitle = EvidenceTitle.Text;
+        string previousEvidence = EvidenceBox.Text;
+        string previousCoverage = CoverageLabel.Text;
         BeginWorkflowOutput(WorkflowKind.InstalledApps);
         AppendWorkflowOutput("Comparing saved application inventories. No application will be changed.");
         try
@@ -142,9 +145,20 @@ public partial class MainWindow
             Report(status);
             SetScanLight(result.Comparable ? "ready" : "incomplete", status);
         }
-        catch (OperationCanceledException) { Report("Inventory comparison stopped or timed out."); }
+        catch (OperationCanceledException)
+        {
+            EvidenceTitle.Text = previousTitle;
+            EvidenceBox.Text = previousEvidence;
+            CoverageLabel.Text = previousCoverage;
+            Report("Inventory comparison stopped or timed out.");
+        }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or JsonException or InvalidOperationException or KeyNotFoundException or ArgumentException or NotSupportedException or FormatException)
-        { Report("Cannot compare inventories: " + error.Message); }
+        {
+            EvidenceTitle.Text = previousTitle;
+            EvidenceBox.Text = previousEvidence;
+            CoverageLabel.Text = previousCoverage;
+            Report("Cannot compare inventories: " + error.Message);
+        }
         finally
         {
             readCancellation = null;

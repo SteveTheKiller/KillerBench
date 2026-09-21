@@ -308,6 +308,7 @@ public partial class MainWindow
     private void BeginWorkflowOutput(WorkflowKind kind)
     {
         workflowOutputActive = true;
+        SourcesList.SelectedIndex = -1;
         SourcesList.IsEnabled = false;
         SearchBox.IsEnabled = false;
         EvidenceTitle.Text = kind + " / Live";
