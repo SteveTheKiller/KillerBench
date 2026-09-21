@@ -1,5 +1,6 @@
 # Changelog
 
+- Route Security review, Defender scan and Firewall profile controls through localizable string resources.
 - Route Windows and third-party update discovery, selection, installation and recovery controls through localizable string resources.
 - Route cleanup targets, evidence warnings, rollback removal and permanent-action controls through localizable string resources.
 - Route scheduled-task drafting, review, registration and recovery controls through localizable string resources.

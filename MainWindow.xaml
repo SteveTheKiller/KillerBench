@@ -517,34 +517,34 @@
               </Expander>
             </StackPanel>
             <StackPanel x:Name="SecuritySettings" Visibility="Collapsed" Margin="0,0,0,6">
-              <TextBlock Text="Include with Defender signature checks:" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,4"/>
+              <TextBlock Text="{DynamicResource Str_Security_Include}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,4"/>
               <WrapPanel>
-                <CheckBox x:Name="SecurityTpm" Content="TPM readiness" IsChecked="True" Margin="0,0,14,0"/>
-                <CheckBox x:Name="SecurityBoot" Content="Secure Boot" IsChecked="True" Margin="0,0,14,0"/>
-                <CheckBox x:Name="SecurityVirtualization" Content="VBS, memory integrity and Credential Guard" IsChecked="True"/>
+                <CheckBox x:Name="SecurityTpm" Content="{DynamicResource Str_Security_Tpm}" IsChecked="True" Margin="0,0,14,0"/>
+                <CheckBox x:Name="SecurityBoot" Content="{DynamicResource Str_Security_SecureBoot}" IsChecked="True" Margin="0,0,14,0"/>
+                <CheckBox x:Name="SecurityVirtualization" Content="{DynamicResource Str_Security_Virtualization}" IsChecked="True"/>
               </WrapPanel>
-              <TextBlock Text="GO action" Foreground="{DynamicResource DimTextBrush}" Margin="0,8,0,3"/>
+              <TextBlock Text="{DynamicResource Str_Security_GoAction}" Foreground="{DynamicResource DimTextBrush}" Margin="0,8,0,3"/>
               <ComboBox x:Name="DefenderScanChoice" SelectedIndex="0" SelectionChanged="OnDefenderScanOptionChanged" AutomationProperties.Name="Microsoft Defender scan action">
-                <ComboBoxItem Content="Diagnosis only" Tag="None"/>
-                <ComboBoxItem Content="Quick scan" Tag="Quick"/>
-                <ComboBoxItem Content="Full scan" Tag="Full"/>
+                <ComboBoxItem Content="{DynamicResource Str_Security_DiagnosisOnly}" Tag="None"/>
+                <ComboBoxItem Content="{DynamicResource Str_Security_QuickScan}" Tag="Quick"/>
+                <ComboBoxItem Content="{DynamicResource Str_Security_FullScan}" Tag="Full"/>
               </ComboBox>
-              <CheckBox x:Name="DefenderScanConsent" Content="Start the selected scan when I press GO" Margin="0,5,0,0" IsEnabled="False" Checked="OnDefenderScanConsentChanged" Unchecked="OnDefenderScanConsentChanged"/>
-              <TextBlock Text="Without confirmation, GO previews eligibility. A scan never changes exclusions or policy, and interrupted requests are not repeated automatically." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <CheckBox x:Name="DefenderScanConsent" Content="{DynamicResource Str_Security_ScanConsent}" Margin="0,5,0,0" IsEnabled="False" Checked="OnDefenderScanConsentChanged" Unchecked="OnDefenderScanConsentChanged"/>
+              <TextBlock Text="{DynamicResource Str_Security_ScanBoundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
               <WrapPanel Margin="0,5,0,0">
-                <Button Content="View Defender overview" Click="OnViewDefenderOverview" Margin="0,0,6,0" ToolTip="Open a read-only report of protection, scan timing and aggregate threat history."/>
-                <Button Content="Check interrupted scan" Click="OnRecoverDefenderScan" ToolTip="Read current scan history without starting another scan."/>
+                <Button Content="{DynamicResource Str_Security_ViewOverview}" Click="OnViewDefenderOverview" Margin="0,0,6,0" ToolTip="{DynamicResource Str_Security_ViewOverviewTip}"/>
+                <Button Content="{DynamicResource Str_Security_CheckInterrupted}" Click="OnRecoverDefenderScan" ToolTip="{DynamicResource Str_Security_CheckInterruptedTip}"/>
               </WrapPanel>
             </StackPanel>
             <StackPanel x:Name="FirewallProfileSettings" Visibility="Collapsed" Margin="0,0,0,6">
-              <TextBlock Text="Enable selected Windows Firewall profiles" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,4"/>
+              <TextBlock Text="{DynamicResource Str_Firewall_EnableProfiles}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,4"/>
               <WrapPanel>
-                <CheckBox x:Name="FirewallDomainProfile" Content="Domain" Checked="OnFirewallProfileSelectionChanged" Unchecked="OnFirewallProfileSelectionChanged" Margin="0,0,14,0"/>
-                <CheckBox x:Name="FirewallPrivateProfile" Content="Private" Checked="OnFirewallProfileSelectionChanged" Unchecked="OnFirewallProfileSelectionChanged" Margin="0,0,14,0"/>
-                <CheckBox x:Name="FirewallPublicProfile" Content="Public" Checked="OnFirewallProfileSelectionChanged" Unchecked="OnFirewallProfileSelectionChanged"/>
+                <CheckBox x:Name="FirewallDomainProfile" Content="{DynamicResource Str_Firewall_Domain}" Checked="OnFirewallProfileSelectionChanged" Unchecked="OnFirewallProfileSelectionChanged" Margin="0,0,14,0"/>
+                <CheckBox x:Name="FirewallPrivateProfile" Content="{DynamicResource Str_Firewall_Private}" Checked="OnFirewallProfileSelectionChanged" Unchecked="OnFirewallProfileSelectionChanged" Margin="0,0,14,0"/>
+                <CheckBox x:Name="FirewallPublicProfile" Content="{DynamicResource Str_Firewall_Public}" Checked="OnFirewallProfileSelectionChanged" Unchecked="OnFirewallProfileSelectionChanged"/>
               </WrapPanel>
-              <CheckBox x:Name="FirewallProfileApply" Content="Apply selected local profiles after fresh policy checks" Checked="OnFirewallProfileApplyChanged" Margin="0,5,0,0"/>
-              <TextBlock Text="Unchecked runs the normal firewall diagnosis. Managed, enabled, missing or ambiguous profile settings are preserved. Rules, default actions and logging settings are not changed." Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+              <CheckBox x:Name="FirewallProfileApply" Content="{DynamicResource Str_Firewall_Apply}" Checked="OnFirewallProfileApplyChanged" Margin="0,5,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Firewall_Boundary}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="PrivacySettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="{DynamicResource Str_Privacy_Description}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,0,0,4"/>

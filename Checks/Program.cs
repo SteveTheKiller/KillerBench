@@ -146,6 +146,10 @@ internal static class Program
                 window.FindName("UpdateInstallButton") is Button { Content: "Install selected" } &&
                 window.FindName("ThirdPartyUpdateAgreements") is CheckBox { Content: "Accept the selected package and source agreements" },
                 "Windows and third-party update controls resolve their localizable English resources");
+            Require(window.FindName("SecurityVirtualization") is CheckBox { Content: "VBS, memory integrity and Credential Guard" } &&
+                window.FindName("DefenderScanConsent") is CheckBox { Content: "Start the selected scan when I press GO" } &&
+                window.FindName("FirewallProfileApply") is CheckBox { Content: "Apply selected local profiles after fresh policy checks" },
+                "Security scan and Firewall profile controls resolve their localizable English resources");
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
                 "Desktop subtitle identifies the full maintenance scope");
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;

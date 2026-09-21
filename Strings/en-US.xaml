@@ -441,4 +441,24 @@
   <sys:String x:Key="Str_Update_ThirdPartyBoundary">One exact package, source and version per operation. No automatic restart.</sys:String>
   <sys:String x:Key="Str_Update_CheckInterruptedApp">Check interrupted app update</sys:String>
   <sys:String x:Key="Str_Update_CheckInterruptedAppTip">Verify the exact installed version without retrying the update.</sys:String>
+  <sys:String x:Key="Str_Security_Include">Include with Defender signature checks:</sys:String>
+  <sys:String x:Key="Str_Security_Tpm">TPM readiness</sys:String>
+  <sys:String x:Key="Str_Security_SecureBoot">Secure Boot</sys:String>
+  <sys:String x:Key="Str_Security_Virtualization">VBS, memory integrity and Credential Guard</sys:String>
+  <sys:String x:Key="Str_Security_GoAction">GO action</sys:String>
+  <sys:String x:Key="Str_Security_DiagnosisOnly">Diagnosis only</sys:String>
+  <sys:String x:Key="Str_Security_QuickScan">Quick scan</sys:String>
+  <sys:String x:Key="Str_Security_FullScan">Full scan</sys:String>
+  <sys:String x:Key="Str_Security_ScanConsent">Start the selected scan when I press GO</sys:String>
+  <sys:String x:Key="Str_Security_ScanBoundary">Without confirmation, GO previews eligibility. A scan never changes exclusions or policy, and interrupted requests are not repeated automatically.</sys:String>
+  <sys:String x:Key="Str_Security_ViewOverview">View Defender overview</sys:String>
+  <sys:String x:Key="Str_Security_ViewOverviewTip">Open a read-only report of protection, scan timing and aggregate threat history.</sys:String>
+  <sys:String x:Key="Str_Security_CheckInterrupted">Check interrupted scan</sys:String>
+  <sys:String x:Key="Str_Security_CheckInterruptedTip">Read current scan history without starting another scan.</sys:String>
+  <sys:String x:Key="Str_Firewall_EnableProfiles">Enable selected Windows Firewall profiles</sys:String>
+  <sys:String x:Key="Str_Firewall_Domain">Domain</sys:String>
+  <sys:String x:Key="Str_Firewall_Private">Private</sys:String>
+  <sys:String x:Key="Str_Firewall_Public">Public</sys:String>
+  <sys:String x:Key="Str_Firewall_Apply">Apply selected local profiles after fresh policy checks</sys:String>
+  <sys:String x:Key="Str_Firewall_Boundary">Unchecked runs the normal firewall diagnosis. Managed, enabled, missing or ambiguous profile settings are preserved. Rules, default actions and logging settings are not changed.</sys:String>
 </ResourceDictionary>
