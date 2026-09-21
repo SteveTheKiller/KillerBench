@@ -640,77 +640,77 @@
               <TextBlock Text="GO inventories existing tasks. Registration is separate, creates only a disabled task and never runs, replaces or deletes a task." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="EventLogSettings" Visibility="Collapsed" Margin="0,0,0,6">
-              <TextBlock Text="Diagnostic channel" Margin="0,0,0,4"/>
+              <TextBlock Text="{DynamicResource Str_EventLog_Channel}" Margin="0,0,0,4"/>
               <ComboBox x:Name="EventChannelChoice" SelectedIndex="0" SelectionChanged="OnEventChannelOptionChanged" AutomationProperties.Name="Diagnostic event channel">
-                <ComboBoxItem Content="System" Tag="System"/>
-                <ComboBoxItem Content="Application" Tag="Application"/>
-                <ComboBoxItem Content="Setup" Tag="Setup"/>
-                <ComboBoxItem Content="Windows Update Client / Operational" Tag="Microsoft-Windows-WindowsUpdateClient/Operational"/>
+                <ComboBoxItem Content="{DynamicResource Str_EventLog_System}" Tag="System"/>
+                <ComboBoxItem Content="{DynamicResource Str_EventLog_Application}" Tag="Application"/>
+                <ComboBoxItem Content="{DynamicResource Str_EventLog_Setup}" Tag="Setup"/>
+                <ComboBoxItem Content="{DynamicResource Str_EventLog_WindowsUpdate}" Tag="Microsoft-Windows-WindowsUpdateClient/Operational"/>
               </ComboBox>
-              <CheckBox x:Name="EventChannelEnableConsent" Content="Enable this channel after fresh checks" Margin="0,4,0,0" Checked="OnEventChannelOptionChanged" Unchecked="OnEventChannelOptionChanged" AutomationProperties.Name="Enable selected diagnostic event channel"/>
-              <TextBlock Text="GO always inspects all four channels. This option changes only the exact selected disabled, unmanaged channel and verifies that every other reported channel setting stayed unchanged." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <CheckBox x:Name="EventChannelEnableConsent" Content="{DynamicResource Str_EventLog_Enable}" Margin="0,4,0,0" Checked="OnEventChannelOptionChanged" Unchecked="OnEventChannelOptionChanged" AutomationProperties.Name="Enable selected diagnostic event channel"/>
+              <TextBlock Text="{DynamicResource Str_EventLog_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="NetworkSettings" Visibility="Collapsed" Margin="0,0,0,6">
-              <TextBlock Text="Hostname lookup (optional)" Margin="0,0,0,4"/>
+              <TextBlock Text="{DynamicResource Str_Network_Hostname}" Margin="0,0,0,4"/>
               <TextBox x:Name="NetworkLookupHost" AutomationProperties.Name="Optional hostname to resolve"/>
-              <TextBlock Text="TCP destination (optional)" Margin="0,6,0,4"/>
+              <TextBlock Text="{DynamicResource Str_Network_Destination}" Margin="0,6,0,4"/>
               <TextBox x:Name="NetworkTcpHost" AutomationProperties.Name="Optional TCP hostname or IP address"/>
-              <TextBlock Text="TCP port" Margin="0,4,0,4"/>
+              <TextBlock Text="{DynamicResource Str_Network_Port}" Margin="0,4,0,4"/>
               <TextBox x:Name="NetworkTcpPort" AutomationProperties.Name="TCP destination port"/>
-              <TextBlock Text="Timeout per lookup or connection (seconds)" Margin="0,6,0,4"/>
+              <TextBlock Text="{DynamicResource Str_Network_Timeout}" Margin="0,6,0,4"/>
               <DockPanel>
                 <TextBlock DockPanel.Dock="Right" Text="{Binding Value, ElementName=NetworkTimeoutSeconds, StringFormat={}{0:0}}" Margin="8,0,0,0"/>
                 <Slider x:Name="NetworkTimeoutSeconds" Minimum="1" Maximum="60" Value="10" TickFrequency="1" IsSnapToTickEnabled="True" AutomationProperties.Name="Network timeout in seconds"/>
               </DockPanel>
-              <TextBlock Text="Enter both destination and port to test a connection. No application data is sent." TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
-              <TextBlock Text="Leave blank to skip. Uses your configured resolver; no DNS settings are changed." TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Network_ConnectionBoundary}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Network_DnsBoundary}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="AudioSettings" Visibility="Collapsed" Margin="0,0,0,6">
-              <TextBlock Text="Default endpoint scope" Margin="0,0,0,4"/>
+              <TextBlock Text="{DynamicResource Str_Audio_EndpointScope}" Margin="0,0,0,4"/>
               <ComboBox x:Name="AudioDirectionChoice" SelectedIndex="0" SelectionChanged="OnWorkflowOptionsChanged" AutomationProperties.Name="Audio endpoint direction">
-                <ComboBoxItem Content="Input and output" Tag="All"/>
-                <ComboBoxItem Content="Output" Tag="Output"/>
-                <ComboBoxItem Content="Input" Tag="Input"/>
+                <ComboBoxItem Content="{DynamicResource Str_Audio_InputOutput}" Tag="All"/>
+                <ComboBoxItem Content="{DynamicResource Str_Audio_Output}" Tag="Output"/>
+                <ComboBoxItem Content="{DynamicResource Str_Audio_Input}" Tag="Input"/>
               </ComboBox>
-              <TextBlock Text="Windows role" Margin="0,6,0,4"/>
+              <TextBlock Text="{DynamicResource Str_Audio_WindowsRole}" Margin="0,6,0,4"/>
               <ComboBox x:Name="AudioRoleChoice" SelectedIndex="0" SelectionChanged="OnWorkflowOptionsChanged" AutomationProperties.Name="Audio endpoint role">
-                <ComboBoxItem Content="All roles" Tag="All"/>
-                <ComboBoxItem Content="Console" Tag="Console"/>
-                <ComboBoxItem Content="Multimedia" Tag="Multimedia"/>
-                <ComboBoxItem Content="Communications" Tag="Communications"/>
+                <ComboBoxItem Content="{DynamicResource Str_Audio_AllRoles}" Tag="All"/>
+                <ComboBoxItem Content="{DynamicResource Str_Audio_Console}" Tag="Console"/>
+                <ComboBoxItem Content="{DynamicResource Str_Audio_Multimedia}" Tag="Multimedia"/>
+                <ComboBoxItem Content="{DynamicResource Str_Audio_Communications}" Tag="Communications"/>
               </ComboBox>
-              <TextBlock Text="GO still checks every audio device and driver. These controls limit the default endpoint details shown." TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Audio_Boundary}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="SystemRestoreSettings" Visibility="Collapsed" Margin="0,0,0,6">
-              <CheckBox x:Name="SystemRestoreCreate" Content="Prepare one restore point" Margin="0,0,0,6" AutomationProperties.Name="Prepare one System Restore point" Checked="OnSystemRestoreOptionChanged" Unchecked="OnSystemRestoreOptionChanged"/>
-              <TextBlock Text="Description"/>
-              <TextBox x:Name="SystemRestoreDescription" Text="Before KillerBench maintenance" MaxLength="64" IsEnabled="{Binding IsChecked, ElementName=SystemRestoreCreate}" TextChanged="OnSystemRestoreDescriptionChanged" AutomationProperties.Name="Restore point description"/>
-              <TextBlock Text="Reason" Margin="0,6,0,4"/>
+              <CheckBox x:Name="SystemRestoreCreate" Content="{DynamicResource Str_Restore_Prepare}" Margin="0,0,0,6" AutomationProperties.Name="Prepare one System Restore point" Checked="OnSystemRestoreOptionChanged" Unchecked="OnSystemRestoreOptionChanged"/>
+              <TextBlock Text="{DynamicResource Str_Restore_Description}"/>
+              <TextBox x:Name="SystemRestoreDescription" Text="{DynamicResource Str_Restore_DefaultDescription}" MaxLength="64" IsEnabled="{Binding IsChecked, ElementName=SystemRestoreCreate}" TextChanged="OnSystemRestoreDescriptionChanged" AutomationProperties.Name="Restore point description"/>
+              <TextBlock Text="{DynamicResource Str_Restore_Reason}" Margin="0,6,0,4"/>
               <ComboBox x:Name="SystemRestoreReasonChoice" SelectedIndex="0" IsEnabled="{Binding IsChecked, ElementName=SystemRestoreCreate}" SelectionChanged="OnSystemRestoreReasonChanged" AutomationProperties.Name="Restore point reason">
-                <ComboBoxItem Content="System settings change" Tag="ModifySettings"/>
-                <ComboBoxItem Content="Application installation" Tag="ApplicationInstall"/>
-                <ComboBoxItem Content="Device driver installation" Tag="DeviceDriverInstall"/>
+                <ComboBoxItem Content="{DynamicResource Str_Restore_SystemSettings}" Tag="ModifySettings"/>
+                <ComboBoxItem Content="{DynamicResource Str_Restore_ApplicationInstall}" Tag="ApplicationInstall"/>
+                <ComboBoxItem Content="{DynamicResource Str_Restore_DriverInstall}" Tag="DeviceDriverInstall"/>
               </ComboBox>
-              <TextBlock Text="GO lists existing points unless this option is selected. Select automatic action below to request one point after fresh checks. Windows frequency limits and protection policy are preserved." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Restore_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="StorageSettings" Visibility="Collapsed" Margin="0,0,0,6">
-              <TextBlock Text="Volume to check"/>
+              <TextBlock Text="{DynamicResource Str_Storage_Volume}"/>
               <ComboBox x:Name="StorageVolumeChoice" AutomationProperties.Name="Filesystem check volume"/>
-              <TextBlock Text="Checks this NTFS volume plus disk and controller devices across the PC. Device findings are not mapped to this volume. No repair or restart is scheduled." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
-              <CheckBox x:Name="StorageRepairReview" Content="Review filesystem repair" Margin="0,8,0,4" AutomationProperties.Name="Review filesystem repair eligibility" Checked="OnStorageRepairConsentChanged" Unchecked="OnStorageRepairConsentChanged"/>
+              <TextBlock Text="{DynamicResource Str_Storage_Description}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <CheckBox x:Name="StorageRepairReview" Content="{DynamicResource Str_Storage_RepairReview}" Margin="0,8,0,4" AutomationProperties.Name="Review filesystem repair eligibility" Checked="OnStorageRepairConsentChanged" Unchecked="OnStorageRepairConsentChanged"/>
               <ComboBox x:Name="StorageRepairModeChoice" SelectedIndex="0" IsEnabled="{Binding IsChecked, ElementName=StorageRepairReview}" AutomationProperties.Name="Filesystem repair mode" SelectionChanged="OnStorageRepairModeChanged">
-                <ComboBoxItem Content="Spot repair" Tag="SpotFix"/>
-                <ComboBoxItem Content="Offline scan and repair" Tag="OfflineScanAndFix"/>
+                <ComboBoxItem Content="{DynamicResource Str_Storage_SpotRepair}" Tag="SpotFix"/>
+                <ComboBoxItem Content="{DynamicResource Str_Storage_OfflineRepair}" Tag="OfflineScanAndFix"/>
               </ComboBox>
-              <CheckBox x:Name="StorageAllowDismount" Content="Allow a non-system volume to go offline" Margin="0,4,0,0" IsEnabled="{Binding IsChecked, ElementName=StorageRepairReview}" AutomationProperties.Name="Allow non-system volume dismount during repair" Checked="OnStorageRepairConsentChanged" Unchecked="OnStorageRepairConsentChanged"/>
-              <CheckBox x:Name="StorageBackupConfirmed" Content="Important data on this volume is backed up" Margin="0,4,0,0" IsEnabled="{Binding IsChecked, ElementName=StorageRepairReview}" AutomationProperties.Name="Confirm filesystem repair backup" Checked="OnStorageRepairConsentChanged" Unchecked="OnStorageRepairConsentChanged"/>
-              <CheckBox x:Name="StorageOptimizationReview" Content="Analyze drive optimization" Margin="0,8,0,4" AutomationProperties.Name="Analyze drive optimization" Checked="OnStorageOptimizationChanged" Unchecked="OnStorageOptimizationChanged"/>
+              <CheckBox x:Name="StorageAllowDismount" Content="{DynamicResource Str_Storage_AllowDismount}" Margin="0,4,0,0" IsEnabled="{Binding IsChecked, ElementName=StorageRepairReview}" AutomationProperties.Name="Allow non-system volume dismount during repair" Checked="OnStorageRepairConsentChanged" Unchecked="OnStorageRepairConsentChanged"/>
+              <CheckBox x:Name="StorageBackupConfirmed" Content="{DynamicResource Str_Storage_BackupConfirmed}" Margin="0,4,0,0" IsEnabled="{Binding IsChecked, ElementName=StorageRepairReview}" AutomationProperties.Name="Confirm filesystem repair backup" Checked="OnStorageRepairConsentChanged" Unchecked="OnStorageRepairConsentChanged"/>
+              <CheckBox x:Name="StorageOptimizationReview" Content="{DynamicResource Str_Storage_OptimizationReview}" Margin="0,8,0,4" AutomationProperties.Name="Analyze drive optimization" Checked="OnStorageOptimizationChanged" Unchecked="OnStorageOptimizationChanged"/>
               <ComboBox x:Name="StorageOptimizationModeChoice" SelectedIndex="0" IsEnabled="{Binding IsChecked, ElementName=StorageOptimizationReview}" AutomationProperties.Name="Drive optimization method" SelectionChanged="OnStorageOptimizationModeChanged">
-                <ComboBoxItem Content="Windows recommended" Tag="Recommended"/>
-                <ComboBoxItem Content="Retrim solid-state storage" Tag="ReTrim"/>
-                <ComboBoxItem Content="Defragment hard disk" Tag="Defragment"/>
+                <ComboBoxItem Content="{DynamicResource Str_Storage_WindowsRecommended}" Tag="Recommended"/>
+                <ComboBoxItem Content="{DynamicResource Str_Storage_Retrim}" Tag="ReTrim"/>
+                <ComboBoxItem Content="{DynamicResource Str_Storage_Defragment}" Tag="Defragment"/>
               </ComboBox>
-              <TextBlock Text="GO always collects current evidence first. Filesystem repair and drive optimization are separate choices. Optimization requires a confirmed media type and never changes schedules or restarts Windows." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Storage_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
               <Expander Header="Review selected folder" Foreground="{DynamicResource TextBrush}" Margin="0,8,0,0">
                 <StackPanel>
                   <TextBlock Text="Find duplicate files or large files in one selected local folder. Both reviews are read-only and never select files for deletion." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>

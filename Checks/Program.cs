@@ -122,6 +122,12 @@ internal static class Program
             Require(window.FindName("PrivacyBooleanApply") is CheckBox { Content: "Apply when I press GO" } &&
                 window.FindName("BitLockerEncryptConsent") is CheckBox { Content: "Back up the selected recovery key, then start encryption when I press GO" },
                 "Privacy and BitLocker safety controls resolve their localizable English resources");
+            Require(window.FindName("EventChannelEnableConsent") is CheckBox { Content: "Enable this channel after fresh checks" } &&
+                window.FindName("AudioDirectionChoice") is ComboBox { Items.Count: 3 } audioDirections &&
+                audioDirections.Items[0] is ComboBoxItem { Content: "Input and output" } &&
+                window.FindName("SystemRestoreCreate") is CheckBox { Content: "Prepare one restore point" } &&
+                window.FindName("StorageRepairReview") is CheckBox { Content: "Review filesystem repair" },
+                "Event log, audio, System Restore and Storage controls resolve their localizable English resources");
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
                 "Desktop subtitle identifies the full maintenance scope");
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;

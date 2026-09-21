@@ -1,5 +1,6 @@
 # Changelog
 
+- Route Event Log, Network, Audio, System Restore and Storage option panels through localizable string resources.
 - Route Privacy and BitLocker review, confirmation and preservation boundaries through localizable string resources.
 - Route Time and Profiles review, confirmation, backup and recovery controls through localizable string resources.
 - Route BITS, Printing and Installer review, consent and safety controls through localizable string resources.
