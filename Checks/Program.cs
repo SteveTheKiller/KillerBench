@@ -106,6 +106,7 @@ internal static class Program
                 window.FindName("OrcaClearCaches") is CheckBox { Content: "Outlook caches" },
                 "MACE and ORCA controls resolve their localizable English resources");
             Require(window.FindName("DepotUpdates") is CheckBox { Content: "Windows updates" } &&
+                window.FindName("DepotPrivacy") is CheckBox { Content: "Privacy" } &&
                 window.FindName("BeamInstallSwitches") is TextBox { ToolTip: "MSI uses /qn when this is blank. EXE runs without switches when blank." },
                 "DEPOT and BEAM controls resolve their localizable English resources");
             Require(window.FindName("DebloatPower") is CheckBox { Content: "High performance power" } &&
@@ -114,11 +115,13 @@ internal static class Program
                 window.FindName("DebloatOfficeCulture") is ComboBox { Items.Count: 13 } officeCultures &&
                 officeCultures.Items[0] is ComboBoxItem { Content: "Choose Office language to retain" } &&
                 window.FindName("DebloatSleepAc") is ComboBox { Items.Count: 5 } sleepAc &&
-                sleepAc.Items[0] is ComboBoxItem { Content: "Sleep AC: Never" },
+                sleepAc.Items[0] is ComboBoxItem { Content: "Sleep AC: Never" } &&
+                window.FindName("DebloatHp") is CheckBox { Content: "HP software" },
                 "DEBLOAT safety, culture and timer controls resolve their localizable English resources");
             Require(window.FindName("BitsRetryButton") is Button { Content: "Retry selected transfer" } &&
                 window.FindName("PrinterMakeDefault") is CheckBox { Content: "Repair a missing or conflicting default with this queue" } &&
-                window.FindName("FindMsiProductsButton") is Button { Content: "Find installed MSI apps" },
+                window.FindName("FindMsiProductsButton") is Button { Content: "Find installed MSI apps" } &&
+                window.FindName("InstallerProductCode") is TextBox { ToolTip: "Example: {00000000-0000-0000-0000-000000000000}" },
                 "BITS, Printing and Installer controls resolve their localizable English resources");
             Require(window.FindName("TimeRecoverButton") is Button { Content: "Check interrupted time change" } &&
                 window.FindName("CopyProfileBackupButton") is Button { Content: "Copy and verify" },

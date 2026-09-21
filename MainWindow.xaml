@@ -279,7 +279,7 @@
                 <CheckBox x:Name="DepotUpdates" Content="{DynamicResource Str_Depot_WindowsUpdates}"/><CheckBox x:Name="DepotComputerName" Content="{DynamicResource Str_Depot_ComputerName}"/>
                 <CheckBox x:Name="DepotLocalAdmin" Content="{DynamicResource Str_Depot_LocalAdministrator}"/><CheckBox x:Name="DepotAdminReview" Content="{DynamicResource Str_Depot_AdministratorReview}"/>
                 <CheckBox x:Name="DepotExtensions" Content="{DynamicResource Str_Apps_ReviewExtensions}"/><CheckBox x:Name="DepotCleanup" Content="{DynamicResource Str_Depot_Cleanup}"/>
-                <CheckBox x:Name="DepotEdge" Content="Edge"/><CheckBox x:Name="DepotPrivacy" Content="Privacy"/>
+                <CheckBox x:Name="DepotEdge" Content="Edge"/><CheckBox x:Name="DepotPrivacy" Content="{DynamicResource Str_Depot_Privacy}"/>
                 <CheckBox x:Name="DepotTaskbar" Content="{DynamicResource Str_Depot_Taskbar}"/><CheckBox x:Name="DepotStartMenu" Content="{DynamicResource Str_Depot_StartMenu}"/>
                 <CheckBox x:Name="DepotNotifications" Content="{DynamicResource Str_Depot_Notifications}"/>
               </WrapPanel>
@@ -318,9 +318,9 @@
                 <CheckBox x:Name="DebloatStart" Content="{DynamicResource Str_Debloat_Start}"/><CheckBox x:Name="DebloatNotifications" Content="{DynamicResource Str_Depot_Notifications}"/>
                 <CheckBox x:Name="DebloatEdge" Content="Edge"/><CheckBox x:Name="DebloatPower" Content="{DynamicResource Str_Debloat_HighPerformance}"/>
                 <CheckBox x:Name="DebloatTimers" Content="{DynamicResource Str_Debloat_Timers}"/><CheckBox x:Name="DebloatHibernation" Content="{DynamicResource Str_Debloat_Hibernation}"/>
-                <CheckBox x:Name="DebloatOfficeLanguages" Content="{DynamicResource Str_Debloat_OfficeLanguages}"/><CheckBox x:Name="DebloatHp" Content="HP software"/>
-                <CheckBox x:Name="DebloatDell" Content="Dell software"/><CheckBox x:Name="DebloatAsusAcer" Content="ASUS and Acer software"/>
-                <CheckBox x:Name="DebloatLenovo" Content="Lenovo software"/><CheckBox x:Name="DebloatThirdParty" Content="{DynamicResource Str_Debloat_ThirdPartyApps}"/>
+                <CheckBox x:Name="DebloatOfficeLanguages" Content="{DynamicResource Str_Debloat_OfficeLanguages}"/><CheckBox x:Name="DebloatHp" Content="{DynamicResource Str_Debloat_HpSoftware}"/>
+                <CheckBox x:Name="DebloatDell" Content="{DynamicResource Str_Debloat_DellSoftware}"/><CheckBox x:Name="DebloatAsusAcer" Content="{DynamicResource Str_Debloat_AsusAcerSoftware}"/>
+                <CheckBox x:Name="DebloatLenovo" Content="{DynamicResource Str_Debloat_LenovoSoftware}"/><CheckBox x:Name="DebloatThirdParty" Content="{DynamicResource Str_Debloat_ThirdPartyApps}"/>
                 <CheckBox x:Name="DebloatVendorData" Content="{DynamicResource Str_Debloat_VendorData}"/>
               </WrapPanel>
               <ComboBox x:Name="DebloatOfficeCulture" SelectedIndex="0" Margin="0,6,0,0" IsEnabled="{Binding IsChecked, ElementName=DebloatOfficeLanguages}" AutomationProperties.Name="Office language to retain">
@@ -383,7 +383,7 @@
               </StackPanel>
               <ComboBox x:Name="InstallerProductChoice" Margin="0,0,0,4" SelectionChanged="OnInstallerProductSelected" AutomationProperties.Name="Installed MSI application"/>
               <TextBlock Text="{DynamicResource Str_Installer_ProductCode}"/>
-              <TextBox x:Name="InstallerProductCode" Margin="0,4,0,4" MaxLength="38" AutomationProperties.Name="Optional braced MSI product code" ToolTip="Example: {00000000-0000-0000-0000-000000000000}"/>
+              <TextBox x:Name="InstallerProductCode" Margin="0,4,0,4" MaxLength="38" AutomationProperties.Name="Optional braced MSI product code" ToolTip="{DynamicResource Str_Installer_ProductCodeTip}"/>
               <TextBlock Text="{DynamicResource Str_Installer_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
             </StackPanel>
             <StackPanel x:Name="TimeSettings" Visibility="Collapsed" Margin="0,0,0,6">
@@ -946,7 +946,7 @@
                 </Image>
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                   <TextBlock FontFamily="{DynamicResource WordmarkFont}" Cursor="Hand" MouseLeftButtonUp="OnAboutWebsite" ToolTip="killerbench.net"><Run Text="Killer" FontSize="22" Foreground="{DynamicResource TextBrush}"/><Run Text="Bench" FontSize="28.6" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/></TextBlock>
-                  <TextBlock FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap">A deterministic Windows diagnostic and repair workbench. A <Hyperlink NavigateUri="https://killertools.net" RequestNavigate="OnAboutLink" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None">GPLv3 Killer Tools</Hyperlink> utility.</TextBlock>
+                  <TextBlock FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap"><Run Text="{DynamicResource Str_About_DescriptionPrefix}"/><Run Text=" "/><Hyperlink NavigateUri="https://killertools.net" RequestNavigate="OnAboutLink" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None">GPLv3 Killer Tools</Hyperlink><Run Text=" "/><Run Text="{DynamicResource Str_About_DescriptionSuffix}"/></TextBlock>
                 </StackPanel>
               </Grid>
               <Grid x:Name="AboutInfoGrid">
@@ -957,7 +957,7 @@
                 <Border Background="Transparent" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="14,12,14,4">
                   <StackPanel>
                     <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_Version}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><Grid Margin="0,1,0,0"><TextBlock x:Name="AboutVersionBlock" Foreground="{DynamicResource PrimaryBrush}" FontFamily="Consolas" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Bottom" Cursor="Hand" MouseLeftButtonUp="OnAboutRelease"/><TextBlock x:Name="AboutReleaseDateBlock" Foreground="{DynamicResource MutedTextBrush}" FontFamily="Consolas" FontSize="11" FontStyle="Italic" HorizontalAlignment="Right" VerticalAlignment="Bottom"/></Grid></StackPanel>
-                    <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_Publisher}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><TextBlock x:Name="AboutPublisherBlock" FontSize="12" TextWrapping="Wrap"/><TextBlock x:Name="AboutAkaBlock" Visibility="Collapsed" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,3,0,0">AKA <Hyperlink NavigateUri="https://thekiller.net" RequestNavigate="OnAboutLink" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None"><Run x:Name="AboutAkaRun"/></Hyperlink></TextBlock></StackPanel>
+                    <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_Publisher}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><TextBlock x:Name="AboutPublisherBlock" FontSize="12" TextWrapping="Wrap"/><TextBlock x:Name="AboutAkaBlock" Visibility="Collapsed" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,3,0,0"><Run Text="{DynamicResource Str_About_Aka}"/><Run Text=" "/><Hyperlink NavigateUri="https://thekiller.net" RequestNavigate="OnAboutLink" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None"><Run x:Name="AboutAkaRun"/></Hyperlink></TextBlock></StackPanel>
                     <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_Thumbprint}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><TextBlock x:Name="AboutThumbprintBlock" FontFamily="Consolas" FontSize="11" TextWrapping="Wrap"/></StackPanel>
                     <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_ExeHash}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><TextBlock x:Name="AboutSha256Block" FontFamily="Consolas" FontSize="11" TextWrapping="NoWrap"/></StackPanel>
                     <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_KnowledgeDatabases}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><TextBlock x:Name="AboutDatabaseInfo" FontFamily="Consolas" FontSize="11" TextWrapping="Wrap"/><Button x:Name="AboutDatabaseUpdate" Content="{DynamicResource Str_About_UpdateDatabases}" Click="OnAboutDatabaseUpdate" HorizontalAlignment="Left" Margin="0,7,0,0"/><TextBlock x:Name="AboutDatabaseStatus" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,5,0,0"/></StackPanel>

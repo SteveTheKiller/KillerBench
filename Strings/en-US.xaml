@@ -539,4 +539,13 @@
   <sys:String x:Key="Str_Debloat_DisplayBattery30">Display battery: 30</sys:String>
   <sys:String x:Key="Str_Debloat_DisplayBattery60">Display battery: 60</sys:String>
   <sys:String x:Key="Str_Debloat_DisplayBattery120">Display battery: 120</sys:String>
+  <sys:String x:Key="Str_Depot_Privacy">Privacy</sys:String>
+  <sys:String x:Key="Str_Debloat_HpSoftware">HP software</sys:String>
+  <sys:String x:Key="Str_Debloat_DellSoftware">Dell software</sys:String>
+  <sys:String x:Key="Str_Debloat_AsusAcerSoftware">ASUS and Acer software</sys:String>
+  <sys:String x:Key="Str_Debloat_LenovoSoftware">Lenovo software</sys:String>
+  <sys:String x:Key="Str_Installer_ProductCodeTip">Example: {00000000-0000-0000-0000-000000000000}</sys:String>
+  <sys:String x:Key="Str_About_DescriptionPrefix">A deterministic Windows diagnostic and repair workbench. A</sys:String>
+  <sys:String x:Key="Str_About_DescriptionSuffix">utility.</sys:String>
+  <sys:String x:Key="Str_About_Aka">AKA</sys:String>
 </ResourceDictionary>

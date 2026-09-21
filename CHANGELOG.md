@@ -1,6 +1,6 @@
 # Changelog
 
-- Route DEBLOAT Office culture and power-timer choices through localizable string resources.
+- Route remaining DEBLOAT, DEPOT, Installer and About labels through localizable string resources.
 - Route shell status and About metadata controls through localizable string resources.
 - Route advanced check selection, knowledge tools, session views and manual repair consent through localizable string resources.
 - Route Security review, Defender scan and Firewall profile controls through localizable string resources.
