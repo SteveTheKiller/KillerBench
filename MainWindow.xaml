@@ -603,7 +603,7 @@
               <CheckBox x:Name="BitLockerResumeConsent" Content="{DynamicResource Str_BitLocker_ResumeConsent}" Click="OnBitLockerResumeConsentChanged" Margin="0,0,0,4"/>
               <TextBlock Text="{DynamicResource Str_BitLocker_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
             </StackPanel>
-            <TextBlock x:Name="ComponentCleanupSettings" Visibility="Collapsed" Margin="0,0,0,6" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Text="GO checks whether Windows recommends cleanup. Optional cleanup removes superseded components immediately; no automatic undo or restart. Reclaimed space is not measured."/>
+            <TextBlock x:Name="ComponentCleanupSettings" Visibility="Collapsed" Margin="0,0,0,6" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Text="{DynamicResource Str_ComponentCleanup_Boundary}"/>
             <StackPanel x:Name="TaskSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <Expander x:Name="TaskDraftExpander" Header="New task draft" Loaded="OnTaskDraftLoaded">
                 <StackPanel Margin="0,6,0,6">
@@ -711,30 +711,30 @@
                 <ComboBoxItem Content="{DynamicResource Str_Storage_Defragment}" Tag="Defragment"/>
               </ComboBox>
               <TextBlock Text="{DynamicResource Str_Storage_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
-              <Expander Header="Review selected folder" Foreground="{DynamicResource TextBrush}" Margin="0,8,0,0">
+              <Expander Header="{DynamicResource Str_FileReview_Header}" Foreground="{DynamicResource TextBrush}" Margin="0,8,0,0">
                 <StackPanel>
-                  <TextBlock Text="Find duplicate files or large files in one selected local folder. Both reviews are read-only and never select files for deletion." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+                  <TextBlock Text="{DynamicResource Str_FileReview_Description}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
                   <DockPanel Margin="0,5,0,4" LastChildFill="True">
-                    <Button Content="Browse" Click="OnBrowseFileReviewFolder" DockPanel.Dock="Right" Margin="5,0,0,0"/>
-                    <TextBox x:Name="FileReviewFolder" AutomationProperties.Name="Folder to review for duplicate and large files" ToolTip="One local folder. Reparse points and inaccessible content are excluded."/>
+                    <Button Content="{DynamicResource Str_FileReview_Browse}" Click="OnBrowseFileReviewFolder" DockPanel.Dock="Right" Margin="5,0,0,0"/>
+                    <TextBox x:Name="FileReviewFolder" AutomationProperties.Name="Folder to review for duplicate and large files" ToolTip="{DynamicResource Str_FileReview_FolderTip}"/>
                   </DockPanel>
                   <WrapPanel>
-                    <Button x:Name="ReviewDuplicatesButton" Content="Find duplicates" Click="OnReviewDuplicates" Margin="0,0,6,0" ToolTip="Read-only SHA-256 duplicate review"/>
-                    <Button x:Name="ReviewLargeFilesButton" Content="Find large files" Click="OnReviewLargeFiles" ToolTip="Read-only review for files of at least 100 MB"/>
+                    <Button x:Name="ReviewDuplicatesButton" Content="{DynamicResource Str_FileReview_Duplicates}" Click="OnReviewDuplicates" Margin="0,0,6,0" ToolTip="{DynamicResource Str_FileReview_DuplicatesTip}"/>
+                    <Button x:Name="ReviewLargeFilesButton" Content="{DynamicResource Str_FileReview_LargeFiles}" Click="OnReviewLargeFiles" ToolTip="{DynamicResource Str_FileReview_LargeFilesTip}"/>
                   </WrapPanel>
                 </StackPanel>
               </Expander>
             </StackPanel>
             <StackPanel x:Name="ComputerNameSettings" Visibility="Collapsed" Margin="0,0,0,6">
-              <TextBlock Text="Proposed computer name"/>
+              <TextBlock Text="{DynamicResource Str_ComputerName_Proposed}"/>
               <TextBox x:Name="ProposedComputerName" MaxLength="63" TextChanged="OnProposedComputerNameChanged" AutomationProperties.Name="Proposed computer name"/>
-              <CheckBox x:Name="ComputerRenameConsent" Content="Rename this workgroup PC after fresh checks" Margin="0,4,0,0"/>
-              <TextBlock Text="GO reviews the name and current identity. With the rename option selected, only a standalone workgroup PC with clear prerequisites is eligible. KillerBench never restarts Windows." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <CheckBox x:Name="ComputerRenameConsent" Content="{DynamicResource Str_ComputerName_Rename}" Margin="0,4,0,0"/>
+              <TextBlock Text="{DynamicResource Str_ComputerName_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
             </StackPanel>
-            <CheckBox x:Name="MainAutoRepair" Content="Auto-repair confirmed issues" Margin="0,8,0,8" Checked="OnMainAutoRepairChanged" Unchecked="OnMainAutoRepairChanged"/>
+            <CheckBox x:Name="MainAutoRepair" Content="{DynamicResource Str_Main_AutoRepair}" Margin="0,8,0,8" Checked="OnMainAutoRepairChanged" Unchecked="OnMainAutoRepairChanged"/>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-              <Button x:Name="MainGo" Content="Run diagnosis" Style="{StaticResource PrimaryButton}" Click="OnMainGo" Width="128" Margin="0,0,8,0" ToolTip="Run the selected read-only checks and open a readable report."/>
-              <Button x:Name="CancelButton" Content="Stop" Click="OnCancel" IsEnabled="False" ToolTip="Stop after the current command (Esc)" Width="72"/>
+              <Button x:Name="MainGo" Content="{DynamicResource Str_Main_RunDiagnosis}" Style="{StaticResource PrimaryButton}" Click="OnMainGo" Width="128" Margin="0,0,8,0" ToolTip="{DynamicResource Str_Main_RunDiagnosisTip}"/>
+              <Button x:Name="CancelButton" Content="{DynamicResource Str_Main_Stop}" Click="OnCancel" IsEnabled="False" ToolTip="{DynamicResource Str_Main_StopTip}" Width="72"/>
             </StackPanel>
             <Expander x:Name="RecipeSelectionPanel" Header="Choose checks (advanced)" Foreground="{DynamicResource TextBrush}" Visibility="Collapsed" Margin="0,0,0,6">
               <StackPanel>

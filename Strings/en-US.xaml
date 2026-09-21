@@ -314,4 +314,21 @@
   <sys:String x:Key="Str_Storage_Retrim">Retrim solid-state storage</sys:String>
   <sys:String x:Key="Str_Storage_Defragment">Defragment hard disk</sys:String>
   <sys:String x:Key="Str_Storage_Boundary">GO always collects current evidence first. Filesystem repair and drive optimization are separate choices. Optimization requires a confirmed media type and never changes schedules or restarts Windows.</sys:String>
+  <sys:String x:Key="Str_ComponentCleanup_Boundary">GO checks whether Windows recommends cleanup. Optional cleanup removes superseded components immediately; no automatic undo or restart. Reclaimed space is not measured.</sys:String>
+  <sys:String x:Key="Str_FileReview_Header">Review selected folder</sys:String>
+  <sys:String x:Key="Str_FileReview_Description">Find duplicate files or large files in one selected local folder. Both reviews are read-only and never select files for deletion.</sys:String>
+  <sys:String x:Key="Str_FileReview_Browse">Browse</sys:String>
+  <sys:String x:Key="Str_FileReview_FolderTip">One local folder. Reparse points and inaccessible content are excluded.</sys:String>
+  <sys:String x:Key="Str_FileReview_Duplicates">Find duplicates</sys:String>
+  <sys:String x:Key="Str_FileReview_DuplicatesTip">Read-only SHA-256 duplicate review</sys:String>
+  <sys:String x:Key="Str_FileReview_LargeFiles">Find large files</sys:String>
+  <sys:String x:Key="Str_FileReview_LargeFilesTip">Read-only review for files of at least 100 MB</sys:String>
+  <sys:String x:Key="Str_ComputerName_Proposed">Proposed computer name</sys:String>
+  <sys:String x:Key="Str_ComputerName_Rename">Rename this workgroup PC after fresh checks</sys:String>
+  <sys:String x:Key="Str_ComputerName_Boundary">GO reviews the name and current identity. With the rename option selected, only a standalone workgroup PC with clear prerequisites is eligible. KillerBench never restarts Windows.</sys:String>
+  <sys:String x:Key="Str_Main_AutoRepair">Auto-repair confirmed issues</sys:String>
+  <sys:String x:Key="Str_Main_RunDiagnosis">Run diagnosis</sys:String>
+  <sys:String x:Key="Str_Main_RunDiagnosisTip">Run the selected read-only checks and open a readable report.</sys:String>
+  <sys:String x:Key="Str_Main_Stop">Stop</sys:String>
+  <sys:String x:Key="Str_Main_StopTip">Stop after the current command (Esc)</sys:String>
 </ResourceDictionary>

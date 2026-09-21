@@ -128,6 +128,11 @@ internal static class Program
                 window.FindName("SystemRestoreCreate") is CheckBox { Content: "Prepare one restore point" } &&
                 window.FindName("StorageRepairReview") is CheckBox { Content: "Review filesystem repair" },
                 "Event log, audio, System Restore and Storage controls resolve their localizable English resources");
+            Require(window.FindName("ComponentCleanupSettings") is TextBlock { Text: "GO checks whether Windows recommends cleanup. Optional cleanup removes superseded components immediately; no automatic undo or restart. Reclaimed space is not measured." } &&
+                window.FindName("ReviewDuplicatesButton") is Button { Content: "Find duplicates" } &&
+                window.FindName("ComputerRenameConsent") is CheckBox { Content: "Rename this workgroup PC after fresh checks" } &&
+                window.FindName("MainGo") is Button { Content: "Run diagnosis" },
+                "Cleanup, file review, computer name and primary action controls resolve their localizable English resources");
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
                 "Desktop subtitle identifies the full maintenance scope");
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
