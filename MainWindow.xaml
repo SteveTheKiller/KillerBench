@@ -176,22 +176,22 @@
               <ComboBox x:Name="CategoryWorkflow" DisplayMemberPath="Title" Width="260" AutomationProperties.Name="Tool in selected category" Margin="0,0,8,0" SelectionChanged="OnCategoryWorkflowSelected"/>
             </WrapPanel>
             <StackPanel x:Name="ServicingMonitorSettings" Visibility="Collapsed" Margin="0,0,0,8">
-              <TextBlock Text="Watch Windows Update and Setup activity. This monitor is read-only and does not decide that activity is stuck." TextWrapping="Wrap"/>
-              <TextBlock Margin="0,6,0,0"><Run Text="Refresh every "/><Run Text="{Binding ElementName=ServicingMonitorRefresh, Path=Value, StringFormat={}{0:0}}"/><Run Text=" seconds"/></TextBlock>
+              <TextBlock Text="{DynamicResource Str_Peek_Description}" TextWrapping="Wrap"/>
+              <TextBlock Margin="0,6,0,0"><Run Text="{DynamicResource Str_Peek_RefreshPrefix}"/><Run Text="{Binding ElementName=ServicingMonitorRefresh, Path=Value, StringFormat={}{0:0}}"/><Run Text="{DynamicResource Str_Peek_SecondsSuffix}"/></TextBlock>
               <Slider x:Name="ServicingMonitorRefresh" Minimum="1" Maximum="60" Value="3" TickFrequency="1" IsSnapToTickEnabled="True"/>
-              <TextBlock Margin="0,6,0,0"><Run Text="Snapshots: "/><Run Text="{Binding ElementName=ServicingMonitorSamples, Path=Value, StringFormat={}{0:0}}"/></TextBlock>
+              <TextBlock Margin="0,6,0,0"><Run Text="{DynamicResource Str_Peek_SnapshotsPrefix}"/><Run Text="{Binding ElementName=ServicingMonitorSamples, Path=Value, StringFormat={}{0:0}}"/></TextBlock>
               <Slider x:Name="ServicingMonitorSamples" Minimum="1" Maximum="120" Value="3" TickFrequency="1" IsSnapToTickEnabled="True"/>
-              <CheckBox x:Name="ServicingMonitorEvents" Content="Recent Windows Update events" IsChecked="True"/>
-              <CheckBox x:Name="ServicingMonitorHistory" Content="Windows Update history" IsChecked="True"/>
-              <CheckBox x:Name="ServicingMonitorServices" Content="Servicing service states" IsChecked="True"/>
-              <CheckBox x:Name="ServicingMonitorRestart" Content="Restart indicators" IsChecked="True"/>
-              <CheckBox x:Name="ServicingMonitorSetup" Content="Panther setup activity" IsChecked="True"/>
-              <CheckBox x:Name="ServicingMonitorCompatibility" Content="Setup compatibility blocks" IsChecked="True"/>
-              <CheckBox x:Name="ServicingMonitorReadiness" Content="Storage, power, and BitLocker readiness" IsChecked="True"/>
-              <CheckBox x:Name="ServicingMonitorTransfers" Content="Current-account background transfers" IsChecked="True"/>
-              <CheckBox x:Name="ServicingMonitorDeliveryOptimization" Content="Delivery Optimization activity" IsChecked="True"/>
-              <CheckBox x:Name="ServicingMonitorInstaller" Content="Windows Installer activity" IsChecked="True"/>
-              <CheckBox x:Name="ServicingMonitorScheduledTask" Content="Windows Update scheduled task" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorEvents" Content="{DynamicResource Str_Peek_Events}" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorHistory" Content="{DynamicResource Str_Peek_History}" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorServices" Content="{DynamicResource Str_Peek_Services}" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorRestart" Content="{DynamicResource Str_Peek_Restart}" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorSetup" Content="{DynamicResource Str_Peek_Setup}" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorCompatibility" Content="{DynamicResource Str_Peek_Compatibility}" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorReadiness" Content="{DynamicResource Str_Peek_Readiness}" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorTransfers" Content="{DynamicResource Str_Peek_Transfers}" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorDeliveryOptimization" Content="{DynamicResource Str_Peek_DeliveryOptimization}" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorInstaller" Content="{DynamicResource Str_Peek_Installer}" IsChecked="True"/>
+              <CheckBox x:Name="ServicingMonitorScheduledTask" Content="{DynamicResource Str_Peek_ScheduledTask}" IsChecked="True"/>
             </StackPanel>
             <StackPanel x:Name="SearchSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <CheckBox x:Name="SearchIndexRebuildConsent" Content="Rebuild the Windows Search index" Checked="OnSearchIndexRebuildChanged" Unchecked="OnSearchIndexRebuildChanged"/>

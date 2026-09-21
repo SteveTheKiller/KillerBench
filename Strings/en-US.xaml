@@ -93,4 +93,19 @@
   <sys:String x:Key="Str_CaptureScope">Read-only scan. CBS and Panther snapshots, up to 200 events per channel from the last 7 days. Esc stops.</sys:String>
   <sys:String x:Key="Str_ExportActivity">Export...</sys:String>
   <sys:String x:Key="Str_ExportActivityHint">Export retained session activity as TXT, CSV, or HTML (up to 150 entries)</sys:String>
+  <sys:String x:Key="Str_Peek_Description">Watch Windows Update and Setup activity. This monitor is read-only and does not decide that activity is stuck.</sys:String>
+  <sys:String x:Key="Str_Peek_RefreshPrefix">Refresh every </sys:String>
+  <sys:String x:Key="Str_Peek_SecondsSuffix"> seconds</sys:String>
+  <sys:String x:Key="Str_Peek_SnapshotsPrefix">Snapshots: </sys:String>
+  <sys:String x:Key="Str_Peek_Events">Recent Windows Update events</sys:String>
+  <sys:String x:Key="Str_Peek_History">Windows Update history</sys:String>
+  <sys:String x:Key="Str_Peek_Services">Servicing service states</sys:String>
+  <sys:String x:Key="Str_Peek_Restart">Restart indicators</sys:String>
+  <sys:String x:Key="Str_Peek_Setup">Panther setup activity</sys:String>
+  <sys:String x:Key="Str_Peek_Compatibility">Setup compatibility blocks</sys:String>
+  <sys:String x:Key="Str_Peek_Readiness">Storage, power, and BitLocker readiness</sys:String>
+  <sys:String x:Key="Str_Peek_Transfers">Current-account background transfers</sys:String>
+  <sys:String x:Key="Str_Peek_DeliveryOptimization">Delivery Optimization activity</sys:String>
+  <sys:String x:Key="Str_Peek_Installer">Windows Installer activity</sys:String>
+  <sys:String x:Key="Str_Peek_ScheduledTask">Windows Update scheduled task</sys:String>
 </ResourceDictionary>

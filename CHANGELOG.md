@@ -1,5 +1,6 @@
 # Changelog
 
+- Route the complete PEEK option panel through the existing localizable string resources.
 - Retain reviewed Windows Setup result and extend-code pairs with their phase and operation context.
 - Add the family List and Keyboard shortcut views from one binding table and restore F12 for About.
 - Preserve existing evidence when an application inventory comparison cannot complete and keep sample evidence available within bounded sessions.

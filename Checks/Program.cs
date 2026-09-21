@@ -96,6 +96,9 @@ internal static class Program
                 "Zoom content remains clipped to the workbench window");
             Require(window.FindName("ServicingMonitorSamples") is Slider { Minimum: 1, Maximum: 120, Value: 3 },
                 "PEEK desktop controls expose the shared one through 120 snapshot range");
+            Require(window.FindName("ServicingMonitorEvents") is CheckBox { Content: "Recent Windows Update events" } &&
+                window.FindName("ServicingMonitorScheduledTask") is CheckBox { Content: "Windows Update scheduled task" },
+                "PEEK desktop controls resolve their localizable English resources");
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
                 "Desktop subtitle identifies the full maintenance scope");
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
