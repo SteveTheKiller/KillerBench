@@ -112,6 +112,10 @@ internal static class Program
                 window.FindName("DebloatActionChoice") is ComboBox { Items.Count: 4 } debloatActions &&
                 debloatActions.Items[3] is ComboBoxItem { Content: "Disable hibernation" },
                 "DEBLOAT safety and action controls resolve their localizable English resources");
+            Require(window.FindName("BitsRetryButton") is Button { Content: "Retry selected transfer" } &&
+                window.FindName("PrinterMakeDefault") is CheckBox { Content: "Repair a missing or conflicting default with this queue" } &&
+                window.FindName("FindMsiProductsButton") is Button { Content: "Find installed MSI apps" },
+                "BITS, Printing and Installer controls resolve their localizable English resources");
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
                 "Desktop subtitle identifies the full maintenance scope");
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;

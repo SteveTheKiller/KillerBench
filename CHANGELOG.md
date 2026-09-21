@@ -1,5 +1,6 @@
 # Changelog
 
+- Route BITS, Printing and Installer review, consent and safety controls through localizable string resources.
 - Route DEBLOAT review areas, guarded power actions and safety boundary through localizable string resources.
 - Route DEPOT and BEAM review fields, boundaries and tooltips through localizable string resources.
 - Route MACE and ORCA review, safety and action controls through localizable string resources.

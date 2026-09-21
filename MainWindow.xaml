@@ -350,41 +350,41 @@
               <TextBlock Text="{DynamicResource Str_Debloat_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
             </StackPanel>
             <StackPanel x:Name="BitsSettings" Visibility="Collapsed" Margin="0,0,0,8">
-              <TextBlock Text="GO reads transfer jobs. All users requires administrator access. No transfers are changed." TextWrapping="Wrap"/>
+              <TextBlock Text="{DynamicResource Str_Bits_Description}" TextWrapping="Wrap"/>
               <ComboBox x:Name="BitsScopeChoice" SelectedIndex="0" SelectionChanged="OnBitsScopeChanged" Margin="0,6,0,6" AutomationProperties.Name="BITS account scope">
-                <ComboBoxItem Content="Running account"/><ComboBoxItem Content="All users"/>
+                <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/><ComboBoxItem Content="{DynamicResource Str_Scope_AllUsers}"/>
               </ComboBox>
               <ComboBox x:Name="BitsSelection" SelectionChanged="OnBitsSelectionChanged" Margin="0,0,0,6" AutomationProperties.Name="Exact BITS job to review"/>
-              <Button Content="Review selected transfer" Click="OnReviewBitsJob" HorizontalAlignment="Left"/>
-              <Button Content="Observe selected transfer" Click="OnObserveBitsJob" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Compare two snapshots five seconds apart. No transfer changes."/>
-              <TextBlock Text="Retry may resume network transfers for the selected job. Review its owning application first. Suspended jobs are preserved; completion is not guaranteed." TextWrapping="Wrap" Margin="0,6,0,4"/>
-              <TextBlock x:Name="BitsRetryAvailability" Text="Collect and select a running-account job to review retry availability." TextWrapping="Wrap" Margin="0,0,0,4"/>
-              <CheckBox x:Name="BitsRetryConsent" IsEnabled="False" Content="Request retry for this selected job"/>
-              <Button x:Name="BitsRetryButton" IsEnabled="False" Content="Retry selected transfer" Click="OnRetryBitsJob" HorizontalAlignment="Left" Margin="0,4,0,0"/>
+              <Button Content="{DynamicResource Str_Bits_Review}" Click="OnReviewBitsJob" HorizontalAlignment="Left"/>
+              <Button Content="{DynamicResource Str_Bits_Observe}" Click="OnObserveBitsJob" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Bits_ObserveTip}"/>
+              <TextBlock Text="{DynamicResource Str_Bits_RetryWarning}" TextWrapping="Wrap" Margin="0,6,0,4"/>
+              <TextBlock x:Name="BitsRetryAvailability" Text="{DynamicResource Str_Bits_RetryAvailability}" TextWrapping="Wrap" Margin="0,0,0,4"/>
+              <CheckBox x:Name="BitsRetryConsent" IsEnabled="False" Content="{DynamicResource Str_Bits_RetryConsent}"/>
+              <Button x:Name="BitsRetryButton" IsEnabled="False" Content="{DynamicResource Str_Bits_Retry}" Click="OnRetryBitsJob" HorizontalAlignment="Left" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="PrinterSettings" Visibility="Collapsed" Margin="0,0,0,8">
-              <Button Content="Find local printers" Click="OnDiscoverPrinters" HorizontalAlignment="Left"/>
+              <Button Content="{DynamicResource Str_Print_FindPrinters}" Click="OnDiscoverPrinters" HorizontalAlignment="Left"/>
               <ComboBox x:Name="PrinterQueues" Margin="0,6,0,6" SelectionChanged="OnPrinterSelectionChanged" AutomationProperties.Name="Local printer queue"/>
-              <CheckBox x:Name="PrinterMakeDefault" Content="Repair a missing or conflicting default with this queue" IsEnabled="False" Margin="0,0,0,6" Click="OnPrinterDefaultChanged"/>
-              <Button Content="Find blocked print jobs" Click="OnDiscoverPrintJobs" HorizontalAlignment="Left"/>
+              <CheckBox x:Name="PrinterMakeDefault" Content="{DynamicResource Str_Print_RepairDefault}" IsEnabled="False" Margin="0,0,0,6" Click="OnPrinterDefaultChanged"/>
+              <Button Content="{DynamicResource Str_Print_FindBlockedJobs}" Click="OnDiscoverPrintJobs" HorizontalAlignment="Left"/>
               <ComboBox x:Name="PrintJobChoice" Margin="0,6,0,6" SelectionChanged="OnPrintJobSelectionChanged" AutomationProperties.Name="Exact blocked print job"/>
-              <CheckBox x:Name="PrintJobCancelConsent" Content="Cancel only this selected job" IsEnabled="False" Margin="0,0,0,6" Click="OnPrintJobCancelChanged"/>
-              <Button Content="Check interrupted job cancellation" Click="OnRecoverPrintJobCancellation" HorizontalAlignment="Left" Margin="0,0,0,6"/>
-              <Button Content="Use general printing checks" Click="OnGeneralPrinting" HorizontalAlignment="Left" Margin="0,0,0,6"/>
-              <TextBlock Text="GO checks the selected queue. A selected Error or Blocked job can be canceled only after separate confirmation. Every other observed job must remain queued. The default repair is limited to missing or conflicting defaults. With no selection, GO runs general printing checks." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+              <CheckBox x:Name="PrintJobCancelConsent" Content="{DynamicResource Str_Print_CancelSelected}" IsEnabled="False" Margin="0,0,0,6" Click="OnPrintJobCancelChanged"/>
+              <Button Content="{DynamicResource Str_Print_CheckInterrupted}" Click="OnRecoverPrintJobCancellation" HorizontalAlignment="Left" Margin="0,0,0,6"/>
+              <Button Content="{DynamicResource Str_Print_GeneralChecks}" Click="OnGeneralPrinting" HorizontalAlignment="Left" Margin="0,0,0,6"/>
+              <TextBlock Text="{DynamicResource Str_Print_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
             </StackPanel>
             <StackPanel x:Name="InstallerSettings" Visibility="Collapsed" Margin="0,0,0,8">
-              <TextBlock Text="Optional MSI application"/>
+              <TextBlock Text="{DynamicResource Str_Installer_OptionalApp}"/>
               <StackPanel Orientation="Horizontal" Margin="0,4,0,4">
-                <Button x:Name="FindMsiProductsButton" Content="Find installed MSI apps" Click="OnFindMsiProducts" Margin="0,0,6,0"/>
+                <Button x:Name="FindMsiProductsButton" Content="{DynamicResource Str_Installer_FindApps}" Click="OnFindMsiProducts" Margin="0,0,6,0"/>
                 <ComboBox x:Name="InstallerProductScopeChoice" SelectedIndex="0" Width="120" SelectionChanged="OnInstallerProductScopeChanged" AutomationProperties.Name="MSI application registry scope">
-                  <ComboBoxItem Content="This PC"/><ComboBoxItem Content="This account"/>
+                  <ComboBoxItem Content="{DynamicResource Str_Scope_ThisPc}"/><ComboBoxItem Content="{DynamicResource Str_Scope_ThisAccount}"/>
                 </ComboBox>
               </StackPanel>
               <ComboBox x:Name="InstallerProductChoice" Margin="0,0,0,4" SelectionChanged="OnInstallerProductSelected" AutomationProperties.Name="Installed MSI application"/>
-              <TextBlock Text="Exact product code"/>
+              <TextBlock Text="{DynamicResource Str_Installer_ProductCode}"/>
               <TextBox x:Name="InstallerProductCode" Margin="0,4,0,4" MaxLength="38" AutomationProperties.Name="Optional braced MSI product code" ToolTip="Example: {00000000-0000-0000-0000-000000000000}"/>
-              <TextBlock Text="Leave blank for general Installer checks. GO checks the selected product. Automatic repair remains off unless you separately enable it, and only a freshly confirmed broken registration is eligible." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+              <TextBlock Text="{DynamicResource Str_Installer_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
             </StackPanel>
             <StackPanel x:Name="TimeSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <ComboBox x:Name="TimeSourceChoice" SelectedIndex="0" Width="240" HorizontalAlignment="Left" SelectionChanged="OnWorkflowOptionsChanged" AutomationProperties.Name="Time source">

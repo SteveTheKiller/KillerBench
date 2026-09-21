@@ -202,4 +202,25 @@
   <sys:String x:Key="Str_Debloat_ActionTimers">Apply the four selected power timers</sys:String>
   <sys:String x:Key="Str_Debloat_ActionDisableHibernation">Disable hibernation</sys:String>
   <sys:String x:Key="Str_Debloat_Boundary">Power changes require their matching area as the only selection. Managed settings and user data remain protected. All other areas are review only.</sys:String>
+  <sys:String x:Key="Str_Scope_ThisPc">This PC</sys:String>
+  <sys:String x:Key="Str_Scope_ThisAccount">This account</sys:String>
+  <sys:String x:Key="Str_Bits_Description">GO reads transfer jobs. All users requires administrator access. No transfers are changed.</sys:String>
+  <sys:String x:Key="Str_Bits_Review">Review selected transfer</sys:String>
+  <sys:String x:Key="Str_Bits_Observe">Observe selected transfer</sys:String>
+  <sys:String x:Key="Str_Bits_ObserveTip">Compare two snapshots five seconds apart. No transfer changes.</sys:String>
+  <sys:String x:Key="Str_Bits_RetryWarning">Retry may resume network transfers for the selected job. Review its owning application first. Suspended jobs are preserved; completion is not guaranteed.</sys:String>
+  <sys:String x:Key="Str_Bits_RetryAvailability">Collect and select a running-account job to review retry availability.</sys:String>
+  <sys:String x:Key="Str_Bits_RetryConsent">Request retry for this selected job</sys:String>
+  <sys:String x:Key="Str_Bits_Retry">Retry selected transfer</sys:String>
+  <sys:String x:Key="Str_Print_FindPrinters">Find local printers</sys:String>
+  <sys:String x:Key="Str_Print_RepairDefault">Repair a missing or conflicting default with this queue</sys:String>
+  <sys:String x:Key="Str_Print_FindBlockedJobs">Find blocked print jobs</sys:String>
+  <sys:String x:Key="Str_Print_CancelSelected">Cancel only this selected job</sys:String>
+  <sys:String x:Key="Str_Print_CheckInterrupted">Check interrupted job cancellation</sys:String>
+  <sys:String x:Key="Str_Print_GeneralChecks">Use general printing checks</sys:String>
+  <sys:String x:Key="Str_Print_Boundary">GO checks the selected queue. A selected Error or Blocked job can be canceled only after separate confirmation. Every other observed job must remain queued. The default repair is limited to missing or conflicting defaults. With no selection, GO runs general printing checks.</sys:String>
+  <sys:String x:Key="Str_Installer_OptionalApp">Optional MSI application</sys:String>
+  <sys:String x:Key="Str_Installer_FindApps">Find installed MSI apps</sys:String>
+  <sys:String x:Key="Str_Installer_ProductCode">Exact product code</sys:String>
+  <sys:String x:Key="Str_Installer_Boundary">Leave blank for general Installer checks. GO checks the selected product. Automatic repair remains off unless you separately enable it, and only a freshly confirmed broken registration is eligible.</sys:String>
 </ResourceDictionary>
