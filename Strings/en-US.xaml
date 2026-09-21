@@ -182,4 +182,24 @@
   <sys:String x:Key="Str_Beam_TenantDomain">Tenant domain</sys:String>
   <sys:String x:Key="Str_Beam_TenantDomainTip">Example: contoso.onmicrosoft.com. No administrator email or credential is retained.</sys:String>
   <sys:String x:Key="Str_Beam_Boundary">Review only. No sign-in, download, packaging, upload, application or group change, assignment, device sync or installation.</sys:String>
+  <sys:String x:Key="Str_Scope_AllProfiles">All profiles and default user</sys:String>
+  <sys:String x:Key="Str_Debloat_Description">Choose exactly what to review, then press GO. Nothing is selected automatically.</sys:String>
+  <sys:String x:Key="Str_Debloat_RecallAi">Recall and AI</sys:String>
+  <sys:String x:Key="Str_Debloat_Telemetry">Telemetry and reporting</sys:String>
+  <sys:String x:Key="Str_Debloat_Search">Search and suggestions</sys:String>
+  <sys:String x:Key="Str_Debloat_Consumer">Consumer content</sys:String>
+  <sys:String x:Key="Str_Debloat_Start">Taskbar and Start</sys:String>
+  <sys:String x:Key="Str_Debloat_HighPerformance">High performance power</sys:String>
+  <sys:String x:Key="Str_Debloat_Timers">Sleep and display timers</sys:String>
+  <sys:String x:Key="Str_Debloat_Hibernation">Hibernation</sys:String>
+  <sys:String x:Key="Str_Debloat_OfficeLanguages">Office languages</sys:String>
+  <sys:String x:Key="Str_Debloat_ThirdPartyApps">Third-party apps</sys:String>
+  <sys:String x:Key="Str_Debloat_VendorData">Vendor data</sys:String>
+  <sys:String x:Key="Str_Debloat_TimerHelp">Requested timer minutes. Zero means Never.</sys:String>
+  <sys:String x:Key="Str_Debloat_GoAction">GO action</sys:String>
+  <sys:String x:Key="Str_Debloat_ActionReview">Review selected areas only</sys:String>
+  <sys:String x:Key="Str_Debloat_ActionHighPerformance">Activate existing High performance plan</sys:String>
+  <sys:String x:Key="Str_Debloat_ActionTimers">Apply the four selected power timers</sys:String>
+  <sys:String x:Key="Str_Debloat_ActionDisableHibernation">Disable hibernation</sys:String>
+  <sys:String x:Key="Str_Debloat_Boundary">Power changes require their matching area as the only selection. Managed settings and user data remain protected. All other areas are review only.</sys:String>
 </ResourceDictionary>

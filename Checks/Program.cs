@@ -108,6 +108,10 @@ internal static class Program
             Require(window.FindName("DepotUpdates") is CheckBox { Content: "Windows updates" } &&
                 window.FindName("BeamInstallSwitches") is TextBox { ToolTip: "MSI uses /qn when this is blank. EXE runs without switches when blank." },
                 "DEPOT and BEAM controls resolve their localizable English resources");
+            Require(window.FindName("DebloatPower") is CheckBox { Content: "High performance power" } &&
+                window.FindName("DebloatActionChoice") is ComboBox { Items.Count: 4 } debloatActions &&
+                debloatActions.Items[3] is ComboBoxItem { Content: "Disable hibernation" },
+                "DEBLOAT safety and action controls resolve their localizable English resources");
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
                 "Desktop subtitle identifies the full maintenance scope");
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;

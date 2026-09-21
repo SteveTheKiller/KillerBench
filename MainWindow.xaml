@@ -308,20 +308,20 @@
               <TextBlock Text="{DynamicResource Str_Beam_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
             </StackPanel>
             <StackPanel x:Name="DebloatSettings" Visibility="Collapsed" Margin="0,0,0,8">
-              <TextBlock Text="Choose exactly what to review, then press GO. Nothing is selected automatically." TextWrapping="Wrap"/>
+              <TextBlock Text="{DynamicResource Str_Debloat_Description}" TextWrapping="Wrap"/>
               <ComboBox x:Name="DebloatScopeChoice" SelectedIndex="0" Margin="0,6,0,4" AutomationProperties.Name="DEBLOAT user scope">
-                <ComboBoxItem Content="Running account"/><ComboBoxItem Content="All profiles and default user"/>
+                <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/><ComboBoxItem Content="{DynamicResource Str_Scope_AllProfiles}"/>
               </ComboBox>
               <WrapPanel>
-                <CheckBox x:Name="DebloatRecallAi" Content="Recall and AI"/><CheckBox x:Name="DebloatTelemetry" Content="Telemetry and reporting"/>
-                <CheckBox x:Name="DebloatSearch" Content="Search and suggestions"/><CheckBox x:Name="DebloatConsumer" Content="Consumer content"/>
-                <CheckBox x:Name="DebloatStart" Content="Taskbar and Start"/><CheckBox x:Name="DebloatNotifications" Content="Notifications"/>
-                <CheckBox x:Name="DebloatEdge" Content="Edge"/><CheckBox x:Name="DebloatPower" Content="High performance power"/>
-                <CheckBox x:Name="DebloatTimers" Content="Sleep and display timers"/><CheckBox x:Name="DebloatHibernation" Content="Hibernation"/>
-                <CheckBox x:Name="DebloatOfficeLanguages" Content="Office languages"/><CheckBox x:Name="DebloatHp" Content="HP software"/>
+                <CheckBox x:Name="DebloatRecallAi" Content="{DynamicResource Str_Debloat_RecallAi}"/><CheckBox x:Name="DebloatTelemetry" Content="{DynamicResource Str_Debloat_Telemetry}"/>
+                <CheckBox x:Name="DebloatSearch" Content="{DynamicResource Str_Debloat_Search}"/><CheckBox x:Name="DebloatConsumer" Content="{DynamicResource Str_Debloat_Consumer}"/>
+                <CheckBox x:Name="DebloatStart" Content="{DynamicResource Str_Debloat_Start}"/><CheckBox x:Name="DebloatNotifications" Content="{DynamicResource Str_Depot_Notifications}"/>
+                <CheckBox x:Name="DebloatEdge" Content="Edge"/><CheckBox x:Name="DebloatPower" Content="{DynamicResource Str_Debloat_HighPerformance}"/>
+                <CheckBox x:Name="DebloatTimers" Content="{DynamicResource Str_Debloat_Timers}"/><CheckBox x:Name="DebloatHibernation" Content="{DynamicResource Str_Debloat_Hibernation}"/>
+                <CheckBox x:Name="DebloatOfficeLanguages" Content="{DynamicResource Str_Debloat_OfficeLanguages}"/><CheckBox x:Name="DebloatHp" Content="HP software"/>
                 <CheckBox x:Name="DebloatDell" Content="Dell software"/><CheckBox x:Name="DebloatAsusAcer" Content="ASUS and Acer software"/>
-                <CheckBox x:Name="DebloatLenovo" Content="Lenovo software"/><CheckBox x:Name="DebloatThirdParty" Content="Third-party apps"/>
-                <CheckBox x:Name="DebloatVendorData" Content="Vendor data"/>
+                <CheckBox x:Name="DebloatLenovo" Content="Lenovo software"/><CheckBox x:Name="DebloatThirdParty" Content="{DynamicResource Str_Debloat_ThirdPartyApps}"/>
+                <CheckBox x:Name="DebloatVendorData" Content="{DynamicResource Str_Debloat_VendorData}"/>
               </WrapPanel>
               <ComboBox x:Name="DebloatOfficeCulture" SelectedIndex="0" Margin="0,6,0,0" IsEnabled="{Binding IsChecked, ElementName=DebloatOfficeLanguages}" AutomationProperties.Name="Office language to retain">
                 <ComboBoxItem Content="Choose Office language to retain" Tag=""/>
@@ -334,20 +334,20 @@
               <Grid Margin="0,6,0,0" IsEnabled="{Binding IsChecked, ElementName=DebloatTimers}">
                 <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                <TextBlock Grid.ColumnSpan="2" Text="Requested timer minutes. Zero means Never." Foreground="{DynamicResource MutedTextBrush}"/>
+                <TextBlock Grid.ColumnSpan="2" Text="{DynamicResource Str_Debloat_TimerHelp}" Foreground="{DynamicResource MutedTextBrush}"/>
                 <ComboBox x:Name="DebloatSleepAc" Grid.Row="1" Grid.Column="0" SelectedIndex="0" Margin="0,4,3,0" AutomationProperties.Name="Sleep timeout on AC"><ComboBoxItem Content="Sleep AC: Never" Tag="0"/><ComboBoxItem Content="Sleep AC: 15" Tag="15"/><ComboBoxItem Content="Sleep AC: 30" Tag="30"/><ComboBoxItem Content="Sleep AC: 60" Tag="60"/><ComboBoxItem Content="Sleep AC: 120" Tag="120"/></ComboBox>
                 <ComboBox x:Name="DebloatSleepDc" Grid.Row="1" Grid.Column="1" SelectedIndex="3" Margin="3,4,0,0" AutomationProperties.Name="Sleep timeout on battery"><ComboBoxItem Content="Sleep battery: Never" Tag="0"/><ComboBoxItem Content="Sleep battery: 15" Tag="15"/><ComboBoxItem Content="Sleep battery: 30" Tag="30"/><ComboBoxItem Content="Sleep battery: 60" Tag="60"/><ComboBoxItem Content="Sleep battery: 120" Tag="120"/></ComboBox>
                 <ComboBox x:Name="DebloatDisplayAc" Grid.Row="2" Grid.Column="0" SelectedIndex="3" Margin="0,4,3,0" AutomationProperties.Name="Display timeout on AC"><ComboBoxItem Content="Display AC: Never" Tag="0"/><ComboBoxItem Content="Display AC: 15" Tag="15"/><ComboBoxItem Content="Display AC: 30" Tag="30"/><ComboBoxItem Content="Display AC: 60" Tag="60"/><ComboBoxItem Content="Display AC: 120" Tag="120"/></ComboBox>
                 <ComboBox x:Name="DebloatDisplayDc" Grid.Row="2" Grid.Column="1" SelectedIndex="1" Margin="3,4,0,0" AutomationProperties.Name="Display timeout on battery"><ComboBoxItem Content="Display battery: Never" Tag="0"/><ComboBoxItem Content="Display battery: 15" Tag="15"/><ComboBoxItem Content="Display battery: 30" Tag="30"/><ComboBoxItem Content="Display battery: 60" Tag="60"/><ComboBoxItem Content="Display battery: 120" Tag="120"/></ComboBox>
               </Grid>
-              <TextBlock Text="GO action" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Debloat_GoAction}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
               <ComboBox x:Name="DebloatActionChoice" SelectedIndex="0" AutomationProperties.Name="DEBLOAT GO action">
-                <ComboBoxItem Content="Review selected areas only"/>
-                <ComboBoxItem Content="Activate existing High performance plan"/>
-                <ComboBoxItem Content="Apply the four selected power timers"/>
-                <ComboBoxItem Content="Disable hibernation"/>
+                <ComboBoxItem Content="{DynamicResource Str_Debloat_ActionReview}"/>
+                <ComboBoxItem Content="{DynamicResource Str_Debloat_ActionHighPerformance}"/>
+                <ComboBoxItem Content="{DynamicResource Str_Debloat_ActionTimers}"/>
+                <ComboBoxItem Content="{DynamicResource Str_Debloat_ActionDisableHibernation}"/>
               </ComboBox>
-              <TextBlock Text="Power changes require their matching area as the only selection. Managed settings and user data remain protected. All other areas are review only." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Debloat_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
             </StackPanel>
             <StackPanel x:Name="BitsSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="GO reads transfer jobs. All users requires administrator access. No transfers are changed." TextWrapping="Wrap"/>
