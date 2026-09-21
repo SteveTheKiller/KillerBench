@@ -110,8 +110,12 @@ internal static class Program
                 "DEPOT and BEAM controls resolve their localizable English resources");
             Require(window.FindName("DebloatPower") is CheckBox { Content: "High performance power" } &&
                 window.FindName("DebloatActionChoice") is ComboBox { Items.Count: 4 } debloatActions &&
-                debloatActions.Items[3] is ComboBoxItem { Content: "Disable hibernation" },
-                "DEBLOAT safety and action controls resolve their localizable English resources");
+                debloatActions.Items[3] is ComboBoxItem { Content: "Disable hibernation" } &&
+                window.FindName("DebloatOfficeCulture") is ComboBox { Items.Count: 13 } officeCultures &&
+                officeCultures.Items[0] is ComboBoxItem { Content: "Choose Office language to retain" } &&
+                window.FindName("DebloatSleepAc") is ComboBox { Items.Count: 5 } sleepAc &&
+                sleepAc.Items[0] is ComboBoxItem { Content: "Sleep AC: Never" },
+                "DEBLOAT safety, culture and timer controls resolve their localizable English resources");
             Require(window.FindName("BitsRetryButton") is Button { Content: "Retry selected transfer" } &&
                 window.FindName("PrinterMakeDefault") is CheckBox { Content: "Repair a missing or conflicting default with this queue" } &&
                 window.FindName("FindMsiProductsButton") is Button { Content: "Find installed MSI apps" },
