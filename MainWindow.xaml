@@ -388,40 +388,40 @@
             </StackPanel>
             <StackPanel x:Name="TimeSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <ComboBox x:Name="TimeSourceChoice" SelectedIndex="0" Width="240" HorizontalAlignment="Left" SelectionChanged="OnWorkflowOptionsChanged" AutomationProperties.Name="Time source">
-                <ComboBoxItem Content="Keep configured source"/>
-                <ComboBoxItem Content="Domain hierarchy"/>
-                  <ComboBoxItem Content="Custom NTP peers"/>
+                <ComboBoxItem Content="{DynamicResource Str_Time_KeepSource}"/>
+                <ComboBoxItem Content="{DynamicResource Str_Time_DomainHierarchy}"/>
+                  <ComboBoxItem Content="{DynamicResource Str_Time_CustomPeers}"/>
               </ComboBox>
-                <TextBox x:Name="TimePeers" Width="340" HorizontalAlignment="Left" TextChanged="OnTimePeersChanged" AutomationProperties.Name="NTP peers separated by spaces" ToolTip="Up to eight NTP hostnames or IP addresses, separated by spaces"/>
-                <CheckBox x:Name="TimeApply" Content="Apply selected source and synchronize (can change the clock)" Margin="0,6,0,6"/>
-                <Button Content="Check interrupted time change" Click="OnRecoverTime" HorizontalAlignment="Left" Margin="0,0,0,6" ToolTip="Verify recorded settings without retrying a change"/>
-                <TextBlock Text="GO previews source changes unless Apply is selected. Domain hierarchy is limited to a domain member that is not a domain controller. Every change requires fresh policy, role and elevation checks. No automatic rollback." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+                <TextBox x:Name="TimePeers" Width="340" HorizontalAlignment="Left" TextChanged="OnTimePeersChanged" AutomationProperties.Name="NTP peers separated by spaces" ToolTip="{DynamicResource Str_Time_PeersTip}"/>
+                <CheckBox x:Name="TimeApply" Content="{DynamicResource Str_Time_Apply}" Margin="0,6,0,6"/>
+                <Button x:Name="TimeRecoverButton" Content="{DynamicResource Str_Time_CheckInterrupted}" Click="OnRecoverTime" HorizontalAlignment="Left" Margin="0,0,0,6" ToolTip="{DynamicResource Str_Time_CheckInterruptedTip}"/>
+                <TextBlock Text="{DynamicResource Str_Time_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
             </StackPanel>
             <StackPanel x:Name="ProfileSettings" Visibility="Collapsed" Margin="0,0,0,6">
-              <TextBlock Text="Minimum days since last use (review only):"/>
+              <TextBlock Text="{DynamicResource Str_Profile_MinimumAge}"/>
               <Slider x:Name="ProfileAge" Minimum="1" Maximum="3650" Value="90" TickFrequency="1" IsSnapToTickEnabled="True" Width="240" HorizontalAlignment="Left"/>
               <TextBlock Text="{Binding ElementName=ProfileAge, Path=Value, StringFormat={}{0:0} days}"/>
-              <CheckBox x:Name="ProfileDependencyCheck" Content="Check service and scheduled-task dependencies" IsChecked="True"/>
-              <Expander x:Name="ProfileSelectionExpander" Header="Select profiles after review" Foreground="{DynamicResource TextBrush}">
+              <CheckBox x:Name="ProfileDependencyCheck" Content="{DynamicResource Str_Profile_CheckDependencies}" IsChecked="True"/>
+              <Expander x:Name="ProfileSelectionExpander" Header="{DynamicResource Str_Profile_SelectAfterReview}" Foreground="{DynamicResource TextBrush}">
                 <StackPanel>
                   <ListBox x:Name="ProfileSelection" SelectionMode="Multiple" DisplayMemberPath="Path" MaxHeight="120" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}"/>
-                  <Button Content="Preview selected profiles" Click="OnPreviewProfiles" HorizontalAlignment="Left"/>
+                  <Button Content="{DynamicResource Str_Profile_PreviewSelected}" Click="OnPreviewProfiles" HorizontalAlignment="Left"/>
                 </StackPanel>
               </Expander>
-              <Expander Header="Back up and verify a profile" Foreground="{DynamicResource TextBrush}" Margin="0,4,0,0">
+              <Expander Header="{DynamicResource Str_Profile_BackupHeader}" Foreground="{DynamicResource TextBrush}" Margin="0,4,0,0">
                 <StackPanel>
-                  <TextBlock Text="Select exactly one reviewed profile. To make a new backup, type a new local NTFS folder that does not exist. To inspect an existing copy, choose its folder. KillerBench never deletes the profile." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+                  <TextBlock Text="{DynamicResource Str_Profile_BackupDescription}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
                   <DockPanel Margin="0,5,0,4" LastChildFill="True">
-                    <Button Content="Browse" Click="OnBrowseProfileBackup" DockPanel.Dock="Right" Margin="5,0,0,0"/>
-                    <TextBox x:Name="ProfileBackupPath" AutomationProperties.Name="Profile backup folder" ToolTip="A new absent local NTFS folder for copying, or an existing copied profile folder for verification"/>
+                    <Button Content="{DynamicResource Str_Profile_Browse}" Click="OnBrowseProfileBackup" DockPanel.Dock="Right" Margin="5,0,0,0"/>
+                    <TextBox x:Name="ProfileBackupPath" AutomationProperties.Name="Profile backup folder" ToolTip="{DynamicResource Str_Profile_BackupPathTip}"/>
                   </DockPanel>
                   <WrapPanel>
-                    <Button x:Name="CopyProfileBackupButton" Content="Copy and verify" Click="OnCopyProfileBackup" Margin="0,0,5,4" ToolTip="Copy the selected unloaded profile once into a new empty local NTFS folder, then verify every regular file"/>
-                    <Button x:Name="CreateProfileBackupArtifactButton" Content="Create verification files" Click="OnCreateProfileBackupArtifact" Margin="0,0,5,4" ToolTip="Compare the selected live profile with the existing copied folder, then create its manifest and receipt"/>
-                    <Button x:Name="VerifyProfileBackupButton" Content="Verify copied backup" Click="OnVerifyProfileBackup" Margin="0,0,5,4" ToolTip="Verify the existing manifest and receipt against both the live profile and copied folder"/>
-                    <Button x:Name="RecoverProfileBackupButton" Content="Check interrupted backup" Click="OnRecoverProfileBackup" Margin="0,0,0,4" ToolTip="Verify a pending backup without copying files again"/>
+                    <Button x:Name="CopyProfileBackupButton" Content="{DynamicResource Str_Profile_CopyVerify}" Click="OnCopyProfileBackup" Margin="0,0,5,4" ToolTip="{DynamicResource Str_Profile_CopyVerifyTip}"/>
+                    <Button x:Name="CreateProfileBackupArtifactButton" Content="{DynamicResource Str_Profile_CreateVerification}" Click="OnCreateProfileBackupArtifact" Margin="0,0,5,4" ToolTip="{DynamicResource Str_Profile_CreateVerificationTip}"/>
+                    <Button x:Name="VerifyProfileBackupButton" Content="{DynamicResource Str_Profile_VerifyBackup}" Click="OnVerifyProfileBackup" Margin="0,0,5,4" ToolTip="{DynamicResource Str_Profile_VerifyBackupTip}"/>
+                    <Button x:Name="RecoverProfileBackupButton" Content="{DynamicResource Str_Profile_CheckInterrupted}" Click="OnRecoverProfileBackup" Margin="0,0,0,4" ToolTip="{DynamicResource Str_Profile_CheckInterruptedTip}"/>
                   </WrapPanel>
-                  <TextBlock Text="Verification compares the complete regular-file set, lengths and SHA-256 hashes. It does not prove permissions, alternate streams, encrypted files, application state or restore behavior." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+                  <TextBlock Text="{DynamicResource Str_Profile_VerificationBoundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
                 </StackPanel>
               </Expander>
             </StackPanel>

@@ -1,5 +1,6 @@
 # Changelog
 
+- Route Time and Profiles review, confirmation, backup and recovery controls through localizable string resources.
 - Route BITS, Printing and Installer review, consent and safety controls through localizable string resources.
 - Route DEBLOAT review areas, guarded power actions and safety boundary through localizable string resources.
 - Route DEPOT and BEAM review fields, boundaries and tooltips through localizable string resources.
