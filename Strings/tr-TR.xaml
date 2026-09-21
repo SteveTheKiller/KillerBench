@@ -1,3 +1,44 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-  <!-- Translation deferred. Missing keys use the English base. -->
+  <!-- Reused approved family translations. Missing keys use the English base. -->
+  <sys:String x:Key="Str_ToolTip_Minimize">Simge Durumuna Küçült</sys:String>
+  <sys:String x:Key="Str_ToolTip_Close">Kapat</sys:String>
+  <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">Klavye kısayolları (F1)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Language">Dil</sys:String>
+  <sys:String x:Key="Str_Content_Stop">Durdur</sys:String>
+  <sys:String x:Key="Str_Text_TEXT_SIZE">Metin boyutu</sys:String>
+  <sys:String x:Key="Str_Text_Ready">Hazır</sys:String>
+  <sys:String x:Key="Str_Text_Keyboard_shortcuts">Klavye kısayolları</sys:String>
+  <sys:String x:Key="Str_Shortcuts_List">LİSTE</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Keyboard">KLAVYE</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Base">Temel</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Ctrl">Ctrl</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupView">Görünüm</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupNav">GEZİNME</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupFile">DOSYA</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Show">Klavye kısayolları</sys:String>
+  <sys:String x:Key="Str_Content_Close">Kapat</sys:String>
+  <sys:String x:Key="Str_Theme_Dark">Koyu</sys:String>
+  <sys:String x:Key="Str_Theme_Light">Açık</sys:String>
+  <sys:String x:Key="Str_Theme_Black">Siyah</sys:String>
+  <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+  <sys:String x:Key="Str_Theme_Cyanotic">Siyanotik</sys:String>
+  <sys:String x:Key="Str_Scope_ThisPc">Bu bilgisayar</sys:String>
+  <sys:String x:Key="Str_BitLocker_Operation">işlem</sys:String>
+  <sys:String x:Key="Str_BitLocker_Browse">Gözat...</sys:String>
+  <sys:String x:Key="Str_EventLog_System">sistem</sys:String>
+  <sys:String x:Key="Str_EventLog_Application">Uygulama</sys:String>
+  <sys:String x:Key="Str_Audio_Output">ÇIKTI</sys:String>
+  <sys:String x:Key="Str_Main_Stop">Durdur</sys:String>
+  <sys:String x:Key="Str_Task_Weekly">Haftalık</sys:String>
+  <sys:String x:Key="Str_Task_Monthly">Aylık</sys:String>
+  <sys:String x:Key="Str_Advanced_All">Tümü</sys:String>
+  <sys:String x:Key="Str_Advanced_None">yok</sys:String>
+  <sys:String x:Key="Str_About_Version">SÜRÜM</sys:String>
+  <sys:String x:Key="Str_About_Thumbprint">PARMAK İZİ</sys:String>
+  <sys:String x:Key="Str_About_ExeHash">EXE SHA-256</sys:String>
+  <sys:String x:Key="Str_Depot_Privacy">GİZLİLİK</sys:String>
+  <sys:String x:Key="Str_About_Aka">Diğer adıyla</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupHelp">YARDIM</sys:String>
+  <sys:String x:Key="Str_Beam_Publisher">Yayımcı</sys:String>
+  <sys:String x:Key="Str_Restore_Description">Açıklama</sys:String>
 </ResourceDictionary>

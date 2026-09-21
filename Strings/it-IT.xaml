@@ -1,3 +1,39 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-  <!-- Translation deferred. Missing keys use the English base. -->
+  <!-- Reused approved family translations. Missing keys use the English base. -->
+  <sys:String x:Key="Str_ToolTip_Close">Chiudi</sys:String>
+  <sys:String x:Key="Str_ToolTip_Language">Lingua</sys:String>
+  <sys:String x:Key="Str_Text_TEXT_SIZE">Dimensione testo</sys:String>
+  <sys:String x:Key="Str_Text_Ready">Pronto</sys:String>
+  <sys:String x:Key="Str_Shortcuts_List">ELENCO</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Keyboard">TASTIERA</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Base">Base</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Ctrl">Ctrl</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupNav">NAVIGAZIONE</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupFile">FILE</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupHelp">AIUTO</sys:String>
+  <sys:String x:Key="Str_Content_Close">Chiudi</sys:String>
+  <sys:String x:Key="Str_Theme_Dark">Scuro</sys:String>
+  <sys:String x:Key="Str_Theme_Light">Chiaro</sys:String>
+  <sys:String x:Key="Str_Theme_Black">Nero</sys:String>
+  <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+  <sys:String x:Key="Str_Theme_Blood">Sangue</sys:String>
+  <sys:String x:Key="Str_Theme_Greed">Avidità</sys:String>
+  <sys:String x:Key="Str_Theme_Cyanotic">Cianotico</sys:String>
+  <sys:String x:Key="Str_Beam_Publisher">EDITORE</sys:String>
+  <sys:String x:Key="Str_Scope_ThisPc">Questo PC</sys:String>
+  <sys:String x:Key="Str_BitLocker_Operation">operazione</sys:String>
+  <sys:String x:Key="Str_BitLocker_Browse">Sfoglia...</sys:String>
+  <sys:String x:Key="Str_EventLog_System">sistema</sys:String>
+  <sys:String x:Key="Str_EventLog_Application">Applicazione</sys:String>
+  <sys:String x:Key="Str_Audio_Output">DESTINAZIONE</sys:String>
+  <sys:String x:Key="Str_Restore_Description">DESCRIZIONE</sys:String>
+  <sys:String x:Key="Str_Task_Monthly">Ogni mese</sys:String>
+  <sys:String x:Key="Str_About_Version">VERSIONE</sys:String>
+  <sys:String x:Key="Str_About_Publisher">EDITORE</sys:String>
+  <sys:String x:Key="Str_About_ExeHash">SHA-256 DELL&apos;EXE</sys:String>
+  <sys:String x:Key="Str_Depot_Privacy">PRIVACY</sys:String>
+  <sys:String x:Key="Str_About_Aka">Conosciuto anche come</sys:String>
+  <sys:String x:Key="Str_Text_Keyboard_shortcuts">Scorciatoie da tastiera</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Show">Scorciatoie da tastiera</sys:String>
+  <sys:String x:Key="Str_Advanced_None">Nessuno</sys:String>
 </ResourceDictionary>

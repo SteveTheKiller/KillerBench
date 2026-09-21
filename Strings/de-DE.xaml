@@ -1,3 +1,45 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-  <!-- Translation deferred. Missing keys use the English base. -->
+  <!-- Reused approved family translations. Missing keys use the English base. -->
+  <sys:String x:Key="Str_ToolTip_Minimize">Minimieren</sys:String>
+  <sys:String x:Key="Str_ToolTip_Close">Schließen</sys:String>
+  <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">Tastenkürzel (F1)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Language">Sprache</sys:String>
+  <sys:String x:Key="Str_Text_TEXT_SIZE">Textgröße</sys:String>
+  <sys:String x:Key="Str_Text_Ready">Bereit</sys:String>
+  <sys:String x:Key="Str_Text_Keyboard_shortcuts">Tastenkürzel</sys:String>
+  <sys:String x:Key="Str_Shortcuts_List">LISTE</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Keyboard">TASTATUR</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Base">Basis</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Ctrl">Strg</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupView">Ansicht</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupNav">NAVIGATION</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupFile">DATEI</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupHelp">HILFE</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Show">Tastenkürzel</sys:String>
+  <sys:String x:Key="Str_Content_Close">Schließen</sys:String>
+  <sys:String x:Key="Str_Theme_Dark">Dunkel</sys:String>
+  <sys:String x:Key="Str_Theme_Light">Hell</sys:String>
+  <sys:String x:Key="Str_Theme_Black">Schwarz</sys:String>
+  <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+  <sys:String x:Key="Str_Theme_Blood">Blut</sys:String>
+  <sys:String x:Key="Str_Theme_Greed">Gier</sys:String>
+  <sys:String x:Key="Str_Theme_Cyanotic">Zyanotisch</sys:String>
+  <sys:String x:Key="Str_Theme_Delirium">Delirium</sys:String>
+  <sys:String x:Key="Str_Beam_Publisher">HERAUSGEBER</sys:String>
+  <sys:String x:Key="Str_Scope_ThisPc">Dieser PC</sys:String>
+  <sys:String x:Key="Str_BitLocker_Operation">Vorgang</sys:String>
+  <sys:String x:Key="Str_BitLocker_Browse">Durchsuchen...</sys:String>
+  <sys:String x:Key="Str_EventLog_System">System</sys:String>
+  <sys:String x:Key="Str_EventLog_Application">Anwendung</sys:String>
+  <sys:String x:Key="Str_Audio_Output">AUSGABE</sys:String>
+  <sys:String x:Key="Str_Restore_Description">BESCHREIBUNG</sys:String>
+  <sys:String x:Key="Str_Task_Weekly">Wöchentlich</sys:String>
+  <sys:String x:Key="Str_Task_Monthly">Monatlich</sys:String>
+  <sys:String x:Key="Str_Advanced_All">Alle</sys:String>
+  <sys:String x:Key="Str_Advanced_None">keine</sys:String>
+  <sys:String x:Key="Str_About_Publisher">HERAUSGEBER</sys:String>
+  <sys:String x:Key="Str_About_Thumbprint">FINGERABDRUCK</sys:String>
+  <sys:String x:Key="Str_Depot_Privacy">DATENSCHUTZ</sys:String>
+  <sys:String x:Key="Str_About_Aka">Auch bekannt als</sys:String>
+  <sys:String x:Key="Str_About_Version">VERSION</sys:String>
 </ResourceDictionary>

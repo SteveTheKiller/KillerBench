@@ -1,3 +1,39 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-  <!-- Translation deferred. Missing keys use the English base. -->
+  <!-- Reused approved family translations. Missing keys use the English base. -->
+  <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">কীবোর্ড শর্টকাট (F1)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Language">ভাষা</sys:String>
+  <sys:String x:Key="Str_Text_TEXT_SIZE">পাঠ্যের আকার</sys:String>
+  <sys:String x:Key="Str_Text_Ready">প্রস্তুত</sys:String>
+  <sys:String x:Key="Str_Text_Keyboard_shortcuts">কীবোর্ড শর্টকাট</sys:String>
+  <sys:String x:Key="Str_Shortcuts_List">তালিকা</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Keyboard">কীবোর্ড</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Base">মূল</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Ctrl">Ctrl</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupNav">নেভিগেশন</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupFile">ফাইল</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupHelp">সহায়তা</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Show">কীবোর্ড শর্টকাট</sys:String>
+  <sys:String x:Key="Str_Theme_Light">হালকা</sys:String>
+  <sys:String x:Key="Str_Theme_Black">কালো</sys:String>
+  <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+  <sys:String x:Key="Str_Theme_Blood">রক্ত</sys:String>
+  <sys:String x:Key="Str_Theme_Greed">লোভ</sys:String>
+  <sys:String x:Key="Str_Beam_Publisher">প্রকাশক</sys:String>
+  <sys:String x:Key="Str_Scope_ThisPc">এই পিসি</sys:String>
+  <sys:String x:Key="Str_BitLocker_Operation">কাজ</sys:String>
+  <sys:String x:Key="Str_BitLocker_Browse">ব্রাউজ...</sys:String>
+  <sys:String x:Key="Str_EventLog_System">সিস্টেম</sys:String>
+  <sys:String x:Key="Str_EventLog_Application">অ্যাপ্লিকেশন</sys:String>
+  <sys:String x:Key="Str_Audio_Output">আউটপুট</sys:String>
+  <sys:String x:Key="Str_Restore_Description">বিবরণ</sys:String>
+  <sys:String x:Key="Str_Task_Monthly">প্রতি মাসে</sys:String>
+  <sys:String x:Key="Str_Advanced_All">সব</sys:String>
+  <sys:String x:Key="Str_About_Version">সংস্করণ</sys:String>
+  <sys:String x:Key="Str_About_Publisher">প্রকাশক</sys:String>
+  <sys:String x:Key="Str_About_Thumbprint">থাম্বপ্রিন্ট</sys:String>
+  <sys:String x:Key="Str_About_ExeHash">EXE SHA-256</sys:String>
+  <sys:String x:Key="Str_Depot_Privacy">গোপনীয়তা</sys:String>
+  <sys:String x:Key="Str_About_Aka">অন্য নাম</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupView">ভিউ</sys:String>
+  <sys:String x:Key="Str_Advanced_None">কোনোটি নয়</sys:String>
 </ResourceDictionary>

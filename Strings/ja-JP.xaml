@@ -1,3 +1,43 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-  <!-- Translation deferred. Missing keys use the English base. -->
+  <!-- Reused approved family translations. Missing keys use the English base. -->
+  <sys:String x:Key="Str_ToolTip_Minimize">最小化</sys:String>
+  <sys:String x:Key="Str_ToolTip_Close">閉じる</sys:String>
+  <sys:String x:Key="Str_ToolTip_Language">言語</sys:String>
+  <sys:String x:Key="Str_Content_Stop">停止</sys:String>
+  <sys:String x:Key="Str_Text_TEXT_SIZE">テキストサイズ</sys:String>
+  <sys:String x:Key="Str_Text_Ready">準備完了</sys:String>
+  <sys:String x:Key="Str_Shortcuts_List">リスト</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Keyboard">キーボード</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Base">基本</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Ctrl">Ctrl</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupView">表示</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupNav">ナビゲーション</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupFile">ファイル</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupHelp">ヘルプ</sys:String>
+  <sys:String x:Key="Str_Content_Close">閉じる</sys:String>
+  <sys:String x:Key="Str_Theme_Dark">ダーク</sys:String>
+  <sys:String x:Key="Str_Theme_Light">ライト</sys:String>
+  <sys:String x:Key="Str_Theme_Black">ブラック</sys:String>
+  <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+  <sys:String x:Key="Str_Theme_Blood">ブラッド</sys:String>
+  <sys:String x:Key="Str_Theme_Greed">グリード</sys:String>
+  <sys:String x:Key="Str_Theme_Cyanotic">シアノティック</sys:String>
+  <sys:String x:Key="Str_Beam_Publisher">発行元</sys:String>
+  <sys:String x:Key="Str_Scope_ThisPc">PC</sys:String>
+  <sys:String x:Key="Str_BitLocker_Operation">操作</sys:String>
+  <sys:String x:Key="Str_BitLocker_Browse">参照...</sys:String>
+  <sys:String x:Key="Str_EventLog_Application">Application</sys:String>
+  <sys:String x:Key="Str_Audio_Output">出力</sys:String>
+  <sys:String x:Key="Str_Restore_Description">説明</sys:String>
+  <sys:String x:Key="Str_Main_Stop">停止</sys:String>
+  <sys:String x:Key="Str_Task_Weekly">毎週</sys:String>
+  <sys:String x:Key="Str_Task_Monthly">毎月</sys:String>
+  <sys:String x:Key="Str_Advanced_All">すべて</sys:String>
+  <sys:String x:Key="Str_Advanced_None">なし</sys:String>
+  <sys:String x:Key="Str_About_Version">バージョン</sys:String>
+  <sys:String x:Key="Str_About_Publisher">発行元</sys:String>
+  <sys:String x:Key="Str_About_Thumbprint">拇印</sys:String>
+  <sys:String x:Key="Str_Depot_Privacy">プライバシー</sys:String>
+  <sys:String x:Key="Str_About_Aka">別名</sys:String>
+  <sys:String x:Key="Str_EventLog_System">System</sys:String>
 </ResourceDictionary>

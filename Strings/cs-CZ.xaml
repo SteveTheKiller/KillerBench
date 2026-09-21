@@ -1,3 +1,44 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-  <!-- Translation deferred. Missing keys use the English base. -->
+  <!-- Reused approved family translations. Missing keys use the English base. -->
+  <sys:String x:Key="Str_ToolTip_Minimize">Minimalizovat</sys:String>
+  <sys:String x:Key="Str_ToolTip_Close">Zavřít</sys:String>
+  <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">Klávesové zkratky (F1)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Language">Jazyk</sys:String>
+  <sys:String x:Key="Str_Content_Stop">Zastavit</sys:String>
+  <sys:String x:Key="Str_Text_TEXT_SIZE">Velikost textu</sys:String>
+  <sys:String x:Key="Str_Text_Ready">Připraveno</sys:String>
+  <sys:String x:Key="Str_Text_Keyboard_shortcuts">Klávesové zkratky</sys:String>
+  <sys:String x:Key="Str_Shortcuts_List">SEZNAM</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Keyboard">KLÁVESNICE</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Base">Základní</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Ctrl">Ctrl</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupView">Zobrazení</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupNav">NAVIGACE</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupFile">SOUBOR</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupHelp">NÁPOVĚDA</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Show">Klávesové zkratky</sys:String>
+  <sys:String x:Key="Str_Content_Close">Zavřít</sys:String>
+  <sys:String x:Key="Str_Theme_Dark">Tmavý</sys:String>
+  <sys:String x:Key="Str_Theme_Light">Světlý</sys:String>
+  <sys:String x:Key="Str_Theme_Black">Černý</sys:String>
+  <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+  <sys:String x:Key="Str_Theme_Blood">Krvavý</sys:String>
+  <sys:String x:Key="Str_Theme_Delirium">Delirium</sys:String>
+  <sys:String x:Key="Str_Beam_Publisher">VYDAVATEL</sys:String>
+  <sys:String x:Key="Str_Scope_ThisPc">Tento počítač</sys:String>
+  <sys:String x:Key="Str_BitLocker_Operation">operace</sys:String>
+  <sys:String x:Key="Str_BitLocker_Browse">Procházet...</sys:String>
+  <sys:String x:Key="Str_EventLog_Application">Aplikace</sys:String>
+  <sys:String x:Key="Str_Audio_Output">VÝSTUP</sys:String>
+  <sys:String x:Key="Str_Restore_Description">POPIS</sys:String>
+  <sys:String x:Key="Str_Main_Stop">Zastavit</sys:String>
+  <sys:String x:Key="Str_Task_Weekly">Týdně</sys:String>
+  <sys:String x:Key="Str_Task_Monthly">Měsíčně</sys:String>
+  <sys:String x:Key="Str_Advanced_None">žádné</sys:String>
+  <sys:String x:Key="Str_About_Version">VERZE</sys:String>
+  <sys:String x:Key="Str_About_Publisher">VYDAVATEL</sys:String>
+  <sys:String x:Key="Str_Depot_Privacy">SOUKROMÍ</sys:String>
+  <sys:String x:Key="Str_About_Aka">Také známý jako</sys:String>
+  <sys:String x:Key="Str_EventLog_System">Systém</sys:String>
+  <sys:String x:Key="Str_Advanced_All">Vše</sys:String>
 </ResourceDictionary>

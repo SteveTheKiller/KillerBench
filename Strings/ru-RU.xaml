@@ -1,3 +1,35 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-  <!-- Translation deferred. Missing keys use the English base. -->
+  <!-- Reused approved family translations. Missing keys use the English base. -->
+  <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">Сочетания клавиш (F1)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Language">Язык</sys:String>
+  <sys:String x:Key="Str_Text_TEXT_SIZE">Размер текста</sys:String>
+  <sys:String x:Key="Str_Text_Ready">Готово</sys:String>
+  <sys:String x:Key="Str_Text_Keyboard_shortcuts">Сочетания клавиш</sys:String>
+  <sys:String x:Key="Str_Shortcuts_List">СПИСОК</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Keyboard">КЛАВИАТУРА</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Base">Основной</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Ctrl">Ctrl</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupView">Вид</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupNav">НАВИГАЦИЯ</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupFile">ФАЙЛ</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Show">Сочетания клавиш</sys:String>
+  <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+  <sys:String x:Key="Str_Theme_Ectoplasm">Эктоплазма</sys:String>
+  <sys:String x:Key="Str_Theme_Decay">Распад</sys:String>
+  <sys:String x:Key="Str_Theme_Mourning">Траур</sys:String>
+  <sys:String x:Key="Str_Beam_Publisher">ИЗДАТЕЛЬ</sys:String>
+  <sys:String x:Key="Str_Scope_ThisPc">Этот компьютер</sys:String>
+  <sys:String x:Key="Str_BitLocker_Operation">операция</sys:String>
+  <sys:String x:Key="Str_BitLocker_Browse">Обзор...</sys:String>
+  <sys:String x:Key="Str_EventLog_Application">Приложение</sys:String>
+  <sys:String x:Key="Str_Audio_Output">ВЫВОД</sys:String>
+  <sys:String x:Key="Str_Restore_Description">ОПИСАНИЕ</sys:String>
+  <sys:String x:Key="Str_Task_Weekly">Еженедельно</sys:String>
+  <sys:String x:Key="Str_Task_Monthly">Ежемесячно</sys:String>
+  <sys:String x:Key="Str_Advanced_None">нет</sys:String>
+  <sys:String x:Key="Str_About_Version">ВЕРСИЯ</sys:String>
+  <sys:String x:Key="Str_About_Publisher">ИЗДАТЕЛЬ</sys:String>
+  <sys:String x:Key="Str_Depot_Privacy">КОНФИДЕНЦИАЛЬНОСТЬ</sys:String>
+  <sys:String x:Key="Str_About_Aka">Также известен как</sys:String>
+  <sys:String x:Key="Str_EventLog_System">Система</sys:String>
 </ResourceDictionary>

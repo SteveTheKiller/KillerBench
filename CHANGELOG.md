@@ -1,5 +1,6 @@
 # Changelog
 
+- Reuse approved family translations for common labels across all 14 non-English locale files.
 - Route remaining DEBLOAT, DEPOT, Installer and About labels through localizable string resources.
 - Route shell status and About metadata controls through localizable string resources.
 - Route advanced check selection, knowledge tools, session views and manual repair consent through localizable string resources.

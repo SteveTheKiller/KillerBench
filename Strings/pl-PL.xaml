@@ -1,3 +1,41 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-  <!-- Translation deferred. Missing keys use the English base. -->
+  <!-- Reused approved family translations. Missing keys use the English base. -->
+  <sys:String x:Key="Str_ToolTip_Close">Zamknij</sys:String>
+  <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">Skróty klawiaturowe (F1)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Language">Język</sys:String>
+  <sys:String x:Key="Str_Content_Stop">Zatrzymaj</sys:String>
+  <sys:String x:Key="Str_Text_TEXT_SIZE">Rozmiar czcionki</sys:String>
+  <sys:String x:Key="Str_Text_Keyboard_shortcuts">Skróty klawiaturowe</sys:String>
+  <sys:String x:Key="Str_Shortcuts_List">LISTA</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Keyboard">KLAWIATURA</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Base">Podstawowa</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Ctrl">Ctrl</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupView">Widok</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupNav">NAWIGACJA</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupFile">PLIK</sys:String>
+  <sys:String x:Key="Str_Shortcuts_GroupHelp">POMOC</sys:String>
+  <sys:String x:Key="Str_Shortcuts_Show">Skróty klawiaturowe</sys:String>
+  <sys:String x:Key="Str_Content_Close">Zamknij</sys:String>
+  <sys:String x:Key="Str_Theme_Dark">Ciemny</sys:String>
+  <sys:String x:Key="Str_Theme_Light">Jasny</sys:String>
+  <sys:String x:Key="Str_Theme_Black">Czarny</sys:String>
+  <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
+  <sys:String x:Key="Str_Theme_Delirium">Delirium</sys:String>
+  <sys:String x:Key="Str_Beam_Publisher">WYDAWCA</sys:String>
+  <sys:String x:Key="Str_Scope_ThisPc">Ten komputer</sys:String>
+  <sys:String x:Key="Str_BitLocker_Operation">operacja</sys:String>
+  <sys:String x:Key="Str_BitLocker_Browse">Przeglądaj...</sys:String>
+  <sys:String x:Key="Str_EventLog_Application">Aplikacja</sys:String>
+  <sys:String x:Key="Str_Audio_Output">WYJŚCIE</sys:String>
+  <sys:String x:Key="Str_Restore_Description">OPIS</sys:String>
+  <sys:String x:Key="Str_Main_Stop">Zatrzymaj</sys:String>
+  <sys:String x:Key="Str_Task_Weekly">Co tydzień</sys:String>
+  <sys:String x:Key="Str_Task_Monthly">Co miesiąc</sys:String>
+  <sys:String x:Key="Str_Advanced_All">Wszystkie</sys:String>
+  <sys:String x:Key="Str_About_Version">WERSJA</sys:String>
+  <sys:String x:Key="Str_About_Publisher">WYDAWCA</sys:String>
+  <sys:String x:Key="Str_Depot_Privacy">PRYWATNOŚĆ</sys:String>
+  <sys:String x:Key="Str_About_Aka">Znany także jako</sys:String>
+  <sys:String x:Key="Str_EventLog_System">System</sys:String>
+  <sys:String x:Key="Str_Advanced_None">Nic</sys:String>
 </ResourceDictionary>
