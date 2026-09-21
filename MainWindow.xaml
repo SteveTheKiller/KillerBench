@@ -223,47 +223,47 @@
               </DockPanel>
             </StackPanel>
             <StackPanel x:Name="MaceSettings" Visibility="Collapsed" Margin="0,0,0,8">
-              <TextBlock Text="Choose exactly what to review. GO inventories registrations and shows consequences. Package removal has its own guarded control." TextWrapping="Wrap"/>
+              <TextBlock Text="{DynamicResource Str_Mace_Description}" TextWrapping="Wrap"/>
               <ComboBox x:Name="MaceScopeChoice" SelectedIndex="0" Margin="0,6,0,6" AutomationProperties.Name="MACE account scope" SelectionChanged="OnMaceOptionChanged">
-                <ComboBoxItem Content="Running account"/><ComboBoxItem Content="All users and new users"/>
+                <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/><ComboBoxItem Content="{DynamicResource Str_Scope_AllUsersAndNew}"/>
               </ComboBox>
-              <TextBlock Text="Applications" Foreground="{DynamicResource DimTextBrush}"/>
+              <TextBlock Text="{DynamicResource Str_Common_Applications}" Foreground="{DynamicResource DimTextBrush}"/>
               <CheckBox x:Name="MaceOneDrive" Content="OneDrive" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
               <CheckBox x:Name="MaceOutlook" Content="Outlook" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
               <CheckBox x:Name="MaceOffice" Content="Office / Microsoft 365" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
               <CheckBox x:Name="MaceProject" Content="Microsoft Project" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
               <CheckBox x:Name="MaceTeams" Content="Microsoft Teams" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
-              <TextBlock Text="Future removal choices" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
-              <CheckBox x:Name="MaceRemoveData" Content="Remove selected applications' profile data" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
-              <CheckBox x:Name="MaceRemoveCredentials" Content="Remove selected applications' cached credentials" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
-              <CheckBox x:Name="MaceRestoreFolders" Content="Review OneDrive folder locations for restoration" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
-              <TextBlock Text="GO records these choices in a review only. No process, application, package, file, credential, folder location, registry value or user data changes." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
-              <TextBlock Text="Supported package plan" Foreground="{DynamicResource DimTextBrush}" Margin="0,8,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Mace_FutureChoices}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <CheckBox x:Name="MaceRemoveData" Content="{DynamicResource Str_Mace_RemoveData}" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
+              <CheckBox x:Name="MaceRemoveCredentials" Content="{DynamicResource Str_Mace_RemoveCredentials}" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
+              <CheckBox x:Name="MaceRestoreFolders" Content="{DynamicResource Str_Mace_RestoreFolders}" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
+              <TextBlock Text="{DynamicResource Str_Mace_ReviewBoundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Mace_PackagePlan}" Foreground="{DynamicResource DimTextBrush}" Margin="0,8,0,0"/>
               <ComboBox x:Name="MacePackageSelection" DisplayMemberPath="Label" Margin="0,4,0,4" AutomationProperties.Name="Supported MACE package candidate" SelectionChanged="OnMacePackageSelectionChanged"/>
-              <Button x:Name="MaceReviewPackage" Content="Check selected package" Click="OnReviewMacePackage" IsEnabled="False" HorizontalAlignment="Left"/>
-              <TextBlock x:Name="MacePackageHint" Text="Run GO to find supported current-account package candidates." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
-              <TextBlock Text="Destructive package removal" Foreground="{DynamicResource DangerRed}" Margin="0,8,0,0"/>
-              <CheckBox x:Name="MacePackageRemovalConsent" Content="I understand that this removes only the selected package after fresh safeguards pass" Checked="OnMacePackageRemovalConsentChanged" Unchecked="OnMacePackageRemovalConsentChanged"/>
-              <Button x:Name="MaceRemovePackage" Content="REMOVE SELECTED PACKAGE" Click="OnRemoveMacePackage" IsEnabled="False" HorizontalAlignment="Left" Margin="0,4,0,0" Background="{DynamicResource DangerRed}" Foreground="White" ToolTip="Requires an eligible review, this confirmation, a second confirmation, and fresh exact evidence before requesting removal."/>
-              <Button x:Name="MaceReconcilePackage" Content="Check interrupted removal" Click="OnReconcileMacePackage" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Checks a prior MACE package-removal record without sending another removal request."/>
-              <TextBlock Text="This red control is separate from GO. It removes one exact, unprotected development package for the running account only. The final request is recorded and never retried automatically." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <Button x:Name="MaceReviewPackage" Content="{DynamicResource Str_Mace_CheckPackage}" Click="OnReviewMacePackage" IsEnabled="False" HorizontalAlignment="Left"/>
+              <TextBlock x:Name="MacePackageHint" Text="{DynamicResource Str_Mace_PackageHint}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Mace_DestructiveRemoval}" Foreground="{DynamicResource DangerRed}" Margin="0,8,0,0"/>
+              <CheckBox x:Name="MacePackageRemovalConsent" Content="{DynamicResource Str_Mace_RemovalConsent}" Checked="OnMacePackageRemovalConsentChanged" Unchecked="OnMacePackageRemovalConsentChanged"/>
+              <Button x:Name="MaceRemovePackage" Content="{DynamicResource Str_Mace_RemovePackage}" Click="OnRemoveMacePackage" IsEnabled="False" HorizontalAlignment="Left" Margin="0,4,0,0" Background="{DynamicResource DangerRed}" Foreground="White" ToolTip="{DynamicResource Str_Mace_RemovePackageTip}"/>
+              <Button x:Name="MaceReconcilePackage" Content="{DynamicResource Str_Mace_CheckInterrupted}" Click="OnReconcileMacePackage" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Mace_CheckInterruptedTip}"/>
+              <TextBlock Text="{DynamicResource Str_Mace_RemovalBoundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="OrcaSettings" Visibility="Collapsed" Margin="0,0,0,8">
-              <TextBlock Text="Choose the Outlook edition, account scope and exact reset areas. GO reviews them. For running-account caches only, enable retention to move the caches under recovery names after fresh checks." TextWrapping="Wrap"/>
+              <TextBlock Text="{DynamicResource Str_Orca_Description}" TextWrapping="Wrap"/>
               <ComboBox x:Name="OrcaModeChoice" SelectedIndex="2" Margin="0,6,0,4" AutomationProperties.Name="ORCA Outlook edition" SelectionChanged="OnOrcaOptionChanged">
-                <ComboBoxItem Content="New Outlook"/><ComboBoxItem Content="Classic Outlook"/><ComboBoxItem Content="Both"/>
+                <ComboBoxItem Content="{DynamicResource Str_Orca_NewOutlook}"/><ComboBoxItem Content="{DynamicResource Str_Orca_ClassicOutlook}"/><ComboBoxItem Content="{DynamicResource Str_Common_Both}"/>
               </ComboBox>
               <ComboBox x:Name="OrcaScopeChoice" SelectedIndex="0" Margin="0,0,0,6" AutomationProperties.Name="ORCA account scope" SelectionChanged="OnOrcaOptionChanged">
-                <ComboBoxItem Content="Running account"/><ComboBoxItem Content="All users"/>
+                <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/><ComboBoxItem Content="{DynamicResource Str_Scope_AllUsers}"/>
               </ComboBox>
-              <TextBlock Text="Reset areas" Foreground="{DynamicResource DimTextBrush}"/>
-              <CheckBox x:Name="OrcaClearCaches" Content="Outlook caches" IsChecked="True" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
-              <CheckBox x:Name="OrcaResetProfiles" Content="Profile and discovery settings" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
-              <CheckBox x:Name="OrcaResetAuthentication" Content="Authentication state" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
-              <CheckBox x:Name="OrcaDeleteOst" Content="Classic Outlook OST files" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
-              <CheckBox x:Name="OrcaRemoveAddIns" Content="Classic Outlook add-ins" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
-              <CheckBox x:Name="OrcaReinstallNew" Content="Reinstall New Outlook" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
-              <TextBlock Text="Only cache retention is available. Profiles, OST files, credentials, add-ins, packages, settings and retained caches are never removed." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Orca_ResetAreas}" Foreground="{DynamicResource DimTextBrush}"/>
+              <CheckBox x:Name="OrcaClearCaches" Content="{DynamicResource Str_Orca_Caches}" IsChecked="True" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
+              <CheckBox x:Name="OrcaResetProfiles" Content="{DynamicResource Str_Orca_Profiles}" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
+              <CheckBox x:Name="OrcaResetAuthentication" Content="{DynamicResource Str_Orca_Authentication}" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
+              <CheckBox x:Name="OrcaDeleteOst" Content="{DynamicResource Str_Orca_OstFiles}" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
+              <CheckBox x:Name="OrcaRemoveAddIns" Content="{DynamicResource Str_Orca_AddIns}" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
+              <CheckBox x:Name="OrcaReinstallNew" Content="{DynamicResource Str_Orca_ReinstallNew}" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
+              <TextBlock Text="{DynamicResource Str_Orca_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
             </StackPanel>
             <StackPanel x:Name="DepotSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="Select applications and configuration groups for a provisioning review. Nothing is selected or installed automatically." TextWrapping="Wrap"/>

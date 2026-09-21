@@ -1,5 +1,6 @@
 # Changelog
 
+- Route MACE and ORCA review, safety and action controls through localizable string resources.
 - Route Search, package review, installed-app inventory and browser-extension controls through localizable string resources.
 - Route the complete PEEK option panel through the existing localizable string resources.
 - Retain reviewed Windows Setup result and extend-code pairs with their phase and operation context.

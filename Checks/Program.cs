@@ -102,6 +102,9 @@ internal static class Program
             Require(window.FindName("SearchIndexRebuildConsent") is CheckBox { Content: "Rebuild the Windows Search index" } &&
                 window.FindName("ReviewBrowserExtensions") is Button { Content: "Review browser extensions" },
                 "Search and application review controls resolve their localizable English resources");
+            Require(window.FindName("MaceRemovePackage") is Button { Content: "REMOVE SELECTED PACKAGE" } &&
+                window.FindName("OrcaClearCaches") is CheckBox { Content: "Outlook caches" },
+                "MACE and ORCA controls resolve their localizable English resources");
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
                 "Desktop subtitle identifies the full maintenance scope");
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
