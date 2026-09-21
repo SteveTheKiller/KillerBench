@@ -456,63 +456,63 @@
               <TextBlock Text="{DynamicResource Str_Cleanup_Boundary}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="UpdateSettings" Visibility="Collapsed" Margin="0,0,0,6">
-              <TextBlock Text="Update source"/>
+              <TextBlock Text="{DynamicResource Str_Update_Source}"/>
               <ComboBox x:Name="UpdateSourceChoice" SelectedIndex="0" AutomationProperties.Name="Update source" Margin="0,0,0,4">
-                <ComboBoxItem Content="Configured source"/>
-                <ComboBoxItem Content="Windows Update"/>
-                <ComboBoxItem Content="Microsoft Update (if registered)"/>
+                <ComboBoxItem Content="{DynamicResource Str_Update_ConfiguredSource}"/>
+                <ComboBoxItem Content="{DynamicResource Str_Update_WindowsUpdate}"/>
+                <ComboBoxItem Content="{DynamicResource Str_Update_MicrosoftUpdate}"/>
               </ComboBox>
               <WrapPanel>
-                <CheckBox x:Name="UpdateSoftware" Content="Software updates" IsChecked="True" Checked="OnUpdateDiscoverySelectionChanged" Unchecked="OnUpdateDiscoverySelectionChanged" Margin="0,0,14,0"/>
-                <CheckBox x:Name="UpdateDrivers" Content="Drivers" Checked="OnUpdateDiscoverySelectionChanged" Unchecked="OnUpdateDiscoverySelectionChanged" Margin="0,0,14,0"/>
-                <CheckBox x:Name="UpdateThirdParty" Content="Third-party apps"/>
+                <CheckBox x:Name="UpdateSoftware" Content="{DynamicResource Str_Update_Software}" IsChecked="True" Checked="OnUpdateDiscoverySelectionChanged" Unchecked="OnUpdateDiscoverySelectionChanged" Margin="0,0,14,0"/>
+                <CheckBox x:Name="UpdateDrivers" Content="{DynamicResource Str_Update_Drivers}" Checked="OnUpdateDiscoverySelectionChanged" Unchecked="OnUpdateDiscoverySelectionChanged" Margin="0,0,14,0"/>
+                <CheckBox x:Name="UpdateThirdParty" Content="{DynamicResource Str_Update_ThirdParty}"/>
               </WrapPanel>
-              <TextBlock Text="GO searches only the selected existing source. It does not register a service or change policy. Select updates below to preview or install. No automatic restart." Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Update_Boundary}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
               <Border x:Name="UpdateStoreRecoveryPanel" Visibility="Collapsed" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="7" Margin="0,7,0,2">
                 <StackPanel>
-                  <TextBlock Text="UPDATE DATABASE RECOVERY" Foreground="{DynamicResource AccentBrush}" FontFamily="Consolas" FontSize="10"/>
+                  <TextBlock Text="{DynamicResource Str_Update_DatabaseRecovery}" Foreground="{DynamicResource AccentBrush}" FontFamily="Consolas" FontSize="10"/>
                   <TextBlock x:Name="UpdateStoreRecoveryStatus" TextWrapping="Wrap" Margin="0,3,0,4"/>
-                  <CheckBox x:Name="UpdateStoreRecoveryConsent" Content="Retain the old database and rebuild Windows Update data" Checked="OnUpdateStoreRecoveryConsentChanged" Unchecked="OnUpdateStoreRecoveryConsentChanged"/>
+                  <CheckBox x:Name="UpdateStoreRecoveryConsent" Content="{DynamicResource Str_Update_DatabaseRecoveryConsent}" Checked="OnUpdateStoreRecoveryConsentChanged" Unchecked="OnUpdateStoreRecoveryConsentChanged"/>
                   <WrapPanel Margin="0,4,0,0">
-                    <Button x:Name="UpdateStoreResetButton" Content="Preview recovery" Click="OnUpdateStoreReset"/>
-                    <Button x:Name="UpdateStoreReconcileButton" Content="Check interrupted recovery" Click="OnRecoverUpdateStore" Margin="6,0,0,0"/>
+                    <Button x:Name="UpdateStoreResetButton" Content="{DynamicResource Str_Update_PreviewRecovery}" Click="OnUpdateStoreReset"/>
+                    <Button x:Name="UpdateStoreReconcileButton" Content="{DynamicResource Str_Update_CheckRecovery}" Click="OnRecoverUpdateStore" Margin="6,0,0,0"/>
                   </WrapPanel>
                 </StackPanel>
               </Border>
-              <Expander Header="Select updates after discovery" Foreground="{DynamicResource TextBrush}" Margin="0,4,0,0">
+              <Expander Header="{DynamicResource Str_Update_SelectAfterDiscovery}" Foreground="{DynamicResource TextBrush}" Margin="0,4,0,0">
                 <StackPanel>
-                  <TextBlock Text="Filter update titles"/>
+                  <TextBlock Text="{DynamicResource Str_Update_FilterTitles}"/>
                   <TextBox x:Name="UpdateTitleFilter" MaxLength="256" TextChanged="OnUpdateFilterChanged" AutomationProperties.Name="Filter update titles"/>
-                  <CheckBox x:Name="UpdateDownloadedOnly" Content="Already downloaded only" Checked="OnUpdateFilterChanged" Unchecked="OnUpdateFilterChanged" Margin="0,4,0,4"/>
-                  <TextBlock Text="Update product"/>
-                  <ComboBox x:Name="UpdateProductFilter" DisplayMemberPath="Name" SelectedValuePath="Id" SelectionChanged="OnUpdateFilterChanged" AutomationProperties.Name="Update product" ToolTip="Products offered by the configured update source" Margin="0,0,0,4"/>
-                  <TextBlock Text="Update classification"/>
+                  <CheckBox x:Name="UpdateDownloadedOnly" Content="{DynamicResource Str_Update_DownloadedOnly}" Checked="OnUpdateFilterChanged" Unchecked="OnUpdateFilterChanged" Margin="0,4,0,4"/>
+                  <TextBlock Text="{DynamicResource Str_Update_Product}"/>
+                  <ComboBox x:Name="UpdateProductFilter" DisplayMemberPath="Name" SelectedValuePath="Id" SelectionChanged="OnUpdateFilterChanged" AutomationProperties.Name="Update product" ToolTip="{DynamicResource Str_Update_ProductTip}" Margin="0,0,0,4"/>
+                  <TextBlock Text="{DynamicResource Str_Update_Classification}"/>
                   <ComboBox x:Name="UpdateClassificationFilter" DisplayMemberPath="Name" SelectedValuePath="Id" SelectionChanged="OnUpdateFilterChanged" AutomationProperties.Name="Update classification" Margin="0,0,0,4"/>
                   <TextBlock x:Name="UpdateFilterCount" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
                   <ListBox x:Name="AvailableUpdateList" SelectionChanged="OnUpdateSelectionChanged" SelectionMode="Multiple" DisplayMemberPath="Title" MaxHeight="160" MinHeight="40" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}"/>
                   <WrapPanel Margin="0,4,0,0">
-                    <CheckBox x:Name="UpdateAllowRestart" Content="Include updates that may need a restart" Checked="OnUpdateSelectionChanged" Unchecked="OnUpdateSelectionChanged" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    <CheckBox x:Name="UpdateAllowFeatureUpgrade" Content="Allow one offered Windows feature upgrade" Checked="OnUpdateSelectionChanged" Unchecked="OnUpdateSelectionChanged" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    <Button x:Name="UpdatePreviewButton" Content="Preview selected" IsEnabled="False" Click="OnPreviewUpdates"/>
-                    <Button x:Name="UpdateInstallButton" Content="Install selected" IsEnabled="False" Click="OnInstallUpdates" Margin="6,0,0,0"/>
+                    <CheckBox x:Name="UpdateAllowRestart" Content="{DynamicResource Str_Update_AllowRestart}" Checked="OnUpdateSelectionChanged" Unchecked="OnUpdateSelectionChanged" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <CheckBox x:Name="UpdateAllowFeatureUpgrade" Content="{DynamicResource Str_Update_AllowFeatureUpgrade}" Checked="OnUpdateSelectionChanged" Unchecked="OnUpdateSelectionChanged" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <Button x:Name="UpdatePreviewButton" Content="{DynamicResource Str_Update_PreviewSelected}" IsEnabled="False" Click="OnPreviewUpdates"/>
+                    <Button x:Name="UpdateInstallButton" Content="{DynamicResource Str_Update_InstallSelected}" IsEnabled="False" Click="OnInstallUpdates" Margin="6,0,0,0"/>
                   </WrapPanel>
-                  <TextBlock x:Name="UpdateSelectionStatus" Text="Select updates to review their installation requirements." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+                  <TextBlock x:Name="UpdateSelectionStatus" Text="{DynamicResource Str_Update_SelectionStatus}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
                 </StackPanel>
               </Expander>
-              <Button Content="Check interrupted update" Click="OnRecoverUpdates" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Verify a previous update before clearing its guard. Never installs or retries an update."/>
-              <Expander Header="Select a third-party app after discovery" Foreground="{DynamicResource TextBrush}" Margin="0,6,0,0">
+              <Button Content="{DynamicResource Str_Update_CheckInterrupted}" Click="OnRecoverUpdates" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Update_CheckInterruptedTip}"/>
+              <Expander Header="{DynamicResource Str_Update_SelectThirdParty}" Foreground="{DynamicResource TextBrush}" Margin="0,6,0,0">
                 <StackPanel>
-                  <TextBlock x:Name="ThirdPartyUpdateCount" Text="Select Third-party apps, then press GO." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+                  <TextBlock x:Name="ThirdPartyUpdateCount" Text="{DynamicResource Str_Update_ThirdPartyPrompt}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
                   <ListBox x:Name="ThirdPartyUpdateList" SelectionChanged="OnThirdPartyUpdateSelectionChanged" SelectionMode="Single" DisplayMemberPath="Name" MaxHeight="120" MinHeight="40" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" AutomationProperties.Name="Third-party application update candidates"/>
-                  <TextBlock Text="Target version" Margin="0,4,0,0"/>
+                  <TextBlock Text="{DynamicResource Str_Update_TargetVersion}" Margin="0,4,0,0"/>
                   <ComboBox x:Name="ThirdPartyUpdateVersion" SelectionChanged="OnThirdPartyUpdateSelectionChanged" AutomationProperties.Name="Third-party application target version"/>
-                  <CheckBox x:Name="ThirdPartyUpdateAgreements" Content="Accept the selected package and source agreements" Checked="OnThirdPartyUpdateSelectionChanged" Unchecked="OnThirdPartyUpdateSelectionChanged" Margin="0,5,0,0"/>
+                  <CheckBox x:Name="ThirdPartyUpdateAgreements" Content="{DynamicResource Str_Update_AcceptAgreements}" Checked="OnThirdPartyUpdateSelectionChanged" Unchecked="OnThirdPartyUpdateSelectionChanged" Margin="0,5,0,0"/>
                   <WrapPanel Margin="0,4,0,0">
-                    <Button x:Name="ThirdPartyUpdatePreview" Content="Preview selected" IsEnabled="False" Click="OnPreviewThirdPartyUpdate"/>
-                    <Button x:Name="ThirdPartyUpdateInstall" Content="Install selected" IsEnabled="False" Click="OnInstallThirdPartyUpdate" Margin="6,0,0,0"/>
+                    <Button x:Name="ThirdPartyUpdatePreview" Content="{DynamicResource Str_Update_PreviewSelected}" IsEnabled="False" Click="OnPreviewThirdPartyUpdate"/>
+                    <Button x:Name="ThirdPartyUpdateInstall" Content="{DynamicResource Str_Update_InstallSelected}" IsEnabled="False" Click="OnInstallThirdPartyUpdate" Margin="6,0,0,0"/>
                   </WrapPanel>
-                  <TextBlock x:Name="ThirdPartyUpdateStatus" Text="One exact package, source and version per operation. No automatic restart." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
-                  <Button Content="Check interrupted app update" Click="OnRecoverThirdPartyUpdate" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Verify the exact installed version without retrying the update."/>
+                  <TextBlock x:Name="ThirdPartyUpdateStatus" Text="{DynamicResource Str_Update_ThirdPartyBoundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+                  <Button Content="{DynamicResource Str_Update_CheckInterruptedApp}" Click="OnRecoverThirdPartyUpdate" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Update_CheckInterruptedAppTip}"/>
                 </StackPanel>
               </Expander>
             </StackPanel>
