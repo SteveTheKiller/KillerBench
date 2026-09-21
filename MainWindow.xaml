@@ -605,39 +605,39 @@
             </StackPanel>
             <TextBlock x:Name="ComponentCleanupSettings" Visibility="Collapsed" Margin="0,0,0,6" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Text="{DynamicResource Str_ComponentCleanup_Boundary}"/>
             <StackPanel x:Name="TaskSettings" Visibility="Collapsed" Margin="0,0,0,6">
-              <Expander x:Name="TaskDraftExpander" Header="New task draft" Loaded="OnTaskDraftLoaded">
+              <Expander x:Name="TaskDraftExpander" Header="{DynamicResource Str_Task_NewDraft}" Loaded="OnTaskDraftLoaded">
                 <StackPanel Margin="0,6,0,6">
-                  <TextBlock Text="Task folder"/><TextBox x:Name="TaskDraftFolder" Text="\KillerBench\"/>
-                  <TextBlock Text="Task name"/><TextBox x:Name="TaskDraftName"/>
-                  <TextBlock Text="Executable path"/><TextBox x:Name="TaskDraftExecutable"/>
-                  <TextBlock Text="Arguments"/><TextBox x:Name="TaskDraftArguments"/>
-                  <TextBlock Text="Working directory (optional)"/><TextBox x:Name="TaskDraftDirectory"/>
-                  <TextBlock Text="Schedule"/>
-                  <ComboBox x:Name="TaskDraftSchedule" SelectedIndex="0" SelectionChanged="OnTaskDraftScheduleChanged"><ComboBoxItem Content="Daily"/><ComboBoxItem Content="Weekly"/><ComboBoxItem Content="Monthly"/><ComboBoxItem Content="Startup"/></ComboBox>
-                  <TextBlock Text="Time (HH:mm, unused for startup)"/><TextBox x:Name="TaskDraftTime" Text="09:00"/>
-                  <TextBlock Text="Calendar time zone"/><ComboBox x:Name="TaskDraftZone" DisplayMemberPath="DisplayName" SelectedValuePath="Id"/>
-                  <StackPanel x:Name="TaskDraftWeekly" Visibility="Collapsed"><TextBlock Text="Select weekdays (Ctrl-click for multiple)"/><ListBox x:Name="TaskDraftWeekdays" SelectionMode="Multiple" MaxHeight="110"/></StackPanel>
-                  <StackPanel x:Name="TaskDraftMonthly" Visibility="Collapsed"><TextBlock Text="Select month days (Ctrl-click for multiple)"/><ListBox x:Name="TaskDraftMonthDays" SelectionMode="Multiple" MaxHeight="110"/><CheckBox x:Name="TaskDraftLastDay" Content="Last day instead of selected days"/></StackPanel>
-                  <TextBlock Text="Account mode"/>
-                  <ComboBox x:Name="TaskDraftAccountMode" SelectedIndex="0"><ComboBoxItem Content="Interactive user"/><ComboBoxItem Content="Local System"/></ComboBox>
-                  <TextBlock Text="User account (System uses S-1-5-18)"/><TextBox x:Name="TaskDraftUser"/>
-                  <CheckBox x:Name="TaskDraftHighest" Content="Highest privileges"/>
-                  <TextBlock Text="Execution limit (minutes, 1 to 4320)"/><TextBox x:Name="TaskDraftMinutes" Text="60"/>
-                  <TextBlock Text="If a previous run is still active"/><ComboBox x:Name="TaskDraftOverlap" SelectedIndex="0"><ComboBoxItem Content="Skip the new run"/><ComboBoxItem Content="Queue the new run"/><ComboBoxItem Content="Run both at once"/><ComboBoxItem Content="Stop the previous run"/></ComboBox>
-                  <Button Content="Review draft" Click="OnReviewTaskDraft" HorizontalAlignment="Left" Margin="0,6,0,0"/>
-                  <Button Content="Inspect draft on this PC" Click="OnInspectTaskDraft" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Read executable identity and visible task conflicts without registering or running anything"/>
-                  <Button Content="Save new draft..." Click="OnSaveTaskDraft" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Save to a new JSON file; existing files are preserved"/>
-                  <TextBlock Text="XML start date (YYYY-MM-DD)" Margin="0,6,0,0"/>
-                  <TextBox x:Name="TaskDraftStartDate" ToolTip="Local calendar start boundary; startup triggers do not use this date"/>
-                  <Button Content="Export disabled task XML..." Click="OnExportTaskXml" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Export a new review file using the local calendar time zone. No task is registered or run; existing files are preserved"/>
-                  <CheckBox x:Name="TaskRegistrationConsent" Content="Create this disabled Local System task after fresh checks" Margin="0,8,0,0" Checked="OnTaskRegistrationConsentChanged" Unchecked="OnTaskRegistrationConsentChanged" AutomationProperties.Name="Allow disabled task registration"/>
-                  <Button x:Name="TaskRegistrationButton" Content="Preview registration" Click="OnRegisterTaskDraft" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Preview by default. Creation requires the separate confirmation, elevation, a valid signed executable, an existing folder and an absent exact target."/>
-                  <Button x:Name="TaskRegistrationRecoveryButton" Content="Check interrupted registration" Click="OnRecoverTaskRegistration" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="Read the current exact task definition and close a matching pending guard. Never retries, enables, runs, replaces or deletes a task."/>
+                  <TextBlock Text="{DynamicResource Str_Task_Folder}"/><TextBox x:Name="TaskDraftFolder" Text="\KillerBench\"/>
+                  <TextBlock Text="{DynamicResource Str_Task_Name}"/><TextBox x:Name="TaskDraftName"/>
+                  <TextBlock Text="{DynamicResource Str_Task_Executable}"/><TextBox x:Name="TaskDraftExecutable"/>
+                  <TextBlock Text="{DynamicResource Str_Task_Arguments}"/><TextBox x:Name="TaskDraftArguments"/>
+                  <TextBlock Text="{DynamicResource Str_Task_WorkingDirectory}"/><TextBox x:Name="TaskDraftDirectory"/>
+                  <TextBlock Text="{DynamicResource Str_Task_Schedule}"/>
+                  <ComboBox x:Name="TaskDraftSchedule" SelectedIndex="0" SelectionChanged="OnTaskDraftScheduleChanged"><ComboBoxItem Content="{DynamicResource Str_Task_Daily}"/><ComboBoxItem Content="{DynamicResource Str_Task_Weekly}"/><ComboBoxItem Content="{DynamicResource Str_Task_Monthly}"/><ComboBoxItem Content="{DynamicResource Str_Task_Startup}"/></ComboBox>
+                  <TextBlock Text="{DynamicResource Str_Task_Time}"/><TextBox x:Name="TaskDraftTime" Text="09:00"/>
+                  <TextBlock Text="{DynamicResource Str_Task_TimeZone}"/><ComboBox x:Name="TaskDraftZone" DisplayMemberPath="DisplayName" SelectedValuePath="Id"/>
+                  <StackPanel x:Name="TaskDraftWeekly" Visibility="Collapsed"><TextBlock Text="{DynamicResource Str_Task_SelectWeekdays}"/><ListBox x:Name="TaskDraftWeekdays" SelectionMode="Multiple" MaxHeight="110"/></StackPanel>
+                  <StackPanel x:Name="TaskDraftMonthly" Visibility="Collapsed"><TextBlock Text="{DynamicResource Str_Task_SelectMonthDays}"/><ListBox x:Name="TaskDraftMonthDays" SelectionMode="Multiple" MaxHeight="110"/><CheckBox x:Name="TaskDraftLastDay" Content="{DynamicResource Str_Task_LastDay}"/></StackPanel>
+                  <TextBlock Text="{DynamicResource Str_Task_AccountMode}"/>
+                  <ComboBox x:Name="TaskDraftAccountMode" SelectedIndex="0"><ComboBoxItem Content="{DynamicResource Str_Task_InteractiveUser}"/><ComboBoxItem Content="{DynamicResource Str_Task_LocalSystem}"/></ComboBox>
+                  <TextBlock Text="{DynamicResource Str_Task_UserAccount}"/><TextBox x:Name="TaskDraftUser"/>
+                  <CheckBox x:Name="TaskDraftHighest" Content="{DynamicResource Str_Task_Highest}"/>
+                  <TextBlock Text="{DynamicResource Str_Task_ExecutionLimit}"/><TextBox x:Name="TaskDraftMinutes" Text="60"/>
+                  <TextBlock Text="{DynamicResource Str_Task_Overlap}"/><ComboBox x:Name="TaskDraftOverlap" SelectedIndex="0"><ComboBoxItem Content="{DynamicResource Str_Task_OverlapSkip}"/><ComboBoxItem Content="{DynamicResource Str_Task_OverlapQueue}"/><ComboBoxItem Content="{DynamicResource Str_Task_OverlapParallel}"/><ComboBoxItem Content="{DynamicResource Str_Task_OverlapStop}"/></ComboBox>
+                  <Button Content="{DynamicResource Str_Task_ReviewDraft}" Click="OnReviewTaskDraft" HorizontalAlignment="Left" Margin="0,6,0,0"/>
+                  <Button Content="{DynamicResource Str_Task_InspectDraft}" Click="OnInspectTaskDraft" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Task_InspectDraftTip}"/>
+                  <Button Content="{DynamicResource Str_Task_SaveDraft}" Click="OnSaveTaskDraft" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Task_SaveDraftTip}"/>
+                  <TextBlock Text="{DynamicResource Str_Task_StartDate}" Margin="0,6,0,0"/>
+                  <TextBox x:Name="TaskDraftStartDate" ToolTip="{DynamicResource Str_Task_StartDateTip}"/>
+                  <Button Content="{DynamicResource Str_Task_ExportXml}" Click="OnExportTaskXml" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Task_ExportXmlTip}"/>
+                  <CheckBox x:Name="TaskRegistrationConsent" Content="{DynamicResource Str_Task_RegisterConsent}" Margin="0,8,0,0" Checked="OnTaskRegistrationConsentChanged" Unchecked="OnTaskRegistrationConsentChanged" AutomationProperties.Name="Allow disabled task registration"/>
+                  <Button x:Name="TaskRegistrationButton" Content="{DynamicResource Str_Task_PreviewRegistration}" Click="OnRegisterTaskDraft" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Task_PreviewRegistrationTip}"/>
+                  <Button x:Name="TaskRegistrationRecoveryButton" Content="{DynamicResource Str_Task_CheckInterrupted}" Click="OnRecoverTaskRegistration" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Task_CheckInterruptedTip}"/>
                 </StackPanel>
               </Expander>
-              <Button Content="Review saved task plan..." Click="OnReviewTaskPlan" HorizontalAlignment="Left" ToolTip="Open a task-plan JSON file for review only"/>
-              <Button Content="Review recovery records..." Click="OnReviewTaskJournal" HorizontalAlignment="Left" ToolTip="Select one record or an intent/completion pair. Review never changes a task or allows a retry."/>
-              <TextBlock Text="GO inventories existing tasks. Registration is separate, creates only a disabled task and never runs, replaces or deletes a task." TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <Button Content="{DynamicResource Str_Task_ReviewSavedPlan}" Click="OnReviewTaskPlan" HorizontalAlignment="Left" ToolTip="{DynamicResource Str_Task_ReviewSavedPlanTip}"/>
+              <Button Content="{DynamicResource Str_Task_ReviewRecovery}" Click="OnReviewTaskJournal" HorizontalAlignment="Left" ToolTip="{DynamicResource Str_Task_ReviewRecoveryTip}"/>
+              <TextBlock Text="{DynamicResource Str_Task_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="EventLogSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="{DynamicResource Str_EventLog_Channel}" Margin="0,0,0,4"/>

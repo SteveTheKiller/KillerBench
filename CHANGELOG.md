@@ -1,5 +1,6 @@
 # Changelog
 
+- Route scheduled-task drafting, review, registration and recovery controls through localizable string resources.
 - Route component cleanup, file review, computer name and primary workflow actions through localizable string resources.
 - Route Event Log, Network, Audio, System Restore and Storage option panels through localizable string resources.
 - Route Privacy and BitLocker review, confirmation and preservation boundaries through localizable string resources.

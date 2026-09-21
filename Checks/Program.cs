@@ -133,6 +133,10 @@ internal static class Program
                 window.FindName("ComputerRenameConsent") is CheckBox { Content: "Rename this workgroup PC after fresh checks" } &&
                 window.FindName("MainGo") is Button { Content: "Run diagnosis" },
                 "Cleanup, file review, computer name and primary action controls resolve their localizable English resources");
+            Require(window.FindName("TaskDraftExpander") is Expander { Header: "New task draft" } &&
+                window.FindName("TaskRegistrationConsent") is CheckBox { Content: "Create this disabled Local System task after fresh checks" } &&
+                window.FindName("TaskRegistrationRecoveryButton") is Button { Content: "Check interrupted registration" },
+                "Scheduled task draft and registration controls resolve their localizable English resources");
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
                 "Desktop subtitle identifies the full maintenance scope");
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
