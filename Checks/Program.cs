@@ -1362,7 +1362,7 @@ internal static class Program
             Pump();
             var languages = ((Button)window.FindName("LangButton")).ContextMenu;
             Capture(languages, Path.Combine(scratch, "language-menu.png"));
-            Require(((StackPanel)languages.Items[0]).Children.OfType<RadioButton>().Count() == 15, "All 15 languages visible");
+            Require(((StackPanel)languages.Items[0]).Children.OfType<RadioButton>().Count() == 16, "All 16 languages visible");
             languages.IsOpen = false;
             foreach (var locale in Enum.GetValues<KillerBench.Services.Locale>())
             {

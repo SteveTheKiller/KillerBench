@@ -27,6 +27,7 @@ public partial class MainWindow
             (Locale.PlPL, "Polski",       "pl-PL"),
             (Locale.RuRU, "Русский",      "ru-RU"),
             (Locale.TrTR, "Türkçe",      "tr-TR"),
+            (Locale.ViVN, "Tiếng Việt",  "vi-VN"),
             (Locale.ZhCN, "中文 (简体)",  "zh-CN"),
             (Locale.ZhTW, "中文 (繁體)",  "zh-TW"),
         ];
@@ -115,12 +116,11 @@ public partial class MainWindow
             radio.Checked += (_, _) =>
             {
                 LocaleManager.Apply(locale);
-                Report(locale == Locale.EnUS ? "Language: English." : $"Language selected: {name}. English fallback until translation is complete.");
+                Report($"Language: {name}.");
                 languageMenu.IsOpen = false;
             };
             panel.Children.Add(radio);
         }
-        panel.Children.Add(new TextBlock { Text = "Translations pending; English fallback.", Margin = new Thickness(0,6,0,0), FontSize = 11 });
         languageMenu.Items.Add(panel);
         LangButton.ContextMenu = languageMenu;
         OpenFamilyMenu(languageMenu, LangButton);

@@ -96,6 +96,7 @@
 
 ## [0.1.0] - Unreleased
 
+- Added complete Vietnamese desktop localization. (Thanks @vuanhvu11982)
 - Added bounded backup, focused Backup Services, system-stability, security, focused Defender, application-deployment, installation-environment, storage-environment, focused Windows Update and System Files, broad and focused service, audio, printing-environment, Windows Search, WMI, Event Log, Windows Time, file-sharing, background-transfer, DHCP, DNS and Winsock correlations.
 - Expanded Vitals with device, reliability, hardware-error, crash and shutdown evidence plus one bounded system-stability conclusion.
 - Expanded Applications with Reliability Monitor evidence and one bounded stability-history conclusion.
