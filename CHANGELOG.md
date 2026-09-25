@@ -1,5 +1,6 @@
 # Changelog
 
+- Align the sidebar rail with the family footer spacing.
 - Complete all 14 non-English locale resource sets.
 - Route remaining DEBLOAT, DEPOT, Installer and About labels through localizable string resources.
 - Route shell status and About metadata controls through localizable string resources.
