@@ -80,6 +80,23 @@ internal static class WindowsSystemPackChecks
         Verdict(wifi, WindowsAdapterPowerSavingProbe.Interpret(new ToolResult(0, "Enabled\r\n", "", false)), ProbeVerdict.Repairable, "wifi power saving on");
         Verdict(wifi, WindowsAdapterPowerSavingProbe.Interpret(new ToolResult(0, "Disabled\r\n", "", false)), ProbeVerdict.Clear, "wifi power saving off");
         Verdict(wifi, WindowsAdapterPowerSavingProbe.Interpret(new ToolResult(1, "", "No MSFT_NetAdapterPowerManagementSettingData objects found", false)), ProbeVerdict.Unknown, "wifi adapter absent");
+        var winhttp = network.Recipes.Single(r => r.Id == "network.winhttp-proxy-reset");
+        const string directBytes = "1800000000000000010000000000000000000000";
+        const string proxyBytes = "180000000500000003000000" + "0a000000" + "70726f78793a38303830" + "07000000" + "3c6c6f63616c3e";
+        Verdict(winhttp, WindowsWinHttpProxyProbe.Interpret(new ToolResult(0, "Absent\r\n", "", false)), ProbeVerdict.Clear, "winhttp never stored");
+        Verdict(winhttp, WindowsWinHttpProxyProbe.Interpret(new ToolResult(0, directBytes + "\r\n", "", false)), ProbeVerdict.Clear, "winhttp direct");
+        var proxyResult = WindowsWinHttpProxyProbe.Interpret(new ToolResult(0, proxyBytes + "\r\n", "", false));
+        Verdict(winhttp, proxyResult, ProbeVerdict.Repairable, "winhttp proxy set");
+        if (proxyResult.Raw != "Proxy|proxy:8080|1") throw new Exception("WinHTTP proxy evidence was not retained exactly: " + proxyResult.Raw);
+        Verdict(winhttp, WindowsWinHttpProxyProbe.Interpret(new ToolResult(0, "1800000005000000030000000000000000000000\r\n", "", false)), ProbeVerdict.Unknown, "winhttp proxy flag without server");
+        Verdict(winhttp, WindowsWinHttpProxyProbe.Interpret(new ToolResult(0, "18000000050000000300000064000000\r\n", "", false)), ProbeVerdict.Unknown, "winhttp length overruns");
+        Verdict(winhttp, WindowsWinHttpProxyProbe.Interpret(new ToolResult(0, "zz\r\n", "", false)), ProbeVerdict.Unknown, "winhttp not hex");
+        Verdict(winhttp, WindowsWinHttpProxyProbe.Interpret(new ToolResult(1, "", "denied", false)), ProbeVerdict.Unknown, "winhttp read failed");
+        if (WindowsWinHttpProxyResetAction.Interpret(new ToolResult(0, "AlreadyDirect\r\n", "", false)) is not { Dispatched: false, Succeeded: true }) throw new Exception("An already-direct WinHTTP proxy was reported as changed.");
+        if (WindowsWinHttpProxyResetAction.Interpret(new ToolResult(0, "Reset\r\n", "", false)) is not { Dispatched: true, Succeeded: true }) throw new Exception("A WinHTTP reset was not reported as dispatched.");
+        if (WindowsWinHttpProxyResetAction.Interpret(new ToolResult(1, "", "netsh exited with 1", false)) is not { Dispatched: false, Succeeded: false }) throw new Exception("A failed WinHTTP reset was reported as successful.");
+        var liveProxy = await new WindowsWinHttpProxyProbe().ObserveAsync(new Dictionary<string, string>(), TimeSpan.FromSeconds(20), CancellationToken.None);
+        if (!liveProxy.Complete && string.IsNullOrEmpty(liveProxy.Error)) throw new Exception("Live WinHTTP proxy read returned an inconsistent result.");
 
         // Live read-only probes: dsregcmd and a CPU sample.
         var liveEntra = await new WindowsEntraStatusProbe().ObserveAsync(new Dictionary<string, string>(), TimeSpan.FromSeconds(20), CancellationToken.None);

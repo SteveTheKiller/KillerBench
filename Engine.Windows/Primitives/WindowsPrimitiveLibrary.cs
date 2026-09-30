@@ -33,6 +33,7 @@ public static class WindowsPrimitiveLibrary
         .AddProbe(new WindowsDeviceStatusProbe())
         .AddProbe(new WindowsUnletteredVolumesProbe())
         .AddProbe(new WindowsAppxStatusProbe())
+        .AddProbe(new WindowsWinHttpProxyProbe())
         .AddAction(new WindowsServiceStartAction())
         .AddAction(new WindowsRegistrySetDwordAction())
         .AddAction(new WindowsBcdSafebootClearAction())
@@ -46,5 +47,6 @@ public static class WindowsPrimitiveLibrary
         .AddAction(new WindowsInterfaceMtuSetAction())
         .AddAction(new WindowsDeviceRestartAction())
         .AddAction(new WindowsAssignDriveLetterAction())
-        .AddAction(new WindowsAppxReregisterAction());
+        .AddAction(new WindowsAppxReregisterAction())
+        .AddAction(new WindowsWinHttpProxyResetAction());
 }

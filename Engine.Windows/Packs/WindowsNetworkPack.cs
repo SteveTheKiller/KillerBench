@@ -59,6 +59,24 @@ public static class WindowsNetworkPack
             RequiresElevation = true,
             RequiresExplicitOptions = true,
             Limitations = "The adapter option defaults to Wi-Fi; a renamed adapter needs its exact name."
+        },
+        new RecipeDefinition("network.winhttp-proxy-reset", 1, "Reset the WinHTTP proxy", "Network",
+            "The machine-wide WinHTTP proxy reads back as direct access; browser, per-user and PAC settings are untested",
+            new ProbeSpec("winhttp.proxy", new Dictionary<string, string>(), new ExpectSpec(
+            [
+                new ExpectClause("equals", "Direct", ProbeVerdict.Clear),
+                new ExpectClause("equals", "Proxy", ProbeVerdict.Repairable) { Detail = "A machine-wide WinHTTP proxy is set. Managed networks sometimes set one on purpose, so confirm it is wrong before resetting. The evidence names the server so it can be restored with netsh winhttp set proxy." },
+                new ExpectClause("any", "", ProbeVerdict.Unknown)
+            ])) { Name = "WinHTTP proxy" })
+        {
+            Symptoms = ["network.proxy-wrong"],
+            Action = new ActionSpec("winhttp.proxy-reset", new Dictionary<string, string>())
+                { Timeout = TimeSpan.FromSeconds(30), Effects = "Runs netsh winhttp reset proxy so Windows services use direct access. Browser and per-user proxy settings are left alone." },
+            Verify = new ProbeSpec("winhttp.proxy", new Dictionary<string, string>(), ExpectSpec.ClearWhenEquals("Direct", ProbeVerdict.Attention)) { Name = "WinHTTP proxy" },
+            Risk = RecipeRisk.Persistent,
+            RequiresElevation = true,
+            RequiresExplicitOptions = true,
+            Limitations = "The prior proxy server is journaled in the detect evidence; there is no automatic rollback."
         }
     ]);
 }
