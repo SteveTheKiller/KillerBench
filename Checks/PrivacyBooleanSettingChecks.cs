@@ -6,7 +6,7 @@ internal static class PrivacyBooleanSettingChecks
     public static async Task RunAsync(string scratch)
     {
         string root = Path.Combine(scratch, "privacy-boolean-settings");
-        Require(PrivacyBooleanSettingCatalog.All.Count == 18 &&
+        Require(PrivacyBooleanSettingCatalog.All.Count == 38 &&
             PrivacyBooleanSettingCatalog.Find("ADVERTISING-ID") == PrivacyBooleanSettingCatalog.AdvertisingId &&
             PrivacyBooleanSettingCatalog.TailoredExperiences.PolicyScope == PrivacyRegistryScope.CurrentUser &&
             PrivacyBooleanSettingCatalog.Find("ONLINE-SPEECH") == PrivacyBooleanSettingCatalog.OnlineSpeech &&
@@ -47,6 +47,25 @@ internal static class PrivacyBooleanSettingChecks
             PrivacyBooleanSettingCatalog.MicrophoneAccess.ValueKind == PrivacyBooleanValueKind.ConsentString &&
             PrivacyBooleanSettingCatalog.MicrophoneAccess.PolicyValueName == "LetAppsAccessMicrophone",
             "Privacy setting definitions retain distinct current-user and policy identities");
+        var all = PrivacyBooleanSettingCatalog.All;
+        Require(all.Select(s => s.Key).Distinct(StringComparer.OrdinalIgnoreCase).Count() == all.Count &&
+            all.Select(s => s.UserPath + "|" + s.UserValueName).Distinct(StringComparer.OrdinalIgnoreCase).Count() == all.Count &&
+            all.Where(s => s.ValueKind == PrivacyBooleanValueKind.ConsentString).All(s =>
+                s.UserPath.StartsWith(@"Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\", StringComparison.Ordinal) &&
+                s.UserValueName == "Value" && s.MachinePath == s.UserPath && s.MachineValueName == "Value" &&
+                s.PolicyScope == PrivacyRegistryScope.LocalMachine && s.PolicyPath == @"SOFTWARE\Policies\Microsoft\Windows\AppPrivacy" && s.PolicyValueName.StartsWith("LetApps", StringComparison.Ordinal)) &&
+            all.Count(s => s.ValueKind == PrivacyBooleanValueKind.ConsentString) == 19 &&
+            PrivacyBooleanSettingCatalog.Find("location-access")!.PolicyValueName == "LetAppsAccessLocation" &&
+            PrivacyBooleanSettingCatalog.Find("search-highlights")!.PolicyValueName == "EnableDynamicContentInWSB" &&
+            PrivacyBooleanSettingCatalog.Find("cloud-search-work")!.UserValueName == "IsAADCloudSearchEnabled",
+            "Expanded privacy catalog keeps unique identities, one consent-store pattern and documented policy names");
+        if (OperatingSystem.IsWindows())
+            foreach (var definition in all)
+            {
+                var live = await new WindowsPrivacyBooleanSettingHost(definition).ReadAsync(CancellationToken.None);
+                Require(live.Complete || live.Detail.StartsWith("Privacy-setting evidence is unavailable", StringComparison.Ordinal),
+                    definition.Title + " live read-only evidence is complete or explicitly unavailable: " + live.Detail);
+            }
 
         var previewHost = new Host(Evidence(false, null));
         var preview = await PrivacyBooleanSettingExecution.RunAsync(PrivacyBooleanSettingCatalog.AdvertisingId,
@@ -252,7 +271,7 @@ internal static class PrivacyBooleanSettingChecks
             unavailableUndo.Detail.Contains("No registry write was dispatched", StringComparison.Ordinal),
             "Unavailable final undo evidence archives a prepared no-write result");
 
-        Console.WriteLine("PASS: 18 reusable privacy-setting definitions preserve policy, machine consent, durable evidence, final eligibility, exact verification, no-repeat recovery and guarded undo; simulated providers only.");
+        Console.WriteLine("PASS: 38 reusable privacy-setting definitions preserve policy, machine consent, durable evidence, final eligibility, exact verification, no-repeat recovery and guarded undo; simulated changes and read-only live evidence only.");
     }
 
     private static PrivacyBooleanEvidence Evidence(bool present, int? value, bool policyPresent = false, int? policyValue = null,

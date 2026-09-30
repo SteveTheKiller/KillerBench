@@ -86,7 +86,46 @@ public static class PrivacyBooleanSettingCatalog
         @"Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone", "Value", PrivacyRegistryScope.LocalMachine,
         @"SOFTWARE\Policies\Microsoft\Windows\AppPrivacy", "LetAppsAccessMicrophone", PrivacyBooleanValueKind.ConsentString,
         @"Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone", "Value");
-    public static IReadOnlyList<PrivacyBooleanSettingDefinition> All { get; } = [AdvertisingId, TailoredExperiences, OnlineSpeech, ClipboardSync, AppLaunchTracking, WindowsTips, SuggestedNotifications, ConsumerContent, LockScreenSpotlight, LockScreenSpotlightOverlay, StartSuggestions, PreinstalledAppSuggestions, SilentAppSuggestions, TypingAndInkingPersonalization, WebSearchResults, OemAppSuggestions, CameraAccess, MicrophoneAccess];
+    public static PrivacyBooleanSettingDefinition LocationAccess { get; } = Consent("location-access", "Location access", "location", "LetAppsAccessLocation", "the device location", "Location services, geofences and per-application exceptions");
+    public static PrivacyBooleanSettingDefinition ContactsAccess { get; } = Consent("contacts-access", "Contacts access", "contacts", "LetAppsAccessContacts", "contacts", "Stored contacts and per-application exceptions");
+    public static PrivacyBooleanSettingDefinition CalendarAccess { get; } = Consent("calendar-access", "Calendar access", "appointments", "LetAppsAccessCalendar", "calendar appointments", "Stored appointments and per-application exceptions");
+    public static PrivacyBooleanSettingDefinition CallHistoryAccess { get; } = Consent("call-history-access", "Call history access", "phoneCallHistory", "LetAppsAccessCallHistory", "call history", "Stored call history and per-application exceptions");
+    public static PrivacyBooleanSettingDefinition EmailAccess { get; } = Consent("email-access", "Email access", "email", "LetAppsAccessEmail", "email", "Mail accounts, stored messages and per-application exceptions");
+    public static PrivacyBooleanSettingDefinition NotificationsAccess { get; } = Consent("notifications-access", "Notification access", "userNotificationListener", "LetAppsAccessNotifications", "notifications from other apps", "Ordinary notification delivery and per-application exceptions");
+    public static PrivacyBooleanSettingDefinition AccountInfoAccess { get; } = Consent("account-info-access", "Account info access", "userAccountInformation", "LetAppsAccessAccountInfo", "the account name and picture", "The account itself and per-application exceptions");
+    public static PrivacyBooleanSettingDefinition MessagingAccess { get; } = Consent("messaging-access", "Messaging access", "chat", "LetAppsAccessMessaging", "text and MMS messages", "Stored messages and per-application exceptions");
+    public static PrivacyBooleanSettingDefinition RadiosAccess { get; } = Consent("radios-access", "Radio control", "radios", "LetAppsAccessRadios", "Wi-Fi and Bluetooth radio control", "Radio state, adapters and per-application exceptions");
+    public static PrivacyBooleanSettingDefinition OtherDevicesAccess { get; } = Consent("other-devices-access", "Communication with unpaired devices", "bluetoothSync", "LetAppsSyncWithDevices", "communication with unpaired devices", "Paired devices, Bluetooth itself and per-application exceptions");
+    public static PrivacyBooleanSettingDefinition AppDiagnosticsAccess { get; } = Consent("app-diagnostics-access", "App diagnostics access", "appDiagnostics", "LetAppsGetDiagnosticInfo", "diagnostic information about other apps", "Windows diagnostic data settings and per-application exceptions");
+    public static PrivacyBooleanSettingDefinition TasksAccess { get; } = Consent("tasks-access", "Tasks access", "userDataTasks", "LetAppsAccessTasks", "task items", "Stored tasks and per-application exceptions");
+    public static PrivacyBooleanSettingDefinition PhoneCallsAccess { get; } = Consent("phone-calls-access", "Phone calls access", "phoneCall", "LetAppsAccessPhone", "making phone calls", "Call history and per-application exceptions");
+    public static PrivacyBooleanSettingDefinition MotionAccess { get; } = Consent("motion-access", "Motion activity access", "activity", "LetAppsAccessMotion", "motion activity", "Sensors, drivers and per-application exceptions");
+    public static PrivacyBooleanSettingDefinition EyeTrackerAccess { get; } = Consent("eye-tracker-access", "Eye tracker access", "gazeInput", "LetAppsAccessGazeInput", "an eye tracker", "Eye control accessibility features and per-application exceptions");
+    public static PrivacyBooleanSettingDefinition ScreenshotAccess { get; } = Consent("screenshot-access", "Programmatic screenshots", "graphicsCaptureProgrammatic", "LetAppsAccessGraphicsCaptureProgrammatic", "taking screenshots without a picker", "Screenshots you take yourself and per-application exceptions");
+    public static PrivacyBooleanSettingDefinition ScreenshotBorderAccess { get; } = Consent("screenshot-border-access", "Screenshots without a border", "graphicsCaptureWithoutBorder", "LetAppsAccessGraphicsCaptureWithoutBorder", "capturing the screen without the capture border", "Screenshots you take yourself and per-application exceptions");
+    public static PrivacyBooleanSettingDefinition CloudSearchMicrosoftAccount { get; } = new("cloud-search-msa", "Cloud content search (Microsoft account)",
+        "Changes whether Windows Search can include OneDrive, Outlook and other Microsoft account content for the account running KillerBench. Local indexing and web results are separate. Machine policy is preserved.",
+        @"Software\Microsoft\Windows\CurrentVersion\SearchSettings", "IsMSACloudSearchEnabled", PrivacyRegistryScope.LocalMachine,
+        @"SOFTWARE\Policies\Microsoft\Windows\Windows Search", "AllowCloudSearch");
+    public static PrivacyBooleanSettingDefinition CloudSearchWorkAccount { get; } = new("cloud-search-work", "Cloud content search (work or school)",
+        "Changes whether Windows Search can include OneDrive for work or school, SharePoint and other organization content for the account running KillerBench. Local indexing and web results are separate. Machine policy is preserved.",
+        @"Software\Microsoft\Windows\CurrentVersion\SearchSettings", "IsAADCloudSearchEnabled", PrivacyRegistryScope.LocalMachine,
+        @"SOFTWARE\Policies\Microsoft\Windows\Windows Search", "AllowCloudSearch");
+    public static PrivacyBooleanSettingDefinition SearchHighlights { get; } = new("search-highlights", "Search highlights",
+        "Changes whether the Start and taskbar search boxes show online search highlights for the account running KillerBench. Search results and web results are separate. Machine policy is preserved.",
+        @"Software\Microsoft\Windows\CurrentVersion\SearchSettings", "IsDynamicSearchBoxEnabled", PrivacyRegistryScope.LocalMachine,
+        @"SOFTWARE\Policies\Microsoft\Windows\Windows Search", "EnableDynamicContentInWSB");
+    public static IReadOnlyList<PrivacyBooleanSettingDefinition> All { get; } = [AdvertisingId, TailoredExperiences, OnlineSpeech, ClipboardSync, AppLaunchTracking, WindowsTips, SuggestedNotifications, ConsumerContent, LockScreenSpotlight, LockScreenSpotlightOverlay, StartSuggestions, PreinstalledAppSuggestions, SilentAppSuggestions, TypingAndInkingPersonalization, WebSearchResults, OemAppSuggestions, CameraAccess, MicrophoneAccess,
+        LocationAccess, ContactsAccess, CalendarAccess, CallHistoryAccess, EmailAccess, NotificationsAccess, AccountInfoAccess, MessagingAccess, RadiosAccess, OtherDevicesAccess, AppDiagnosticsAccess, TasksAccess, PhoneCallsAccess, MotionAccess, EyeTrackerAccess, ScreenshotAccess, ScreenshotBorderAccess,
+        CloudSearchMicrosoftAccount, CloudSearchWorkAccount, SearchHighlights];
+
+    private static PrivacyBooleanSettingDefinition Consent(string key, string title, string capability, string policy, string subject, string separate)
+    {
+        string path = @"Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\" + capability;
+        return new(key, title,
+            "Changes whether apps can use " + subject + " for the account running KillerBench. " + separate + " are separate and are not changed. Machine policy and a machine-wide denial are preserved.",
+            path, "Value", PrivacyRegistryScope.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\AppPrivacy", policy, PrivacyBooleanValueKind.ConsentString, path, "Value");
+    }
     public static PrivacyBooleanSettingDefinition? Find(string key) => All.SingleOrDefault(value => value.Key.Equals(key, StringComparison.OrdinalIgnoreCase));
 }
 
