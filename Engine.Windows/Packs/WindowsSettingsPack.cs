@@ -7,6 +7,8 @@ public static class WindowsSettingsPack
 {
     public const string PackId = "windows.settings";
 
+    private const string Fips = @"SYSTEM\CurrentControlSet\Control\Lsa\FIPSAlgorithmPolicy";
+
     private static Dictionary<string, string> Registry(string hive, string key, string name) => new() { ["hive"] = hive, ["key"] = key, ["name"] = name };
 
     public static RecipePack Build() => new(RecipePack.CurrentSchemaVersion, PackId, 1, WindowsPrimitiveLibrary.Platform, "Windows settings and boot state",
@@ -72,6 +74,37 @@ public static class WindowsSettingsPack
             Action = new ActionSpec("explorer.start", new Dictionary<string, string>()) { Timeout = TimeSpan.FromSeconds(15), Effects = "Starts explorer.exe for the current session. No process is terminated." },
             Risk = RecipeRisk.Reversible,
             Limitations = "A shell that is running but hung is not detected; only absence is."
+        },
+        new RecipeDefinition("security.fips-policy-enable", 1, "Enable the FIPS algorithm policy", "Security",
+            "FIPSAlgorithmPolicy Enabled reads 1 afterwards; applications that need non-FIPS algorithms are not tested",
+            new ProbeSpec("registry.value", Registry("HKLM", Fips, "Enabled"), new ExpectSpec(
+            [
+                new ExpectClause("equals", "1", ProbeVerdict.Clear) { Detail = "The FIPS algorithm policy is enabled." },
+                new ExpectClause("equals", "0", ProbeVerdict.Repairable) { Detail = "The FIPS algorithm policy is off. Since the April 2024 updates Windows runs its FIPS self-tests without it; it is only still needed when BitLocker PIN or password protectors must be FIPS-approved. Enabling it can break applications that use non-FIPS algorithms." },
+                new ExpectClause("absent", "", ProbeVerdict.Repairable) { Detail = "The FIPS algorithm policy is not set, so it is off. It is only still needed when BitLocker PIN or password protectors must be FIPS-approved. Enabling it can break applications that use non-FIPS algorithms." },
+                new ExpectClause("any", "", ProbeVerdict.Unknown)
+            ])) { Name = "FIPS algorithm policy" })
+        {
+            Symptoms = ["security.fips-required"],
+            Preconditions =
+            [
+                new ProbeSpec("registry.value", Registry("HKLM", Fips, "MDMEnabled"), new ExpectSpec(
+                [
+                    new ExpectClause("absent", "", ProbeVerdict.Clear),
+                    new ExpectClause("equals", "0", ProbeVerdict.Clear),
+                    new ExpectClause("any", "", ProbeVerdict.Attention) { Detail = "Device management controls the FIPS policy. Change it there instead." }
+                ])) { Name = "FIPS policy management" }
+            ],
+            Action = new ActionSpec("registry.set-dword", new Dictionary<string, string>(Registry("HKLM", Fips, "Enabled")) { ["value"] = "1" })
+                { Timeout = TimeSpan.FromSeconds(10), Effects = "Sets FIPSAlgorithmPolicy Enabled to 1, the same value as the System cryptography FIPS security option. Create BitLocker PIN protectors after this so they use the FIPS-approved derivation. Some applications and older protocols may stop working." },
+            Verify = new ProbeSpec("registry.value", Registry("HKLM", Fips, "Enabled"), ExpectSpec.ClearWhenEquals("1", ProbeVerdict.Attention)) { Name = "FIPS algorithm policy" },
+            Rollback = new ActionSpec("registry.set-dword", new Dictionary<string, string>(Registry("HKLM", Fips, "Enabled")) { ["value"] = "0" })
+                { Timeout = TimeSpan.FromSeconds(10), Effects = "Turns the FIPS algorithm policy back off." },
+            Risk = RecipeRisk.Persistent,
+            RequiresElevation = true,
+            RequiresExplicitOptions = true,
+            MayRequireRestart = true,
+            Limitations = "Only the registry value is verified. A domain security template can set it back, and applications only pick it up after they restart."
         }
     ]);
 }

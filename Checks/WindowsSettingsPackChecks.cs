@@ -57,6 +57,15 @@ internal static class WindowsSettingsPackChecks
             Expectation.Evaluate(fastStartup.Detect.Expect, new PrimitiveResult(true, "0", "")).Verdict != ProbeVerdict.Clear ||
             Expectation.Evaluate(fastStartup.Detect.Expect, new PrimitiveResult(true, null, "")).Verdict != ProbeVerdict.Information)
             throw new Exception("Fast Startup expectations misbehaved.");
+        var fips = pack.Recipes.Single(r => r.Id == "security.fips-policy-enable");
+        if (Expectation.Evaluate(fips.Detect.Expect, new PrimitiveResult(true, "1", "")).Verdict != ProbeVerdict.Clear ||
+            Expectation.Evaluate(fips.Detect.Expect, new PrimitiveResult(true, "0", "")).Verdict != ProbeVerdict.Repairable ||
+            Expectation.Evaluate(fips.Detect.Expect, new PrimitiveResult(true, null, "")).Verdict != ProbeVerdict.Repairable ||
+            Expectation.Evaluate(fips.Detect.Expect, new PrimitiveResult(true, "7", "")).Verdict != ProbeVerdict.Unknown ||
+            Expectation.Evaluate(fips.Preconditions[0].Expect, new PrimitiveResult(true, "1", "")).Verdict == ProbeVerdict.Clear ||
+            Expectation.Evaluate(fips.Preconditions[0].Expect, new PrimitiveResult(true, null, "")).Verdict != ProbeVerdict.Clear ||
+            !fips.RequiresExplicitOptions || !fips.RequiresElevation || fips.Rollback is null)
+            throw new Exception("FIPS policy expectations or gates misbehaved.");
         var profile = pack.Recipes.Single(r => r.Id == "profile.temporary-detect");
         if (Expectation.Evaluate(profile.Detect.Expect, new PrimitiveResult(true, "S-1-5-18;S-1-5-21-1-2-3-1001;S-1-5-21-1-2-3-1001.bak", "")).Verdict != ProbeVerdict.Attention ||
             Expectation.Evaluate(profile.Detect.Expect, new PrimitiveResult(true, "S-1-5-18;S-1-5-21-1-2-3-1001", "")).Verdict != ProbeVerdict.Clear)
