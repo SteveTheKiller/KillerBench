@@ -164,7 +164,7 @@
   <sys:String x:Key="Str_Mace_RemovePackage">移除所选软件包</sys:String>
   <sys:String x:Key="Str_Mace_RemovePackageTip">需要符合条件的审查、本确认、第二次确认，以及在请求移除前提供新的确切证据。</sys:String>
   <sys:String x:Key="Str_Mace_CheckInterrupted">检查中断的移除</sys:String>
-  <sys:String x:Key="Str_Mace_CheckInterruptedTip">检查以前的 MACE 软件包删除记录，而无需发送另一个删除请求。</sys:String>
+  <sys:String x:Key="Str_Mace_CheckInterruptedTip">检查以前的软件包删除记录，而无需发送另一个删除请求。</sys:String>
   <sys:String x:Key="Str_Mace_RemovalBoundary">此红色控制与 GO 分开。它仅删除正在运行帐户的一个精确、未保护的开发软件包。最终请求会被记录，并且不会自动重试。</sys:String>
   <sys:String x:Key="Str_Orca_Description">选择 Outlook 版本、帐户范围和精确重置区域。GO 会进行审核。仅针对正在运行的帐户缓存，启用保留以便在重新检查后将缓存移动到恢复名称下。</sys:String>
   <sys:String x:Key="Str_Orca_NewOutlook">新 Outlook</sys:String>

@@ -92,7 +92,7 @@ public static class DepotInstallerTrust
 
     public static async Task<DepotInstallerTrustResult> VerifyFileAsync(DepotApplications application, string path, CancellationToken token = default)
     {
-        var source = Find(application) ?? throw new ArgumentException("DEPOT has no installer source for that application.");
+        var source = Find(application) ?? throw new ArgumentException("Onboarding has no installer source for that application.");
         if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Authenticode inspection requires Windows.");
         return Interpret(source, await BoundedTool.RunAsync(SignatureStep(path), TimeSpan.FromSeconds(60), token: token).ConfigureAwait(false));
     }

@@ -69,7 +69,7 @@ public sealed record OrcaReview(OrcaReviewOptions Options, OrcaEvidenceSnapshot 
     {
         string actions = string.Join(", ", Enum.GetValues<OrcaActions>()
             .Where(value => value != OrcaActions.None && Options.Actions.HasFlag(value)));
-        return "ORCA / OUTLOOK REPAIR REVIEW\nMode: " + Options.Mode + "\nScope: " + Options.Scope +
+        return "OUTLOOK RESET REVIEW\nMode: " + Options.Mode + "\nScope: " + Options.Scope +
             "\nRequested actions: " + actions + "\nApplicability: " + (Applicable ? "Evidence found" : "Not established") +
             "\nCoverage: " + (Complete ? "Complete for collected sources" : "Incomplete") +
             (ResetReadiness is null ? "" : "\nApplications closed: " + (ResetReadiness.ApplicationsClosed ? "Yes" : "No or unverified") +
@@ -102,13 +102,13 @@ public static class OrcaPlanning
             (string.IsNullOrWhiteSpace(processes.Limitation) ? "" : " " + processes.Limitation));
         var checks = new List<WorkflowCheck>
         {
-            new("ORCA review coverage", complete ? CheckState.Information : CheckState.Unknown,
+            new("Outlook reset review coverage", complete ? CheckState.Information : CheckState.Unknown,
                 (complete ? "Requested evidence sources completed. " : "At least one requested evidence source was incomplete. Absence is not established. ") +
                 evidence.Limitation),
             new("Outlook applicability", applicable ? CheckState.Information : complete ? CheckState.Attention : CheckState.Unknown,
                 applicable ? "At least one selected Outlook edition has local registration or data evidence. This does not prove that a reset is needed."
                     : "No selected Outlook edition was established from the collected evidence. No repair should be planned from absence alone."),
-            new("Requested ORCA actions", CheckState.Information,
+            new("Requested Outlook reset actions", CheckState.Information,
                 DescribeActions(options) + (cacheOnly
                     ? " Cache-only execution uses the separate guarded reset action and retains each selected cache under a unique recovery name."
                     : " These selections are a review request only. Execution remains unavailable."))
@@ -117,7 +117,7 @@ public static class OrcaPlanning
         {
             checks.Add(new("Outlook process readiness", !readiness.Complete ? CheckState.Unknown :
                 readiness.ApplicationsClosed ? CheckState.Information : CheckState.Attention, readiness.Detail));
-            checks.Add(new("ORCA backup prerequisite", backupRequired ? CheckState.Attention : CheckState.Information,
+            checks.Add(new("Outlook reset backup prerequisite", backupRequired ? CheckState.Attention : CheckState.Information,
                 backupRequired ? "The selected actions can change or remove Outlook state. A verified backup destination, exact retained items and restore procedure are required before execution can be implemented." :
                 "The selected cache review does not require a separate backup plan because execution retains each exact cache under a unique recovery name."));
         }
@@ -162,7 +162,7 @@ public static class OrcaProcessInventory
             token.ThrowIfCancellationRequested();
             if (modern is < 0 or > 128 || classic is < 0 or > 128)
                 return new(Math.Clamp(modern, 0, 128), Math.Clamp(classic, 0, 128), false,
-                    "Process count exceeded the bounded ORCA inventory.");
+                    "Process count exceeded the bounded Outlook reset inventory.");
             return new(modern, classic, true,
                 "Only bounded process counts were retained. Process IDs, paths, command lines, users and window titles were excluded.");
         }
@@ -187,7 +187,7 @@ public static class OrcaInventory
         ArgumentNullException.ThrowIfNull(options);
         options.Validate();
         token.ThrowIfCancellationRequested();
-        if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("ORCA inventory requires Windows.");
+        if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Outlook reset inventory requires Windows.");
         var items = new List<OrcaEvidence>();
         bool complete = true;
         if (options.Scope == OrcaScope.AllUsers)
@@ -197,7 +197,7 @@ public static class OrcaInventory
             items.Add(new("Classic Outlook registration", "AllUsers", null, 0,
                 "All-user profile hives are not loaded or opened by this review", false));
             return new(items.AsReadOnly(), false,
-                "All-user ORCA review intentionally leaves per-user files, registry hives and credentials uninspected.");
+                "All-user Outlook reset review intentionally leaves per-user files, registry hives and credentials uninspected.");
         }
 
         if (options.Mode is OrcaOutlookMode.New or OrcaOutlookMode.Both)

@@ -28,7 +28,7 @@ internal static class BeamCommands
                     case "--target": targets.Add(Value(args, ref i, "--target")); break;
                     case "--tenant-domain": tenantDomain = Value(args, ref i, "--tenant-domain"); break;
                     case "--json": json = true; break;
-                    default: return Usage("Unknown BEAM review option: " + args[i]);
+                    default: return Usage("Unknown Intune deployment review option: " + args[i]);
                 }
             }
         }
@@ -49,9 +49,9 @@ internal static class BeamCommands
             Console.WriteLine(json ? JsonSerializer.Serialize(review, Capture.JsonOptions) : review.Format());
             return review.Ready ? 0 : 3;
         }
-        catch (OperationCanceledException) { Console.Error.WriteLine("BEAM review stopped."); return 130; }
+        catch (OperationCanceledException) { Console.Error.WriteLine("Intune deployment review stopped."); return 130; }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or NotSupportedException or ArgumentException)
-        { Console.Error.WriteLine("BEAM review unavailable: " + error.Message); return 1; }
+        { Console.Error.WriteLine("Intune deployment review unavailable: " + error.Message); return 1; }
         finally { Console.CancelKeyPress -= cancel; }
     }
 

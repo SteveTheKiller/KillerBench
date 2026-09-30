@@ -81,11 +81,11 @@ internal static class MacePackageRemovalChecks
         {
             await MacePackageRemoval.RunAsync(eligible.Options, Identity, false,
                 Path.Combine(root, "canceled"), new FakeHost([eligible]), token: canceled);
-            throw new Exception("Canceled MACE package review completed");
+            throw new Exception("Canceled app removal package review completed");
         }
         catch (OperationCanceledException) { }
 
-        Console.WriteLine("PASS: MACE exact current-account package eligibility, durable preparation, final evidence, verification and no-repeat reconciliation; simulated provider only.");
+        Console.WriteLine("PASS: Microsoft app removal exact current-account package eligibility, durable preparation, final evidence, verification and no-repeat reconciliation; simulated provider only.");
     }
 
     internal static MaceRemovalReview CreateReview(bool packagePresent, bool active = false,

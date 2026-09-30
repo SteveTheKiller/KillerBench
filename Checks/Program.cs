@@ -95,20 +95,20 @@ internal static class Program
             Require(window.FindName("ZoomViewport") is FrameworkElement { ClipToBounds: true },
                 "Zoom content remains clipped to the workbench window");
             Require(window.FindName("ServicingMonitorSamples") is Slider { Minimum: 1, Maximum: 120, Value: 3 },
-                "PEEK desktop controls expose the shared one through 120 snapshot range");
+                "Servicing monitor desktop controls expose the shared one through 120 snapshot range");
             Require(window.FindName("ServicingMonitorEvents") is CheckBox { Content: "Recent Windows Update events" } &&
                 window.FindName("ServicingMonitorScheduledTask") is CheckBox { Content: "Windows Update scheduled task" },
-                "PEEK desktop controls resolve their localizable English resources");
+                "Servicing monitor desktop controls resolve their localizable English resources");
             Require(window.FindName("SearchIndexRebuildConsent") is CheckBox { Content: "Rebuild the Windows Search index" } &&
                 window.FindName("ReviewBrowserExtensions") is Button { Content: "Review browser extensions" },
                 "Search and application review controls resolve their localizable English resources");
             Require(window.FindName("MaceRemovePackage") is Button { Content: "REMOVE SELECTED PACKAGE" } &&
                 window.FindName("OrcaClearCaches") is CheckBox { Content: "Outlook caches" },
-                "MACE and ORCA controls resolve their localizable English resources");
+                "Microsoft app removal and Outlook reset controls resolve their localizable English resources");
             Require(window.FindName("DepotUpdates") is CheckBox { Content: "Windows updates" } &&
                 window.FindName("DepotPrivacy") is CheckBox { Content: "Privacy" } &&
                 window.FindName("BeamInstallSwitches") is TextBox { ToolTip: "MSI uses /qn when this is blank. EXE runs without switches when blank." },
-                "DEPOT and BEAM controls resolve their localizable English resources");
+                "Onboarding and Intune deployment controls resolve their localizable English resources");
             Require(window.FindName("DebloatPower") is CheckBox { Content: "High performance power" } &&
                 window.FindName("DebloatActionChoice") is ComboBox { Items.Count: 4 } debloatActions &&
                 debloatActions.Items[3] is ComboBoxItem { Content: "Disable hibernation" } &&
@@ -117,7 +117,7 @@ internal static class Program
                 window.FindName("DebloatSleepAc") is ComboBox { Items.Count: 5 } sleepAc &&
                 sleepAc.Items[0] is ComboBoxItem { Content: "Sleep AC: Never" } &&
                 window.FindName("DebloatHp") is CheckBox { Content: "HP software" },
-                "DEBLOAT safety, culture and timer controls resolve their localizable English resources");
+                "Declutter safety, culture and timer controls resolve their localizable English resources");
             Require(window.FindName("BitsRetryButton") is Button { Content: "Retry selected transfer" } &&
                 window.FindName("PrinterMakeDefault") is CheckBox { Content: "Repair a missing or conflicting default with this queue" } &&
                 window.FindName("FindMsiProductsButton") is Button { Content: "Find installed MSI apps" } &&
@@ -319,7 +319,7 @@ internal static class Program
             Require(FindTextBlocks(window).Any(block => block.Text == "Time recovery check report") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("did not synchronize the clock", StringComparison.Ordinal)),
                 "Time recovery checks have a readable no-change report");
-            Console.WriteLine("PASS: WPF workbench geometry, zoom containment, PEEK monitor bounds and safe report navigation.");
+            Console.WriteLine("PASS: WPF workbench geometry, zoom containment, servicing monitor bounds and safe report navigation.");
             return 0;
         }
         finally
@@ -973,7 +973,7 @@ internal static class Program
                     {
                         Require(((StackPanel)window.FindName("MaceSettings")).IsVisible &&
                             !((CheckBox)window.FindName("MainAutoRepair")).IsEnabled,
-                            "MACE choices remain review-only in the main workflow");
+                            "Microsoft app removal choices remain review-only in the main workflow");
                         var setMaceReview = window.GetType().GetMethod("SetMaceReview",
                             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
                         setMaceReview.Invoke(window, [MacePackageRemovalChecks.CreateReview(packagePresent: true)]);
@@ -985,15 +985,15 @@ internal static class Program
                             ((Button)window.FindName("MaceReviewPackage")).IsEnabled && !removePackage.IsEnabled && reconcilePackage.IsEnabled,
                             "One supported exact package is presented as one selected plan choice with separate removal recovery");
                         ((Button)window.FindName("MaceReviewPackage")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                        Require(text.Text.Contains("MACE PACKAGE PLAN / ELIGIBLE") &&
+                        Require(text.Text.Contains("APP REMOVAL PACKAGE PLAN / ELIGIBLE") &&
                             text.Text.Contains("GO stays review-only"),
-                            "MACE package plan remains separate from the destructive action");
+                            "App removal package plan remains separate from the destructive action");
                         removalConsent.IsChecked = true;
-                        Require(removePackage.IsEnabled, "The red MACE package action needs explicit consent after an eligible review");
+                        Require(removePackage.IsEnabled, "The red app removal package action needs explicit consent after an eligible review");
                         ((CheckBox)window.FindName("MaceOutlook")).IsChecked = true;
                         Require(selection.Items.Count == 0 && !((Button)window.FindName("MaceReviewPackage")).IsEnabled &&
                             !removePackage.IsEnabled && removalConsent.IsChecked != true,
-                            "Changing a MACE selection clears stale package eligibility and destructive consent");
+                            "Changing a Microsoft app removal selection clears stale package eligibility and destructive consent");
                         ((ListBox)window.FindName("SourcesList")).SelectedIndex = 0;
                     }
                     if (tool.Kind == WorkflowKind.Orca)
@@ -1002,19 +1002,19 @@ internal static class Program
                         var orcaScope = (ComboBox)window.FindName("OrcaScopeChoice");
                         var orcaProfiles = (CheckBox)window.FindName("OrcaResetProfiles");
                         Require(((StackPanel)window.FindName("OrcaSettings")).IsVisible && orcaRepair.IsEnabled &&
-                            orcaRepair.IsChecked != true, "ORCA cache-only running-account choice exposes guarded retention without initial consent");
+                            orcaRepair.IsChecked != true, "Outlook cache-only running-account choice exposes guarded retention without initial consent");
                         orcaRepair.IsChecked = true;
                         orcaScope.SelectedIndex = 1;
                         Require(!orcaRepair.IsEnabled && orcaRepair.IsChecked != true,
-                            "ORCA all-user review disables cache retention and clears prior consent");
+                            "Outlook reset all-user review disables cache retention and clears prior consent");
                         orcaScope.SelectedIndex = 0;
-                        Require(orcaRepair.IsEnabled, "ORCA running-account cache-only choice restores guarded retention");
+                        Require(orcaRepair.IsEnabled, "Outlook reset running-account cache-only choice restores guarded retention");
                         orcaRepair.IsChecked = true;
                         orcaProfiles.IsChecked = true;
                         Require(!orcaRepair.IsEnabled && orcaRepair.IsChecked != true,
-                            "ORCA mixed reset areas remain review-only and clear prior consent");
+                            "Outlook reset mixed reset areas remain review-only and clear prior consent");
                         orcaProfiles.IsChecked = false;
-                        Require(orcaRepair.IsEnabled, "Returning to ORCA cache-only review restores guarded retention");
+                        Require(orcaRepair.IsEnabled, "Returning to Outlook cache-only review restores guarded retention");
                     }
                     if (tool.Kind == WorkflowKind.CommonProblems)
                     {
@@ -1522,7 +1522,7 @@ internal static class Program
                 !maceRemoval.IsEnabled && Equals(maceRemoval.Content, "REMOVE SELECTED PACKAGE") &&
                 ((CheckBox)window.FindName("MacePackageRemovalConsent")).IsChecked != true &&
                 (maceRemoval.ToolTip?.ToString()?.Contains("second confirmation") ?? false),
-                "MACE keeps package removal as a separate disabled control until review, consent, and final confirmation");
+                "Microsoft app removal keeps package removal as a separate disabled control until review, consent, and final confirmation");
             mainChoices.SelectedItem = WorkflowCatalog.All.Single(definition => definition.Kind == WorkflowKind.WindowsUpdate);
             Pump();
             ((CheckBox)window.FindName("RepairConsent")).IsChecked = true;

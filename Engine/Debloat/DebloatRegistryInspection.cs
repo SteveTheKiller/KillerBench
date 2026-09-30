@@ -54,7 +54,7 @@ public static class DebloatRegistryInspection
         {
             token.ThrowIfCancellationRequested();
             DebloatRegistryValue value = reader(target);
-            if (value.Target != target) throw new InvalidOperationException("DEBLOAT registry evidence target mismatch.");
+            if (value.Target != target) throw new InvalidOperationException("Declutter registry evidence target mismatch.");
             values.Add(value);
         }
         return values.AsReadOnly();

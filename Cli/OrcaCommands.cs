@@ -38,13 +38,13 @@ internal static class OrcaCommands
                 case "--reinstall-new-outlook": actions |= OrcaActions.ReinstallNewOutlook; break;
                 case "--json": json = true; break;
                 case "--execute" when args[0] == "orca-cache-reset": execute = true; break;
-                default: return args[0] == "orca-review" ? Usage("Unknown ORCA review option: " + args[index]) :
-                    CacheUsage("Unknown ORCA cache option: " + args[index]);
+                default: return args[0] == "orca-review" ? Usage("Unknown Outlook reset review option: " + args[index]) :
+                    CacheUsage("Unknown Outlook cache option: " + args[index]);
             }
         }
         if (args[0] == "orca-cache-reset" && (scope != OrcaScope.RunningAccount ||
             actions is not (OrcaActions.None or OrcaActions.ClearCaches)))
-            return CacheUsage("ORCA cache reset supports the running account and cache selection only.");
+            return CacheUsage("Outlook cache reset supports the running account and cache selection only.");
         if (args[0] == "orca-cache-reset") actions = OrcaActions.ClearCaches;
         var options = new OrcaReviewOptions(mode, scope, actions);
         try { options.Validate(); }
@@ -78,7 +78,7 @@ internal static class OrcaCommands
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or NotSupportedException or
             InvalidOperationException or System.ComponentModel.Win32Exception)
-        { Console.Error.WriteLine("ORCA review unavailable: " + error.Message); return 1; }
+        { Console.Error.WriteLine("Outlook reset review unavailable: " + error.Message); return 1; }
     }
 
     private static int Usage(string message)

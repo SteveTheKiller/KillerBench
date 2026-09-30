@@ -45,7 +45,7 @@ public sealed record DebloatOptions(DebloatAreas Areas, DebloatUserScope UserSco
             DebloatAreas.SleepAndDisplayTimers | DebloatAreas.Hibernation | DebloatAreas.OfficeLanguages |
             DebloatAreas.HpSoftware | DebloatAreas.DellSoftware | DebloatAreas.AsusAcerSoftware |
             DebloatAreas.LenovoSoftware | DebloatAreas.ThirdPartyApps | DebloatAreas.VendorData;
-        if (Areas == DebloatAreas.None) throw new ArgumentException("Select at least one DEBLOAT area.", nameof(Areas));
+        if (Areas == DebloatAreas.None) throw new ArgumentException("Select at least one declutter area.", nameof(Areas));
         if ((Areas & ~all) != 0) throw new ArgumentOutOfRangeException(nameof(Areas));
         if (!Enum.IsDefined(UserScope)) throw new ArgumentOutOfRangeException(nameof(UserScope));
         if (!PreserveManagedSettings)
@@ -79,7 +79,7 @@ public sealed record DebloatReview(DebloatOptions Options, DebloatEnvironmentEvi
     DebloatInventoryEvidence? Inventory,
     IReadOnlyList<WorkflowCheck> Checks, bool Ready, bool ExecutionSupported)
 {
-    public string Format() => "DEBLOAT / CHANGE REVIEW\n" +
+    public string Format() => "DECLUTTER / CHANGE REVIEW\n" +
         "User scope: " + Options.UserScope + "\nSelected areas: " + string.Join(", ", SelectedAreas) +
         "\nManufacturer: " + (Environment.Manufacturer ?? "Unavailable") +
         "\nManaged policy evidence: " + (Environment.ManagedPolicyPresent ? "Present" : Environment.Complete ? "Not found" : "Unknown") +
@@ -142,7 +142,7 @@ public static class DebloatPlanning
         ArgumentNullException.ThrowIfNull(options);
         options.Validate();
         token.ThrowIfCancellationRequested();
-        progress?.Report("Building the selected DEBLOAT change review...");
+        progress?.Report("Building the selected declutter change review...");
         environmentReader ??= new WindowsDebloatEnvironmentReader();
         DebloatEnvironmentEvidence environment = await environmentReader.ReadAsync(token).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
@@ -151,7 +151,7 @@ public static class DebloatPlanning
             ? [] : PrivacyInspection.Inspect(new PrivacyOptions(privacyAreas), registryReader, token);
         IReadOnlyList<DebloatRegistryValue> specificValues = DebloatRegistryInspection.Inspect(
             options, specificRegistryReader, token);
-        progress?.Report("Reading services related to the selected DEBLOAT areas...");
+        progress?.Report("Reading services related to the selected declutter areas...");
         IReadOnlyList<PrivacyServiceValue> currentServices = privacyAreas.Length == 0
             ? [] : await PrivacyInspection.InspectServicesAsync(new PrivacyOptions(privacyAreas), serviceReader, token)
                 .ConfigureAwait(false);
@@ -179,7 +179,7 @@ public static class DebloatPlanning
         if ((options.Areas & (DebloatAreas.TelemetryAndReporting | DebloatAreas.HpSoftware |
             DebloatAreas.DellSoftware | DebloatAreas.AsusAcerSoftware)) != 0)
         {
-            progress?.Report("Reading exact scheduled tasks for selected DEBLOAT areas...");
+            progress?.Report("Reading exact scheduled tasks for selected declutter areas...");
             tasks = taskReader is not null ? await taskReader(token).ConfigureAwait(false) :
                 await DebloatTaskReview.ReadAsync(options, environment, token).ConfigureAwait(false);
         }
@@ -229,7 +229,7 @@ public static class DebloatPlanning
             int unavailable = specificValues.Count(value => value.State is "Unavailable" or "Unsupported value");
             int already = specificValues.Count(value => value.State == "Already proposed");
             int different = specificValues.Count(value => value.State == "Different");
-            checks.Add(new("DEBLOAT-specific registry state", unavailable == 0 ? CheckState.Information : CheckState.Unknown,
+            checks.Add(new("Declutter-specific registry state", unavailable == 0 ? CheckState.Information : CheckState.Unknown,
                 specificValues.Count + " selected value(s) inspected; " + already + " already match the source proposal, " +
                 different + " differ and " + unavailable + " are unavailable or unsupported. " +
                 (options.UserScope == DebloatUserScope.AllProfilesAndDefault && specificValues.Any(value => !value.Target.Machine)

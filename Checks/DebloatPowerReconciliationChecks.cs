@@ -60,7 +60,7 @@ internal static class DebloatPowerReconciliationChecks
         var foreign = await DebloatPowerReconciliation.RunTimersAsync(foreignFolder, foreignHost);
         Require(foreign.Outcome == DebloatPowerReconciliationOutcome.Inconclusive && foreignHost.Reads == 0 &&
             File.Exists(foreignPending), "A foreign-machine power record remains guarded without inspecting or changing the host");
-        Console.WriteLine("PASS: pending DEBLOAT power operations reconcile from bounded fresh evidence without repeating changes; scratch records and simulated providers only.");
+        Console.WriteLine("PASS: pending declutter power operations reconcile from bounded fresh evidence without repeating changes; scratch records and simulated providers only.");
     }
 
     private static DebloatPowerPlanEvidence Plans(bool active)

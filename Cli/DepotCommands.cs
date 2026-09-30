@@ -31,7 +31,7 @@ internal static class DepotCommands
                 case "--start-menu": config |= DepotConfiguration.StartMenu; break;
                 case "--notifications": config |= DepotConfiguration.Notifications; break;
                 case "--json": json = true; break;
-                default: return Usage("Unknown DEPOT review option: " + value);
+                default: return Usage("Unknown onboarding review option: " + value);
             }
         }
         var options = new DepotOptions(apps, config);
@@ -46,10 +46,10 @@ internal static class DepotCommands
             Console.WriteLine(json ? JsonSerializer.Serialize(review, Capture.JsonOptions) : review.Format());
             return review.Complete ? 0 : 3;
         }
-        catch (OperationCanceledException) { Console.Error.WriteLine("DEPOT review stopped."); return 130; }
+        catch (OperationCanceledException) { Console.Error.WriteLine("Onboarding review stopped."); return 130; }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or NotSupportedException or
             InvalidOperationException or System.ComponentModel.Win32Exception)
-        { Console.Error.WriteLine("DEPOT review unavailable: " + error.Message); return 1; }
+        { Console.Error.WriteLine("Onboarding review unavailable: " + error.Message); return 1; }
         finally { Console.CancelKeyPress -= cancel; }
     }
 

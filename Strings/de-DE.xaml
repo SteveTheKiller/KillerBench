@@ -163,7 +163,7 @@
   <sys:String x:Key="Str_Mace_RemovePackage">AUSGEWÄHLTES PAKET ENTFERNEN</sys:String>
   <sys:String x:Key="Str_Mace_RemovePackageTip">Erfordert eine geeignete Prüfung, diese Bestätigung, eine zweite Bestätigung und frische exakte Nachweise, bevor Entfernung angefordert wird.</sys:String>
   <sys:String x:Key="Str_Mace_CheckInterrupted">Unterbrochene Entfernung prüfen</sys:String>
-  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Prüft einen früheren MACE-Paketentfernungsdatensatz, ohne eine weitere Entfernungsanforderung zu senden.</sys:String>
+  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Prüft einen früheren Paketentfernungsdatensatz, ohne eine weitere Entfernungsanforderung zu senden.</sys:String>
   <sys:String x:Key="Str_Mace_RemovalBoundary">Dieses rote Steuerelement ist von GO getrennt. Es entfernt nur ein exaktes, ungeschütztes Entwicklungspaket für das ausführende Konto. Die finale Anforderung wird aufgezeichnet und niemals automatisch erneut versucht.</sys:String>
   <sys:String x:Key="Str_Orca_Description">Outlook-Ausgabe, Kontobereich und exakte Rücksetzbereiche auswählen. GO prüft sie. Nur für Caches des ausführenden Kontos kann Aufbewahrung aktiviert werden, um die Caches nach frischen Prüfungen unter Wiederherstellungsnamen zu verschieben.</sys:String>
   <sys:String x:Key="Str_Orca_NewOutlook">Neues Outlook</sys:String>

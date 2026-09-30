@@ -174,10 +174,10 @@ internal static class WorkflowOptionCatalogChecks
         WorkflowOptionSet servicing = Required("servicing-monitor");
         Require(Value(servicing, "refreshSeconds") == "3" && Value(servicing, "samples") == "3" &&
             servicing.Options.Count(option => option.Key.StartsWith("include", StringComparison.Ordinal)) == 11,
-            "PEEK metadata matches the desktop monitor defaults and all evidence groups");
+            "Servicing monitor metadata matches the desktop monitor defaults and all evidence groups");
 
         Require(Value(Required("orca"), "action.clearCaches") == "true" &&
-            Value(Required("beam"), "publisher") == "BEAM",
+            Value(Required("beam"), "publisher") == "KillerBench",
             "Review defaults match the existing desktop workflow defaults");
 
         foreach (WorkflowOptionSet set in WorkflowOptionCatalog.All)
@@ -567,7 +567,7 @@ internal static class WorkflowOptionCatalogChecks
             }));
         Require(projectedMace.MaceOptions.Targets == MaceTargets.OneDrive &&
             projectedMace.MaceOptions.Scope == MaceScope.AllUsers && projectedMace.MaceOptions.RestoreOneDriveFolderLocations,
-            "Validated MACE selections project into a read-only removal review");
+            "Validated Microsoft app removal selections project into a read-only removal review");
 
         WindowsWorkflowHost projectedBeam = WorkflowOptionProjection.CreateHost(
             WorkflowOptionValidation.Validate("beam", new[]
@@ -587,12 +587,12 @@ internal static class WorkflowOptionCatalogChecks
             !projectedBeam.OptionPlanCheck.Detail.Contains("downloads.example.test", StringComparison.Ordinal) &&
             !projectedBeam.OptionPlanCheck.Detail.Contains("SECRET-FIXTURE", StringComparison.Ordinal) &&
             !projectedBeam.OptionPlanCheck.Detail.Contains("PC-01", StringComparison.Ordinal),
-            "Validated BEAM text selections project into a bounded review plan with sensitive values redacted");
+            "Validated Intune deployment text selections project into a bounded review plan with sensitive values redacted");
 
         ServicingMonitorOptions projectedServicing = WorkflowOptionProjection.CreateServicingOptions(normalized);
         Require(projectedServicing.RefreshSeconds == 5 && projectedServicing.Samples == 3 &&
             !projectedServicing.IncludeEvents && projectedServicing.IncludeHistory,
-            "Validated PEEK controls project into monitor options");
+            "Validated servicing monitor controls project into monitor options");
 
         bool changingRejected = false;
         try { WorkflowOptionProjection.CreateHost(defenderExecution); }

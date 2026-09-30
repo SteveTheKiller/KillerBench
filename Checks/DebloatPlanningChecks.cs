@@ -40,18 +40,18 @@ internal static class DebloatPlanningChecks
                 true, "Fixture vendor data evidence."))
             .GetAwaiter().GetResult();
         Require(review.Ready && !review.ExecutionSupported && review.SelectedAreas.Count == 13,
-            "Selected DEBLOAT areas produce a review without execution");
+            "Selected declutter areas produce a review without execution");
         Require(review.CurrentValues.Count > 10 && review.CurrentValues.All(value => value.State == "Recorded") &&
             review.Checks.Any(check => check.Name == "Current registry state" && check.Detail.Contains("No offline hive was loaded")),
             "Selected policy areas collect bounded current state and preserve all-profile limits");
         Require(review.SpecificValues.Count > 20 && review.SpecificValues.All(value => value.State == "Already proposed") &&
-            review.Checks.Single(check => check.Name == "DEBLOAT-specific registry state").Detail.Contains("No offline hive was loaded"),
-            "DEBLOAT-specific registry targets retain proposed values and all-profile limits");
+            review.Checks.Single(check => check.Name == "Declutter-specific registry state").Detail.Contains("No offline hive was loaded"),
+            "Declutter-specific registry targets retain proposed values and all-profile limits");
         try
         {
             _ = DebloatRegistryInspection.Inspect(new(DebloatAreas.RecallAndAi, DebloatUserScope.RunningAccount),
                 _ => new(DebloatRegistryInspection.Targets[1], "Recorded", 0, "DWord"));
-            throw new Exception("Mismatched DEBLOAT registry evidence target accepted");
+            throw new Exception("Mismatched declutter registry evidence target accepted");
         }
         catch (InvalidOperationException) { }
         Require(review.CurrentServices.Count == 4 && review.CurrentServices.All(service => service.State == "Running") &&
@@ -214,15 +214,15 @@ internal static class DebloatPlanningChecks
         {
             _ = DebloatPlanning.ReviewAsync(new(DebloatAreas.Edge, DebloatUserScope.RunningAccount), token: stop.Token)
                 .GetAwaiter().GetResult();
-            throw new Exception("Canceled DEBLOAT review continued");
+            throw new Exception("Canceled declutter review continued");
         }
         catch (OperationCanceledException) { }
-        Console.WriteLine("PASS: DEBLOAT area selection, preservation requirements and consequence review; no changes available.");
+        Console.WriteLine("PASS: declutter area selection, preservation requirements and consequence review; no changes available.");
     }
 
     private static void Reject(DebloatOptions options)
     {
-        try { options.Validate(); throw new Exception("Invalid DEBLOAT options accepted"); }
+        try { options.Validate(); throw new Exception("Invalid declutter options accepted"); }
         catch (ArgumentException) { }
     }
 

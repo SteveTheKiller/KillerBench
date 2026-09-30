@@ -38,13 +38,13 @@ public static class WindowsUpdateScheduledTaskDiagnostics
             assessed = assessed with
             {
                 State = CheckState.Attention,
-                Detail = assessed.Detail + "\nThe enabled Windows Update task retained a failure-class result. Correlate it with PEEK activity, update history and Task Scheduler history. This value alone does not establish why the task returned it."
+                Detail = assessed.Detail + "\nThe enabled Windows Update task retained a failure-class result. Correlate it with servicing activity, update history and Task Scheduler history. This value alone does not establish why the task returned it."
             };
         return assessed with
         {
             Name = name,
             Evidence = result,
-            Detail = assessed.Detail + "\nThis exact task evidence complements live PEEK activity but does not prove an update search, download or installation is required. It never authorizes task execution, task recreation, schedule changes or an update operation."
+            Detail = assessed.Detail + "\nThis exact task evidence complements live servicing activity but does not prove an update search, download or installation is required. It never authorizes task execution, task recreation, schedule changes or an update operation."
         };
     }
 }

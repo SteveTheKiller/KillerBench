@@ -145,7 +145,7 @@
   <sys:String x:Key="Str_Mace_RemovePackage">REMOVE SELECTED PACKAGE</sys:String>
   <sys:String x:Key="Str_Mace_RemovePackageTip">Requires an eligible review, this confirmation, a second confirmation, and fresh exact evidence before requesting removal.</sys:String>
   <sys:String x:Key="Str_Mace_CheckInterrupted">Check interrupted removal</sys:String>
-  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Checks a prior MACE package-removal record without sending another removal request.</sys:String>
+  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Checks a prior app package-removal record without sending another removal request.</sys:String>
   <sys:String x:Key="Str_Mace_RemovalBoundary">This red control is separate from GO. It removes one exact, unprotected development package for the running account only. The final request is recorded and never retried automatically.</sys:String>
   <sys:String x:Key="Str_Orca_Description">Choose the Outlook edition, account scope and exact reset areas. GO reviews them. For running-account caches only, enable retention to move the caches under recovery names after fresh checks.</sys:String>
   <sys:String x:Key="Str_Orca_NewOutlook">New Outlook</sys:String>

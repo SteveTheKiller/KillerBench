@@ -145,7 +145,7 @@
   <sys:String x:Key="Str_Mace_RemovePackage">GỠ BỎ GÓI ĐÃ CHỌN</sys:String>
   <sys:String x:Key="Str_Mace_RemovePackageTip">Yêu cầu một đánh giá đủ điều kiện, xác nhận này, một xác nhận thứ hai, và bằng chứng chính xác mới trước khi yêu cầu gỡ bỏ.</sys:String>
   <sys:String x:Key="Str_Mace_CheckInterrupted">Kiểm tra việc loại bỏ bị gián đoạn</sys:String>
-  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Kiểm tra một hồ sơ gỡ bỏ gói MACE trước đó mà không gửi yêu cầu gỡ bỏ khác.</sys:String>
+  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Kiểm tra một hồ sơ gỡ bỏ gói trước đó mà không gửi yêu cầu gỡ bỏ khác.</sys:String>
   <sys:String x:Key="Str_Mace_RemovalBoundary">Điều khiển màu đỏ này tách biệt với GO. Nó chỉ xóa một gói phát triển chính xác, không được bảo vệ cho tài khoản đang hoạt động. Yêu cầu cuối cùng được ghi lại và không bao giờ được thử lại tự động.</sys:String>
   <sys:String x:Key="Str_Orca_Description">Chọn phiên bản Outlook, phạm vi tài khoản và các khu vực đặt lại chính xác. GO xem xét chúng. Chỉ đối với bộ nhớ đệm tài khoản đang chạy, bật giữ lại để chuyển bộ nhớ đệm sang tên khôi phục sau khi kiểm tra mới.</sys:String>
   <sys:String x:Key="Str_Orca_NewOutlook">Outlook mới</sys:String>

@@ -46,7 +46,7 @@ public sealed record DepotReview(DepotOptions Options, IReadOnlyList<DepotApplic
             Enum.GetValues<DepotApplications>().Where(value => value != DepotApplications.None && Options.Applications.HasFlag(value)));
         string config = Options.Configuration == DepotConfiguration.None ? "None" : string.Join(", ",
             Enum.GetValues<DepotConfiguration>().Where(value => value != DepotConfiguration.None && Options.Configuration.HasFlag(value)));
-        return "DEPOT / PROVISIONING REVIEW\nApplications: " + apps + "\nConfiguration: " + config +
+        return "ONBOARDING / PROVISIONING REVIEW\nApplications: " + apps + "\nConfiguration: " + config +
             "\nCoverage: " + (Complete ? "Complete for collected registrations" : "Incomplete") +
             "\nExecution available: No\n\nNo download, installation, account, update, cleanup, policy, registry, service, profile or restart action occurred.";
     }
@@ -82,7 +82,7 @@ public static class DepotPlanning
             .Select(value => ReviewApplication(value, installed, packages, office, complete)).ToArray();
         var checks = new List<WorkflowCheck>
         {
-            new("DEPOT review coverage", complete ? CheckState.Information : CheckState.Unknown,
+            new("Onboarding review coverage", complete ? CheckState.Information : CheckState.Unknown,
                 (complete ? "Application registration sources completed. " : "At least one registration source was incomplete. Absence is not established. ") +
                 "Portable applications, per-user Win32 installs, installer source trust, licenses, compatibility, disk space, restart needs and effective policy are not verified."),
             new("Provisioning execution", CheckState.Information,
@@ -151,7 +151,7 @@ public static class DepotPlanning
         DepotConfiguration.BrowserExtensions => "Would review exact browser extension identifiers, source stores and managed policy ownership.",
         DepotConfiguration.Cleanup => "Would use the existing selected cleanup targets, age limits and permanent-removal consent.",
         DepotConfiguration.Edge => "Would review individual Edge policies and current ownership before proposing changes.",
-        DepotConfiguration.Privacy => "Would use individual SHADE selections and preserve managed settings.",
+        DepotConfiguration.Privacy => "Would use individual privacy selections and preserve managed settings.",
         DepotConfiguration.Taskbar => "Would review individual taskbar settings for the selected account scope.",
         DepotConfiguration.StartMenu => "Would review individual Start menu settings for the selected account scope.",
         DepotConfiguration.Notifications => "Would review individual notification settings for the selected account scope.",

@@ -164,7 +164,7 @@
   <sys:String x:Key="Str_Mace_RemovePackage">移除所選套件</sys:String>
   <sys:String x:Key="Str_Mace_RemovePackageTip">需要符合條件的審查、此確認、第二次確認以及最新的準確證據，才可請求移除。</sys:String>
   <sys:String x:Key="Str_Mace_CheckInterrupted">檢查中斷的移除</sys:String>
-  <sys:String x:Key="Str_Mace_CheckInterruptedTip">檢查先前的 MACE 套件移除紀錄，而不發送另一個移除請求。</sys:String>
+  <sys:String x:Key="Str_Mace_CheckInterruptedTip">檢查先前的套件移除紀錄，而不發送另一個移除請求。</sys:String>
   <sys:String x:Key="Str_Mace_RemovalBoundary">此紅色控制與 GO 分開。它僅移除運行帳戶的一個準確、未受保護的開發套件。最終請求將被記錄，且不會自動重試。</sys:String>
   <sys:String x:Key="Str_Orca_Description">選擇 Outlook 版本、帳戶範圍及準確重設區域。GO 將進行審查。僅對運行帳戶快取，啟用保留以在最新檢查後將快取移到恢復名稱下。</sys:String>
   <sys:String x:Key="Str_Orca_NewOutlook">新 Outlook</sys:String>

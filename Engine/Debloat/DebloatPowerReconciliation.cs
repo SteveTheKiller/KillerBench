@@ -113,16 +113,16 @@ public static class DebloatPowerReconciliation
     private static async Task<T> ReadAsync<T>(string path, CancellationToken token)
     {
         await using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.Asynchronous);
-        if (stream.Length is <= 0 or > 262_144) throw new InvalidDataException("Pending DEBLOAT power record size is invalid.");
+        if (stream.Length is <= 0 or > 262_144) throw new InvalidDataException("Pending declutter power record size is invalid.");
         var bytes = new byte[checked((int)stream.Length)];
         await stream.ReadExactlyAsync(bytes, token).ConfigureAwait(false);
         try
         {
             using var document = JsonDocument.Parse(bytes);
-            if (!UniqueFields(document.RootElement)) throw new InvalidDataException("Pending DEBLOAT power record contains conflicting fields.");
-            return document.RootElement.Deserialize<T>(StrictJson) ?? throw new InvalidDataException("Pending DEBLOAT power record is empty.");
+            if (!UniqueFields(document.RootElement)) throw new InvalidDataException("Pending declutter power record contains conflicting fields.");
+            return document.RootElement.Deserialize<T>(StrictJson) ?? throw new InvalidDataException("Pending declutter power record is empty.");
         }
-        catch (JsonException error) { throw new InvalidDataException("Pending DEBLOAT power record is not valid JSON.", error); }
+        catch (JsonException error) { throw new InvalidDataException("Pending declutter power record is not valid JSON.", error); }
     }
 
     private static bool Complete(DebloatPowerEvidence value) => value.Complete &&

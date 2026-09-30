@@ -11,7 +11,7 @@ internal static class OrcaCacheResetChecks
         Require(recipe.Action == RepairKind.OrcaCacheReset && recipe.RequiresExplicitOptions && !recipe.CanAutoExecute &&
             recipe.RecoveryContract == RepairRecoveryContract.OrcaCacheState &&
             Repairs.Plan(recipe.Action).Steps.Count == 0 && Repairs.Plan(recipe.Action).Effects.Contains("generic recipe runner never", StringComparison.Ordinal),
-            "ORCA cache retention is a focused option-dependent recipe with an exact recovery contract");
+            "Outlook cache retention is a focused option-dependent recipe with an exact recovery contract");
 
         var invalid = await OrcaCacheReset.RunAsync(
             options with { Actions = OrcaActions.ClearCaches | OrcaActions.ResetProfileSettings }, false,
@@ -105,7 +105,7 @@ internal static class OrcaCacheResetChecks
         Require(none.Outcome == OrcaCacheReconciliationOutcome.NoPendingRecord,
             "Recovery distinguishes an absent pending record");
 
-        Console.WriteLine("PASS: ORCA exact cache retention uses repeated process and path eligibility, durable preparation, exact verification and no-repeat reconciliation.");
+        Console.WriteLine("PASS: Outlook reset exact cache retention uses repeated process and path eligibility, durable preparation, exact verification and no-repeat reconciliation.");
     }
 
     private static OrcaProcessEvidence Processes(int modern = 0, int classic = 0) =>

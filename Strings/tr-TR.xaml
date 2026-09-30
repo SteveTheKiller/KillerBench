@@ -164,7 +164,7 @@
   <sys:String x:Key="Str_Mace_RemovePackage">SEÇİLİ PAKETİ KALDIR</sys:String>
   <sys:String x:Key="Str_Mace_RemovePackageTip">Kaldırma istemeden önce uygun bir inceleme, bu onay, ikinci bir onay ve güncel tam kanıt gerektirir.</sys:String>
   <sys:String x:Key="Str_Mace_CheckInterrupted">Kesintiye uğrayan kaldırmayı denetle</sys:String>
-  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Başka bir kaldırma isteği göndermeden önceki bir MACE paket kaldırma kaydını denetler.</sys:String>
+  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Başka bir kaldırma isteği göndermeden önceki bir paket kaldırma kaydını denetler.</sys:String>
   <sys:String x:Key="Str_Mace_RemovalBoundary">Bu kırmızı denetim GO'dan ayrıdır. Yalnızca çalışan hesap için tam, korumasız bir geliştirme paketini kaldırır. Son istek kaydedilir ve asla otomatik olarak yeniden denenmez.</sys:String>
   <sys:String x:Key="Str_Orca_Description">Outlook sürümünü, hesap kapsamını ve tam sıfırlama alanlarını seçin. GO bunları inceler. Yalnızca çalışan hesap önbellekleri için, güncel denetimlerden sonra önbellekleri kurtarma adları altına taşımak için saklamayı etkinleştirin.</sys:String>
   <sys:String x:Key="Str_Orca_NewOutlook">Yeni Outlook</sys:String>

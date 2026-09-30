@@ -266,7 +266,7 @@ internal static class WorkflowCommands
             var progress = new Progress<string>(Console.Error.WriteLine);
             if (definition.Kind == WorkflowKind.ServicingActivity)
             {
-                if (reportPath is not null) { Console.Error.WriteLine("--report is unavailable for the PEEK servicing monitor. Its report is already written to standard output."); return 2; }
+                if (reportPath is not null) { Console.Error.WriteLine("--report is unavailable for the Servicing monitor. Its report is already written to standard output."); return 2; }
                 ServicingMonitorOptions options = WorkflowOptionProjection.CreateServicingOptions(validation);
                 IReadOnlyList<ServicingActivitySnapshot> snapshots = await ServicingActivityMonitor.ObserveAsync(
                     options, progress: progress, token: stop.Token).ConfigureAwait(false);

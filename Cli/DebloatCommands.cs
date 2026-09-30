@@ -22,7 +22,7 @@ internal static class DebloatCommands
                     case "--area":
                         string name = Value(args, ref i, "--area");
                         if (!Enum.TryParse(name, true, out DebloatAreas area) || !Enum.IsDefined(area) || area == DebloatAreas.None)
-                            return Usage("Unknown DEBLOAT area: " + name);
+                            return Usage("Unknown declutter area: " + name);
                         areas |= area;
                         break;
                     case "--all-profiles": scope = DebloatUserScope.AllProfilesAndDefault; break;
@@ -35,7 +35,7 @@ internal static class DebloatCommands
                     case "--apply-high-performance": applyHighPerformance = true; break;
                     case "--apply-power-timers": applyPowerTimers = true; break;
                     case "--disable-hibernation": disableHibernation = true; break;
-                    default: return Usage("Unknown DEBLOAT review option: " + args[i]);
+                    default: return Usage("Unknown declutter review option: " + args[i]);
                 }
             }
         }
@@ -59,7 +59,7 @@ internal static class DebloatCommands
                 return review.Ready ? 0 : 3;
             }
             if ((applyHighPerformance ? 1 : 0) + (applyPowerTimers ? 1 : 0) + (disableHibernation ? 1 : 0) > 1)
-                return Usage("Select only one DEBLOAT execution option at a time.");
+                return Usage("Select only one declutter execution option at a time.");
             string debloatFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Debloat");
             if (disableHibernation)
             {
@@ -107,7 +107,7 @@ internal static class DebloatCommands
             Console.WriteLine(json ? JsonSerializer.Serialize(result, Capture.JsonOptions) : result.Detail);
             return result.GetExitCode();
         }
-        catch (OperationCanceledException) { Console.Error.WriteLine("DEBLOAT review stopped."); return 130; }
+        catch (OperationCanceledException) { Console.Error.WriteLine("Declutter review stopped."); return 130; }
         finally { Console.CancelKeyPress -= cancel; }
     }
 

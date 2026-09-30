@@ -340,14 +340,14 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         if (kind == WorkflowKind.Beam)
         {
             LastBeamReview = null;
-            Progress?.Report("Validating the selected BEAM source, package metadata and Intune targets...");
+            Progress?.Report("Validating the selected Intune deployment source, package metadata and Intune targets...");
             LastBeamReview = await BeamPlanning.ReviewAsync(BeamOptions, Progress, token).ConfigureAwait(false);
             return LastBeamReview.Checks;
         }
         if (kind == WorkflowKind.Debloat)
         {
             LastDebloatReview = null;
-            Progress?.Report("Reviewing the selected DEBLOAT areas and preservation boundaries...");
+            Progress?.Report("Reviewing the selected declutter areas and preservation boundaries...");
             LastDebloatReview = await DebloatPlanning.ReviewAsync(DebloatOptions, Progress, token).ConfigureAwait(false);
             return LastDebloatReview.Checks;
         }

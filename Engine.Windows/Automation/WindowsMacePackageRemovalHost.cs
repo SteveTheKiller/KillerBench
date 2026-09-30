@@ -9,7 +9,7 @@ public sealed class WindowsMacePackageRemovalHost : IMacePackageRemovalHost
     {
         ValidatePackageFullName(packageFullName);
         if (!OperatingSystem.IsWindows())
-            throw new PlatformNotSupportedException("MACE package removal requires Windows.");
+            throw new PlatformNotSupportedException("App package removal requires Windows.");
 
         const string script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
             "& { param([string]$packageFullName) " +

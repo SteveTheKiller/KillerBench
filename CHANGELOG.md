@@ -1,5 +1,6 @@
 # Changelog
 
+- Replace the old script names with plain feature names in the app, reports and CLI messages.
 - Add an interactive Microsoft Entra sign-in for the typed Intune tenant.
 - Add DEPOT installer trust checks that require a valid signature from the confirmed vendor.
 - Add guarded BitLocker TPM and recovery-password protector creation.

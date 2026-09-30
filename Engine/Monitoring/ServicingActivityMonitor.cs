@@ -69,7 +69,7 @@ public static class ServicingActivityText
         ArgumentNullException.ThrowIfNull(snapshots);
         var lines = new List<string>
         {
-            "PEEK / SERVICING ACTIVITY MONITOR / READ ONLY",
+            "SERVICING ACTIVITY MONITOR / READ ONLY",
             "Activity and resource use are point-in-time evidence. They do not prove progress, completion, a stall or a fault.",
             ""
         };

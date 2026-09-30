@@ -62,7 +62,7 @@ public sealed record MaceRemovalReview(MaceReviewOptions Options, IReadOnlyList<
     {
         string selected = string.Join(", ", Enum.GetValues<MaceTargets>()
             .Where(value => value != MaceTargets.None && Options.Targets.HasFlag(value)));
-        return "MACE / REMOVAL REVIEW\nSelected: " + selected + "\nScope: " + Options.Scope +
+        return "MICROSOFT APP REMOVAL REVIEW\nSelected: " + selected + "\nScope: " + Options.Scope +
             "\nApplication data: " + (Options.PreserveApplicationData ? "Preserve" : "Remove requested") +
             "\nCached credentials: " + (Options.PreserveCachedCredentials ? "Preserve" : "Remove requested") +
             "\nOneDrive folder locations: " + (Options.RestoreOneDriveFolderLocations ? "Review requested" : "Leave unchanged") +
@@ -138,7 +138,7 @@ public static class MacePlanning
         ArgumentNullException.ThrowIfNull(packages);
         options.Validate();
         if (machine.Scope != InstalledApplicationScope.Machine || account.Scope != InstalledApplicationScope.CurrentAccount)
-            throw new ArgumentException("MACE review requires separate machine and running-account application inventories.");
+            throw new ArgumentException("Microsoft app removal review requires separate machine and running-account application inventories.");
         var candidates = new List<MaceCandidate>();
         AddApplications(candidates, options, machine);
         AddApplications(candidates, options, account);
@@ -159,7 +159,7 @@ public static class MacePlanning
         int activeProcesses = processes?.RelevantCount(options.Targets) ?? 0;
         var checks = new List<WorkflowCheck>
         {
-            new("MACE review coverage", complete ? CheckState.Information : CheckState.Unknown,
+            new("Microsoft app removal review coverage", complete ? CheckState.Information : CheckState.Unknown,
                 $"{candidates.Count} exact registrations matched the selected products. " +
                 (complete ? "Every requested inventory source completed. " : "At least one requested inventory source was incomplete. Absence is not established. ") +
                 "Portable applications, individual Click-to-Run app inclusion, application use, managed ownership and user data are not verified. No removal is authorized."),
@@ -169,7 +169,7 @@ public static class MacePlanning
                 "; OneDrive folder locations: " + (options.RestoreOneDriveFolderLocations ? "review requested" : "leave unchanged") +
                 ". These choices describe a future plan and do not change the computer.")
         };
-        checks.Add(new("MACE process readiness", processes is null || !processes.Complete ? CheckState.Unknown :
+        checks.Add(new("Microsoft app removal process readiness", processes is null || !processes.Complete ? CheckState.Unknown :
             activeProcesses > 0 ? CheckState.Attention : CheckState.Information,
             processes is null ? "Selected-application process evidence was not supplied. Future removal eligibility must remain blocked." :
             !processes.Complete ? "Selected-application process evidence is incomplete. Future removal eligibility must remain blocked. " + processes.Limitation :
@@ -341,7 +341,7 @@ public static class MaceProcessInventory
                         token.ThrowIfCancellationRequested();
                         int observed = count(name);
                         if (observed is < 0 or > 128 || total > 128 - observed)
-                            return Evidence(totals, false, "A selected process count exceeded the bounded MACE inventory.");
+                            return Evidence(totals, false, "A selected process count exceeded the bounded Microsoft app removal inventory.");
                         total += observed;
                     }
                 }

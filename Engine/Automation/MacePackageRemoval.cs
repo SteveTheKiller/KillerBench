@@ -43,7 +43,7 @@ public static class MacePackageRemoval
     {
         ArgumentNullException.ThrowIfNull(review);
         ValidateIdentity(identity);
-        if (!review.Complete) return Blocked("MACE review evidence is incomplete.");
+        if (!review.Complete) return Blocked("Microsoft app removal review evidence is incomplete.");
         if (review.Options.Scope != MaceScope.RunningAccount)
             return Blocked("Automatic package removal is limited to the running account.");
         if (!review.Options.PreserveApplicationData || !review.Options.PreserveCachedCredentials)
@@ -87,11 +87,11 @@ public static class MacePackageRemoval
         ArgumentException.ThrowIfNullOrWhiteSpace(journalFolder);
         options.Validate();
         ValidateIdentity(identity);
-        Report(progress, "Reviewing exact MACE package removal eligibility.");
-        MaceRemovalReview first = await Required(ct => host.ReviewAsync(options, ct), "MACE review", token).ConfigureAwait(false);
+        Report(progress, "Reviewing exact app package removal eligibility.");
+        MaceRemovalReview first = await Required(ct => host.ReviewAsync(options, ct), "Microsoft app removal review", token).ConfigureAwait(false);
         if (!SameOptions(options, first.Options))
             return new(MacePackageRemovalOutcome.Blocked,
-                "The evidence provider returned a different MACE selection. No package removal was requested.");
+                "The evidence provider returned a different Microsoft app removal selection. No package removal was requested.");
         MacePackageRemovalEligibility firstEligibility = Evaluate(first, identity);
         if (!firstEligibility.Eligible)
             return new(MacePackageRemovalOutcome.Blocked, firstEligibility.Detail + " No package removal was requested.");
@@ -108,8 +108,8 @@ public static class MacePackageRemoval
             return new(MacePackageRemovalOutcome.Blocked,
                 "A prior package removal needs reconciliation before another can start.", PendingPath: pendingPath);
 
-        Report(progress, "Repeating exact MACE package and safeguard evidence.");
-        MaceRemovalReview repeated = await Required(ct => host.ReviewAsync(options, ct), "MACE review", token).ConfigureAwait(false);
+        Report(progress, "Repeating exact app removal package and safeguard evidence.");
+        MaceRemovalReview repeated = await Required(ct => host.ReviewAsync(options, ct), "Microsoft app removal review", token).ConfigureAwait(false);
         MacePackageRemovalEligibility repeatedEligibility = Evaluate(repeated, identity);
         if (!SameOptions(options, repeated.Options) || !repeatedEligibility.Eligible ||
             !SameCandidate(firstEligibility.Candidate!, repeatedEligibility.Candidate!))
@@ -123,8 +123,8 @@ public static class MacePackageRemoval
         bool dispatched = false;
         try
         {
-            Report(progress, "Performing the final exact MACE eligibility check.");
-            MaceRemovalReview boundary = await Required(ct => host.ReviewAsync(options, ct), "MACE review", token).ConfigureAwait(false);
+            Report(progress, "Performing the final exact Microsoft app removal eligibility check.");
+            MaceRemovalReview boundary = await Required(ct => host.ReviewAsync(options, ct), "Microsoft app removal review", token).ConfigureAwait(false);
             MacePackageRemovalEligibility boundaryEligibility = Evaluate(boundary, identity);
             if (!SameOptions(options, boundary.Options) || !boundaryEligibility.Eligible ||
                 !SameCandidate(repeatedEligibility.Candidate, boundaryEligibility.Candidate!))
@@ -134,9 +134,9 @@ public static class MacePackageRemoval
             Report(progress, "Requesting removal of the exact current-account package.");
             dispatched = true;
             ToolResult command = await Required(ct => host.RemoveCurrentAccountPackageAsync(identity, ct),
-                "MACE package removal", token).ConfigureAwait(false);
+                "App package removal", token).ConfigureAwait(false);
             Report(progress, "Verifying exact package absence.");
-            MaceRemovalReview after = await Required(ct => host.ReviewAsync(options, ct), "MACE review", token).ConfigureAwait(false);
+            MaceRemovalReview after = await Required(ct => host.ReviewAsync(options, ct), "Microsoft app removal review", token).ConfigureAwait(false);
             if (!SameOptions(options, after.Options) || !after.Complete)
                 return new(MacePackageRemovalOutcome.Uncertain,
                     "Package removal was requested, but fresh inventory is incomplete. The pending record remains and the request will not be repeated automatically.",
@@ -183,14 +183,14 @@ public static class MacePackageRemoval
         string pendingPath = Path.Combine(root, PendingFileName);
         if (!File.Exists(pendingPath))
             return new(MacePackageRemovalReconciliationOutcome.NoPendingRecord,
-                "No interrupted MACE package removal record is present.", pendingPath);
+                "No interrupted app package removal record is present.", pendingPath);
         Directory.CreateDirectory(root);
         await using var operationLock = new FileStream(Path.Combine(root, "mace-package-removal.reconcile.lock"),
             FileMode.CreateNew, FileAccess.Write, FileShare.None, 1, FileOptions.DeleteOnClose);
         try
         {
             MacePackageRemovalPendingRecord pending = await ReadPendingAsync(pendingPath, token).ConfigureAwait(false);
-            MaceRemovalReview current = await Required(ct => host.ReviewAsync(pending.Options, ct), "MACE review", token).ConfigureAwait(false);
+            MaceRemovalReview current = await Required(ct => host.ReviewAsync(pending.Options, ct), "Microsoft app removal review", token).ConfigureAwait(false);
             if (!SameOptions(pending.Options, current.Options) || !current.Complete)
                 return new(MacePackageRemovalReconciliationOutcome.Inconclusive,
                     "Fresh package inventory is incomplete. The pending record remains and no removal was repeated.", pendingPath);
@@ -233,19 +233,19 @@ public static class MacePackageRemoval
     private static async Task<MacePackageRemovalPendingRecord> ReadPendingAsync(string path, CancellationToken token)
     {
         await using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.Asynchronous);
-        if (stream.Length is <= 0 or > 131_072) throw new InvalidDataException("MACE package-removal record size is invalid.");
+        if (stream.Length is <= 0 or > 131_072) throw new InvalidDataException("App package-removal record size is invalid.");
         var bytes = new byte[checked((int)stream.Length)];
         await stream.ReadExactlyAsync(bytes, token).ConfigureAwait(false);
         using var document = JsonDocument.Parse(bytes);
-        if (!UniqueFields(document.RootElement)) throw new InvalidDataException("MACE package-removal record contains conflicting fields.");
+        if (!UniqueFields(document.RootElement)) throw new InvalidDataException("App package-removal record contains conflicting fields.");
         MacePackageRemovalPendingRecord pending = document.RootElement.Deserialize<MacePackageRemovalPendingRecord>(StrictJson) ??
-            throw new InvalidDataException("MACE package-removal record is empty.");
+            throw new InvalidDataException("App package-removal record is empty.");
         pending.Options.Validate();
         ValidateIdentity(pending.Identity);
         if (pending.Schema != 1 || pending.StartedUtc == default ||
             !pending.Machine.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase) ||
             !SingleTarget(pending.Target))
-            throw new InvalidDataException("MACE package-removal record is invalid.");
+            throw new InvalidDataException("App package-removal record is invalid.");
         return pending;
     }
 

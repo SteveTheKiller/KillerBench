@@ -61,7 +61,7 @@ internal static class WindowsUpdateActivityChecks
         Require(unavailable.State == CheckState.Unknown, "Unavailable System-channel transition evidence fails closed");
         try { WindowsUpdateActivityDiagnostics.Interpret(completed, new CancellationToken(true)); throw new Exception("Windows Update activity ignored cancellation"); }
         catch (OperationCanceledException) { }
-        Console.WriteLine("PASS: PEEK live Windows Update transitions retain bounded titles, exact failures, qualified starts and private-field exclusions.");
+        Console.WriteLine("PASS: servicing monitor live Windows Update transitions retain bounded titles, exact failures, qualified starts and private-field exclusions.");
     }
 
     private static void Require(bool condition, string message)

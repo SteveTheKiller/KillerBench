@@ -164,7 +164,7 @@
   <sys:String x:Key="Str_Mace_RemovePackage">QUITAR PAQUETE SELECCIONADO</sys:String>
   <sys:String x:Key="Str_Mace_RemovePackageTip">Requiere una revisión elegible, esta confirmación, una segunda confirmación y evidencia exacta actualizada antes de solicitar la eliminación.</sys:String>
   <sys:String x:Key="Str_Mace_CheckInterrupted">Comprobar eliminación interrumpida</sys:String>
-  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Comprueba un registro anterior de eliminación de paquete MACE sin enviar otra solicitud de eliminación.</sys:String>
+  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Comprueba un registro anterior de eliminación de paquete sin enviar otra solicitud de eliminación.</sys:String>
   <sys:String x:Key="Str_Mace_RemovalBoundary">Este control rojo está separado de GO. Quita un paquete de desarrollo exacto, sin protección, solo para la cuenta en ejecución. La solicitud final se registra y nunca se reintenta automáticamente.</sys:String>
   <sys:String x:Key="Str_Orca_Description">Elige la edición de Outlook, el ámbito de cuenta y las áreas exactas de restablecimiento. GO las revisa. Solo para cachés de la cuenta en ejecución, habilita la retención para mover las cachés con nombres de recuperación después de comprobaciones actualizadas.</sys:String>
   <sys:String x:Key="Str_Orca_NewOutlook">Nuevo Outlook</sys:String>

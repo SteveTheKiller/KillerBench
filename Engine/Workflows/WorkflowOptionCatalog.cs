@@ -100,17 +100,17 @@ public static class WorkflowOptionCatalog
             Set(WorkflowKind.Defender, DefenderOptions(),
                 "Diagnosis is the default. Quick and Full scans require explicit execution, fresh active-protection and idle-scan evidence, durable preparation and completion verification."),
             Set(WorkflowKind.Mace, MaceOptions(),
-                "MACE currently produces a removal review only. No application, package, credential, file or user data is changed."),
+                "Microsoft app removal currently produces a removal review only. No application, package, credential, file or user data is changed."),
             Set(WorkflowKind.Orca, OrcaOptions(),
-                "ORCA reviews every selected area. Running-account cache-only requests can use a separate preview-first retention coordinator. Other Outlook data, packages, credentials, profiles and add-ins remain unchanged."),
+                "Outlook reset reviews every selected area. Running-account cache-only requests can use a separate preview-first retention coordinator. Other Outlook data, packages, credentials, profiles and add-ins remain unchanged."),
             Set(WorkflowKind.Depot, DepotOptions(),
-                "DEPOT currently produces a provisioning review only. No download, installation, account or configuration change occurs."),
+                "Onboarding currently produces a provisioning review only. No download, installation, account or configuration change occurs."),
             Set(WorkflowKind.Beam, BeamOptions(),
-                "BEAM currently produces an Intune deployment review only. No download, packaging, tenant, assignment or installation action occurs."),
+                "Intune app deployment currently produces a review only. No download, packaging, tenant, assignment or installation action occurs."),
             Set(WorkflowKind.Debloat, DebloatOptions(),
                 "Review is read-only. The three power actions require their matching area as the only selection, fresh evidence and explicit execution."),
             Set(WorkflowKind.ServicingActivity, ServicingOptions(),
-                "PEEK collects bounded point-in-time evidence only. It never starts, stops or changes servicing activity.")
+                "Servicing monitor collects bounded point-in-time evidence only. It never starts, stops or changes servicing activity.")
         };
         return sets.ToDictionary(item => item.Kind);
     }
@@ -412,7 +412,7 @@ public static class WorkflowOptionCatalog
         Choice("installerType", "Installer type", nameof(BeamInstallerType.Exe), EnumChoices<BeamInstallerType>(),
             "Choose the package format used by the source."),
         Text("appName", "Application name", "", "Display name for the deployment review.", required: true),
-        Text("publisher", "Publisher", "BEAM", "Expected software publisher.", required: true),
+        Text("publisher", "Publisher", "KillerBench", "Expected software publisher.", required: true),
         Text("installSwitches", "Install switches", "", "Optional silent installer arguments.", advanced: true),
         Text("targetHostnames", "Target hostnames", "", "One or more device hostnames, with one target per entry.", required: true),
         Text("tenantDomain", "Tenant domain", "", "DNS tenant domain such as contoso.onmicrosoft.com.", required: true)

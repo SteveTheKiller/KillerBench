@@ -160,7 +160,7 @@ if (args.Length == 0 || args is ["help"] or ["--help"] or ["-h"])
     Console.WriteLine("KillerBench command-line Windows maintenance workbench. Diagnostics are read-only by default; every machine change requires --execute and its command-specific safeguards.");
     Console.WriteLine("killerbench-cli workflow-options [WORKFLOW [--set KEY=VALUE ...]] (show or validate host-neutral controls; no scan or repair)");
     Console.WriteLine("killerbench-cli backup-events (VSS and volsnap history; JSON evidence; no changes)");
-    Console.WriteLine("killerbench-cli servicing-monitor [--refresh 1..60] [--samples 1..120] [--skip-events] [--skip-history] [--skip-services] [--skip-restart] [--skip-setup] [--skip-compatibility] [--skip-readiness] [--skip-transfers] [--skip-delivery-optimization] [--skip-installer] [--skip-scheduled-task] (read-only PEEK servicing activity snapshots)");
+    Console.WriteLine("killerbench-cli servicing-monitor [--refresh 1..60] [--samples 1..120] [--skip-events] [--skip-history] [--skip-services] [--skip-restart] [--skip-setup] [--skip-compatibility] [--skip-readiness] [--skip-transfers] [--skip-delivery-optimization] [--skip-installer] [--skip-scheduled-task] (read-only Servicing activity snapshots)");
     Console.WriteLine("killerbench-cli setup-code DECIMAL_OR_0xHEX (documented Windows Setup result-code reference; no machine inspection or repair)");
     Console.WriteLine("killerbench-cli backup-summary (local Windows Backup operation summary; no backup changes)");
     Console.WriteLine("killerbench-cli file-history-status (current-account File History protection state; no changes)");
@@ -208,7 +208,7 @@ if (args.Length == 0 || args is ["help"] or ["--help"] or ["-h"])
     Console.WriteLine("killerbench-cli foxit-inventory (read-only machine product inventory; JSON output)");
     Console.WriteLine("killerbench-cli mace-review (--onedrive|--outlook|--office|--project|--teams|--all-products) [--all-users] [--remove-data] [--remove-credentials] [--review-folder-restore] [--json] (review only; no removal)");
     Console.WriteLine("killerbench-cli mace-package-plan (--onedrive|--outlook|--office|--project|--teams|--all-products) --package PACKAGE_FULL_NAME [--json] (fresh exact eligibility preview; no removal provider)");
-    Console.WriteLine("killerbench-cli mace-package-recover (freshly reconcile one interrupted MACE package-removal record; never repeats removal)");
+    Console.WriteLine("killerbench-cli mace-package-recover (freshly reconcile one interrupted app package-removal record; never repeats removal)");
     Console.WriteLine("killerbench-cli <analyze|investigate> <text-log-path> [--json] (analyze local text evidence)");
     Console.WriteLine("killerbench-cli investigate-batch FILE [FILE ...] (up to 12 files; JSON Lines; exit 3 for failed or partial imports)");
     Console.WriteLine("killerbench-cli app-packages [--all-users] (registered Appx/MSIX inventory only; no removal)");

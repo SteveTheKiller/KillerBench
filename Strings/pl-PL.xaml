@@ -146,7 +146,7 @@
   <sys:String x:Key="Str_Mace_RemovePackage">USUŃ WYBRANY PAKIET</sys:String>
   <sys:String x:Key="Str_Mace_RemovePackageTip">Wymaga kwalifikującego przeglądu, tego potwierdzenia, drugiego potwierdzenia i świeżych dokładnych dowodów przed żądaniem usunięcia.</sys:String>
   <sys:String x:Key="Str_Mace_CheckInterrupted">Sprawdź przerwane usuwanie</sys:String>
-  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Sprawdza wcześniejszy rekord usuwania pakietu MACE bez wysyłania kolejnego żądania usunięcia.</sys:String>
+  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Sprawdza wcześniejszy rekord usuwania pakietu bez wysyłania kolejnego żądania usunięcia.</sys:String>
   <sys:String x:Key="Str_Mace_RemovalBoundary">Ta czerwona kontrolka jest oddzielona od GO. Usuwa jeden dokładny, niezabezpieczony pakiet deweloperski tylko dla konta uruchamiającego. Ostateczne żądanie jest rejestrowane i nigdy nie jest ponawiane automatycznie.</sys:String>
   <sys:String x:Key="Str_Orca_Description">Wybierz edycję Outlook, zakres konta i dokładne obszary resetowania. GO je przegląda. Tylko dla pamięci podręcznych konta uruchamiającego włącz zachowanie, aby po świeżych kontrolach przenieść pamięci podręczne pod nazwy odzyskiwania.</sys:String>
   <sys:String x:Key="Str_Orca_NewOutlook">Nowy Outlook</sys:String>

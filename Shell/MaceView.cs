@@ -63,11 +63,11 @@ public partial class MainWindow
         if (readCancellation is not null) return;
         if (maceReview is null || MacePackageSelection.SelectedItem is not MacePackageChoice selected)
         {
-            Report("Run MACE, then select a supported package candidate.");
+            Report("Run Microsoft app removal, then select a supported package candidate.");
             return;
         }
         MacePackageRemovalEligibility eligibility = MacePackageRemoval.Evaluate(maceReview, selected.Identity);
-        string text = "MACE PACKAGE PLAN / " + (eligibility.Eligible ? "ELIGIBLE" : "BLOCKED") +
+        string text = "APP REMOVAL PACKAGE PLAN / " + (eligibility.Eligible ? "ELIGIBLE" : "BLOCKED") +
             "\n" + selected.Label + "\nPackage: " + selected.Identity + "\n\n" + eligibility.Detail +
             "\n\nGO stays review-only. The separate red removal control requires its own confirmation and repeats fresh exact evidence before one request.";
         BeginWorkflowOutput(WorkflowKind.Mace);
@@ -82,7 +82,7 @@ public partial class MainWindow
                 "GO remains review-only. Any removal requires the separate red control, its own consent and a second confirmation after fresh safeguards pass.")
         };
         RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Mace, Environment.MachineName, DateTimeOffset.UtcNow,
-            status, checks, [], "Read-only MACE package plan. No journal was written."), "MACE package plan");
+            status, checks, [], "Read-only app removal package plan. No journal was written."), "App removal package plan");
         Report(status);
         RefreshMacePackageRemoval();
     }
@@ -99,7 +99,7 @@ public partial class MainWindow
         MessageBoxResult confirmation = MessageBox.Show(this,
             "Remove this exact current-account package?\n\n" + selected.Identity +
             "\n\nKillerBench will repeat the safeguard review, record the request, send one removal request, and verify the package inventory. It will not retry automatically.",
-            "Confirm MACE package removal", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+            "Confirm app package removal", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
         if (confirmation != MessageBoxResult.Yes) return;
         macePackageRemovalRequested = true;
         try { await RunWorkflowAsync(); }

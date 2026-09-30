@@ -224,7 +224,7 @@
             </StackPanel>
             <StackPanel x:Name="MaceSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="{DynamicResource Str_Mace_Description}" TextWrapping="Wrap"/>
-              <ComboBox x:Name="MaceScopeChoice" SelectedIndex="0" Margin="0,6,0,6" AutomationProperties.Name="MACE account scope" SelectionChanged="OnMaceOptionChanged">
+              <ComboBox x:Name="MaceScopeChoice" SelectedIndex="0" Margin="0,6,0,6" AutomationProperties.Name="Microsoft app removal account scope" SelectionChanged="OnMaceOptionChanged">
                 <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/><ComboBoxItem Content="{DynamicResource Str_Scope_AllUsersAndNew}"/>
               </ComboBox>
               <TextBlock Text="{DynamicResource Str_Common_Applications}" Foreground="{DynamicResource DimTextBrush}"/>
@@ -239,7 +239,7 @@
               <CheckBox x:Name="MaceRestoreFolders" Content="{DynamicResource Str_Mace_RestoreFolders}" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
               <TextBlock Text="{DynamicResource Str_Mace_ReviewBoundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
               <TextBlock Text="{DynamicResource Str_Mace_PackagePlan}" Foreground="{DynamicResource DimTextBrush}" Margin="0,8,0,0"/>
-              <ComboBox x:Name="MacePackageSelection" DisplayMemberPath="Label" Margin="0,4,0,4" AutomationProperties.Name="Supported MACE package candidate" SelectionChanged="OnMacePackageSelectionChanged"/>
+              <ComboBox x:Name="MacePackageSelection" DisplayMemberPath="Label" Margin="0,4,0,4" AutomationProperties.Name="Supported app removal package candidate" SelectionChanged="OnMacePackageSelectionChanged"/>
               <Button x:Name="MaceReviewPackage" Content="{DynamicResource Str_Mace_CheckPackage}" Click="OnReviewMacePackage" IsEnabled="False" HorizontalAlignment="Left"/>
               <TextBlock x:Name="MacePackageHint" Text="{DynamicResource Str_Mace_PackageHint}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
               <TextBlock Text="{DynamicResource Str_Mace_DestructiveRemoval}" Foreground="{DynamicResource DangerRed}" Margin="0,8,0,0"/>
@@ -250,10 +250,10 @@
             </StackPanel>
             <StackPanel x:Name="OrcaSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="{DynamicResource Str_Orca_Description}" TextWrapping="Wrap"/>
-              <ComboBox x:Name="OrcaModeChoice" SelectedIndex="2" Margin="0,6,0,4" AutomationProperties.Name="ORCA Outlook edition" SelectionChanged="OnOrcaOptionChanged">
+              <ComboBox x:Name="OrcaModeChoice" SelectedIndex="2" Margin="0,6,0,4" AutomationProperties.Name="Outlook edition" SelectionChanged="OnOrcaOptionChanged">
                 <ComboBoxItem Content="{DynamicResource Str_Orca_NewOutlook}"/><ComboBoxItem Content="{DynamicResource Str_Orca_ClassicOutlook}"/><ComboBoxItem Content="{DynamicResource Str_Common_Both}"/>
               </ComboBox>
-              <ComboBox x:Name="OrcaScopeChoice" SelectedIndex="0" Margin="0,0,0,6" AutomationProperties.Name="ORCA account scope" SelectionChanged="OnOrcaOptionChanged">
+              <ComboBox x:Name="OrcaScopeChoice" SelectedIndex="0" Margin="0,0,0,6" AutomationProperties.Name="Outlook reset account scope" SelectionChanged="OnOrcaOptionChanged">
                 <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/><ComboBoxItem Content="{DynamicResource Str_Scope_AllUsers}"/>
               </ComboBox>
               <TextBlock Text="{DynamicResource Str_Orca_ResetAreas}" Foreground="{DynamicResource DimTextBrush}"/>
@@ -288,28 +288,28 @@
             <StackPanel x:Name="BeamSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="{DynamicResource Str_Beam_Description}" TextWrapping="Wrap"/>
               <TextBlock Text="{DynamicResource Str_Beam_InstallerSource}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
-              <ComboBox x:Name="BeamSourceKindChoice" SelectedIndex="0" AutomationProperties.Name="BEAM installer source type">
+              <ComboBox x:Name="BeamSourceKindChoice" SelectedIndex="0" AutomationProperties.Name="Intune deployment installer source type">
                 <ComboBoxItem Content="{DynamicResource Str_Beam_LocalSource}"/><ComboBoxItem Content="{DynamicResource Str_Beam_HttpsSource}"/>
               </ComboBox>
-              <TextBox x:Name="BeamSource" Margin="0,4,0,0" MaxLength="32768" AutomationProperties.Name="BEAM installer path or HTTPS URL"/>
-              <ComboBox x:Name="BeamInstallerTypeChoice" SelectedIndex="0" Margin="0,4,0,0" AutomationProperties.Name="BEAM installer type">
+              <TextBox x:Name="BeamSource" Margin="0,4,0,0" MaxLength="32768" AutomationProperties.Name="Intune deployment installer path or HTTPS URL"/>
+              <ComboBox x:Name="BeamInstallerTypeChoice" SelectedIndex="0" Margin="0,4,0,0" AutomationProperties.Name="Intune deployment installer type">
                 <ComboBoxItem Content="EXE"/><ComboBoxItem Content="MSI"/>
               </ComboBox>
               <TextBlock Text="{DynamicResource Str_Beam_AppName}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
-              <TextBox x:Name="BeamAppName" MaxLength="256" AutomationProperties.Name="BEAM Intune app name"/>
+              <TextBox x:Name="BeamAppName" MaxLength="256" AutomationProperties.Name="Intune app name"/>
               <TextBlock Text="{DynamicResource Str_Beam_Publisher}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
-              <TextBox x:Name="BeamPublisher" MaxLength="256" Text="BEAM" AutomationProperties.Name="BEAM publisher"/>
+              <TextBox x:Name="BeamPublisher" MaxLength="256" Text="KillerBench" AutomationProperties.Name="Intune deployment publisher"/>
               <TextBlock Text="{DynamicResource Str_Beam_InstallSwitches}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
-              <TextBox x:Name="BeamInstallSwitches" MaxLength="2048" AutomationProperties.Name="BEAM install switches" ToolTip="{DynamicResource Str_Beam_InstallSwitchesTip}"/>
+              <TextBox x:Name="BeamInstallSwitches" MaxLength="2048" AutomationProperties.Name="Intune deployment install switches" ToolTip="{DynamicResource Str_Beam_InstallSwitchesTip}"/>
               <TextBlock Text="{DynamicResource Str_Beam_TargetHostnames}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
-              <TextBox x:Name="BeamTargets" MaxLength="32000" AutomationProperties.Name="BEAM comma separated target hostnames" ToolTip="{DynamicResource Str_Beam_TargetHostnamesTip}"/>
+              <TextBox x:Name="BeamTargets" MaxLength="32000" AutomationProperties.Name="Intune deployment comma separated target hostnames" ToolTip="{DynamicResource Str_Beam_TargetHostnamesTip}"/>
               <TextBlock Text="{DynamicResource Str_Beam_TenantDomain}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
-              <TextBox x:Name="BeamTenantDomain" MaxLength="253" AutomationProperties.Name="BEAM tenant domain" ToolTip="{DynamicResource Str_Beam_TenantDomainTip}"/>
+              <TextBox x:Name="BeamTenantDomain" MaxLength="253" AutomationProperties.Name="Intune deployment tenant domain" ToolTip="{DynamicResource Str_Beam_TenantDomainTip}"/>
               <TextBlock Text="{DynamicResource Str_Beam_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
             </StackPanel>
             <StackPanel x:Name="DebloatSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="{DynamicResource Str_Debloat_Description}" TextWrapping="Wrap"/>
-              <ComboBox x:Name="DebloatScopeChoice" SelectedIndex="0" Margin="0,6,0,4" AutomationProperties.Name="DEBLOAT user scope">
+              <ComboBox x:Name="DebloatScopeChoice" SelectedIndex="0" Margin="0,6,0,4" AutomationProperties.Name="Declutter user scope">
                 <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/><ComboBoxItem Content="{DynamicResource Str_Scope_AllProfiles}"/>
               </ComboBox>
               <WrapPanel>
@@ -341,7 +341,7 @@
                 <ComboBox x:Name="DebloatDisplayDc" Grid.Row="2" Grid.Column="1" SelectedIndex="1" Margin="3,4,0,0" AutomationProperties.Name="Display timeout on battery"><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBatteryNever}" Tag="0"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery15}" Tag="15"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery30}" Tag="30"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery60}" Tag="60"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery120}" Tag="120"/></ComboBox>
               </Grid>
               <TextBlock Text="{DynamicResource Str_Debloat_GoAction}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
-              <ComboBox x:Name="DebloatActionChoice" SelectedIndex="0" AutomationProperties.Name="DEBLOAT GO action">
+              <ComboBox x:Name="DebloatActionChoice" SelectedIndex="0" AutomationProperties.Name="Declutter GO action">
                 <ComboBoxItem Content="{DynamicResource Str_Debloat_ActionReview}"/>
                 <ComboBoxItem Content="{DynamicResource Str_Debloat_ActionHighPerformance}"/>
                 <ComboBoxItem Content="{DynamicResource Str_Debloat_ActionTimers}"/>

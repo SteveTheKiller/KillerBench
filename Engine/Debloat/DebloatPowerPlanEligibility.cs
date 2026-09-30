@@ -8,11 +8,11 @@ public static class DebloatPowerPlanEligibility
         ArgumentNullException.ThrowIfNull(options);
         if (!options.Areas.HasFlag(DebloatAreas.HighPerformancePower))
             return new("High performance power plan", CheckState.Information,
-                "Select HighPerformancePower as the only DEBLOAT area to evaluate the guarded plan change. No plan change was selected.");
+                "Select HighPerformancePower as the only declutter area to evaluate the guarded plan change. No plan change was selected.");
         options.Validate();
         if (options.Areas != DebloatAreas.HighPerformancePower)
             return new("High performance power plan", CheckState.Attention,
-                "Select HighPerformancePower as the only DEBLOAT area before changing the active plan.");
+                "Select HighPerformancePower as the only declutter area before changing the active plan.");
         if (pendingRecovery)
             return new("High performance power plan", CheckState.Attention,
                 "A previous power-plan change requires reconciliation. Recheck the active plan without repeating activation before another attempt.");

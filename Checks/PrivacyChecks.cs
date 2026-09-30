@@ -26,7 +26,7 @@ internal static class PrivacyChecks
             "SubscribedContent-338393Enabled", "SubscribedContent-310093Enabled", "Start_TrackProgs", "AllowInputPersonalization",
             "RestrictImplicitInkCollection", "RestrictImplicitTextCollection" })
             if (!PrivacyInspection.Targets.Any(target => target.Name == required))
-                throw new Exception("Missing reviewed SHADE registry target: " + required);
+                throw new Exception("Missing reviewed privacy registry target: " + required);
         int reads = 0;
         var snapshot = PrivacyInspection.Inspect(new([PrivacyArea.Camera]), target =>
         {
@@ -43,7 +43,7 @@ internal static class PrivacyChecks
             throw new Exception("App activity and input personalization registry coverage changed.");
         if (PrivacyInspection.Services.Count != 7 ||
             PrivacyInspection.Services.Select(service => service.Name).Distinct(StringComparer.OrdinalIgnoreCase).Count() != 7)
-            throw new Exception("Reviewed SHADE service coverage mismatch.");
+            throw new Exception("Reviewed privacy service coverage mismatch.");
         int serviceReads = 0;
         var services = PrivacyInspection.InspectServicesAsync(new([PrivacyArea.DiagnosticData]), (target, token) =>
         {
@@ -54,7 +54,7 @@ internal static class PrivacyChecks
         if (serviceReads != 4 || services.Count != 4 || services.Count(service => service.State == "Running") != 3 ||
             services.Single(service => service.Target.Name == "WerSvc").State != "Stopped" ||
             !PrivacyInspection.Format([], services).Contains("PRIVACY SERVICE SNAPSHOT"))
-            throw new Exception("Selected SHADE service states were not retained accurately.");
+            throw new Exception("Selected privacy service states were not retained accurately.");
         var incompleteService = PrivacyInspection.InspectServicesAsync(new([PrivacyArea.Location]),
             (target, token) => Task.FromResult(new ToolResult(0, "SERVICE_NAME: other\nSTATE : 4 RUNNING", "", false)))
             .GetAwaiter().GetResult().Single();
@@ -75,6 +75,6 @@ internal static class PrivacyChecks
             throw new Exception("Canceled privacy service inspection succeeded.");
         }
         catch (OperationCanceledException) { }
-        Console.WriteLine("PASS: privacy option isolation, reviewed SHADE registry and service coverage, unchanged defaults and invalid selection rejection.");
+        Console.WriteLine("PASS: privacy option isolation, reviewed privacy registry and service coverage, unchanged defaults and invalid selection rejection.");
     }
 }

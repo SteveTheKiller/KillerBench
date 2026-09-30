@@ -44,7 +44,7 @@ internal static class ServicingActivityMonitorChecks
             firstLive.Contains("ATTENTION / Services", StringComparison.Ordinal) && firstLive.Length < 3_000,
             "Each completed snapshot emits a bounded live summary");
         string retained = ServicingActivityText.FormatReport(result);
-        Require(retained.Contains("PEEK / SERVICING ACTIVITY MONITOR / READ ONLY", StringComparison.Ordinal) &&
+        Require(retained.Contains("SERVICING ACTIVITY MONITOR / READ ONLY", StringComparison.Ordinal) &&
             retained.Contains("No update, setup, transfer, service, process, policy, restart or repair action was requested.", StringComparison.Ordinal) &&
             retained.Contains("Services / Attention\nFixture attention.", StringComparison.Ordinal),
             "Retained report keeps full checks and the read-only boundary");
@@ -58,7 +58,7 @@ internal static class ServicingActivityMonitorChecks
             canceling, token: canceled.Token));
         Require(canceling.ProcessReads == 1 && canceling.RestartReads == 1, "Cancellation stops before another snapshot");
 
-        Console.WriteLine("PASS: PEEK servicing monitor options, bounded process evidence, selected scopes, sample order and cancellation; substituted providers only.");
+        Console.WriteLine("PASS: Servicing monitor options, bounded process evidence, selected scopes, sample order and cancellation; substituted providers only.");
     }
 
     private static void RejectsInvalidOptions()
@@ -190,7 +190,7 @@ internal static class ServicingActivityMonitorChecks
         string command = string.Join(" ", ServicingInstallerActivityDiagnostics.QueryStep().Arguments);
         Require(command.Contains("Win32_Process", StringComparison.Ordinal) && command.Contains("processCount", StringComparison.Ordinal) &&
             !command.Contains("ProcessId", StringComparison.Ordinal) && !command.Contains("ParentProcessId", StringComparison.Ordinal) &&
-            !command.Contains("CommandLine", StringComparison.Ordinal), "PEEK Installer query retains counts without process identity");
+            !command.Contains("CommandLine", StringComparison.Ordinal), "Servicing monitor Installer query retains counts without process identity");
         var idle = ServicingInstallerActivityDiagnostics.Interpret(new(0,
             "{\"complete\":true,\"processCount\":0,\"marker\":false}", "", false));
         Require(idle.State == CheckState.Information && idle.Detail.Contains("No msiexec process", StringComparison.Ordinal),

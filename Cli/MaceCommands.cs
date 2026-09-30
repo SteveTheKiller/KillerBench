@@ -23,7 +23,7 @@ internal static class MaceCommands
                 case "--remove-credentials": preserveCredentials = false; break;
                 case "--review-folder-restore": restoreFolders = true; break;
                 case "--json": json = true; break;
-                default: return Usage("Unknown MACE review option: " + value);
+                default: return Usage("Unknown Microsoft app removal review option: " + value);
             }
         }
         var options = new MaceReviewOptions(targets, scope, preserveData, preserveCredentials, restoreFolders);
@@ -38,10 +38,10 @@ internal static class MaceCommands
             Console.WriteLine(json ? JsonSerializer.Serialize(review, Capture.JsonOptions) : review.Format());
             return review.Complete ? 0 : 3;
         }
-        catch (OperationCanceledException) { Console.Error.WriteLine("MACE review stopped."); return 130; }
+        catch (OperationCanceledException) { Console.Error.WriteLine("Microsoft app removal review stopped."); return 130; }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or NotSupportedException or
             InvalidOperationException or System.ComponentModel.Win32Exception)
-        { Console.Error.WriteLine("MACE review unavailable: " + error.Message); return 1; }
+        { Console.Error.WriteLine("Microsoft app removal review unavailable: " + error.Message); return 1; }
         finally { Console.CancelKeyPress -= cancel; }
     }
 
@@ -65,7 +65,7 @@ internal static class MaceCommands
                     identity = args[++index];
                     break;
                 case "--json": json = true; break;
-                default: return PackagePlanUsage("Unknown MACE package-plan option: " + args[index]);
+                default: return PackagePlanUsage("Unknown app removal package-plan option: " + args[index]);
             }
         }
         if (string.IsNullOrWhiteSpace(identity)) return PackagePlanUsage("Select one exact package full name.");
@@ -87,11 +87,11 @@ internal static class MaceCommands
                     "\n\nPreview only. No removal provider is connected to the CLI.");
             return eligibility.Eligible ? 0 : 3;
         }
-        catch (OperationCanceledException) { Console.Error.WriteLine("MACE package plan stopped."); return 130; }
+        catch (OperationCanceledException) { Console.Error.WriteLine("App removal package plan stopped."); return 130; }
         catch (ArgumentException error) { return PackagePlanUsage(error.Message); }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or NotSupportedException or
             InvalidOperationException or System.ComponentModel.Win32Exception)
-        { Console.Error.WriteLine("MACE package plan unavailable: " + error.Message); return 1; }
+        { Console.Error.WriteLine("App removal package plan unavailable: " + error.Message); return 1; }
         finally { Console.CancelKeyPress -= cancel; }
     }
 
@@ -110,10 +110,10 @@ internal static class MaceCommands
             Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
             return result.GetExitCode();
         }
-        catch (OperationCanceledException) { Console.Error.WriteLine("MACE package recovery stopped. No removal was repeated."); return 130; }
+        catch (OperationCanceledException) { Console.Error.WriteLine("App removal package recovery stopped. No removal was repeated."); return 130; }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or NotSupportedException or
             InvalidOperationException or System.ComponentModel.Win32Exception)
-        { Console.Error.WriteLine("MACE package recovery unavailable: " + error.Message); return 1; }
+        { Console.Error.WriteLine("App removal package recovery unavailable: " + error.Message); return 1; }
         finally { Console.CancelKeyPress -= cancel; }
     }
 
@@ -137,7 +137,7 @@ internal static class MaceCommands
     {
         Console.Error.WriteLine(message);
         Console.Error.WriteLine("Usage: mace-package-recover");
-        Console.Error.WriteLine("Freshly reconcile one interrupted MACE package-removal record without repeating removal.");
+        Console.Error.WriteLine("Freshly reconcile one interrupted app package-removal record without repeating removal.");
         return 2;
     }
 }

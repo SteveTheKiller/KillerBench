@@ -12,7 +12,7 @@ public static class DebloatPowerTimerEligibility
         options.Validate();
         if (options.Areas != DebloatAreas.SleepAndDisplayTimers || options.PowerRequest is null)
             return new("Power timers", CheckState.Attention,
-                "Select SleepAndDisplayTimers as the only DEBLOAT area and provide all four timeout values.");
+                "Select SleepAndDisplayTimers as the only declutter area and provide all four timeout values.");
         if (pendingRecovery)
             return new("Power timers", CheckState.Attention,
                 "A previous power-timer change requires reconciliation. Recheck all four timers without repeating commands before another attempt.");

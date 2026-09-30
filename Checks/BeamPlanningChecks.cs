@@ -18,9 +18,9 @@ internal static class BeamPlanningChecks
             "Targets are deduplicated and IP entries are separated from Intune hostnames");
         Require(review.Plan.InstallContext == "SYSTEM" && review.Plan.AssignmentIntent.Contains("Required") &&
             review.Plan.InstallCommand.Contains("/silent") && review.Plan.UninstallCommand.Contains("No automatic"),
-            "The review exposes BEAM execution consequences and the EXE uninstall limitation");
+            "The review exposes Intune deployment execution consequences and the EXE uninstall limitation");
         Require(review.Checks.All(check => check.Repair is null) && review.Format().Contains("Execution available: No"),
-            "BEAM review never offers tenant or installer execution");
+            "Intune deployment review never offers tenant or installer execution");
 
         var url = options with { SourceKind = BeamSourceKind.HttpsUrl,
             Source = "https://downloads.example.test/setup.msi?token=secret", InstallerType = BeamInstallerType.Msi,
@@ -32,28 +32,28 @@ internal static class BeamPlanningChecks
         try
         {
             BeamPlanning.ReviewAsync(options with { Source = "relative.exe" }).GetAwaiter().GetResult();
-            throw new Exception("Relative BEAM source accepted.");
+            throw new Exception("Relative Intune deployment source accepted.");
         }
         catch (ArgumentException) { }
         try
         {
             BeamPlanning.ReviewAsync(options with { TargetHostnames = ["192.0.2.10"] }).GetAwaiter().GetResult();
-            throw new Exception("IP-only BEAM target list accepted.");
+            throw new Exception("IP-only Intune deployment target list accepted.");
         }
         catch (ArgumentException) { }
         try
         {
             BeamPlanning.ReviewAsync(url with { Source = "https://downloads.example.test/setup%0A.msi" }).GetAwaiter().GetResult();
-            throw new Exception("Encoded control character accepted in BEAM installer name.");
+            throw new Exception("Encoded control character accepted in Intune deployment installer name.");
         }
         catch (ArgumentException) { }
         try
         {
             BeamPlanning.ReviewAsync(url with { Source = "https://downloads.example.test/setup.exe" }).GetAwaiter().GetResult();
-            throw new Exception("Conflicting BEAM URL extension accepted.");
+            throw new Exception("Conflicting Intune deployment URL extension accepted.");
         }
         catch (ArgumentException) { }
-        Console.WriteLine("PASS: BEAM source, package, target and tenant review; no deployment available.");
+        Console.WriteLine("PASS: Intune deployment source, package, target and tenant review; no deployment available.");
     }
 
     private static void Require(bool condition, string message)

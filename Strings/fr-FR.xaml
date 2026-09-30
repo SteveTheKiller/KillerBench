@@ -337,7 +337,7 @@
   <sys:String x:Key="Str_Mace_RemovePackage">SUPPRIMER LE PACKAGE SÉLECTIONNÉ</sys:String>
   <sys:String x:Key="Str_Mace_RemovePackageTip">Nécessite un examen admissible, cette confirmation, une seconde confirmation et des preuves exactes fraîches avant de demander la suppression.</sys:String>
   <sys:String x:Key="Str_Mace_CheckInterrupted">Vérifier la suppression interrompue</sys:String>
-  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Vérifie un enregistrement antérieur de suppression de package MACE sans envoyer une autre demande de suppression.</sys:String>
+  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Vérifie un enregistrement antérieur de suppression de package sans envoyer une autre demande de suppression.</sys:String>
   <sys:String x:Key="Str_Mace_RemovalBoundary">Ce contrôle rouge est séparé de GO. Il supprime un seul package de développement exact et non protégé pour le compte en cours d&apos;exécution. La demande finale est consignée et jamais retentée automatiquement.</sys:String>
   <sys:String x:Key="Str_Orca_Description">Choisissez l&apos;édition Outlook, la portée du compte et les zones exactes à réinitialiser. GO les examine. Pour les caches du compte en cours uniquement, activez la conservation pour déplacer les caches sous des noms de récupération après des vérifications fraîches.</sys:String>
   <sys:String x:Key="Str_Orca_NewOutlook">Nouvel Outlook</sys:String>

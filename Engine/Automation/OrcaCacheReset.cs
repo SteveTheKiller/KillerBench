@@ -50,24 +50,24 @@ public static class OrcaCacheReset
         ArgumentNullException.ThrowIfNull(options);
         options.Validate();
         if (options.Scope != OrcaScope.RunningAccount || options.Actions != OrcaActions.ClearCaches)
-            return new("ORCA cache retention", CheckState.Information,
-                "Cache retention requires ClearCaches as the sole running-account action. The selected ORCA areas remain review-only.");
+            return new("Outlook cache retention", CheckState.Information,
+                "Cache retention requires ClearCaches as the sole running-account action. The selected Outlook reset areas remain review-only.");
         host ??= new WindowsOrcaCacheResetHost();
         var processes = await Required(ct => host.ReadProcessesAsync(options.Mode, ct), "Outlook process", token).ConfigureAwait(false);
         var targets = await Required(ct => host.ReadTargetsAsync(options.Mode, ct), "Outlook cache", token).ConfigureAwait(false);
         if (!processes.Complete || targets.Any(target => target is null || !target.Complete))
-            return new("ORCA cache retention", CheckState.Unknown,
+            return new("Outlook cache retention", CheckState.Unknown,
                 "Outlook process or exact cache directory evidence is incomplete. No cache retention is available.");
         if (processes.RelevantCount(options.Mode) != 0)
-            return new("ORCA cache retention", CheckState.Attention,
+            return new("Outlook cache retention", CheckState.Attention,
                 "Close every selected Outlook edition and collect fresh evidence before retaining caches.");
         if (!TryValidate(options.Mode, processes, targets, out string reason))
-            return new("ORCA cache retention", CheckState.Attention, reason + " No cache retention is available.");
+            return new("Outlook cache retention", CheckState.Attention, reason + " No cache retention is available.");
         int present = targets.Count(target => target.Exists);
         return present == 0
-            ? new("ORCA cache retention", CheckState.Clear,
+            ? new("Outlook cache retention", CheckState.Clear,
                 "No selected Outlook cache directory is present. No cache retention is needed.")
-            : new("ORCA cache retention", CheckState.Repairable,
+            : new("Outlook cache retention", CheckState.Repairable,
                 present + " exact cache director" + (present == 1 ? "y is" : "ies are") +
                 " eligible for preview-first retention after separate confirmation. Profiles, OST files, credentials, add-ins, packages and settings are excluded.",
                 RepairKind.OrcaCacheReset);
@@ -92,7 +92,7 @@ public static class OrcaCacheReset
             FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         if (File.Exists(pendingPath))
             return new(OrcaCacheResetOutcome.Blocked,
-                "A prior ORCA cache reset needs reconciliation before another cache reset can start.", pendingPath);
+                "A prior Outlook cache reset needs reconciliation before another cache reset can start.", pendingPath);
 
         Report(progress, "Checking selected Outlook processes and cache locations.");
         var firstProcesses = await Required(ct => host.ReadProcessesAsync(options.Mode, ct), "Outlook process", token).ConfigureAwait(false);
@@ -199,7 +199,7 @@ public static class OrcaCacheReset
         string pendingPath = Path.Combine(root, "orca-cache-reset.pending.json");
         if (!File.Exists(pendingPath))
             return new(OrcaCacheReconciliationOutcome.NoPendingRecord,
-                "No interrupted ORCA cache reset record is present.", pendingPath);
+                "No interrupted Outlook cache reset record is present.", pendingPath);
         Directory.CreateDirectory(root);
         await using var operationLock = new FileStream(Path.Combine(root, "orca-cache-reset.reconcile.lock"),
             FileMode.CreateNew, FileAccess.Write, FileShare.None, 1, FileOptions.DeleteOnClose);
@@ -241,7 +241,7 @@ public static class OrcaCacheReset
             System.ComponentModel.Win32Exception)
         {
             return new(OrcaCacheReconciliationOutcome.Inconclusive,
-                "The interrupted ORCA cache reset record or current directory evidence could not be verified. The pending record was retained and no move was repeated.",
+                "The interrupted Outlook cache reset record or current directory evidence could not be verified. The pending record was retained and no move was repeated.",
                 pendingPath);
         }
     }
@@ -304,26 +304,26 @@ public static class OrcaCacheReset
     private static async Task<OrcaCachePendingRecord> ReadPendingAsync(string path, CancellationToken token)
     {
         await using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.Asynchronous);
-        if (stream.Length is <= 0 or > 1_048_576) throw new InvalidDataException("ORCA cache reset record size is invalid.");
+        if (stream.Length is <= 0 or > 1_048_576) throw new InvalidDataException("Outlook cache reset record size is invalid.");
         var bytes = new byte[checked((int)stream.Length)];
         await stream.ReadExactlyAsync(bytes, token).ConfigureAwait(false);
         using var document = JsonDocument.Parse(bytes);
-        if (!UniqueFields(document.RootElement)) throw new InvalidDataException("ORCA cache reset record contains conflicting fields.");
+        if (!UniqueFields(document.RootElement)) throw new InvalidDataException("Outlook cache reset record contains conflicting fields.");
         var pending = document.RootElement.Deserialize<OrcaCachePendingRecord>(StrictJson);
         if (pending is null || pending.Schema != 1 || pending.StartedUtc == default || pending.OperationId.Length != 32 ||
             !pending.OperationId.All(Uri.IsHexDigit) || !pending.Machine.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase) ||
             !Enum.IsDefined(pending.Mode) || string.IsNullOrWhiteSpace(pending.JournalPath) || pending.Targets is null || pending.Targets.Count is < 1 or > 3)
-            throw new InvalidDataException("ORCA cache reset record is invalid.");
+            throw new InvalidDataException("Outlook cache reset record is invalid.");
         string[] expected = ExpectedPaths(pending.Mode).OrderBy(value => value, StringComparer.OrdinalIgnoreCase).ToArray();
         foreach (var target in pending.Targets)
         {
             string source = Path.GetFullPath(target.SourcePath), retained = Path.GetFullPath(target.RetainedPath);
             if (!expected.Contains(source, StringComparer.OrdinalIgnoreCase) ||
                 !retained.Equals(source + ".KillerBench." + pending.OperationId, StringComparison.OrdinalIgnoreCase))
-                throw new InvalidDataException("ORCA cache reset record paths are invalid.");
+                throw new InvalidDataException("Outlook cache reset record paths are invalid.");
         }
         if (pending.Targets.Select(item => item.SourcePath).Distinct(StringComparer.OrdinalIgnoreCase).Count() != pending.Targets.Count)
-            throw new InvalidDataException("ORCA cache reset record contains duplicate targets.");
+            throw new InvalidDataException("Outlook cache reset record contains duplicate targets.");
         return pending;
     }
 
@@ -386,7 +386,7 @@ public sealed class WindowsOrcaCacheResetHost : IOrcaCacheResetHost
         if (!OrcaCacheReset.ExpectedPaths(OrcaOutlookMode.Both).Contains(source, StringComparer.OrdinalIgnoreCase) ||
             !retained.StartsWith(source + ".KillerBench.", StringComparison.OrdinalIgnoreCase) ||
             !Path.GetDirectoryName(source)!.Equals(Path.GetDirectoryName(retained), StringComparison.OrdinalIgnoreCase))
-            throw new ArgumentException("ORCA cache retention paths are outside the expected boundary.");
+            throw new ArgumentException("Outlook cache retention paths are outside the expected boundary.");
         var step = new RepairStep(PrintRecovery.Tool,
             ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command",
             "& { param($source,$retained) if(Test-Path -LiteralPath $retained){throw 'Retention destination already exists.'}; Move-Item -LiteralPath $source -Destination $retained -ErrorAction Stop }",

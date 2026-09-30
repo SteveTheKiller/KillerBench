@@ -19,7 +19,7 @@ public sealed record BeamOptions(BeamSourceKind SourceKind, string Source, BeamI
         if (TargetHostnames is null || TargetHostnames.Count == 0)
             throw new ArgumentException("Enter at least one target hostname.", nameof(TargetHostnames));
         if (TargetHostnames.Count > 1000)
-            throw new ArgumentException("A BEAM plan is limited to 1,000 target entries.", nameof(TargetHostnames));
+            throw new ArgumentException("An Intune deployment plan is limited to 1,000 target entries.", nameof(TargetHostnames));
         if (SourceKind == BeamSourceKind.HttpsUrl &&
             (!Uri.TryCreate(Source, UriKind.Absolute, out var uri) || uri.Scheme != Uri.UriSchemeHttps ||
              !string.IsNullOrEmpty(uri.UserInfo) || string.IsNullOrWhiteSpace(uri.Host)))
@@ -77,7 +77,7 @@ public sealed record BeamPlan(string SourceDisplay, BeamInstallerType InstallerT
 public sealed record BeamReview(BeamPlan Plan, bool SourceVerified, bool Ready, bool ExecutionSupported,
     IReadOnlyList<WorkflowCheck> Checks)
 {
-    public string Format() => "BEAM / INTUNE DEPLOYMENT REVIEW\n" +
+    public string Format() => "INTUNE APP DEPLOYMENT REVIEW\n" +
         "Source: " + Plan.SourceDisplay + "\nInstaller: " + Plan.InstallerType + " / " + Plan.SetupFile +
         "\nApp: " + Plan.AppDisplayName + "\nPublisher: " + Plan.Publisher +
         "\nTenant domain: " + Plan.TenantDomain + "\nTargets: " + string.Join(", ", Plan.TargetHostnames) +
@@ -98,7 +98,7 @@ public static class BeamPlanning
         ArgumentNullException.ThrowIfNull(options);
         options.Validate();
         token.ThrowIfCancellationRequested();
-        progress?.Report("Validating BEAM installer source and target hostnames...");
+        progress?.Report("Validating Intune deployment installer source and target hostnames...");
         var normalized = NormalizeTargets(options.TargetHostnames);
         if (normalized.Hostnames.Count == 0)
             throw new ArgumentException("Enter at least one hostname. Intune device matching does not accept IP targets.", nameof(options));
@@ -123,10 +123,10 @@ public static class BeamPlanning
             : "No automatic uninstall command supplied";
         string safeName = SafeName(options.AppName.Trim());
         var plan = new BeamPlan(SourceDisplay(options), options.InstallerType, setupFile,
-            options.AppName.Trim() + " (BEAM)", options.Publisher.Trim(), install, uninstall,
+            options.AppName.Trim() + "", options.Publisher.Trim(), install, uninstall,
             normalized.Hostnames, normalized.IpAddresses, options.TenantDomain.Trim().TrimEnd('.'),
-            "BEAM-" + safeName, "SYSTEM", "Required for the generated device group",
-            "Per-run marker at C:\\ProgramData\\BEAM\\BEAM.marker", "Suppress restart");
+            "KillerBench-" + safeName, "SYSTEM", "Required for the generated device group",
+            "Per-run marker at C:\\ProgramData\\KillerBench\\KillerBench.marker", "Suppress restart");
         bool ready = options.SourceKind == BeamSourceKind.HttpsUrl || sourceVerified;
         var checks = new List<WorkflowCheck>
         {
@@ -136,9 +136,9 @@ public static class BeamPlanning
                 (normalized.IpAddresses.Count == 0 ? "No IP targets were supplied. " : normalized.IpAddresses.Count + " IP target(s) were ignored because Intune matches these devices by hostname. ") +
                 "Entra and Intune membership, duplicate display names, license state and device check-in are not verified."),
             new("Package behavior", CheckState.Information,
-                "The plan uses SYSTEM context, x64 and x86 applicability, Windows 10 1607 minimum, a required group assignment, visible notifications, suppressed restart behavior and a new content version when the BEAM app already exists."),
+                "The plan uses SYSTEM context, x64 and x86 applicability, Windows 10 1607 minimum, a required group assignment, visible notifications, suppressed restart behavior and a new content version when the Intune deployment app already exists."),
             new("Detection and uninstall", CheckState.Information,
-                "The source workflow uses a unique per-run marker, so a later BEAM run intentionally installs again. Marker detection does not prove application health. " +
+                "The source workflow uses a unique per-run marker, so a later Intune deployment run intentionally installs again. Marker detection does not prove application health. " +
                 (options.InstallerType == BeamInstallerType.Msi ? "The generated MSI uninstall command still requires product-specific validation." : "The source workflow provides no real EXE uninstall command.")),
             new("Tenant execution", CheckState.Information,
                 "Execution is unavailable. Global or Intune administrator sign-in, Graph consent, tenant licensing, IntuneWinAppUtil trust, download, packaging, upload, group membership, assignment and device sync require separate guarded implementation and verification.")

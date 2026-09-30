@@ -12,7 +12,7 @@ public static class DebloatHibernationEligibility
         options.Validate();
         if (options.Areas != DebloatAreas.Hibernation)
             return new("Hibernation disable", CheckState.Attention,
-                "Select Hibernation as the only DEBLOAT area before evaluating this power change.");
+                "Select Hibernation as the only declutter area before evaluating this power change.");
         if (pendingRecovery)
             return new("Hibernation disable", CheckState.Attention,
                 "A previous hibernation change requires reconciliation. Recheck current state without repeating the command before another attempt.");

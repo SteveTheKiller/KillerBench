@@ -163,7 +163,7 @@
   <sys:String x:Key="Str_Mace_RemovePackage">ODEBRAT VYBRANÝ BALÍČEK</sys:String>
   <sys:String x:Key="Str_Mace_RemovePackageTip">Vyžaduje způsobilé přezkoumání, toto potvrzení, druhé potvrzení a nové přesné důkazy před požádáním o odstranění.</sys:String>
   <sys:String x:Key="Str_Mace_CheckInterrupted">Zkontrolujte přerušené odstranění</sys:String>
-  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Kontroluje předchozí záznam odebrání balíčku MACE, aniž by posílal další žádost o odebrání.</sys:String>
+  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Kontroluje předchozí záznam odebrání balíčku, aniž by posílal další žádost o odebrání.</sys:String>
   <sys:String x:Key="Str_Mace_RemovalBoundary">Tento červený ovládací prvek je oddělený od GO. Odstraní jeden přesný, nechráněný vývojový balíček pouze pro běžící účet. Konečná žádost je zaznamenána a nikdy se automaticky neopakuje.</sys:String>
   <sys:String x:Key="Str_Orca_Description">Vyberte edici Outlooku, rozsah účtu a přesné oblasti resetu. GO je zkontroluje. Pro vyrovnávací paměti běžících účtů povolte uchovávání, aby se vyrovnávací paměti po nové kontrole přesunuly pod obnovovací názvy.</sys:String>
   <sys:String x:Key="Str_Orca_NewOutlook">Nový Outlook</sys:String>

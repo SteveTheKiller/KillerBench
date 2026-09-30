@@ -18,10 +18,10 @@ internal static class OrcaPlanningChecks
         Require(review.Checks.Any(check => check.Name == "Classic Outlook OST files" && check.State == CheckState.Information),
             "Selected Classic Outlook evidence is retained");
         Require(review.Format().Contains("Execution available: No") && review.Checks.All(check => check.Repair is null),
-            "ORCA review never offers a repair");
+            "Outlook reset review never offers a repair");
         Require(review.ResetReadiness is { ApplicationsClosed: true, BackupRequired: true, Complete: true } &&
-            review.Checks.Any(check => check.Name == "ORCA backup prerequisite" && check.State == CheckState.Attention),
-            "Destructive ORCA selections require closed applications and a verified backup before future execution");
+            review.Checks.Any(check => check.Name == "Outlook reset backup prerequisite" && check.State == CheckState.Attention),
+            "Destructive Outlook reset selections require closed applications and a verified backup before future execution");
 
         var active = OrcaPlanning.Review(options, evidence, new(1, 2, true, "Counts only."));
         Require(active.ResetReadiness is { ApplicationsClosed: false } &&
@@ -32,7 +32,7 @@ internal static class OrcaPlanningChecks
         var processEvidence = OrcaProcessInventory.Read(OrcaOutlookMode.Both, name => name == "olk" ? 1 : 2);
         Require(processEvidence.Complete && processEvidence.NewOutlookProcesses == 1 &&
             processEvidence.ClassicOutlookProcesses == 2 && processEvidence.Limitation.Contains("Process IDs"),
-            "ORCA process inventory retains bounded counts and an explicit privacy boundary");
+            "Outlook reset process inventory retains bounded counts and an explicit privacy boundary");
         Require(!OrcaProcessInventory.Read(OrcaOutlookMode.New, _ => 129).Complete &&
             !OrcaProcessInventory.Read(OrcaOutlookMode.Classic, _ => throw new InvalidOperationException()).Complete,
             "Oversized and failed process evidence remains incomplete");
@@ -42,7 +42,7 @@ internal static class OrcaPlanningChecks
             try
             {
                 OrcaProcessInventory.Read(OrcaOutlookMode.Both, _ => throw new Exception("Canceled provider ran"), stopped.Token);
-                throw new Exception("Canceled ORCA process inventory continued.");
+                throw new Exception("Canceled Outlook reset process inventory continued.");
             }
             catch (OperationCanceledException) { }
         }
@@ -64,21 +64,21 @@ internal static class OrcaPlanningChecks
         var cacheOnly = OrcaPlanning.Review(new(OrcaOutlookMode.Both, OrcaScope.RunningAccount, OrcaActions.ClearCaches),
             evidence, new(0, 0, true, "Counts only."));
         Require(cacheOnly.ExecutionSupported && cacheOnly.Format().Contains("Execution available: Cache retention only") &&
-            cacheOnly.Checks.Any(check => check.Name == "Requested ORCA actions" && check.Detail.Contains("guarded reset action")) &&
-            cacheOnly.Checks.Any(check => check.Name == "ORCA backup prerequisite" && check.State == CheckState.Information),
-            "Complete cache-only review exposes the guarded retention action without widening other ORCA execution");
+            cacheOnly.Checks.Any(check => check.Name == "Requested Outlook reset actions" && check.Detail.Contains("guarded reset action")) &&
+            cacheOnly.Checks.Any(check => check.Name == "Outlook reset backup prerequisite" && check.State == CheckState.Information),
+            "Complete cache-only review exposes the guarded retention action without widening other Outlook reset execution");
         var activeCache = OrcaPlanning.Review(new(OrcaOutlookMode.Both, OrcaScope.RunningAccount, OrcaActions.ClearCaches),
             evidence, new(1, 0, true, "Counts only."));
         Require(!activeCache.ExecutionSupported, "Active Outlook blocks cache-only execution");
         ExpectInvalid(new(OrcaOutlookMode.New, OrcaScope.RunningAccount, OrcaActions.DeleteOstFiles));
         ExpectInvalid(new(OrcaOutlookMode.Classic, OrcaScope.RunningAccount, OrcaActions.ReinstallNewOutlook));
         ExpectInvalid(new(OrcaOutlookMode.Both, OrcaScope.RunningAccount, OrcaActions.None));
-        Console.WriteLine("PASS: ORCA edition, scope, action, process privacy, backup readiness and guarded cache-only execution boundary.");
+        Console.WriteLine("PASS: Outlook reset edition, scope, action, process privacy, backup readiness and guarded cache-only execution boundary.");
     }
 
     private static void ExpectInvalid(OrcaReviewOptions options)
     {
-        try { options.Validate(); throw new Exception("Invalid ORCA options were accepted."); }
+        try { options.Validate(); throw new Exception("Invalid Outlook reset options were accepted."); }
         catch (ArgumentException) { }
     }
 

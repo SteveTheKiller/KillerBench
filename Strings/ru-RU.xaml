@@ -161,7 +161,7 @@
   <sys:String x:Key="Str_Mace_RemovePackage">УДАЛИТЬ ВЫБРАННЫЙ ПАКЕТ</sys:String>
   <sys:String x:Key="Str_Mace_RemovePackageTip">Требуется действительный отзыв, это подтверждение, второе подтверждение и свежие точные доказательства перед запросом на удаление.</sys:String>
   <sys:String x:Key="Str_Mace_CheckInterrupted">Проверка прерванного удаления</sys:String>
-  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Проверяет предыдущую запись об удалении пакета MACE без отправки нового запроса на удаление.</sys:String>
+  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Проверяет предыдущую запись об удалении пакета без отправки нового запроса на удаление.</sys:String>
   <sys:String x:Key="Str_Mace_RemovalBoundary">Этот красный элемент управления отделен от GO. Он удаляет один точный, незащищенный пакет разработки только для текущей учетной записи. Финальный запрос записывается и больше не повторяется автоматически.</sys:String>
   <sys:String x:Key="Str_Orca_Description">Выберите редакцию Outlook, область учетной записи и точные области сброса. GO проверяет их. Только для кешей текущей учетной записи включите сохранение, чтобы переместить кеши под восстановленные имена после свежих проверок.</sys:String>
   <sys:String x:Key="Str_Orca_NewOutlook">Новый Outlook</sys:String>

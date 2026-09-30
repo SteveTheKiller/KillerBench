@@ -163,7 +163,7 @@
   <sys:String x:Key="Str_Mace_RemovePackage">নির্বাচিত প্যাকেজ অপসারণ করুন</sys:String>
   <sys:String x:Key="Str_Mace_RemovePackageTip">সরানোর জন্য অনুরোধ করার আগে একটি যোগ্য পর্যালোচনা, এই নিশ্চিতকরণ, একটি দ্বিতীয় নিশ্চিতকরণ এবং নতুন সঠিক প্রমাণ প্রয়োজন।</sys:String>
   <sys:String x:Key="Str_Mace_CheckInterrupted">বিচ্ছিন্ন সরানো পরীক্ষা করুন</sys:String>
-  <sys:String x:Key="Str_Mace_CheckInterruptedTip">অন্য সরানোর অনুরোধ না পাঠিয়ে পূর্ববর্তী MACE প্যাকেজ-সরানোর রেকর্ড পরীক্ষা করে।</sys:String>
+  <sys:String x:Key="Str_Mace_CheckInterruptedTip">অন্য সরানোর অনুরোধ না পাঠিয়ে পূর্ববর্তী প্যাকেজ-সরানোর রেকর্ড পরীক্ষা করে।</sys:String>
   <sys:String x:Key="Str_Mace_RemovalBoundary">এই লাল নিয়ন্ত্রণ GO থেকে আলাদা। এটি চলমান অ্যাকাউন্টের জন্য কেবল একটি সঠিক, অরক্ষিত উন্নয়ন প্যাকেজ সরায়। চূড়ান্ত অনুরোধটি রেকর্ড করা হয় এবং কখনও স্বয়ংক্রিয়ভাবে পুনরায় চেষ্টা করা হয় না।</sys:String>
   <sys:String x:Key="Str_Orca_Description">Outlook সংস্করণ, অ্যাকাউন্ট সীমা এবং সঠিক রিসেট এলাকা নির্বাচন করুন। GO সেগুলি পর্যালোচনা করে। চলমান-অ্যাকাউন্ট ক্যাশের জন্য কেবলমাত্র, নতুন পরীক্ষার পরে ক্যাশগুলি পুনরুদ্ধার নামের নিচে সরাতে ধরে রাখার ক্ষমতা সক্ষম করুন।</sys:String>
   <sys:String x:Key="Str_Orca_NewOutlook">নিউ আউটলুক</sys:String>

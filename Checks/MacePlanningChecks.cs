@@ -40,7 +40,7 @@ internal static class MacePlanningChecks
             "A matching product name from another publisher is excluded");
         Require(review.Format().Contains("Execution available: No") && review.Checks.All(item => item.Repair is null),
             "Review output never offers a repair");
-        Require(review.ProcessEvidence == closed && review.Checks.Single(item => item.Name == "MACE process readiness").State == CheckState.Information &&
+        Require(review.ProcessEvidence == closed && review.Checks.Single(item => item.Name == "Microsoft app removal process readiness").State == CheckState.Information &&
             review.Format().Contains("Selected applications active: 0"),
             "Complete closed-process evidence is retained without exposing process identities");
         Require(!MacePlanning.Review(options, machine with { Complete = false }, account, packages,
@@ -59,7 +59,7 @@ internal static class MacePlanningChecks
         var active = MacePlanning.Review(options, machine, account, packages, clickToRun: clickToRun,
             processes: closed with { OneDriveProcesses = 1, OfficeProcesses = 2 }, oneDriveFolders: folders,
             managedPolicy: policy);
-        Require(active.Complete && active.Checks.Single(item => item.Name == "MACE process readiness") is
+        Require(active.Complete && active.Checks.Single(item => item.Name == "Microsoft app removal process readiness") is
             { State: CheckState.Attention, Repair: null } && active.Format().Contains("Selected applications active: 3"),
             "Selected active applications block future removal readiness without exposing process details");
         Require(!MacePlanning.Review(options, machine, account, packages, clickToRun: clickToRun,
@@ -255,17 +255,17 @@ internal static class MacePlanningChecks
         try
         {
             MaceProcessInventory.Read(MaceTargets.OneDrive, _ => 0, new CancellationToken(true));
-            throw new Exception("Canceled MACE process inventory completed");
+            throw new Exception("Canceled Microsoft app removal process inventory completed");
         }
         catch (OperationCanceledException) { }
         ExpectInvalid(new(MaceTargets.None));
         ExpectInvalid(new(MaceTargets.Teams, RestoreOneDriveFolderLocations: true));
-        Console.WriteLine("PASS: MACE target, scope, retention, exact-registration, process, known-folder, credential, application-data, managed-policy and removal-provider readiness; no removal available.");
+        Console.WriteLine("PASS: Microsoft app removal target, scope, retention, exact-registration, process, known-folder, credential, application-data, managed-policy and removal-provider readiness; no removal available.");
     }
 
     private static void ExpectInvalid(MaceReviewOptions options)
     {
-        try { options.Validate(); throw new Exception("Invalid MACE options were accepted."); }
+        try { options.Validate(); throw new Exception("Invalid Microsoft app removal options were accepted."); }
         catch (ArgumentException) { }
     }
 

@@ -357,13 +357,13 @@ public partial class MainWindow
         }
         if (macePackageReconciliationRequested && kind != WorkflowKind.Mace)
         {
-            Report("MACE reconciliation is available only from the MACE workflow.");
+            Report("Microsoft app removal reconciliation is available only from the Microsoft app removal workflow.");
             return;
         }
         if (macePackageRemovalRequested && (kind != WorkflowKind.Mace ||
             MacePackageSelection.SelectedItem is not MacePackageChoice || MacePackageRemovalConsent.IsChecked != true))
         {
-            Report("The separate MACE removal control requires one selected package and its confirmation.");
+            Report("The separate app removal control requires one selected package and its confirmation.");
             return;
         }
         var orcaOptions = new OrcaReviewOptions(
@@ -443,7 +443,7 @@ public partial class MainWindow
             catch (ArgumentException error) { Report(error.Message); return; }
         }
         int debloatAction = kind == WorkflowKind.Debloat ? DebloatActionChoice.SelectedIndex : 0;
-        if (debloatAction is < 0 or > 3) { Report("Choose a valid DEBLOAT GO action."); return; }
+        if (debloatAction is < 0 or > 3) { Report("Choose a valid declutter GO action."); return; }
         if (debloatAction == 1 && debloatOptions.Areas != DebloatAreas.HighPerformancePower)
         { Report("High performance activation requires High performance power as the only selected area."); return; }
         if (debloatAction == 2 && (debloatOptions.Areas != DebloatAreas.SleepAndDisplayTimers || debloatOptions.PowerRequest is null))
@@ -632,7 +632,7 @@ public partial class MainWindow
         SetCaptureBusy(true);
         RepairPanel.IsEnabled = false;
         ModeLabel.Text = restorePointRequest is not null ? "SYSTEM RESTORE / PREPARE POINT" : renameComputer ? "COMPUTER NAME / GUARDED RENAME" : previousWindowsRemoval ? "CLEANUP / PREVIOUS WINDOWS" : applyTime ? "TIME / APPLY CUSTOM SOURCE" : applyFirewallProfiles ? "FIREWALL / ENABLE PROFILES" : enableEventChannel ? "EVENT LOG / ENABLE CHANNEL" :
-            applyPrivacyClipboardHistory ? "PRIVACY / CLIPBOARD HISTORY" : applyPrivacyBoolean ? "PRIVACY / GUARDED SETTING" : rebuildSearchIndex ? "SEARCH / GUARDED INDEX REBUILD" : debloatAction > 0 ? "DEBLOAT / GUARDED POWER CHANGE" : autoRepair ? "WORKFLOW / AUTOMATIC REPAIR" : "WORKFLOW / DIAGNOSE";
+            applyPrivacyClipboardHistory ? "PRIVACY / CLIPBOARD HISTORY" : applyPrivacyBoolean ? "PRIVACY / GUARDED SETTING" : rebuildSearchIndex ? "SEARCH / GUARDED INDEX REBUILD" : debloatAction > 0 ? "DECLUTTER / GUARDED POWER CHANGE" : autoRepair ? "WORKFLOW / AUTOMATIC REPAIR" : "WORKFLOW / DIAGNOSE";
         BeginWorkflowOutput(kind);
         try
         {
@@ -644,15 +644,15 @@ public partial class MainWindow
                     "KillerBench", "MacePackageRemoval");
                 var reconciliation = await Task.Run(() => MacePackageRemoval.ReconcileAsync(maceFolder,
                     new WindowsMacePackageRemovalHost(), stop.Token));
-                string output = "MACE PACKAGE REMOVAL / RECONCILIATION " + reconciliation.Outcome.ToString().ToUpperInvariant() +
+                string output = "APP PACKAGE REMOVAL / RECONCILIATION " + reconciliation.Outcome.ToString().ToUpperInvariant() +
                     "\n\n" + reconciliation.Detail + "\n\nRecord: " +
                     (reconciliation.ArchivePath ?? reconciliation.PendingPath) +
                     "\nNo package removal request was sent.";
                 string journal = reconciliation.ArchivePath ?? reconciliation.PendingPath;
                 bool verified = reconciliation.Outcome is MacePackageRemovalReconciliationOutcome.Verified or
                     MacePackageRemovalReconciliationOutcome.NotApplied or MacePackageRemovalReconciliationOutcome.NoPendingRecord;
-                RegisterGuardedActionReport(WorkflowKind.Mace, "MACE package reconciliation",
-                    "MACE package removal reconciliation / " + reconciliation.Outcome, output, reconciliation.Detail, journal, verified,
+                RegisterGuardedActionReport(WorkflowKind.Mace, "App removal package reconciliation",
+                    "App package removal reconciliation / " + reconciliation.Outcome, output, reconciliation.Detail, journal, verified,
                     "Review the selected package and current installed state before requesting another removal.");
                 SetMaceReview(null);
                 SetScanLight(verified ? "ready" : "attention", reconciliation.Detail);
@@ -665,14 +665,14 @@ public partial class MainWindow
                     "KillerBench", "MacePackageRemoval");
                 var removal = await Task.Run(() => MacePackageRemoval.RunAsync(maceOptions, selected.Identity,
                     true, maceFolder, new WindowsMacePackageRemovalHost(), progress, stop.Token));
-                string output = "MACE PACKAGE REMOVAL / " + removal.Outcome.ToString().ToUpperInvariant() +
+                string output = "APP PACKAGE REMOVAL / " + removal.Outcome.ToString().ToUpperInvariant() +
                     "\nPackage: " + selected.Identity + "\n\n" + removal.Detail +
                     "\n\nRecord: " + (removal.JournalPath ?? removal.PendingPath ?? "No change record created.") +
                     "\nNo other package, user data, credential, policy or folder action was requested.";
                 string journal = removal.JournalPath ?? removal.PendingPath ?? "No change record created.";
                 bool verified = removal.Outcome == MacePackageRemovalOutcome.Verified;
-                RegisterGuardedActionReport(WorkflowKind.Mace, "MACE package removal",
-                    "MACE package removal / " + removal.Outcome, output, removal.Detail, journal, verified,
+                RegisterGuardedActionReport(WorkflowKind.Mace, "App package removal",
+                    "App package removal / " + removal.Outcome, output, removal.Detail, journal, verified,
                     "Verify the selected application no longer appears, then test Windows before requesting another removal.");
                 MacePackageRemovalConsent.IsChecked = false;
                 SetMaceReview(null);
@@ -686,13 +686,13 @@ public partial class MainWindow
                 string output = ServicingActivityText.FormatReport(snapshots);
                 bool incomplete = snapshots.Any(snapshot => snapshot.State == CheckState.Unknown);
                 bool attention = snapshots.Any(snapshot => snapshot.State == CheckState.Attention);
-                string detail = $"PEEK retained {snapshots.Count} read-only servicing snapshot{(snapshots.Count == 1 ? "" : "s")}.";
+                string detail = $"Servicing monitor retained {snapshots.Count} read-only servicing snapshot{(snapshots.Count == 1 ? "" : "s")}.";
                 CheckState state = incomplete ? CheckState.Unknown : attention ? CheckState.Attention : CheckState.Information;
                 AppendWorkflowOutput(output);
                 RegisterWorkflowResult(new WorkflowResult(WorkflowKind.ServicingActivity, Environment.MachineName,
-                    DateTimeOffset.UtcNow, incomplete ? "PEEK monitoring incomplete" : attention ? "PEEK needs attention" : "PEEK monitoring complete",
-                    snapshots.SelectMany(snapshot => snapshot.Checks).DefaultIfEmpty(new WorkflowCheck("PEEK servicing activity", state, detail)).ToArray(), [],
-                    "Read-only servicing activity monitor. No operation journal was created."), "PEEK servicing activity");
+                    DateTimeOffset.UtcNow, incomplete ? "Servicing monitoring incomplete" : attention ? "Servicing monitor needs attention" : "Servicing monitoring complete",
+                    snapshots.SelectMany(snapshot => snapshot.Checks).DefaultIfEmpty(new WorkflowCheck("Servicing activity", state, detail)).ToArray(), [],
+                    "Read-only servicing activity monitor. No operation journal was created."), "Servicing activity");
                 SetScanLight(incomplete ? "incomplete" : attention ? "attention" : "ready", detail);
                 return;
             }
@@ -902,15 +902,15 @@ public partial class MainWindow
                     }
                 }
                 string output = title + "\n" + detail + "\nJournal: " + (journal ?? "No change journal created.") +
-                    "\n\nApplies only to the selected power action. No other DEBLOAT area was changed.";
+                    "\n\nApplies only to the selected power action. No other declutter area was changed.";
                 AppendWorkflowOutput(output);
                 var action = new WorkflowAction(title, verified ? "Verified" : "Review required", detail,
                     verified ? "Review the completed action and test the computer's power behavior before making another change."
                         : "Review the local change journal and current power state before retrying.", verified);
                 RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Debloat, Environment.MachineName, DateTimeOffset.UtcNow,
                     verified ? "Power action verified" : "Power action requires review",
-                    [new WorkflowCheck("Guarded DEBLOAT power action", verified ? CheckState.Information : CheckState.Unknown,
-                        detail)], [], journal ?? "No change journal created.") { Actions = [action] }, "DEBLOAT power action");
+                    [new WorkflowCheck("Guarded declutter power action", verified ? CheckState.Information : CheckState.Unknown,
+                        detail)], [], journal ?? "No change journal created.") { Actions = [action] }, "Declutter power action");
                 SetScanLight(verified ? "ready" : "attention", detail);
                 return;
             }
@@ -1338,7 +1338,7 @@ public partial class MainWindow
                     ? "\nCaches: " + string.Join(", ", reset.Targets.Select(target => target.Label))
                     : "";
                 string journal = reset?.JournalPath ?? recovery?.ArchivePath ?? recovery?.PendingPath ?? "No change journal created.";
-                string output = "ORCA / OUTLOOK CACHE RESET\nOutcome: " + outcome + targets + "\n\n" + detail +
+                string output = "OUTLOOK CACHE RESET\nOutcome: " + outcome + targets + "\n\n" + detail +
                     "\n\nJournal: " + journal +
                     "\nRetained cache locations are recorded only in the local recovery journal.";
                 bool verified = outcome is "Verified" or "NotChanged" or "NoPendingRecord";

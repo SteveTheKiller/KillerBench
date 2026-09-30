@@ -23,13 +23,13 @@ public static class WorkflowCatalog
         new WorkflowDefinition(WorkflowKind.Cleanup, "cleanup", "Cleanup"),
         new WorkflowDefinition(WorkflowKind.Defender, "defender", "Microsoft Defender"),
         new WorkflowDefinition(WorkflowKind.AvailableUpdates, "updates", "Available updates"),
-        new WorkflowDefinition(WorkflowKind.Privacy, "privacy", "Privacy (SHADE)"),
-        new WorkflowDefinition(WorkflowKind.BitLocker, "bitlocker", "BitLocker (BERET)"),
+        new WorkflowDefinition(WorkflowKind.Privacy, "privacy", "Privacy"),
+        new WorkflowDefinition(WorkflowKind.BitLocker, "bitlocker", "BitLocker"),
         new WorkflowDefinition(WorkflowKind.ComponentCleanup, "component-cleanup", "Component-store cleanup"),
-        new WorkflowDefinition(WorkflowKind.Profiles, "profiles", "Profiles (PRUNE)"),
+        new WorkflowDefinition(WorkflowKind.Profiles, "profiles", "Profiles"),
         new WorkflowDefinition(WorkflowKind.ComputerName, "computer-name", "Computer name review (URT)"),
-        new WorkflowDefinition(WorkflowKind.Foxit, "foxit", "Foxit inventory (FACTS)"),
-        new WorkflowDefinition(WorkflowKind.ScheduledTasks, "tasks", "Scheduled tasks (STARE)"),
+        new WorkflowDefinition(WorkflowKind.Foxit, "foxit", "Foxit inventory"),
+        new WorkflowDefinition(WorkflowKind.ScheduledTasks, "tasks", "Scheduled tasks"),
         new WorkflowDefinition(WorkflowKind.Services, "services", "Windows services"),
         new WorkflowDefinition(WorkflowKind.EventLog, "eventlog", "Windows Event Log"),
         new WorkflowDefinition(WorkflowKind.Applications, "applications", "Application errors"),
@@ -105,12 +105,12 @@ public static class WorkflowCatalog
         new WorkflowDefinition(WorkflowKind.WindowsActivation, "windows-activation", "Windows activation"),
         new WorkflowDefinition(WorkflowKind.StartupPerformance, "startup-performance", "Startup performance"),
         new WorkflowDefinition(WorkflowKind.StartupApplications, "startup-applications", "Startup applications"),
-        new WorkflowDefinition(WorkflowKind.Mace, "mace", "Microsoft application removal review (MACE)"),
-        new WorkflowDefinition(WorkflowKind.Orca, "orca", "Outlook repair review (ORCA)"),
-        new WorkflowDefinition(WorkflowKind.Depot, "depot", "Endpoint provisioning review (DEPOT)"),
-        new WorkflowDefinition(WorkflowKind.Beam, "beam", "Intune deployment review (BEAM)"),
-        new WorkflowDefinition(WorkflowKind.Debloat, "debloat", "Windows cleanup review (DEBLOAT)"),
-        new WorkflowDefinition(WorkflowKind.ServicingActivity, "servicing-monitor", "Servicing activity monitor (PEEK)")
+        new WorkflowDefinition(WorkflowKind.Mace, "mace", "Microsoft app removal"),
+        new WorkflowDefinition(WorkflowKind.Orca, "orca", "Outlook reset"),
+        new WorkflowDefinition(WorkflowKind.Depot, "depot", "Onboarding"),
+        new WorkflowDefinition(WorkflowKind.Beam, "beam", "Intune app deployment"),
+        new WorkflowDefinition(WorkflowKind.Debloat, "debloat", "Declutter Windows"),
+        new WorkflowDefinition(WorkflowKind.ServicingActivity, "servicing-monitor", "Servicing activity monitor")
     });
 
     public static string CommandChoices => string.Join("|", All.Select(x => x.Key));

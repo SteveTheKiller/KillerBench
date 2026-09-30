@@ -146,7 +146,7 @@
   <sys:String x:Key="Str_Mace_RemovePackage">ТАҢДАЛҒАН ПАКЕТТІ ЖОЮ</sys:String>
   <sys:String x:Key="Str_Mace_RemovePackageTip">Жарамды қарап шығу, осы растау, екінші растау және жою сұрауына дейін жаңа нақты дәлел қажет.</sys:String>
   <sys:String x:Key="Str_Mace_CheckInterrupted">Үзілген жоюды тексеру</sys:String>
-  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Басқа жою сұрауын жібермей, алдыңғы MACE пакет жою жазбасын тексереді.</sys:String>
+  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Басқа жою сұрауын жібермей, алдыңғы пакет жою жазбасын тексереді.</sys:String>
   <sys:String x:Key="Str_Mace_RemovalBoundary">Бұл қызыл басқару GO-дан бөлек. Ол іске қосушы тіркелгі үшін ғана бір нақты, қорғалмаған әзірлеу пакетін жояды. Соңғы сұрау жазылады және автоматты түрде қайта орындалмайды.</sys:String>
   <sys:String x:Key="Str_Orca_Description">Outlook шығарылымын, тіркелгі ауқымын және нақты қалпына келтіру аймақтарын таңдаңыз. GO оларды қарап шығады. Тек іске қосушы тіркелгі кэштері үшін, жаңа тексерулерден кейін кэштерді қалпына келтіру атауларына жылжыту үшін сақтауды қосыңыз.</sys:String>
   <sys:String x:Key="Str_Orca_NewOutlook">Жаңа Outlook</sys:String>

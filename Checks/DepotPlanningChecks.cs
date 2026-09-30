@@ -20,12 +20,12 @@ internal static class DepotPlanningChecks
         Require(review.Applications.Single(item => item.Application == DepotApplications.Chrome).Registrations.Count == 1,
             "Publisher evidence rejects an unrelated same-name registration");
         Require(review.Checks.All(check => check.Repair is null) && review.Format().Contains("Execution available: No"),
-            "DEPOT review never offers provisioning execution");
+            "Onboarding review never offers provisioning execution");
         Require(!DepotPlanning.Review(options, installed with { Complete = false }, packages, office).Complete,
             "Incomplete inventory cannot establish complete provisioning review coverage");
-        try { new DepotOptions(DepotApplications.None, DepotConfiguration.None).Validate(); throw new Exception("Empty DEPOT selection accepted."); }
+        try { new DepotOptions(DepotApplications.None, DepotConfiguration.None).Validate(); throw new Exception("Empty onboarding selection accepted."); }
         catch (ArgumentException) { }
-        Console.WriteLine("PASS: DEPOT application, configuration, publisher and incomplete-evidence review; no provisioning available.");
+        Console.WriteLine("PASS: onboarding application, configuration, publisher and incomplete-evidence review; no provisioning available.");
     }
 
     private static void Require(bool condition, string message)

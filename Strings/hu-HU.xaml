@@ -146,7 +146,7 @@
   <sys:String x:Key="Str_Mace_RemovePackage">KIVÁLASZTOTT CSOMAG ELTÁVOLÍTÁSA</sys:String>
   <sys:String x:Key="Str_Mace_RemovePackageTip">Jogosult áttekintés, ez a megerősítés, egy második megerősítés és friss pontos bizonyíték szükséges az eltávolítás kéréséhez.</sys:String>
   <sys:String x:Key="Str_Mace_CheckInterrupted">Megszakított eltávolítás ellenőrzése</sys:String>
-  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Egy korábbi MACE csomageltávolítási rekordot ellenőriz anélkül, hogy újabb eltávolítási kérést küldene.</sys:String>
+  <sys:String x:Key="Str_Mace_CheckInterruptedTip">Egy korábbi csomageltávolítási rekordot ellenőriz anélkül, hogy újabb eltávolítási kérést küldene.</sys:String>
   <sys:String x:Key="Str_Mace_RemovalBoundary">Ez a piros vezérlő külön van a GO-tól. Pontosan egy nem védett fejlesztői csomagot távolít el csak a futtató fióknál. A végső kérés rögzítésre kerül, és soha nem próbálkozik újra automatikusan.</sys:String>
   <sys:String x:Key="Str_Orca_Description">Válassza ki az Outlook kiadását, a fiókhatókört és a pontos visszaállítási területeket. A GO áttekinti ezeket. Csak futtató fiókos gyorsítótáraknál engedélyezze a megőrzést, hogy a gyorsítótárak friss ellenőrzések után helyreállítási nevekre kerüljenek.</sys:String>
   <sys:String x:Key="Str_Orca_NewOutlook">Új Outlook</sys:String>

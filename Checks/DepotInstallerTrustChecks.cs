@@ -47,7 +47,7 @@ internal static class DepotInstallerTrustChecks
             Require(live.Outcome is DepotInstallerTrustOutcome.Trusted or DepotInstallerTrustOutcome.Untrusted or DepotInstallerTrustOutcome.Unknown,
                 "Live read-only signature inspection returns a bounded outcome");
         }
-        Console.WriteLine("PASS: DEPOT installer trust requires a valid Authenticode signature from the confirmed vendor organization; unconfirmed and unsigned vendors stay untrusted; read-only signature evidence only.");
+        Console.WriteLine("PASS: onboarding installer trust requires a valid Authenticode signature from the confirmed vendor organization; unconfirmed and unsigned vendors stay untrusted; read-only signature evidence only.");
     }
 
     private static void Require(bool condition, string message) { if (!condition) throw new Exception(message); }
