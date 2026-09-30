@@ -159,3 +159,50 @@ public sealed class WindowsRegistrySetDwordAction : IActionPrimitive
         }
     }
 }
+
+/// <summary>Writes one REG_SZ value in an existing key. An existing value of another type is refused rather than converted, the prior value is retained in the raw evidence, and a value that already matches is reported as not dispatched.</summary>
+public sealed class WindowsRegistrySetStringAction : IActionPrimitive
+{
+    public string Name => "registry.set-string";
+    public IReadOnlyList<PrimitiveParameter> Parameters { get; } =
+    [
+        WindowsRegistryPrimitives.HiveParameter, WindowsRegistryPrimitives.KeyParameter, WindowsRegistryPrimitives.NameParameter,
+        new("value", true, "String data, up to 256 printable characters") { Pattern = "[ -~]{0,256}" }, WindowsRegistryPrimitives.ViewParameter
+    ];
+    public RecipeRisk Risk => RecipeRisk.Persistent;
+    public bool RequiresElevation => false;
+
+    public Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
+    {
+        ArgumentNullException.ThrowIfNull(parameters);
+        token.ThrowIfCancellationRequested();
+        if (!OperatingSystem.IsWindows()) return Task.FromResult(new ActionResult(false, false, "", "Registry access requires Windows."));
+        string requested = parameters.GetValueOrDefault("value") ?? "";
+        if (requested.Length > 256 || requested.Any(c => c < ' ' || c > '~')) return Task.FromResult(new ActionResult(false, false, "", "The value is not printable text of 256 characters or fewer."));
+        if (!WindowsRegistryPrimitives.TryOpen(parameters, true, out var key, out string error)) return Task.FromResult(new ActionResult(false, false, "", error));
+        using (key)
+        {
+            if (key is null) return Task.FromResult(new ActionResult(false, false, "", "The registry key does not exist; this primitive does not create keys."));
+            string name = parameters["name"];
+            try
+            {
+                object? prior = key.GetValue(name, null, RegistryValueOptions.DoNotExpandEnvironmentNames);
+                var priorKind = prior is null ? RegistryValueKind.Unknown : key.GetValueKind(name);
+                string priorText = prior is null ? "absent" : priorKind + ":" + WindowsRegistryPrimitives.Render(prior, priorKind);
+                if (prior is not null && priorKind != RegistryValueKind.String)
+                    return Task.FromResult(new ActionResult(false, false, "prior=" + priorText, "The existing value is " + priorKind + ", not String; it was left unchanged."));
+                if (prior is string existing && string.Equals(existing, requested, StringComparison.Ordinal))
+                    return Task.FromResult(new ActionResult(false, true, "prior=" + priorText, "The value already matches; nothing was written."));
+                key.SetValue(name, requested, RegistryValueKind.String);
+                object? after = key.GetValue(name, null, RegistryValueOptions.DoNotExpandEnvironmentNames);
+                bool verified = after is string written && string.Equals(written, requested, StringComparison.Ordinal) && key.GetValueKind(name) == RegistryValueKind.String;
+                return Task.FromResult(new ActionResult(true, verified, "prior=" + priorText + "; after=String:" + WindowsRegistryPrimitives.Render(after, RegistryValueKind.String),
+                    verified ? null : "The value did not read back as written."));
+            }
+            catch (Exception exception) when (exception is System.Security.SecurityException or UnauthorizedAccessException or IOException)
+            {
+                return Task.FromResult(new ActionResult(false, false, "", "Registry value could not be written: " + exception.Message));
+            }
+        }
+    }
+}

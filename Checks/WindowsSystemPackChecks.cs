@@ -116,13 +116,60 @@ internal static class WindowsSystemPackChecks
             var result = await runner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true, Elevated = true });
             if (result.Outcome != RecipeRunOutcome.RepairAvailable || result.Action is not null) throw new Exception(recipe.Id + " dispatched without explicit options.");
         }
-        Console.WriteLine("PASS: Windows system pack (" + pack.Recipes.Count + " recipes): secure channel, Entra, Group Policy age and boot sequence interpretation fixtures; live dsregcmd and CPU sample were read-only; explicit-option recipes never dispatched.");
+
+        // Foxit per-user updater: policy precondition, option substitution, explicit gate and read-back, all substituted.
+        var foxit = pack.Recipes.Single(r => r.Id == "apps.foxit-auto-update-off");
+        Verdict(foxit, new PrimitiveResult(true, "2", "String: 2"), ProbeVerdict.Repairable, "foxit automatic install");
+        Verdict(foxit, new PrimitiveResult(true, "1", "String: 1"), ProbeVerdict.Repairable, "foxit download and prompt");
+        Verdict(foxit, new PrimitiveResult(true, "0", "String: 0"), ProbeVerdict.Clear, "foxit updates off");
+        Verdict(foxit, new PrimitiveResult(true, null, "value absent"), ProbeVerdict.Repairable, "foxit default updates");
+        Verdict(foxit, PrimitiveResult.Unavailable("denied"), ProbeVerdict.Unknown, "foxit read failed");
+        foreach (bool managed in new[] { false, true })
+        {
+            string? updateMode = "2";
+            int writes = 0;
+            string? writtenKey = null;
+            var foxitLibrary = new PrimitiveLibrary("Windows")
+                .AddProbe(new StoreProbe("registry.value", library.FindProbe("registry.value")!.Parameters, p =>
+                    p["hive"] == "HKLM" ? new PrimitiveResult(true, managed ? "Updater.fpi" : null, managed ? "String: Updater.fpi" : "value absent") : new PrimitiveResult(true, updateMode, "String: " + updateMode)))
+                .AddAction(new StoreAction("registry.set-string", library.FindAction("registry.set-string")!.Parameters, p => { writes++; writtenKey = p["key"]; updateMode = p["value"]; return new ActionResult(true, true, "prior=String:2; after=String:0"); }));
+            var foxitRunner = new RecipeRunner(foxitLibrary, new MemoryRecipeJournal());
+            var options = new Dictionary<string, string> { ["product"] = "Foxit PDF Editor 12.0" };
+            var gated = await foxitRunner.RunAsync(foxit, new RecipeRunOptions { AuthorizeRepair = true, Options = options });
+            if (gated.Outcome != RecipeRunOutcome.RepairAvailable || writes != 0) throw new Exception("Foxit updater change dispatched without explicit confirmation.");
+            var run = await foxitRunner.RunAsync(foxit, new RecipeRunOptions { AuthorizeRepair = true, Options = options, ExplicitOptionsConfirmed = true });
+            if (managed && (run.Outcome != RecipeRunOutcome.Blocked || writes != 0)) throw new Exception("Foxit updater change ignored machine policy: " + run.Outcome);
+            if (!managed && (run.Outcome != RecipeRunOutcome.Repaired || writes != 1 || writtenKey != @"Software\Foxit Software\Foxit PDF Editor 12.0\plugins\Updater"))
+                throw new Exception("Foxit updater change did not write the exact product key and verify: " + run.Outcome + " " + writtenKey);
+        }
+        var guardLibrary = new PrimitiveLibrary("Windows")
+            .AddProbe(new StoreProbe("registry.value", library.FindProbe("registry.value")!.Parameters, _ => new PrimitiveResult(true, "2", "String: 2")))
+            .AddAction(new StoreAction("registry.set-string", library.FindAction("registry.set-string")!.Parameters, _ => throw new InvalidOperationException("A malformed Foxit product name reached the registry.")));
+        var badProduct = await new RecipeRunner(guardLibrary, new MemoryRecipeJournal()).RunAsync(foxit, new RecipeRunOptions { AuthorizeRepair = true, ExplicitOptionsConfirmed = true, Options = new Dictionary<string, string> { ["product"] = @"Foxit PDF Editor\..\x" } });
+        if (badProduct.Outcome == RecipeRunOutcome.Repaired || badProduct.Action is not null) throw new Exception("A malformed Foxit product name reached the registry.");
+        Console.WriteLine("PASS: Windows system pack (" + pack.Recipes.Count + " recipes): secure channel, Entra, Group Policy age and boot sequence interpretation fixtures; Foxit updater policy, option and explicit gates substituted; live dsregcmd and CPU sample were read-only; explicit-option recipes never dispatched.");
     }
 
     private static void Verdict(RecipeDefinition recipe, PrimitiveResult result, ProbeVerdict expected, string what)
     {
         var evaluation = Expectation.Evaluate(recipe.Detect.Expect, result);
         if (evaluation.Verdict != expected) throw new Exception(what + " expected " + expected + " but was " + evaluation.Verdict + ": " + evaluation.Detail);
+    }
+
+    private sealed class StoreProbe(string name, IReadOnlyList<PrimitiveParameter> parameters, Func<IReadOnlyDictionary<string, string>, PrimitiveResult> observe) : IProbePrimitive
+    {
+        public string Name => name;
+        public IReadOnlyList<PrimitiveParameter> Parameters => parameters;
+        public Task<PrimitiveResult> ObserveAsync(IReadOnlyDictionary<string, string> p, TimeSpan timeout, CancellationToken token) => Task.FromResult(observe(p));
+    }
+
+    private sealed class StoreAction(string name, IReadOnlyList<PrimitiveParameter> parameters, Func<IReadOnlyDictionary<string, string>, ActionResult> execute) : IActionPrimitive
+    {
+        public string Name => name;
+        public IReadOnlyList<PrimitiveParameter> Parameters => parameters;
+        public RecipeRisk Risk => RecipeRisk.Persistent;
+        public bool RequiresElevation => false;
+        public Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> p, TimeSpan timeout, IProgress<string>? progress, CancellationToken token) => Task.FromResult(execute(p));
     }
 
     private sealed class Fake(string name, Func<IReadOnlyDictionary<string, string>, PrimitiveResult> observe) : IProbePrimitive

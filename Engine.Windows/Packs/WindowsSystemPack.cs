@@ -2,12 +2,13 @@ using KillerBench.Engine.Core;
 
 namespace KillerBench.Engine;
 
-/// <summary>Identity, performance and hardware triage recipes. Most are diagnostic; the two actions are explicit options.</summary>
+/// <summary>Identity, performance and hardware triage recipes. Most are diagnostic; every action is an explicit option.</summary>
 public static class WindowsSystemPack
 {
     public const string PackId = "windows.system";
 
     private static readonly IReadOnlyDictionary<string, string> None = new Dictionary<string, string>();
+    private static readonly IReadOnlyDictionary<string, string> FoxitUpdater = new Dictionary<string, string> { ["hive"] = "HKCU", ["key"] = @"Software\Foxit Software\${product}\plugins\Updater", ["name"] = "UpdateMode" };
 
     public static RecipePack Build() => new(RecipePack.CurrentSchemaVersion, PackId, 1, WindowsPrimitiveLibrary.Platform, "Windows identity, performance and hardware triage",
     [
@@ -137,6 +138,35 @@ public static class WindowsSystemPack
         {
             Symptoms = ["apps.file-association-wrong"],
             Limitations = "Windows signs the user choice; changing it programmatically is not supported, so the recipe only reports it."
+        },
+        new RecipeDefinition("apps.foxit-auto-update-off", 1, "Turn off Foxit automatic updates", "Applications",
+            "The running account's Foxit UpdateMode reads back as string 0; machine policy, other accounts and installed version are untested",
+            new ProbeSpec("registry.value", FoxitUpdater, new ExpectSpec(
+            [
+                new ExpectClause("equals", "0", ProbeVerdict.Clear) { Detail = "Foxit will not download or install updates automatically for this account." },
+                new ExpectClause("equals", "1", ProbeVerdict.Repairable) { Detail = "Foxit downloads updates automatically and prompts to install them. Turning this off also stops security updates until someone updates Foxit by hand." },
+                new ExpectClause("equals", "2", ProbeVerdict.Repairable) { Detail = "Foxit downloads and installs updates automatically. Turning this off also stops security updates until someone updates Foxit by hand." },
+                new ExpectClause("absent", "", ProbeVerdict.Repairable) { Detail = "No UpdateMode is stored for this account, so Foxit's default automatic updates apply. The Updater key must already exist; KillerBench does not create it." },
+                new ExpectClause("any", "", ProbeVerdict.Unknown)
+            ])) { Name = "Foxit UpdateMode" })
+        {
+            Symptoms = ["apps.foxit-auto-updates"],
+            Options = [new RecipeOption("product", "Exact Foxit product key name, such as Foxit PDF Editor 12.0") { Pattern = @"Foxit (PDF Editor|PDF Reader|PhantomPDF|Reader)( [0-9]{1,2}\.[0-9])?" }],
+            Preconditions =
+            [
+                new ProbeSpec("registry.value", new Dictionary<string, string> { ["hive"] = "HKLM", ["key"] = @"SOFTWARE\Policies\Foxit\PDFEditor\Plugins", ["name"] = "Updater" }, new ExpectSpec(
+                [
+                    new ExpectClause("absent", "", ProbeVerdict.Clear),
+                    new ExpectClause("present", "", ProbeVerdict.Attention) { Detail = "Machine policy already manages the Foxit PDF Editor updater. Change it through that policy instead." },
+                    new ExpectClause("any", "", ProbeVerdict.Unknown)
+                ])) { Name = "Foxit updater policy" }
+            ],
+            Action = new ActionSpec("registry.set-string", new Dictionary<string, string>(FoxitUpdater) { ["value"] = "0" })
+                { Timeout = TimeSpan.FromSeconds(15), Effects = "Sets UpdateMode to string 0 under the running account's Foxit Updater key, the documented per-user setting for no automatic download or install. Other accounts, services and tasks are left alone." },
+            Verify = new ProbeSpec("registry.value", FoxitUpdater, ExpectSpec.ClearWhenEquals("0", ProbeVerdict.Attention)) { Name = "Foxit UpdateMode" },
+            Risk = RecipeRisk.Persistent,
+            RequiresExplicitOptions = true,
+            Limitations = "Only the running account changes. The prior value is journaled; there is no automatic rollback. Only the documented PDF Editor policy location is checked, and the updater service and scheduled tasks are not changed."
         },
         new RecipeDefinition("apps.http-association", 1, "Default browser association", "Applications",
             "The current account's chosen http handler is reported",

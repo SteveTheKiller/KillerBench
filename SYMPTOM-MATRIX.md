@@ -184,6 +184,7 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | apps.outlook-slow-or-stuck | Cache file bloat, profile | Outlook cache review (ORCA) | Retain and reset selected cache (applications.outlook-cache-reset, explicit) | Cache absent, retained copy exists | workflow |
 | apps.office-click-to-run-broken | ClickToRun service or install | Office Click-to-Run inventory | None automatic | n/a | diag |
 | apps.foxit-outdated | Old version, updater setting | Foxit inventory (FACTS) | None automatic | n/a | diag |
+| apps.foxit-auto-updates | Per-user UpdateMode 1 or 2, absent setting, machine updater policy | registry.value HKCU Foxit Updater UpdateMode (apps.foxit-auto-update-off recipe), PDF Editor updater policy precondition | Set UpdateMode to string 0 for the running account (explicit with product) | UpdateMode reads back 0 | pack |
 | apps.browser-extension-unwanted | Sideloaded or policy extension | Browser Extensions workflow | None automatic | n/a | diag |
 | apps.file-association-wrong | UserChoice hash reset, app default lost | registry.value .pdf UserChoice ProgId (apps.pdf-association recipe) | Manual: Windows signs the user choice | n/a | pack |
 | apps.default-apps-reset | Same | registry.value http UserChoice ProgId (apps.http-association recipe) | Manual: Windows signs the user choice | n/a | pack |
@@ -273,8 +274,8 @@ The Engine.Core model is platform-neutral. When a Linux or macOS provider exists
 
 Update these when rows change. A row counts once by its first status token.
 
-- rows: 150
-- pack: 78
+- rows: 151
+- pack: 79
 - workflow: 38
 - diag: 23
 - planned: 0

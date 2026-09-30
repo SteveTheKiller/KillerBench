@@ -1,5 +1,6 @@
 # Changelog
 
+- Add an explicit per-user Foxit automatic update switch that respects machine policy.
 - Add an explicit WinHTTP proxy reset recipe for the wrong-proxy symptom.
 - Align the sidebar rail with the family footer spacing.
 - Complete all 14 non-English locale resource sets.

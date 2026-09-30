@@ -36,6 +36,7 @@ public static class WindowsPrimitiveLibrary
         .AddProbe(new WindowsWinHttpProxyProbe())
         .AddAction(new WindowsServiceStartAction())
         .AddAction(new WindowsRegistrySetDwordAction())
+        .AddAction(new WindowsRegistrySetStringAction())
         .AddAction(new WindowsBcdSafebootClearAction())
         .AddAction(new WindowsMemoryDiagnosticScheduleAction())
         .AddAction(new WindowsExplorerStartAction())
