@@ -579,6 +579,26 @@
               <CheckBox x:Name="BitLockerBackupConsent" Content="{DynamicResource Str_BitLocker_BackupConsent}" Margin="0,4,0,4"/>
               <CheckBox x:Name="BitLockerEncryptConsent" Content="{DynamicResource Str_BitLocker_EncryptConsent}" Click="OnBitLockerEncryptConsentChanged" Margin="0,0,0,4"/>
               <CheckBox x:Name="BitLockerResumeConsent" Content="{DynamicResource Str_BitLocker_ResumeConsent}" Click="OnBitLockerResumeConsentChanged" Margin="0,0,0,4"/>
+              <Expander x:Name="BitLockerActionsExpander" Header="{DynamicResource Str_BitLocker_MoreActions}" Margin="0,4,0,6">
+                <StackPanel Margin="0,6,0,0">
+                  <TextBlock Text="{DynamicResource Str_BitLocker_Action}"/>
+                  <ComboBox x:Name="BitLockerActionChoice" SelectedIndex="0" SelectionChanged="OnBitLockerActionChanged" AutomationProperties.Name="BitLocker action">
+                    <ComboBoxItem Content="{DynamicResource Str_BitLocker_ActionAutoUnlock}" Tag="auto-unlock"/>
+                    <ComboBoxItem Content="{DynamicResource Str_BitLocker_ActionAddTpm}" Tag="protector-tpm"/>
+                    <ComboBoxItem Content="{DynamicResource Str_BitLocker_ActionAddRecovery}" Tag="protector-recovery"/>
+                    <ComboBoxItem Content="{DynamicResource Str_BitLocker_ActionEscrowAd}" Tag="escrow-ad"/>
+                    <ComboBoxItem Content="{DynamicResource Str_BitLocker_ActionEscrowEntra}" Tag="escrow-entra"/>
+                    <ComboBoxItem Content="{DynamicResource Str_BitLocker_ActionDecrypt}" Tag="decrypt"/>
+                  </ComboBox>
+                  <TextBlock Text="{DynamicResource Str_BitLocker_ActionHint}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,4"/>
+                  <CheckBox x:Name="BitLockerActionConsent" Content="{DynamicResource Str_BitLocker_ActionConsent}" Margin="0,0,0,4"/>
+                  <CheckBox x:Name="BitLockerDecryptConsent" Content="{DynamicResource Str_BitLocker_DecryptConsent}" Visibility="Collapsed" Margin="0,0,0,4"/>
+                  <WrapPanel>
+                    <Button x:Name="BitLockerActionPreview" Content="{DynamicResource Str_BitLocker_ActionPreview}" Click="OnBitLockerActionPreview" Margin="0,0,6,0"/>
+                    <Button x:Name="BitLockerActionRun" Content="{DynamicResource Str_BitLocker_ActionRun}" Click="OnBitLockerActionRun" IsEnabled="{Binding IsChecked, ElementName=BitLockerActionConsent}"/>
+                  </WrapPanel>
+                </StackPanel>
+              </Expander>
               <TextBlock Text="{DynamicResource Str_BitLocker_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
             </StackPanel>
             <TextBlock x:Name="ComponentCleanupSettings" Visibility="Collapsed" Margin="0,0,0,6" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Text="{DynamicResource Str_ComponentCleanup_Boundary}"/>

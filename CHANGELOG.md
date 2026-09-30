@@ -1,5 +1,6 @@
 # Changelog
 
+- Add More BitLocker actions to the BitLocker section for auto-unlock, protectors, directory backup and decryption.
 - Add BitLocker encryption for data volumes and guarded auto-unlock.
 - Remove the Intune app deployment review and tenant sign-in; KillerBench works only on the local computer.
 - Add explicit TPM preparation that never clears the TPM.

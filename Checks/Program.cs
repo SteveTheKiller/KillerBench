@@ -1220,6 +1220,21 @@ internal static class Program
             Require(((StackPanel)window.FindName("BitLockerSettings")).Visibility == Visibility.Visible && !((CheckBox)window.FindName("MainAutoRepair")).IsEnabled, "BitLocker exposes preview options without automatic encryption");
             Require(((ComboBox)window.FindName("BitLockerEncryptionChoice")).SelectedItem is BitLockerEncryption.XtsAes128 && ((ComboBox)window.FindName("BitLockerDestination")).SelectedItem is RecoveryDestination.None, "BitLocker preview defaults");
             Capture(window, Path.Combine(scratch, "bitlocker-options.png"));
+            var bitLockerActions = (ComboBox)window.FindName("BitLockerActionChoice");
+            var bitLockerDecryptConsent = (CheckBox)window.FindName("BitLockerDecryptConsent");
+            Require(bitLockerActions.Items.Count == 6 && ((ComboBoxItem)bitLockerActions.SelectedItem).Tag as string == "auto-unlock" &&
+                window.FindName("BitLockerActionRun") is Button { IsEnabled: false } && window.FindName("BitLockerActionConsent") is CheckBox { IsChecked: false } &&
+                bitLockerDecryptConsent.Visibility == Visibility.Collapsed,
+                "More BitLocker actions start on auto-unlock with Run disabled until the change is confirmed");
+            bitLockerActions.SelectedIndex = 5;
+            window.UpdateLayout();
+            Require(bitLockerDecryptConsent.Visibility == Visibility.Visible && bitLockerDecryptConsent.IsChecked == false,
+                "Decryption shows its separate unprotected confirmation");
+            ((Expander)window.FindName("BitLockerActionsExpander")).IsExpanded = true;
+            window.UpdateLayout();
+            Capture(window, Path.Combine(scratch, "bitlocker-actions.png"));
+            ((Expander)window.FindName("BitLockerActionsExpander")).IsExpanded = false;
+            bitLockerActions.SelectedIndex = 0;
             workflowPicker.SelectedIndex = (int)WorkflowKind.ComponentCleanup;
             window.UpdateLayout();
             Require(((TextBlock)window.FindName("ComponentCleanupSettings")).Visibility == Visibility.Visible && ((CheckBox)window.FindName("MainAutoRepair")).Content is "Run recommended cleanup", "Component cleanup exposes its maintenance choice");

@@ -38,6 +38,8 @@ public partial class MainWindow
         if (BitLockerBackupConsent is not null) BitLockerBackupConsent.IsChecked = false;
         if (BitLockerEncryptConsent is not null) BitLockerEncryptConsent.IsChecked = false;
         if (BitLockerResumeConsent is not null) BitLockerResumeConsent.IsChecked = false;
+        if (BitLockerActionConsent is not null) BitLockerActionConsent.IsChecked = false;
+        if (BitLockerDecryptConsent is not null) BitLockerDecryptConsent.IsChecked = false;
     }
 
     private void OnBitLockerResumeConsentChanged(object sender, RoutedEventArgs e)
@@ -250,6 +252,8 @@ public partial class MainWindow
             BitLockerBackupConsent.IsChecked = false;
             BitLockerEncryptConsent.IsChecked = false;
             BitLockerResumeConsent.IsChecked = false;
+            BitLockerActionConsent.IsChecked = false;
+            BitLockerDecryptConsent.IsChecked = false;
             SourcesList.IsEnabled = true;
             SearchBox.IsEnabled = true;
             SetCaptureBusy(false);
