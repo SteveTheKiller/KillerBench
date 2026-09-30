@@ -1,5 +1,6 @@
 # Changelog
 
+- Add guarded BitLocker decryption for re-encrypting a drive with a required method.
 - Split the five workspaces into Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker and Privacy.
 - Replace the old script names with plain feature names in the app, reports and CLI messages.
 - Add an interactive Microsoft Entra sign-in for the typed Intune tenant.
