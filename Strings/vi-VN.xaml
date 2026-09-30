@@ -257,7 +257,7 @@
   <sys:String x:Key="Str_BitLocker_BackupConsent">Ghi bản sao lưu khôi phục đã chọn khi tôi nhấn GO</sys:String>
   <sys:String x:Key="Str_BitLocker_EncryptConsent">Sao lưu khóa phục hồi đã chọn, sau đó bắt đầu mã hóa khi tôi nhấn GO</sys:String>
   <sys:String x:Key="Str_BitLocker_ResumeConsent">Tiếp tục bảo vệ trên ổ đĩa được mã hóa hoàn toàn này khi tôi nhấn GO</sys:String>
-  <sys:String x:Key="Str_BitLocker_Boundary">Mã hóa yêu cầu một bộ bảo vệ TPM hiện có, bộ bảo vệ mật khẩu khôi phục đã chọn và một tệp sao lưu đã được xác minh mới bên ngoài ổ đĩa được bảo vệ. Các bộ bảo vệ hiện có và chính sách được quản lý được giữ nguyên.</sys:String>
+  <sys:String x:Key="Str_BitLocker_Boundary">Mã hóa cần trình bảo vệ mật khẩu khôi phục đã chọn và một tệp sao lưu mới đã xác minh nằm ngoài ổ được bảo vệ. Ổ Windows còn cần trình bảo vệ TPM của nó. Các trình bảo vệ hiện có và chính sách được quản lý được giữ nguyên.</sys:String>
   <sys:String x:Key="Str_BitLocker_MoreActions">Thao tác BitLocker khác</sys:String>
   <sys:String x:Key="Str_BitLocker_Action">Thao tác</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionAutoUnlock">Bật tự động mở khóa</sys:String>

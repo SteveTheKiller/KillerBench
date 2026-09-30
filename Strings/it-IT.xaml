@@ -268,7 +268,7 @@
   <sys:String x:Key="Str_BitLocker_BackupConsent">Scrivi backup di ripristino selezionato quando premo GO</sys:String>
   <sys:String x:Key="Str_BitLocker_EncryptConsent">Esegui backup della chiave di ripristino selezionata, poi avvia cifratura quando premo GO</sys:String>
   <sys:String x:Key="Str_BitLocker_ResumeConsent">Riprendi protezione su questo volume completamente cifrato quando premo GO</sys:String>
-  <sys:String x:Key="Str_BitLocker_Boundary">La cifratura richiede un protettore TPM esistente, il protettore password di ripristino selezionato e un nuovo file di backup verificato fuori dal volume protetto. I protettori esistenti e i criteri gestiti vengono preservati.</sys:String>
+  <sys:String x:Key="Str_BitLocker_Boundary">La crittografia richiede la protezione con password di ripristino selezionata e un nuovo file di backup verificato fuori dal volume protetto. L'unità di Windows richiede anche la sua protezione TPM. Le protezioni esistenti e i criteri gestiti vengono mantenuti.</sys:String>
   <sys:String x:Key="Str_BitLocker_MoreActions">Altre azioni BitLocker</sys:String>
   <sys:String x:Key="Str_BitLocker_Action">Azione</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionAutoUnlock">Attiva lo sblocco automatico</sys:String>

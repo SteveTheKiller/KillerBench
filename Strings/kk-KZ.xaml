@@ -258,7 +258,7 @@
   <sys:String x:Key="Str_BitLocker_BackupConsent">GO басқанда таңдалған қалпына келтіру сақтық көшірмесін жазу</sys:String>
   <sys:String x:Key="Str_BitLocker_EncryptConsent">Таңдалған қалпына келтіру кілтінің сақтық көшірмесін жасап, содан кейін GO басқанда шифрлауды бастау</sys:String>
   <sys:String x:Key="Str_BitLocker_ResumeConsent">GO басқанда осы толық шифрланған томдағы қорғауды жалғастыру</sys:String>
-  <sys:String x:Key="Str_BitLocker_Boundary">Шифрлау бар TPM қорғаушысын, таңдалған қалпына келтіру құпиясөзі қорғаушысын және қорғалған томнан тыс жаңа тексерілген сақтық көшірме файлын қажет етеді. Бар қорғаушылар мен басқарылатын саясат сақталады.</sys:String>
+  <sys:String x:Key="Str_BitLocker_Boundary">Шифрлау үшін таңдалған қалпына келтіру құпия сөзі қорғағышы және қорғалатын томнан тыс жаңа тексерілген сақтық көшірме файлы қажет. Windows дискісіне TPM қорғағышы да қажет. Бар қорғағыштар мен басқарылатын саясат сақталады.</sys:String>
   <sys:String x:Key="Str_BitLocker_MoreActions">BitLocker-тің басқа әрекеттері</sys:String>
   <sys:String x:Key="Str_BitLocker_Action">Әрекет</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionAutoUnlock">Автоматты құлыптан босатуды қосу</sys:String>

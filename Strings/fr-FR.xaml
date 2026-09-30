@@ -445,7 +445,7 @@
   <sys:String x:Key="Str_BitLocker_BackupConsent">Écrire la sauvegarde de récupération sélectionnée quand j&apos;appuie sur GO</sys:String>
   <sys:String x:Key="Str_BitLocker_EncryptConsent">Sauvegarder la clé de récupération sélectionnée, puis démarrer le chiffrement quand j&apos;appuie sur GO</sys:String>
   <sys:String x:Key="Str_BitLocker_ResumeConsent">Reprendre la protection sur ce volume entièrement chiffré quand j&apos;appuie sur GO</sys:String>
-  <sys:String x:Key="Str_BitLocker_Boundary">Le chiffrement exige un protecteur TPM existant, le protecteur par mot de passe de récupération sélectionné et un nouveau fichier de sauvegarde vérifié hors du volume protégé. Les protecteurs existants et la stratégie gérée sont préservés.</sys:String>
+  <sys:String x:Key="Str_BitLocker_Boundary">Le chiffrement exige le protecteur de mot de passe de récupération sélectionné et un nouveau fichier de sauvegarde vérifié hors du volume protégé. Le lecteur Windows a aussi besoin de son protecteur TPM. Les protecteurs existants et la stratégie gérée sont conservés.</sys:String>
   <sys:String x:Key="Str_BitLocker_MoreActions">Autres actions BitLocker</sys:String>
   <sys:String x:Key="Str_BitLocker_Action">Action</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionAutoUnlock">Activer le déverrouillage automatique</sys:String>

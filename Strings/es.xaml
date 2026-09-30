@@ -272,7 +272,7 @@
   <sys:String x:Key="Str_BitLocker_BackupConsent">Escribir respaldo de recuperación seleccionado cuando presione GO</sys:String>
   <sys:String x:Key="Str_BitLocker_EncryptConsent">Respaldar la clave de recuperación seleccionada y luego iniciar cifrado cuando presione GO</sys:String>
   <sys:String x:Key="Str_BitLocker_ResumeConsent">Reanudar protección en este volumen totalmente cifrado cuando presione GO</sys:String>
-  <sys:String x:Key="Str_BitLocker_Boundary">El cifrado requiere un protector TPM existente, el protector de contraseña de recuperación seleccionado y un archivo de respaldo nuevo verificado fuera del volumen protegido. Se conservan protectores existentes y directiva administrada.</sys:String>
+  <sys:String x:Key="Str_BitLocker_Boundary">El cifrado requiere el protector de contraseña de recuperación seleccionado y un nuevo archivo de copia verificado fuera del volumen protegido. La unidad de Windows también necesita su protector de TPM. Se conservan los protectores existentes y la directiva administrada.</sys:String>
   <sys:String x:Key="Str_BitLocker_MoreActions">Más acciones de BitLocker</sys:String>
   <sys:String x:Key="Str_BitLocker_Action">Acción</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionAutoUnlock">Activar el desbloqueo automático</sys:String>

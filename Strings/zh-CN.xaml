@@ -272,7 +272,7 @@
   <sys:String x:Key="Str_BitLocker_BackupConsent">按下 GO 时写入选定的恢复备份</sys:String>
   <sys:String x:Key="Str_BitLocker_EncryptConsent">按下 GO 时备份选定的恢复密钥，然后开始加密</sys:String>
   <sys:String x:Key="Str_BitLocker_ResumeConsent">按下 GO 时在此完全加密的卷上恢复保护</sys:String>
-  <sys:String x:Key="Str_BitLocker_Boundary">加密需要现有的 TPM 保护器、所选的恢复密码保护器以及受保护卷外的新验证备份文件。现有的保护器和管理策略将被保留。</sys:String>
+  <sys:String x:Key="Str_BitLocker_Boundary">加密需要所选的恢复密码保护器，以及位于受保护卷之外的新的已验证备份文件。Windows 驱动器还需要其 TPM 保护器。现有保护器和托管策略会被保留。</sys:String>
   <sys:String x:Key="Str_BitLocker_MoreActions">更多 BitLocker 操作</sys:String>
   <sys:String x:Key="Str_BitLocker_Action">操作</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionAutoUnlock">启用自动解锁</sys:String>

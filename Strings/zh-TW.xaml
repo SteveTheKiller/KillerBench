@@ -272,7 +272,7 @@
   <sys:String x:Key="Str_BitLocker_BackupConsent">當我按下 GO 時，寫入所選的復原備份</sys:String>
   <sys:String x:Key="Str_BitLocker_EncryptConsent">當我按下 GO 時，備份所選的復原金鑰，然後開始加密</sys:String>
   <sys:String x:Key="Str_BitLocker_ResumeConsent">當我按下 GO 時，在此完全加密的卷上恢復保護</sys:String>
-  <sys:String x:Key="Str_BitLocker_Boundary">加密需要現有的 TPM 保護器、所選的恢復密碼保護器以及受保護磁碟區外的新驗證備份檔案。現有的保護器和管理政策將被保留。</sys:String>
+  <sys:String x:Key="Str_BitLocker_Boundary">加密需要所選的修復密碼保護裝置，以及位於受保護磁碟區之外的新的已驗證備份檔案。Windows 磁碟機還需要其 TPM 保護裝置。現有保護裝置與受管理原則會保留。</sys:String>
   <sys:String x:Key="Str_BitLocker_MoreActions">更多 BitLocker 動作</sys:String>
   <sys:String x:Key="Str_BitLocker_Action">動作</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionAutoUnlock">開啟自動解除鎖定</sys:String>

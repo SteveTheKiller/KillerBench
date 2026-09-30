@@ -257,7 +257,7 @@
   <sys:String x:Key="Str_BitLocker_BackupConsent">Write selected recovery backup when I press GO</sys:String>
   <sys:String x:Key="Str_BitLocker_EncryptConsent">Back up the selected recovery key, then start encryption when I press GO</sys:String>
   <sys:String x:Key="Str_BitLocker_ResumeConsent">Resume protection on this fully encrypted volume when I press GO</sys:String>
-  <sys:String x:Key="Str_BitLocker_Boundary">Encryption requires an existing TPM protector, the selected recovery-password protector and a new verified backup file outside the protected volume. Existing protectors and managed policy are preserved.</sys:String>
+  <sys:String x:Key="Str_BitLocker_Boundary">Encryption requires the selected recovery-password protector and a new verified backup file outside the protected volume. The Windows drive also needs its TPM protector. Existing protectors and managed policy are preserved.</sys:String>
   <sys:String x:Key="Str_BitLocker_MoreActions">More BitLocker actions</sys:String>
   <sys:String x:Key="Str_BitLocker_Action">Action</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionAutoUnlock">Turn on auto-unlock</sys:String>

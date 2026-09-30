@@ -272,7 +272,7 @@
   <sys:String x:Key="Str_BitLocker_BackupConsent">GO を押したときに選択された回復バックアップを書き込む</sys:String>
   <sys:String x:Key="Str_BitLocker_EncryptConsent">GO を押したときに選択された回復キーをバックアップし、その後暗号化を開始する</sys:String>
   <sys:String x:Key="Str_BitLocker_ResumeConsent">GO を押したときにこの完全に暗号化されたボリュームの保護を再開する</sys:String>
-  <sys:String x:Key="Str_BitLocker_Boundary">暗号化には、既存のTPMプロテクター、選択されたリカバリーパスワードプロテクター、および保護されたボリューム外の新しい検証済みバックアップファイルが必要です。既存のプロテクターと管理ポリシーは保持されます。</sys:String>
+  <sys:String x:Key="Str_BitLocker_Boundary">暗号化には、選択した回復パスワード保護機能と、保護対象ボリュームの外にある新しい検証済みバックアップ ファイルが必要です。Windows ドライブには TPM 保護機能も必要です。既存の保護機能と管理ポリシーは保持されます。</sys:String>
   <sys:String x:Key="Str_BitLocker_MoreActions">その他の BitLocker 操作</sys:String>
   <sys:String x:Key="Str_BitLocker_Action">操作</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionAutoUnlock">自動ロック解除をオンにする</sys:String>

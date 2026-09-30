@@ -269,7 +269,7 @@
   <sys:String x:Key="Str_BitLocker_BackupConsent">Записать выбранную резервную копию восстановления при нажатии GO</sys:String>
   <sys:String x:Key="Str_BitLocker_EncryptConsent">Сделать резервную копию выбранного ключа восстановления, затем начать шифрование при нажатии GO</sys:String>
   <sys:String x:Key="Str_BitLocker_ResumeConsent">Возобновить защиту на полностью зашифрованном томе при нажатии GO</sys:String>
-  <sys:String x:Key="Str_BitLocker_Boundary">Шифрование требует существующего защитника TPM, выбранного защитника с паролем восстановления и нового проверенного резервного файла за пределами защищенного тома. Существующие защитники и управляемая политика сохраняются.</sys:String>
+  <sys:String x:Key="Str_BitLocker_Boundary">Для шифрования нужны выбранный предохранитель с паролем восстановления и новый проверенный файл резервной копии вне защищаемого тома. Диску Windows также нужен предохранитель TPM. Существующие предохранители и управляемая политика сохраняются.</sys:String>
   <sys:String x:Key="Str_BitLocker_MoreActions">Другие действия BitLocker</sys:String>
   <sys:String x:Key="Str_BitLocker_Action">Действие</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionAutoUnlock">Включить автоматическую разблокировку</sys:String>

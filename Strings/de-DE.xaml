@@ -271,7 +271,7 @@
   <sys:String x:Key="Str_BitLocker_BackupConsent">Ausgewählte Wiederherstellungssicherung schreiben, wenn ich GO drücke</sys:String>
   <sys:String x:Key="Str_BitLocker_EncryptConsent">Ausgewählten Wiederherstellungsschlüssel sichern, dann Verschlüsselung starten, wenn ich GO drücke</sys:String>
   <sys:String x:Key="Str_BitLocker_ResumeConsent">Schutz auf diesem vollständig verschlüsselten Volume fortsetzen, wenn ich GO drücke</sys:String>
-  <sys:String x:Key="Str_BitLocker_Boundary">Verschlüsselung erfordert einen vorhandenen TPM-Schutz, den ausgewählten Wiederherstellungskennwortschutz und eine neue geprüfte Sicherungsdatei außerhalb des geschützten Volumes. Vorhandene Schutzvorrichtungen und verwaltete Richtlinien bleiben erhalten.</sys:String>
+  <sys:String x:Key="Str_BitLocker_Boundary">Die Verschlüsselung erfordert die ausgewählte Wiederherstellungskennwort-Schutzvorrichtung und eine neue überprüfte Sicherungsdatei außerhalb des geschützten Volumes. Das Windows-Laufwerk benötigt zusätzlich seine TPM-Schutzvorrichtung. Vorhandene Schutzvorrichtungen und verwaltete Richtlinien bleiben erhalten.</sys:String>
   <sys:String x:Key="Str_BitLocker_MoreActions">Weitere BitLocker-Aktionen</sys:String>
   <sys:String x:Key="Str_BitLocker_Action">Aktion</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionAutoUnlock">Automatische Entsperrung aktivieren</sys:String>

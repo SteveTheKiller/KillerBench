@@ -271,7 +271,7 @@
   <sys:String x:Key="Str_BitLocker_BackupConsent">Zapiš vybranou zálohu obnovení, když stisknu TLAČÍTKO GO</sys:String>
   <sys:String x:Key="Str_BitLocker_EncryptConsent">Zálohujte vybraný klíč pro obnovení a poté spusťte šifrování, když stisknu GO</sys:String>
   <sys:String x:Key="Str_BitLocker_ResumeConsent">Obnovit ochranu na tomto plně šifrovaném svazku, když stisknu GO</sys:String>
-  <sys:String x:Key="Str_BitLocker_Boundary">Šifrování vyžaduje existující TPM ochranu, zvolenou ochranu pomocí obnovovacího hesla a nový ověřený záložní soubor mimo chráněný svazek. Existující ochrany a spravovaná politika jsou zachovány.</sys:String>
+  <sys:String x:Key="Str_BitLocker_Boundary">Šifrování vyžaduje vybranou ochranu heslem pro obnovení a nový ověřený záložní soubor mimo chráněný svazek. Jednotka Windows navíc potřebuje svou ochranu TPM. Stávající ochrany a spravované zásady zůstanou zachovány.</sys:String>
   <sys:String x:Key="Str_BitLocker_MoreActions">Další akce nástroje BitLocker</sys:String>
   <sys:String x:Key="Str_BitLocker_Action">Akce</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionAutoUnlock">Zapnout automatické odemykání</sys:String>

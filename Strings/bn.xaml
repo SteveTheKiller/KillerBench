@@ -271,7 +271,7 @@
   <sys:String x:Key="Str_BitLocker_BackupConsent">আমি GO চাপলে নির্বাচিত রিকভারি ব্যাকআপ লিখুন</sys:String>
   <sys:String x:Key="Str_BitLocker_EncryptConsent">আমি GO চাপলে নির্বাচিত রিকভারি কী ব্যাকআপ করুন, তারপর এনক্রিপশন শুরু করুন</sys:String>
   <sys:String x:Key="Str_BitLocker_ResumeConsent">আমি GO চাপলে এই সম্পূর্ণ এনক্রিপ্ট করা ভলিউমে সুরক্ষা পুনরায় চালু করুন</sys:String>
-  <sys:String x:Key="Str_BitLocker_Boundary">এনক্রিপশনের জন্য একটি বিদ্যমান টিপিএম প্রটেক্টর, নির্বাচিত পুনরুদ্ধার-পাসওয়ার্ড প্রটেক্টর এবং সুরক্ষিত ভলিউমের বাইরে একটি নতুন যাচাইকৃত ব্যাকআপ ফাইল প্রয়োজন। বিদ্যমান রক্ষক এবং পরিচালিত নীতি সংরক্ষণ করা হয়।</sys:String>
+  <sys:String x:Key="Str_BitLocker_Boundary">এনক্রিপশনের জন্য নির্বাচিত পুনরুদ্ধার পাসওয়ার্ড সুরক্ষক এবং সুরক্ষিত ভলিউমের বাইরে একটি নতুন যাচাইকৃত ব্যাকআপ ফাইল দরকার। Windows ড্রাইভের জন্য এর TPM সুরক্ষকও দরকার। বিদ্যমান সুরক্ষক এবং পরিচালিত নীতি অপরিবর্তিত থাকে।</sys:String>
   <sys:String x:Key="Str_BitLocker_MoreActions">আরও BitLocker কাজ</sys:String>
   <sys:String x:Key="Str_BitLocker_Action">কাজ</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionAutoUnlock">স্বয়ংক্রিয় আনলক চালু করুন</sys:String>

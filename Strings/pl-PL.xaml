@@ -258,7 +258,7 @@
   <sys:String x:Key="Str_BitLocker_BackupConsent">Zapisz wybraną kopię zapasową odzyskiwania po naciśnięciu GO</sys:String>
   <sys:String x:Key="Str_BitLocker_EncryptConsent">Utwórz kopię zapasową wybranego klucza odzyskiwania, a następnie uruchom szyfrowanie po naciśnięciu GO</sys:String>
   <sys:String x:Key="Str_BitLocker_ResumeConsent">Wznów ochronę na tym w pełni zaszyfrowanym woluminie po naciśnięciu GO</sys:String>
-  <sys:String x:Key="Str_BitLocker_Boundary">Szyfrowanie wymaga istniejącego protektora TPM, wybranego protektora hasła odzyskiwania oraz nowego zweryfikowanego pliku kopii zapasowej poza chronionym woluminem. Istniejące protektory i zarządzane zasady są zachowane.</sys:String>
+  <sys:String x:Key="Str_BitLocker_Boundary">Szyfrowanie wymaga wybranej funkcji ochrony hasłem odzyskiwania i nowego zweryfikowanego pliku kopii poza chronionym woluminem. Dysk systemu Windows potrzebuje też funkcji ochrony TPM. Istniejące funkcje ochrony i zasady zarządzane pozostają bez zmian.</sys:String>
   <sys:String x:Key="Str_BitLocker_MoreActions">Więcej akcji funkcji BitLocker</sys:String>
   <sys:String x:Key="Str_BitLocker_Action">Akcja</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionAutoUnlock">Włącz automatyczne odblokowywanie</sys:String>

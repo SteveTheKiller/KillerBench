@@ -272,7 +272,7 @@
   <sys:String x:Key="Str_BitLocker_BackupConsent">GO düğmesine bastığımda seçili kurtarma yedeğini yaz</sys:String>
   <sys:String x:Key="Str_BitLocker_EncryptConsent">Seçili kurtarma anahtarını yedekle, sonra GO düğmesine bastığımda şifrelemeyi başlat</sys:String>
   <sys:String x:Key="Str_BitLocker_ResumeConsent">GO düğmesine bastığımda bu tamamen şifreli birimde korumayı sürdür</sys:String>
-  <sys:String x:Key="Str_BitLocker_Boundary">Şifreleme, mevcut bir TPM koruyucusu, seçili kurtarma parolası koruyucusu ve korunan birimin dışında yeni doğrulanmış yedek dosyası gerektirir. Mevcut koruyucular ve yönetilen ilke korunur.</sys:String>
+  <sys:String x:Key="Str_BitLocker_Boundary">Şifreleme, seçili kurtarma parolası koruyucusunu ve korunan birimin dışında yeni, doğrulanmış bir yedek dosyasını gerektirir. Windows sürücüsü ayrıca TPM koruyucusuna ihtiyaç duyar. Mevcut koruyucular ve yönetilen ilke korunur.</sys:String>
   <sys:String x:Key="Str_BitLocker_MoreActions">Diğer BitLocker işlemleri</sys:String>
   <sys:String x:Key="Str_BitLocker_Action">İşlem</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionAutoUnlock">Otomatik kilit açmayı etkinleştir</sys:String>
