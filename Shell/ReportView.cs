@@ -146,9 +146,9 @@ public partial class MainWindow
     private void OnReviewRepairOptions(WorkflowKind? target)
     {
         MainAutoRepair.IsChecked = false;
-        CategoryList.SelectedItem = ToolCategories.Single(category => category.Title == "Repair");
-        if (target is { } kind)
-            MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(workflow => workflow.Kind == kind);
+        CategoryList.SelectedItem = target is { } kind ? CategoryOf(kind) : ToolCategories.Single(category => category.Title == "Repair");
+        if (target is { } selected)
+            MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(workflow => workflow.Kind == selected);
     }
 
     private Button MaintenanceNavigationButton(WorkflowKind workflow)
@@ -164,9 +164,8 @@ public partial class MainWindow
         button.Click += (_, _) =>
         {
             MainAutoRepair.IsChecked = false;
-            CategoryList.SelectedItem = ToolCategories.Single(category => category.Title == "Maintenance");
-            WorkflowKind target = ToolCategories.Single(category => category.Title == "Maintenance").Tools.Contains(workflow)
-                ? workflow : WorkflowKind.Cleanup;
+            WorkflowKind target = MaintenanceWorkflows.Contains(workflow) ? workflow : WorkflowKind.Cleanup;
+            CategoryList.SelectedItem = CategoryOf(target);
             MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == target);
         };
         return button;
@@ -185,7 +184,7 @@ public partial class MainWindow
         button.Click += (_, _) =>
         {
             MainAutoRepair.IsChecked = false;
-            CategoryList.SelectedItem = ToolCategories.Single(category => category.Title == "Security");
+            CategoryList.SelectedItem = CategoryOf(workflow);
             MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == workflow);
         };
         return button;
@@ -204,7 +203,7 @@ public partial class MainWindow
         button.Click += (_, _) =>
         {
             MainAutoRepair.IsChecked = false;
-            CategoryList.SelectedItem = ToolCategories.Single(category => category.Title == "Network");
+            CategoryList.SelectedItem = CategoryOf(WorkflowKind.Network);
             MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == WorkflowKind.Network);
         };
         return button;
@@ -235,7 +234,7 @@ public partial class MainWindow
 
     private static WorkflowKind? RepairWorkflow(RepairKind repair)
     {
-        foreach (WorkflowKind kind in ToolCategories.Single(category => category.Title == "Repair").Tools)
+        foreach (WorkflowKind kind in RepairWorkflows)
         {
             if (Workflows.Scopes(kind).Contains(repair)) return kind;
         }
@@ -244,10 +243,10 @@ public partial class MainWindow
 
     private static bool HasMaintenanceOptions(WorkflowResult result) =>
         result.Summary.ReviewItems > 0 && (result.Kind == WorkflowKind.CommonProblems ||
-            ToolCategories.Single(category => category.Title == "Maintenance").Tools.Contains(result.Kind));
+            MaintenanceWorkflows.Contains(result.Kind));
 
     private static bool HasSecurityOptions(WorkflowResult result) =>
-        result.Summary.ReviewItems > 0 && ToolCategories.Single(category => category.Title == "Security").Tools.Contains(result.Kind);
+        result.Summary.ReviewItems > 0 && SecurityWorkflows.Contains(result.Kind);
 
     private static bool HasNetworkOptions(WorkflowResult result) =>
         result.Kind == WorkflowKind.Network && result.Summary.ReviewItems > 0;

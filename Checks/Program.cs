@@ -220,9 +220,9 @@ internal static class Program
                 "Recipe-only repair reports identify their focused Repair workflow");
             ((ComboBox)window.FindName("MainWorkflow")).SelectedItem = WorkflowCatalog.All.Single(workflow => workflow.Kind == WorkflowKind.BrowserExtensions);
             window.UpdateLayout();
-            Require(window.FindName("CategoryList") is ListBox { SelectedItem: not null } browserCategories && browserCategories.SelectedItem.ToString() == "Maintenance" &&
+            Require(window.FindName("CategoryList") is ListBox { SelectedItem: not null } browserCategories && browserCategories.SelectedItem.ToString() == "Apps" &&
                 window.FindName("MainAutoRepair") is CheckBox { IsChecked: not true, IsEnabled: false },
-                "Browser extension inventory appears in Maintenance without repair controls");
+                "Browser extension inventory appears in Apps without repair controls");
             ((ComboBox)window.FindName("MainWorkflow")).SelectedItem = WorkflowCatalog.All.Single(workflow => workflow.Kind == WorkflowKind.InstalledApps);
             window.UpdateLayout();
             ((Button)window.FindName("ReviewBrowserExtensions")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -828,8 +828,8 @@ internal static class Program
                 "Control bank sits beside the console, not above it");
             var categories = (ListBox)window.FindName("CategoryList");
             var categoryOrigin = categories.TranslatePoint(new Point(), window);
-            Require(categoryOrigin.X >= controlOrigin.X + controlBank.ActualWidth && categories.ActualHeight < 65,
-                "Compact category buttons occupy only the middle pane beside the tool sidebar");
+            Require(categoryOrigin.X >= controlOrigin.X + controlBank.ActualWidth && categories.ActualHeight < 100,
+                "Two compact rows of section buttons occupy only the middle pane beside the tool sidebar");
             Require(Grid.GetColumnSpan(categories) == 1 && ((FrameworkElement)window.FindName("DetailsPanel")).Visibility == Visibility.Collapsed &&
                 ((Button)window.FindName("ExportReportButton")).Visibility == Visibility.Visible,
                 "Category bank leads to the report workspace with a visible export action and no inspector sidebar");
@@ -861,10 +861,10 @@ internal static class Program
                 "Shortcut rail button closes the overlay without changing the workspace");
             var categoryTools = (ComboBox)window.FindName("CategoryWorkflow");
             var allTools = (ComboBox)window.FindName("MainWorkflow");
-            Require(categories.Items.Cast<object>().Select(category => category.ToString()).SequenceEqual(["Diagnostics", "Repair", "Network", "Maintenance", "Security"]) &&
+            Require(categories.Items.Cast<object>().Select(category => category.ToString()).SequenceEqual(["Diagnostics", "Repair", "Updates", "Devices", "Network", "Apps", "Maintenance", "Onboarding", "Security", "BitLocker", "Privacy"]) &&
                 categories.ItemContainerGenerator.ContainerFromIndex(0) is ListBoxItem { FontFamily.Source: "Segoe UI", FontWeight: var categoryWeight } &&
                 categoryWeight == FontWeights.SemiBold,
-                "Primary categories place Diagnostics beside Repair in a clear UI face while keeping Network separate and BitLocker under Security");
+                "Primary sections place Diagnostics beside Repair in a clear UI face and give Onboarding, BitLocker and Privacy their own sections");
             var mainAction = (Button)window.FindName("MainGo");
             var automaticRepair = (CheckBox)window.FindName("MainAutoRepair");
             Require(categories.SelectedItem?.ToString() == "Diagnostics" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.CommonProblems } &&
@@ -1069,11 +1069,12 @@ internal static class Program
             }
             Require(reachableTools.Count == WorkflowCatalog.All.Count, "Every workflow is reachable through a category");
             categories.SelectedItem = categories.Items.Cast<object>().Single(category => category.ToString() == "Network");
-            Require(categoryTools.Items.Cast<WorkflowDefinition>().Select(tool => tool.Kind).SequenceEqual([WorkflowKind.Network]),
-                "Network is available as its own primary category");
-            categories.SelectedItem = categories.Items.Cast<object>().Single(category => category.ToString() == "Security");
-            Require(categoryTools.Items.Cast<WorkflowDefinition>().Any(tool => tool.Kind == WorkflowKind.BitLocker),
-                "BitLocker is available from Security");
+            Require(categoryTools.Items.Cast<WorkflowDefinition>().First().Kind == WorkflowKind.Network &&
+                categoryTools.Items.Cast<WorkflowDefinition>().Any(tool => tool.Kind == WorkflowKind.Wireless),
+                "Network opens on the network diagnosis and holds the network services");
+            categories.SelectedItem = categories.Items.Cast<object>().Single(category => category.ToString() == "BitLocker");
+            Require(categoryTools.Items.Cast<WorkflowDefinition>().Select(tool => tool.Kind).SequenceEqual([WorkflowKind.BitLocker]),
+                "BitLocker is its own section");
             Require(((CheckBox)window.FindName("TaskRegistrationConsent")).IsChecked == false &&
                 ((Button)window.FindName("TaskRegistrationButton")).Content is "Preview registration",
                 "Desktop task registration defaults to preview and requires separate create consent");
@@ -1091,9 +1092,9 @@ internal static class Program
             Require(((ComboBox)window.FindName("MainWorkflow")).SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Cleanup },
                 "A running scan can open another category without starting another operation");
             var busyTools = (ComboBox)window.FindName("CategoryWorkflow");
-            busyTools.SelectedItem = busyTools.Items.Cast<WorkflowDefinition>().Single(tool => tool.Kind == WorkflowKind.AvailableUpdates);
+            busyTools.SelectedItem = busyTools.Items.Cast<WorkflowDefinition>().Single(tool => tool.Kind == WorkflowKind.Profiles);
             Pump();
-            Require(((ComboBox)window.FindName("MainWorkflow")).SelectedItem is WorkflowDefinition { Kind: WorkflowKind.AvailableUpdates },
+            Require(((ComboBox)window.FindName("MainWorkflow")).SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Profiles },
                 "A running scan can browse another tool without enabling another GO action");
             setCaptureBusy.Invoke(window, [false]);
             categories.SelectedIndex = 0;
@@ -1627,7 +1628,7 @@ internal static class Program
             securityNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review security options"));
             securityNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
-            Require(categories.SelectedItem?.ToString() == "Security" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.BitLocker } &&
+            Require(categories.SelectedItem?.ToString() == "BitLocker" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.BitLocker } &&
                 automaticRepair.IsChecked != true,
                 "BitLocker reports open Security options without selecting encryption or recovery-key actions");
             var networkWorkflow = new WorkflowResult(WorkflowKind.Network, "fixture", DateTimeOffset.UtcNow, "Needs attention",
@@ -1645,7 +1646,7 @@ internal static class Program
             var maintenanceNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review maintenance options"));
             maintenanceNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
-            Require(categories.SelectedItem?.ToString() == "Maintenance" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.AvailableUpdates } &&
+            Require(categories.SelectedItem?.ToString() == "Updates" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.AvailableUpdates } &&
                 automaticRepair.IsChecked != true,
                 "Update reports open the exact Maintenance tool without selecting installation");
             Capture(window, Path.Combine(scratch, "workflow-outcome.png"));
