@@ -24,7 +24,6 @@
   <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
   <sys:String x:Key="Str_Theme_Blood">Krvavý</sys:String>
   <sys:String x:Key="Str_Theme_Delirium">Delirium</sys:String>
-  <sys:String x:Key="Str_Beam_Publisher">VYDAVATEL</sys:String>
   <sys:String x:Key="Str_Scope_ThisPc">Tento počítač</sys:String>
   <sys:String x:Key="Str_BitLocker_Operation">operace</sys:String>
   <sys:String x:Key="Str_BitLocker_Browse">Procházet...</sys:String>
@@ -187,18 +186,6 @@
   <sys:String x:Key="Str_Depot_StartMenu">Nabídka Start</sys:String>
   <sys:String x:Key="Str_Depot_Notifications">Oznámení</sys:String>
   <sys:String x:Key="Str_Depot_Boundary">Pouze kontrola. Žádné stahování, instalace, účet, aktualizace, úklid, zásada, registr, služba, profil nebo restartování.</sys:String>
-  <sys:String x:Key="Str_Beam_Description">Vytvořit kontrolu jednoho Intune Win32 balíčku a jeho explicitních cílových zařízení. GO ověřuje pouze plán.</sys:String>
-  <sys:String x:Key="Str_Beam_InstallerSource">Zdroj instalátoru</sys:String>
-  <sys:String x:Key="Str_Beam_LocalSource">Místní cesta EXE nebo MSI</sys:String>
-  <sys:String x:Key="Str_Beam_HttpsSource">HTTPS URL pro stažení</sys:String>
-  <sys:String x:Key="Str_Beam_AppName">Název aplikace</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitches">Instalační přepínače</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitchesTip">MSI používá /qn, pokud je toto pole prázdné. EXE se spustí bez přepínačů, pokud je prázdné.</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnames">Cílové názvy hostitelů</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnamesTip">Oddělte názvy hostitelů čárkami. IP adresy nesmějí odpovídat zařízením Intune.</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomain">Doména tenanta</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomainTip">Příklad: contoso.onmicrosoft.com. E-mail nebo přihlašovací údaje administrátora se neuchovávají.</sys:String>
-  <sys:String x:Key="Str_Beam_Boundary">Pouze kontrola. Žádné přihlášení, stahování, balení, nahrávání, aplikace nebo změna skupiny, přiřazení, synchronizace zařízení nebo instalace.</sys:String>
   <sys:String x:Key="Str_Scope_AllProfiles">Všechny profily a výchozí uživatel</sys:String>
   <sys:String x:Key="Str_Debloat_Description">Vyberte přesně, co chcete zkontrolovat, a potom stiskněte GO. Nic není vybíráno automaticky.</sys:String>
   <sys:String x:Key="Str_Debloat_RecallAi">Připomenutí a AI</sys:String>

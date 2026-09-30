@@ -123,7 +123,6 @@ if (args.Length > 0 && args[0] == "profiles") return await ProfileCommands.RunAs
 if (args.Length > 0 && args[0] is "orca-review" or "orca-cache-reset" or "orca-cache-reset-recover") return await OrcaCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "depot-review") return await DepotCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "depot-verify-installer") return await DepotInstallerCommands.RunAsync(args);
-if (args.Length > 0 && args[0] == "beam-review") return await BeamCommands.RunAsync(args);
 if (args.Length > 0 && args[0] == "debloat-review") return await DebloatCommands.RunAsync(args);
 
 if (args.Length > 0 && args[0] == "cleanup") return CleanupCommands.Run(args);
@@ -267,7 +266,6 @@ if (args.Length == 0 || args is ["help"] or ["--help"] or ["-h"])
     Console.WriteLine("killerbench-cli orca-cache-reset-recover (verify interrupted cache retention without repeating a move)");
     Console.WriteLine("killerbench-cli depot-review [application and configuration selections] [--json] (review only; no provisioning)");
     Console.WriteLine("killerbench-cli depot-verify-installer onedrive|teams|chrome|acrobat|zoom|7zip FULL_PATH (read-only Authenticode and vendor-signer check; nothing is run)");
-    Console.WriteLine("killerbench-cli beam-review --source URL_OR_PATH --type Exe|Msi --name APP_NAME --publisher PUBLISHER --target HOST [--target HOST ...] --tenant-domain DOMAIN [--switches ARGS] [--json] (review only; no Intune changes)");
     Console.WriteLine("killerbench-cli debloat-review --area AREA [--area AREA ...] [--all-profiles] [--json] (review only; no system changes)");
     Console.WriteLine("killerbench-cli delivery-optimization (read-only Delivery Optimization service state; JSON evidence)");
     Console.WriteLine("killerbench-cli delivery-optimization-activity (privacy-bounded current job counts and byte totals; no transfer identities or changes)");

@@ -98,10 +98,6 @@ public static class DesktopWorkflowOptionBindings
                 ("configuration.cleanup", "DepotCleanup"), ("configuration.edge", "DepotEdge"),
                 ("configuration.privacy", "DepotPrivacy"), ("configuration.taskbar", "DepotTaskbar"),
                 ("configuration.startMenu", "DepotStartMenu"), ("configuration.notifications", "DepotNotifications")),
-            [WorkflowKind.Beam] = Bindings(
-                ("source", "BeamSource"), ("installerType", "BeamInstallerTypeChoice"), ("appName", "BeamAppName"),
-                ("publisher", "BeamPublisher"), ("installSwitches", "BeamInstallSwitches"),
-                ("targetHostnames", "BeamTargets"), ("tenantDomain", "BeamTenantDomain")),
             [WorkflowKind.Debloat] = Bindings(
                 ("area.recallAndAi", "DebloatRecallAi"), ("area.telemetryAndReporting", "DebloatTelemetry"),
                 ("area.searchAndSuggestions", "DebloatSearch"), ("area.consumerContent", "DebloatConsumer"),

@@ -19,7 +19,6 @@
   <sys:String x:Key="Str_Theme_Blood">Sangue</sys:String>
   <sys:String x:Key="Str_Theme_Greed">Avidità</sys:String>
   <sys:String x:Key="Str_Theme_Cyanotic">Cianotico</sys:String>
-  <sys:String x:Key="Str_Beam_Publisher">EDITORE</sys:String>
   <sys:String x:Key="Str_Scope_ThisPc">Questo PC</sys:String>
   <sys:String x:Key="Str_BitLocker_Operation">operazione</sys:String>
   <sys:String x:Key="Str_BitLocker_Browse">Sfoglia...</sys:String>
@@ -184,18 +183,6 @@
   <sys:String x:Key="Str_Depot_StartMenu">Menu Start</sys:String>
   <sys:String x:Key="Str_Depot_Notifications">Notifiche</sys:String>
   <sys:String x:Key="Str_Depot_Boundary">Solo esame. Nessuna azione di download, installazione, account, aggiornamento, pulizia, criterio, registro, servizio, profilo o riavvio.</sys:String>
-  <sys:String x:Key="Str_Beam_Description">Crea un esame di un pacchetto Intune Win32 e delle sue destinazioni dispositivo esplicite. GO convalida solo il piano.</sys:String>
-  <sys:String x:Key="Str_Beam_InstallerSource">Origine programma di installazione</sys:String>
-  <sys:String x:Key="Str_Beam_LocalSource">Percorso EXE o MSI locale</sys:String>
-  <sys:String x:Key="Str_Beam_HttpsSource">URL download HTTPS</sys:String>
-  <sys:String x:Key="Str_Beam_AppName">Nome app</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitches">Opzioni di installazione</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitchesTip">MSI usa /qn quando questo campo è vuoto. EXE viene eseguito senza opzioni quando è vuoto.</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnames">Nomi host di destinazione</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnamesTip">Separa i nomi host con virgole. Gli indirizzi IP non possono corrispondere ai dispositivi Intune.</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomain">Dominio tenant</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomainTip">Esempio: contoso.onmicrosoft.com. Nessuna email amministratore o credenziale viene conservata.</sys:String>
-  <sys:String x:Key="Str_Beam_Boundary">Solo esame. Nessun accesso, download, pacchettizzazione, caricamento, modifica di applicazione o gruppo, assegnazione, sincronizzazione dispositivo o installazione.</sys:String>
   <sys:String x:Key="Str_Scope_AllProfiles">Tutti i profili e utente predefinito</sys:String>
   <sys:String x:Key="Str_Debloat_Description">Scegli esattamente cosa esaminare, poi premi GO. Nulla viene selezionato automaticamente.</sys:String>
   <sys:String x:Key="Str_Debloat_RecallAi">Recall e IA</sys:String>

@@ -17,7 +17,6 @@
   <sys:String x:Key="Str_Theme_Ectoplasm">Эктоплазма</sys:String>
   <sys:String x:Key="Str_Theme_Decay">Распад</sys:String>
   <sys:String x:Key="Str_Theme_Mourning">Траур</sys:String>
-  <sys:String x:Key="Str_Beam_Publisher">ИЗДАТЕЛЬ</sys:String>
   <sys:String x:Key="Str_Scope_ThisPc">Этот компьютер</sys:String>
   <sys:String x:Key="Str_BitLocker_Operation">операция</sys:String>
   <sys:String x:Key="Str_BitLocker_Browse">Обзор...</sys:String>
@@ -185,18 +184,6 @@
   <sys:String x:Key="Str_Depot_StartMenu">Меню Пуск</sys:String>
   <sys:String x:Key="Str_Depot_Notifications">Уведомления</sys:String>
   <sys:String x:Key="Str_Depot_Boundary">Только обзор. Нет загрузки, установки, работы с учетными записями, обновления, очистки, политики, реестра, службы, профиля или перезапуска.</sys:String>
-  <sys:String x:Key="Str_Beam_Description">Создайте обзор одного пакета Win32 Intune и его явных целевых устройств. GO только проверяет план.</sys:String>
-  <sys:String x:Key="Str_Beam_InstallerSource">Источник установщика</sys:String>
-  <sys:String x:Key="Str_Beam_LocalSource">Локальный путь EXE или MSI</sys:String>
-  <sys:String x:Key="Str_Beam_HttpsSource">URL загрузки через HTTPS</sys:String>
-  <sys:String x:Key="Str_Beam_AppName">Название приложения</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitches">Ключи установки</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitchesTip">MSI использует /qn, если здесь пусто. EXE запускается без ключей, если здесь пусто.</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnames">Целевые имена хостов</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnamesTip">Разделяйте имена хостов запятыми. IP-адреса не могут совпадать с устройствами Intune.</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomain">Домен арендатора</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomainTip">Пример: contoso.onmicrosoft.com. Электронная почта администратора или учетные данные не сохраняются.</sys:String>
-  <sys:String x:Key="Str_Beam_Boundary">Только просмотр. Нет входа в систему, загрузки, упаковки, загрузки, изменения приложений или групп, назначения, синхронизации устройств или установки.</sys:String>
   <sys:String x:Key="Str_Scope_AllProfiles">Все профили и пользователь по умолчанию</sys:String>
   <sys:String x:Key="Str_Debloat_Description">Выберите точно, что нужно просмотреть, затем нажмите ПОЕХАЛИ. Ничего не выбирается автоматически.</sys:String>
   <sys:String x:Key="Str_Debloat_RecallAi">Отзыв и ИИ</sys:String>

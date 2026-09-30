@@ -108,7 +108,6 @@ public static class WorkflowCatalog
         new WorkflowDefinition(WorkflowKind.Mace, "mace", "Microsoft app removal"),
         new WorkflowDefinition(WorkflowKind.Orca, "orca", "Outlook reset"),
         new WorkflowDefinition(WorkflowKind.Depot, "depot", "Onboarding"),
-        new WorkflowDefinition(WorkflowKind.Beam, "beam", "Intune app deployment"),
         new WorkflowDefinition(WorkflowKind.Debloat, "debloat", "Declutter Windows"),
         new WorkflowDefinition(WorkflowKind.ServicingActivity, "servicing-monitor", "Servicing activity monitor")
     });

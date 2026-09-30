@@ -156,8 +156,6 @@ internal static class WorkflowCommands
         { Console.Error.WriteLine("Use orca-review with an explicit Outlook mode and one or more review actions."); return 2; }
         if (definition?.Kind == WorkflowKind.Depot)
         { Console.Error.WriteLine("Use depot-review with one or more explicit application or configuration selections."); return 2; }
-        if (definition?.Kind == WorkflowKind.Beam)
-        { Console.Error.WriteLine("Use beam-review with an explicit installer source, package metadata, tenant domain and target hostnames."); return 2; }
         if (definition?.Kind == WorkflowKind.Debloat)
         { Console.Error.WriteLine("Use debloat-review with one or more explicit change areas."); return 2; }
         if (definition?.Kind == WorkflowKind.AvailableUpdates && args.Contains("--auto-repair"))

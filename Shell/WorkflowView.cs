@@ -134,8 +134,6 @@ public partial class MainWindow
         if (OrcaSettings is not null) OrcaSettings.Visibility = orca ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         bool depot = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Depot };
         if (DepotSettings is not null) DepotSettings.Visibility = depot ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-        bool beam = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Beam };
-        if (BeamSettings is not null) BeamSettings.Visibility = beam ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         bool debloat = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Debloat };
         if (DebloatSettings is not null) DebloatSettings.Visibility = debloat ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         if (AppPackageSettings is not null) AppPackageSettings.Visibility = packages ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
@@ -226,7 +224,7 @@ public partial class MainWindow
         if (!MainAutoRepair.IsEnabled) MainAutoRepair.IsChecked = false;
         if (MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.CommonProblems } && FocusDiagnosticAreas?.IsChecked == true)
         { MainAutoRepair.IsEnabled = false; MainAutoRepair.IsChecked = false; }
-        if (servicingMonitor || packages || tasks || computerName || (storage && !storageRepair && !storageOptimization) || (systemRestore && !systemRestoreCreate) || cleanup || updates || privacy || bitlocker || profiles || timePreview || searchRebuild || eventChannelEnable || selectedPrinter || selectedPrintJob || mace || depot || beam || debloat) MainAutoRepair.IsChecked = false;
+        if (servicingMonitor || packages || tasks || computerName || (storage && !storageRepair && !storageOptimization) || (systemRestore && !systemRestoreCreate) || cleanup || updates || privacy || bitlocker || profiles || timePreview || searchRebuild || eventChannelEnable || selectedPrinter || selectedPrintJob || mace || depot || debloat) MainAutoRepair.IsChecked = false;
         else if (CleanupRemove is not null) CleanupRemove.IsChecked = false;
         UpdateMainActionLabel();
     }
@@ -402,17 +400,6 @@ public partial class MainWindow
         if (kind == WorkflowKind.Depot)
         {
             try { depotOptions.Validate(); }
-            catch (ArgumentException error) { Report(error.Message); return; }
-        }
-        var beamOptions = new BeamOptions(
-            BeamSourceKindChoice.SelectedIndex == 1 ? BeamSourceKind.HttpsUrl : BeamSourceKind.LocalFile,
-            BeamSource.Text.Trim(), BeamInstallerTypeChoice.SelectedIndex == 1 ? BeamInstallerType.Msi : BeamInstallerType.Exe,
-            BeamAppName.Text.Trim(), BeamPublisher.Text.Trim(), BeamInstallSwitches.Text.Trim(),
-            BeamTargets.Text.Split([',', ';'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
-            BeamTenantDomain.Text.Trim());
-        if (kind == WorkflowKind.Beam)
-        {
-            try { beamOptions.Validate(); }
             catch (ArgumentException error) { Report(error.Message); return; }
         }
         var debloatOptions = new DebloatOptions(
@@ -1348,7 +1335,7 @@ public partial class MainWindow
                 SetScanLight(verified ? "ready" : "attention", detail);
                 return;
             }
-            var host = new WindowsWorkflowHost { NetworkTimeout = networkTimeout, BitsAllUsers = bitsAllUsers, BitsSelectedJobId = BitsSelection.SelectedItem is Guid selectedBitsJob ? selectedBitsJob : null, TimeOptions = timeOptions, ApplicationScope = applicationScope, MaceOptions = maceOptions, OrcaOptions = orcaOptions, DepotOptions = depotOptions, BeamOptions = beamOptions, DebloatOptions = debloatOptions, IncludeProvisionedPackages = includeProvisioned, PackageScope = packageScope, NetworkEndpoint = networkEndpoint, NetworkLookupHost = networkLookupHost, MsiProductCode = msiProductCode, ProposedComputerName = proposedName, StorageVolume = storageVolume, CheckProfileDependencies = profileDependencies, ProfileMinimumDays = profileDays, CleanupOptions = cleanupOptions, SecurityOptions = securityOptions, AudioEndpointSelection = audioSelection, UpdateOptions = updateOptions, IncludeThirdPartyUpdates = UpdateThirdParty.IsChecked == true, PrivacyOptions = privacyOptions, BitLockerOptions = bitlockerOptions, BitLockerRecoveryProtector = string.Equals(protectorVolume, bitlockerOptions.Volume, StringComparison.OrdinalIgnoreCase) && BitLockerProtectorChoice.SelectedItem is Guid selectedProtector ? selectedProtector : null, EventChannel = selectedEventChannel, KnowledgeCatalogs = sessionKnowledgeCatalogs, Progress = progress };
+            var host = new WindowsWorkflowHost { NetworkTimeout = networkTimeout, BitsAllUsers = bitsAllUsers, BitsSelectedJobId = BitsSelection.SelectedItem is Guid selectedBitsJob ? selectedBitsJob : null, TimeOptions = timeOptions, ApplicationScope = applicationScope, MaceOptions = maceOptions, OrcaOptions = orcaOptions, DepotOptions = depotOptions, DebloatOptions = debloatOptions, IncludeProvisionedPackages = includeProvisioned, PackageScope = packageScope, NetworkEndpoint = networkEndpoint, NetworkLookupHost = networkLookupHost, MsiProductCode = msiProductCode, ProposedComputerName = proposedName, StorageVolume = storageVolume, CheckProfileDependencies = profileDependencies, ProfileMinimumDays = profileDays, CleanupOptions = cleanupOptions, SecurityOptions = securityOptions, AudioEndpointSelection = audioSelection, UpdateOptions = updateOptions, IncludeThirdPartyUpdates = UpdateThirdParty.IsChecked == true, PrivacyOptions = privacyOptions, BitLockerOptions = bitlockerOptions, BitLockerRecoveryProtector = string.Equals(protectorVolume, bitlockerOptions.Volume, StringComparison.OrdinalIgnoreCase) && BitLockerProtectorChoice.SelectedItem is Guid selectedProtector ? selectedProtector : null, EventChannel = selectedEventChannel, KnowledgeCatalogs = sessionKnowledgeCatalogs, Progress = progress };
             if (kind == WorkflowKind.AppPackages) SetAppPackageInventory(null);
             if (kind == WorkflowKind.InstalledApps) SetApplicationInventory(null);
             if (kind == WorkflowKind.Mace) SetMaceReview(null);

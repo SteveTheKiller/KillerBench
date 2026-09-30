@@ -285,28 +285,6 @@
               </WrapPanel>
               <TextBlock Text="{DynamicResource Str_Depot_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
             </StackPanel>
-            <StackPanel x:Name="BeamSettings" Visibility="Collapsed" Margin="0,0,0,8">
-              <TextBlock Text="{DynamicResource Str_Beam_Description}" TextWrapping="Wrap"/>
-              <TextBlock Text="{DynamicResource Str_Beam_InstallerSource}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
-              <ComboBox x:Name="BeamSourceKindChoice" SelectedIndex="0" AutomationProperties.Name="Intune deployment installer source type">
-                <ComboBoxItem Content="{DynamicResource Str_Beam_LocalSource}"/><ComboBoxItem Content="{DynamicResource Str_Beam_HttpsSource}"/>
-              </ComboBox>
-              <TextBox x:Name="BeamSource" Margin="0,4,0,0" MaxLength="32768" AutomationProperties.Name="Intune deployment installer path or HTTPS URL"/>
-              <ComboBox x:Name="BeamInstallerTypeChoice" SelectedIndex="0" Margin="0,4,0,0" AutomationProperties.Name="Intune deployment installer type">
-                <ComboBoxItem Content="EXE"/><ComboBoxItem Content="MSI"/>
-              </ComboBox>
-              <TextBlock Text="{DynamicResource Str_Beam_AppName}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
-              <TextBox x:Name="BeamAppName" MaxLength="256" AutomationProperties.Name="Intune app name"/>
-              <TextBlock Text="{DynamicResource Str_Beam_Publisher}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
-              <TextBox x:Name="BeamPublisher" MaxLength="256" Text="KillerBench" AutomationProperties.Name="Intune deployment publisher"/>
-              <TextBlock Text="{DynamicResource Str_Beam_InstallSwitches}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
-              <TextBox x:Name="BeamInstallSwitches" MaxLength="2048" AutomationProperties.Name="Intune deployment install switches" ToolTip="{DynamicResource Str_Beam_InstallSwitchesTip}"/>
-              <TextBlock Text="{DynamicResource Str_Beam_TargetHostnames}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
-              <TextBox x:Name="BeamTargets" MaxLength="32000" AutomationProperties.Name="Intune deployment comma separated target hostnames" ToolTip="{DynamicResource Str_Beam_TargetHostnamesTip}"/>
-              <TextBlock Text="{DynamicResource Str_Beam_TenantDomain}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
-              <TextBox x:Name="BeamTenantDomain" MaxLength="253" AutomationProperties.Name="Intune deployment tenant domain" ToolTip="{DynamicResource Str_Beam_TenantDomainTip}"/>
-              <TextBlock Text="{DynamicResource Str_Beam_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
-            </StackPanel>
             <StackPanel x:Name="DebloatSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="{DynamicResource Str_Debloat_Description}" TextWrapping="Wrap"/>
               <ComboBox x:Name="DebloatScopeChoice" SelectedIndex="0" Margin="0,6,0,4" AutomationProperties.Name="Declutter user scope">

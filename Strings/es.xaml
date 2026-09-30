@@ -25,7 +25,6 @@
   <sys:String x:Key="Str_Theme_Blood">Sangre</sys:String>
   <sys:String x:Key="Str_Theme_Greed">Codicia</sys:String>
   <sys:String x:Key="Str_Theme_Cyanotic">Cianótico</sys:String>
-  <sys:String x:Key="Str_Beam_Publisher">EDITOR</sys:String>
   <sys:String x:Key="Str_Scope_ThisPc">Este equipo</sys:String>
   <sys:String x:Key="Str_BitLocker_Operation">la operación</sys:String>
   <sys:String x:Key="Str_BitLocker_Browse">Examinar...</sys:String>
@@ -188,18 +187,6 @@
   <sys:String x:Key="Str_Depot_StartMenu">Menú Inicio</sys:String>
   <sys:String x:Key="Str_Depot_Notifications">Notificaciones</sys:String>
   <sys:String x:Key="Str_Depot_Boundary">Solo revisión. Sin descarga, instalación, cuenta, actualización, limpieza, directiva, registro, servicio, perfil ni reinicio.</sys:String>
-  <sys:String x:Key="Str_Beam_Description">Crea una revisión de un paquete Win32 de Intune y sus destinos de dispositivo explícitos. GO solo valida el plan.</sys:String>
-  <sys:String x:Key="Str_Beam_InstallerSource">Origen del instalador</sys:String>
-  <sys:String x:Key="Str_Beam_LocalSource">Ruta local de EXE o MSI</sys:String>
-  <sys:String x:Key="Str_Beam_HttpsSource">URL de descarga HTTPS</sys:String>
-  <sys:String x:Key="Str_Beam_AppName">Nombre de la app</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitches">Modificadores de instalación</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitchesTip">MSI usa /qn cuando esto está en blanco. EXE se ejecuta sin modificadores cuando está en blanco.</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnames">Nombres de host de destino</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnamesTip">Separa nombres de host con comas. Las direcciones IP no pueden coincidir con dispositivos de Intune.</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomain">Dominio de inquilino</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomainTip">Ejemplo: contoso.onmicrosoft.com. No se conserva ningún correo de administrador ni credencial.</sys:String>
-  <sys:String x:Key="Str_Beam_Boundary">Solo revisión. Sin inicio de sesión, descarga, empaquetado, carga, cambio de aplicación o grupo, asignación, sincronización de dispositivo ni instalación.</sys:String>
   <sys:String x:Key="Str_Scope_AllProfiles">Todos los perfiles y usuario predeterminado</sys:String>
   <sys:String x:Key="Str_Debloat_Description">Elige exactamente qué revisar y luego presiona GO. Nada se selecciona automáticamente.</sys:String>
   <sys:String x:Key="Str_Debloat_RecallAi">Recall e IA</sys:String>

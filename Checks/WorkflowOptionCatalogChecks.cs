@@ -4,7 +4,7 @@ internal static class WorkflowOptionCatalogChecks
 {
     internal static void Run()
     {
-        Require(WorkflowOptionCatalog.All.Count == 28, "Option catalog exposes the twenty-eight option-rich workflows");
+        Require(WorkflowOptionCatalog.All.Count == 27, "Option catalog exposes the twenty-seven option-rich workflows");
         Require(WorkflowOptionCatalog.All.Select(item => item.Kind).SequenceEqual(
             WorkflowCatalog.All.Where(item => WorkflowOptionCatalog.ForWorkflow(item.Kind) is not null).Select(item => item.Kind)),
             "Option sets follow the canonical workflow order");
@@ -176,8 +176,7 @@ internal static class WorkflowOptionCatalogChecks
             servicing.Options.Count(option => option.Key.StartsWith("include", StringComparison.Ordinal)) == 11,
             "Servicing monitor metadata matches the desktop monitor defaults and all evidence groups");
 
-        Require(Value(Required("orca"), "action.clearCaches") == "true" &&
-            Value(Required("beam"), "publisher") == "KillerBench",
+        Require(Value(Required("orca"), "action.clearCaches") == "true",
             "Review defaults match the existing desktop workflow defaults");
 
         foreach (WorkflowOptionSet set in WorkflowOptionCatalog.All)
@@ -287,9 +286,9 @@ internal static class WorkflowOptionCatalogChecks
             !WorkflowOptionValidation.Validate("defender", new[] { KeyValuePair.Create("startScan", "true") }).IsValid,
             "Validation identifies explicit Defender execution and requires a scan type");
 
-        WorkflowOptionValidationResult required = WorkflowOptionValidation.Validate("beam", Array.Empty<KeyValuePair<string, string>>());
+        WorkflowOptionValidationResult required = WorkflowOptionValidation.Validate("computer-name", Array.Empty<KeyValuePair<string, string>>());
         Require(!required.IsValid && required.Errors.Select(error => error.Key).ToHashSet(StringComparer.Ordinal)
-            .IsSupersetOf(new[] { "source", "appName", "targetHostnames", "tenantDomain" }),
+            .Contains("proposedName"),
             "Validation reports active required text fields");
 
         WorkflowOptionValidationResult networkTarget = WorkflowOptionValidation.Validate("network", new[]
@@ -568,26 +567,6 @@ internal static class WorkflowOptionCatalogChecks
         Require(projectedMace.MaceOptions.Targets == MaceTargets.OneDrive &&
             projectedMace.MaceOptions.Scope == MaceScope.AllUsers && projectedMace.MaceOptions.RestoreOneDriveFolderLocations,
             "Validated Microsoft app removal selections project into a read-only removal review");
-
-        WindowsWorkflowHost projectedBeam = WorkflowOptionProjection.CreateHost(
-            WorkflowOptionValidation.Validate("beam", new[]
-            {
-                KeyValuePair.Create("source", "https://downloads.example.test/setup.msi"),
-                KeyValuePair.Create("installerType", nameof(BeamInstallerType.Msi)),
-                KeyValuePair.Create("appName", "Fixture App"),
-                KeyValuePair.Create("installSwitches", "/quiet SECRET-FIXTURE"),
-                KeyValuePair.Create("targetHostnames", "PC-01,PC-02"),
-                KeyValuePair.Create("tenantDomain", "example.onmicrosoft.com")
-            }));
-        Require(projectedBeam.BeamOptions.SourceKind == BeamSourceKind.HttpsUrl &&
-            projectedBeam.BeamOptions.TargetHostnames.SequenceEqual(new[] { "PC-01", "PC-02" }) &&
-            projectedBeam.OptionPlanCheck?.Detail.Contains("Installer source: supplied", StringComparison.Ordinal) == true &&
-            projectedBeam.OptionPlanCheck.Detail.Contains("Install switches: supplied", StringComparison.Ordinal) &&
-            projectedBeam.OptionPlanCheck.Detail.Contains("2 targets", StringComparison.Ordinal) &&
-            !projectedBeam.OptionPlanCheck.Detail.Contains("downloads.example.test", StringComparison.Ordinal) &&
-            !projectedBeam.OptionPlanCheck.Detail.Contains("SECRET-FIXTURE", StringComparison.Ordinal) &&
-            !projectedBeam.OptionPlanCheck.Detail.Contains("PC-01", StringComparison.Ordinal),
-            "Validated Intune deployment text selections project into a bounded review plan with sensitive values redacted");
 
         ServicingMonitorOptions projectedServicing = WorkflowOptionProjection.CreateServicingOptions(normalized);
         Require(projectedServicing.RefreshSeconds == 5 && projectedServicing.Samples == 3 &&

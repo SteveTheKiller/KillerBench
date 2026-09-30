@@ -25,7 +25,6 @@
   <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
   <sys:String x:Key="Str_Theme_Cyanotic">Cyanotique</sys:String>
   <sys:String x:Key="Str_Theme_Malaise">Malaise</sys:String>
-  <sys:String x:Key="Str_Beam_Publisher">ÉDITEUR</sys:String>
   <sys:String x:Key="Str_Scope_ThisPc">Ce PC</sys:String>
   <sys:String x:Key="Str_BitLocker_Operation">l&apos;opération</sys:String>
   <sys:String x:Key="Str_BitLocker_Browse">Parcourir...</sys:String>
@@ -361,18 +360,6 @@
   <sys:String x:Key="Str_Depot_StartMenu">Menu Démarrer</sys:String>
   <sys:String x:Key="Str_Depot_Notifications">Notifications</sys:String>
   <sys:String x:Key="Str_Depot_Boundary">Examen uniquement. Aucune action de téléchargement, installation, compte, mise à jour, nettoyage, stratégie, registre, service, profil ou redémarrage.</sys:String>
-  <sys:String x:Key="Str_Beam_Description">Créer l&apos;examen d&apos;un package Intune Win32 et de ses cibles d&apos;appareils explicites. GO valide uniquement le plan.</sys:String>
-  <sys:String x:Key="Str_Beam_InstallerSource">Source du programme d&apos;installation</sys:String>
-  <sys:String x:Key="Str_Beam_LocalSource">Chemin EXE ou MSI local</sys:String>
-  <sys:String x:Key="Str_Beam_HttpsSource">URL de téléchargement HTTPS</sys:String>
-  <sys:String x:Key="Str_Beam_AppName">Nom de l&apos;application</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitches">Commutateurs d&apos;installation</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitchesTip">MSI utilise /qn si ce champ est vide. EXE s&apos;exécute sans commutateurs si le champ est vide.</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnames">Noms d&apos;hôte cibles</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnamesTip">Séparez les noms d&apos;hôte par des virgules. Les adresses IP ne peuvent pas correspondre aux appareils Intune.</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomain">Domaine du locataire</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomainTip">Exemple : contoso.onmicrosoft.com. Aucun e-mail administrateur ou identifiant n&apos;est conservé.</sys:String>
-  <sys:String x:Key="Str_Beam_Boundary">Examen uniquement. Aucune connexion, téléchargement, empaquetage, téléversement, modification d&apos;application ou de groupe, affectation, synchronisation d&apos;appareil ou installation.</sys:String>
   <sys:String x:Key="Str_Scope_AllProfiles">Tous les profils et utilisateur par défaut</sys:String>
   <sys:String x:Key="Str_Debloat_Description">Choisissez exactement ce qu&apos;il faut examiner, puis appuyez sur GO. Rien n&apos;est sélectionné automatiquement.</sys:String>
   <sys:String x:Key="Str_Debloat_RecallAi">Recall et IA</sys:String>

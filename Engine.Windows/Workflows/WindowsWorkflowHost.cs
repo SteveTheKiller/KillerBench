@@ -62,7 +62,6 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
     public MaceRemovalReview? LastMaceReview { get; private set; }
     public OrcaReview? LastOrcaReview { get; private set; }
     public DepotReview? LastDepotReview { get; private set; }
-    public BeamReview? LastBeamReview { get; private set; }
     public DebloatReview? LastDebloatReview { get; private set; }
     public BitsInventoryResult? LastBitsInventory { get; private set; }
     public DnsLookupResult? LastDnsLookup { get; private set; }
@@ -78,8 +77,6 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
     public MaceReviewOptions MaceOptions { get; init; } = new(MaceTargets.None);
     public OrcaReviewOptions OrcaOptions { get; init; } = new(OrcaOutlookMode.Both, OrcaScope.RunningAccount);
     public DepotOptions DepotOptions { get; init; } = new(DepotApplications.None, DepotConfiguration.None);
-    public BeamOptions BeamOptions { get; init; } = new(BeamSourceKind.LocalFile, "", BeamInstallerType.Exe,
-        "", "", "", [], "");
     public DebloatOptions DebloatOptions { get; init; } = new(DebloatAreas.None, DebloatUserScope.RunningAccount);
     public IDebloatPowerPlanChangeHost DebloatPowerPlanHost { get; init; } = new WindowsDebloatPowerPlanChangeHost();
     public IDebloatHibernationHost DebloatHibernationHost { get; init; } = new WindowsDebloatHibernationHost();
@@ -336,13 +333,6 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             Progress?.Report("Collecting selected provisioning application registrations...");
             LastDepotReview = await DepotPlanning.ReviewCurrentAsync(DepotOptions, Progress, token).ConfigureAwait(false);
             return LastDepotReview.Checks;
-        }
-        if (kind == WorkflowKind.Beam)
-        {
-            LastBeamReview = null;
-            Progress?.Report("Validating the selected Intune deployment source, package metadata and Intune targets...");
-            LastBeamReview = await BeamPlanning.ReviewAsync(BeamOptions, Progress, token).ConfigureAwait(false);
-            return LastBeamReview.Checks;
         }
         if (kind == WorkflowKind.Debloat)
         {

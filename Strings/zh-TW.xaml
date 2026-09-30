@@ -21,7 +21,6 @@
   <sys:String x:Key="Str_Theme_Light">淺色</sys:String>
   <sys:String x:Key="Str_Theme_Black">黑色</sys:String>
   <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
-  <sys:String x:Key="Str_Beam_Publisher">發行者</sys:String>
   <sys:String x:Key="Str_Scope_ThisPc">本機</sys:String>
   <sys:String x:Key="Str_BitLocker_Operation">操作</sys:String>
   <sys:String x:Key="Str_BitLocker_Browse">瀏覽...</sys:String>
@@ -188,18 +187,6 @@
   <sys:String x:Key="Str_Depot_StartMenu">開始功能表</sys:String>
   <sys:String x:Key="Str_Depot_Notifications">通知</sys:String>
   <sys:String x:Key="Str_Depot_Boundary">僅檢閱。沒有下載、安裝、帳戶、更新、清理、政策、登錄、服務、個人資料或重新啟動動作。</sys:String>
-  <sys:String x:Key="Str_Beam_Description">建立單一 Intune Win32 套件及其明確裝置目標的檢閱。GO 僅驗證計劃。</sys:String>
-  <sys:String x:Key="Str_Beam_InstallerSource">安裝程式來源</sys:String>
-  <sys:String x:Key="Str_Beam_LocalSource">本機 EXE 或 MSI 路徑</sys:String>
-  <sys:String x:Key="Str_Beam_HttpsSource">HTTPS 下載 URL</sys:String>
-  <sys:String x:Key="Str_Beam_AppName">應用程式名稱</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitches">安裝開關</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitchesTip">當此欄位為空時，MSI 使用 /qn。當此欄位為空時，EXE 不使用開關執行。</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnames">目標主機名稱</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnamesTip">用逗號分隔主機名稱。IP 位址不能與 Intune 裝置匹配。</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomain">租戶網域</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomainTip">範例：contoso.onmicrosoft.com。沒有保留管理員電子郵件或認證。</sys:String>
-  <sys:String x:Key="Str_Beam_Boundary">僅檢視。無登入、下載、打包、上傳、應用程式或群組變更、指派、裝置同步或安裝。</sys:String>
   <sys:String x:Key="Str_Scope_AllProfiles">所有設定檔和預設使用者</sys:String>
   <sys:String x:Key="Str_Debloat_Description">精確選擇要檢視的項目，然後按 GO。未自動選擇任何項目。</sys:String>
   <sys:String x:Key="Str_Debloat_RecallAi">回想與 AI</sys:String>

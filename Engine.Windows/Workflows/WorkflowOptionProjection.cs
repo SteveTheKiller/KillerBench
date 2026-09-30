@@ -47,7 +47,6 @@ public static class WorkflowOptionProjection
             MaceOptions = MaceSelection(values),
             OrcaOptions = OrcaSelection(values),
             DepotOptions = DepotSelection(values),
-            BeamOptions = BeamSelection(values),
             DebloatOptions = DebloatSelection(values)
         };
 
@@ -96,7 +95,6 @@ public static class WorkflowOptionProjection
             case WorkflowKind.Mace: host.MaceOptions.Validate(); break;
             case WorkflowKind.Orca: host.OrcaOptions.Validate(); break;
             case WorkflowKind.Depot: host.DepotOptions.Validate(); break;
-            case WorkflowKind.Beam: host.BeamOptions.Validate(); break;
             case WorkflowKind.Debloat: host.DebloatOptions.Validate(); break;
             case WorkflowKind.BitLocker: host.BitLockerOptions.Validate(); break;
         }
@@ -177,8 +175,7 @@ public static class WorkflowOptionProjection
 
     private static string DisplayValue(string workflowKey, string key, string value)
     {
-        if (key is "backupFile" or "installSwitches" or "protectorId" ||
-            workflowKey == "beam" && key == "source") return "supplied";
+        if (key is "backupFile" or "installSwitches" or "protectorId") return "supplied";
         if (key == "targetHostnames")
             return value.Split(['\r', '\n', ',', ';'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                 .Length.ToString(CultureInfo.InvariantCulture) + " targets";
@@ -223,17 +220,6 @@ public static class WorkflowOptionProjection
 
     private static DepotOptions DepotSelection(IReadOnlyDictionary<string, string> values) => new(
         Flags<DepotApplications>(values, "application"), Flags<DepotConfiguration>(values, "configuration"));
-
-    private static BeamOptions BeamSelection(IReadOnlyDictionary<string, string> values)
-    {
-        string source = Text(values, "source") ?? "";
-        string[] targets = (Text(values, "targetHostnames") ?? "")
-            .Split(['\r', '\n', ',', ';'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        return new(source.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ? BeamSourceKind.HttpsUrl : BeamSourceKind.LocalFile,
-            source, EnumValue(values, "installerType", BeamInstallerType.Exe), Text(values, "appName") ?? "",
-            Text(values, "publisher") ?? "", Text(values, "installSwitches") ?? "", targets,
-            Text(values, "tenantDomain") ?? "");
-    }
 
     private static DebloatOptions DebloatSelection(IReadOnlyDictionary<string, string> values)
     {

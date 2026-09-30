@@ -1,11 +1,11 @@
 # Changelog
 
+- Remove the Intune app deployment review and tenant sign-in; KillerBench works only on the local computer.
 - Add explicit TPM preparation that never clears the TPM.
 - Add an explicit FIPS algorithm policy switch for BitLocker PIN compliance.
 - Add guarded BitLocker decryption for re-encrypting a drive with a required method.
 - Split the five workspaces into Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker and Privacy.
 - Replace the old script names with plain feature names in the app, reports and CLI messages.
-- Add an interactive Microsoft Entra sign-in for the typed Intune tenant.
 - Add DEPOT installer trust checks that require a valid signature from the confirmed vendor.
 - Add guarded BitLocker TPM and recovery-password protector creation.
 - Add explicit BitLocker recovery-password backup to Active Directory or Microsoft Entra ID.

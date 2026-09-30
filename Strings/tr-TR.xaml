@@ -39,7 +39,6 @@
   <sys:String x:Key="Str_Depot_Privacy">GİZLİLİK</sys:String>
   <sys:String x:Key="Str_About_Aka">Diğer adıyla</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupHelp">YARDIM</sys:String>
-  <sys:String x:Key="Str_Beam_Publisher">Yayımcı</sys:String>
   <sys:String x:Key="Str_Restore_Description">Açıklama</sys:String>
   <sys:String x:Key="Str_ToolTip_Scroll_here_to_resize_the_interface">Arayüzü yeniden boyutlandırmak için burada kaydırın</sys:String>
   <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">WINDOWS BAKIM TEZGAHI</sys:String>
@@ -188,18 +187,6 @@
   <sys:String x:Key="Str_Depot_StartMenu">Başlat menüsü</sys:String>
   <sys:String x:Key="Str_Depot_Notifications">Bildirimler</sys:String>
   <sys:String x:Key="Str_Depot_Boundary">Yalnızca inceleme. İndirme, yükleme, hesap, güncelleme, temizleme, ilke, kayıt defteri, hizmet, profil veya yeniden başlatma eylemi yok.</sys:String>
-  <sys:String x:Key="Str_Beam_Description">Bir Intune Win32 paketinin ve açık cihaz hedeflerinin incelemesini oluşturun. GO yalnızca planı doğrular.</sys:String>
-  <sys:String x:Key="Str_Beam_InstallerSource">Yükleyici kaynağı</sys:String>
-  <sys:String x:Key="Str_Beam_LocalSource">Yerel EXE veya MSI yolu</sys:String>
-  <sys:String x:Key="Str_Beam_HttpsSource">HTTPS indirme URL'si</sys:String>
-  <sys:String x:Key="Str_Beam_AppName">Uygulama adı</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitches">Yükleme anahtarları</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitchesTip">Boşsa MSI /qn kullanır. Boşsa EXE anahtarsız çalışır.</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnames">Hedef ana bilgisayar adları</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnamesTip">Ana bilgisayar adlarını virgülle ayırın. IP adresleri Intune cihazlarıyla eşleşemez.</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomain">Kiracı etki alanı</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomainTip">Örnek: contoso.onmicrosoft.com. Yönetici e-postası veya kimlik bilgisi saklanmaz.</sys:String>
-  <sys:String x:Key="Str_Beam_Boundary">Yalnızca inceleme. Oturum açma, indirme, paketleme, yükleme, uygulama veya grup değişikliği, atama, cihaz eşitleme veya kurulum yok.</sys:String>
   <sys:String x:Key="Str_Scope_AllProfiles">Tüm profiller ve varsayılan kullanıcı</sys:String>
   <sys:String x:Key="Str_Debloat_Description">Tam olarak neyin inceleneceğini seçin, sonra GO düğmesine basın. Hiçbir şey otomatik olarak seçilmez.</sys:String>
   <sys:String x:Key="Str_Debloat_RecallAi">Recall ve AI</sys:String>

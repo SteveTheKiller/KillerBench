@@ -18,7 +18,6 @@
   <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
   <sys:String x:Key="Str_Theme_Blood">রক্ত</sys:String>
   <sys:String x:Key="Str_Theme_Greed">লোভ</sys:String>
-  <sys:String x:Key="Str_Beam_Publisher">প্রকাশক</sys:String>
   <sys:String x:Key="Str_Scope_ThisPc">এই পিসি</sys:String>
   <sys:String x:Key="Str_BitLocker_Operation">কাজ</sys:String>
   <sys:String x:Key="Str_BitLocker_Browse">ব্রাউজ...</sys:String>
@@ -187,18 +186,6 @@
   <sys:String x:Key="Str_Depot_StartMenu">স্টার্ট মেনু</sys:String>
   <sys:String x:Key="Str_Depot_Notifications">নোটিফিকেশন</sys:String>
   <sys:String x:Key="Str_Depot_Boundary">শুধু পর্যালোচনা। কোনো ডাউনলোড, ইনস্টলেশন, অ্যাকাউন্ট, আপডেট, ক্লিনআপ, নীতি, রেজিস্ট্রি, সার্ভিস, প্রোফাইল বা পুনরায় চালু করার কোনো ক্রিয়া নয়।</sys:String>
-  <sys:String x:Key="Str_Beam_Description">একটি Intune Win32 প্যাকেজ এবং এর স্পষ্ট ডিভাইস লক্ষ্যগুলির পর্যালোচনা তৈরি করুন। GO কেবল পরিকল্পনাটি যাচাই করে।</sys:String>
-  <sys:String x:Key="Str_Beam_InstallerSource">ইনস্টলার উৎস</sys:String>
-  <sys:String x:Key="Str_Beam_LocalSource">স্থানীয় EXE বা MSI পাথ</sys:String>
-  <sys:String x:Key="Str_Beam_HttpsSource">এইচটিটিপিএস ডাউনলোড ইউআরএল</sys:String>
-  <sys:String x:Key="Str_Beam_AppName">অ্যাপের নাম</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitches">সুইচ ইনস্টল করুন</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitchesTip">এমএসআই যখন খালি থাকে তখন /qn ব্যবহার করে। এক্সই চলাকালীন যখন খালি থাকে তখন কোনো সুইচ ছাড়াই চলে।</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnames">লক্ষ্য হোস্টনেমস</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnamesTip">হোস্টনেমগুলো কমা দিয়ে আলাদা করুন। আইপি ঠিকানাগুলো Intune ডিভাইসের সাথে মেলে না।</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomain">টেন্যান্ট ডোমেইন</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomainTip">উদাহরণ: contoso.onmicrosoft.com। কোনো প্রশাসকের ইমেইল বা ক্রেডেনশিয়াল সংরক্ষিত হয় না।</sys:String>
-  <sys:String x:Key="Str_Beam_Boundary">শুধুমাত্র পর্যালোচনা। কোনো সাইন-ইন, ডাউনলোড, প্যাকেজিং, আপলোড, অ্যাপ্লিকেশন বা গ্রুপ পরিবর্তন, অ্যাসাইনমেন্ট, ডিভাইস সিঙ্ক বা ইনস্টলেশন নেই।</sys:String>
   <sys:String x:Key="Str_Scope_AllProfiles">সব প্রোফাইল এবং ডিফল্ট ব্যবহারকারী</sys:String>
   <sys:String x:Key="Str_Debloat_Description">যা পর্যালোচনা করতে চান তা নির্ধারণ করুন, তারপর GO চাপুন। কিছু স্বয়ংক্রিয়ভাবে নির্বাচিত হয় না।</sys:String>
   <sys:String x:Key="Str_Debloat_RecallAi">রিকল এবং AI</sys:String>

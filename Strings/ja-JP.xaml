@@ -22,7 +22,6 @@
   <sys:String x:Key="Str_Theme_Blood">ブラッド</sys:String>
   <sys:String x:Key="Str_Theme_Greed">グリード</sys:String>
   <sys:String x:Key="Str_Theme_Cyanotic">シアノティック</sys:String>
-  <sys:String x:Key="Str_Beam_Publisher">発行元</sys:String>
   <sys:String x:Key="Str_Scope_ThisPc">PC</sys:String>
   <sys:String x:Key="Str_BitLocker_Operation">操作</sys:String>
   <sys:String x:Key="Str_BitLocker_Browse">参照...</sys:String>
@@ -188,18 +187,6 @@
   <sys:String x:Key="Str_Depot_StartMenu">スタートメニュー</sys:String>
   <sys:String x:Key="Str_Depot_Notifications">通知</sys:String>
   <sys:String x:Key="Str_Depot_Boundary">レビューのみ。ダウンロード、インストール、アカウント、更新、クリーンアップ、ポリシー、レジストリ、サービス、プロファイル、または再起動の操作は行いません。</sys:String>
-  <sys:String x:Key="Str_Beam_Description">1 つの Intune Win32 パッケージとその明示的なデバイスターゲットのレビューを作成します。GO はプランのみを検証します。</sys:String>
-  <sys:String x:Key="Str_Beam_InstallerSource">インストーラーソース</sys:String>
-  <sys:String x:Key="Str_Beam_LocalSource">ローカル EXE または MSI パス</sys:String>
-  <sys:String x:Key="Str_Beam_HttpsSource">HTTPS ダウンロード URL</sys:String>
-  <sys:String x:Key="Str_Beam_AppName">アプリ名</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitches">インストールスイッチ</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitchesTip">空白の場合、MSI は /qn を使用します。EXE は空白時にスイッチなしで実行されます。</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnames">ターゲットホスト名</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnamesTip">ホスト名をコンマで区切ってください。IPアドレスは Intune デバイスと一致できません。</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomain">テナントドメイン</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomainTip">例: contoso.onmicrosoft.com。管理者のメールや資格情報は保持されません。</sys:String>
-  <sys:String x:Key="Str_Beam_Boundary">確認のみ。サインイン、ダウンロード、パッケージ化、アップロード、アプリケーションやグループの変更、割り当て、デバイスの同期やインストールは行いません。</sys:String>
   <sys:String x:Key="Str_Scope_AllProfiles">すべてのプロファイルと既定のユーザー</sys:String>
   <sys:String x:Key="Str_Debloat_Description">確認する項目を正確に選択し、[GO] を押してください。自動で選択される項目はありません。</sys:String>
   <sys:String x:Key="Str_Debloat_RecallAi">リコールと AI</sys:String>

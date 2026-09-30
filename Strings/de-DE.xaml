@@ -25,7 +25,6 @@
   <sys:String x:Key="Str_Theme_Greed">Gier</sys:String>
   <sys:String x:Key="Str_Theme_Cyanotic">Zyanotisch</sys:String>
   <sys:String x:Key="Str_Theme_Delirium">Delirium</sys:String>
-  <sys:String x:Key="Str_Beam_Publisher">HERAUSGEBER</sys:String>
   <sys:String x:Key="Str_Scope_ThisPc">Dieser PC</sys:String>
   <sys:String x:Key="Str_BitLocker_Operation">Vorgang</sys:String>
   <sys:String x:Key="Str_BitLocker_Browse">Durchsuchen...</sys:String>
@@ -187,18 +186,6 @@
   <sys:String x:Key="Str_Depot_StartMenu">Startmenü</sys:String>
   <sys:String x:Key="Str_Depot_Notifications">Benachrichtigungen</sys:String>
   <sys:String x:Key="Str_Depot_Boundary">Nur Prüfung. Keine Download-, Installations-, Konto-, Update-, Bereinigungs-, Richtlinien-, Registrierungs-, Dienst-, Profil- oder Neustartaktion.</sys:String>
-  <sys:String x:Key="Str_Beam_Description">Prüfung eines Intune Win32-Pakets und seiner expliziten Gerätezielgruppen erstellen. GO validiert nur den Plan.</sys:String>
-  <sys:String x:Key="Str_Beam_InstallerSource">Installationsquelle</sys:String>
-  <sys:String x:Key="Str_Beam_LocalSource">Lokaler EXE- oder MSI-Pfad</sys:String>
-  <sys:String x:Key="Str_Beam_HttpsSource">HTTPS-Download-URL</sys:String>
-  <sys:String x:Key="Str_Beam_AppName">App-Name</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitches">Installationsschalter</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitchesTip">MSI verwendet /qn, wenn dies leer ist. EXE wird ohne Schalter ausgeführt, wenn leer.</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnames">Zielhostnamen</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnamesTip">Hostnamen mit Kommas trennen. IP-Adressen können keine Intune-Geräte abgleichen.</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomain">Mandantendomäne</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomainTip">Beispiel: contoso.onmicrosoft.com. Keine Administrator-E-Mail und keine Anmeldeinformation wird behalten.</sys:String>
-  <sys:String x:Key="Str_Beam_Boundary">Nur Prüfung. Keine Anmeldung, kein Download, keine Paketierung, kein Upload, keine Anwendungs- oder Gruppenänderung, keine Zuweisung, keine Gerätesynchronisierung und keine Installation.</sys:String>
   <sys:String x:Key="Str_Scope_AllProfiles">Alle Profile und Standardbenutzer</sys:String>
   <sys:String x:Key="Str_Debloat_Description">Genau auswählen, was geprüft werden soll, dann GO drücken. Nichts wird automatisch ausgewählt.</sys:String>
   <sys:String x:Key="Str_Debloat_RecallAi">Recall und KI</sys:String>

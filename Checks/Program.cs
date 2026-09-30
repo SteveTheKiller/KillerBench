@@ -106,9 +106,8 @@ internal static class Program
                 window.FindName("OrcaClearCaches") is CheckBox { Content: "Outlook caches" },
                 "Microsoft app removal and Outlook reset controls resolve their localizable English resources");
             Require(window.FindName("DepotUpdates") is CheckBox { Content: "Windows updates" } &&
-                window.FindName("DepotPrivacy") is CheckBox { Content: "Privacy" } &&
-                window.FindName("BeamInstallSwitches") is TextBox { ToolTip: "MSI uses /qn when this is blank. EXE runs without switches when blank." },
-                "Onboarding and Intune deployment controls resolve their localizable English resources");
+                window.FindName("DepotPrivacy") is CheckBox { Content: "Privacy" },
+                "Onboarding controls resolve their localizable English resources");
             Require(window.FindName("DebloatPower") is CheckBox { Content: "High performance power" } &&
                 window.FindName("DebloatActionChoice") is ComboBox { Items.Count: 4 } debloatActions &&
                 debloatActions.Items[3] is ComboBoxItem { Content: "Disable hibernation" } &&
@@ -454,7 +453,6 @@ internal static class Program
             OrcaCacheResetChecks.RunAsync(scratch).GetAwaiter().GetResult();
             PreviousWindowsInstallationChecks.RunAsync(scratch).GetAwaiter().GetResult();
             DepotPlanningChecks.Run();
-            BeamPlanningChecks.Run(scratch);
             DebloatPlanningChecks.Run();
             DebloatPowerPlanExecutionChecks.RunAsync(scratch).GetAwaiter().GetResult();
             DebloatPowerTimerExecutionChecks.RunAsync(scratch).GetAwaiter().GetResult();
@@ -705,7 +703,6 @@ internal static class Program
             BitLockerProtectorCreationChecks.RunAsync(scratch).GetAwaiter().GetResult();
             BitLockerDecryptionChecks.RunAsync(scratch).GetAwaiter().GetResult();
             DepotInstallerTrustChecks.RunAsync().GetAwaiter().GetResult();
-            EntraSignInChecks.Run();
             BitLockerEncryptionChecks.RunAsync(scratch).GetAwaiter().GetResult();
             AudioDeviceChecks.Run();
             DefaultAudioEndpointChecks.Run();

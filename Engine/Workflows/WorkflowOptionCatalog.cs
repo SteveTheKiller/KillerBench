@@ -105,8 +105,6 @@ public static class WorkflowOptionCatalog
                 "Outlook reset reviews every selected area. Running-account cache-only requests can use a separate preview-first retention coordinator. Other Outlook data, packages, credentials, profiles and add-ins remain unchanged."),
             Set(WorkflowKind.Depot, DepotOptions(),
                 "Onboarding currently produces a provisioning review only. No download, installation, account or configuration change occurs."),
-            Set(WorkflowKind.Beam, BeamOptions(),
-                "Intune app deployment currently produces a review only. No download, packaging, tenant, assignment or installation action occurs."),
             Set(WorkflowKind.Debloat, DebloatOptions(),
                 "Review is read-only. The three power actions require their matching area as the only selection, fresh evidence and explicit execution."),
             Set(WorkflowKind.ServicingActivity, ServicingOptions(),
@@ -405,18 +403,6 @@ public static class WorkflowOptionCatalog
             "Include this configuration group in the provisioning review."));
         return options.AsReadOnly();
     }
-
-    private static IReadOnlyList<WorkflowOptionDefinition> BeamOptions() => Array.AsReadOnly(new[]
-    {
-        Text("source", "Installer source", "", "Absolute local installer path or HTTPS URL.", required: true),
-        Choice("installerType", "Installer type", nameof(BeamInstallerType.Exe), EnumChoices<BeamInstallerType>(),
-            "Choose the package format used by the source."),
-        Text("appName", "Application name", "", "Display name for the deployment review.", required: true),
-        Text("publisher", "Publisher", "KillerBench", "Expected software publisher.", required: true),
-        Text("installSwitches", "Install switches", "", "Optional silent installer arguments.", advanced: true),
-        Text("targetHostnames", "Target hostnames", "", "One or more device hostnames, with one target per entry.", required: true),
-        Text("tenantDomain", "Tenant domain", "", "DNS tenant domain such as contoso.onmicrosoft.com.", required: true)
-    });
 
     private static IReadOnlyList<WorkflowOptionDefinition> DebloatOptions()
     {

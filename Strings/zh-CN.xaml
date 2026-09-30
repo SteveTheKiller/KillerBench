@@ -20,7 +20,6 @@
   <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
   <sys:String x:Key="Str_Theme_Blood">血色</sys:String>
   <sys:String x:Key="Str_Theme_Greed">贪婪</sys:String>
-  <sys:String x:Key="Str_Beam_Publisher">发布者</sys:String>
   <sys:String x:Key="Str_Scope_ThisPc">此电脑</sys:String>
   <sys:String x:Key="Str_BitLocker_Operation">操作</sys:String>
   <sys:String x:Key="Str_BitLocker_Browse">浏览...</sys:String>
@@ -188,18 +187,6 @@
   <sys:String x:Key="Str_Depot_StartMenu">开始菜单</sys:String>
   <sys:String x:Key="Str_Depot_Notifications">通知</sys:String>
   <sys:String x:Key="Str_Depot_Boundary">仅审核。没有下载、安装、账户、更新、清理、策略、注册表、服务、配置文件或重启操作。</sys:String>
-  <sys:String x:Key="Str_Beam_Description">构建一个 Intune Win32 包及其明确设备目标的审核。GO 仅验证计划。</sys:String>
-  <sys:String x:Key="Str_Beam_InstallerSource">安装程序源</sys:String>
-  <sys:String x:Key="Str_Beam_LocalSource">本地 EXE 或 MSI 路径</sys:String>
-  <sys:String x:Key="Str_Beam_HttpsSource">HTTPS 下载 URL</sys:String>
-  <sys:String x:Key="Str_Beam_AppName">应用名称</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitches">安装开关</sys:String>
-  <sys:String x:Key="Str_Beam_InstallSwitchesTip">MSI 在此为空时使用 /qn。EXE 为空时无开关运行。</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnames">目标主机名</sys:String>
-  <sys:String x:Key="Str_Beam_TargetHostnamesTip">用逗号分隔主机名。IP 地址不能与 Intune 设备匹配。</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomain">租户域</sys:String>
-  <sys:String x:Key="Str_Beam_TenantDomainTip">示例：contoso.onmicrosoft.com。不会保留管理员电子邮件或凭据。</sys:String>
-  <sys:String x:Key="Str_Beam_Boundary">仅供审阅。不进行登录、下载、打包、上传、应用或组更改、分配、设备同步或安装。</sys:String>
   <sys:String x:Key="Str_Scope_AllProfiles">所有配置文件和默认用户</sys:String>
   <sys:String x:Key="Str_Debloat_Description">精确选择要审阅的内容，然后按GO。不会自动选择任何内容。</sys:String>
   <sys:String x:Key="Str_Debloat_RecallAi">回忆和人工智能</sys:String>
