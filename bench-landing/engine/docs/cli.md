@@ -89,14 +89,14 @@ dotnet run --project Cli\KillerBench.Cli.csproj -- servicing-monitor
 
 The monitor prints completed snapshots as they arrive. It reports recognized activity and evidence, not an invented completion percentage.
 
-## Review MACE package eligibility
+## Review Microsoft app removal package eligibility
 
 ```powershell
 dotnet run --project Cli\KillerBench.Cli.csproj -- mace-review --outlook --json
 dotnet run --project Cli\KillerBench.Cli.csproj -- mace-package-plan --outlook --package PACKAGE_FULL_NAME --json
 ```
 
-The plan command repeats current MACE inventory and safeguard collection, then evaluates one exact package full name. It is preview-only and connects no removal provider. Preserved-data eligibility is limited to loose-file development packages because Windows does not offer that safeguard for ordinary installed Store/MSIX packages. An eligible result does not remove the package.
+The plan command repeats current Microsoft app removal inventory and safeguard collection, then evaluates one exact package full name. It is preview-only and connects no removal provider. Preserved-data eligibility is limited to loose-file development packages because Windows does not offer that safeguard for ordinary installed Store/MSIX packages. An eligible result does not remove the package.
 
 ## Export the VM validation plan
 
