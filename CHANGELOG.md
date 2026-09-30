@@ -1,5 +1,6 @@
 # Changelog
 
+- Add DEPOT installer trust checks that require a valid signature from the confirmed vendor.
 - Add guarded BitLocker TPM and recovery-password protector creation.
 - Add explicit BitLocker recovery-password backup to Active Directory or Microsoft Entra ID.
 - Add 20 guarded privacy controls for app permissions, cloud content search and search highlights.
