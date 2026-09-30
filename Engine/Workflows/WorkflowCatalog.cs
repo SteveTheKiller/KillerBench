@@ -27,7 +27,7 @@ public static class WorkflowCatalog
         new WorkflowDefinition(WorkflowKind.BitLocker, "bitlocker", "BitLocker"),
         new WorkflowDefinition(WorkflowKind.ComponentCleanup, "component-cleanup", "Component-store cleanup"),
         new WorkflowDefinition(WorkflowKind.Profiles, "profiles", "Profiles"),
-        new WorkflowDefinition(WorkflowKind.ComputerName, "computer-name", "Computer name review (URT)"),
+        new WorkflowDefinition(WorkflowKind.ComputerName, "computer-name", "Computer name"),
         new WorkflowDefinition(WorkflowKind.Foxit, "foxit", "Foxit inventory"),
         new WorkflowDefinition(WorkflowKind.ScheduledTasks, "tasks", "Scheduled tasks"),
         new WorkflowDefinition(WorkflowKind.Services, "services", "Windows services"),

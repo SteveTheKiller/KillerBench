@@ -30,9 +30,9 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | --- | --- | --- | --- | --- | --- |
 | profile.temporary | ProfileList .bak entry, folder rename, permissions | registry.subkeys ProfileList for .bak (profile.temporary-detect recipe) | Manual rename with guidance; automated rename is a later explicit option | Next sign-in loads the normal profile | pack |
 | profile.corrupt-cannot-load | User Profile Service failure, NTUSER.DAT locked or damaged | User Profile Service events, profile inventory | User Profile Service start (profiles.user-profile-service) | Service running; sign-in untested | pack |
-| profile.stale-accounts | Old local profiles consuming space | Profiles (PRUNE) workflow | Backup then remove selected profile (explicit, guarded) | Profile absent from registry and disk | workflow |
+| profile.stale-accounts | Old local profiles consuming space | Profiles workflow | Backup then remove selected profile (explicit, guarded) | Profile absent from registry and disk | workflow |
 | signin.hello-pin-broken | NGC container damaged, TPM reset | Windows Hello sign-in options | Out: removing the NGC container signs every account on the PC out of Windows Hello and needs SYSTEM ownership of the folder; guidance points at Sign-in options and, when that fails, the documented manual reset | n/a | out (destructive, per-machine impact) |
-| signin.credential-prompts-repeat | Cached credentials stale, Credential Manager service, Office identity | Credential Manager service, WAM and Microsoft account services, Outlook credential review (MACE) | Service starts (security.credential-manager-service, accounts.web-account-manager-service, accounts.microsoft-account-sign-in-service) | Service running | pack |
+| signin.credential-prompts-repeat | Cached credentials stale, Credential Manager service, Office identity | Credential Manager service, WAM and Microsoft account services, Outlook credential review | Service starts (security.credential-manager-service, accounts.web-account-manager-service, accounts.microsoft-account-sign-in-service) | Service running | pack |
 | signin.domain-trust-broken | Secure channel broken, machine password mismatch | domain.secure-channel probe (identity.secure-channel recipe) | Manual: Test-ComputerSecureChannel -Repair with domain credentials; automated repair needs a credential-carrying explicit option | Secure channel test True | pack |
 | signin.group-policy-not-applying | GP client service, secure channel, connectivity to DC, SYSVOL access | Group Policy Client service, secure channel, hours since computer policy applied (identity.group-policy-age) | Service start (core.group-policy-client-service) | Service running; policy age under 24 h | pack |
 | signin.no-user-manager | User Manager service stopped | Service check | Service start (core.user-manager-service) | Service running | pack |
@@ -137,7 +137,7 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | audio.no-sound | Audio services, wrong endpoint, muted, driver | Audio workflow; audio chain | Service starts (pack) | Service running | pack |
 | audio.wrong-device | Default endpoint changed | Default audio endpoints | Out: Windows has no supported API for setting the default endpoint (IPolicyConfig is undocumented) and decision 0005 rules out a dependency; guidance points at Sound settings | n/a | out (no supported API) |
 | audio.crackling | Driver, enhancements, sample rate | Audio device inventory | Out: audio enhancement and format settings live in per-device property stores with vendor-specific keys; guidance points at the device properties | n/a | out (vendor-specific settings) |
-| audio.microphone-blocked | Privacy setting denies microphone | Privacy (SHADE) microphone review | Allow microphone (explicit) | Registry value | workflow |
+| audio.microphone-blocked | Privacy setting denies microphone | Privacy microphone review | Allow microphone (explicit) | Registry value | workflow |
 
 ## 10. Display, graphics and input
 
@@ -183,14 +183,14 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | store.package-corrupt | Package registration damaged | appx.status for the named package (apps.package-reregister recipe), app platform services | Add-AppxPackage -Register from the install location (explicit with package option) | Package reports Ok | pack |
 | apps.crash-on-launch | Faulting module, missing runtime | Application history, WER | None automatic; crash reference | n/a | diag |
 | installer.msi-fails | Windows Installer service, registration, policy | Installer workflow | Service start (pack); /regserver (installer.registration, explicit); exact product repair (installer.msi-product, explicit) | Service running, product state | pack + workflow |
-| apps.outlook-slow-or-stuck | Cache file bloat, profile | Outlook cache review (ORCA) | Retain and reset selected cache (applications.outlook-cache-reset, explicit) | Cache absent, retained copy exists | workflow |
+| apps.outlook-slow-or-stuck | Cache file bloat, profile | Outlook cache review | Retain and reset selected cache (applications.outlook-cache-reset, explicit) | Cache absent, retained copy exists | workflow |
 | apps.office-click-to-run-broken | ClickToRun service or install | Office Click-to-Run inventory | None automatic | n/a | diag |
-| apps.foxit-outdated | Old version, updater setting | Foxit inventory (FACTS) | None automatic | n/a | diag |
+| apps.foxit-outdated | Old version, updater setting | Foxit inventory | None automatic | n/a | diag |
 | apps.foxit-auto-updates | Per-user UpdateMode 1 or 2, absent setting, machine updater policy | registry.value HKCU Foxit Updater UpdateMode (apps.foxit-auto-update-off recipe), PDF Editor updater policy precondition | Set UpdateMode to string 0 for the running account (explicit with product) | UpdateMode reads back 0 | pack |
 | apps.browser-extension-unwanted | Sideloaded or policy extension | Browser Extensions workflow | None automatic | n/a | diag |
 | apps.file-association-wrong | UserChoice hash reset, app default lost | registry.value .pdf UserChoice ProgId (apps.pdf-association recipe) | Manual: Windows signs the user choice | n/a | pack |
 | apps.default-apps-reset | Same | registry.value http UserChoice ProgId (apps.http-association recipe) | Manual: Windows signs the user choice | n/a | pack |
-| apps.mace-removal | Unwanted preinstalled packages | MACE workflow | Remove selected package for current account (explicit) | Package absent | workflow |
+| apps.mace-removal | Unwanted preinstalled packages | Microsoft app removal workflow | Remove selected package for current account (explicit) | Package absent | workflow |
 
 ## 14. Time and licensing
 
@@ -256,7 +256,7 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 
 | Symptom | Likely causes in order | Detect | Repair | Verify | Status |
 | --- | --- | --- | --- | --- | --- |
-| privacy.telemetry-settings | Diagnostic data level, ads, clipboard history | Privacy (SHADE) workflow | Set selected boolean settings, clipboard history (explicit) | Registry values | workflow |
+| privacy.telemetry-settings | Diagnostic data level, ads, clipboard history | Privacy workflow | Set selected boolean settings, clipboard history (explicit) | Registry values | workflow |
 | debloat.unwanted-apps | Preinstalled packages | Debloat workflow | Remove selected packages (explicit) | Package absent | workflow |
 | debloat.power-tweaks | Timers and plans | Debloat power diagnostics | Explicit timers | Values | workflow |
 
