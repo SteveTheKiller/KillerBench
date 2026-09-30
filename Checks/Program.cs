@@ -702,6 +702,7 @@ internal static class Program
             BitLockerChecks.RunAsync().GetAwaiter().GetResult();
             BitLockerProtectionResumeChecks.RunAsync(scratch).GetAwaiter().GetResult();
             BitLockerEscrowChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            BitLockerProtectorCreationChecks.RunAsync(scratch).GetAwaiter().GetResult();
             BitLockerEncryptionChecks.RunAsync(scratch).GetAwaiter().GetResult();
             AudioDeviceChecks.Run();
             DefaultAudioEndpointChecks.Run();
