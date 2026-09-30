@@ -105,6 +105,26 @@ public static class WindowsSettingsPack
             RequiresExplicitOptions = true,
             MayRequireRestart = true,
             Limitations = "Only the registry value is verified. A domain security template can set it back, and applications only pick it up after they restart."
+        },
+        new RecipeDefinition("security.tpm-initialize", 1, "Prepare the TPM", "Security",
+            "Get-Tpm reports the TPM ready afterwards, or after the restart Windows asks for; BitLocker and Windows Hello use are not tested",
+            new ProbeSpec("tpm.status", new Dictionary<string, string>(), new ExpectSpec(
+            [
+                new ExpectClause("equals", "Ready", ProbeVerdict.Clear),
+                new ExpectClause("equals", "NotReady", ProbeVerdict.Repairable) { Detail = "The TPM is present but not ready. Windows can usually provision it without clearing it; BitLocker with a TPM protector needs a ready TPM." },
+                new ExpectClause("equals", "Absent", ProbeVerdict.Information) { Detail = "No TPM is visible to Windows. Turn it on in the firmware settings if the computer has one." },
+                new ExpectClause("any", "", ProbeVerdict.Unknown)
+            ])) { Name = "TPM readiness" })
+        {
+            Symptoms = ["security.tpm-not-ready"],
+            Action = new ActionSpec("tpm.initialize", new Dictionary<string, string>())
+                { Timeout = TimeSpan.FromMinutes(2), Effects = "Runs Initialize-Tpm without clearing the TPM and without queuing a firmware prompt. A TPM that needs clearing or a physical-presence confirmation is reported and left alone." },
+            Verify = new ProbeSpec("tpm.status", new Dictionary<string, string>(), ExpectSpec.ClearWhenEquals("Ready", ProbeVerdict.Attention)) { Name = "TPM readiness" },
+            Risk = RecipeRisk.Persistent,
+            RequiresElevation = true,
+            RequiresExplicitOptions = true,
+            MayRequireRestart = true,
+            Limitations = "KillerBench never clears a TPM. When Windows asks for a restart the TPM is only checked again after it."
         }
     ]);
 }

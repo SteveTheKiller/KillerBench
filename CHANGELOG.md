@@ -1,5 +1,6 @@
 # Changelog
 
+- Add explicit TPM preparation that never clears the TPM.
 - Add an explicit FIPS algorithm policy switch for BitLocker PIN compliance.
 - Add guarded BitLocker decryption for re-encrypting a drive with a required method.
 - Split the five workspaces into Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker and Privacy.

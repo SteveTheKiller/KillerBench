@@ -66,6 +66,19 @@ internal static class WindowsSettingsPackChecks
             Expectation.Evaluate(fips.Preconditions[0].Expect, new PrimitiveResult(true, null, "")).Verdict != ProbeVerdict.Clear ||
             !fips.RequiresExplicitOptions || !fips.RequiresElevation || fips.Rollback is null)
             throw new Exception("FIPS policy expectations or gates misbehaved.");
+        var tpm = pack.Recipes.Single(r => r.Id == "security.tpm-initialize");
+        ProbeVerdict Tpm(string output, int exit = 0) => Expectation.Evaluate(tpm.Detect.Expect, WindowsTpmStatusProbe.Interpret(new ToolResult(exit, output, exit == 0 ? "" : "denied", false))).Verdict;
+        if (Tpm("True|True|True|True\r\n") != ProbeVerdict.Clear || Tpm("True|False|True|False\r\n") != ProbeVerdict.Repairable ||
+            Tpm("False|False|False|False\r\n") != ProbeVerdict.Information || Tpm("True|maybe|True|True\r\n") != ProbeVerdict.Unknown || Tpm("", 1) != ProbeVerdict.Unknown)
+            throw new Exception("TPM readiness expectations misbehaved.");
+        if (WindowsTpmInitializeAction.Interpret(new ToolResult(0, "AlreadyReady\r\n", "", false)) is not { Dispatched: false, Succeeded: true } ||
+            WindowsTpmInitializeAction.Interpret(new ToolResult(0, "True|False|False|False|False\r\n", "", false)) is not { Dispatched: true, Succeeded: true, RestartRequired: false } ||
+            WindowsTpmInitializeAction.Interpret(new ToolResult(0, "False|True|False|False|False\r\n", "", false)) is not { Dispatched: true, Succeeded: true, RestartRequired: true } ||
+            WindowsTpmInitializeAction.Interpret(new ToolResult(0, "False|False|False|True|False\r\n", "", false)) is not { Succeeded: false, Error: not null } ||
+            WindowsTpmInitializeAction.Interpret(new ToolResult(0, "False|False|False|False|True\r\n", "", false)) is not { Succeeded: false } ||
+            WindowsTpmInitializeAction.Interpret(new ToolResult(1, "", "Access denied", false)) is not { Dispatched: false, Succeeded: false })
+            throw new Exception("TPM initialization outcomes misbehaved.");
+        if (!tpm.RequiresExplicitOptions || !tpm.RequiresElevation || !tpm.MayRequireRestart) throw new Exception("TPM initialization gates misbehaved.");
         var profile = pack.Recipes.Single(r => r.Id == "profile.temporary-detect");
         if (Expectation.Evaluate(profile.Detect.Expect, new PrimitiveResult(true, "S-1-5-18;S-1-5-21-1-2-3-1001;S-1-5-21-1-2-3-1001.bak", "")).Verdict != ProbeVerdict.Attention ||
             Expectation.Evaluate(profile.Detect.Expect, new PrimitiveResult(true, "S-1-5-18;S-1-5-21-1-2-3-1001", "")).Verdict != ProbeVerdict.Clear)
@@ -87,8 +100,10 @@ internal static class WindowsSettingsPackChecks
             .AddProbe(new FakeProbe("registry.value", library.FindProbe("registry.value")!.Parameters, _ => new PrimitiveResult(true, "1", "")))
             .AddProbe(new FakeProbe("registry.subkeys", library.FindProbe("registry.subkeys")!.Parameters, _ => new PrimitiveResult(true, "S-1-5-18", "")))
             .AddProbe(new FakeProbe("bcd.safeboot", [], _ => new PrimitiveResult(true, safeboot, "")))
+            .AddProbe(new FakeProbe("tpm.status", [], _ => new PrimitiveResult(true, "Ready", "")))
             .AddProbe(new FakeProbe("process.running", library.FindProbe("process.running")!.Parameters, _ => new PrimitiveResult(true, "Running", "")))
             .AddAction(setDword).AddAction(clearSafeboot)
+            .AddAction(new FakeAction("tpm.initialize", [], RecipeRisk.Persistent, true, _ => throw new InvalidOperationException("TPM initialization must not run in substituted checks.")))
             .AddAction(new FakeAction("explorer.start", [], RecipeRisk.Reversible, false, _ => new ActionResult(true, true, "started")));
         if (!RecipePackValidation.Validate(pack, substituted).IsValid) throw new Exception("Settings pack did not validate against the substituted library.");
         var runner = new RecipeRunner(substituted, new MemoryRecipeJournal());

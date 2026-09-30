@@ -109,6 +109,7 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | security.center-blank | Security Center service stopped | Service check | Service start (security.center-service) | Service running | pack |
 | security.bitlocker-suspended | Protection suspended after update | BitLocker workflow | Resume protection (security.bitlocker-resume, explicit) | Protection on | workflow |
 | security.bitlocker-key-not-backed-up | No escrow | BitLocker workflow protector inventory | Back up recovery protector to file, or to Active Directory or Entra ID (explicit) | File exists and verified; directory request accepted | workflow |
+| security.tpm-not-ready | TPM not provisioned, turned off in firmware, needs clearing | tpm.status (security.tpm-initialize recipe) | Initialize-Tpm without clearing (explicit); clearing and firmware prompts stay manual | Get-Tpm reports ready | pack |
 | security.fips-required | Compliance needs the legacy FIPS policy for BitLocker PIN protectors | registry.value FIPSAlgorithmPolicy Enabled (security.fips-policy-enable recipe), MDMEnabled precondition | Set Enabled to 1 (explicit, reversible) | Enabled reads 1 | pack |
 | security.uac-misconfigured | UAC policy changed | UAC policy diagnostics | None automatic | n/a | diag |
 | security.certificate-errors | Expired or untrusted certificates, wrong clock | Certificates workflow, time | Time sync (time.synchronization) | Sync reported | workflow |
@@ -275,8 +276,8 @@ The Engine.Core model is platform-neutral. When a Linux or macOS provider exists
 
 Update these when rows change. A row counts once by its first status token.
 
-- rows: 152
-- pack: 80
+- rows: 153
+- pack: 81
 - workflow: 38
 - diag: 23
 - planned: 0
