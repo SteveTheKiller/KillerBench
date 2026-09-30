@@ -1,5 +1,6 @@
 # Changelog
 
+- Add explicit BitLocker recovery-password backup to Active Directory or Microsoft Entra ID.
 - Add 20 guarded privacy controls for app permissions, cloud content search and search highlights.
 - Add an explicit per-user Foxit automatic update switch that respects machine policy.
 - Add an explicit WinHTTP proxy reset recipe for the wrong-proxy symptom.
