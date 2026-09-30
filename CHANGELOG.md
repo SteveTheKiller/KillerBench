@@ -1,5 +1,6 @@
 # Changelog
 
+- Add BitLocker encryption for data volumes and guarded auto-unlock.
 - Remove the Intune app deployment review and tenant sign-in; KillerBench works only on the local computer.
 - Add explicit TPM preparation that never clears the TPM.
 - Add an explicit FIPS algorithm policy switch for BitLocker PIN compliance.

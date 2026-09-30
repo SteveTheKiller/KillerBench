@@ -134,6 +134,7 @@ if (args.Length > 0 && args[0] is "bitlocker-resume" or "bitlocker-resume-recove
 if (args.Length > 0 && args[0] == "bitlocker-escrow") return await BitLockerEscrowCommands.RunAsync(args);
 if (args.Length > 0 && args[0] is "bitlocker-protector-add" or "bitlocker-protector-recover") return await BitLockerProtectorCommands.RunAsync(args);
 if (args.Length > 0 && args[0] is "bitlocker-decrypt" or "bitlocker-decrypt-recover") return await BitLockerDecryptionCommands.RunAsync(args);
+if (args.Length > 0 && args[0] is "bitlocker-auto-unlock" or "bitlocker-auto-unlock-recover") return await BitLockerAutoUnlockCommands.RunAsync(args);
 if (args.Length > 0 && args[0] is "bitlocker-encrypt" or "bitlocker-encrypt-recover") return await BitLockerEncryptionCommands.RunAsync(args);
 if (args.Length > 0 && args[0] is "firewall-enable" or "firewall-enable-recover") return await FirewallProfileCommands.RunAsync(args);
 if (args.Length > 0 && args[0] is "update-plan" or "update-recover") return await UpdateCommands.RunAsync(args);
@@ -457,6 +458,8 @@ if (args.Length == 0 || args is ["help"] or ["--help"] or ["-h"])
     Console.WriteLine("killerbench-cli bitlocker-protector-recover (verify an interrupted protector request without repeating it)");
     Console.WriteLine("killerbench-cli bitlocker-decrypt DRIVE: [--execute --confirm-unprotected] (preview by default; starts decryption, for example before re-encrypting with a required method)");
     Console.WriteLine("killerbench-cli bitlocker-decrypt-recover (verify an interrupted decryption request without repeating it)");
+    Console.WriteLine("killerbench-cli bitlocker-auto-unlock DRIVE: [--execute] (preview by default; turns on auto-unlock for an encrypted data volume)");
+    Console.WriteLine("killerbench-cli bitlocker-auto-unlock-recover (verify an interrupted auto-unlock request without repeating it)");
     Console.WriteLine("killerbench-cli bitlocker-encrypt DRIVE: RECOVERY_PROTECTOR_GUID NEW_BACKUP_FILE [--encryption XtsAes128] [--used-space-only] [--execute] (preview by default; requires existing TPM and recovery protectors)");
     Console.WriteLine("killerbench-cli bitlocker-encrypt-recover (verify pending conversion state without repeating the request)");
     Console.WriteLine("killerbench-cli cleanup --user-temp [--windows-temp] [--system-temp] [--shader-caches] [--browser-caches] [--office-caches] [--thumbnail-cache] [--icon-cache] [--error-reports] [--crash-dumps] [--windows-minidumps] [--delivery-optimization-cache] [--recycle-bin] [--days 7] [--max-files 100] [--json] [--execute] (preview by default; Recycle Bin is all-or-nothing and age does not apply)");

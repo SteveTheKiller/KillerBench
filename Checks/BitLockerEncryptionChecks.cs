@@ -15,6 +15,13 @@ internal static class BitLockerEncryptionChecks
         var eligible = State();
         Require(BitLockerEncryptionExecution.EligibilityBlocker(options, Recovery, eligible) is null,
             "Exact decrypted volume with TPM and selected recovery protector is eligible");
+        var data = eligible with { Volume = "E:", VolumeType = "Data", TpmReady = false, Protectors = [new(Recovery, "RecoveryPassword")] };
+        var dataOptions = options with { Volume = "E:" };
+        Require(BitLockerEncryptionExecution.EligibilityBlocker(dataOptions, Recovery, data) is null &&
+            BitLockerEncryptionExecution.EligibilityBlocker(dataOptions, Recovery, data with { Protectors = [new(Tpm, "Tpm"), new(Recovery, "RecoveryPassword")] }) is not null &&
+            BitLockerEncryptionExecution.EligibilityBlocker(dataOptions, Recovery, data with { VolumeType = "Unknown" }) is not null &&
+            BitLockerEncryptionExecution.EligibilityBlocker(dataOptions, Recovery, data with { Protectors = [] }) is not null,
+            "A data volume with only the selected recovery protector is eligible without a TPM; TPM protectors and unknown volume types fail closed");
         foreach (var blocked in new[]
         {
             eligible with { Complete = false },
@@ -66,7 +73,7 @@ internal static class BitLockerEncryptionChecks
             !File.Exists(Path.Combine(interruptedFolder, "bitlocker-encryption.pending.json")),
             "Recovery verifies current conversion without repeating encryption");
 
-        Console.WriteLine("PASS: BitLocker encryption requires verified recovery backup, exact final eligibility and no-repeat reconciliation.");
+        Console.WriteLine("PASS: BitLocker operating-system and data-volume encryption requires verified recovery backup, exact final eligibility and no-repeat reconciliation.");
     }
 
     private static BitLockerEncryptionState State() => new("C:", "fixture-volume", "FullyDecrypted", "Off",

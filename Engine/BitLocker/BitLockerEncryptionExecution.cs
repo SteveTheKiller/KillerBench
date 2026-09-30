@@ -51,7 +51,7 @@ public static class BitLockerEncryptionExecution
         token.ThrowIfCancellationRequested();
         return Task.FromResult(new BitLockerEncryptionResult(options.Volume.ToUpperInvariant(),
             BitLockerEncryptionOutcome.Preview,
-            "Preview only. Execution requires an exact fully decrypted NTFS operating-system volume, a TPM protector, the selected recovery-password protector, a newly verified recovery backup, clear restart evidence and administrator access. It saves a pending record, repeats every check, starts conversion once and verifies that Windows reports encryption in progress or complete."));
+            "Preview only. Execution requires an exact fully decrypted NTFS volume, a TPM protector on an operating-system volume or no TPM protector on a data volume, the selected recovery-password protector, a newly verified recovery backup, clear restart evidence and administrator access. It saves a pending record, repeats every check, starts conversion once and verifies that Windows reports encryption in progress or complete."));
     }
 
     public static async Task<BitLockerEncryptionResult> ReviewAsync(BitLockerOptions options,
@@ -239,20 +239,24 @@ public static class BitLockerEncryptionExecution
             return "A complete exact selected-volume inventory is required. Encryption was not started.";
         if (string.IsNullOrWhiteSpace(state.Identity) || state.Identity.Length > 512 || state.Identity.Any(char.IsControl))
             return "The exact selected volume identity could not be confirmed. Encryption was not started.";
-        if (state.FileSystem != "NTFS" || state.VolumeType != "OperatingSystem")
-            return "This path requires an NTFS operating-system volume.";
-        if (!state.TpmReady) return "TPM readiness is required. KillerBench does not initialize or clear the TPM.";
+        bool operatingSystem = state.VolumeType == "OperatingSystem";
+        if (state.FileSystem != "NTFS" || !operatingSystem && state.VolumeType != "Data")
+            return "This path requires an NTFS operating-system or data volume.";
+        if (operatingSystem && !state.TpmReady) return "TPM readiness is required. KillerBench does not initialize or clear the TPM.";
         if (state.PolicyPresent) return "Managed BitLocker policy is present. This local encryption path preserves it and remains unavailable.";
         if (state.VolumeStatus != "FullyDecrypted" || state.EncryptionPercentage != 0 || state.ProtectionStatus != "Off")
             return IsStarted(state, options) ? "Encryption is already in progress or complete. No new request is eligible."
                 : "Only a fully decrypted volume at zero percent with protection off is eligible.";
         if (state.LockStatus != "Unlocked") return "The selected volume must be unlocked.";
-        if (state.Protectors.Count is < 2 or > 64 || state.Protectors.Select(p => p.Id).Distinct().Count() != state.Protectors.Count)
+        if (state.Protectors.Count < (operatingSystem ? 2 : 1) || state.Protectors.Count > 64 ||
+            state.Protectors.Select(p => p.Id).Distinct().Count() != state.Protectors.Count)
             return "A complete unique protector inventory is required.";
         if (state.Protectors.Count(p => p.Id == recoveryProtector && p.Type == "RecoveryPassword") != 1)
             return "The selected recovery-password protector is not present exactly once.";
-        if (state.Protectors.Count(p => p.Type == "Tpm") != 1)
+        if (operatingSystem && state.Protectors.Count(p => p.Type == "Tpm") != 1)
             return "Exactly one existing TPM protector is required for this operating-system encryption path.";
+        if (!operatingSystem && state.Protectors.Any(p => p.Type.StartsWith("Tpm", StringComparison.Ordinal)))
+            return "A data volume cannot carry a TPM protector. The protector inventory was not recognized.";
         if (!string.Equals(state.EncryptionMethod, "None", StringComparison.Ordinal))
             return "The fully decrypted volume reported an unexpected encryption method.";
         return null;
