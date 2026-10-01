@@ -18,6 +18,7 @@
 - Add 20 guarded privacy controls for app permissions, cloud content search and search highlights.
 - Add an explicit per-user Foxit automatic update switch that respects machine policy.
 - Add an explicit WinHTTP proxy reset recipe for the wrong-proxy symptom.
+- KillerMCP can use the installed CLI to look up Device Manager and Windows system error codes without changing the computer.
 - Align the sidebar rail with the family footer spacing.
 - Complete all 14 non-English locale resource sets.
 - Route remaining DEBLOAT, DEPOT, Installer and About labels through localizable string resources.
