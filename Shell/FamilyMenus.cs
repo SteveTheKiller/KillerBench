@@ -27,6 +27,7 @@ public partial class MainWindow
             (Locale.PlPL, "Polski",       "pl-PL"),
             (Locale.RuRU, "Русский",      "ru-RU"),
             (Locale.TrTR, "Türkçe",      "tr-TR"),
+            (Locale.UkUA, "Українська",  "uk-UA"),
             (Locale.ViVN, "Tiếng Việt",  "vi-VN"),
             (Locale.ZhCN, "中文 (简体)",  "zh-CN"),
             (Locale.ZhTW, "中文 (繁體)",  "zh-TW"),
