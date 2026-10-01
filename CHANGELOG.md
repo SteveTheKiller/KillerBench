@@ -2,6 +2,7 @@
 
 - Add yellow and magenta accents to the neutral and 98SE themes.
 - Add Ukrainian localization.
+- Add Norwegian (Bokmål) and Brazilian Portuguese localization.
 - Rebuild the landing site with a current home page, a searchable user guide and static Engine guide pages.
 - Add More BitLocker actions to the BitLocker section for auto-unlock, protectors, directory backup and decryption.
 - Add BitLocker encryption for data volumes and guarded auto-unlock.

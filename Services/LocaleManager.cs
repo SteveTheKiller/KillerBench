@@ -4,7 +4,7 @@ using System.Windows;
 
 namespace KillerBench.Services
 {
-    public enum Locale { EnUS, Es, ZhTW, ZhCN, Bn, TrTR, De, Fr, Ja, Cs, PlPL, HuHU, It, RuRU, KkKZ, ViVN, UkUA }
+    public enum Locale { EnUS, Es, ZhTW, ZhCN, Bn, TrTR, De, Fr, Ja, Cs, PlPL, HuHU, It, RuRU, KkKZ, ViVN, UkUA, NbNO, PtBR }
 
     public static class LocaleManager
     {
@@ -52,6 +52,8 @@ namespace KillerBench.Services
                 "pl" => Locale.PlPL, "ru" => Locale.RuRU, "tr" => Locale.TrTR,
                 "vi" => Locale.ViVN,
                 "uk" => Locale.UkUA,
+                "nb" or "no" or "nn" => Locale.NbNO,
+                "pt" => Locale.PtBR,
                 _ => Locale.EnUS,
             };
         }
@@ -88,6 +90,8 @@ namespace KillerBench.Services
                 Locale.KkKZ => new Uri("pack://application:,,,/KillerBench;component/Strings/kk-KZ.xaml"),
                 Locale.ViVN => new Uri("pack://application:,,,/KillerBench;component/Strings/vi-VN.xaml"),
                 Locale.UkUA => new Uri("pack://application:,,,/KillerBench;component/Strings/uk-UA.xaml"),
+                Locale.NbNO => new Uri("pack://application:,,,/KillerBench;component/Strings/nb-NO.xaml"),
+                Locale.PtBR => new Uri("pack://application:,,,/KillerBench;component/Strings/pt-BR.xaml"),
                 _           => null,   // English: base only
             };
 
