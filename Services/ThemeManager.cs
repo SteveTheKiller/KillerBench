@@ -6,7 +6,7 @@ namespace KillerBench.Services
 {
     public enum Theme { Dark, Light, Black, Blood, Greed, Cyanotic, Retro98, Ectoplasm, Decay, Malaise, Sepulchre, Delirium, Mourning }
 
-    public enum Accent { Green, Red, Blue, Purple, Orange, Teal }
+    public enum Accent { Green, Red, Blue, Purple, Orange, Teal, Yellow, Magenta }
 
 
     public static class ThemeManager

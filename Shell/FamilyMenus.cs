@@ -58,15 +58,20 @@ public partial class MainWindow
         if (!show) return;
         string family = ThemeLabel(ThemeManager.Current);
         var palette = new ResourceDictionary { Source = new Uri($"pack://application:,,,/KillerBench;component/Themes/{family}.xaml") };
-        Accent[] order = [Accent.Red, Accent.Orange, Accent.Green, Accent.Teal, Accent.Blue, Accent.Purple];
-        Border[] dots = [AccentStripDot0, AccentStripDot1, AccentStripDot2, AccentStripDot3, AccentStripDot4, AccentStripDot5];
+        Accent[] order = [Accent.Red, Accent.Orange, Accent.Yellow, Accent.Green, Accent.Teal, Accent.Blue, Accent.Purple, Accent.Magenta];
+        Border[] dots = [AccentStripDot0, AccentStripDot1, AccentStripDot2, AccentStripDot3, AccentStripDot4, AccentStripDot5, AccentStripDot6, AccentStripDot7];
         for (int i = 0; i < dots.Length; i++)
         {
             var accent = order[i];
             var colors = accent == Accent.Green ? palette : new ResourceDictionary { Source = new Uri($"pack://application:,,,/KillerBench;component/Themes/Accents/{family}/{accent}.xaml") };
             dots[i].Tag = accent;
             dots[i].ToolTip = accent.ToString();
-            dots[i].Background = (Brush)colors["PrimaryBrush"];
+            dots[i].Background = accent == Accent.Yellow && (ThemeManager.Current is Theme.Light or Theme.Retro98)
+                ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EAD900"))
+                : (Brush)colors["PrimaryBrush"];
+            dots[i].Effect = accent == Accent.Yellow && (ThemeManager.Current is Theme.Light or Theme.Retro98)
+                ? new System.Windows.Media.Effects.DropShadowEffect { Color = Colors.Black, BlurRadius = 4, ShadowDepth = 1, Opacity = 0.45 }
+                : null;
             dots[i].BorderBrush = accent == ThemeManager.AccentChoiceFor(ThemeManager.Current) ? (Brush)FindResource("TextBrush") : Brushes.Transparent;
             dots[i].Focusable = true;
             dots[i].KeyDown -= OnAccentKey;
