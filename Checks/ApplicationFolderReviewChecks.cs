@@ -4,7 +4,7 @@ internal static class ApplicationFolderReviewChecks
 {
     internal static void Run()
     {
-        ApplicationFolderObservation Reader(string area) => area switch
+        static ApplicationFolderObservation Reader(string area) => area switch
         {
             "Local application data" => new(area, "Directory", false, "Fixture"),
             "Roaming application data" => new(area, "Directory", true, "Fixture"),

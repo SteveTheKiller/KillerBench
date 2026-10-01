@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.FileSystem;
 
 public sealed record FileSystemRepairSelection(string Volume, FileSystemRepairMode Mode,
     bool AllowDismount, bool BackupConfirmed);

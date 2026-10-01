@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Printing;
 
 public enum PrinterOfflineReconciliationOutcome { NoPending, Verified, NotApplied, Inconclusive }
 public sealed record PrinterOfflineReconciliationResult(PrinterOfflineReconciliationOutcome Outcome, string Detail);

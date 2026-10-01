@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Crash;
 
 public static class ReliabilityOperationalCorrelation
 {
@@ -11,7 +11,7 @@ public static class ReliabilityOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Reliability history conclusion";
         const string boundary = " This conclusion covers bounded retained local history only. It is not a current health verdict, root-cause diagnosis or repair authorization. Application launch, dump contents, hardware tests, drivers, firmware, services, files, power and restart behavior remain outside this workflow. No process, application, service, file, driver, hardware, power, restart or setting state changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         bool invalidReliability = reliabilityHistory.Count is 0 or > 65 || reliabilityHistory.Any(item =>
             item is null || string.IsNullOrWhiteSpace(item.Name) || item.Name.Length > 512);

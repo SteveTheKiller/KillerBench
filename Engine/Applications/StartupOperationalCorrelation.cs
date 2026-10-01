@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Applications;
 
 public static class StartupOperationalCorrelation
 {
@@ -11,7 +11,7 @@ public static class StartupOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Startup environment conclusion";
         const string boundary = " This is a bounded inventory of registration names, Windows approval markers and boot or logon task identities. It does not collect commands, arguments, accounts or credentials, measure startup cost, prove an item ran, classify an item as wanted or unwanted, or establish that an item is safe to disable. No registration, approval marker, file, task, application, service or policy changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var selected = evidence.Where(item => RequiredNames.Contains(item.Name, StringComparer.Ordinal)).ToArray();
         bool exact = selected.Length == RequiredNames.Length && RequiredNames.All(required =>

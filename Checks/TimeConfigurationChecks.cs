@@ -12,7 +12,7 @@ internal static class TimeConfigurationChecks
         var noPending = await TimeConfigurationRecovery.ReconcileAsync(Path.Combine(scratch, "time-no-pending-" + Guid.NewGuid().ToString("N")));
         if (noPending.Outcome != TimeConfigurationRecoveryOutcome.NoPendingRecord || !noPending.Resolved || noPending.GetExitCode() != 0)
             throw new Exception("Absent time recovery record did not report an exact no-pending outcome");
-        string ValidRecord(string folder, TimeOptions options, string? machine = null)
+        static string ValidRecord(string folder, TimeOptions options, string? machine = null)
         {
             var before = options.Source == TimeSourceMode.DomainHierarchy
                 ? new TimeEnvironment(true, false, false, true) { LocalMode = "NT5DS", LocalPeers = "" }
@@ -92,7 +92,7 @@ internal static class TimeConfigurationChecks
             }
             catch (InvalidOperationException) when (fail) { }
             if (commands.Count != expectedCommands || commands[0].Arguments[0] != "/config" ||
-                (expectedCommands == 2 && !commands[1].Arguments.SequenceEqual(new[] { "/resync" }))) throw new Exception("Native time command sequence mismatch: " + outcome);
+                (expectedCommands == 2 && !commands[1].Arguments.SequenceEqual(["/resync"]))) throw new Exception("Native time command sequence mismatch: " + outcome);
         }
         try { await NativeTimeConfiguration.RunCustomAsync(new(TimeSourceMode.DomainHierarchy), scratch); throw new Exception("Unsupported native domain change accepted"); }
         catch (ArgumentException) { }
@@ -106,8 +106,8 @@ internal static class TimeConfigurationChecks
             });
         await domainCommandHost.ApplyAsync(new(TimeSourceMode.DomainHierarchy), default);
         if (domainCommands.Count != 2 ||
-            !domainCommands[0].Arguments.SequenceEqual(new[] { "/config", "/syncfromflags:domhier", "/update" }) ||
-            !domainCommands[1].Arguments.SequenceEqual(new[] { "/resync", "/rediscover" }))
+            !domainCommands[0].Arguments.SequenceEqual(["/config", "/syncfromflags:domhier", "/update"]) ||
+            !domainCommands[1].Arguments.SequenceEqual(["/resync", "/rediscover"]))
             throw new Exception("Native domain time command sequence changed scope");
         var selected = new TimeOptions(TimeSourceMode.CustomPeers, ["time.example.test", "192.0.2.1"]);
         var stored = new TimeEnvironment(false, false, false, true) { LocalMode = "NTP", LocalPeers = "192.0.2.1,0x8 TIME.EXAMPLE.TEST,0x8" };
@@ -162,10 +162,10 @@ internal static class TimeConfigurationChecks
             stored with { LocalPeers = "time.example.test,0x8 time.example.test,0x8" } })
             if (TimeConfiguration.MatchesStoredConfiguration(selected, mismatch)) throw new Exception("Different or unknown time configuration accepted");
         var custom = TimeConfiguration.ConfigurationStep(new(TimeSourceMode.CustomPeers, ["time.example.test", "192.0.2.1"]));
-        if (custom.Tool != "w32tm.exe" || !custom.Arguments.SequenceEqual(new[] { "/config", "/manualpeerlist:time.example.test,0x8 192.0.2.1,0x8", "/syncfromflags:manual", "/update" }))
+        if (custom.Tool != "w32tm.exe" || !custom.Arguments.SequenceEqual(["/config", "/manualpeerlist:time.example.test,0x8 192.0.2.1,0x8", "/syncfromflags:manual", "/update"]))
             throw new Exception("Custom time command changed selected peers or configuration scope");
         var domain = TimeConfiguration.ConfigurationStep(new(TimeSourceMode.DomainHierarchy));
-        if (!domain.Arguments.SequenceEqual(new[] { "/config", "/syncfromflags:domhier", "/update" }))
+        if (!domain.Arguments.SequenceEqual(["/config", "/syncfromflags:domhier", "/update"]))
             throw new Exception("Domain time command changed unrelated settings");
         foreach (string scenario in new[] { "changed", "canceled" })
         {

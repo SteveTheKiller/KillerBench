@@ -3,12 +3,14 @@ using System.Text.Json;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Scheduling;
 
 public sealed record ScheduledTaskDefinitionResult(ScheduledTaskIdentity Target, string? Xml, string Detail, ToolResult Evidence)
 {
     public bool Observed => Xml is not null;
+#pragma warning disable CA1822 // Instance property is serialized into exported inspection reports.
     public string Limitation => "Read-only definition snapshot. Task execution, permissions, schema validity and agreement with a proposed plan are not verified. Unavailable evidence does not establish absence.";
+#pragma warning restore CA1822
 }
 
 public static class ScheduledTaskDefinition
@@ -18,7 +20,7 @@ public static class ScheduledTaskDefinition
     public static RepairStep CreateReadStep(ScheduledTaskIdentity target)
     {
         ArgumentNullException.ThrowIfNull(target);
-        string Encode(string value) => Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
+        static string Encode(string value) => Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
         string script = "$ErrorActionPreference='Stop'; $ProgressPreference='SilentlyContinue'; " +
             "$folder=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('" + Encode(target.Path) + "')); " +
             "$name=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('" + Encode(target.Name) + "')); " +

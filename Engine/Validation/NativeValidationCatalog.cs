@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Validation;
 
 public enum NativeValidationMode
 {
@@ -45,24 +45,24 @@ public sealed record NativeRecipeValidationPlan(
 
 public static class NativeValidationCatalog
 {
-    private static readonly IReadOnlySet<RepairKind> ManagedAuthorityActions = new HashSet<RepairKind>
-    {
+    private static readonly HashSet<RepairKind> ManagedAuthorityActions =
+    [
         RepairKind.TimeSourceConfiguration,
         RepairKind.FirewallProfiles,
         RepairKind.UpdateDataStoreReset,
         RepairKind.DeliveryOptimization,
         RepairKind.PowerTimers,
         RepairKind.HibernationDisable
-    };
+    ];
 
-    private static readonly IReadOnlySet<RepairKind> RestartActions = new HashSet<RepairKind>
-    {
+    private static readonly HashSet<RepairKind> RestartActions =
+    [
         RepairKind.ComputerRename,
         RepairKind.ComponentStore,
         RepairKind.SystemFiles,
         RepairKind.ComponentCleanup,
         RepairKind.StorageFileSystem
-    };
+    ];
 
     public static IReadOnlyList<NativeRecipeValidationPlan> All { get; } =
         Array.AsReadOnly(RecipeCatalog.All.Select(Create).ToArray());

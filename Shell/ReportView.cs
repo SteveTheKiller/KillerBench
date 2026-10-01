@@ -251,14 +251,14 @@ public partial class MainWindow
     private static bool HasNetworkOptions(WorkflowResult result) =>
         result.Kind == WorkflowKind.Network && result.Summary.ReviewItems > 0;
 
-    private TextBlock Heading(string text, double size)
+    private static TextBlock Heading(string text, double size)
     {
         var block = new TextBlock { Text = text, FontSize = size, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 7) };
         block.SetResourceReference(TextBlock.ForegroundProperty, "PrimaryBrush");
         return block;
     }
 
-    private TextBlock Body(string text, double size, Thickness margin, string brush = "TextBrush")
+    private static TextBlock Body(string text, double size, Thickness margin, string brush = "TextBrush")
     {
         var block = new TextBlock { Text = text, FontSize = size, TextWrapping = TextWrapping.Wrap, Margin = margin };
         block.SetResourceReference(TextBlock.ForegroundProperty, brush);

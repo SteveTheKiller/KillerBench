@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Printing;
 
 public sealed record PrintQueueRepairAssessment(WorkflowCheck Check, IReadOnlyList<string> Targets);
 

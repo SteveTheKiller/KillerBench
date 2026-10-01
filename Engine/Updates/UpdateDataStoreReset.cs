@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public enum UpdateDataStoreResetOutcome { Preview, Blocked, Verified, Failed, Uncertain, Stopped }
 

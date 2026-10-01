@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public static class DefenderProtectionDiagnostics
 {
@@ -45,8 +45,8 @@ public static class DefenderProtectionDiagnostics
     public static IReadOnlyList<WorkflowCheck> Interpret(ToolResult result)
     {
         string[] names = ["Defender active protection", "Behavior monitoring", "Downloaded-file scanning", "Network inspection system", "Tamper protection", "Potentially unwanted application protection", "Network protection", "Cloud protection", "Automatic sample submission", "Controlled folder access"];
-        WorkflowCheck[] unknown = names.Select(name => new WorkflowCheck(name, CheckState.Unknown,
-            "Microsoft Defender protection settings are unavailable or incomplete. No setting or policy was changed.", Evidence: result)).ToArray();
+        WorkflowCheck[] unknown = [.. names.Select(name => new WorkflowCheck(name, CheckState.Unknown,
+            "Microsoft Defender protection settings are unavailable or incomplete. No setting or policy was changed.", Evidence: result))];
         if (result.ExitCode != 0 || result.Truncated || result.TimedOut || !string.IsNullOrWhiteSpace(result.Error)) return unknown;
         try
         {
@@ -120,6 +120,6 @@ public static class DefenderProtectionDiagnostics
             names.Add(name);
         }
         names.Sort(StringComparer.OrdinalIgnoreCase);
-        return names.ToArray();
+        return [.. names];
     }
 }

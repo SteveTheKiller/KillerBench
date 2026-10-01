@@ -25,7 +25,7 @@ internal static class DiskQuotaChecks
         {
             Evidence([Row()], complete: false), Evidence([Row()], unresolved: 1), Evidence([Row(state: 3)]),
             Evidence([Row(defaultLimitBytes: 100, defaultWarningBytes: 101)]), Evidence([Row(defaultLimitBytes: -2)]),
-            Evidence([Row(), Row("c:")]), Evidence(Enumerable.Range(0, 65).Select(index => Row(((char)('A' + index % 26)).ToString() + ":")).ToArray()),
+            Evidence([Row(), Row("c:")]), Evidence([.. Enumerable.Range(0, 65).Select(index => Row(((char)('A' + index % 26)).ToString() + ":"))]),
             new ToolResult(0, "{}", "", false), new ToolResult(0, "not json", "", false),
             configuredEvidence with { ExitCode = 5 }, configuredEvidence with { Error = "denied" },
             configuredEvidence with { TimedOut = true }, configuredEvidence with { Truncated = true }

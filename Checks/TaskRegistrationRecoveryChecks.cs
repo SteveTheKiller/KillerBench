@@ -4,6 +4,13 @@ using KillerBench.Engine;
 internal static class TaskRegistrationRecoveryChecks
 {
     private static readonly ToolResult Good = new(0, "fixture", "", false);
+    private static readonly string[] ExpectedRecoveryMessages =
+    [
+        "Reading the pending task registration record.",
+        "Reading the exact current disabled task definition without changing it.",
+        "Locking and rechecking the unchanged pending record.",
+        "Exact disabled definition verified. The pending guard was closed without retrying or running the task."
+    ];
 
     internal static async Task RunAsync(string scratch)
     {
@@ -26,13 +33,7 @@ internal static class TaskRegistrationRecoveryChecks
             success.PendingRecord is not null && success.RecoveryRecord is not null &&
             File.Exists(success.PendingRecord) && File.Exists(success.RecoveryRecord) &&
             Directory.GetFiles(successRoot, "*.pending.json").Length == 0 &&
-            progress.Messages.SequenceEqual(new[]
-            {
-                "Reading the pending task registration record.",
-                "Reading the exact current disabled task definition without changing it.",
-                "Locking and rechecking the unchanged pending record.",
-                "Exact disabled definition verified. The pending guard was closed without retrying or running the task."
-            }), "Exact recovery did not durably close the no-repeat guard.");
+            progress.Messages.SequenceEqual(ExpectedRecoveryMessages), "Exact recovery did not durably close the no-repeat guard.");
 
         string pendingPath = FileTaskRegistrationJournal.GetPendingPath(successRoot, plan.Identity);
         File.Move(success.PendingRecord!, pendingPath);
@@ -96,24 +97,24 @@ internal static class TaskRegistrationRecoveryChecks
         string planPath = Path.Combine(scratch, "task-recovery-plan.json");
         await File.WriteAllBytesAsync(planPath, ScheduledTaskPlanJson.Serialize(plan));
         var cliHost = new RecoveryHost(plan.Identity, exactXml, Good);
-        var cli = await InvokeCliAsync(["task-register-recover", planPath], cliHost, cliRoot);
-        Require(cli.Exit == 0 && cliHost.Reads == 1 &&
-            !cli.Json.RootElement.GetProperty("retryAttempted").GetBoolean() &&
-            !cli.Json.RootElement.GetProperty("taskChanged").GetBoolean() &&
-            !cli.Json.RootElement.GetProperty("taskExecuted").GetBoolean() &&
-            cli.Json.RootElement.GetProperty("result").GetProperty("outcome").GetString() == "Verified",
+        var (cliExit, cliJson) = await InvokeCliAsync(["task-register-recover", planPath], cliHost, cliRoot);
+        Require(cliExit == 0 && cliHost.Reads == 1 &&
+            !cliJson.RootElement.GetProperty("retryAttempted").GetBoolean() &&
+            !cliJson.RootElement.GetProperty("taskChanged").GetBoolean() &&
+            !cliJson.RootElement.GetProperty("taskExecuted").GetBoolean() &&
+            cliJson.RootElement.GetProperty("result").GetProperty("outcome").GetString() == "Verified",
             "CLI recovery did not preserve the read-only exact-definition boundary.");
         string cliReportPath = Path.Combine(scratch, "task-recovery-report.txt");
         var cliReportHost = new RecoveryHost(plan.Identity, null, Good);
-        var cliWithReport = await InvokeCliAsync(["task-register-recover", planPath, "--report", cliReportPath],
+        var (cliWithReportExit, cliWithReportJson) = await InvokeCliAsync(["task-register-recover", planPath, "--report", cliReportPath],
             cliReportHost, Path.Combine(scratch, "task-recovery-cli-report"));
-        Require(cliWithReport.Exit == 0 && cliReportHost.Reads == 0 && File.Exists(cliReportPath) &&
+        Require(cliWithReportExit == 0 && cliReportHost.Reads == 0 && File.Exists(cliReportPath) &&
             File.ReadAllText(cliReportPath).Contains("Task registration recovery", StringComparison.Ordinal) &&
-            cliWithReport.Json.RootElement.GetProperty("reportPath").GetString() == cliReportPath,
+            cliWithReportJson.RootElement.GetProperty("reportPath").GetString() == cliReportPath,
             "CLI recovery report changed state or omitted its readable outcome.");
-        var rejectedCli = await InvokeCliAsync(["task-register-recover"],
+        var (rejectedCliExit, _) = await InvokeCliAsync(["task-register-recover"],
             new RecoveryHost(plan.Identity, exactXml, Good), cliRoot);
-        Require(rejectedCli.Exit == 2, "CLI recovery accepted a missing plan path.");
+        Require(rejectedCliExit == 2, "CLI recovery accepted a missing plan path.");
 
         Console.WriteLine("PASS: exact task registration recovery, durable resume, app-independent CLI, mismatch, old-schema, unavailable and cancellation boundaries; substituted providers only.");
     }

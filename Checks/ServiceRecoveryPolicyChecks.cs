@@ -32,12 +32,12 @@ internal static class ServiceRecoveryPolicyChecks
         foreach (var invalid in new[]
         {
             snapshot with { Complete = false },
-            snapshot with { Services = snapshot.Services.Take(3).ToArray() },
+            snapshot with { Services = [.. snapshot.Services.Take(3)] },
             snapshot with { Services = [snapshot.Services[0], snapshot.Services[0], snapshot.Services[2], snapshot.Services[3]] },
             snapshot with { Services = [snapshot.Services[0] with { Name = "foreign" }, snapshot.Services[1], snapshot.Services[2], snapshot.Services[3]] },
             snapshot with { Services = [snapshot.Services[0] with { Readable = false }, snapshot.Services[1], snapshot.Services[2], snapshot.Services[3]] },
             snapshot with { Services = [snapshot.Services[0] with { Actions = [new("Unsupported", 0)] }, snapshot.Services[1], snapshot.Services[2], snapshot.Services[3]] },
-            snapshot with { Services = [snapshot.Services[0] with { Actions = Enumerable.Repeat(new ServiceRecoveryAction("None", 0), 17).ToArray() }, snapshot.Services[1], snapshot.Services[2], snapshot.Services[3]] }
+            snapshot with { Services = [snapshot.Services[0] with { Actions = [.. Enumerable.Repeat(new ServiceRecoveryAction("None", 0), 17)] }, snapshot.Services[1], snapshot.Services[2], snapshot.Services[3]] }
         })
             Require(ServiceRecoveryPolicyDiagnostics.Assess(invalid, inventory).State == CheckState.Unknown,
                 "Incomplete, mismatched, unreadable and malformed recovery evidence remains unknown");

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public static class NetworkConnectionsOperationalCorrelation
 {
@@ -8,7 +8,7 @@ public static class NetworkConnectionsOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Network Connections readiness";
         const string boundary = " This bounded conclusion does not establish adapter availability, address assignment, route selection, name resolution, firewall access, Internet reachability or connection success. It does not enable, disable, reset or reconfigure an adapter, profile, address, route, DNS server, firewall rule, service or policy, and it selects no repair.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var profiles = checks.Where(check => check is not null && (check.Name == "Network profiles" ||
             check.Name.StartsWith("Network profile: ", StringComparison.Ordinal))).ToArray();

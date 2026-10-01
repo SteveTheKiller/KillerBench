@@ -2,7 +2,7 @@ using Microsoft.Win32;
 using System.Runtime.Versioning;
 using System.Security;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Automation;
 
 public sealed record MaceManagedPolicyObservation(MaceTargets Target, string Area,
     bool MachineConfigured, bool CurrentAccountConfigured);

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Workflows;
 
 public sealed record WorkflowSummary(int ClearChecks, int VerifiedRepairs, int AvailableRepairs,
     int NeedsAttention, int Incomplete, int Deferred, int Informational)

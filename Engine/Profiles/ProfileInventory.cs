@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Profiles;
 
 public sealed record ProfileInventoryResult(IReadOnlyList<ProfileSnapshot> Profiles, bool Complete);
 

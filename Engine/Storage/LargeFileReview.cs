@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public sealed record LargeFile(string Path, long Length, DateTimeOffset LastWriteTimeUtc);
 public sealed record LargeFileReviewResult(string Root, int FilesExamined, bool Complete,
@@ -10,8 +10,9 @@ public static class LargeFileReview
         int maximumFiles = 10_000, int resultLimit = 500, CancellationToken token = default) => Task.Run(() =>
     {
         if (string.IsNullOrWhiteSpace(root)) throw new ArgumentException("Choose a folder to review.", nameof(root));
-        if (minimumBytes < 1) throw new ArgumentOutOfRangeException(nameof(minimumBytes));
-        if (maximumFiles is < 1 or > 100_000 || resultLimit is < 1 or > 10_000) throw new ArgumentOutOfRangeException();
+        ArgumentOutOfRangeException.ThrowIfLessThan(minimumBytes, 1);
+        if (maximumFiles is < 1 or > 100_000) throw new ArgumentOutOfRangeException(nameof(maximumFiles));
+        if (resultLimit is < 1 or > 10_000) throw new ArgumentOutOfRangeException(nameof(resultLimit));
         string fullRoot = Path.GetFullPath(root);
         if (!Path.IsPathFullyQualified(fullRoot) || fullRoot.StartsWith("\\\\", StringComparison.Ordinal))
             throw new ArgumentException("Large-file review accepts one local folder only.", nameof(root));

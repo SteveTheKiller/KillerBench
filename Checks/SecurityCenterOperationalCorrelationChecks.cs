@@ -16,9 +16,9 @@ internal static class SecurityCenterOperationalCorrelationChecks
             attention.Detail.Contains("cannot authorize recovery or a security change", StringComparison.Ordinal) &&
             attention.Detail.Contains("does not interpret raw provider state", StringComparison.Ordinal),
             "Current Security Center service concern requests review without inventing protection health");
-        Require(SecurityCenterOperationalCorrelation.Check(Inputs().Append(Info("Registered antivirus products")).ToArray()).State == CheckState.Unknown,
+        Require(SecurityCenterOperationalCorrelation.Check([.. Inputs(), Info("Registered antivirus products")]).State == CheckState.Unknown,
             "Duplicate Security Center evidence identity fails closed");
-        Require(SecurityCenterOperationalCorrelation.Check(Inputs().Where(check => check.Name != "Focused service readiness").ToArray()).State == CheckState.Unknown,
+        Require(SecurityCenterOperationalCorrelation.Check([.. Inputs().Where(check => check.Name != "Focused service readiness")]).State == CheckState.Unknown,
             "Missing Security Center evidence identity fails closed");
         try
         {

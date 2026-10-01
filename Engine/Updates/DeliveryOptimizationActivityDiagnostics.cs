@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public static class DeliveryOptimizationActivityDiagnostics
 {
@@ -111,7 +111,7 @@ public static class DeliveryOptimizationActivityDiagnostics
         }
     }
 
-    private static ulong Count(IReadOnlyDictionary<string, ulong> counts, string status) =>
+    private static ulong Count(Dictionary<string, ulong> counts, string status) =>
         counts.TryGetValue(status, out ulong count) ? count : 0;
     private static WorkflowCheck Unknown(string detail, ToolResult evidence) =>
         new("Delivery Optimization activity", CheckState.Unknown, detail + Scope + Reference, Evidence: evidence);

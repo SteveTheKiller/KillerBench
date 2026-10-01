@@ -22,8 +22,8 @@ internal static class WindowsRecoveryChecks
         }), "Caller labels cannot override contradictory recovery evidence");
 
         var plan = Repairs.Plan(RepairKind.WindowsRecoveryEnvironment);
-        Require(plan.Steps.Count == 2 && plan.Steps[0].Tool == "reagentc.exe" && plan.Steps[0].Arguments.SequenceEqual(new[] { "/enable" }) &&
-            plan.Steps[1].Tool == "reagentc.exe" && plan.Steps[1].Arguments.SequenceEqual(new[] { "/info" }) && !plan.Steps[0].Verification && plan.Steps[1].Verification &&
+        Require(plan.Steps.Count == 2 && plan.Steps[0].Tool == "reagentc.exe" && plan.Steps[0].Arguments.SequenceEqual(["/enable"]) &&
+            plan.Steps[1].Tool == "reagentc.exe" && plan.Steps[1].Arguments.SequenceEqual(["/info"]) && !plan.Steps[0].Verification && plan.Steps[1].Verification &&
             plan.Effects.Contains("No image is downloaded", StringComparison.Ordinal),
             "Recovery repair plan enables the existing configuration and verifies without replacing its image");
         var verified = new RepairResult("Fixture", RepairKind.WindowsRecoveryEnvironment, DateTimeOffset.UtcNow,
@@ -34,7 +34,7 @@ internal static class WindowsRecoveryChecks
             "Windows RE status: Disabled\nREAGENTC.EXE: Operation Successful.", "", false))] }),
             "Successful enable exit without enabled verification is unresolved");
         Require(Workflows.SupportsRepair(WorkflowKind.WindowsRecovery) &&
-            Workflows.Scopes(WorkflowKind.WindowsRecovery).SequenceEqual(new[] { RepairKind.WindowsRecoveryEnvironment }) &&
+            Workflows.Scopes(WorkflowKind.WindowsRecovery).SequenceEqual([RepairKind.WindowsRecoveryEnvironment]) &&
             RecipeCatalog.ForWorkflow(WorkflowKind.WindowsRecovery).Single().Id == "windows.recovery-environment",
             "Recovery repair is exposed through the shared workflow recipe catalog");
 

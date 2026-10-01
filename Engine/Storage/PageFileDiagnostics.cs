@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public static class PageFileDiagnostics
 {
@@ -65,7 +65,7 @@ public static class PageFileDiagnostics
             foreach (var item in pageFiles.EnumerateArray())
             {
                 if (!Unique(item, 5) || !Text(item, "drive", out string drive) ||
-                    drive.Length != 2 || !char.IsAsciiLetter(drive[0]) || drive[1] != ':' || drive != drive.ToUpperInvariant() ||
+                    drive.Length != 2 || !char.IsAsciiLetterUpper(drive[0]) || drive[1] != ':' ||
                     !Unsigned(item, "allocatedMiB", out ulong allocated) || !Unsigned(item, "currentMiB", out ulong current) ||
                     !Unsigned(item, "peakMiB", out ulong peak) || !Boolean(item, "temporary", out bool temporary) ||
                     allocated == 0 || current > allocated || peak > allocated || current > peak || !drives.Add(drive))

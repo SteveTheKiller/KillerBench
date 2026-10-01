@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Infrastructure;
 
 public sealed record ToolResult(int ExitCode, string Output, string Error, bool Truncated)
 {

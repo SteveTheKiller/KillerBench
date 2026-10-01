@@ -5,7 +5,7 @@ internal static class PrintSpoolDirectoryChecks
 {
     public static void Run()
     {
-        PrintSpoolDirectorySnapshot Snapshot(bool exists = true, bool? reparse = false, DriveType? driveType = DriveType.Fixed,
+        static PrintSpoolDirectorySnapshot Snapshot(bool exists = true, bool? reparse = false, DriveType? driveType = DriveType.Fixed,
             long? available = 10L * 1024 * 1024 * 1024, bool complete = true, string? issue = null) =>
             new(complete, Path.Combine(Environment.SystemDirectory, "spool", "PRINTERS"), Path.Combine(Environment.SystemDirectory, "spool", "PRINTERS"), exists, reparse, driveType, available, true, issue);
         var healthy = PrintSpoolDirectoryDiagnostics.Interpret(Snapshot());

@@ -4,7 +4,7 @@ internal static class WiredAuthenticationEventChecks
 {
     internal static void Run()
     {
-        string Entry(int id, int level = 2, string provider = "Microsoft-Windows-Wired-AutoConfig", ulong record = 1) =>
+        static string Entry(int id, int level = 2, string provider = "Microsoft-Windows-Wired-AutoConfig", ulong record = 1) =>
             $"<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='{provider}'/><EventID>{id}</EventID><EventRecordID>{record}</EventRecordID><Level>{level}</Level><TimeCreated SystemTime='2026-09-14T00:00:00Z'/></System><EventData><Data Name='Identity'>PRIVATE\\User</Data><Data Name='ProfileName'>PRIVATE-PROFILE</Data><Data Name='InterfaceGuid'>{{11111111-2222-3333-4444-555555555555}}</Data></EventData></Event>";
         var evidence = new ToolResult(0, "<Events>" + Entry(15500, record: 1) + Entry(15500, record: 2) + Entry(15501, 4, record: 3) + "</Events>", "", false);
         var result = WiredAuthenticationEvents.Interpret(evidence);

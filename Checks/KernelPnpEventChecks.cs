@@ -4,7 +4,7 @@ internal static class KernelPnpEventChecks
 {
     internal static void Run()
     {
-        string Entry(int id, int level = 2, string provider = "Microsoft-Windows-Kernel-PnP", ulong record = 1) =>
+        static string Entry(int id, int level = 2, string provider = "Microsoft-Windows-Kernel-PnP", ulong record = 1) =>
             $"<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='{provider}'/><EventID>{id}</EventID><EventRecordID>{record}</EventRecordID><Level>{level}</Level><TimeCreated SystemTime='2026-09-14T00:00:00Z'/></System><EventData><Data Name='DeviceInstanceId'>PCI\\VEN_1234&amp;DEV_5678</Data><Data Name='DriverName'>private.inf</Data></EventData></Event>";
         var evidence = new ToolResult(0, "<Events>" + Entry(411, record: 1) + Entry(411, record: 2) + Entry(410, level: 4, record: 3) + "</Events>", "", false);
         var result = KernelPnpEvents.Interpret(evidence);

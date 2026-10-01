@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Debloat;
 
 public sealed record DebloatTaskCandidate(DebloatAreas Area, ScheduledTaskSnapshot Task, string SourcePattern);
 
@@ -7,7 +7,7 @@ public sealed record DebloatTaskEvidence(IReadOnlyList<DebloatTaskCandidate> Mat
 
 public static class DebloatTaskReview
 {
-    private static readonly IReadOnlyDictionary<string, DebloatAreas> ExactTargets =
+    private static readonly Dictionary<string, DebloatAreas> ExactTargets =
         new Dictionary<string, DebloatAreas>(StringComparer.OrdinalIgnoreCase)
         {
             [@"\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser"] = DebloatAreas.TelemetryAndReporting,
@@ -36,10 +36,10 @@ public static class DebloatTaskReview
         {
             if (ExactTargets.TryGetValue(task.Identity.FullName, out var area) && options.Areas.HasFlag(area))
                 matches.Add(new(area, task, task.Identity.FullName));
-            foreach (var target in OemPaths.Where(target => options.Areas.HasFlag(target.Area) &&
+            foreach (var (oemArea, prefix, pattern, _) in OemPaths.Where(target => options.Areas.HasFlag(target.Area) &&
                 ManufacturerMatches(environment, target.Manufacturers)))
-                if (task.Identity.Path.StartsWith(target.Prefix, StringComparison.OrdinalIgnoreCase))
-                    matches.Add(new(target.Area, task, target.Pattern));
+                if (task.Identity.Path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                    matches.Add(new(oemArea, task, pattern));
         }
         return new(Array.AsReadOnly(matches.DistinctBy(match => match.Area + "\0" + match.Task.Identity.FullName,
                 StringComparer.OrdinalIgnoreCase).OrderBy(match => match.Task.Identity.FullName, StringComparer.Ordinal).ToArray()), inventory.Complete, inventory.Evidence,

@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Infrastructure;
 
 public static class ServicingTransitionCorrelation
 {
@@ -81,7 +81,7 @@ public static class ServicingTransitionCorrelation
         Add("pendingFileRenames", "pending file rename operations");
         Add("computerRename", "computer rename");
         Add("updateExecutable", "update executable");
-        return sources.ToArray();
+        return [.. sources];
 
         void Add(string property, string label)
         {

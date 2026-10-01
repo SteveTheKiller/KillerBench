@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record UpdateApplicabilitySnapshot(bool Complete, string? ProductName, string? Edition,
     string? DisplayVersion, string? Build, int? UpdateBuildRevision, string? InstallationType,

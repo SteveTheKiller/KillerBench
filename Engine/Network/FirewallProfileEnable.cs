@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public enum FirewallProfileTarget { Domain, Private, Public }
 public sealed record FirewallProfileState(FirewallProfileTarget Profile, bool? Enabled, bool? Managed);
@@ -296,7 +296,7 @@ public sealed class WindowsFirewallProfileEnableHost : IFirewallProfileEnableHos
                     throw new InvalidDataException("Firewall profile inspection returned invalid state.");
                 values.Add(new(profile, enabled, managed));
             }
-            return values.OrderBy(value => value.Profile).ToArray();
+            return [.. values.OrderBy(value => value.Profile)];
         }
         catch (JsonException error) { throw new InvalidDataException("Firewall profile inspection returned invalid data.", error); }
     }

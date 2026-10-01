@@ -39,8 +39,9 @@ internal static class DiskDiagnosticEventChecks
                 "Unavailable, malformed, foreign or duplicated disk diagnostic history remains unknown");
         var configurationStep = DiskDiagnosticEvents.CreateConfigurationStep(Channel);
         var historyStep = DiskDiagnosticEvents.CreateHistoryStep(Channel);
+        string[] expectedConfigurationArguments = ["gl", Channel, "/f:xml"];
         Require(configurationStep.Verification && historyStep.Verification && configurationStep.Tool == "wevtutil.exe" && historyStep.Tool == "wevtutil.exe" &&
-            configurationStep.Arguments.SequenceEqual(new[] { "gl", Channel, "/f:xml" }) && historyStep.Arguments.Contains("/c:201") &&
+            configurationStep.Arguments.SequenceEqual(expectedConfigurationArguments) && historyStep.Arguments.Contains("/c:201") &&
             !historyStep.Arguments.Any(argument => argument.Contains("sl", StringComparison.OrdinalIgnoreCase)),
             "Disk diagnostic event plans read exact channel configuration and bounded history without changing logging");
 
@@ -57,11 +58,11 @@ internal static class DiskDiagnosticEventChecks
         };
         Require(DiskDiagnosticCorrelation.Check(tasks, histories).State == CheckState.Information,
             "Complete quiet disk diagnostic evidence remains informational without claiming health");
-        Require(DiskDiagnosticCorrelation.Check(tasks, histories.Select((item, index) => index == 1 ? item with { State = CheckState.Attention } : item).ToArray()).State == CheckState.Attention,
+        Require(DiskDiagnosticCorrelation.Check(tasks, [.. histories.Select((item, index) => index == 1 ? item with { State = CheckState.Attention } : item)]).State == CheckState.Attention,
             "Disk diagnostic correlation carries a review result from exact history");
-        Require(DiskDiagnosticCorrelation.Check(tasks, histories.Select((item, index) => index == 2 ? item with { State = CheckState.Unknown } : item).ToArray()).State == CheckState.Unknown,
+        Require(DiskDiagnosticCorrelation.Check(tasks, [.. histories.Select((item, index) => index == 2 ? item with { State = CheckState.Unknown } : item)]).State == CheckState.Unknown,
             "Incomplete disk diagnostic evidence takes precedence over review findings");
-        Require(DiskDiagnosticCorrelation.Check(tasks.Take(1).ToArray(), histories).State == CheckState.Unknown,
+        Require(DiskDiagnosticCorrelation.Check([.. tasks.Take(1)], histories).State == CheckState.Unknown,
             "Missing exact disk diagnostic source prevents a combined conclusion");
         Console.WriteLine("PASS: exact disk diagnostic channels and task correlation remain bounded, private and read only.");
     }

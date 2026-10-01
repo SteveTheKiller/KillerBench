@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public sealed record RegisteredSecurityProduct(string Name, Guid InstanceId, uint ProductState, string? Timestamp);
 public sealed record SecurityProductInventory(IReadOnlyList<RegisteredSecurityProduct> Products, bool Complete, ToolResult Evidence);

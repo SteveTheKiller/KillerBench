@@ -2,7 +2,7 @@ using Microsoft.Win32;
 using System.Security;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record UpdateRestartPolicySnapshot(bool Complete,
     object? SetComplianceDeadlineForQualityUpdates = null, object? ConfigureDeadlineForQualityUpdates = null,

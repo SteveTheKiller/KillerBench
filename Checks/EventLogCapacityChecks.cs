@@ -5,7 +5,7 @@ internal static class EventLogCapacityChecks
 {
     internal static async Task RunAsync()
     {
-        ToolResult Evidence(EventLogCapacitySnapshot value) => new(0, JsonSerializer.Serialize(value, Capture.JsonOptions), "", false);
+        static ToolResult Evidence(EventLogCapacitySnapshot value) => new(0, JsonSerializer.Serialize(value, Capture.JsonOptions), "", false);
         var circular = new EventLogCapacitySnapshot("System", true, "Circular", 950, 1000, 40, false);
         var circularCheck = EventLogCapacityDiagnostics.Interpret("System", Evidence(circular));
         Require(circularCheck.State == CheckState.Information && circularCheck.Detail.Contains("overwrite the oldest", StringComparison.Ordinal),

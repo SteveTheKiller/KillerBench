@@ -1,4 +1,4 @@
-namespace KillerBench.Engine.Core;
+namespace KillerBench.Engine.Core.Recipes;
 
 public sealed record ProbeOutcome(string Role, ProbeSpec Probe, PrimitiveResult Result, Expectation.Evaluation Evaluation);
 
@@ -59,7 +59,7 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
             options.Progress?.Report(recipe.Title + ": checking current state...");
             var detect = await ProbeAsync("detect", recipe.Detect, recipe.InspectionTimeout, token).ConfigureAwait(false);
             probes.Add(detect);
-            await RecordAsync(recipe, RecipeJournalStage.Detected, detect.Evaluation.Verdict + ": " + detect.Evaluation.Detail, detect.Result.Raw, token).ConfigureAwait(false);
+            await RecordAsync(recipe, RecipeJournalStage.Detected, detect.Evaluation.Verdict + ": " + detect.Evaluation.Detail, detect.Result.Raw).ConfigureAwait(false);
             switch (detect.Evaluation.Verdict)
             {
                 case ProbeVerdict.Clear:
@@ -90,24 +90,24 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
                 probes.Add(outcome);
                 if (outcome.Evaluation.Verdict is not (ProbeVerdict.Clear or ProbeVerdict.Information))
                 {
-                    await RecordAsync(recipe, RecipeJournalStage.PreconditionsChecked, "Blocked by " + (precondition.Name ?? precondition.Primitive) + ": " + outcome.Evaluation.Detail, outcome.Result.Raw, token).ConfigureAwait(false);
+                    await RecordAsync(recipe, RecipeJournalStage.PreconditionsChecked, "Blocked by " + (precondition.Name ?? precondition.Primitive) + ": " + outcome.Evaluation.Detail, outcome.Result.Raw).ConfigureAwait(false);
                     return Result(RecipeRunOutcome.Blocked, "Prerequisite " + (precondition.Name ?? precondition.Primitive) + " is not satisfied: " + outcome.Evaluation.Detail + " No change was made.");
                 }
             }
-            await RecordAsync(recipe, RecipeJournalStage.PreconditionsChecked, recipe.Preconditions.Count + " prerequisite(s) satisfied.", null, token).ConfigureAwait(false);
+            await RecordAsync(recipe, RecipeJournalStage.PreconditionsChecked, recipe.Preconditions.Count + " prerequisite(s) satisfied.", null).ConfigureAwait(false);
 
             token.ThrowIfCancellationRequested();
             var recheck = await ProbeAsync("recheck", recipe.Detect, recipe.InspectionTimeout, token).ConfigureAwait(false);
             probes.Add(recheck);
             if (recheck.Evaluation.Verdict != ProbeVerdict.Repairable)
             {
-                await RecordAsync(recipe, RecipeJournalStage.Completed, "Skipped before dispatch: " + recheck.Evaluation.Detail, recheck.Result.Raw, token).ConfigureAwait(false);
+                await RecordAsync(recipe, RecipeJournalStage.Completed, "Skipped before dispatch: " + recheck.Evaluation.Detail, recheck.Result.Raw).ConfigureAwait(false);
                 return recheck.Evaluation.Verdict is ProbeVerdict.Clear or ProbeVerdict.Information
                     ? Result(RecipeRunOutcome.Clear, "The condition cleared before the repair ran. No change was made.")
                     : Result(RecipeRunOutcome.Unknown, "Fresh evidence no longer authorizes the repair: " + recheck.Evaluation.Detail + " No change was made.");
             }
 
-            await RecordAsync(recipe, RecipeJournalStage.Prepared, "Dispatching " + Describe(recipe.Action), null, token).ConfigureAwait(false);
+            await RecordAsync(recipe, RecipeJournalStage.Prepared, "Dispatching " + Describe(recipe.Action), null).ConfigureAwait(false);
             options.Progress?.Report(recipe.Title + ": " + Describe(recipe.Action));
             ActionResult actionResult;
             using (var deadline = CancellationTokenSource.CreateLinkedTokenSource(token))
@@ -125,7 +125,7 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
             }
             await RecordAsync(recipe, RecipeJournalStage.Dispatched,
                 (actionResult.Dispatched ? "Dispatched" : "Not dispatched") + (actionResult.Succeeded ? ", reported success." : ", reported failure. ") + (actionResult.Error ?? ""),
-                actionResult.Raw, token).ConfigureAwait(false);
+                actionResult.Raw).ConfigureAwait(false);
             if (!actionResult.Dispatched)
                 return Result(RecipeRunOutcome.Blocked, "The repair was not dispatched: " + (actionResult.Error ?? "the provider declined.") + " No change was made.", actionResult);
             if (actionResult.TimedOut)
@@ -136,10 +136,10 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
             token.ThrowIfCancellationRequested();
             var verify = await ProbeAsync("verify", recipe.Verify ?? recipe.Detect, recipe.InspectionTimeout, token).ConfigureAwait(false);
             probes.Add(verify);
-            await RecordAsync(recipe, RecipeJournalStage.Verified, verify.Evaluation.Verdict + ": " + verify.Evaluation.Detail, verify.Result.Raw, token).ConfigureAwait(false);
+            await RecordAsync(recipe, RecipeJournalStage.Verified, verify.Evaluation.Verdict + ": " + verify.Evaluation.Detail, verify.Result.Raw).ConfigureAwait(false);
             if (verify.Evaluation.Verdict is ProbeVerdict.Clear or ProbeVerdict.Information)
             {
-                await RecordAsync(recipe, RecipeJournalStage.Completed, "Repaired and verified within scope: " + recipe.VerificationScope, null, token).ConfigureAwait(false);
+                await RecordAsync(recipe, RecipeJournalStage.Completed, "Repaired and verified within scope: " + recipe.VerificationScope, null).ConfigureAwait(false);
                 return Result(RecipeRunOutcome.Repaired, "Verified: " + recipe.VerificationScope + ". " + recipe.Limitations, actionResult);
             }
             return Result(RecipeRunOutcome.NeedsAttention,
@@ -171,7 +171,7 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
         return new(role, probe, result, Expectation.Evaluate(probe.Expect, result));
     }
 
-    private Task RecordAsync(RecipeDefinition recipe, RecipeJournalStage stage, string detail, string? raw, CancellationToken token) =>
+    private Task RecordAsync(RecipeDefinition recipe, RecipeJournalStage stage, string detail, string? raw) =>
         journal.RecordAsync(new(DateTimeOffset.UtcNow, recipe.Id, recipe.Version, stage, detail) { Raw = raw }, CancellationToken.None);
 
     private static string Describe(ActionSpec action) =>

@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Scheduling;
 
 /// <summary>Retains immutable intent and completion files. Existing target records require explicit review.</summary>
 public sealed class FileTaskRegistrationJournal(string directory, DateOnly? startDate = null) : ITaskRegistrationJournal

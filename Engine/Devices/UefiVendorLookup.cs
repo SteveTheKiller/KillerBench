@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Devices;
 
 public enum UefiVendorRegistry
 {

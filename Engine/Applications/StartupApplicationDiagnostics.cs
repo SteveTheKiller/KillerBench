@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Applications;
 
 public static class StartupApplicationDiagnostics
 {
@@ -115,7 +115,7 @@ public static class StartupScheduledTaskDiagnostics
                     !entry.TryGetProperty("state", out var stateValue) || stateValue.ValueKind != JsonValueKind.String) return Unknown();
                 string path = pathValue.GetString()!, name = nameValue.GetString()!, trigger = triggerValue.GetString()!, state = stateValue.GetString()!;
                 if (!DriverReference.ValidText(path, 512) || !DriverReference.ValidText(name, 256) || path != path.Trim() || name != name.Trim() ||
-                    !path.StartsWith("\\", StringComparison.Ordinal) || !TriggerKinds.Contains(trigger) || !States.Contains(state) ||
+                    !path.StartsWith('\\') || !TriggerKinds.Contains(trigger) || !States.Contains(state) ||
                     !seen.Add(path + "\0" + name + "\0" + trigger)) return Unknown();
                 entries.Add((path, name, trigger, state));
             }

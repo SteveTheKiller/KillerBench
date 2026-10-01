@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public static class ServiceOperationalCorrelation
 {
@@ -24,7 +24,7 @@ public static class ServiceOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Service operational correlation";
         const string boundary = " This is a bounded registration, configuration, current-state and history review. It does not start, stop or exercise a service, validate feature behavior, test credentials, inspect protected payloads, or authorize recovery. No service, executable, DLL, driver, startup setting, dependency, trigger, account, credential, permission, registry value, recovery action or file changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         if (eventCorrelation.Name != "Service failure correlation" || structural.Count != StructuralNames.Length ||
             structural.Select(item => item.Name).OrderBy(value => value, StringComparer.Ordinal)

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Scheduling;
 
 public enum TaskScheduleKind { Daily, Weekly, Monthly, Startup }
 public enum TaskLocalTimeState { Unique, Ambiguous, Invalid }
@@ -13,7 +13,7 @@ public static class TaskSchedule
     {
         ArgumentNullException.ThrowIfNull(zone);
         var local = date.ToDateTime(time, DateTimeKind.Unspecified);
-        if (zone.IsInvalidTime(local)) return new(local, zone.Id, TaskLocalTimeState.Invalid, Array.Empty<DateTimeOffset>());
+        if (zone.IsInvalidTime(local)) return new(local, zone.Id, TaskLocalTimeState.Invalid, []);
         var offsets = zone.IsAmbiguousTime(local) ? zone.GetAmbiguousTimeOffsets(local) : [zone.GetUtcOffset(local)];
         var candidates = offsets.Select(offset => new DateTimeOffset(local, offset)).OrderBy(value => value.UtcDateTime).ToArray();
         return new(local, zone.Id, candidates.Length > 1 ? TaskLocalTimeState.Ambiguous : TaskLocalTimeState.Unique, Array.AsReadOnly(candidates));
@@ -23,7 +23,7 @@ public static class TaskSchedule
     {
         var schedule = Validate(options);
         if (count is < 1 or > 100) throw new ArgumentOutOfRangeException(nameof(count), "Preview between 1 and 100 dates.");
-        if (schedule.Kind == TaskScheduleKind.Startup) return Array.Empty<DateOnly>();
+        if (schedule.Kind == TaskScheduleKind.Startup) return [];
         var dates = new List<DateOnly>();
         var date = start;
         for (int inspected = 0; inspected < 3660 && dates.Count < count; inspected++)

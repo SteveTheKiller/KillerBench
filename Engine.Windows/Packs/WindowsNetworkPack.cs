@@ -1,6 +1,6 @@
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Packs;
 
 /// <summary>Network adapter recipes that go beyond service state.</summary>
 public static class WindowsNetworkPack

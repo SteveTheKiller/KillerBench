@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public sealed record WinRmListener(string Identity, string Address, string Transport, int? Port, bool Enabled,
     string UrlPrefix, bool HasCertificate);

@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Services;
 
 public sealed class WindowsBitsRetryHost : IBitsRetryHost
 {

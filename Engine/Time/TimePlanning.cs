@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Time;
 
 public enum TimeSourceMode { Existing, DomainHierarchy, CustomPeers }
 public sealed record TimeOptions(TimeSourceMode Source = TimeSourceMode.Existing, IReadOnlyList<string>? Peers = null);
@@ -11,7 +11,7 @@ public sealed record TimeEnvironment(bool? DomainJoined, bool? DomainController,
 public sealed record TimeConfigurationPlan(TimeSourceMode Source, IReadOnlyList<string> Peers, IReadOnlyList<string> Blockers)
 {
     public bool ReviewPassed => Blockers.Count == 0;
-    public string Limitation => "Preview only. Execution requires separate authorization and fresh prerequisites. Synchronization and absolute clock accuracy are not established by this plan.";
+    public static string Limitation => "Preview only. Execution requires separate authorization and fresh prerequisites. Synchronization and absolute clock accuracy are not established by this plan.";
     public string Format()
     {
         string source = Source switch

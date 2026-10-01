@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public sealed record VolumeCapacitySnapshot(string Volume, long TotalBytes, long AvailableBytes);
 

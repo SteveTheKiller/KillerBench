@@ -4,7 +4,7 @@ internal static class WindowsUpdateEventChecks
 {
     internal static void Run()
     {
-        string Entry(int id, int level = 2, string provider = WindowsUpdateEvents.Provider, ulong record = 1) =>
+        static string Entry(int id, int level = 2, string provider = WindowsUpdateEvents.Provider, ulong record = 1) =>
             $"<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='{provider}'/><EventID>{id}</EventID><EventRecordID>{record}</EventRecordID><Level>{level}</Level><TimeCreated SystemTime='2026-09-14T00:00:00Z'/></System><EventData><Data Name='updateTitle'>Private fixture update</Data><Data Name='serviceUrl'>https://private.invalid/update</Data></EventData></Event>";
         var evidence = new ToolResult(0, "<Events>" + Entry(20, record: 1) + Entry(20, record: 2) + Entry(19, level: 4, record: 3) + "</Events>", "", false);
         var result = WindowsUpdateEvents.Interpret(evidence);

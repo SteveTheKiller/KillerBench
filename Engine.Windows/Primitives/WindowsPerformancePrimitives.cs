@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Primitives;
 
 /// <summary>Samples CPU use over a short window and reports the busiest process as a percentage of total capacity. Raw lists the top five by image name only.</summary>
 public sealed class WindowsTopCpuProbe : IProbePrimitive
@@ -48,8 +48,14 @@ public sealed class WindowsTopCpuProbe : IProbePrimitive
 }
 
 /// <summary>Reads the BCD boot sequence. Value is the one-time boot sequence entry list, or absent when none is set.</summary>
-public sealed class WindowsBcdBootSequenceProbe : IProbePrimitive
+public sealed partial class WindowsBcdBootSequenceProbe : IProbePrimitive
 {
+    [GeneratedRegex(@"(?m)^identifier\s+\{bootmgr\}\s*$", RegexOptions.CultureInvariant)]
+    private static partial Regex BootManagerIdentifierPattern();
+
+    [GeneratedRegex(@"(?m)^bootsequence\s+(.+)$", RegexOptions.CultureInvariant)]
+    private static partial Regex BootSequencePattern();
+
     public string Name => "bcd.bootsequence";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [];
 
@@ -66,9 +72,9 @@ public sealed class WindowsBcdBootSequenceProbe : IProbePrimitive
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
         if (result.TimedOut) return new PrimitiveResult(false, null, raw, "bcdedit timed out.") { TimedOut = true };
         if (result.ExitCode != 0) return PrimitiveResult.Unavailable("bcdedit exited with " + result.ExitCode + "; administrator access is usually required.");
-        if (!Regex.IsMatch(result.Output, @"(?m)^identifier\s+\{bootmgr\}\s*$", RegexOptions.CultureInvariant))
+        if (!BootManagerIdentifierPattern().IsMatch(result.Output))
             return PrimitiveResult.Unavailable("bcdedit output did not describe the {bootmgr} entry.");
-        var match = Regex.Match(result.Output, @"(?m)^bootsequence\s+(.+)$", RegexOptions.CultureInvariant);
+        var match = BootSequencePattern().Match(result.Output);
         if (!match.Success) return new PrimitiveResult(true, null, raw) { Detail = "No one-time boot sequence is set." };
         string value = match.Groups[1].Value.Trim();
         return new PrimitiveResult(true, value, raw) { Detail = "A one-time boot sequence is set: " + value + "." };

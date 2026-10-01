@@ -14,17 +14,17 @@ internal static class ServiceObservationChecks
         foreach (string invalid in new[] { "STATE : 4 STOPPED", "STATE : 1 RUNNING", "STATE : 4 UNKNOWN", "STATE : 4 RUNNING trailing" })
             if (ServiceRecovery.State(new(0, invalid, "", false)) is not null)
                 throw new Exception("Contradictory or malformed service state label was accepted.");
-        foreach (var scenario in new[] {
-            (States: new[] { State(4), State(4) }, Success: true),
-            (States: new[] { State(2), State(4), State(4) }, Success: true),
-            (States: new[] { State(4), State(1) }, Success: false),
-            (States: new[] { State(4), State(4, "Other") }, Success: false),
-            (States: new[] { State(4), State(4) with { Truncated = true } }, Success: false),
-            (States: new[] { State(7) }, Success: false) })
+        foreach (var (states, success) in new (ToolResult[] States, bool Success)[] {
+            ([State(4), State(4)], true),
+            ([State(2), State(4), State(4)], true),
+            ([State(4), State(1)], false),
+            ([State(4), State(4, "Other")], false),
+            ([State(4), State(4) with { Truncated = true }], false),
+            ([State(7)], false) })
         {
             int calls = 0;
-            var observed = await ServiceRecovery.ObserveRunningAsync("Spooler", _ => Task.FromResult(scenario.States[calls++]));
-            if ((observed.ExitCode == 0) != scenario.Success || calls != scenario.States.Length)
+            var observed = await ServiceRecovery.ObserveRunningAsync("Spooler", _ => Task.FromResult(states[calls++]));
+            if ((observed.ExitCode == 0) != success || calls != states.Length)
                 throw new Exception("Service observation accepted unstable or incomplete evidence.");
         }
         using var stop = new CancellationTokenSource(TimeSpan.FromMilliseconds(50));

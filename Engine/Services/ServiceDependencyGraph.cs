@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public sealed record ServiceDependencyNode(int? Startup, IReadOnlyList<string> Dependencies, bool Complete, bool DelayedAutoStart = false);
 public sealed record ServiceDependencyGraphResult(IReadOnlyList<ServiceRecovery.Dependency> Dependencies, bool Complete)

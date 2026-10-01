@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public static class RemoteDesktopDiagnostics
 {
@@ -40,15 +40,15 @@ public static class RemoteDesktopDiagnostics
                 return [Unknown("Configuration values were missing, duplicated or invalid.")];
             string policy = policyDeny is null && policyNla is null ? "No matching machine policy values were observed." :
                 $"Machine policy values observed: enablement={(policyDeny is null ? "not configured" : policyDeny == 0 ? "enabled" : "disabled")}; NLA={(policyNla is null ? "not configured" : policyNla == 1 ? "required" : "not required")}.";
-            return new[]
-            {
+            return
+            [
                 new WorkflowCheck("Remote Desktop enablement", CheckState.Information,
                     $"Local configuration reports Remote Desktop {(deny == 0 ? "enabled" : "disabled")}. {policy}" + Scope, Evidence: result),
                 new WorkflowCheck("Remote Desktop Network Level Authentication", nla == 1 ? CheckState.Information : CheckState.Attention,
                     $"Local listener configuration reports NLA {(nla == 1 ? "required" : "not required")}. {policy}" + Scope, Evidence: result),
                 new WorkflowCheck("Remote Desktop listener port", CheckState.Information,
                     $"Configured RDP-Tcp port: {port}. This does not prove a listener is bound or reachable." + Scope, Evidence: result)
-            };
+            ];
         }
         catch (JsonException) { return [Unknown("Configuration data could not be interpreted.")]; }
     }

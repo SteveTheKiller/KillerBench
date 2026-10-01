@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace KillerBench.Engine.Core;
+namespace KillerBench.Engine.Core.Recipes;
 
 /// <summary>Reads and writes recipe packs as UTF-8 JSON. Loading is bounded and strict: unknown properties, duplicate properties and oversized documents are rejected.</summary>
 public static class RecipePackJson

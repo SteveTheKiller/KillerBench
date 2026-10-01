@@ -78,7 +78,7 @@ internal static class DiagnosticReadinessSummaryChecks
             "Installation readiness declares its current service, registration, exact history and operational correlation boundary");
 
         foreach (var invalid in new IReadOnlyList<WorkflowCheck>[] { [],
-            Enumerable.Range(0, 513).Select(index => new WorkflowCheck("Fixture " + index, CheckState.Clear, "fixture")).ToArray() })
+            [.. Enumerable.Range(0, 513).Select(index => new WorkflowCheck("Fixture " + index, CheckState.Clear, "fixture"))] })
         {
             try { DiagnosticReadinessSummary.Check(CommonDiagnosticScope.ServiceReadiness, invalid); throw new Exception("Invalid readiness input accepted"); }
             catch (ArgumentException) { }

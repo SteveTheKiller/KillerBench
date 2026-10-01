@@ -1,6 +1,6 @@
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Primitives;
 
 /// <summary>Shared helpers for Windows service primitives. The service name parameter must name a service the Engine's service catalog supports.</summary>
 public static class WindowsServicePrimitives

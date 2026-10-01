@@ -18,7 +18,7 @@ internal static class ThirdPartyUpdateExecutionChecks
 
         var step = WindowsThirdPartyUpdateExecutionHost.UpgradeStep(selection);
         Require(step.Tool == "winget.exe" && !step.Verification &&
-            step.Arguments.SequenceEqual(new[] { "upgrade", "--id", "Vendor.Tool", "--exact", "--source", "winget", "--version", "2.0", "--silent", "--disable-interactivity", "--accept-source-agreements", "--accept-package-agreements" }) &&
+            step.Arguments.SequenceEqual(["upgrade", "--id", "Vendor.Tool", "--exact", "--source", "winget", "--version", "2.0", "--silent", "--disable-interactivity", "--accept-source-agreements", "--accept-package-agreements"]) &&
             !step.Arguments.Contains("--all") && !step.Arguments.Contains("--force") && !step.Arguments.Contains("--allow-reboot"),
             "Native third-party update targets one exact version without broad or bypass options");
         Require(WindowsThirdPartyUpdateExecutionHost.InterpretInstalledVersion(new(0, "{\"count\":1,\"version\":\"2.0\"}", "", false)) == "2.0", "Exact installed version evidence is accepted");

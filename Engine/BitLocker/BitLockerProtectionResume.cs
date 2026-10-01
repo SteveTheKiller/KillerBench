@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.BitLocker;
 
 public sealed record BitLockerProtectionState(string Volume, string Identity, string VolumeStatus,
     string ProtectionStatus, string LockStatus, int EncryptionPercentage,

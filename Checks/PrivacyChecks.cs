@@ -12,7 +12,8 @@ internal static class PrivacyChecks
         if (new PrivacyOptions([PrivacyArea.AppActivity]).Plan().Single().Area != PrivacyArea.AppActivity ||
             new PrivacyOptions([PrivacyArea.InputPersonalization]).Plan().Single().Area != PrivacyArea.InputPersonalization)
             throw new Exception("App activity and input personalization must remain independent choices.");
-        foreach (var invalid in new[] { new[] { PrivacyArea.Camera, PrivacyArea.Camera }, new[] { (PrivacyArea)999 } })
+        PrivacyArea[][] invalidSelections = [[PrivacyArea.Camera, PrivacyArea.Camera], [(PrivacyArea)999]];
+        foreach (var invalid in invalidSelections)
         {
             try { new PrivacyOptions(invalid).Plan(); throw new Exception("Invalid privacy selection accepted."); }
             catch (ArgumentException) { }

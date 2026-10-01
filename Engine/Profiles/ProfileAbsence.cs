@@ -1,6 +1,6 @@
 using Microsoft.Win32;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Profiles;
 
 public static class ProfileAbsence
 {

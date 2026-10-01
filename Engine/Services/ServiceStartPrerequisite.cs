@@ -2,7 +2,7 @@ using Microsoft.Win32;
 using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public enum ServiceStartRegistrationStatus
 {

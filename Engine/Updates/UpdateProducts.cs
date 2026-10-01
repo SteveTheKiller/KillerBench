@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record UpdateProduct(string Id, string Name);
 

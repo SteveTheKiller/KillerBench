@@ -35,7 +35,7 @@ internal static class IpInterfaceConfigurationChecks
             Evidence([Row()], false), Evidence([Row(mtu: 0)]), Evidence([Row(family: "Other")]),
             Evidence([Row(connection: "Unknown")]), Evidence([Row(dhcp: "Maybe")]),
             Evidence([Row(discovery: "FutureValue")]), Evidence([Row(), Row(alias: "Renamed")]),
-            Evidence(Enumerable.Range(0, 513).Select(i => Row(index: i + 1)).ToArray()),
+            Evidence([.. Enumerable.Range(0, 513).Select(i => Row(index: i + 1))]),
             new ToolResult(0, "{}", "", false), new ToolResult(0, "not json", "", false),
             clearEvidence with { ExitCode = 5 }, clearEvidence with { Error = "denied" },
             clearEvidence with { TimedOut = true }, clearEvidence with { Truncated = true }

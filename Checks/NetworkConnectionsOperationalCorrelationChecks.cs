@@ -9,9 +9,9 @@ internal static class NetworkConnectionsOperationalCorrelationChecks
         Require(Check(history: CheckState.Attention).State == CheckState.Information, "Historical Network Connections failures remain informational");
         Require(Check(service: CheckState.Attention).State == CheckState.Attention, "Current Network Connections service concern requests review");
         Require(Check(profile: CheckState.Unknown, service: CheckState.Attention).State == CheckState.Unknown, "Incomplete profiles take precedence over service attention");
-        Require(NetworkConnectionsOperationalCorrelation.Check(Inputs().Append(new("Focused service readiness", CheckState.Information, "duplicate")).ToArray()).State == CheckState.Unknown,
+        Require(NetworkConnectionsOperationalCorrelation.Check([.. Inputs().Append(new("Focused service readiness", CheckState.Information, "duplicate"))]).State == CheckState.Unknown,
             "Duplicate Network Connections identity fails closed");
-        Require(NetworkConnectionsOperationalCorrelation.Check(Inputs().Where(check => check.Name != "Network Connections service failure history").ToArray()).State == CheckState.Unknown,
+        Require(NetworkConnectionsOperationalCorrelation.Check([.. Inputs().Where(check => check.Name != "Network Connections service failure history")]).State == CheckState.Unknown,
             "Missing Network Connections identity fails closed");
         try { NetworkConnectionsOperationalCorrelation.Check(Inputs(), new CancellationToken(true)); throw new Exception("Canceled Network Connections correlation completed"); }
         catch (OperationCanceledException) { }

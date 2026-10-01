@@ -45,12 +45,12 @@ internal static class TaskRuntimeChecks
             (0x80041317, "XML"), (0x80041318, "XML"), (0x80041319, "XML"), (0x8004131A, "XML"),
             (0x8004131D, "XML"), (0x8004131E, "end boundary"), (0x8004131F, "overlap"),
             (0x80041320, "user session"), (0x80041321, "integrity"), (0x80041324, "conditions"), (0x80041328, "On-demand") };
-        foreach (var item in cases)
+        foreach (var (code, expected) in cases)
         {
             var task = new ScheduledTaskSnapshot(new("\\", "Fixture"), "Ready")
-                { ActionCount = 1, RuntimeAvailable = true, LastTaskResult = item.Code, MissedRuns = 0 };
+                { ActionCount = 1, RuntimeAvailable = true, LastTaskResult = code, MissedRuns = 0 };
             var finding = ScheduledTaskDiagnostics.Assess(task);
-            Require(finding.State == CheckState.Attention && finding.Repair is null && finding.Detail.Contains(item.Expected),
+            Require(finding.State == CheckState.Attention && finding.Repair is null && finding.Detail.Contains(expected),
                 "Documented task result retains targeted review guidance");
         }
         foreach (string stamp in new[] { "2026-09-13T01:23:45.1234567", "bad", "2026-09-13T01:23:45.1234567Z", "2026-02-30T01:23:45.1234567" })
@@ -93,6 +93,7 @@ internal static class TaskRuntimeChecks
         CheckNativeCollection().GetAwaiter().GetResult();
         Console.WriteLine("PASS: scheduled-task runtime codes and substituted native collection failures; no tasks executed.");
     }
+    private static readonly string[] ExpectedTaskNames = ["Before", "Denied", "After"];
     private static async Task CheckNativeCollection()
     {
         if (!OperatingSystem.IsWindows()) return;
@@ -117,12 +118,12 @@ internal static class TaskRuntimeChecks
         var step = ScheduledTaskInventory.CreateReadStep();
         var arguments = step.Arguments.ToArray();
         arguments[^1] = providers + "\n" + arguments[^1];
-        var bounded = typeof(ToolResult).Assembly.GetType("KillerBench.Engine.BoundedTool")!
+        var bounded = typeof(ToolResult).Assembly.GetType("KillerBench.Engine.Infrastructure.BoundedTool")!
             .GetMethod("RunAsync", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!;
-        var raw = await ((Task<ToolResult>)bounded.Invoke(null, new object?[] {
-            step with { Arguments = arguments }, TimeSpan.FromSeconds(15), null, CancellationToken.None })!);
+        var raw = await ((Task<ToolResult>)bounded.Invoke(null, [
+            step with { Arguments = arguments }, TimeSpan.FromSeconds(15), null, CancellationToken.None])!);
         var inventory = ScheduledTaskInventory.Interpret(raw);
-        Require(inventory.Complete && inventory.Tasks.Select(task => task.Identity.Name).SequenceEqual(new[] { "Before", "Denied", "After" }),
+        Require(inventory.Complete && inventory.Tasks.Select(task => task.Identity.Name).SequenceEqual(ExpectedTaskNames),
             "Native collector preserves task identities across provider exceptions");
         Require(inventory.Tasks[0].RuntimeAvailable == true && inventory.Tasks[1].RuntimeAvailable == false &&
             inventory.Tasks[1].RuntimeError == "Fixture access denied" && inventory.Tasks[2].RuntimeAvailable == true,

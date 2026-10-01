@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Applications;
 
 public sealed record InstalledApplication(string View, string Key, string Name, string? Version, string? Publisher,
     bool HasUninstallCommand = false, bool HasInstallLocation = false);

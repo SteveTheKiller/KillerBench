@@ -11,9 +11,9 @@ internal static class WinRmOperationalCorrelationChecks
             "Historical WinRM records alone remain informational");
         Require(Check(events: CheckState.Unknown, service: CheckState.Attention).State == CheckState.Unknown,
             "Incomplete WinRM history takes precedence over current attention");
-        Require(WinRmOperationalCorrelation.Check(Inputs().Append(Info("WinRM listeners")).ToArray()).State == CheckState.Unknown,
+        Require(WinRmOperationalCorrelation.Check([.. Inputs(), Info("WinRM listeners")]).State == CheckState.Unknown,
             "Duplicate WinRM evidence identity fails closed");
-        Require(WinRmOperationalCorrelation.Check(Inputs().Where(check => check.Name != "Focused service readiness").ToArray()).State == CheckState.Unknown,
+        Require(WinRmOperationalCorrelation.Check([.. Inputs().Where(check => check.Name != "Focused service readiness")]).State == CheckState.Unknown,
             "Missing WinRM evidence identity fails closed");
         try
         {

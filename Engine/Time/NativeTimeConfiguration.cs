@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Time;
 
 public static class NativeTimeConfiguration
 {

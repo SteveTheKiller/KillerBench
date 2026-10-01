@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Devices;
 
 public sealed record PciHardwareResult(string PackId, long Revision, string HardwareId, string VendorCode,
     string DeviceCode, KnowledgeEntry? Vendor, KnowledgeEntry? Device, string Detail);
@@ -10,6 +10,12 @@ public static partial class PciHardwareLookup
     [GeneratedRegex(@"^PCI\\VEN_(?<vendor>[0-9A-F]{4})&DEV_(?<device>[0-9A-F]{4})(?:&[A-Z0-9_&.-]{1,480})?$",
         RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex HardwareIdPattern();
+
+    [GeneratedRegex("VEN_", RegexOptions.CultureInvariant)]
+    private static partial Regex VendorMarkerPattern();
+
+    [GeneratedRegex("DEV_", RegexOptions.CultureInvariant)]
+    private static partial Regex DeviceMarkerPattern();
 
     public static PciHardwareResult Find(KnowledgeCatalog catalog, string hardwareId)
     {
@@ -35,8 +41,8 @@ public static partial class PciHardwareLookup
             throw new ArgumentException("Enter one complete PCI hardware ID.", nameof(hardwareId));
         string normalized = hardwareId.ToUpperInvariant();
         if (!HardwareIdPattern().IsMatch(normalized) ||
-            Regex.Matches(normalized, "VEN_", RegexOptions.CultureInvariant).Count != 1 ||
-            Regex.Matches(normalized, "DEV_", RegexOptions.CultureInvariant).Count != 1)
+            VendorMarkerPattern().Count(normalized) != 1 ||
+            DeviceMarkerPattern().Count(normalized) != 1)
             throw new ArgumentException("Use a PCI hardware ID beginning with PCI\\VEN_hhhh&DEV_hhhh.", nameof(hardwareId));
         return normalized;
     }

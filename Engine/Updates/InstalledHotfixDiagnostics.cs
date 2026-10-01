@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record InstalledHotfixEntry(string Id, string Description, DateTimeOffset? InstalledUtc);
 

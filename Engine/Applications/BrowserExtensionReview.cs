@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Applications;
 
 public sealed record BrowserExtensionIdentity(string Browser, string Profile, string ExtensionId);
 public sealed record BrowserExtensionReviewResult(IReadOnlyList<BrowserExtensionIdentity> Extensions, bool Complete, string Detail);
@@ -65,7 +65,7 @@ public static class BrowserExtensionReview
             }
             catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException) { complete = false; }
         }
-        return new(found.OrderBy(item => item.Browser).ThenBy(item => item.Profile).ThenBy(item => item.ExtensionId).ToArray(), complete,
+        return new([.. found.OrderBy(item => item.Browser).ThenBy(item => item.Profile).ThenBy(item => item.ExtensionId)], complete,
             "Read-only browser extension identity review. Browser history, credentials, extension settings, manifest content, commands and policy values were excluded. Presence does not prove enablement, trust, ownership or safe removal. No browser or policy changed.");
     }
 

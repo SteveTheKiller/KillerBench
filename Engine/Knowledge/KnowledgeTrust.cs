@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Knowledge;
 
 public static class KnowledgeTrust
 {

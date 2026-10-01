@@ -10,7 +10,7 @@ internal static class VolumeDirtyChecks
         var dirty = VolumeDirtyStatus.Interpret("C:", dirtyEvidence);
         Require(clean is { State: CheckState.Information, Repair: null } && clean.Evidence == cleanEvidence && clean.Detail.Contains("does not establish"), "Clean dirty bit remains a limited observation");
         Require(dirty is { State: CheckState.Attention, Repair: null } && dirty.Evidence == dirtyEvidence && dirty.Detail.Contains("nothing was scheduled"), "Dirty volume requests review without repair");
-        Require(VolumeDirtyStatus.Step("d:\\") is { Tool: "fsutil.exe", Verification: true } step && step.Arguments.SequenceEqual(new[] { "dirty", "query", "D:" }), "Dirty-bit command is read-only and binds the selected volume");
+        Require(VolumeDirtyStatus.Step("d:\\") is { Tool: "fsutil.exe", Verification: true } step && step.Arguments.SequenceEqual(["dirty", "query", "D:"]), "Dirty-bit command is read-only and binds the selected volume");
         foreach (var invalid in new[]
         {
             cleanEvidence with { Output = "Example: Volume - C: is NOT Dirty" },

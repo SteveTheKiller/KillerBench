@@ -1,6 +1,6 @@
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Packs;
 
 /// <summary>Declarative recipes over registry, BCD and shell primitives. Each recipe states exactly what it observes, changes and proves.</summary>
 public static class WindowsSettingsPack

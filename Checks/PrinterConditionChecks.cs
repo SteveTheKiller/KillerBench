@@ -5,7 +5,7 @@ internal static class PrinterConditionChecks
 {
     internal static async Task RunAsync()
     {
-        ToolResult Evidence(object[] queues, bool complete = true) => new(0, JsonSerializer.Serialize(new { complete, queues }, Capture.JsonOptions), "", false);
+        static ToolResult Evidence(object[] queues, bool complete = true) => new(0, JsonSerializer.Serialize(new { complete, queues }, Capture.JsonOptions), "", false);
         var ordinary = PrinterConditionDiagnostics.Interpret(Evidence([new { name = "Office", printerStatus = 3, detectedErrorState = 2, workOffline = false }]));
         Require(ordinary.Single().State == CheckState.Information && ordinary.Single().Repair is null, "Idle no-error queue remains descriptive");
         var adverse = PrinterConditionDiagnostics.Interpret(Evidence([

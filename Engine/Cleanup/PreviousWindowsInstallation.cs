@@ -1,7 +1,7 @@
 using System.Security.Principal;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Cleanup;
 
 public enum PreviousWindowsRemovalOutcome { Preview, Blocked, Verified, Uncertain, Stopped }
 public enum PreviousWindowsReconciliationOutcome { NoPendingRecord, Verified, NotChanged, Inconclusive }

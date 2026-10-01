@@ -5,7 +5,7 @@ internal static class PhysicalDiskChecks
     internal static void Run()
     {
         const string healthy = "{\"deviceId\":\"0\",\"name\":\"Fixture SSD\",\"health\":\"Healthy\",\"operational\":\"OK\",\"media\":\"SSD\",\"bus\":\"NVMe\",\"size\":107374182400,\"usage\":\"Auto-Select\",\"readOnly\":false}";
-        ToolResult Evidence(string records) => new(0, "{\"physicalDisks\":[" + records + "]}", "", false);
+        static ToolResult Evidence(string records) => new(0, "{\"physicalDisks\":[" + records + "]}", "", false);
         var clear = PhysicalDiskDiagnostics.Interpret(Evidence(healthy)).Single();
         Require(clear.State == CheckState.Information && clear.Repair is null &&
             clear.Detail.Contains("100.0 GiB") && clear.Detail.Contains("Serial numbers") &&

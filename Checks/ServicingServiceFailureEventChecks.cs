@@ -56,7 +56,7 @@ internal static class ServicingServiceFailureEventChecks
             medicCommand.Contains("Get-WinEvent", StringComparison.Ordinal) && !medicCommand.Contains("Start-Service", StringComparison.Ordinal),
             "Focused Medic history uses the exact read-only service identity and never selects repair");
 
-        foreach (var focused in new[]
+        foreach (var (kind, service, name) in new[]
         {
             (Kind: WorkflowKind.WindowsUpdateService, Service: "wuauserv", Name: "Windows Update service failure history"),
             (Kind: WorkflowKind.BitsService, Service: "BITS", Name: "BITS service failure history"),
@@ -67,15 +67,15 @@ internal static class ServicingServiceFailureEventChecks
         })
         {
             string? focusedCommand = null;
-            var focusedCheck = await ServicingServiceFailureEvents.CheckFocusedAsync(focused.Kind, execute: (step, _) =>
+            var focusedCheck = await ServicingServiceFailureEvents.CheckFocusedAsync(kind, execute: (step, _) =>
             {
                 focusedCommand = step.Arguments.Last();
                 return Task.FromResult(new ToolResult(0,
-                    JsonSerializer.Serialize(new { complete = true, scanned = 0, service = displayNames[focused.Service], records = Array.Empty<string>() }), "", false));
+                    JsonSerializer.Serialize(new { complete = true, scanned = 0, service = displayNames[service], records = Array.Empty<string>() }), "", false));
             });
-            Require(focusedCheck is { State: CheckState.Information, Repair: null } && focusedCheck.Name == focused.Name &&
-                focusedCommand is not null && focusedCommand.StartsWith("$target='" + focused.Service + "';", StringComparison.Ordinal),
-                "Focused servicing history selects only its exact service identity: " + focused.Kind);
+            Require(focusedCheck is { State: CheckState.Information, Repair: null } && focusedCheck.Name == name &&
+                focusedCommand is not null && focusedCommand.StartsWith("$target='" + service + "';", StringComparison.Ordinal),
+                "Focused servicing history selects only its exact service identity: " + kind);
         }
         try
         {

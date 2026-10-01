@@ -5,6 +5,8 @@ using KillerBench.Engine;
 
 internal static class PrintResumeChecks
 {
+    private static readonly string[] ResumedQueueNames = ["A"];
+
     internal static async Task RunAsync()
     {
         const string providers = """
@@ -21,19 +23,19 @@ internal static class PrintResumeChecks
                 $global:state=0; [pscustomobject]@{ReturnValue=0}
             }
             """;
-        var method = typeof(ToolResult).Assembly.GetType("KillerBench.Engine.NativeTool")!
+        var method = typeof(ToolResult).Assembly.GetType("KillerBench.Engine.Infrastructure.NativeTool")!
             .GetMethod("RunAsync", BindingFlags.Static | BindingFlags.NonPublic)!;
         async Task<ToolResult> Run(string fixture)
         {
             using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(15));
             var args = PrintRecovery.Step(false, ["A"]).Arguments.ToArray();
             args[^1] = fixture + "\n" + args[^1];
-            return await (Task<ToolResult>)method.Invoke(null, new object?[] { PrintRecovery.Tool, args, false, null, timeout.Token })!;
+            return await (Task<ToolResult>)method.Invoke(null, [PrintRecovery.Tool, args, false, null, timeout.Token])!;
         }
         var success = await Run(providers);
         Require(PrintRecovery.Read(success) == (1, 0), "Native script resumes only the exact selected paused local queue: " + success.Error);
         using (var json = JsonDocument.Parse(success.Output))
-            Require(json.RootElement.GetProperty("targets").EnumerateArray().Select(x => x.GetString()).SequenceEqual(new[] { "A" }),
+            Require(json.RootElement.GetProperty("targets").EnumerateArray().Select(x => x.GetString()).SequenceEqual(ResumedQueueNames),
                 "Only the resumed local queue is recorded");
         foreach (string invalid in new[] { "-1", "4294967296", "'not a state'", "$null" })
         {

@@ -3,6 +3,12 @@ using KillerBench.Engine;
 
 internal static class DebloatPowerTimerExecutionChecks
 {
+    private static readonly DebloatPowerTimerSetting[] ExpectedSettings =
+    [
+        DebloatPowerTimerSetting.SleepAc, DebloatPowerTimerSetting.SleepDc,
+        DebloatPowerTimerSetting.DisplayAc, DebloatPowerTimerSetting.DisplayDc
+    ];
+
     internal static async Task RunAsync(string scratch)
     {
         var request = new DebloatPowerRequest(0, 60, 60, 15);
@@ -52,11 +58,7 @@ internal static class DebloatPowerTimerExecutionChecks
             "Shared workflow host exposes exact timer eligibility without dispatching commands");
         var host = new Host([before, before, after]);
         var verified = await DebloatPowerTimerExecution.RunAsync(request, true, Path.Combine(root, "verified"), host);
-        Require(verified.Outcome == DebloatPowerTimerOutcome.Verified && verified.GetExitCode() == 0 && host.Settings.SequenceEqual(new[]
-        {
-            DebloatPowerTimerSetting.SleepAc, DebloatPowerTimerSetting.SleepDc,
-            DebloatPowerTimerSetting.DisplayAc, DebloatPowerTimerSetting.DisplayDc
-        }) && !File.Exists(Path.Combine(root, "verified", "debloat-power-timers.pending.json")),
+        Require(verified.Outcome == DebloatPowerTimerOutcome.Verified && verified.GetExitCode() == 0 && host.Settings.SequenceEqual(ExpectedSettings) && !File.Exists(Path.Combine(root, "verified", "debloat-power-timers.pending.json")),
             "All four selected timers require exact same-plan verification");
 
         var managed = new Host([before]) { Managed = true };
@@ -75,16 +77,16 @@ internal static class DebloatPowerTimerExecutionChecks
             File.Exists(finalBlocked.JournalPath + ".prepared.json") &&
             !File.Exists(Path.Combine(root, "final-match", "debloat-power-timers.pending.json")),
             "Timers changed after preparation are not rewritten and close the prepared guard");
-        foreach (var fixture in new[]
+        foreach (var (error, outcome) in new[]
         {
             (Error: (Exception)new IOException("final timer evidence unavailable"), Outcome: DebloatPowerTimerOutcome.Blocked),
             (Error: (Exception)new OperationCanceledException("final timer evidence canceled"), Outcome: DebloatPowerTimerOutcome.Stopped)
         })
         {
             string folder = Path.Combine(root, "final-unavailable-" + Guid.NewGuid().ToString("N"));
-            var unavailable = new Host([before]) { ReadErrorAt = 2, ReadError = fixture.Error };
+            var unavailable = new Host([before]) { ReadErrorAt = 2, ReadError = error };
             var result = await DebloatPowerTimerExecution.RunAsync(request, true, folder, unavailable);
-            Require(result.Outcome == fixture.Outcome && unavailable.Settings.Count == 0 &&
+            Require(result.Outcome == outcome && unavailable.Settings.Count == 0 &&
                 !File.Exists(Path.Combine(folder, "debloat-power-timers.pending.json")) &&
                 File.Exists(result.JournalPath + ".prepared.json"),
                 "Unavailable or canceled final timer evidence records an exact no-command outcome");

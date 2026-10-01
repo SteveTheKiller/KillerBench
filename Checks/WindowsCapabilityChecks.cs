@@ -38,7 +38,7 @@ internal static class WindowsCapabilityChecks
         }) Require(WindowsCapabilityDiagnostics.Interpret(invalid).State == CheckState.Unknown,
             "Incomplete, malformed, duplicate, failed and truncated capability evidence remains unknown");
 
-        var capped = Evidence(Enumerable.Range(1, 4097).Select(index => Capability("Capability" + index, "NotPresent")).ToArray());
+        var capped = Evidence([.. Enumerable.Range(1, 4097).Select(index => Capability("Capability" + index, "NotPresent"))]);
         Require(WindowsCapabilityDiagnostics.Interpret(capped).State == CheckState.Unknown,
             "Oversized capability evidence cannot claim complete coverage");
 

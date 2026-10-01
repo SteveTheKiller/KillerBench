@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Applications;
 
 public static class InstalledApplicationOperationalCorrelation
 {
@@ -11,7 +11,7 @@ public static class InstalledApplicationOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Installed application operational conclusion";
         const string boundary = " Registration is not proof that an application is present, managed, supported, licensed, launchable or removable. Stability history is not correlated to a registration identity in this workflow. No installer, uninstaller, application, process, service, file, registration, account, policy or restart action is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
         if (registrations.Name != "Application registrations" ||
             stabilityHistory.Name != "Application stability history conclusion" || restartState.Name != "Restart")
             return Unknown("Installed application evidence carried an unexpected identity.");

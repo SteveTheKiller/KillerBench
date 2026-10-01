@@ -12,50 +12,50 @@ internal static class BitsRetryReconciliationChecks
         Require(absent.Outcome == BitsRetryReconciliationOutcome.NoPendingRecord && absentHost.Reads == 0,
             "Missing retry record does not inspect or change BITS");
 
-        var active = await PreparedAsync(scratch, "active", "Queued", includeResult: true);
-        var activeHost = new Host([Snapshot(active.Id, "Transferring", 20), Snapshot(active.Id, "Transferring", 20)]);
-        var activeResult = await BitsRetryReconciliation.RunAsync(active.Folder, active.Id, activeHost, TimeSpan.Zero);
+        var (activeId, activeFolder, activePending) = await PreparedAsync(scratch, "active", "Queued", includeResult: true);
+        var activeHost = new Host([Snapshot(activeId, "Transferring", 20), Snapshot(activeId, "Transferring", 20)]);
+        var activeResult = await BitsRetryReconciliation.RunAsync(activeFolder, activeId, activeHost, TimeSpan.Zero);
         Require(activeResult.Outcome == BitsRetryReconciliationOutcome.Active && activeResult.GetExitCode() == 4 &&
-            File.Exists(active.Pending) && activeHost.Requests == 0, "Active retry remains guarded without another request");
+            File.Exists(activePending) && activeHost.Requests == 0, "Active retry remains guarded without another request");
 
-        var transferred = await PreparedAsync(scratch, "transferred", "Transferred", includeResult: true);
-        var transferredHost = new Host([Snapshot(transferred.Id, "Transferred", 100), Snapshot(transferred.Id, "Transferred", 100)]);
-        var transferredResult = await BitsRetryReconciliation.RunAsync(transferred.Folder, transferred.Id, transferredHost, TimeSpan.Zero);
+        var (transferredId, transferredFolder, transferredPending) = await PreparedAsync(scratch, "transferred", "Transferred", includeResult: true);
+        var transferredHost = new Host([Snapshot(transferredId, "Transferred", 100), Snapshot(transferredId, "Transferred", 100)]);
+        var transferredResult = await BitsRetryReconciliation.RunAsync(transferredFolder, transferredId, transferredHost, TimeSpan.Zero);
         Require(transferredResult.Outcome == BitsRetryReconciliationOutcome.TransferReported && transferredResult.GetExitCode() == 0 &&
-            !File.Exists(transferred.Pending) && File.Exists(transferredResult.ArchivePath) &&
+            !File.Exists(transferredPending) && File.Exists(transferredResult.ArchivePath) &&
             File.Exists(transferredResult.ArchivePath + ".prepared.json") && File.Exists(transferredResult.ArchivePath + ".attempt.json") &&
             transferredHost.Requests == 0, "Stable transferred evidence archives the guard and original attempt");
 
-        var failed = await PreparedAsync(scratch, "failed", "Error");
-        var failedHost = new Host([Snapshot(failed.Id, "Error", 5), Snapshot(failed.Id, "Error", 5)]);
-        var failedResult = await BitsRetryReconciliation.RunAsync(failed.Folder, failed.Id, failedHost, TimeSpan.Zero);
+        var (failedId, failedFolder, failedPending) = await PreparedAsync(scratch, "failed", "Error");
+        var failedHost = new Host([Snapshot(failedId, "Error", 5), Snapshot(failedId, "Error", 5)]);
+        var failedResult = await BitsRetryReconciliation.RunAsync(failedFolder, failedId, failedHost, TimeSpan.Zero);
         Require(failedResult.Outcome == BitsRetryReconciliationOutcome.StableFailure && failedResult.GetExitCode() == 3 &&
-            !File.Exists(failed.Pending) && failedHost.Requests == 0, "Stable failed evidence archives the attempt without retrying");
+            !File.Exists(failedPending) && failedHost.Requests == 0, "Stable failed evidence archives the attempt without retrying");
 
-        var removed = await PreparedAsync(scratch, "removed", "Transferred");
+        var (removedId, removedFolder, removedPending) = await PreparedAsync(scratch, "removed", "Transferred");
         var removedHost = new Host([Empty(), Empty()]);
-        var removedResult = await BitsRetryReconciliation.RunAsync(removed.Folder, removed.Id, removedHost, TimeSpan.Zero);
-        Require(removedResult.Outcome == BitsRetryReconciliationOutcome.TerminalOrRemoved && !File.Exists(removed.Pending) &&
+        var removedResult = await BitsRetryReconciliation.RunAsync(removedFolder, removedId, removedHost, TimeSpan.Zero);
+        Require(removedResult.Outcome == BitsRetryReconciliationOutcome.TerminalOrRemoved && !File.Exists(removedPending) &&
             removedHost.Requests == 0, "Two complete absent snapshots archive the guard without claiming completion");
 
-        var changed = await PreparedAsync(scratch, "changed", "Transferred");
-        var changedHost = new Host([Snapshot(changed.Id, "Transferred", 99), Snapshot(changed.Id, "Transferred", 100)]);
-        var changedResult = await BitsRetryReconciliation.RunAsync(changed.Folder, changed.Id, changedHost, TimeSpan.Zero);
-        Require(changedResult.Outcome == BitsRetryReconciliationOutcome.Inconclusive && File.Exists(changed.Pending) &&
+        var (changedId, changedFolder, changedPending) = await PreparedAsync(scratch, "changed", "Transferred");
+        var changedHost = new Host([Snapshot(changedId, "Transferred", 99), Snapshot(changedId, "Transferred", 100)]);
+        var changedResult = await BitsRetryReconciliation.RunAsync(changedFolder, changedId, changedHost, TimeSpan.Zero);
+        Require(changedResult.Outcome == BitsRetryReconciliationOutcome.Inconclusive && File.Exists(changedPending) &&
             changedHost.Requests == 0, "Changing transfer evidence retains the retry guard");
 
-        var partial = await PreparedAsync(scratch, "partial", "Transferred");
-        var partialHost = new Host([Snapshot(partial.Id, "Transferred", 100, false), Snapshot(partial.Id, "Transferred", 100)]);
-        var partialResult = await BitsRetryReconciliation.RunAsync(partial.Folder, partial.Id, partialHost, TimeSpan.Zero);
-        Require(partialResult.Outcome == BitsRetryReconciliationOutcome.Inconclusive && File.Exists(partial.Pending) &&
+        var (partialId, partialFolder, partialPending) = await PreparedAsync(scratch, "partial", "Transferred");
+        var partialHost = new Host([Snapshot(partialId, "Transferred", 100, false), Snapshot(partialId, "Transferred", 100)]);
+        var partialResult = await BitsRetryReconciliation.RunAsync(partialFolder, partialId, partialHost, TimeSpan.Zero);
+        Require(partialResult.Outcome == BitsRetryReconciliationOutcome.Inconclusive && File.Exists(partialPending) &&
             partialHost.Requests == 0, "Incomplete transfer coverage retains the retry guard");
 
-        var foreign = await PreparedAsync(scratch, "foreign-machine", "Transferred");
-        File.WriteAllText(foreign.Pending, File.ReadAllText(foreign.Pending).Replace(Environment.MachineName, "OTHER-MACHINE"));
-        var foreignHost = new Host([Snapshot(foreign.Id, "Transferred", 100), Snapshot(foreign.Id, "Transferred", 100)]);
-        var foreignResult = await BitsRetryReconciliation.RunAsync(foreign.Folder, foreign.Id, foreignHost, TimeSpan.Zero);
+        var (foreignId, foreignFolder, foreignPending) = await PreparedAsync(scratch, "foreign-machine", "Transferred");
+        File.WriteAllText(foreignPending, File.ReadAllText(foreignPending).Replace(Environment.MachineName, "OTHER-MACHINE"));
+        var foreignHost = new Host([Snapshot(foreignId, "Transferred", 100), Snapshot(foreignId, "Transferred", 100)]);
+        var foreignResult = await BitsRetryReconciliation.RunAsync(foreignFolder, foreignId, foreignHost, TimeSpan.Zero);
         Require(foreignResult.Outcome == BitsRetryReconciliationOutcome.Inconclusive && foreignHost.Reads == 0 &&
-            foreignHost.Requests == 0 && File.Exists(foreign.Pending),
+            foreignHost.Requests == 0 && File.Exists(foreignPending),
             "A foreign-machine BITS retry record remains guarded without reading or retrying the transfer");
 
         Console.WriteLine("PASS: BITS retry reconciliation uses two exact read-only snapshots, archives stable terminal outcomes and never repeats a retry; fixtures only.");

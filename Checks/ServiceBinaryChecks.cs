@@ -4,7 +4,7 @@ internal static class ServiceBinaryChecks
 {
     public static void Run()
     {
-        ToolResult Evidence(string services, bool complete = true) => new(0,
+        static ToolResult Evidence(string services, bool complete = true) => new(0,
             "{\"complete\":" + complete.ToString().ToLowerInvariant() + ",\"services\":[" + services + "]}", "", false);
         const string present = "{\"name\":\"ExampleSvc\",\"displayName\":\"Example Service\",\"serviceType\":\"Own Process\",\"binaryFile\":\"example.exe\",\"status\":\"Present\",\"signature\":\"Valid\",\"signatureIssue\":null,\"complete\":true,\"issue\":null}";
         var clear = ServiceBinaryDiagnostics.Interpret(Evidence(present));

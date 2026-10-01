@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public static class NetworkSetupOperationalCorrelation
 {
@@ -15,7 +15,7 @@ public static class NetworkSetupOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Network Setup readiness";
         const string boundary = " This bounded conclusion does not establish adapter availability, driver suitability, pending setup completion, address assignment, route selection, name resolution, firewall access or connectivity. It does not install, remove, roll back or select a driver, device, adapter, binding, address, route, DNS server, firewall rule, service or policy change, and it selects no repair.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var selected = new List<WorkflowCheck>();
         foreach (string required in RequiredNames)

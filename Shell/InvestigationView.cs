@@ -9,7 +9,7 @@ namespace KillerBench;
 
 public partial class MainWindow
 {
-    private readonly ConditionalWeakTable<TextEvidence, InvestigationReport> reports = new();
+    private readonly ConditionalWeakTable<TextEvidence, InvestigationReport> reports = [];
     private InvestigationReport? shownReport;
 
     private void OnFindingsTab(object sender, RoutedEventArgs e)
@@ -40,7 +40,7 @@ public partial class MainWindow
             AddText(finding.Explanation);
             if (report.Source == "Windows Update capture" && finding.Evidence.Count > 0) AddText("Source: " + finding.Evidence[0].Source);
             AddText("Next: " + finding.NextStep);
-            if (finding.Evidence.FirstOrDefault() is { } reference)
+            if ((finding.Evidence.Count > 0 ? finding.Evidence[0] : null) is { } reference)
             {
                 var button = new Button { Content = "Show evidence", Tag = finding.RuleId, Margin = new Thickness(0, 4, 0, 0), ToolTip = reference.Excerpt };
                 System.Windows.Automation.AutomationProperties.SetName(button, "Show evidence: " + finding.Title);

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public static class BitsOperationalCorrelation
 {
@@ -12,7 +12,7 @@ public static class BitsOperationalCorrelation
 
         const string name = "Background transfer operational correlation";
         const string boundary = " This bounded correlation does not prove transfer progress, a stalled job, application ownership, application acknowledgment or application completion. No job is resumed, completed, canceled, deleted or reassigned; no service, proxy, priority, destination, cache, policy or network setting changes; and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         if (jobs.Name != "BITS transfer jobs" ||
             service.Name != "Background Intelligent Transfer Service state" ||

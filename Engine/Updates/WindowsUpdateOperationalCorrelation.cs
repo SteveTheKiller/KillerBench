@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public static class WindowsUpdateOperationalCorrelation
 {
@@ -19,7 +19,7 @@ public static class WindowsUpdateOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Windows Update operational correlation";
         const string boundary = " This is a bounded prerequisite review. It does not search for updates, establish applicability, download or install content, validate every policy, prove component-store health, clear state, restart Windows or authorize repair. No service, DLL, update, transfer, cache, source, policy, package, capability, feature, file, network or restart state changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var selected = RequiredNames.Select(required => evidence.Where(item => item.Name == required).ToArray()).ToArray();
         if (selected.Any(matches => matches.Length != 1))

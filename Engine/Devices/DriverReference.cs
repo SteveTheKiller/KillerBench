@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Devices;
 
 public sealed record DriverReference(string HardwareId, string Architecture, string WindowsProduct,
     int MinimumBuild, int MaximumBuild, string Vendor, string DriverVersion, string DownloadUrl)

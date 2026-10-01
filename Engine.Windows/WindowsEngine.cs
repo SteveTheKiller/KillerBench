@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows;
 
 /// <summary>
 /// Registers the Windows providers with the platform-neutral core. Hosts call this once at startup

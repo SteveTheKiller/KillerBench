@@ -4,7 +4,7 @@ internal static class PrintExtensionChecks
 {
     public static void Run()
     {
-        ToolResult Evidence(string complete = "true", string queues = "[]", string processors = "[]", string monitors = "[]") =>
+        static ToolResult Evidence(string complete = "true", string queues = "[]", string processors = "[]", string monitors = "[]") =>
             new(0, $"{{\"complete\":{complete},\"queues\":{queues},\"processors\":{processors},\"monitors\":{monitors}}}", "", false);
         const string processor = "[{\"name\":\"winprint\",\"environment\":\"Windows x64\",\"driver\":\"winprint.dll\"}]";
         const string monitor = "[{\"name\":\"Standard TCP/IP Port\",\"driver\":\"tcpmon.dll\"}]";

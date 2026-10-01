@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Evidence;
 
 public static class EventCollectorOperationalCorrelation
 {
@@ -15,7 +15,7 @@ public static class EventCollectorOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Windows Event Collector conclusion";
         const string boundary = " This bounded conclusion does not establish source reachability, authentication, event delivery, event freshness or subscription health. It does not start a service, create or change a subscription, open forwarded event contents, change credentials, channels or policy, or select a repair.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var selected = new List<WorkflowCheck>(RequiredNames.Length);
         foreach (string required in RequiredNames)

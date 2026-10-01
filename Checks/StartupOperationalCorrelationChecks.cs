@@ -16,8 +16,8 @@ internal static class StartupOperationalCorrelationChecks
         Require(incomplete is { State: CheckState.Unknown, Repair: null } && incomplete.Detail.Contains("incomplete sources: 1"),
             "Incomplete startup evidence takes precedence");
 
-        Require(StartupOperationalCorrelation.Check(Evidence().Skip(1).ToArray()).State == CheckState.Unknown &&
-            StartupOperationalCorrelation.Check(Evidence().Append(Evidence()[0]).ToArray()).State == CheckState.Unknown,
+        Require(StartupOperationalCorrelation.Check([.. Evidence().Skip(1)]).State == CheckState.Unknown &&
+            StartupOperationalCorrelation.Check([.. Evidence(), Evidence()[0]]).State == CheckState.Unknown,
             "Missing and duplicate startup identities fail closed");
 
         try { StartupOperationalCorrelation.Check(Evidence(), new CancellationToken(true)); throw new Exception("Startup correlation cancellation ignored"); }

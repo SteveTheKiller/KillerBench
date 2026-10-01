@@ -29,7 +29,7 @@ internal static class PrinterDriverFileChecks
         foreach (var invalid in new[]
         {
             Evidence([Row(declared: 5)]), Evidence([Row(), Row(name: "fixture driver")]),
-            Evidence(Enumerable.Range(0, 129).Select(index => Row(name: "Driver " + index)).ToArray()),
+            Evidence([.. Enumerable.Range(0, 129).Select(index => Row(name: "Driver " + index))]),
             new ToolResult(0, "{}", "", false), new ToolResult(0, "not json", "", false),
             clearEvidence with { ExitCode = 5 }, clearEvidence with { TimedOut = true }, clearEvidence with { Truncated = true }, clearEvidence with { Error = "denied" }
         })

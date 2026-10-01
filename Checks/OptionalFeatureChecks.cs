@@ -4,7 +4,7 @@ internal static class OptionalFeatureChecks
 {
     public static void Run()
     {
-        ToolResult Evidence(string complete = "true", string features = "[]") =>
+        static ToolResult Evidence(string complete = "true", string features = "[]") =>
             new(0, $"{{\"complete\":{complete},\"features\":{features}}}", "", false);
         var stable = Evidence(features: "[{\"name\":\"Containers\",\"state\":\"Enabled\"},{\"name\":\"TelnetClient\",\"state\":\"Disabled\"},{\"name\":\"LegacyPayload\",\"state\":\"Removed\"}]");
         var stableResult = OptionalFeatureDiagnostics.Interpret(stable);

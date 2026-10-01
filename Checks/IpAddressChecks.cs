@@ -4,7 +4,7 @@ internal static class IpAddressChecks
 {
     public static void Run()
     {
-        ToolResult Evidence(string rows, bool complete = true) => new(0,
+        static ToolResult Evidence(string rows, bool complete = true) => new(0,
             "{\"complete\":" + complete.ToString().ToLowerInvariant() + ",\"addresses\":[" + rows + "]}", "", false);
         const string preferred = "{\"interfaceIndex\":7,\"interfaceAlias\":\"Ethernet\",\"addressFamily\":\"IPv4\",\"address\":\"192.0.2.10\",\"prefixLength\":24,\"prefixOrigin\":\"Dhcp\",\"suffixOrigin\":\"OriginDhcp\",\"addressState\":\"Preferred\",\"skipAsSource\":false,\"connectionState\":\"Connected\"}";
         var clear = IpAddressDiagnostics.Interpret(Evidence(preferred));

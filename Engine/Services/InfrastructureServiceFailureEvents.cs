@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public enum InfrastructureServiceFailureArea
 {
@@ -35,7 +35,7 @@ public enum InfrastructureServiceFailureArea
 
 public static class InfrastructureServiceFailureEvents
 {
-    private static readonly IReadOnlyDictionary<InfrastructureServiceFailureArea, ExactServiceFailureEventDefinition> Definitions =
+    private static readonly Dictionary<InfrastructureServiceFailureArea, ExactServiceFailureEventDefinition> Definitions =
         new Dictionary<InfrastructureServiceFailureArea, ExactServiceFailureEventDefinition>
         {
             [InfrastructureServiceFailureArea.Bluetooth] = Definition("bthserv", "Bluetooth Support Service", "Bluetooth service failure history", "Bluetooth discovery, pairing or device operation"),
@@ -85,7 +85,7 @@ public static class InfrastructureServiceFailureEvents
         var selected = areas.ToArray();
         if (selected.Length == 0 || selected.Distinct().Count() != selected.Length || selected.Any(area => !Enum.IsDefined(area)))
             throw new ArgumentException("Use one or more distinct infrastructure service areas.", nameof(areas));
-        return await ExactServiceFailureEvents.CheckManyAsync(selected.Select(area => Definitions[area]).ToArray(), token, execute)
+        return await ExactServiceFailureEvents.CheckManyAsync([.. selected.Select(area => Definitions[area])], token, execute)
             .ConfigureAwait(false);
     }
 

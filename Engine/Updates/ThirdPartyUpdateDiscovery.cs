@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record ThirdPartyUpdateCandidate(string Id, string Name, string InstalledVersion, string Source,
     IReadOnlyList<string> AvailableVersions);

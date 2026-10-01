@@ -13,7 +13,7 @@ internal static class SystemStabilityOperationalCorrelationChecks
         var incomplete = Check(vital: CheckState.Unknown, device: CheckState.Attention);
         Require(incomplete is { State: CheckState.Unknown, Repair: null } && incomplete.Detail.Contains("1 incomplete"),
             "Incomplete stability evidence takes precedence over attention");
-        Require(Invoke(vitals: Vitals().Skip(1).ToArray()).State == CheckState.Unknown &&
+        Require(Invoke(vitals: [.. Vitals().Skip(1)]).State == CheckState.Unknown &&
             Invoke(crashes: [Info("Crash dump configuration"), Info("Crash dump files")]).State == CheckState.Unknown &&
             Invoke(devices: []).State == CheckState.Unknown, "Missing and empty stability groups fail closed");
         try { Invoke(token: new CancellationToken(true)); throw new Exception("Stability cancellation ignored"); }

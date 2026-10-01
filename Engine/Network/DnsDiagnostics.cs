@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public enum DnsLookupState { Resolved, NoAddresses, Failed, TimedOut }
 public sealed record DnsLookupResult(string Host, DnsLookupState State, string[] Addresses, string Detail)

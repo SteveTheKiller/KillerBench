@@ -3,6 +3,8 @@ using KillerBench.Engine;
 
 internal static class DhcpChecks
 {
+    private static readonly int[] SingleTarget = [1];
+
     internal static async Task RunAsync()
     {
         Require(!DhcpRecovery.HasUsableAddress(["169.254.10.1", "::1", "0.0.0.0", "127.0.0.1", "224.0.0.1"]), "Unusable addresses rejected");
@@ -69,13 +71,13 @@ internal static class DhcpChecks
                 $global:lease='192.0.2.10'; [pscustomobject]@{ReturnValue=0}
             }
             """;
-        var method = typeof(ToolResult).Assembly.GetType("KillerBench.Engine.NativeTool")!.GetMethod("RunAsync", BindingFlags.Static | BindingFlags.NonPublic)!;
+        var method = typeof(ToolResult).Assembly.GetType("KillerBench.Engine.Infrastructure.NativeTool")!.GetMethod("RunAsync", BindingFlags.Static | BindingFlags.NonPublic)!;
         async Task<ToolResult> RunFixture(string providers, bool readOnly = false)
         {
             using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(15));
             var args = DhcpRecovery.Step(readOnly).Arguments.ToArray();
             args[^1] = providers + "\n" + args[^1];
-            return await ((Task<ToolResult>)method.Invoke(null, new object?[] { PrintRecovery.Tool, args, false, null, timeout.Token })!);
+            return await ((Task<ToolResult>)method.Invoke(null, [PrintRecovery.Tool, args, false, null, timeout.Token])!);
         }
         var result = await RunFixture(fixture);
         var swapped = await RunFixture(fixture.Replace("('11111111-1111-1111-1111-11111111111'+$_)",
@@ -102,7 +104,7 @@ internal static class DhcpChecks
                 "A lease that became healthy records an exact no-renewal result without calling the provider");
         }
         var snapshot = DhcpRecovery.Read(result);
-        Require(snapshot is not null && snapshot.Targets.SequenceEqual(new[] { 1 }) && snapshot.Adapters.Count == 1 && DhcpRecovery.HasUsableAddress(snapshot.Adapters[1]), "Actual script selects only connected physical DHCP adapter and records renewed target: " + result.Error);
+        Require(snapshot is not null && snapshot.Targets.SequenceEqual(SingleTarget) && snapshot.Adapters.Count == 1 && DhcpRecovery.HasUsableAddress(snapshot.Adapters[1]), "Actual script selects only connected physical DHCP adapter and records renewed target: " + result.Error);
         var restart = await RunFixture(fixture.Replace("ReturnValue=0", "ReturnValue=1"));
         Require(restart.ExitCode == 3010 && DhcpRecovery.Read(restart) is null, "Provider restart requirement is retained without restarting");
         var failed = await RunFixture(fixture.Replace("ReturnValue=0", "ReturnValue=82"));

@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Knowledge;
 
 public sealed record KnowledgeEntry(string Context, string Code, string Title, string Explanation,
     string SourceUrl, DateOnly VerifiedOn, string AppliesTo, DriverReference? Driver = null);
@@ -140,8 +140,8 @@ public sealed class KnowledgeCatalog
             architecture?.ToLowerInvariant() is not ("x86" or "x64" or "arm64") ||
             windowsProduct?.ToLowerInvariant() is not ("client" or "server") || build <= 0)
             throw new ArgumentException("An exact hardware ID, architecture, Windows product and positive build are required.");
-        return index.Values.Where(entry => entry.Driver?.Matches(hardwareId, architecture, windowsProduct, build) == true)
-            .OrderBy(entry => entry.Context, StringComparer.Ordinal).ThenBy(entry => entry.Code, StringComparer.Ordinal).ToArray();
+        return [.. index.Values.Where(entry => entry.Driver?.Matches(hardwareId, architecture, windowsProduct, build) == true)
+            .OrderBy(entry => entry.Context, StringComparer.Ordinal).ThenBy(entry => entry.Code, StringComparer.Ordinal)];
     }
 
     public static KnowledgeCatalog Read(ReadOnlyMemory<byte> utf8, CancellationToken token = default)

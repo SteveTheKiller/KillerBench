@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Knowledge;
 
 public sealed record ReferencedCode(CodeObservation Observation, KnowledgeEntry? Reference)
 {
@@ -16,7 +16,7 @@ public sealed record KnowledgeResolution(string RequestedContext, string Request
     public bool Ambiguous { get; init; }
     public IReadOnlyList<string> MatchingPackIds { get; init; } = [];
     public bool Found => Match is not null && !Ambiguous;
-    public string Limitation => "The exact selected context is checked first. Only a standard 0x8007xxxx HRESULT can fall back to its embedded decimal Win32 code. Other aliases and code families are not inferred. A reference match does not establish a diagnosis or authorize a repair.";
+    public static string Limitation => "The exact selected context is checked first. Only a standard 0x8007xxxx HRESULT can fall back to its embedded decimal Win32 code. Other aliases and code families are not inferred. A reference match does not establish a diagnosis or authorize a repair.";
 }
 
 public static class KnowledgeResolver

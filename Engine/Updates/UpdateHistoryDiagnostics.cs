@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record UpdateHistoryEntry(string Id, int Revision, string Title, DateTimeOffset Date, int Operation, int ResultCode, int HResult);
 

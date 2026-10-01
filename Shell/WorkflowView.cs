@@ -5,9 +5,10 @@ namespace KillerBench;
 
 public partial class MainWindow
 {
+    private static readonly string[] DefaultStorageVolumeChoices = ["Windows volume"];
     private bool workflowOutputActive;
-    private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, WorkflowResult> workflowSummaries = new();
-    private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, string> workflowReportTitles = new();
+    private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, WorkflowResult> workflowSummaries = [];
+    private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, string> workflowReportTitles = [];
 
     private void RegisterWorkflowResult(WorkflowResult result, string? reportTitle = null)
     {
@@ -40,22 +41,22 @@ public partial class MainWindow
     }
     private void OnTimePeersChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
     {
-        if (TimeApply is not null) TimeApply.IsChecked = false;
+        TimeApply?.IsChecked = false;
     }
 
     private void OnPrivacyClipboardHistoryChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
-        if (PrivacyClipboardHistoryApply is not null) PrivacyClipboardHistoryApply.IsChecked = false;
+        PrivacyClipboardHistoryApply?.IsChecked = false;
     }
 
     private void OnPrivacyBooleanSettingChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
-        if (PrivacyBooleanApply is not null) PrivacyBooleanApply.IsChecked = false;
+        PrivacyBooleanApply?.IsChecked = false;
     }
 
     private void OnFirewallProfileSelectionChanged(object sender, System.Windows.RoutedEventArgs e)
     {
-        if (FirewallProfileApply is not null) FirewallProfileApply.IsChecked = false;
+        FirewallProfileApply?.IsChecked = false;
     }
 
     private void OnFirewallProfileApplyChanged(object sender, System.Windows.RoutedEventArgs e)
@@ -68,7 +69,7 @@ public partial class MainWindow
         if (DefenderScanConsent is null) return;
         DefenderScanConsent.IsChecked = false;
         DefenderScanConsent.IsEnabled = DefenderScanChoice?.SelectedIndex > 0;
-        if (MainAutoRepair is not null) MainAutoRepair.IsChecked = false;
+        MainAutoRepair?.IsChecked = false;
         OnWorkflowOptionsChanged(sender, e);
     }
 
@@ -79,9 +80,9 @@ public partial class MainWindow
 
     private void OnEventChannelOptionChanged(object sender, System.Windows.RoutedEventArgs e)
     {
-        if (MainAutoRepair is not null) MainAutoRepair.IsChecked = false;
-        if (EventChannelEnableConsent is not null && sender == EventChannelChoice)
-            EventChannelEnableConsent.IsChecked = false;
+        MainAutoRepair?.IsChecked = false;
+        if (sender == EventChannelChoice)
+            EventChannelEnableConsent?.IsChecked = false;
         OnWorkflowOptionsChanged(sender, null);
     }
 
@@ -90,7 +91,7 @@ public partial class MainWindow
 
     private void OnOrcaOptionChanged(object sender, System.Windows.RoutedEventArgs e)
     {
-        if (MainAutoRepair is not null) MainAutoRepair.IsChecked = false;
+        MainAutoRepair?.IsChecked = false;
         OnWorkflowOptionsChanged(sender, null);
     }
 
@@ -121,30 +122,30 @@ public partial class MainWindow
         SynchronizeNavigation();
         RefreshRecipeSelection();
         bool servicingMonitor = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.ServicingActivity };
-        if (ServicingMonitorSettings is not null) ServicingMonitorSettings.Visibility = servicingMonitor ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        ServicingMonitorSettings?.Visibility =servicingMonitor ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         bool packages = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.AppPackages };
-        if (BitsSettings is not null) BitsSettings.Visibility = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.BackgroundTransfers }
+        BitsSettings?.Visibility =MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.BackgroundTransfers }
             ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-        if (InstalledApplicationSettings is not null) InstalledApplicationSettings.Visibility = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.InstalledApps }
+        InstalledApplicationSettings?.Visibility =MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.InstalledApps }
             ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         bool mace = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Mace };
-        if (MaceSettings is not null) MaceSettings.Visibility = mace ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        MaceSettings?.Visibility =mace ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         bool orca = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Orca };
         bool orcaCacheRetention = IsOrcaCacheRetentionSelected();
-        if (OrcaSettings is not null) OrcaSettings.Visibility = orca ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        OrcaSettings?.Visibility =orca ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         bool depot = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Depot };
-        if (DepotSettings is not null) DepotSettings.Visibility = depot ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        DepotSettings?.Visibility =depot ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         bool debloat = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Debloat };
-        if (DebloatSettings is not null) DebloatSettings.Visibility = debloat ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-        if (AppPackageSettings is not null) AppPackageSettings.Visibility = packages ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        DebloatSettings?.Visibility =debloat ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        AppPackageSettings?.Visibility =packages ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         bool tasks = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.ScheduledTasks };
-        if (TaskSettings is not null) TaskSettings.Visibility = tasks ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        TaskSettings?.Visibility =tasks ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         bool eventLog = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.EventLog };
         bool eventChannelEnable = eventLog && EventChannelEnableConsent?.IsChecked == true;
-        if (EventLogSettings is not null) EventLogSettings.Visibility = eventLog ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-        if (NetworkSettings is not null) NetworkSettings.Visibility = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Network }
+        EventLogSettings?.Visibility =eventLog ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        NetworkSettings?.Visibility =MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Network }
             ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-        if (AudioSettings is not null) AudioSettings.Visibility = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Audio }
+        AudioSettings?.Visibility =MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Audio }
             ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         bool cleanup = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Cleanup };
         bool printing = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Printing };
@@ -152,47 +153,47 @@ public partial class MainWindow
         bool selectedPrinter = printing && PrinterQueues?.SelectedItem is string;
         bool selectedPrintJob = printing && PrintJobChoice?.SelectedItem is System.Windows.Controls.ComboBoxItem
             { Tag: PrintJobSnapshot };
-        if (PrinterSettings is not null) PrinterSettings.Visibility = printing ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        PrinterSettings?.Visibility =printing ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         if (PrinterMakeDefault is not null)
         {
             PrinterMakeDefault.IsEnabled = selectedPrinter;
             if (!selectedPrinter) PrinterMakeDefault.IsChecked = false;
         }
-        if (InstallerSettings is not null) InstallerSettings.Visibility = installer ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        InstallerSettings?.Visibility =installer ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         bool time = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.TimeService };
         bool timePreview = time && TimeSourceChoice?.SelectedIndex > 0;
-        if (TimeSettings is not null) TimeSettings.Visibility = time ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-        if (TimePeers is not null) TimePeers.IsEnabled = TimeSourceChoice?.SelectedIndex == 2;
+        TimeSettings?.Visibility = time ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        TimePeers?.IsEnabled = TimeSourceChoice?.SelectedIndex == 2;
         if (TimeApply is not null)
         {
             TimeApply.IsEnabled = time && TimeSourceChoice?.SelectedIndex > 0;
             TimeApply.IsChecked = false;
         }
         bool profiles = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Profiles };
-        if (ProfileSettings is not null) ProfileSettings.Visibility = profiles ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        ProfileSettings?.Visibility =profiles ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         bool updates = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.AvailableUpdates };
         bool search = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Search };
         bool searchRebuild = search && SearchIndexRebuildConsent?.IsChecked == true;
-        if (SearchSettings is not null) SearchSettings.Visibility = search ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        SearchSettings?.Visibility =search ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         bool privacy = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Privacy };
         bool bitlocker = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.BitLocker };
         bool components = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.ComponentCleanup };
         bool systemRestore = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.SystemRestore };
         bool systemRestoreCreate = systemRestore && SystemRestoreCreate?.IsChecked == true;
-        if (SystemRestoreSettings is not null) SystemRestoreSettings.Visibility = systemRestore ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        SystemRestoreSettings?.Visibility =systemRestore ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         bool storage = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Storage };
         bool storageRepair = storage && StorageRepairReview?.IsChecked == true;
         bool storageOptimization = storage && StorageOptimizationReview?.IsChecked == true;
         bool computerName = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.ComputerName };
-        if (ComputerNameSettings is not null) ComputerNameSettings.Visibility = computerName ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-        if (StorageSettings is not null) StorageSettings.Visibility = storage ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        ComputerNameSettings?.Visibility =computerName ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        StorageSettings?.Visibility =storage ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         if (storage && StorageVolumeChoice is not null)
         {
             string selected = StorageVolumeChoice.SelectedItem as string ?? "Windows volume";
             try
             {
-                var choices = new[] { "Windows volume" }.Concat(DriveInfo.GetDrives().Select(d => d.Name.TrimEnd('\\')))
-                    .Append(selected).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+                string[] choices = [.. DefaultStorageVolumeChoices.Concat(DriveInfo.GetDrives().Select(d => d.Name.TrimEnd('\\')))
+                    .Append(selected).Distinct(StringComparer.OrdinalIgnoreCase)];
                 StorageVolumeChoice.ItemsSource = choices;
                 StorageVolumeChoice.SelectedItem = choices.First(choice => string.Equals(choice, selected, StringComparison.OrdinalIgnoreCase));
             }
@@ -206,18 +207,18 @@ public partial class MainWindow
                 Report("Drive list unavailable. Previous selection retained: " + error.Message);
             }
         }
-        if (ComponentCleanupSettings is not null) ComponentCleanupSettings.Visibility = components ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        ComponentCleanupSettings?.Visibility =components ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         MainAutoRepair.Content = selectedPrinter ? "Clear offline mode if confirmed (can release waiting jobs)" : storageRepair ? "Repair confirmed filesystem errors" : storageOptimization ? "Run selected optimization after analysis" : systemRestoreCreate ? "Create this restore point after fresh checks" : orca ? "Retain and clear selected Outlook caches" : components ? "Run recommended cleanup" : "Auto-repair confirmed issues";
-        if (BitLockerSettings is not null) BitLockerSettings.Visibility = bitlocker ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-        if (PrivacySettings is not null) PrivacySettings.Visibility = privacy ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-        if (UpdateSettings is not null) UpdateSettings.Visibility = updates ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        BitLockerSettings?.Visibility =bitlocker ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        PrivacySettings?.Visibility =privacy ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        UpdateSettings?.Visibility =updates ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         if (UpdateSourceChoice is not null && UpdateSoftware is not null && UpdateDrivers is not null)
             UpdateSourceChoice.IsEnabled = UpdateSoftware.IsChecked == true || UpdateDrivers.IsChecked == true;
         if (updates) RefreshUpdateStoreRecovery();
         bool defender = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Defender };
-        if (SecuritySettings is not null) SecuritySettings.Visibility = defender ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        SecuritySettings?.Visibility =defender ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         bool firewallProfiles = MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.FirewallServices };
-        if (FirewallProfileSettings is not null) FirewallProfileSettings.Visibility = firewallProfiles ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+        FirewallProfileSettings?.Visibility =firewallProfiles ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         if (!firewallProfiles && FirewallProfileApply is not null) FirewallProfileApply.IsChecked = false;
         CleanupSettings.Visibility = cleanup ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         MainAutoRepair.IsEnabled = MainWorkflow.SelectedItem is WorkflowDefinition definition && (Workflows.SupportsRepair(definition.Kind) || storageRepair || storageOptimization || systemRestoreCreate || orcaCacheRetention) && !packages && !tasks && !computerName && !cleanup && !updates && !privacy && !bitlocker && !profiles && !timePreview && !searchRebuild && !eventChannelEnable && !(defender && DefenderScanChoice?.SelectedIndex > 0);
@@ -225,7 +226,7 @@ public partial class MainWindow
         if (MainWorkflow.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.CommonProblems } && FocusDiagnosticAreas?.IsChecked == true)
         { MainAutoRepair.IsEnabled = false; MainAutoRepair.IsChecked = false; }
         if (servicingMonitor || packages || tasks || computerName || (storage && !storageRepair && !storageOptimization) || (systemRestore && !systemRestoreCreate) || cleanup || updates || privacy || bitlocker || profiles || timePreview || searchRebuild || eventChannelEnable || selectedPrinter || selectedPrintJob || mace || depot || debloat) MainAutoRepair.IsChecked = false;
-        else if (CleanupRemove is not null) CleanupRemove.IsChecked = false;
+        else CleanupRemove?.IsChecked = false;
         UpdateMainActionLabel();
     }
 
@@ -242,31 +243,31 @@ public partial class MainWindow
 
     private void OnSystemRestoreOptionChanged(object sender, System.Windows.RoutedEventArgs e)
     {
-        if (MainAutoRepair is not null) MainAutoRepair.IsChecked = false;
+        MainAutoRepair?.IsChecked = false;
         OnWorkflowOptionsChanged(sender, null);
     }
 
     private void OnSearchIndexRebuildChanged(object sender, System.Windows.RoutedEventArgs e)
     {
-        if (MainAutoRepair is not null) MainAutoRepair.IsChecked = false;
+        MainAutoRepair?.IsChecked = false;
         OnWorkflowOptionsChanged(sender, null);
     }
 
     private void OnSystemRestoreDescriptionChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
     {
-        if (MainAutoRepair is not null) MainAutoRepair.IsChecked = false;
+        MainAutoRepair?.IsChecked = false;
     }
 
     private void OnSystemRestoreReasonChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
-        if (MainAutoRepair is not null) MainAutoRepair.IsChecked = false;
+        MainAutoRepair?.IsChecked = false;
     }
 
     private void OnStorageRepairConsentChanged(object sender, System.Windows.RoutedEventArgs e)
     {
         if (sender == StorageRepairReview && StorageRepairReview.IsChecked == true && StorageOptimizationReview is not null)
             StorageOptimizationReview.IsChecked = false;
-        if (MainAutoRepair is not null) MainAutoRepair.IsChecked = false;
+        MainAutoRepair?.IsChecked = false;
         OnWorkflowOptionsChanged(sender, null);
     }
 
@@ -274,19 +275,19 @@ public partial class MainWindow
     {
         if (sender == StorageOptimizationReview && StorageOptimizationReview.IsChecked == true && StorageRepairReview is not null)
             StorageRepairReview.IsChecked = false;
-        if (MainAutoRepair is not null) MainAutoRepair.IsChecked = false;
+        MainAutoRepair?.IsChecked = false;
         OnWorkflowOptionsChanged(sender, null);
     }
 
     private void OnStorageOptimizationModeChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
-        if (MainAutoRepair is not null) MainAutoRepair.IsChecked = false;
+        MainAutoRepair?.IsChecked = false;
         OnWorkflowOptionsChanged(sender, e);
     }
 
     private void OnStorageRepairModeChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
-        if (MainAutoRepair is not null) MainAutoRepair.IsChecked = false;
+        MainAutoRepair?.IsChecked = false;
         OnWorkflowOptionsChanged(sender, e);
     }
 
@@ -299,8 +300,8 @@ public partial class MainWindow
                 CleanupErrorReports, CleanupCrashDumps, CleanupWindowsMinidumps,
                 CleanupDeliveryOptimization, CleanupRecycleBin }) option.IsChecked = false;
         }
-        else if (CleanupPreviousWindowsBackup is not null) CleanupPreviousWindowsBackup.IsChecked = false;
-        if (CleanupRemove is not null) CleanupRemove.IsChecked = false;
+        else CleanupPreviousWindowsBackup?.IsChecked = false;
+        CleanupRemove?.IsChecked = false;
     }
 
     private void BeginWorkflowOutput(WorkflowKind kind)
@@ -439,10 +440,10 @@ public partial class MainWindow
         { Report("Disabling hibernation requires Hibernation as the only selected area."); return; }
         bool includeProvisioned = IncludeProvisionedPackages.IsChecked == true;
         CommonDiagnosticScope[]? diagnosticScopes = kind == WorkflowKind.CommonProblems && FocusDiagnosticAreas.IsChecked == true
-            ? DiagnosticAreaList.SelectedItems.Cast<DiagnosticArea>().Select(area => area.Scope).ToArray() : null;
+            ? [.. DiagnosticAreaList.SelectedItems.Cast<DiagnosticArea>().Select(area => area.Scope)] : null;
         if (diagnosticScopes is { Length: 0 }) { Report("Select at least one diagnostic area before GO."); return; }
         string[]? selectedRecipes = kind == WorkflowKind.CommonProblems && CustomizeRecipes.IsChecked == true
-            ? RecipeSelectionList.SelectedItems.Cast<RepairRecipe>().Select(recipe => recipe.Id).ToArray() : null;
+            ? [.. RecipeSelectionList.SelectedItems.Cast<RepairRecipe>().Select(recipe => recipe.Id)] : null;
         string? selectedQueue = kind == WorkflowKind.Printing ? PrinterQueues.SelectedItem as string : null;
         bool makeDefaultPrinter = selectedQueue is not null && PrinterMakeDefault.IsChecked == true;
         PrintJobSnapshot? selectedPrintJob = kind == WorkflowKind.Printing &&
@@ -553,7 +554,7 @@ public partial class MainWindow
                 2 => UpdateSearchSource.MicrosoftUpdate,
                 _ => (UpdateSearchSource)(-1)
             });
-        var privacyOptions = new PrivacyOptions(PrivacyAreas.SelectedItems.Cast<PrivacyChoice>().Select(c => c.Area).ToArray());
+        var privacyOptions = new PrivacyOptions([.. PrivacyAreas.SelectedItems.Cast<PrivacyChoice>().Select(c => c.Area)]);
         var privacyItem = PrivacyClipboardHistoryChoice.SelectedItem as System.Windows.Controls.ComboBoxItem;
         string privacyAction = privacyItem?.Tag as string ?? "Inspect";
         bool applyPrivacyClipboardHistory = kind == WorkflowKind.Privacy && privacyAction is "On" or "Off" &&
@@ -678,7 +679,7 @@ public partial class MainWindow
                 AppendWorkflowOutput(output);
                 RegisterWorkflowResult(new WorkflowResult(WorkflowKind.ServicingActivity, Environment.MachineName,
                     DateTimeOffset.UtcNow, incomplete ? "Servicing monitoring incomplete" : attention ? "Servicing monitor needs attention" : "Servicing monitoring complete",
-                    snapshots.SelectMany(snapshot => snapshot.Checks).DefaultIfEmpty(new WorkflowCheck("Servicing activity", state, detail)).ToArray(), [],
+                    [.. snapshots.SelectMany(snapshot => snapshot.Checks).DefaultIfEmpty(new WorkflowCheck("Servicing activity", state, detail))], [],
                     "Read-only servicing activity monitor. No operation journal was created."), "Servicing activity");
                 SetScanLight(incomplete ? "incomplete" : attention ? "attention" : "ready", detail);
                 return;

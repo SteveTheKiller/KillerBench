@@ -45,7 +45,7 @@ public partial class MainWindow
     {
         if (InstallerProductChoice.SelectedItem is MsiProductCandidate candidate)
             InstallerProductCode.Text = candidate.ProductCode;
-        if (RepairConsent is not null) RepairConsent.IsChecked = false;
+        RepairConsent?.IsChecked = false;
     }
 
     private void OnInstallerProductScopeChanged(object sender, SelectionChangedEventArgs e)
@@ -53,6 +53,6 @@ public partial class MainWindow
         if (InstallerProductChoice is null) return;
         InstallerProductChoice.ItemsSource = null;
         InstallerProductCode.Clear();
-        if (RepairConsent is not null) RepairConsent.IsChecked = false;
+        RepairConsent?.IsChecked = false;
     }
 }

@@ -2,11 +2,13 @@ using KillerBench.Engine;
 
 internal static class BackupServiceChecks
 {
+    private static readonly RepairKind[] ExpectedScopes = [RepairKind.VolumeShadowCopy, RepairKind.SoftwareShadowProvider,
+        RepairKind.WindowsBackupService, RepairKind.BlockLevelBackupEngineService];
+
     internal static async Task RunAsync(string scratch)
     {
         var scopes = Workflows.Scopes(WorkflowKind.BackupServices);
-        if (!scopes.SequenceEqual(new[] { RepairKind.VolumeShadowCopy, RepairKind.SoftwareShadowProvider,
-                RepairKind.WindowsBackupService, RepairKind.BlockLevelBackupEngineService }) ||
+        if (!scopes.SequenceEqual(ExpectedScopes) ||
             WorkflowCatalog.Find("backup-services")?.Kind != WorkflowKind.BackupServices ||
             !Workflows.Preview(WorkflowKind.BackupServices).Contains("current snapshots and shadow-storage allocation", StringComparison.Ordinal) ||
             !scopes.All(scope => RecipeCatalog.ForWorkflow(WorkflowKind.CommonProblems).Any(recipe => recipe.Action == scope)))

@@ -1,6 +1,7 @@
+using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Workflows;
 
 public enum WorkflowOptionControl
 {
@@ -36,9 +37,9 @@ public sealed record WorkflowOptionSet(
     IReadOnlyList<WorkflowOptionDefinition> Options,
     string ExecutionBoundary);
 
-public static class WorkflowOptionCatalog
+public static partial class WorkflowOptionCatalog
 {
-    private static readonly IReadOnlyDictionary<WorkflowKind, WorkflowOptionSet> ByKind = Build();
+    private static readonly Dictionary<WorkflowKind, WorkflowOptionSet> ByKind = Build();
 
     public static IReadOnlyList<WorkflowOptionSet> All { get; } = Array.AsReadOnly(
         WorkflowCatalog.All.Where(item => ByKind.ContainsKey(item.Kind)).Select(item => ByKind[item.Kind]).ToArray());
@@ -51,7 +52,7 @@ public static class WorkflowOptionCatalog
         return All.FirstOrDefault(item => item.WorkflowKey.Equals(workflowKey.Trim(), StringComparison.OrdinalIgnoreCase));
     }
 
-    private static IReadOnlyDictionary<WorkflowKind, WorkflowOptionSet> Build()
+    private static Dictionary<WorkflowKind, WorkflowOptionSet> Build()
     {
         var sets = new[]
         {
@@ -119,33 +120,33 @@ public static class WorkflowOptionCatalog
         return new(kind, definition.Key, definition.Title, options, boundary);
     }
 
-    private static IReadOnlyList<WorkflowOptionDefinition> NetworkOptions() => Array.AsReadOnly(new[]
-    {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> NetworkOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
         Text("lookupHost", "Hostname lookup", "", "Optional hostname to resolve with the configured system resolver."),
         Text("tcpHost", "TCP destination", "", "Optional exact hostname or IP address for one connection attempt."),
         Text("tcpPort", "TCP port", "", "Port from 1 through 65535. Supply it together with a TCP destination."),
         Slider("timeoutSeconds", "Timeout", 10, 1, 60, 1, "Maximum seconds for each selected lookup or connection attempt.")
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> AudioOptions() => Array.AsReadOnly(new[]
-    {
-        Choice("direction", "Default endpoint direction", "All", Array.AsReadOnly(new[]
-        {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> AudioOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
+        Choice("direction", "Default endpoint direction", "All", Array.AsReadOnly<WorkflowOptionChoice>(
+        [
             new WorkflowOptionChoice("All", "Input and output"),
             new WorkflowOptionChoice(nameof(AudioEndpointDirection.Output), "Output"),
             new WorkflowOptionChoice(nameof(AudioEndpointDirection.Input), "Input")
-        }), "Limit default-endpoint detail by direction. Device and driver checks remain complete."),
-        Choice("role", "Windows role", "All", Array.AsReadOnly(new[]
-        {
+        ]), "Limit default-endpoint detail by direction. Device and driver checks remain complete."),
+        Choice("role", "Windows role", "All", Array.AsReadOnly<WorkflowOptionChoice>(
+        [
             new WorkflowOptionChoice("All", "All roles"),
             new WorkflowOptionChoice(nameof(AudioEndpointRole.Console), "Console"),
             new WorkflowOptionChoice(nameof(AudioEndpointRole.Multimedia), "Multimedia"),
             new WorkflowOptionChoice(nameof(AudioEndpointRole.Communications), "Communications")
-        }), "Limit default-endpoint detail to one Windows audio role.")
-    });
+        ]), "Limit default-endpoint detail to one Windows audio role.")
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> SystemRestoreOptions() => Array.AsReadOnly(new[]
-    {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> SystemRestoreOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
         Toggle("prepare", "Prepare one restore point", false,
             "Collect fresh creation eligibility for one restore point."),
         Text("description", "Description", "Before KillerBench maintenance",
@@ -156,10 +157,10 @@ public static class WorkflowOptionCatalog
         Toggle("execute", "Create after fresh checks", false,
             "Request one guarded restore point after current eligibility is confirmed.", advanced: true,
             changesMachine: true, enabledWhen: new("prepare", "true"))
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> StorageOptions() => Array.AsReadOnly(new[]
-    {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> StorageOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
         Text("volume", "Volume", "Windows volume", "Windows volume or an exact drive-letter volume such as D:."),
         Toggle("repairReview", "Review filesystem repair", false,
             "Collect current corruption evidence and review one bounded filesystem operation."),
@@ -180,10 +181,10 @@ public static class WorkflowOptionCatalog
         Toggle("execute", "Run selected storage action", false,
             "Run the one selected action only after fresh evidence and final eligibility checks.",
             advanced: true, changesMachine: true)
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> PrintingOptions() => Array.AsReadOnly(new[]
-    {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> PrintingOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
         Text("queue", "Printer queue", "", "Exact local printer queue. Leave empty for general printing diagnosis."),
         Toggle("clearOffline", "Clear offline mode", false,
             "Repair offline mode for the exact selected queue after fresh evidence.", advanced: true, changesMachine: true),
@@ -193,10 +194,10 @@ public static class WorkflowOptionCatalog
         Text("jobId", "Blocked job ID", "", "Exact nonzero Windows print job ID."),
         Toggle("cancelJob", "Cancel selected job", false,
             "Cancel only the exact repeatedly blocked job after durable preparation.", advanced: true, changesMachine: true)
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> InstallerOptions() => Array.AsReadOnly(new[]
-    {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> InstallerOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
         Choice("scope", "Application registry scope", nameof(InstalledApplicationScope.Machine),
             EnumChoices<InstalledApplicationScope>(), "Choose machine or current-account registrations for MSI application discovery."),
         Text("productCode", "MSI product code", "",
@@ -204,10 +205,10 @@ public static class WorkflowOptionCatalog
         Toggle("execute", "Repair confirmed Installer damage", false,
             "Run only a freshly eligible Installer registration or exact selected-product repair.", advanced: true,
             changesMachine: true)
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> TimeOptions() => Array.AsReadOnly(new[]
-    {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> TimeOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
         Choice("source", "Time source", nameof(TimeSourceMode.Existing), EnumChoices<TimeSourceMode>(),
             "Keep the configured source, use domain hierarchy or select custom NTP peers."),
         Text("peers", "Custom NTP peers", "", "One to eight unique hostnames or IP addresses separated by spaces.",
@@ -215,94 +216,94 @@ public static class WorkflowOptionCatalog
         Toggle("execute", "Apply source and synchronize", false,
             "Apply the selected non-default source and request synchronization after fresh safeguards.", advanced: true,
             changesMachine: true)
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> EventLogOptions() => Array.AsReadOnly(new[]
-    {
-        Choice("channel", "Diagnostic event channel", "System", Array.AsReadOnly(new[]
-        {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> EventLogOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
+        Choice("channel", "Diagnostic event channel", "System", Array.AsReadOnly<WorkflowOptionChoice>(
+        [
             new WorkflowOptionChoice("System", "System"),
             new WorkflowOptionChoice("Application", "Application"),
             new WorkflowOptionChoice("Setup", "Setup"),
             new WorkflowOptionChoice("Microsoft-Windows-WindowsUpdateClient/Operational", "Windows Update Client / Operational")
-        }), "Choose one exact supported channel for optional enablement. Diagnosis still inspects every supported channel."),
+        ]), "Choose one exact supported channel for optional enablement. Diagnosis still inspects every supported channel."),
         Toggle("execute", "Enable selected channel", false,
             "Enable only the exact selected disabled and unmanaged channel after fresh checks.", advanced: true,
             changesMachine: true)
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> ProfileOptions() => Array.AsReadOnly(new[]
-    {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> ProfileOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
         Slider("minimumInactiveDays", "Minimum days since last use", 90, 1, 3650, 1,
             "Review nonprotected profiles whose last use is at least this many days old."),
         Toggle("checkDependencies", "Check profile dependencies", true,
             "Include service and scheduled-task references in the read-only review.")
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> ComputerNameOptions() => Array.AsReadOnly(new[]
-    {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> ComputerNameOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
         Text("proposedName", "Proposed computer name", "",
             "Use 1 to 63 ASCII letters, digits or internal hyphens, including at least one letter or hyphen.", required: true),
         Toggle("execute", "Rename after fresh checks", false,
             "Rename this workgroup PC only after fresh identity, restart and administrator checks.", advanced: true,
             changesMachine: true)
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> BackgroundTransferOptions() => Array.AsReadOnly(new[]
-    {
-        Choice("scope", "BITS account scope", "RunningAccount", Array.AsReadOnly(new[]
-        {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> BackgroundTransferOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
+        Choice("scope", "BITS account scope", "RunningAccount", Array.AsReadOnly<WorkflowOptionChoice>(
+        [
             new WorkflowOptionChoice("RunningAccount", "Running account"),
             new WorkflowOptionChoice("AllUsers", "All users")
-        }), "Choose current-account inventory or administrator-only all-users inventory.")
-    });
+        ]), "Choose current-account inventory or administrator-only all-users inventory.")
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> AppPackageOptions() => Array.AsReadOnly(new[]
-    {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> AppPackageOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
         Choice("scope", "Package account scope", nameof(AppPackageScope.CurrentAccount),
             EnumChoices<AppPackageScope>(), "Choose the running account or all registered users."),
         Toggle("includeProvisioned", "Include packages for new users", false,
             "Also inventory packages provisioned in the Windows image. Administrator access is required.", advanced: true)
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> InstalledApplicationOptions() => Array.AsReadOnly(new[]
-    {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> InstalledApplicationOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
         Choice("scope", "Application registration scope", nameof(InstalledApplicationScope.Machine),
             EnumChoices<InstalledApplicationScope>(), "Choose machine-wide or running-account uninstall registrations.")
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> SearchOptions() => Array.AsReadOnly(new[]
-    {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> SearchOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
         Toggle("rebuildIndex", "Rebuild the Windows Search index", false,
             "Retain the current index and rebuild only after fresh eligibility and explicit approval.", advanced: true,
             changesMachine: true)
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> ComponentCleanupOptions() => Array.AsReadOnly(new[]
-    {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> ComponentCleanupOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
         Toggle("execute", "Run recommended component cleanup", false,
             "Remove superseded components only after a fresh Windows recommendation and servicing checks.", advanced: true,
             changesMachine: true)
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> WindowsRecoveryOptions() => Array.AsReadOnly(new[]
-    {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> WindowsRecoveryOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
         Toggle("execute", "Enable Windows Recovery Environment", false,
             "Enable WinRE only after fresh exact eligibility and administrator checks.", advanced: true,
             changesMachine: true)
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> FirewallOptions() => Array.AsReadOnly(new[]
-    {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> FirewallOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
         Toggle("profile.domain", "Domain profile", false, "Select the local Domain profile for guarded enablement."),
         Toggle("profile.private", "Private profile", false, "Select the local Private profile for guarded enablement."),
         Toggle("profile.public", "Public profile", false, "Select the local Public profile for guarded enablement."),
         Toggle("execute", "Enable selected local profiles", false,
             "Enable only selected profiles confirmed disabled and unmanaged by fresh evidence.", advanced: true,
             changesMachine: true)
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> CleanupOptions()
+    private static ReadOnlyCollection<WorkflowOptionDefinition> CleanupOptions()
     {
         var options = Flags<CleanupTargets>("target", "Include", CleanupTargets.UserTemp,
             "Include this target in the bounded cleanup preview.");
@@ -315,20 +316,20 @@ public static class WorkflowOptionCatalog
         return options.AsReadOnly();
     }
 
-    private static IReadOnlyList<WorkflowOptionDefinition> AvailableUpdateOptions() => Array.AsReadOnly(new[]
-    {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> AvailableUpdateOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
         Toggle("software", "Software updates", true, "Search for software updates from the selected source."),
         Toggle("drivers", "Driver updates", false, "Include driver updates in discovery."),
         Toggle("thirdPartyApplications", "Third-party applications", false, "Include separate read-only application update discovery."),
         Choice("source", "Update source", nameof(UpdateSearchSource.Configured), EnumChoices<UpdateSearchSource>(),
             "Use configured policy, public Windows Update or registered Microsoft Update.")
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> PrivacyOptions() => Array.AsReadOnly(
+    private static ReadOnlyCollection<WorkflowOptionDefinition> PrivacyOptions() => Array.AsReadOnly(
         PrivacyCatalog.All.Select(item => Toggle("area." + Lower(item.Area), item.Title, false, item.Impact)).ToArray());
 
-    private static IReadOnlyList<WorkflowOptionDefinition> BitLockerOptions() => Array.AsReadOnly(new[]
-    {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> BitLockerOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
         Text("volume", "Volume", "C:", "Drive-letter volume such as C:.", required: true),
         Choice("operation", "Operation", nameof(BitLockerOperation.Inspect), EnumChoices<BitLockerOperation>(),
             "Choose inspection, recovery backup, encryption planning or protection resume planning."),
@@ -350,22 +351,22 @@ public static class WorkflowOptionCatalog
         Toggle("executeResume", "Resume BitLocker protection", false,
             "Resume protection only on the exact fully encrypted eligible volume.", advanced: true,
             changesMachine: true)
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> DefenderOptions() => Array.AsReadOnly(new[]
-    {
-        Choice("scanType", "GO action", "None", Array.AsReadOnly(new[]
-        {
+    private static ReadOnlyCollection<WorkflowOptionDefinition> DefenderOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
+    [
+        Choice("scanType", "GO action", "None", Array.AsReadOnly<WorkflowOptionChoice>(
+        [
             new WorkflowOptionChoice("None", "Diagnosis only"),
             new WorkflowOptionChoice(nameof(DefenderScanType.Quick), "Quick scan"),
             new WorkflowOptionChoice(nameof(DefenderScanType.Full), "Full scan")
-        }), "Choose diagnosis only, one Quick scan or one Full scan."),
+        ]), "Choose diagnosis only, one Quick scan or one Full scan."),
         Toggle("startScan", "Start selected scan", false,
             "Start the selected scan only after fresh eligibility and durable preparation.", advanced: true,
             changesMachine: true)
-    });
+    ]);
 
-    private static IReadOnlyList<WorkflowOptionDefinition> MaceOptions()
+    private static ReadOnlyCollection<WorkflowOptionDefinition> MaceOptions()
     {
         var options = Flags<MaceTargets>("target", "Review", MaceTargets.None,
             "Include this exact Microsoft application family in the removal review.");
@@ -381,7 +382,7 @@ public static class WorkflowOptionCatalog
         return options.AsReadOnly();
     }
 
-    private static IReadOnlyList<WorkflowOptionDefinition> OrcaOptions()
+    private static ReadOnlyCollection<WorkflowOptionDefinition> OrcaOptions()
     {
         var options = new List<WorkflowOptionDefinition>
         {
@@ -395,7 +396,7 @@ public static class WorkflowOptionCatalog
         return options.AsReadOnly();
     }
 
-    private static IReadOnlyList<WorkflowOptionDefinition> DepotOptions()
+    private static ReadOnlyCollection<WorkflowOptionDefinition> DepotOptions()
     {
         var options = Flags<DepotApplications>("application", "Review", DepotApplications.None,
             "Review current registration evidence for this application.");
@@ -404,7 +405,7 @@ public static class WorkflowOptionCatalog
         return options.AsReadOnly();
     }
 
-    private static IReadOnlyList<WorkflowOptionDefinition> DebloatOptions()
+    private static ReadOnlyCollection<WorkflowOptionDefinition> DebloatOptions()
     {
         var options = Flags<DebloatAreas>("area", "Review", DebloatAreas.None,
             "Include this Windows cleanup area in the evidence review.");
@@ -427,7 +428,7 @@ public static class WorkflowOptionCatalog
         return options.AsReadOnly();
     }
 
-    private static IReadOnlyList<WorkflowOptionDefinition> ServicingOptions()
+    private static ReadOnlyCollection<WorkflowOptionDefinition> ServicingOptions()
     {
         var options = new List<WorkflowOptionDefinition>
         {
@@ -447,9 +448,9 @@ public static class WorkflowOptionCatalog
     }
 
     private static List<WorkflowOptionDefinition> Flags<T>(string prefix, string verb, T defaults, string description) where T : struct, Enum =>
-        Enum.GetValues<T>().Where(value => Convert.ToUInt64(value) != 0).Select(value =>
+        [.. Enum.GetValues<T>().Where(value => Convert.ToUInt64(value) != 0).Select(value =>
             Toggle(prefix + "." + Lower(value), verb + " " + Label(value.ToString()),
-                (Convert.ToUInt64(defaults) & Convert.ToUInt64(value)) != 0, description)).ToList();
+                (Convert.ToUInt64(defaults) & Convert.ToUInt64(value)) != 0, description))];
 
     private static WorkflowOptionDefinition Toggle(string key, string label, bool value, string description,
         bool advanced = false, bool changesMachine = false, WorkflowOptionCondition? enabledWhen = null) =>
@@ -470,7 +471,7 @@ public static class WorkflowOptionCatalog
         new(key, label, WorkflowOptionControl.Text, value, description, Advanced: advanced,
             Required: required, EnabledWhen: enabledWhen);
 
-    private static IReadOnlyList<WorkflowOptionChoice> EnumChoices<T>() where T : struct, Enum => Array.AsReadOnly(
+    private static ReadOnlyCollection<WorkflowOptionChoice> EnumChoices<T>() where T : struct, Enum => Array.AsReadOnly(
         Enum.GetValues<T>().Select(value => new WorkflowOptionChoice(value.ToString(), Label(value.ToString()))).ToArray());
 
     private static string Lower<T>(T value) where T : struct, Enum
@@ -479,7 +480,10 @@ public static class WorkflowOptionCatalog
         return char.ToLowerInvariant(name[0]) + name[1..];
     }
 
-    private static string Label(string value) => Regex.Replace(value, "(?<=[a-z0-9])(?=[A-Z])", " ")
+    [GeneratedRegex("(?<=[a-z0-9])(?=[A-Z])")]
+    private static partial Regex LabelBoundaryPattern();
+
+    private static string Label(string value) => LabelBoundaryPattern().Replace(value, " ")
         .Replace("Ai", "AI", StringComparison.Ordinal)
         .Replace("Msi", "MSI", StringComparison.Ordinal)
         .Replace("Exe", "EXE", StringComparison.Ordinal);

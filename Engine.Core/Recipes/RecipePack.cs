@@ -1,4 +1,4 @@
-namespace KillerBench.Engine.Core;
+namespace KillerBench.Engine.Core.Recipes;
 
 /// <summary>Outcome of one recipe run. Mirrors the Engine's RecipeOutcome so results can be mapped without loss.</summary>
 public enum RecipeRunOutcome { Clear, RepairAvailable, Repaired, NeedsAttention, Unknown, Blocked, Canceled, RestartRequired }

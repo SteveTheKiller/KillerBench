@@ -80,16 +80,16 @@ internal static class FileSystemRepairExecutionChecks
             FileSystemRepairOutcome.Blocked && finalDenied.Repairs == 0,
             "Administrator access changed after preparation blocks repair");
 
-        foreach (var fixture in new[]
+        foreach (var (error, outcome) in new[]
         {
             (Error: (Exception)new IOException("final inspection unavailable"), Outcome: FileSystemRepairOutcome.Blocked),
             (Error: (Exception)new OperationCanceledException("final inspection canceled"), Outcome: FileSystemRepairOutcome.Stopped)
         })
         {
             string folder = Path.Combine(scratch, "fs-final-unavailable-" + Guid.NewGuid().ToString("N"));
-            var host = new Host { FinalInspectionError = fixture.Error };
+            var host = new Host { FinalInspectionError = error };
             var result = await FileSystemRepairExecution.RunAsync(draft, true, folder, host);
-            Require(result.Outcome == fixture.Outcome && host.Repairs == 0 && host.Schedules == 0 &&
+            Require(result.Outcome == outcome && host.Repairs == 0 && host.Schedules == 0 &&
                 !File.Exists(Path.Combine(folder, "filesystem-repair.pending.json")) &&
                 File.Exists(result.JournalPath + ".prepared.json") &&
                 result.Detail.Contains("No repair was started or scheduled", StringComparison.Ordinal),

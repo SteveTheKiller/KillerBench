@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public static class StorageSpacesDiagnostics
 {
@@ -47,11 +47,11 @@ public static class StorageSpacesDiagnostics
                 !OptionalError(root, "virtualDiskError", out string? virtualDiskError))
                 return UnknownSet("Storage Spaces data was malformed.", result);
 
-            return Array.AsReadOnly(new[]
-            {
+            return Array.AsReadOnly<WorkflowCheck>(
+            [
                 InterpretItems("Storage pools", pools, poolError, result, pool: true),
                 InterpretItems("Storage virtual disks", virtualDisks, virtualDiskError, result, pool: false)
-            });
+            ]);
         }
         catch (Exception error) when (error is JsonException or InvalidOperationException)
         {
@@ -151,10 +151,10 @@ public static class StorageSpacesDiagnostics
         ? $"{bytes / (double)(1UL << 40):F1} TiB"
         : $"{bytes / (double)(1UL << 30):F1} GiB";
 
-    private static IReadOnlyList<WorkflowCheck> UnknownSet(string detail, ToolResult? evidence) =>
-        Array.AsReadOnly(new[]
-        {
+    private static System.Collections.ObjectModel.ReadOnlyCollection<WorkflowCheck> UnknownSet(string detail, ToolResult? evidence) =>
+        Array.AsReadOnly<WorkflowCheck>(
+        [
             new WorkflowCheck("Storage pools", CheckState.Unknown, detail + Scope, Evidence: evidence),
             new WorkflowCheck("Storage virtual disks", CheckState.Unknown, detail + Scope, Evidence: evidence)
-        });
+        ]);
 }

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public static class FileSharingOperationalCorrelation
 {
@@ -12,7 +12,7 @@ public static class FileSharingOperationalCorrelation
 
         const string name = "File sharing operational correlation";
         const string boundary = " This bounded correlation does not test share permissions, authentication, name resolution, client negotiation, transport reachability, file access, data transfer, third-party filtering or policy ownership. No share, permission, session, file, SMB setting, firewall profile, rule, service or network setting changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         if (serverConfiguration.Name != "SMB server configuration" || shares.Count == 0 ||
             shares.Any(item => !item.Name.StartsWith("SMB share", StringComparison.Ordinal)) ||

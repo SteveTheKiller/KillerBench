@@ -1,11 +1,11 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Profiles;
 
 public sealed record ProfileDependency(string Kind, string Name, string? Sid);
 public sealed record ProfileDependencyResult(IReadOnlyList<ProfileDependency> Items, bool Complete)
 {
-    public IReadOnlyList<ProfileDependency> ForSid(string sid) => Items.Where(i => string.Equals(i.Sid, sid, StringComparison.OrdinalIgnoreCase)).ToArray();
+    public IReadOnlyList<ProfileDependency> ForSid(string sid) => [.. Items.Where(i => string.Equals(i.Sid, sid, StringComparison.OrdinalIgnoreCase))];
 }
 
 public static class ProfileDependencies

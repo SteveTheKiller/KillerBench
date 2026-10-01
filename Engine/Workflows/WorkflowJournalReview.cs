@@ -1,11 +1,11 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Workflows;
 
 public sealed record WorkflowJournalSnapshot(string Source, string Machine, string Kind, string RecordedStatus,
     DateTimeOffset StartedUtc, int CheckCount, int RepairCount, JsonElement Record)
 {
-    public string Scope => "Historical file contents only. Outcomes are recorded claims, not current verification. No commands run and no retry is authorized.";
+    public static string Scope => "Historical file contents only. Outcomes are recorded claims, not current verification. No commands run and no retry is authorized.";
 }
 
 public static class WorkflowJournalReview

@@ -1,6 +1,6 @@
 using System.Xml;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Backup;
 
 public enum BackupEventSource { Vss, Volsnap }
 

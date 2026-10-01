@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Reflection.PortableExecutable;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Scheduling;
 
 public sealed record ScheduledTaskExecutableResult(string Path, long? Bytes, string? Sha256, string Detail)
 {

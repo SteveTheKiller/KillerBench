@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Printing;
 
 public sealed record PrintingTargetSelection(string? Queue, string? JobQueue, uint? JobId);
 
@@ -57,8 +57,8 @@ public static class PrintingTargetReview
         if (inventory is not { Complete: true })
             return new("Selected print job", CheckState.Unknown,
                 "Complete visible-job evidence is unavailable for the exact selected job. No job was changed.");
-        PrintJobSnapshot[] matches = inventory.Jobs.Where(job => job.JobId == jobId &&
-            job.QueueName.Equals(queue, StringComparison.OrdinalIgnoreCase)).ToArray();
+        PrintJobSnapshot[] matches = [.. inventory.Jobs.Where(job => job.JobId == jobId &&
+            job.QueueName.Equals(queue, StringComparison.OrdinalIgnoreCase))];
         if (matches.Length != 1)
             return new("Selected print job", CheckState.Attention,
                 matches.Length == 0
@@ -75,6 +75,6 @@ public static class PrintingTargetReview
     }
 
     private static WorkflowCheck[] Exact(IReadOnlyList<WorkflowCheck> checks, string prefix, string queue) =>
-        checks.Where(item => item.Name.StartsWith(prefix, StringComparison.Ordinal) &&
-            item.Name[prefix.Length..].Equals(queue, StringComparison.OrdinalIgnoreCase)).Take(2).ToArray();
+        [.. checks.Where(item => item.Name.StartsWith(prefix, StringComparison.Ordinal) &&
+            item.Name[prefix.Length..].Equals(queue, StringComparison.OrdinalIgnoreCase)).Take(2)];
 }

@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public static class WindowsUpdateCollectors
 {

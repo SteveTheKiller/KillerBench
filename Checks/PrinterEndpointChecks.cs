@@ -4,7 +4,7 @@ internal static class PrinterEndpointChecks
 {
     public static void Run()
     {
-        ToolResult Evidence(string queues, string ports, string complete = "true") => new(0,
+        static ToolResult Evidence(string queues, string ports, string complete = "true") => new(0,
             $"{{\"complete\":{complete},\"queues\":{queues},\"ports\":{ports}}}", "", false);
         const string endpoint = "[{\"name\":\"IP_Office\",\"host\":\"192.0.2.10\",\"port\":9100,\"protocol\":1,\"snmpEnabled\":true}]";
         var valid = Evidence("[{\"name\":\"Office\",\"portName\":\"IP_Office\",\"type\":0}]", endpoint);

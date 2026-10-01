@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Scheduling;
 
 public enum ExactScheduledTaskReadState { Found, Missing, Ambiguous, Invalid, Unavailable }
 

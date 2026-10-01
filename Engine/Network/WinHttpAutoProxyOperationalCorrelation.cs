@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public static class WinHttpAutoProxyOperationalCorrelation
 {
@@ -16,7 +16,7 @@ public static class WinHttpAutoProxyOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "WinHTTP Auto-Proxy readiness";
         const string boundary = " This bounded conclusion does not establish PAC or WPAD resolution, proxy reachability, authentication, policy ownership, application overrides or Internet access. It does not fetch a URL, start discovery, clear a cache, change a proxy, credential, network, firewall, service or policy setting, or select a repair.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var selected = new List<WorkflowCheck>();
         foreach (string required in RequiredNames)

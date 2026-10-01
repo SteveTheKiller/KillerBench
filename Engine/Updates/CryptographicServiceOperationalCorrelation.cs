@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public static class CryptographicServiceOperationalCorrelation
 {
@@ -12,7 +12,7 @@ public static class CryptographicServiceOperationalCorrelation
 
         const string name = "Cryptographic Services conclusion";
         const string boundary = " This bounded conclusion does not validate certificates, signatures, catalogs, trust chains, update payloads or application behavior. It does not replace a DLL, rebuild a catalog, clear a cache, change trust, policy or startup settings, or select a repair.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         if (service.Name != "Cryptographic Services state" ||
             registration.Name != "Cryptographic Services registration" ||

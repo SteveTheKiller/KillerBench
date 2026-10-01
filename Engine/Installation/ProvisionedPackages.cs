@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Installation;
 
 public sealed record ProvisionedPackage(string Name, string PackageName, string Version, string Architecture);
 public sealed record ProvisionedPackageInventory(IReadOnlyList<ProvisionedPackage> Packages, bool Complete, ToolResult Evidence);

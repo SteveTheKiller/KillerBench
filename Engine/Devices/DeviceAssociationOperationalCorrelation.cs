@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Devices;
 
 public static class DeviceAssociationOperationalCorrelation
 {
@@ -11,7 +11,7 @@ public static class DeviceAssociationOperationalCorrelation
         ArgumentNullException.ThrowIfNull(checks);
         token.ThrowIfCancellationRequested();
         const string boundary = " This conclusion combines bounded Device Setup Manager and Plug and Play configuration history with the exact Device Association Service conclusion. Historical events do not prove a current device fault. It does not prove discovery, pairing, association, driver installation or physical device operation. It identifies no root cause, selects no repair and changes no device, driver, service configuration, permission, policy, credential or user data.";
-        WorkflowCheck Unknown(string detail) => new("Device association readiness", CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new("Device association readiness", CheckState.Unknown, detail + boundary);
 
         if (checks.Count == 0 || checks.Any(check => check is null))
             return Unknown("Device association correlation evidence is missing or invalid.");

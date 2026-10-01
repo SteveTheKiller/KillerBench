@@ -4,7 +4,7 @@ internal static class RouteChecks
 {
     public static void Run()
     {
-        ToolResult Evidence(string complete = "true", string entries = "[]") =>
+        static ToolResult Evidence(string complete = "true", string entries = "[]") =>
             new(0, $"{{\"complete\":{complete},\"entries\":{entries}}}", "", false);
         var populated = Evidence(entries: "[{\"destination\":\"0.0.0.0/0\",\"nextHop\":\"192.0.2.1\",\"interfaceIndex\":7,\"metric\":25,\"protocol\":\"Dhcp\"},{\"destination\":\"2001:db8::/32\",\"nextHop\":\"::\",\"interfaceIndex\":9,\"metric\":5,\"protocol\":\"Local\"}]");
         var result = RouteDiagnostics.Interpret(populated);

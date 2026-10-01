@@ -1,6 +1,6 @@
 using System.Xml;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Evidence;
 
 public static class EventArchive
 {

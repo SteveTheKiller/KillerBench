@@ -14,7 +14,7 @@ public partial class MainWindow
 
     private void OnBitLockerActionChanged(object sender, RoutedEventArgs e)
     {
-        if (BitLockerActionConsent is not null) BitLockerActionConsent.IsChecked = false;
+        BitLockerActionConsent?.IsChecked = false;
         if (BitLockerDecryptConsent is not null)
         {
             BitLockerDecryptConsent.IsChecked = false;

@@ -15,7 +15,7 @@ internal static class PrinterDriverModelChecks
         Require(PrinterDriverModelDiagnostics.Interpret(Evidence([])).State == CheckState.Information, "Empty registration inventory remains scoped information");
         foreach (var invalid in new[]
         {
-            Evidence([Row()], false), Evidence([Row(), Row("driver")]), Evidence(Enumerable.Range(0, 257).Select(i => Row("Driver " + i)).ToArray()),
+            Evidence([Row()], false), Evidence([Row(), Row("driver")]), Evidence([.. Enumerable.Range(0, 257).Select(i => Row("Driver " + i))]),
             new ToolResult(0, "{}", "", false), new ToolResult(0, "not json", "", false), clearEvidence with { ExitCode = 5 }, clearEvidence with { Error = "denied" }, clearEvidence with { TimedOut = true }, clearEvidence with { Truncated = true }
         }) Require(PrinterDriverModelDiagnostics.Interpret(invalid).State == CheckState.Unknown, "Incomplete, duplicate, excessive, malformed and failed evidence remains unknown");
         RepairStep? planned = null; bool bounded = false;

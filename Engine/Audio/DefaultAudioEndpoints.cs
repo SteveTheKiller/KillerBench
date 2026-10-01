@@ -1,7 +1,8 @@
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
 using System.Runtime.Versioning;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Audio;
 
 public enum AudioEndpointDirection { Output, Input }
 public enum AudioEndpointRole { Console, Multimedia, Communications }
@@ -31,9 +32,13 @@ public sealed record DefaultAudioEndpoint(AudioEndpointDirection Direction, stri
 
 public sealed record DefaultAudioEndpointInventory(IReadOnlyList<DefaultAudioEndpoint> Endpoints, bool Complete, string? Error = null);
 
-public static class DefaultAudioEndpoints
+public static partial class DefaultAudioEndpoints
 {
     private const uint DeviceStateActive = 0x00000001;
+    private const uint ClsCtxAll = 23;
+    private static readonly StrategyBasedComWrappers ComWrappers = new();
+    private static readonly Guid MMDeviceEnumeratorClassId = new("BCDE0395-E52F-467C-8E3D-C4579291692E");
+    private static readonly Guid MMDeviceEnumeratorInterfaceId = new("A95664D2-9614-4F35-A746-DE8DB63617E6");
     private const uint ReadPropertyStore = 0;
     private const uint AllServerContexts = 23;
     private static readonly PropertyKey FriendlyName = new(new Guid("A45C254E-DF1C-4EFD-8020-67D146A850E0"), 14);
@@ -157,7 +162,11 @@ public static class DefaultAudioEndpoints
         var endpoints = new List<DefaultAudioEndpoint>(6);
         try
         {
-            var enumerator = (IMMDeviceEnumerator)(object)new MMDeviceEnumerator();
+            Marshal.ThrowExceptionForHR(CoCreateInstance(in MMDeviceEnumeratorClassId, IntPtr.Zero, ClsCtxAll,
+                in MMDeviceEnumeratorInterfaceId, out IntPtr enumeratorPointer));
+            IMMDeviceEnumerator enumerator;
+            try { enumerator = (IMMDeviceEnumerator)ComWrappers.GetOrCreateObjectForComInstance(enumeratorPointer, CreateObjectFlags.UniqueInstance); }
+            finally { Marshal.Release(enumeratorPointer); }
             try
             {
                 foreach (AudioEndpointRole role in Enum.GetValues<AudioEndpointRole>())
@@ -166,7 +175,7 @@ public static class DefaultAudioEndpoints
                     endpoints.Add(ReadEndpoint(enumerator, DataFlow.Capture, AudioEndpointDirection.Input, role));
                 }
             }
-            finally { Marshal.FinalReleaseComObject(enumerator); }
+            finally { ReleaseCom(enumerator); }
             return new(endpoints.AsReadOnly(), true);
         }
         catch (Exception error) when (error is COMException or InvalidCastException or ArgumentException)
@@ -195,7 +204,7 @@ public static class DefaultAudioEndpoints
                     if (store.GetValue(FriendlyName, out PropVariant value) >= 0)
                     {
                         try { name = value.StringValue; }
-                        finally { PropVariantClear(ref value); }
+                        finally { _ = PropVariantClear(ref value); } // Clearing only releases the value's memory; a failure leaves nothing to recover.
                     }
                     if (store.GetValue(FormFactor, out PropVariant formValue) >= 0)
                     {
@@ -205,7 +214,7 @@ public static class DefaultAudioEndpoints
                             if (raw <= (uint)AudioEndpointFormFactor.AnalogAudioDevice)
                                 formFactor = (AudioEndpointFormFactor)raw.Value;
                         }
-                        finally { PropVariantClear(ref formValue); }
+                        finally { _ = PropVariantClear(ref formValue); }
                     }
                     if (store.GetValue(DisableSystemEffects, out PropVariant effectsValue) >= 0)
                     {
@@ -215,7 +224,7 @@ public static class DefaultAudioEndpoints
                             if (raw is 0 or 1) systemEffectsEnabled = raw == 0;
                             else if (raw is not null) propertyError = "Unsupported system-effects value " + raw.Value;
                         }
-                        finally { PropVariantClear(ref effectsValue); }
+                        finally { _ = PropVariantClear(ref effectsValue); }
                     }
                     if (store.GetValue(SupportsEventDrivenMode, out PropVariant eventValue) >= 0)
                     {
@@ -225,10 +234,10 @@ public static class DefaultAudioEndpoints
                             if (raw is 0 or 1) eventDrivenModeSupported = raw == 1;
                             else if (raw is not null) propertyError = AppendPropertyError(propertyError, "Unsupported event-driven-mode value " + raw.Value);
                         }
-                        finally { PropVariantClear(ref eventValue); }
+                        finally { _ = PropVariantClear(ref eventValue); }
                     }
                 }
-                finally { Marshal.FinalReleaseComObject(store); }
+                finally { ReleaseCom(store); }
             }
             AudioEndpointFormat? format = null;
             AudioExclusiveMixFormatStatus? exclusiveMixFormatStatus = null;
@@ -258,7 +267,12 @@ public static class DefaultAudioEndpoints
                 eventDrivenModeSupported, propertyError, exclusiveMixFormatStatus, exclusiveFormatError,
                 masterVolumeScalar, muted, volumeError);
         }
-        finally { Marshal.FinalReleaseComObject(device); }
+        finally { ReleaseCom(device); }
+    }
+
+    private static void ReleaseCom(object comObject)
+    {
+        if (comObject is ComObject wrapper) wrapper.FinalRelease();
     }
 
     private static string AppendPropertyError(string? current, string next) =>
@@ -286,7 +300,7 @@ public static class DefaultAudioEndpoints
         Marshal.ThrowExceptionForHR(device.Activate(ref interfaceId, AllServerContexts, IntPtr.Zero, out IntPtr instance));
         try
         {
-            var client = (IAudioClient)Marshal.GetObjectForIUnknown(instance);
+            var client = (IAudioClient)ComWrappers.GetOrCreateObjectForComInstance(instance, CreateObjectFlags.UniqueInstance);
             try
             {
                 Marshal.ThrowExceptionForHR(client.GetMixFormat(out IntPtr formatPointer));
@@ -312,7 +326,7 @@ public static class DefaultAudioEndpoints
                 }
                 finally { CoTaskMemFree(formatPointer); }
             }
-            finally { Marshal.FinalReleaseComObject(client); }
+            finally { ReleaseCom(client); }
         }
         finally { Marshal.Release(instance); }
     }
@@ -326,7 +340,7 @@ public static class DefaultAudioEndpoints
         Marshal.ThrowExceptionForHR(device.Activate(ref interfaceId, AllServerContexts, IntPtr.Zero, out IntPtr instance));
         try
         {
-            var volume = (IAudioEndpointVolume)Marshal.GetObjectForIUnknown(instance);
+            var volume = (IAudioEndpointVolume)ComWrappers.GetOrCreateObjectForComInstance(instance, CreateObjectFlags.UniqueInstance);
             try
             {
                 Marshal.ThrowExceptionForHR(volume.GetMasterVolumeLevelScalar(out float scalar));
@@ -337,33 +351,33 @@ public static class DefaultAudioEndpoints
                     throw new InvalidDataException("Windows returned an invalid endpoint mute state.");
                 return new(scalar, muted == 1);
             }
-            finally { Marshal.FinalReleaseComObject(volume); }
+            finally { ReleaseCom(volume); }
         }
         finally { Marshal.Release(instance); }
     }
 
-    private enum DataFlow { Render, Capture, All }
-    private enum NativeRole { Console, Multimedia, Communications }
+    internal enum DataFlow { Render, Capture, All }
+    internal enum NativeRole { Console, Multimedia, Communications }
 
     [StructLayout(LayoutKind.Sequential)]
-    private readonly struct PropertyKey(Guid formatId, uint propertyId)
+    internal readonly struct PropertyKey(Guid formatId, uint propertyId)
     {
         public readonly Guid FormatId = formatId;
         public readonly uint PropertyId = propertyId;
     }
 
     [StructLayout(LayoutKind.Explicit)]
-    private struct PropVariant
+    internal struct PropVariant
     {
-        [FieldOffset(0)] private ushort valueType;
-        [FieldOffset(8)] private IntPtr pointerValue;
-        [FieldOffset(8)] private uint uint32Value;
+        [FieldOffset(0)] private readonly ushort valueType;
+        [FieldOffset(8)] private readonly IntPtr pointerValue;
+        [FieldOffset(8)] private readonly uint uint32Value;
         internal readonly string? StringValue => valueType == 31 ? Marshal.PtrToStringUni(pointerValue) : null;
         internal readonly uint? UInt32Value => valueType == 19 ? uint32Value : null;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    private readonly struct WaveFormat
+    internal readonly struct WaveFormat
     {
         public readonly ushort FormatTag;
         public readonly ushort Channels;
@@ -374,30 +388,27 @@ public static class DefaultAudioEndpoints
         public readonly ushort ExtraSize;
     }
 
-    [ComImport, Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")]
-    private sealed class MMDeviceEnumerator;
-
-    [ComImport, Guid("A95664D2-9614-4F35-A746-DE8DB63617E6"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IMMDeviceEnumerator
+    [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16), Guid("A95664D2-9614-4F35-A746-DE8DB63617E6")]
+    internal partial interface IMMDeviceEnumerator
     {
         [PreserveSig] int EnumAudioEndpoints(DataFlow dataFlow, uint stateMask, out IntPtr devices);
         [PreserveSig] int GetDefaultAudioEndpoint(DataFlow dataFlow, NativeRole role, out IMMDevice endpoint);
-        [PreserveSig] int GetDevice([MarshalAs(UnmanagedType.LPWStr)] string id, out IMMDevice device);
+        [PreserveSig] int GetDevice(string id, out IMMDevice device);
         [PreserveSig] int RegisterEndpointNotificationCallback(IntPtr client);
         [PreserveSig] int UnregisterEndpointNotificationCallback(IntPtr client);
     }
 
-    [ComImport, Guid("D666063F-1587-4E43-81F1-B948E807363F"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IMMDevice
+    [GeneratedComInterface(StringMarshalling = StringMarshalling.Utf16), Guid("D666063F-1587-4E43-81F1-B948E807363F")]
+    internal partial interface IMMDevice
     {
         [PreserveSig] int Activate(ref Guid interfaceId, uint context, IntPtr activationParameters, out IntPtr instance);
         [PreserveSig] int OpenPropertyStore(uint access, out IPropertyStore properties);
-        [PreserveSig] int GetId([MarshalAs(UnmanagedType.LPWStr)] out string id);
+        [PreserveSig] int GetId(out string id);
         [PreserveSig] int GetState(out uint state);
     }
 
-    [ComImport, Guid("886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IPropertyStore
+    [GeneratedComInterface, Guid("886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99")]
+    internal partial interface IPropertyStore
     {
         [PreserveSig] int GetCount(out uint count);
         [PreserveSig] int GetAt(uint index, out PropertyKey key);
@@ -406,8 +417,8 @@ public static class DefaultAudioEndpoints
         [PreserveSig] int Commit();
     }
 
-    [ComImport, Guid("1CB9AD4C-DBFA-4C32-B178-C2F568A703B2"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IAudioClient
+    [GeneratedComInterface, Guid("1CB9AD4C-DBFA-4C32-B178-C2F568A703B2")]
+    internal partial interface IAudioClient
     {
         [PreserveSig] int Initialize(uint shareMode, uint streamFlags, long bufferDuration, long periodicity, IntPtr format, IntPtr sessionGuid);
         [PreserveSig] int GetBufferSize(out uint bufferFrames);
@@ -423,8 +434,8 @@ public static class DefaultAudioEndpoints
         [PreserveSig] int GetService(ref Guid interfaceId, out IntPtr service);
     }
 
-    [ComImport, Guid("5CDF2C82-841E-4546-9722-0CF74078229A"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    private interface IAudioEndpointVolume
+    [GeneratedComInterface, Guid("5CDF2C82-841E-4546-9722-0CF74078229A")]
+    internal partial interface IAudioEndpointVolume
     {
         [PreserveSig] int RegisterControlChangeNotify(IntPtr notify);
         [PreserveSig] int UnregisterControlChangeNotify(IntPtr notify);
@@ -446,9 +457,12 @@ public static class DefaultAudioEndpoints
         [PreserveSig] int GetVolumeRange(out float minimumDb, out float maximumDb, out float incrementDb);
     }
 
-    [DllImport("ole32.dll")]
-    private static extern int PropVariantClear(ref PropVariant value);
+    [LibraryImport("ole32.dll")]
+    private static partial int PropVariantClear(ref PropVariant value);
 
-    [DllImport("ole32.dll")]
-    private static extern void CoTaskMemFree(IntPtr value);
+    [LibraryImport("ole32.dll")]
+    private static partial void CoTaskMemFree(IntPtr value);
+
+    [LibraryImport("ole32.dll")]
+    private static partial int CoCreateInstance(in Guid classId, IntPtr outer, uint classContext, in Guid interfaceId, out IntPtr instance);
 }

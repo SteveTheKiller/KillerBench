@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Workflows;
 
 public enum RepairKind { ComponentStore, SystemFiles, UpdateDataStoreReset, PrintSpooler, PrintSpoolDirectory, WindowsTime, WindowsInstaller, InstallerRegistration, MsiProduct, StorageFileSystem, VolumeOptimization, SystemRestorePoint, ComputerRename, SearchIndexRebuild, OrcaCacheReset, PreviousWindowsInstallationRemoval, BitLockerProtectionResume, BitLockerRecoveryBackup, HighPerformancePowerPlan, PowerTimers, HibernationDisable, PrintQueues, WmiRepository, TimeSynchronization, TimeSourceConfiguration, DhcpClient, DhcpLease, PrinterOffline, DefaultPrinter, UpdateService, BackgroundTransfer, BitsJobRetry, CryptographicServices, ModulesInstaller, WindowsUpdateMedicService, UpdateOrchestrator, DeliveryOptimization, AudioEndpoints, WindowsAudio, WindowsSearch, DefenderSignatures, ComponentCleanup, WindowsManagement, WmiProvider, WindowsEventLog, EventChannelEnable, DnsClient, DnsCache, Workstation, VolumeShadowCopy, SoftwareShadowProvider, WindowsBackupService, BlockLevelBackupEngineService, BaseFilteringEngine, WindowsFirewall, FirewallProfiles, WirelessAutoConfig, WiredAutoConfig, NetworkLocationAwareness, NetworkListService, IpHelper, BluetoothSupport, CameraFrameServer, SmartCardService, BiometricService, ServerService, TaskSchedulerService, WindowsRecoveryEnvironment, DiagnosticPolicyService, WindowsErrorReportingService, WindowsEventCollectorService, RemoteAccessConnectionManagerService, RemoteDesktopServices, WindowsRemoteManagement, SecurityCenterService, NetworkConnectionsService, WinHttpAutoProxyService, WindowsConnectionManagerService, NetworkSetupService, AppReadinessService, StateRepositoryService, UserProfileService, CredentialManagerService, ShellHardwareDetectionService, DeviceInstallService, AppxDeploymentService, ClientLicenseService, StoreInstallService, WindowsLicenseManagerService, PushToInstallService, WebAccountManagerService, MicrosoftAccountSignInService, StorageService, OptimizeDrivesService, WindowsImageAcquisitionService, FunctionDiscoveryProviderHostService, FunctionDiscoveryResourcePublicationService, HumanInterfaceDeviceService, PortableDeviceEnumeratorService, WindowsFontCacheService, DeviceAssociationService, TextInputManagementService, DisplayEnhancementService, ComPlusEventSystem, SystemEventNotificationService, PowerService, PlugAndPlayService, UserManagerService, GroupPolicyClientService, NetworkStoreInterfaceService, RpcEndpointMapperService, RemoteProcedureCallService, DcomServerProcessLauncherService, BackgroundTasksInfrastructureService, CoreMessagingService, PrintJobCancellation }
 public sealed record RepairStep(string Tool, string[] Arguments, bool Verification);
@@ -329,7 +329,7 @@ public static class Repairs
             progress?.Report(status);
             return Current();
 
-            RepairResult Current() => new(Environment.MachineName, kind, started, status, path, results.ToArray())
+            RepairResult Current() => new(Environment.MachineName, kind, started, status, path, [.. results])
                 { SelectedPrinterQueues = selected is null ? null : Array.AsReadOnly(selected) };
             async Task Save()
             {

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Workflows;
 
 public enum CommonDiagnosticScope { DeviceProblems, Vitals, PrinterDrivers, Security, TimeConfiguration, StorageHistory, InstallerHistory, PrintingHistory, NetworkConfiguration, ProxyConfiguration, ApplicationHistory, ServiceHistory, TimeHistory, SystemVolumeCapacity, ShutdownHistory, BackupHistory, VssWriters, BackgroundTransfers, PrinterPorts, AppPackages, ScheduledTasks, PrintJobs, StorageReliability, WindowsLicensing, EventChannels, ReliabilityHistory, HardwareErrorHistory, DriverInstallHistory, CrashEvidence, FirewallProfiles, WindowsUpdateContext, SystemVolumeDirtyBit, InstallerActivity, SearchHealth, SystemRestore, WindowsRecovery, Certificates, RestartState, ServicingTransitions, NetworkPathReadiness, StorageReadiness, PrintingReadiness, InstallationReadiness, ServiceReadiness, WindowsUpdateReadiness, BackupReadiness, SystemStabilityReadiness, SecurityReadiness, ApplicationDeploymentReadiness }
 
@@ -152,8 +152,8 @@ public static class CommonDiagnostics
 
     private static async Task<IReadOnlyList<WorkflowCheck>> CollectVitalsAsync(CancellationToken token)
     {
-        var checks = new List<WorkflowCheck>(await VitalsDiagnostics.CheckAsync(token).ConfigureAwait(false));
-        checks.Add(await MemoryDiagnosticResults.CheckAsync(token).ConfigureAwait(false));
+        List<WorkflowCheck> checks = [.. await VitalsDiagnostics.CheckAsync(token).ConfigureAwait(false),
+            await MemoryDiagnosticResults.CheckAsync(token).ConfigureAwait(false)];
         return checks.AsReadOnly();
     }
 
@@ -390,11 +390,7 @@ public static class CommonDiagnostics
         var extensionFiles = await extensionFileTask.ConfigureAwait(false);
         var environment = PrintingEnvironmentCorrelation.Check(pointAndPrint, rendering, drivers, driverFiles,
             driverModels, ports, endpoints, reachability, extensions, extensionFiles, token);
-        var checks = new List<WorkflowCheck>();
-        checks.Add(spooler);
-        checks.Add(defaultPrinter);
-        checks.Add(pointAndPrint);
-        checks.Add(rendering);
+        List<WorkflowCheck> checks = [spooler, defaultPrinter, pointAndPrint, rendering];
         checks.AddRange(conditions);
         checks.AddRange(attributes);
         checks.AddRange(drivers);
@@ -448,13 +444,7 @@ public static class CommonDiagnostics
         var storeHistory = await storeTask.ConfigureAwait(false);
         var environment = InstallationEnvironmentCorrelation.Check(readiness, securityPolicy, loggingPolicy,
             cache, sources, outcome, appDeployment, storeHistory, token);
-        var checks = new List<WorkflowCheck>();
-        checks.Add(readiness);
-        checks.Add(serviceState);
-        checks.Add(pendingOperations);
-        checks.Add(securityPolicy);
-        checks.Add(engineFiles);
-        checks.Add(serviceRegistration);
+        List<WorkflowCheck> checks = [readiness, serviceState, pendingOperations, securityPolicy, engineFiles, serviceRegistration];
         checks.AddRange(activity);
         checks.Add(InstallerPendingOperationCorrelation.Check(pendingOperations, installerActivity, token));
         checks.AddRange(cache);
@@ -509,7 +499,7 @@ public static class CommonDiagnostics
         return WithReadinessSummary(CommonDiagnosticScope.ServiceReadiness, checks, token);
     }
 
-    private static IReadOnlyList<WorkflowCheck> WithReadinessSummary(CommonDiagnosticScope scope,
+    private static System.Collections.ObjectModel.ReadOnlyCollection<WorkflowCheck> WithReadinessSummary(CommonDiagnosticScope scope,
         IReadOnlyList<WorkflowCheck> checks, CancellationToken token)
     {
         var completed = new List<WorkflowCheck> { DiagnosticReadinessSummary.Check(scope, checks, token) };
@@ -645,7 +635,7 @@ public static class CommonDiagnostics
         var restartState = Completed(completed, CommonDiagnosticScope.RestartState) ?? [RestartDiagnostics.Check()];
         Add(security); Add(certificates); Add(licensing); Add(productChecks);
         checks.Add(threats); checks.Add(scanHistory); checks.Add(defenderEvents); Add(restartState);
-        checks.Add(SecurityOperationalCorrelation.Check(security.Append(scanHistory).ToArray(), certificates, licensing, productChecks, threats,
+        checks.Add(SecurityOperationalCorrelation.Check([.. security.Append(scanHistory)], certificates, licensing, productChecks, threats,
             defenderEvents, restartState, token));
         return WithReadinessSummary(CommonDiagnosticScope.SecurityReadiness, checks, token);
 
@@ -712,18 +702,18 @@ public static class CommonDiagnostics
         token.ThrowIfCancellationRequested();
         var adminTask = PrintServiceEvents.CheckAsync(token);
         var operationalTask = PrintServiceOperationalEvents.CheckAsync(token);
-        return new WorkflowCheck[]
-        {
+        return
+        [
             await adminTask.ConfigureAwait(false),
             await operationalTask.ConfigureAwait(false)
-        };
+        ];
     }
 
     private static async Task<IReadOnlyList<WorkflowCheck>> CollectWindowsUpdateContextAsync(CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
-        var checks = new List<WorkflowCheck>
-        {
+        List<WorkflowCheck> checks =
+        [
             UpdateExecutionContextDiagnostics.Check(),
             UpdateApplicabilityDiagnostics.Check(),
             UpdatePolicyDiagnostics.Check(),
@@ -731,10 +721,10 @@ public static class CommonDiagnostics
             UpdatePolicySurfaceDiagnostics.Check(),
             UpdateRestartPolicyDiagnostics.Check(),
             ComponentRepairSourceDiagnostics.Check(),
-            DeliveryOptimizationPolicyDiagnostics.Check()
-        };
-        checks.Add(await UpdateServiceDiagnostics.CheckAsync(token).ConfigureAwait(false));
-        checks.Add(await WindowsUpdateEngineFileDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            DeliveryOptimizationPolicyDiagnostics.Check(),
+            await UpdateServiceDiagnostics.CheckAsync(token).ConfigureAwait(false),
+            await WindowsUpdateEngineFileDiagnostics.CheckAsync(token).ConfigureAwait(false)
+        ];
         checks.AddRange(await ServicingServiceFailureEvents.CheckAsync(token).ConfigureAwait(false));
         checks.Add(await WindowsUpdateScheduledTaskDiagnostics.CheckAsync(token).ConfigureAwait(false));
         checks.Add(await UpdateHistoryDiagnostics.CheckAsync(token).ConfigureAwait(false));

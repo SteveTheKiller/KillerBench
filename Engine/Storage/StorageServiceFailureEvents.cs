@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public static class StorageServiceFailureEvents
 {

@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Installation;
 
 public sealed record MsiSourceObservation(string ProductKey, string Name, bool PackageConfigured,
     string? PackageFile, string LastUsedType, int NetworkSources, int UrlSources, int MediaSources,

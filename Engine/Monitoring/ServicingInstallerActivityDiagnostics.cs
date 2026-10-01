@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Monitoring;
 
 public sealed record ServicingInstallerActivitySnapshot(int ProcessCount, bool InProgressMarker);
 

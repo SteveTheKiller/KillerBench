@@ -41,8 +41,8 @@ internal static class BitsRetryJournalChecks
         var abandoned = new BitsRetryJournal(abandonedRoot);
         await abandoned.BeginAsync(abandonedId, abandonedEvidence, CancellationToken.None);
         await abandoned.AbandonAsync(new(abandonedId, BitsRetryOutcome.Blocked, "No request fixture", abandonedEvidence), CancellationToken.None);
-        string[] noRequestRecords = Directory.GetFiles(abandonedRoot, "bits-retry-no-request-*.json")
-            .Where(path => !path.EndsWith(".prepared.json", StringComparison.OrdinalIgnoreCase)).ToArray();
+        string[] noRequestRecords = [.. Directory.GetFiles(abandonedRoot, "bits-retry-no-request-*.json")
+            .Where(path => !path.EndsWith(".prepared.json", StringComparison.OrdinalIgnoreCase))];
         if (File.Exists(Path.Combine(abandonedRoot, abandonedId.ToString("N") + ".pending.json")) ||
             noRequestRecords.Length != 1 ||
             Directory.GetFiles(abandonedRoot, "*.prepared.json").Length != 1)

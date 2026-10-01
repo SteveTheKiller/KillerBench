@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Workflows;
 
 public static class WorkflowReport
 {
@@ -69,13 +69,13 @@ public static class WorkflowReport
                     if (step.Result.Truncated) state += "; captured output incomplete";
                     text.AppendLine("Details: " + (step.Step is null ? "Unidentified" : step.Step.Verification ? "Verification" : "Repair") + " command " + state + ". " +
                         (string.IsNullOrWhiteSpace(error) ? "No diagnostic text was returned." :
-                        new string(error.Take(1000).Select(c => char.IsControl(c) ? ' ' : c).ToArray())) +
+                        new string([.. error.Take(1000).Select(c => char.IsControl(c) ? ' ' : c)])) +
                         (error.Length > 1000 ? " [shortened; recorded output in journal]" : ""));
                     if (step.Result.TimedOut && !string.IsNullOrWhiteSpace(step.Result.Error) && !string.IsNullOrWhiteSpace(step.Result.Output))
                     {
                         string observed = step.Result.Output;
                         text.AppendLine("Last captured output (not current state): " +
-                            new string(observed.Take(1000).Select(c => char.IsControl(c) ? ' ' : c).ToArray()) +
+                            new string([.. observed.Take(1000).Select(c => char.IsControl(c) ? ' ' : c)]) +
                             (observed.Length > 1000 ? " [shortened; recorded output in journal]" : ""));
                     }
                 }

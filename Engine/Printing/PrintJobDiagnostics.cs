@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Printing;
 
 public sealed record PrintJobSnapshot(string QueueName, string Name, uint JobId, uint StatusMask);
 public sealed record PrintJobInventory(bool Complete, IReadOnlyList<PrintJobSnapshot> Jobs);

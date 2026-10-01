@@ -2,11 +2,27 @@ using Microsoft.Win32;
 using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
-public static class ServiceRecovery
+public static partial class ServiceRecovery
 {
     public sealed record Dependency(string Name, int? Startup);
+
+    [GeneratedRegex(@"(?m)^[\t ]*STATE[\t ]*:[^\r\n]*", RegexOptions.CultureInvariant)]
+    private static partial Regex StateLineRegex();
+
+    [GeneratedRegex(@":[\t ]*([1-7])(?:[\t ]+([A-Za-z_]+))?[\t ]*$", RegexOptions.CultureInvariant)]
+    private static partial Regex StateValueRegex();
+
+    [GeneratedRegex(@"(?m)^[\t ]*SERVICE_NAME[\t ]*:[\t ]*([^\r\n]*)", RegexOptions.CultureInvariant)]
+    private static partial Regex ServiceNameLineRegex();
+
+    [GeneratedRegex(@"(?m)^[\t ]*WIN32_EXIT_CODE[\t ]*:[^\r\n]*", RegexOptions.CultureInvariant)]
+    private static partial Regex ExitCodeLineRegex();
+
+    [GeneratedRegex(@":\s*([0-9]+)(?:\s+\(0x([0-9a-fA-F]+)\))?\s*$", RegexOptions.CultureInvariant)]
+    private static partial Regex ExitCodeValueRegex();
+
     private static bool ValidDependencyName(string? name) => !string.IsNullOrWhiteSpace(name) &&
         name.Length <= 256 && name == name.Trim() && !name.Any(c => char.IsControl(c) || c is '\\' or '/');
 
@@ -146,9 +162,9 @@ public static class ServiceRecovery
     public static int? State(ToolResult result)
     {
         if (result.ExitCode != 0 || result.Truncated || result.TimedOut || !string.IsNullOrWhiteSpace(result.Error)) return null;
-        var lines = Regex.Matches(result.Output, @"(?m)^[\t ]*STATE[\t ]*:[^\r\n]*", RegexOptions.CultureInvariant);
+        var lines = StateLineRegex().Matches(result.Output);
         if (lines.Count != 1) return null;
-        var match = Regex.Match(lines[0].Value, @":[\t ]*([1-7])(?:[\t ]+([A-Za-z_]+))?[\t ]*$", RegexOptions.CultureInvariant);
+        var match = StateValueRegex().Match(lines[0].Value);
         if (!match.Success) return null;
         int state = int.Parse(match.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture);
         string? label = match.Groups[2].Success ? match.Groups[2].Value : null;
@@ -164,7 +180,7 @@ public static class ServiceRecovery
     {
         if (!ValidDependencyName(expectedService)) throw new ArgumentException("Invalid service name.", nameof(expectedService));
         if (result.ExitCode != 0 || result.TimedOut || result.Truncated || !string.IsNullOrWhiteSpace(result.Error)) return false;
-        var names = Regex.Matches(result.Output, @"(?m)^[\t ]*SERVICE_NAME[\t ]*:[\t ]*([^\r\n]*)", RegexOptions.CultureInvariant);
+        var names = ServiceNameLineRegex().Matches(result.Output);
         return names.Count == 1 && string.Equals(names[0].Groups[1].Value.Trim(), expectedService, StringComparison.OrdinalIgnoreCase);
     }
 
@@ -181,10 +197,10 @@ public static class ServiceRecovery
                 "Demand-start service is stopped. This can be normal when idle, so a stopped state alone does not authorize an automatic start. Startup settings are preserved.", Evidence: result);
         if (State(result) == 1)
         {
-            var fields = Regex.Matches(result.Output, @"(?m)^[\t ]*WIN32_EXIT_CODE[\t ]*:[^\r\n]*", RegexOptions.CultureInvariant);
+            var fields = ExitCodeLineRegex().Matches(result.Output);
             if (fields.Count > 0)
             {
-                var field = Regex.Match(fields[0].Value, @":\s*([0-9]+)(?:\s+\(0x([0-9a-fA-F]+)\))?\s*$", RegexOptions.CultureInvariant);
+                var field = ExitCodeValueRegex().Match(fields[0].Value);
                 if (fields.Count != 1 || !field.Success ||
                     !uint.TryParse(field.Groups[1].Value, out uint code) ||
                     (field.Groups[2].Success && (!uint.TryParse(field.Groups[2].Value, System.Globalization.NumberStyles.HexNumber,
@@ -252,10 +268,10 @@ public static class ServiceRecovery
             object? configured = dependencyKey?.GetValue("DependOnService");
             object? groups = dependencyKey?.GetValue("DependOnGroup");
             int? startup = dependencyKey?.GetValue("Start") as int?;
-            var delayed = DelayedAutoStart(dependencyKey, startup);
+            var (delayed, delayedComplete) = DelayedAutoStart(dependencyKey, startup);
             return new(startup, configured as string[] ?? [],
-                delayed.Complete && dependencyKey is not null && configured is null or string[] && (groups is null || groups is string[] { Length: 0 }),
-                delayed.Delayed);
+                delayedComplete && dependencyKey is not null && configured is null or string[] && (groups is null || groups is string[] { Length: 0 }),
+                delayed);
         }, token);
         if (graph.TargetDelayedAutoStart)
             graph = graph with { DelayedStartWindowElapsed = DelayedStartWindowElapsed(root) };
@@ -266,7 +282,7 @@ public static class ServiceRecovery
     {
         ArgumentNullException.ThrowIfNull(check);
         ArgumentNullException.ThrowIfNull(graph);
-        var snapshot = graph with { Dependencies = graph.Dependencies.ToArray(), Issues = graph.Issues.ToArray() };
+        var snapshot = graph with { Dependencies = [.. graph.Dependencies], Issues = [.. graph.Issues] };
         check = check with { ServiceDependencies = snapshot };
         var assessed = check.State == CheckState.Repairable && graph.TargetStartup != 2 && !(graph.TargetStartup == 3 && check.DemandStartAuthorized)
             ? check with { State = CheckState.Unknown, Repair = null,
@@ -309,19 +325,19 @@ public static class ServiceRecovery
             {
                 var kind = Enum.GetValues<RepairKind>().Where(k => ServiceName(k) is not null &&
                     step.Arguments.Length == 2 && step.Arguments[0] == "start" &&
-                    string.Equals(ServiceName(k), step.Arguments[1], StringComparison.OrdinalIgnoreCase)).Cast<RepairKind?>().SingleOrDefault();
-                if (kind is null) throw new ArgumentException("Unsupported service start command.", nameof(step));
+                    string.Equals(ServiceName(k), step.Arguments[1], StringComparison.OrdinalIgnoreCase)).Cast<RepairKind?>().SingleOrDefault()
+                    ?? throw new ArgumentException("Unsupported service start command.", nameof(step));
                 progress?.Report("Rechecking service state, dependencies and executable registration before start...");
-                bool focusedDemandStart = kind.Value is RepairKind.WindowsTime or RepairKind.WinHttpAutoProxyService or RepairKind.WindowsUpdateMedicService;
-                var check = await CheckAsync(kind.Value, timeout.Token, focusedDemandStart).ConfigureAwait(false);
+                bool focusedDemandStart = kind is RepairKind.WindowsTime or RepairKind.WinHttpAutoProxyService or RepairKind.WindowsUpdateMedicService;
+                var check = await CheckAsync(kind, timeout.Token, focusedDemandStart).ConfigureAwait(false);
                 if (check.State == CheckState.Clear)
                     throw new RepairStepSkippedException("The selected service is already running. No start command was run.", check.Evidence!);
-                if (!CanStart(kind.Value, check))
+                if (!CanStart(kind, check))
                     throw new RepairDispatchDeferredException("Service start was deferred because fresh exact eligibility was not available. " + check.Detail);
                 if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException();
                 var registration = ServiceStartPrerequisite.Read(step.Arguments[1]);
-                var registered = ServiceStartPrerequisite.Assess(kind.Value, check, registration);
-                if (!CanStart(kind.Value, check, registration))
+                var registered = ServiceStartPrerequisite.Assess(kind, check, registration);
+                if (!CanStart(kind, check, registration))
                     throw new RepairDispatchDeferredException("Service start was deferred because fresh executable registration eligibility was not available. " + registered.Detail);
             }
             if (step.Verification)

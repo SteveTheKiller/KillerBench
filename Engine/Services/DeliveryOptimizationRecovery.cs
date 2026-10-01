@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public enum DeliveryOptimizationReconciliationOutcome { NoPending, Verified, NotApplied, Inconclusive }
 public sealed record DeliveryOptimizationReconciliationResult(DeliveryOptimizationReconciliationOutcome Outcome, string Detail);

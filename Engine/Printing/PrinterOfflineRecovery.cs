@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Printing;
 
 public sealed record PrinterOfflineSnapshot(string[] Targets, IReadOnlyDictionary<string, bool> Queues);
 

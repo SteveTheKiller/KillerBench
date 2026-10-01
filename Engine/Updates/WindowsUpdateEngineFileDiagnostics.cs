@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record WindowsUpdateEngineFileEntry(string File, bool Exists, string Signature, string Version);
 public sealed record WindowsUpdateEngineFileSnapshot(bool Complete, IReadOnlyList<WindowsUpdateEngineFileEntry> Files);

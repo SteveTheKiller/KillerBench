@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public static class OptimizeDrivesDiagnostics
 {
@@ -7,8 +7,8 @@ public static class OptimizeDrivesDiagnostics
 
     public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default)
     {
-        var read = await ExactScheduledTaskDiagnostics.ReadAsync(TaskPath, TaskName, TimeSpan.FromSeconds(20), token).ConfigureAwait(false);
-        return InterpretRead(read.Read, read.Evidence);
+        var (read, evidence) = await ExactScheduledTaskDiagnostics.ReadAsync(TaskPath, TaskName, TimeSpan.FromSeconds(20), token).ConfigureAwait(false);
+        return InterpretRead(read, evidence);
     }
 
     public static RepairStep CreateReadStep() => ExactScheduledTaskDiagnostics.CreateReadStep(TaskPath, TaskName);

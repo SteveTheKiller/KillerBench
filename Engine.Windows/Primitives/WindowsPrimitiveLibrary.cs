@@ -1,6 +1,6 @@
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Primitives;
 
 /// <summary>The whitelisted primitives Windows packs may reference. Every registered primitive is used by at least one built-in pack.</summary>
 public static class WindowsPrimitiveLibrary

@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Validation;
 
 public static class NativeValidationReport
 {

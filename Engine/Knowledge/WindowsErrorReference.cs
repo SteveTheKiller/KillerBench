@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Knowledge;
 
 public sealed record WindowsErrorMessage(uint Code, string? Message, string Source, string Limitation);
 

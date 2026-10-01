@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Applications;
 
 public static class AppPackageDiagnostics
 {
@@ -6,7 +6,7 @@ public static class AppPackageDiagnostics
     {
         ArgumentNullException.ThrowIfNull(checks);
         const string name = "Registered app package summary";
-        WorkflowCheck Unknown(string detail, ToolResult? evidence = null) => new(name, CheckState.Unknown,
+        static WorkflowCheck Unknown(string detail, ToolResult? evidence = null) => new(name, CheckState.Unknown,
             detail + " No package was launched, installed, repaired, reset or removed.", Evidence: evidence);
         if (checks.Count is < 1 or > 4097 || checks.Any(check => check is null))
             return Unknown("Packaged-app status evidence is unavailable or exceeds its bound.");

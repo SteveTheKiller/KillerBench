@@ -3,7 +3,7 @@ using System.Runtime.Versioning;
 using System.Security;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record DeliveryOptimizationPolicyValue(string Name, int Value);
 public sealed record DeliveryOptimizationPolicySnapshot(bool Complete,
@@ -42,12 +42,12 @@ public static class DeliveryOptimizationPolicyDiagnostics
             using var root = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
             using var classic = root.OpenSubKey(@"SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization");
             using var csp = root.OpenSubKey(@"SOFTWARE\Microsoft\PolicyManager\current\device\DeliveryOptimization");
-            var classicValues = ReadSurface(classic);
-            var cspValues = ReadSurface(csp);
+            var (classicComplete, classicNumeric, classicSensitive) = ReadSurface(classic);
+            var (cspComplete, cspNumeric, cspSensitive) = ReadSurface(csp);
             int providerMetadata = csp?.GetValueNames().Count(name => name.EndsWith("_ProviderSet", StringComparison.OrdinalIgnoreCase) &&
                 IsRecognized(name[..^"_ProviderSet".Length])) ?? 0;
-            bool complete = classicValues.Complete && cspValues.Complete && providerMetadata <= MaximumValues;
-            return new(complete, classicValues.Numeric, classicValues.Sensitive, cspValues.Numeric, cspValues.Sensitive,
+            bool complete = classicComplete && cspComplete && providerMetadata <= MaximumValues;
+            return new(complete, classicNumeric, classicSensitive, cspNumeric, cspSensitive,
                 Math.Min(providerMetadata, MaximumValues));
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or SecurityException)

@@ -11,9 +11,9 @@ internal static class WindowsErrorReportingOperationalCorrelationChecks
         Require(Check(reports: CheckState.Attention).State == CheckState.Information, "Historical crash reports alone remain informational");
         Require(Check(files: CheckState.Unknown, service: CheckState.Attention).State == CheckState.Unknown,
             "Incomplete dump evidence takes precedence over current attention");
-        Require(WindowsErrorReportingOperationalCorrelation.Check(Inputs().Append(Info("Crash dump files")).ToArray()).State == CheckState.Unknown,
+        Require(WindowsErrorReportingOperationalCorrelation.Check([.. Inputs(), Info("Crash dump files")]).State == CheckState.Unknown,
             "Duplicate evidence identity fails closed");
-        Require(WindowsErrorReportingOperationalCorrelation.Check(Inputs().Where(check => check.Name != "Recent system crash reports").ToArray()).State == CheckState.Unknown,
+        Require(WindowsErrorReportingOperationalCorrelation.Check([.. Inputs().Where(check => check.Name != "Recent system crash reports")]).State == CheckState.Unknown,
             "Missing evidence identity fails closed");
         try
         {

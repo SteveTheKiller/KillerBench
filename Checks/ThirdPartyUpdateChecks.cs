@@ -3,13 +3,16 @@ using KillerBench.Engine;
 
 internal static class ThirdPartyUpdateChecks
 {
+    private static readonly string[] ExpectedAvailableVersions = ["2.0", "1.5"];
+    private static readonly string[] SingleAvailableVersion = ["2.0"];
+
     internal static async Task RunAsync()
     {
-        ToolResult Evidence(object[] candidates, bool available = true, bool complete = true, int scanned = 12, string version = "1.11.0") =>
+        static ToolResult Evidence(object[] candidates, bool available = true, bool complete = true, int scanned = 12, string version = "1.11.0") =>
             new(0, JsonSerializer.Serialize(new { providerAvailable = available, providerVersion = available ? version : "", complete = available && complete, scanned = available ? scanned : 0, detail = available ? "Fixture provider completed." : "Fixture provider unavailable.", candidates }, Capture.JsonOptions), "", false);
         var candidate = new { id = "Vendor.Tool", name = "Vendor Tool", installedVersion = "1.0", source = "winget", availableVersions = new[] { "2.0", "1.5" } };
         var clear = ThirdPartyUpdateDiscovery.Interpret(Evidence([candidate]));
-        Require(clear is { ProviderAvailable: true, Complete: true, Candidates.Count: 1 } && clear.Candidates[0].AvailableVersions.SequenceEqual(new[] { "2.0", "1.5" }) &&
+        Require(clear is { ProviderAvailable: true, Complete: true, Candidates.Count: 1 } && clear.Candidates[0].AvailableVersions.SequenceEqual(ExpectedAvailableVersions) &&
             ThirdPartyUpdateDiscovery.Assess(clear).State == CheckState.Information && clear.Format().Contains("No application was downloaded"),
             "Complete structured WinGet evidence retains exact identities and remains read only");
         var empty = ThirdPartyUpdateDiscovery.Interpret(Evidence([]));
@@ -22,8 +25,8 @@ internal static class ThirdPartyUpdateChecks
             "Partial provider evidence retains candidates without claiming complete coverage");
         foreach (var invalid in new[]
         {
-            Evidence([candidate, new { id = "vendor.tool", name = "Duplicate", installedVersion = "1.0", source = "WINGET", availableVersions = new[] { "2.0" } }]),
-            Evidence([new { id = "Vendor.Tool", name = "Bad\nName", installedVersion = "1.0", source = "winget", availableVersions = new[] { "2.0" } }]),
+            Evidence([candidate, new { id = "vendor.tool", name = "Duplicate", installedVersion = "1.0", source = "WINGET", availableVersions = SingleAvailableVersion }]),
+            Evidence([new { id = "Vendor.Tool", name = "Bad\nName", installedVersion = "1.0", source = "winget", availableVersions = SingleAvailableVersion }]),
             Evidence([new { id = "Vendor.Tool", name = "Vendor Tool", installedVersion = "1.0", source = "winget", availableVersions = Array.Empty<string>() }]),
             new ToolResult(0, JsonSerializer.Serialize(new { providerAvailable = true, providerVersion = "1.11.0", complete = true, scanned = 4097, detail = "Fixture provider completed.", candidates = new[] { candidate } }, Capture.JsonOptions), "", false),
             new ToolResult(1, "{}", "failed", false), new ToolResult(0, "{}", "", true), new ToolResult(0, "{}", "", false) { TimedOut = true }

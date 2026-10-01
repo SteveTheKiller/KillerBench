@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Time;
 
 public static class TimeOperationalCorrelation
 {
@@ -12,7 +12,7 @@ public static class TimeOperationalCorrelation
 
         const string name = "Windows Time operational correlation";
         const string boundary = " This bounded correlation does not measure clock offset, absolute accuracy, source trust, source reachability, network delay, domain convergence or future synchronization. Historical failures do not establish a current outage. No clock, source, service, policy, registry or synchronization setting changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         if (configuration.Name != "Time source configuration" || events.Name != "Recent time-service events" ||
             serviceHistory.Name != "Windows Time service failure history")

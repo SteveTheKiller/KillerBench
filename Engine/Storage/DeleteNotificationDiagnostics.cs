@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public static class DeleteNotificationDiagnostics
 {
@@ -54,7 +54,7 @@ public static class DeleteNotificationDiagnostics
             .Distinct(StringComparer.OrdinalIgnoreCase).Count() != matches.Length)
             return [Unknown("The delete-notification response was not recognized or contained duplicate filesystem evidence.", evidence)];
 
-        return matches.OrderBy(match => match.Groups[1].Value, StringComparer.Ordinal).Select(match =>
+        return [.. matches.OrderBy(match => match.Groups[1].Value, StringComparer.Ordinal).Select(match =>
         {
             string fileSystem = match.Groups[1].Value;
             bool enabled = match.Groups[2].Value == "0";
@@ -64,7 +64,7 @@ public static class DeleteNotificationDiagnostics
                     ? $"{fileSystem} delete notifications are enabled. This permits supported storage devices to receive freed-block notifications, but does not prove that a device accepts or acts on them. No optimization ran and no setting changed."
                     : $"{fileSystem} delete notifications are disabled. Review device support, workload requirements and the setting's management source before changing it. No optimization ran and no setting changed.",
                 Evidence: evidence);
-        }).ToArray();
+        })];
     }
 
     private static WorkflowCheck Unknown(string detail, ToolResult evidence) => new(

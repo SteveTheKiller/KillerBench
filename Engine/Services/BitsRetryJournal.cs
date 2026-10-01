@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 /// <summary>Retains one retry attempt per job until a separate read-only reconciliation archives it.</summary>
 public sealed class BitsRetryJournal(string directory) : IBitsRetryJournal

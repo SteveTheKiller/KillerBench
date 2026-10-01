@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record UpdateCacheArea(bool Complete, bool Exists, bool ReparsePoint,
     long FileCount, long TotalBytes, bool Capped);

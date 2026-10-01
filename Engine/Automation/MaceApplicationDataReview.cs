@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Automation;
 
 public sealed record MaceDataLocationObservation(MaceTargets Target, string Location,
     bool Present, bool ReparsePoint);

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Applications;
 
 public static class AppPackageOperationalCorrelation
 {
@@ -13,7 +13,7 @@ public static class AppPackageOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "App package operational conclusion";
         const string boundary = " This conclusion does not verify application launch, package payload integrity, licensing, dependencies, account access, download completion or managed ownership. No package, registration, repository, account, license, source, service, policy, file or restart state is changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         if (registeredPackages.Name != "Registered app package summary" ||
             provisionedPackages is not null && provisionedPackages.Name != "Provisioned app packages" ||

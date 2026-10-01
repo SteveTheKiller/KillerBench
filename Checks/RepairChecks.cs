@@ -67,7 +67,7 @@ internal static class RepairChecks
             Repairs.Plan(RepairKind.NetworkLocationAwareness).Effects.Contains("different existing firewall profile"),
             "Network Location Awareness recovery is reachable and describes its network-category effect");
         Require(ServiceRecovery.ServiceName(RepairKind.NetworkListService) == "netprofm" &&
-            RecipeCatalog.ForWorkflow(WorkflowKind.Network).Single(recipe => recipe.Id == "network.list-service").Dependencies.SequenceEqual(new[] { "network.location-awareness" }) &&
+            RecipeCatalog.ForWorkflow(WorkflowKind.Network).Single(recipe => recipe.Id == "network.list-service").Dependencies.SequenceEqual(["network.location-awareness"]) &&
             Repairs.Plan(RepairKind.NetworkListService).Effects.Contains("different existing firewall profile"),
             "Network List Service recovery requires Network Location Awareness and describes its network-category effect");
         foreach (var kind in Enum.GetValues<RepairKind>().Where(k => ServiceRecovery.ServiceName(k) is not null))
@@ -243,7 +243,7 @@ internal static class RepairChecks
         try { await Repairs.RunAsync(RepairKind.SystemFiles, folder, cancellationToken: stop.Token, host: beforeCancel); throw new Exception("Canceled repair started"); }
         catch (OperationCanceledException) { }
         Require(beforeCancel.Calls == 0, "Canceled request never executes");
-        Require(Repairs.Plan(RepairKind.SystemFiles).Steps[1].Arguments.SequenceEqual(new[] { "/verifyonly" }), "SFC verification is read-only");
+        Require(Repairs.Plan(RepairKind.SystemFiles).Steps[1].Arguments.SequenceEqual(["/verifyonly"]), "SFC verification is read-only");
         Require(Repairs.Plan(RepairKind.ComponentStore).Steps.All(s => s.Arguments.Contains("/NoRestart")), "DISM never restarts automatically");
         string lockedFolder = Path.Combine(scratch, "locked-repair-journal");
         FileStream? lockedJournal = null;

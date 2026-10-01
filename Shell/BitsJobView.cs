@@ -8,7 +8,7 @@ public partial class MainWindow
     private BitsInventoryResult? bitsInventory;
     private void OnBitsSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
-        if (BitsRetryConsent is not null) BitsRetryConsent.IsChecked = false;
+        BitsRetryConsent?.IsChecked = false;
         RefreshBitsRetryAvailability();
     }
     private void RefreshBitsRetryAvailability()

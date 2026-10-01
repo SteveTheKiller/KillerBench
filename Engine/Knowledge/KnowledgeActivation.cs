@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Knowledge;
 
 public sealed record ActiveKnowledgePointer(string PackId, long Revision, string FileName, string PayloadSha256, DateTimeOffset ActivatedUtc);
 public sealed record KnowledgeActivationResult(KnowledgeCatalog Catalog, string ActivePath, string DataPath, bool Changed, string Detail);
@@ -32,13 +32,13 @@ public static class KnowledgeActivation
             string activePath = Path.Combine(root, "active.json");
             if (File.Exists(activePath))
             {
-                var current = await LoadActiveAsync(root, trustedPublicKey, expectedPackId, minimumRevision, token).ConfigureAwait(false);
-                if (catalog.Revision < current.Catalog.Revision) throw new InvalidDataException("Knowledge activation would roll back the active revision.");
-                if (catalog.Revision == current.Catalog.Revision)
+                var (currentCatalog, currentPointer, currentDataPath) = await LoadActiveAsync(root, trustedPublicKey, expectedPackId, minimumRevision, token).ConfigureAwait(false);
+                if (catalog.Revision < currentCatalog.Revision) throw new InvalidDataException("Knowledge activation would roll back the active revision.");
+                if (catalog.Revision == currentCatalog.Revision)
                 {
-                    if (!string.Equals(hash, current.Pointer.PayloadSha256, StringComparison.Ordinal))
+                    if (!string.Equals(hash, currentPointer.PayloadSha256, StringComparison.Ordinal))
                         throw new InvalidDataException("Knowledge activation conflicts with the active revision.");
-                    return new(catalog, activePath, current.DataPath, false, "The same verified revision is already active.");
+                    return new(catalog, activePath, currentDataPath, false, "The same verified revision is already active.");
                 }
             }
 
@@ -102,8 +102,8 @@ public static class KnowledgeActivation
         {
             await using var processLock = new FileStream(Path.Combine(root, "activation.lock"), FileMode.OpenOrCreate,
                 FileAccess.ReadWrite, FileShare.None, 1, FileOptions.Asynchronous);
-            string[] files = Directory.EnumerateFiles(root, "pack-*.kbpack", SearchOption.TopDirectoryOnly)
-                .OrderBy(path => Path.GetFileName(path), StringComparer.Ordinal).Take(257).ToArray();
+            string[] files = [.. Directory.EnumerateFiles(root, "pack-*.kbpack", SearchOption.TopDirectoryOnly)
+                .OrderBy(path => Path.GetFileName(path), StringComparer.Ordinal).Take(257)];
             if (files.Length > 256) throw new InvalidDataException("Knowledge recovery has more than 256 retained versions.");
             var accepted = new List<(KnowledgeCatalog Catalog, string Path, string Hash)>();
             int rejected = 0;

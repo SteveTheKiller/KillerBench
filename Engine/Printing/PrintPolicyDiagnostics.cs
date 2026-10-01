@@ -2,7 +2,7 @@ using Microsoft.Win32;
 using System.Runtime.Versioning;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Printing;
 
 public sealed record PrintPolicyScope(
     object? Restricted,

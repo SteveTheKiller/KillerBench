@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.FileSystem;
 
 public sealed record FileSystemRepairPendingRecord(int Schema, DateTimeOffset StartedUtc,
     FileSystemRepairDraft Draft, WorkflowCheck Before, string JournalPath)

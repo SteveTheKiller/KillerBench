@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Applications;
 
 public static class ApplicationDeploymentOperationalCorrelation
 {
@@ -13,7 +13,7 @@ public static class ApplicationDeploymentOperationalCorrelation
         ArgumentNullException.ThrowIfNull(restartState); token.ThrowIfCancellationRequested();
         const string name = "Application deployment operational correlation";
         const string boundary = " This is a bounded registration, installation and history review, not proof that an application launches, updates, licenses, repairs or uninstalls successfully. No package, application, registration, cache, source, service, policy, file or restart state changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
         var fixedInputs = new[]
         {
             (Check: registeredPackages, Name: "Registered app package summary"),

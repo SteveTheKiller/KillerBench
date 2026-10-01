@@ -1,6 +1,6 @@
 using System.Xml;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public static class DhcpClientEvents
 {
@@ -32,7 +32,7 @@ public static class DhcpClientEvents
         catch (OperationCanceledException) when (!token.IsCancellationRequested && deadline.IsCancellationRequested)
         {
             var evidence = new ToolResult(-1, "", "DHCP Client event deadline expired.", false) { TimedOut = true };
-            return Definitions.Select(definition => Interpret(definition.Channel, evidence)).ToArray();
+            return [.. Definitions.Select(definition => Interpret(definition.Channel, evidence))];
         }
     }
 

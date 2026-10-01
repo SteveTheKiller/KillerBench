@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Profiles;
 
 public sealed record ProfileSnapshot(string Sid, string Path, bool? Loaded, bool? Special,
     DateTimeOffset? LastUsedUtc, bool CurrentAccount);
@@ -6,7 +6,7 @@ public sealed record ProfileChoice(ProfileSnapshot Profile, bool ReviewEligible,
 public sealed record ProfileSelectionPlan(IReadOnlyList<ProfileSnapshot> Targets, IReadOnlyList<string> Blockers)
 {
     public bool ReviewPassed => Targets.Count > 0 && Blockers.Count == 0;
-    public string Limitation => "Review only. A native backup and removal host is not enabled. Any future removal requires exact fresh backup evidence, fresh prerequisites and absence verification.";
+    public static string Limitation => "Review only. A native backup and removal host is not enabled. Any future removal requires exact fresh backup evidence, fresh prerequisites and absence verification.";
 }
 
 public static class ProfilePlanning

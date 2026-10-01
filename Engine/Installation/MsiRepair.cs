@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Installation;
 
 public enum MsiRepairOutcome { Preview, Blocked, Verified, RestartRequired, Failed, Uncertain, Stopped }
 

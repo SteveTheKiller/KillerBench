@@ -16,9 +16,9 @@ internal static class RemoteAccessOperationalCorrelationChecks
             attention.Detail.Contains("cannot authorize recovery or a connection attempt", StringComparison.Ordinal) &&
             attention.Detail.Contains("does not establish profile applicability", StringComparison.Ordinal),
             "Current Remote Access service concern requests review without widening repair authority");
-        Require(RemoteAccessOperationalCorrelation.Check(Inputs().Append(Info("Current-account VPN profiles")).ToArray()).State == CheckState.Unknown,
+        Require(RemoteAccessOperationalCorrelation.Check([.. Inputs(), Info("Current-account VPN profiles")]).State == CheckState.Unknown,
             "Duplicate Remote Access evidence identity fails closed");
-        Require(RemoteAccessOperationalCorrelation.Check(Inputs().Where(check => check.Name != "Focused service readiness").ToArray()).State == CheckState.Unknown,
+        Require(RemoteAccessOperationalCorrelation.Check([.. Inputs().Where(check => check.Name != "Focused service readiness")]).State == CheckState.Unknown,
             "Missing Remote Access evidence identity fails closed");
         try
         {

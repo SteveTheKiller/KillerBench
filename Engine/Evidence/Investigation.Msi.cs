@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Evidence;
 
 public static partial class Investigation
 {

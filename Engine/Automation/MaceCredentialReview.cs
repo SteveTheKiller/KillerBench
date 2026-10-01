@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Automation;
 
 public sealed record MaceCredentialEvidence(int OneDriveReferences, int OutlookReferences,
     int OfficeReferences, int ProjectReferences, int TeamsReferences, bool Complete, string Limitation)
@@ -15,7 +15,7 @@ public sealed record MaceCredentialEvidence(int OneDriveReferences, int OutlookR
         (targets.HasFlag(MaceTargets.Teams) ? TeamsReferences : 0);
 }
 
-public static class MaceCredentialReview
+public static partial class MaceCredentialReview
 {
     private const int MaximumCredentials = 4096;
     private const int MaximumMatchesPerTarget = 128;
@@ -134,11 +134,11 @@ public static class MaceCredentialReview
         public IntPtr UserName;
     }
 
-    [DllImport("advapi32.dll", EntryPoint = "CredEnumerateW", CharSet = CharSet.Unicode,
+    [LibraryImport("advapi32.dll", EntryPoint = "CredEnumerateW", StringMarshalling = StringMarshalling.Utf16,
         SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool CredEnumerate(string? filter, uint flags, out int count, out IntPtr credentials);
+    private static partial bool CredEnumerate(string? filter, uint flags, out int count, out IntPtr credentials);
 
-    [DllImport("advapi32.dll")]
-    private static extern void CredFree(IntPtr buffer);
+    [LibraryImport("advapi32.dll")]
+    private static partial void CredFree(IntPtr buffer);
 }

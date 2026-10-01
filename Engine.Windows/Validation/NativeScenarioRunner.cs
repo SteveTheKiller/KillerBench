@@ -5,7 +5,7 @@ using System.Text.Json;
 using KillerBench.Engine.Core;
 using Microsoft.Win32;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Validation;
 
 /// <summary>Result of one injected scenario run: the validation record written and the folder holding its artifacts.</summary>
 public sealed record NativeScenarioResult(string ScenarioId, NativeValidationOutcome Outcome, string RecordPath, string ArtifactFolder, string Notes);
@@ -21,7 +21,7 @@ public sealed class NativeScenarioRunner
     public const string DisposableValue = "yes-this-machine-is-disposable";
 
     private readonly PrimitiveLibrary library = WindowsPrimitiveLibrary.Create();
-    private readonly IReadOnlyDictionary<string, RecipeDefinition> recipes =
+    private readonly Dictionary<string, RecipeDefinition> recipes =
         WindowsPacks.All().SelectMany(pack => pack.Recipes).ToDictionary(recipe => recipe.Id, StringComparer.Ordinal);
 
     public static bool IsDisposable(string? declaredMachine) =>
@@ -149,7 +149,7 @@ public sealed class NativeScenarioRunner
         {
             if (injected)
             {
-                bool restored = await RestoreAsync(service, before, token).ConfigureAwait(false);
+                bool restored = await RestoreAsync(service, before).ConfigureAwait(false);
                 notes.Append(restored ? " Injected state restored." : " WARNING: injected state could not be fully restored; review the service manually.");
             }
         }
@@ -167,7 +167,7 @@ public sealed class NativeScenarioRunner
             RuntimeInformation.OSArchitecture.ToString(),
             typeof(WindowsEngine).Assembly.GetName().Version?.ToString(3) ?? "0.0.0",
             DateTimeOffset.UtcNow,
-            artifacts.Select(pair => new NativeValidationArtifact(pair.Key, pair.Value, Sha256(Path.Combine(folder, pair.Value)))).ToArray(),
+            [.. artifacts.Select(pair => new NativeValidationArtifact(pair.Key, pair.Value, Sha256(Path.Combine(folder, pair.Value))))],
             notes.Length > 2000 ? notes.ToString(0, 2000) : notes.ToString());
         string json = JsonSerializer.Serialize(record, Capture.JsonOptions);
         NativeValidationEvidence.Read(Encoding.UTF8.GetBytes(json));
@@ -213,7 +213,7 @@ public sealed class NativeScenarioRunner
         return result.ExitCode == 0;
     }
 
-    private static async Task<bool> RestoreAsync(string service, Snapshot before, CancellationToken token)
+    private static async Task<bool> RestoreAsync(string service, Snapshot before)
     {
         bool ok = true;
         string? start = before.Start switch { 2 => before.Delayed ? "delayed-auto" : "auto", 3 => "demand", 4 => "disabled", _ => null };

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Devices;
 
 public static class FontCacheOperationalCorrelation
 {
@@ -7,7 +7,7 @@ public static class FontCacheOperationalCorrelation
         ArgumentNullException.ThrowIfNull(checks);
         token.ThrowIfCancellationRequested();
         const string boundary = " This conclusion combines bounded machine and current-user font registration evidence with the exact Windows Font Cache Service conclusion and its retained Service Control Manager history. It does not parse font files, inspect cache contents, render text or prove application behavior. It identifies no root cause, selects no repair and changes no font, registration, cache file, application data, service configuration, permission, policy or user data.";
-        WorkflowCheck Unknown(string detail) => new("Font cache readiness", CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new("Font cache readiness", CheckState.Unknown, detail + boundary);
 
         if (checks.Count == 0 || checks.Any(check => check is null))
             return Unknown("Font cache correlation evidence is missing or invalid.");

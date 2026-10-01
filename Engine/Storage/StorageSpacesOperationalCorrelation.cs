@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public static class StorageSpacesOperationalCorrelation
 {
@@ -10,7 +10,7 @@ public static class StorageSpacesOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Storage Spaces operational conclusion";
         const string boundary = " Provider results do not verify pool accessibility, redundancy, data integrity, backup recoverability, physical-disk health, volume health or application I/O. No pool, virtual disk, physical disk, volume, allocation, attachment, repair, optimization, resiliency or setting operation is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
         if (pools.Name != "Storage pools" || virtualDisks.Name != "Storage virtual disks")
             return Unknown("Storage Spaces evidence carried an unexpected identity.");
         var evidence = new[] { pools, virtualDisks };

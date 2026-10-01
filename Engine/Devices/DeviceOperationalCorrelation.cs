@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Devices;
 
 public static class DeviceOperationalCorrelation
 {
@@ -13,7 +13,7 @@ public static class DeviceOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Device operational conclusion";
         const string boundary = " This conclusion does not verify physical operation, firmware, peripheral power, cables, ports, package compatibility, update availability or vendor support. No device, driver, package, service, configuration, rescan, restart or repair action is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         if (currentDevices.Count is < 1 or > 2048 || driverHistory.Count is < 1 or > 128 ||
             currentDevices.Any(check => check is null) || driverHistory.Any(check => check is null) ||

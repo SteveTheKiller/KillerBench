@@ -7,7 +7,7 @@ internal static class FirewallProfileChecks
         const string json = "{\"profiles\":[{\"Name\":\"Domain\",\"Enabled\":\"True\"},{\"Name\":\"Private\",\"Enabled\":\"False\"},{\"Name\":\"Public\",\"Enabled\":\"NotConfigured\"}]}";
         var raw = new ToolResult(0, json, "", false);
         var checks = FirewallProfiles.Interpret(raw);
-        if (!checks.Select(c => c.State).SequenceEqual(new[] { CheckState.Information, CheckState.Attention, CheckState.Unknown }) ||
+        if (!checks.Select(c => c.State).SequenceEqual([CheckState.Information, CheckState.Attention, CheckState.Unknown]) ||
             checks.Any(c => c.Repair is not null || !ReferenceEquals(c.Evidence, raw)))
             throw new Exception("Firewall settings lost scope, evidence or non-mutating classification.");
         foreach (var invalid in new[] { raw with { Error = "partial" }, raw with { Truncated = true }, raw with { TimedOut = true },

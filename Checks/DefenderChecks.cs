@@ -16,7 +16,7 @@ internal static class DefenderChecks
             Require(finding.State == CheckState.Unknown && finding.Repair is null && finding.Evidence == incomplete,
                 "Mixed error output cannot authorize refresh or establish fresh signatures");
             var verification = RecipeChecks.Success(RepairKind.DefenderSignatures);
-            verification = verification with { Steps = verification.Steps.Select(step => step.Step.Verification ? step with { Result = incomplete } : step).ToArray() };
+            verification = verification with { Steps = [.. verification.Steps.Select(step => step.Step.Verification ? step with { Result = incomplete } : step)] };
             Require(!Repairs.IsVerified(verification), "Incomplete Defender verification cannot report a successful repair");
         }
         Require(DefenderRecovery.Interpret(fresh).State == CheckState.Clear, "Fresh status has limited clear scope");

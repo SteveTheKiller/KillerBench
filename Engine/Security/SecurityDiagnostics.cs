@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public sealed record SecurityOptions(bool Tpm = true, bool SecureBoot = true, bool Virtualization = true);
 
@@ -28,8 +28,8 @@ public static class SecurityDiagnostics
     }
 
     public static IReadOnlyList<WorkflowCheck> ApplySelection(IReadOnlyList<WorkflowCheck> checks, SecurityOptions options) =>
-        checks.Select((check, index) => (index == 0 ? options.Tpm : index == 1 ? options.SecureBoot : options.Virtualization)
-            ? check : new WorkflowCheck(check.Name, CheckState.Information, "Not selected. This protection was not checked.")).ToArray();
+        [.. checks.Select((check, index) => (index == 0 ? options.Tpm : index == 1 ? options.SecureBoot : options.Virtualization)
+            ? check : new WorkflowCheck(check.Name, CheckState.Information, "Not selected. This protection was not checked."))];
 
     public static IReadOnlyList<WorkflowCheck> Interpret(ToolResult result)
     {
@@ -68,7 +68,7 @@ public static class SecurityDiagnostics
                     }
                 }
             }
-            return checks.Select(check => check with { Evidence = result }).ToArray();
+            return [.. checks.Select(check => check with { Evidence = result })];
         }
         catch (JsonException) { return checks; }
     }
@@ -83,6 +83,6 @@ public static class SecurityDiagnostics
             if (value.ValueKind != JsonValueKind.Number || !value.TryGetInt32(out int number) || number is < 0 or > 7 || values.Contains(number)) return null;
             values.Add(number);
         }
-        return values.Contains(0) && values.Count > 1 ? null : values.ToArray();
+        return values.Contains(0) && values.Count > 1 ? null : [.. values];
     }
 }

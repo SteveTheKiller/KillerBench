@@ -1,7 +1,7 @@
 using System.Net.NetworkInformation;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public sealed record AdapterSnapshot(string Name, string[] Addresses, string[] Gateways, string[] Dns);
 

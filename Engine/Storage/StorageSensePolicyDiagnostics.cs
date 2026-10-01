@@ -2,7 +2,7 @@ using Microsoft.Win32;
 using System.Runtime.Versioning;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public sealed record StorageSensePolicyValue(string Name, bool Present, bool Valid, int? Value);
 public sealed record StorageSensePolicySnapshot(bool Complete, IReadOnlyList<StorageSensePolicyValue> Values);

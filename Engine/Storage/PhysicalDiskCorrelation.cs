@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public static class PhysicalDiskCorrelation
 {
@@ -12,7 +12,7 @@ public static class PhysicalDiskCorrelation
         ArgumentNullException.ThrowIfNull(inventory);
         ArgumentNullException.ThrowIfNull(reliability);
         const string boundary = " Provider IDs are point-in-time identities and are not mapped to drive letters. This correlation is not a surface test, SMART result, backup check, root-cause diagnosis or repair authorization. No disk, pool, volume, file, driver or storage setting changed.";
-        WorkflowCheck Unknown(string detail) => new("Physical disk evidence correlation", CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new("Physical disk evidence correlation", CheckState.Unknown, detail + boundary);
         if (inventory.Count is < 1 or > 65 || reliability.Count is < 1 or > 65)
             return Unknown("Physical-disk inventory or reliability coverage was absent or outside its supported bound.");
 

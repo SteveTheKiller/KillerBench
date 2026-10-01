@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-internal static class IsolatedDesktop
+internal static partial class IsolatedDesktop
 {
     public static int Run(string childArguments = "--isolated-ui")
     {
@@ -85,23 +85,23 @@ internal static class IsolatedDesktop
     private static extern bool CreateProcessW(string application, System.Text.StringBuilder command, nint processAttributes,
         nint threadAttributes, [MarshalAs(UnmanagedType.Bool)] bool inherit, uint flags, nint environment,
         string? directory, ref StartupInfo startup, out ProcessInfo process);
-    [DllImport("kernel32.dll")] private static extern nint GetStdHandle(int id);
-    [DllImport("kernel32.dll", SetLastError = true)] private static extern uint WaitForSingleObject(nint handle, uint milliseconds);
-    [DllImport("kernel32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool GetExitCodeProcess(nint process, out uint exit);
-    [DllImport("kernel32.dll")] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool CloseHandle(nint handle);
+    [LibraryImport("kernel32.dll")] private static partial nint GetStdHandle(int id);
+    [LibraryImport("kernel32.dll", SetLastError = true)] private static partial uint WaitForSingleObject(nint handle, uint milliseconds);
+    [LibraryImport("kernel32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool GetExitCodeProcess(nint process, out uint exit);
+    [LibraryImport("kernel32.dll")] [return: MarshalAs(UnmanagedType.Bool)] private static partial bool CloseHandle(nint handle);
 
-    [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    private static extern nint CreateDesktopW(string name, nint device, nint deviceMode, uint flags, uint access, nint attributes);
-    [DllImport("user32.dll", SetLastError = true)]
+    [LibraryImport("user32.dll", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+    private static partial nint CreateDesktopW(string name, nint device, nint deviceMode, uint flags, uint access, nint attributes);
+    [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool CloseDesktop(nint desktop);
-    [DllImport("kernel32.dll")]
-    private static extern uint GetCurrentThreadId();
-    [DllImport("user32.dll")]
-    private static extern nint GetThreadDesktop(uint threadId);
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern nint OpenInputDesktop(uint flags, [MarshalAs(UnmanagedType.Bool)] bool inherit, uint access);
+    private static partial bool CloseDesktop(nint desktop);
+    [LibraryImport("kernel32.dll")]
+    private static partial uint GetCurrentThreadId();
+    [LibraryImport("user32.dll")]
+    private static partial nint GetThreadDesktop(uint threadId);
+    [LibraryImport("user32.dll", SetLastError = true)]
+    private static partial nint OpenInputDesktop(uint flags, [MarshalAs(UnmanagedType.Bool)] bool inherit, uint access);
     [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GetUserObjectInformationW(nint handle, int index, System.Text.StringBuilder information, uint length, out uint needed);

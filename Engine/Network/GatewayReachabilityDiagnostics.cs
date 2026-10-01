@@ -3,7 +3,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public enum GatewayProbeStatus { Reachable, NoReply, Unavailable, OnLink }
 
@@ -58,7 +58,7 @@ public static class GatewayReachabilityDiagnostics
         if (unavailable > 0) detail += " One or more probe results were incomplete; do not infer overall reachability.";
         return Result(state, observations, detail);
 
-        WorkflowCheck Result(CheckState state, IReadOnlyList<GatewayProbeObservation> rows, string detail)
+        static WorkflowCheck Result(CheckState state, IReadOnlyList<GatewayProbeObservation> rows, string detail)
         {
             var evidence = new ToolResult(0, JsonSerializer.Serialize(new { complete = state != CheckState.Unknown, observations = rows }, Capture.JsonOptions), "", false);
             string paths = rows.Count == 0 ? "" : " Results: " + string.Join("; ", rows.Select(row =>
@@ -109,7 +109,7 @@ public static class GatewayReachabilityDiagnostics
             : new(0, family, address.ToString(), GatewayProbeStatus.NoReply, null, "The exact gateway address returned " + reply.Status + ".");
     }
 
-    private static IReadOnlyList<GatewayTarget> ReadTargets(string json)
+    private static GatewayTarget[] ReadTargets(string json)
     {
         using var document = JsonDocument.Parse(json, new JsonDocumentOptions { MaxDepth = 8 });
         var root = document.RootElement;
@@ -137,6 +137,6 @@ public static class GatewayReachabilityDiagnostics
             targets.Add(new(index, family, address, metric));
             if (targets.Count > 16) throw new InvalidDataException("Default gateway coverage exceeded its bound.");
         }
-        return targets.OrderBy(target => target.Metric).ThenBy(target => target.InterfaceIndex).ThenBy(target => target.AddressFamily).ToArray();
+        return [.. targets.OrderBy(target => target.Metric).ThenBy(target => target.InterfaceIndex).ThenBy(target => target.AddressFamily)];
     }
 }

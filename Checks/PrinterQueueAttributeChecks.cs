@@ -5,7 +5,7 @@ internal static class PrinterQueueAttributeChecks
 {
     internal static async Task RunAsync()
     {
-        ToolResult Evidence(object[] queues, bool complete = true) =>
+        static ToolResult Evidence(object[] queues, bool complete = true) =>
             new(0, JsonSerializer.Serialize(new { complete, queues }, Capture.JsonOptions), "", false);
 
         var ordinary = PrinterQueueAttributeDiagnostics.Interpret(Evidence([

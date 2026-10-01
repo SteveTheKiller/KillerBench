@@ -4,7 +4,7 @@ internal static class DnsClientConfigurationChecks
 {
     public static void Run()
     {
-        ToolResult Evidence(string complete = "true", string suffixes = "[]", string devolution = "true", string level = "2", string policy = "[]", string rows = "[]") =>
+        static ToolResult Evidence(string complete = "true", string suffixes = "[]", string devolution = "true", string level = "2", string policy = "[]", string rows = "[]") =>
             new(0, $"{{\"complete\":{complete},\"suffixes\":{suffixes},\"useDevolution\":{devolution},\"devolutionLevel\":{level},\"policyValues\":{policy},\"rows\":{rows}}}", "", false);
         var populated = Evidence("true", "[\"corp.example\"]", "true", "2", "[\"SearchList\"]",
             "[{\"interfaceIndex\":7,\"interfaceAlias\":\"Ethernet\",\"connectionSuffix\":\"branch.example\",\"registerAddress\":true,\"useSuffixWhenRegistering\":true},{\"interfaceIndex\":12,\"interfaceAlias\":\"VPN\",\"connectionSuffix\":\"\",\"registerAddress\":false,\"useSuffixWhenRegistering\":false}]");

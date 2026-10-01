@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Scheduling;
 
 public static class ScheduledTaskOperationalCorrelation
 {
@@ -10,7 +10,7 @@ public static class ScheduledTaskOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Scheduled task operational conclusion";
         const string boundary = " This conclusion does not verify task actions, trigger conditions, credentials, application outcomes or future runs. No task is started, stopped, enabled, disabled, registered or changed, no service is started, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         if (inventory.Count is < 1 or > 2049 || inventory.Any(check => check is null))
             return Unknown("Scheduled task inventory evidence is missing or exceeds its bound.");

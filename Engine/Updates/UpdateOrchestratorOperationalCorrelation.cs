@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public static class UpdateOrchestratorOperationalCorrelation
 {
@@ -13,7 +13,7 @@ public static class UpdateOrchestratorOperationalCorrelation
 
         const string name = "Update Orchestrator conclusion";
         const string boundary = " This bounded conclusion does not establish update applicability, download progress, installation progress, completion or restart readiness. It does not start a task, select, approve, download or install an update, request a restart, change policy or scheduling, start a service, or select a repair.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         if (service.Name != "Update Orchestrator Service state" ||
             task.Name != "Windows Update scheduled task" ||

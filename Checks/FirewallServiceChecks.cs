@@ -5,8 +5,8 @@ internal static class FirewallServiceChecks
     internal static async Task RunAsync(string scratch)
     {
         var recipes = RecipeCatalog.ForWorkflow(WorkflowKind.FirewallServices);
-        Require(recipes.Select(r => r.Action).SequenceEqual(new[] { RepairKind.BaseFilteringEngine, RepairKind.WindowsFirewall }) &&
-            recipes[1].Dependencies.SequenceEqual(new[] { recipes[0].Id }), "Firewall recipes require filtering engine first");
+        Require(recipes.Select(r => r.Action).SequenceEqual([RepairKind.BaseFilteringEngine, RepairKind.WindowsFirewall]) &&
+            recipes[1].Dependencies.SequenceEqual([recipes[0].Id]), "Firewall recipes require filtering engine first");
         Require(WorkflowCatalog.Find("firewall-services")?.Kind == WorkflowKind.FirewallServices &&
             recipes.All(firewall => RecipeCatalog.ForWorkflow(WorkflowKind.CommonProblems).Any(common => common.Id == firewall.Id)),
             "Full system scan includes the dependency-ordered firewall recovery pair");
@@ -36,8 +36,8 @@ internal static class FirewallServiceChecks
         {
             var interrupted = new Host(false) { FirstFailure = failure };
             var result = await Workflows.RunAsync(WorkflowKind.FirewallServices, true, scratch, host: interrupted);
-            Require(interrupted.Repaired.SequenceEqual(new[] { RepairKind.BaseFilteringEngine }) &&
-                interrupted.Checked.SequenceEqual(new[] { RepairKind.BaseFilteringEngine }) &&
+            Require(interrupted.Repaired.SequenceEqual([RepairKind.BaseFilteringEngine]) &&
+                interrupted.Checked.SequenceEqual([RepairKind.BaseFilteringEngine]) &&
                 result.Recipes[1].Outcome == RecipeOutcome.Blocked && result.GetExitCode() != 0,
                 "Unverified filtering-engine recovery prevents firewall inspection and start: " + failure);
             Require(result.Repairs.Count == 1 && !Repairs.IsVerified(result.Repairs[0]),

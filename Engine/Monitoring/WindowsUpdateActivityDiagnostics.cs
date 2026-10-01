@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Monitoring;
 
 public sealed record WindowsUpdateTransition(DateTimeOffset TimeUtc, ushort EventId, string State, string Title, string ErrorCode);
 
@@ -10,7 +10,7 @@ public static class WindowsUpdateActivityDiagnostics
 {
     private const string SystemChannel = "System";
     private static readonly XNamespace EventNamespace = "http://schemas.microsoft.com/win/2004/08/events/event";
-    private static readonly IReadOnlyDictionary<ushort, string> States = new Dictionary<ushort, string>
+    private static readonly Dictionary<ushort, string> States = new()
     {
         [17] = "Ready",
         [19] = "Installed",

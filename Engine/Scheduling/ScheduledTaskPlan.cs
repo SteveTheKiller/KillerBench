@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Scheduling;
 
 public enum ScheduledTaskAccountKind { InteractiveUser, LocalSystem }
 public enum ScheduledTaskOverlap { SkipNew, Queue, Parallel, StopExisting }

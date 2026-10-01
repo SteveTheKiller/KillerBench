@@ -115,16 +115,16 @@ internal static class MsiRepairChecks
             becameHealthy.Detail.Contains("No package repair", StringComparison.Ordinal),
             "An exact product that becomes installed after preparation records no command and closes the guard");
 
-        foreach (var fixture in new[]
+        foreach (var (error, outcome) in new[]
         {
             (Error: (Exception)new IOException("final activity unavailable"), Outcome: MsiRepairOutcome.Blocked),
             (Error: (Exception)new OperationCanceledException("final activity canceled"), Outcome: MsiRepairOutcome.Stopped)
         })
         {
             string folder = Folder(scratch, "final-unavailable-" + Guid.NewGuid().ToString("N"));
-            var host = new Host { FinalActivityError = fixture.Error };
+            var host = new Host { FinalActivityError = error };
             var result = await MsiRepair.RunAsync(Product, true, folder, host);
-            Require(result.Outcome == fixture.Outcome && host.Repairs == 0 &&
+            Require(result.Outcome == outcome && host.Repairs == 0 &&
                 !File.Exists(Path.Combine(folder, "msi-repair.pending.json")) &&
                 File.Exists(result.JournalPath + ".prepared.json") &&
                 result.Detail.Contains("No package repair was requested", StringComparison.Ordinal),

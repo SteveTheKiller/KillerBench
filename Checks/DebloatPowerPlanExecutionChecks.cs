@@ -38,16 +38,16 @@ internal static class DebloatPowerPlanExecutionChecks
             File.Exists(finalBlocked.JournalPath + ".prepared.json") &&
             !File.Exists(Path.Combine(root, "final-active", "debloat-power-plan.pending.json")),
             "Plan activated after preparation is not rewritten and closes the prepared guard");
-        foreach (var fixture in new[]
+        foreach (var (error, outcome) in new[]
         {
             (Error: (Exception)new IOException("final inventory unavailable"), Outcome: DebloatPowerPlanOutcome.Blocked),
             (Error: (Exception)new OperationCanceledException("final inventory canceled"), Outcome: DebloatPowerPlanOutcome.Stopped)
         })
         {
             string folder = Path.Combine(root, "final-unavailable-" + Guid.NewGuid().ToString("N"));
-            var unavailable = new Host([highOff]) { ReadErrorAt = 2, ReadError = fixture.Error };
+            var unavailable = new Host([highOff]) { ReadErrorAt = 2, ReadError = error };
             var result = await DebloatPowerPlanExecution.RunAsync(change, true, folder, unavailable);
-            Require(result.Outcome == fixture.Outcome && unavailable.Activations == 0 &&
+            Require(result.Outcome == outcome && unavailable.Activations == 0 &&
                 !File.Exists(Path.Combine(folder, "debloat-power-plan.pending.json")) &&
                 File.Exists(result.JournalPath + ".prepared.json"),
                 "Unavailable or canceled final power-plan evidence records an exact no-command outcome");

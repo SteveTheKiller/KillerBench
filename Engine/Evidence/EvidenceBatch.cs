@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Evidence;
 
 public sealed record EvidenceImportResult(string Path, TextEvidence? Evidence, InvestigationReport? Report, string? Error);
 

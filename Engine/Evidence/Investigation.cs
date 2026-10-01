@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Evidence;
 
 public sealed record ParsedLogEntry(int LineNumber, string Timestamp, string Level, string Component, string Message)
 {
@@ -117,7 +117,7 @@ public static partial class Investigation
                 {
                     var matchingPairs = pairs.Where(pair => pair.Result == code).ToArray();
                     if (matchingPairs.Length == 0) Add("SETUP-" + code, entry);
-                    else foreach (var pair in matchingPairs) Add("SETUP-" + code + "-" + pair.Extend, entry);
+                    else foreach (var (_, extend) in matchingPairs) Add("SETUP-" + code + "-" + extend, entry);
                 }
             }
         }
@@ -133,11 +133,11 @@ public static partial class Investigation
                 _ => ("KB-SETUP-001", "Windows Setup error entries recorded", "Recognized Windows Setup components logged error or fatal entries. This is a review lead, not a diagnosis of why the upgrade failed.", "Review these lines together with setupact.log and the relevant setup phase. Earlier errors can be handled or superseded by a later successful attempt.", SetupReference)
             };
             findings.Add(new(id, 1, title, SetupSeverity(group.Key), "Recorded event", explanation, next, url, group.Value.Count,
-                (group.Key == "MSI-ACTION"
+                [.. (group.Key == "MSI-ACTION"
                     ? group.Value.Take(2).SelectMany(e => new[] { e.LineNumber }.Concat(Enumerable.Range(Math.Max(1, e.LineNumber - 2), e.LineNumber - Math.Max(1, e.LineNumber - 2)))).Distinct()
                     : group.Value.Take(8).Select(e => e.LineNumber))
                 .Select(line => new EvidenceReference(evidence.Source, line,
-                    evidence.Lines[line - 1][..Math.Min(evidence.Lines[line - 1].Length, 640)])).ToArray()));
+                    evidence.Lines[line - 1][..Math.Min(evidence.Lines[line - 1].Length, 640)]))]));
         }
         return new("1", evidence.Source, msi ? (cbs || setup ? "Mixed Windows Installer / servicing" : "Windows Installer") : cbs && setup ? "Mixed CBS / Windows Setup" : cbs ? "CBS / CSI" : setup ? "Windows Setup" : "Unrecognized text",
             codes.LinesAnalyzed, entries.Count, partial, entries.AsReadOnly(), findings.AsReadOnly(), codes, Limitation);
@@ -149,8 +149,9 @@ public static partial class Investigation
         }
     }
 
-    public static string ToJson(InvestigationReport report) => JsonSerializer.Serialize(report,
-        new JsonSerializerOptions { WriteIndented = true, PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+    private static readonly JsonSerializerOptions ReportJsonOptions = new() { WriteIndented = true, PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
+    public static string ToJson(InvestigationReport report) => JsonSerializer.Serialize(report, ReportJsonOptions);
 
     private static bool IsKnownCbsCode(string code)
     {

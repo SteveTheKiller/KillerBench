@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Debloat;
 
 [Flags]
 public enum DebloatAreas
@@ -303,7 +303,7 @@ public static class DebloatPlanning
         if (areas.HasFlag(DebloatAreas.ConsumerContent))
         { selected.Add(PrivacyArea.Advertising); selected.Add(PrivacyArea.Spotlight); }
         if (areas.HasFlag(DebloatAreas.TaskbarAndStart)) selected.Add(PrivacyArea.Advertising);
-        return selected.OrderBy(area => area).ToArray();
+        return [.. selected.OrderBy(area => area)];
     }
 
     private static WorkflowCheck AreaCheck((DebloatAreas Area, string Name, string Consequence) entry,

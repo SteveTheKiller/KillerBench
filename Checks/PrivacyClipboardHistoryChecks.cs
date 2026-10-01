@@ -20,14 +20,14 @@ internal static class PrivacyClipboardHistoryChecks
         var enableHost = new Host([absent, enabled]);
         var enabledResult = await PrivacyClipboardHistoryExecution.RunAsync(true, true, enableFolder, enableHost);
         Require(enabledResult.Outcome == PrivacyChangeOutcome.Verified && enabledResult.GetExitCode() == 0 &&
-            enableHost.Writes.SequenceEqual(new bool?[] { true }) && enabledResult.JournalPath is not null &&
+            enableHost.Writes.SequenceEqual([true]) && enabledResult.JournalPath is not null &&
             File.Exists(enabledResult.JournalPath) && !File.Exists(Path.Combine(enableFolder, "privacy-clipboard-history.pending.json")),
             "Absent current-user value is enabled once with durable preparation and exact verification");
 
         var undoHost = new Host([enabled, absent]);
         var undone = await PrivacyClipboardHistoryExecution.UndoAsync(enabledResult.JournalPath!,
             Path.Combine(root, "undo"), undoHost);
-        Require(undone.Outcome == PrivacyChangeOutcome.Verified && undoHost.Writes.SequenceEqual(new bool?[] { null }),
+        Require(undone.Outcome == PrivacyChangeOutcome.Verified && undoHost.Writes.SequenceEqual([null]),
             "Undo restores an originally absent value and verifies exact absence");
 
         string interruptedUndoFolder = Path.Combine(root, "interrupted-undo");
@@ -46,7 +46,7 @@ internal static class PrivacyClipboardHistoryChecks
         var disableHost = new Host([enabled, disabled]);
         var disabledResult = await PrivacyClipboardHistoryExecution.RunAsync(false, true,
             Path.Combine(root, "disable"), disableHost);
-        Require(disabledResult.Outcome == PrivacyChangeOutcome.Verified && disableHost.Writes.SequenceEqual(new bool?[] { false }),
+        Require(disabledResult.Outcome == PrivacyChangeOutcome.Verified && disableHost.Writes.SequenceEqual([false]),
             "Enabled current-user value is disabled once and verified");
 
         var already = new Host([enabled]);

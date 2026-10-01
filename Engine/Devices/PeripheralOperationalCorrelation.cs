@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Devices;
 
 public static class PeripheralOperationalCorrelation
 {
@@ -13,17 +13,17 @@ public static class PeripheralOperationalCorrelation
     {
         ArgumentNullException.ThrowIfNull(checks);
         token.ThrowIfCancellationRequested();
-        var definition = Definition(kind);
+        var (title, evidencePrefixes, excludedBehavior) = Definition(kind);
         const string summaryName = "Focused service readiness";
         string boundary = " This conclusion combines current Plug and Play configuration, bounded driver inventory, exact service availability and retained Service Control Manager history. It does not prove " +
-            definition.ExcludedBehavior + ". It identifies no root cause, selects no repair and changes no device, driver, service configuration, permission, policy, credential or user data.";
-        WorkflowCheck Unknown(string detail) => new(definition.Title + " readiness", CheckState.Unknown, detail + boundary);
+            excludedBehavior + ". It identifies no root cause, selects no repair and changes no device, driver, service configuration, permission, policy, credential or user data.";
+        WorkflowCheck Unknown(string detail) => new(title + " readiness", CheckState.Unknown, detail + boundary);
 
         if (checks.Count == 0 || checks.Any(check => check is null))
             return Unknown("Peripheral correlation evidence is missing or invalid.");
 
         var service = checks.Where(check => check.Name == summaryName).ToArray();
-        var devices = checks.Where(check => IsDeviceEvidence(check.Name, definition.EvidencePrefixes)).ToArray();
+        var devices = checks.Where(check => IsDeviceEvidence(check.Name, evidencePrefixes)).ToArray();
         if (service.Length != 1 || devices.Length == 0 ||
             devices.Select(check => check.Name).Any(string.IsNullOrWhiteSpace))
             return Unknown("The expected device or focused-service conclusion was missing or duplicated.");
@@ -37,9 +37,9 @@ public static class PeripheralOperationalCorrelation
         if (incomplete > 0)
             return Unknown(detail + "Recollect the incomplete device, driver or service evidence before drawing a peripheral readiness conclusion.");
         if (attention > 0)
-            return new(definition.Title + " readiness", CheckState.Attention,
+            return new(title + " readiness", CheckState.Attention,
                 detail + "Review the current device and service findings. Historical service failures alone do not establish a current device outage." + boundary);
-        return new(definition.Title + " readiness", CheckState.Information,
+        return new(title + " readiness", CheckState.Information,
             detail + "No current configuration or service-availability issue was established within the checked scope." + boundary);
     }
 

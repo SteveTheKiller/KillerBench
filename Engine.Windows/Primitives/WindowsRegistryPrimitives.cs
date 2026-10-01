@@ -2,7 +2,7 @@ using System.Globalization;
 using KillerBench.Engine.Core;
 using Microsoft.Win32;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Primitives;
 
 /// <summary>Bounded registry primitives. Keys are limited to HKLM and HKCU relative paths without traversal; values are read and written one at a time with the prior value retained in the action's raw evidence.</summary>
 public static class WindowsRegistryPrimitives
@@ -40,7 +40,7 @@ public static class WindowsRegistryPrimitives
         }
     }
 
-    public static string? Render(object? value, RegistryValueKind kind) => value switch
+    public static string? Render(object? value, RegistryValueKind _) => value switch
     {
         null => null,
         int number => unchecked((uint)number).ToString(CultureInfo.InvariantCulture),

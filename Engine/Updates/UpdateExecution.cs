@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record UpdateExecutionOutcome(UpdateSelection Selection, bool Installed, bool RestartRequired, string Detail);
 public sealed record UpdateExecutionResult(string Status, string JournalPath, IReadOnlyList<UpdateExecutionOutcome> Outcomes)

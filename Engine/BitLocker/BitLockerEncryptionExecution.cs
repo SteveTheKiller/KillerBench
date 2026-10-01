@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.BitLocker;
 
 public sealed record BitLockerEncryptionState(string Volume, string Identity, string VolumeStatus,
     string ProtectionStatus, string LockStatus, int EncryptionPercentage, string EncryptionMethod,
@@ -458,7 +458,7 @@ public sealed class WindowsBitLockerEncryptionHost : IBitLockerEncryptionHost
         var arguments = new List<string> { "-on", options.Volume.ToUpperInvariant(), "-em", method };
         if (options.UsedSpaceOnly) arguments.Add("-usedspaceonly");
         arguments.Add("-skiphardwaretest");
-        return BoundedTool.RunAsync(new RepairStep("manage-bde.exe", arguments.ToArray(), false),
+        return BoundedTool.RunAsync(new RepairStep("manage-bde.exe", [.. arguments], false),
             TimeSpan.FromMinutes(5), progress, token);
     }
 

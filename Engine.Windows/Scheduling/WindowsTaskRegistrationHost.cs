@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Scheduling;
 
 public sealed class WindowsTaskRegistrationHost(DateOnly startDate) : ITaskRegistrationHost
 {

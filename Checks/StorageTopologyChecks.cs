@@ -4,7 +4,7 @@ internal static class StorageTopologyChecks
 {
     public static void Run()
     {
-        ToolResult Evidence(string complete = "true", string disks = "[]", string partitions = "[]", string volumes = "[]") =>
+        static ToolResult Evidence(string complete = "true", string disks = "[]", string partitions = "[]", string volumes = "[]") =>
             new(0, $"{{\"complete\":{complete},\"disks\":{disks},\"partitions\":{partitions},\"volumes\":{volumes}}}", "", false);
         const string disk = "[{\"number\":0,\"name\":\"Fixture disk\",\"style\":\"GPT\",\"health\":\"Healthy\",\"operational\":[\"Online\"],\"boot\":true,\"system\":true,\"readOnly\":false,\"offline\":false,\"size\":1000}]";
         const string partition = "[{\"disk\":0,\"number\":1,\"letter\":\"C\",\"type\":\"Basic\",\"size\":900,\"boot\":true,\"system\":true,\"hidden\":false,\"readOnly\":false}]";

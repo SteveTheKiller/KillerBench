@@ -1,14 +1,17 @@
 using System.Text.RegularExpressions;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Cleanup;
 
 public interface IComponentCleanupHost
 {
     Task<ToolResult> RunAsync(RepairStep step, IProgress<string>? progress, CancellationToken token);
 }
 
-public static class ComponentCleanup
+public static partial class ComponentCleanup
 {
+    [GeneratedRegex(@"^[ \t]*Component Store Cleanup Recommended[ \t]*:[ \t]*(Yes|No)[ \t]*\r?$", RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex RecommendationRegex();
+
     public static RepairStep Step(bool verification) => new("dism.exe",
         ["/Online", "/Cleanup-Image", verification ? "/AnalyzeComponentStore" : "/StartComponentCleanup", "/NoRestart", "/English"], verification);
 
@@ -18,7 +21,7 @@ public static class ComponentCleanup
             "Cleanup recommendation was not verified. No maintenance selected.", Evidence: result);
         if (result.ExitCode != 0 || result.Truncated || result.TimedOut || !string.IsNullOrWhiteSpace(result.Error) ||
             !result.Output.Contains("The operation completed successfully.", StringComparison.OrdinalIgnoreCase)) return unknown;
-        var matches = Regex.Matches(result.Output, @"^[ \t]*Component Store Cleanup Recommended[ \t]*:[ \t]*(Yes|No)[ \t]*\r?$", RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        var matches = RecommendationRegex().Matches(result.Output);
         if (matches.Count != 1) return unknown;
         bool recommended = matches[0].Groups[1].Value.Equals("Yes", StringComparison.OrdinalIgnoreCase);
         return new("Component-store cleanup", recommended ? CheckState.Repairable : CheckState.Clear,

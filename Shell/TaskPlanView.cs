@@ -8,7 +8,7 @@ namespace KillerBench;
 
 public partial class MainWindow
 {
-    private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, ScheduledTaskInspectionReport> taskInspectionReports = new();
+    private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, ScheduledTaskInspectionReport> taskInspectionReports = [];
 
     private static WorkflowResult BuildTaskInspectionWorkflowReport(ScheduledTaskInspectionReport inspection)
     {
@@ -53,13 +53,12 @@ public partial class MainWindow
         TaskDraftWeekly.Visibility = TaskDraftSchedule.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
         TaskDraftMonthly.Visibility = TaskDraftSchedule.SelectedIndex == 2 ? Visibility.Visible : Visibility.Collapsed;
         TaskDraftTime.IsEnabled = TaskDraftSchedule.SelectedIndex != 3;
-        if (TaskDraftZone is not null) TaskDraftZone.IsEnabled = TaskDraftSchedule.SelectedIndex != 3;
+        TaskDraftZone?.IsEnabled = TaskDraftSchedule.SelectedIndex != 3;
     }
 
     private void OnTaskRegistrationConsentChanged(object sender, RoutedEventArgs e)
     {
-        if (TaskRegistrationButton is not null)
-            TaskRegistrationButton.Content = TaskRegistrationConsent.IsChecked == true
+        TaskRegistrationButton?.Content =TaskRegistrationConsent.IsChecked == true
                 ? "Create disabled task"
                 : "Preview registration";
     }

@@ -8,7 +8,7 @@ internal static class KnowledgeHttpSourceChecks
     internal static async Task RunAsync()
     {
         byte[] payload = "{\"fixture\":true}"u8.ToArray();
-        byte[] signature = Enumerable.Range(0, 64).Select(value => (byte)value).ToArray();
+        byte[] signature = [.. Enumerable.Range(0, 64).Select(value => (byte)value)];
         var handler = new FixtureHandler(request => request.RequestUri!.AbsolutePath switch
         {
             "/errors.json" => Reply(payload),
@@ -32,7 +32,8 @@ internal static class KnowledgeHttpSourceChecks
         var oversized = new HttpKnowledgeCandidateSource(oversizedClient,
             [new("errors", new("https://updates.example/errors.json"), new("https://updates.example/errors.sig"))]);
         await Reject(() => oversized.FetchAsync("errors", CancellationToken.None), "Oversized database response accepted");
-        RejectConstruction(() => new HttpKnowledgeCandidateSource(client,
+        // The constructor validates endpoints; the instance itself is intentionally unused.
+        RejectConstruction(() => _ = new HttpKnowledgeCandidateSource(client,
             [new("errors", new("http://updates.example/errors.json"), new("https://updates.example/errors.sig"))]),
             "Non-HTTPS database endpoint accepted");
 

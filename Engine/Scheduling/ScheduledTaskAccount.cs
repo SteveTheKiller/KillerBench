@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Scheduling;
 
 public sealed record ScheduledTaskAccountResult(string RequestedAccount, string? Sid, string Detail, ToolResult Evidence);
 

@@ -5,7 +5,7 @@ internal static class StorageReliabilityChecks
     internal static void Run()
     {
         const string record = "{\"DeviceId\":\"0\",\"Temperature\":30,\"TemperatureMax\":70,\"Wear\":10,\"ReadErrorsUncorrected\":0,\"WriteErrorsUncorrected\":0}";
-        ToolResult Evidence(string value) => new(0, "{\"counters\":[" + value + "]}", "", false);
+        static ToolResult Evidence(string value) => new(0, "{\"counters\":[" + value + "]}", "", false);
         var original = Evidence(record);
         var denied = original with { ExitCode = 1, Error = "MI RESULT 2,Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand" };
         var deniedCheck = StorageReliability.Interpret(denied).Single();

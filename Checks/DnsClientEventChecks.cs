@@ -4,12 +4,14 @@ using KillerBench.Engine;
 
 internal static class DnsClientEventChecks
 {
+    private static readonly string[] ExpectedChannels = ["System", "Microsoft-Windows-DNS-Client/Operational"];
+
     internal static async Task RunAsync()
     {
-        string Entry(int id, int level = 2, ulong record = 1, string provider = "Microsoft-Windows-DNS-Client") =>
+        static string Entry(int id, int level = 2, ulong record = 1, string provider = "Microsoft-Windows-DNS-Client") =>
             $"<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='{provider}'/><EventID>{id}</EventID><EventRecordID>{record}</EventRecordID><Level>{level}</Level><TimeCreated SystemTime='2026-09-15T00:00:00Z'/></System><EventData><Data Name='QueryName'>PRIVATE-NAME</Data><Data Name='ServerAddress'>192.0.2.53</Data><Data Name='ProcessName'>PRIVATE-PROCESS</Data></EventData></Event>";
 
-        Require(DnsClientEvents.Channels.SequenceEqual(new[] { "System", "Microsoft-Windows-DNS-Client/Operational" }),
+        Require(DnsClientEvents.Channels.SequenceEqual(ExpectedChannels),
             "DNS Client failure sources are explicit and stable");
         foreach (string channel in DnsClientEvents.Channels)
         {

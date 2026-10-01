@@ -4,11 +4,11 @@ internal static class ServicingServiceStateChecks
 {
     internal static async Task RunAsync()
     {
-        ToolResult State(string name, int state, string label) => new(0,
+        static ToolResult State(string name, int state, string label) => new(0,
             $"SERVICE_NAME: {name}\r\n        STATE              : {state}  {label}\r\n", "", false);
         var services = ServicingServiceStateDiagnostics.Services;
         Require(services.Count == 6 && services.Select(service => service.Name).SequenceEqual(
-            new[] { "wuauserv", "BITS", "CryptSvc", "TrustedInstaller", "WaaSMedicSvc", "UsoSvc" }, StringComparer.Ordinal),
+            ["wuauserv", "BITS", "CryptSvc", "TrustedInstaller", "WaaSMedicSvc", "UsoSvc"], StringComparer.Ordinal),
             "Servicing state catalog retains the exact six-service chain");
         Require(ServicingServiceStateDiagnostics.Interpret(services[4], State("WaaSMedicSvc", 1, "STOPPED"), 3) is
             { State: CheckState.Information, Repair: null } idle && idle.Detail.Contains("can be normal while idle"),
@@ -41,7 +41,7 @@ internal static class ServicingServiceStateChecks
             return Task.FromResult((State(service.Name, 1, "STOPPED"), (int?)3));
         });
         Require(selected is [{ Name: "Windows Update Medic Service state", State: CheckState.Information, Repair: null }] &&
-            called.SequenceEqual(new[] { "WaaSMedicSvc" }),
+            called.SequenceEqual(["WaaSMedicSvc"]),
             "Focused collection reads only the selected exact servicing service");
         try
         {

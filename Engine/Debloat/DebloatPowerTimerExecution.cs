@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Debloat;
 
 public enum DebloatPowerTimerOutcome { Preview, Blocked, Verified, Uncertain, Stopped }
 
@@ -105,13 +105,13 @@ public static class DebloatPowerTimerExecution
                 Report(progress, result.Detail);
                 return result;
             }
-            foreach (var item in Settings(request))
+            foreach (var (timerSetting, timerMinutes) in Settings(request))
             {
-                Report(progress, "Applying " + Label(item.Setting) + ": " + item.Minutes + " minute(s).");
+                Report(progress, "Applying " + Label(timerSetting) + ": " + timerMinutes + " minute(s).");
                 commandDispatched = true;
-                var command = await Required(ct => host.ApplyAsync(item.Setting, item.Minutes, ct),
-                    Label(item.Setting), token, limit).ConfigureAwait(false);
-                commands.Add(new(item.Setting, item.Minutes, command));
+                var command = await Required(ct => host.ApplyAsync(timerSetting, timerMinutes, ct),
+                    Label(timerSetting), token, limit).ConfigureAwait(false);
+                commands.Add(new(timerSetting, timerMinutes, command));
                 if (command.ExitCode != 0 || command.TimedOut || command.Truncated || !string.IsNullOrWhiteSpace(command.Error))
                 {
                     result = new(request, DebloatPowerTimerOutcome.Uncertain,

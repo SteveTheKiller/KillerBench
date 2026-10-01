@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Automation;
 
 public sealed record MacePackageRemovalEligibility(bool Eligible, string Detail, MaceCandidate? Candidate = null);
 
@@ -58,16 +58,16 @@ public static class MacePackageRemoval
         if (review.RemovalProviderEvidence is not { Complete: true } providers)
             return Blocked("Removal-provider evidence must be complete.");
 
-        MaceCandidate[] matches = review.Candidates.Where(item =>
-            item.Identity.Equals(identity, StringComparison.OrdinalIgnoreCase)).ToArray();
+        MaceCandidate[] matches = [.. review.Candidates.Where(item =>
+            item.Identity.Equals(identity, StringComparison.OrdinalIgnoreCase))];
         if (matches.Length != 1) return Blocked(matches.Length == 0
             ? "The exact selected package is not present in the current review."
             : "The exact selected package identity is ambiguous.");
         MaceCandidate candidate = matches[0];
-        MaceRemovalProviderCandidate[] providerMatches = providers.Candidates.Where(item =>
+        MaceRemovalProviderCandidate[] providerMatches = [.. providers.Candidates.Where(item =>
             item.Identity.Equals(identity, StringComparison.OrdinalIgnoreCase) &&
             item.RegistrationType.Equals(candidate.RegistrationType, StringComparison.Ordinal) &&
-            item.Scope.Equals(candidate.Scope, StringComparison.Ordinal)).ToArray();
+            item.Scope.Equals(candidate.Scope, StringComparison.Ordinal))];
         if (providerMatches.Length != 1 || providerMatches[0] is not
             { ProviderIdentified: true, ProviderKind: MaceRemovalProviderKind.CurrentAccountAppPackage })
             return Blocked("The exact selected package does not have a supported current-account removal provider.");
@@ -128,7 +128,7 @@ public static class MacePackageRemoval
             MacePackageRemovalEligibility boundaryEligibility = Evaluate(boundary, identity);
             if (!SameOptions(options, boundary.Options) || !boundaryEligibility.Eligible ||
                 !SameCandidate(repeatedEligibility.Candidate, boundaryEligibility.Candidate!))
-                return await CloseAsync(root, pendingPath, pending, MacePackageRemovalOutcome.Blocked,
+                return await CloseAsync(root, pendingPath,MacePackageRemovalOutcome.Blocked,
                     "Exact package or safeguard evidence changed at the final boundary. No package removal was requested.", token).ConfigureAwait(false);
 
             Report(progress, "Requesting removal of the exact current-account package.");
@@ -143,18 +143,18 @@ public static class MacePackageRemoval
                     PendingPath: pendingPath);
             bool remains = after.Candidates.Any(item => item.Identity.Equals(identity, StringComparison.OrdinalIgnoreCase));
             if (!remains)
-                return await CloseAsync(root, pendingPath, pending, MacePackageRemovalOutcome.Verified,
+                return await CloseAsync(root, pendingPath,MacePackageRemovalOutcome.Verified,
                     "The exact current-account package is absent from complete fresh inventory. No data, credential, policy or other package action was requested.", token).ConfigureAwait(false);
             string commandState = command.ExitCode == 0 && !command.TimedOut && !command.Truncated && string.IsNullOrWhiteSpace(command.Error)
                 ? "The provider reported completion, but the package remains registered."
                 : "The provider did not report clean completion and the package remains registered.";
-            return await CloseAsync(root, pendingPath, pending, MacePackageRemovalOutcome.NotApplied,
+            return await CloseAsync(root, pendingPath,MacePackageRemovalOutcome.NotApplied,
                 commandState + " The request will not be repeated automatically.", token).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
             if (!dispatched)
-                return await CloseAsync(root, pendingPath, pending, MacePackageRemovalOutcome.Stopped,
+                return await CloseAsync(root, pendingPath,MacePackageRemovalOutcome.Stopped,
                     "Package removal stopped before dispatch. No package removal was requested.", CancellationToken.None).ConfigureAwait(false);
             return new(MacePackageRemovalOutcome.Stopped,
                 "Package removal stopped after dispatch. The pending record remains and the request will not be repeated automatically.",
@@ -165,7 +165,7 @@ public static class MacePackageRemoval
             System.ComponentModel.Win32Exception)
         {
             if (!dispatched)
-                return await CloseAsync(root, pendingPath, pending, MacePackageRemovalOutcome.Blocked,
+                return await CloseAsync(root, pendingPath,MacePackageRemovalOutcome.Blocked,
                     "Final evidence was unavailable before dispatch. No package removal was requested. " + error.GetType().Name + ".",
                     CancellationToken.None).ConfigureAwait(false);
             return new(MacePackageRemovalOutcome.Uncertain,
@@ -219,7 +219,7 @@ public static class MacePackageRemoval
     }
 
     private static async Task<MacePackageRemovalResult> CloseAsync(string root, string pendingPath,
-        MacePackageRemovalPendingRecord pending, MacePackageRemovalOutcome outcome, string detail,
+        MacePackageRemovalOutcome outcome, string detail,
         CancellationToken token)
     {
         string archive = Path.Combine(root, "mace-package-removal-" +

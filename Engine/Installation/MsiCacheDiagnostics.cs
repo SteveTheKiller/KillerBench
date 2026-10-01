@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Installation;
 
 public sealed record MsiCacheObservation(string ProductCode, string Name, string Context, bool Complete,
     bool PackageConfigured, string? PackageFile, bool? PackageVisible, string? Issue);

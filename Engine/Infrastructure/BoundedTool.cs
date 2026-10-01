@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Infrastructure;
 
 internal static class BoundedTool
 {

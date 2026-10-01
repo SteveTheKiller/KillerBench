@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Workflows;
 
 internal sealed class DiagnosticProgress(IProgress<string> observer) : IProgress<string>
 {

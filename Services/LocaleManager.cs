@@ -37,7 +37,7 @@ namespace KillerBench.Services
             string name = culture.Name;
             string language = culture.TwoLetterISOLanguageName;
             if (language == "zh")
-                return name.IndexOf("Hant", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                return name.Contains("Hant", StringComparison.OrdinalIgnoreCase) ||
                        name.EndsWith("-TW", StringComparison.OrdinalIgnoreCase) ||
                        name.EndsWith("-HK", StringComparison.OrdinalIgnoreCase) ||
                        name.EndsWith("-MO", StringComparison.OrdinalIgnoreCase)

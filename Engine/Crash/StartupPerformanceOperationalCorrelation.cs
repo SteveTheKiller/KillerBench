@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Crash;
 
 public static class StartupPerformanceOperationalCorrelation
 {
@@ -10,7 +10,7 @@ public static class StartupPerformanceOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Startup performance conclusion";
         const string boundary = " This bounded review does not identify a current bottleneck or prove startup speed, shutdown speed, application behavior, driver behavior, storage performance or power behavior. No startup item, service, application, driver, task, power setting, policy or restart state is changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
         if (performanceHistory.Name != "Startup and shutdown performance" || restart.Name != "Restart")
             return Unknown("Startup performance evidence carried an unexpected identity.");
         if (performanceHistory.EffectiveState == CheckState.Unknown || restart.EffectiveState == CheckState.Unknown)

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public static class StorageOperationalCorrelation
 {
@@ -24,7 +24,7 @@ public static class StorageOperationalCorrelation
 
         const string name = "Storage operational correlation";
         const string boundary = " This is a bounded operational review, not a surface test, filesystem proof, backup verification or failure prediction. No file, disk, pool, virtual disk, partition, volume, mount point, service, job, optimization, snapshot, policy or restart state changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var current = new[]
         {

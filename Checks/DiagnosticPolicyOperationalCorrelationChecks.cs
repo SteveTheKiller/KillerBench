@@ -10,9 +10,9 @@ internal static class DiagnosticPolicyOperationalCorrelationChecks
             "Historical Diagnostic Policy records alone remain informational");
         Require(Check(events: CheckState.Unknown, service: CheckState.Attention).State == CheckState.Unknown,
             "Incomplete Diagnostic Policy history takes precedence over current attention");
-        Require(DiagnosticPolicyOperationalCorrelation.Check(Inputs().Append(new("Recent Diagnostic Policy events", CheckState.Information, "duplicate")).ToArray()).State == CheckState.Unknown,
+        Require(DiagnosticPolicyOperationalCorrelation.Check([.. Inputs(), new("Recent Diagnostic Policy events", CheckState.Information, "duplicate")]).State == CheckState.Unknown,
             "Duplicate Diagnostic Policy evidence identity fails closed");
-        Require(DiagnosticPolicyOperationalCorrelation.Check(Inputs().Where(check => check.Name != "Focused service readiness").ToArray()).State == CheckState.Unknown,
+        Require(DiagnosticPolicyOperationalCorrelation.Check([.. Inputs().Where(check => check.Name != "Focused service readiness")]).State == CheckState.Unknown,
             "Missing Diagnostic Policy evidence identity fails closed");
         try { DiagnosticPolicyOperationalCorrelation.Check(Inputs(), new CancellationToken(true)); throw new Exception("Canceled Diagnostic Policy correlation completed"); }
         catch (OperationCanceledException) { }

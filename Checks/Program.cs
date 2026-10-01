@@ -727,11 +727,11 @@ internal static class Program
             var analysis = LogAnalyzer.Analyze(fixture);
             Require(analysis.SourceTruncated && analysis.Observations.Count == 2, "Preserve coverage and reject malformed codes");
             var observed = analysis.Observations.Single(code => code.Code == "0x800F081F");
-            Require(observed.Occurrences == 2 && observed.Evidence.Select(e => e.LineNumber).SequenceEqual(new[] { 2, 3 }), "Normalize codes and preserve evidence locations");
+            Require(observed.Occurrences == 2 && observed.Evidence.Select(e => e.LineNumber).SequenceEqual([2, 3]), "Normalize codes and preserve evidence locations");
             Require(LogAnalyzer.Analyze(new("clean", ["error alone is not a code"], false)).Observations.Count == 0, "No invented findings from generic error text");
-            var bounded = LogAnalyzer.Analyze(new("many", Enumerable.Range(0, 300).Select(i => $"0x{i:X8}").ToArray(), false));
+            var bounded = LogAnalyzer.Analyze(new("many", [.. Enumerable.Range(0, 300).Select(i => $"0x{i:X8}")], false));
             Require(bounded.Observations.Count == 256 && bounded.ObservationsTruncated, "Bound distinct observations");
-            var repeats = LogAnalyzer.Analyze(new("repeat", Enumerable.Repeat("0x80000001", 20).ToArray(), false));
+            var repeats = LogAnalyzer.Analyze(new("repeat", [.. Enumerable.Repeat("0x80000001", 20)], false));
             Require(repeats.Observations[0].Occurrences == 20 && repeats.Observations[0].Evidence.Count == 8, "Count beyond retained reference limit");
             try { LogAnalyzer.Analyze(fixture, new CancellationToken(true)); throw new Exception("Cancellation ignored"); }
             catch (OperationCanceledException) { }
@@ -930,7 +930,7 @@ internal static class Program
                         ((ComboBox)window.FindName("InstalledApplicationScopeChoice")).SelectedIndex = 0;
                         string inventoryFile = Path.Combine(scratch, "application-inventory.json");
                         var inventoryEvidence = new ToolResult(0, "{\"scope\":\"Machine\",\"complete\":true,\"applications\":[]}", "", false);
-                        File.WriteAllText(inventoryFile, System.Text.Json.JsonSerializer.Serialize(new { Evidence = inventoryEvidence }, KillerBench.Engine.Capture.JsonOptions));
+                        File.WriteAllText(inventoryFile, System.Text.Json.JsonSerializer.Serialize(new { Evidence = inventoryEvidence }, KillerBench.Engine.Evidence.Capture.JsonOptions));
                         var compareMethod = window.GetType().GetMethod("CompareApplicationFilesAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
                         var comparisonTask = (Task)compareMethod.Invoke(window, [inventoryFile, inventoryFile])!;
                         var deadline = DateTime.UtcNow.AddSeconds(35);
@@ -1580,7 +1580,7 @@ internal static class Program
             Require(window.FindName("ReportPane") is Border { Visibility: Visibility.Visible } &&
                 ((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Start here"),
                 "Report view leads with a distinct next-action section");
-            using var historicalRecord = JsonDocument.Parse(JsonSerializer.Serialize(completedWorkflow, KillerBench.Engine.Capture.JsonOptions));
+            using var historicalRecord = JsonDocument.Parse(JsonSerializer.Serialize(completedWorkflow, KillerBench.Engine.Evidence.Capture.JsonOptions));
             var historicalSnapshot = new WorkflowJournalSnapshot("fixture-history.json", "fixture", "Services", "Needs attention",
                 DateTimeOffset.UtcNow, 1, 0, historicalRecord.RootElement.Clone());
             var historicalReport = (WorkflowResult)typeof(KillerBench.MainWindow).GetMethod("BuildHistoricalWorkflowReport",
@@ -1597,8 +1597,8 @@ internal static class Program
                 "Historical workflow evidence opens the readable report instead of raw JSON only");
             var largeWorkflow = completedWorkflow with
             {
-                Checks = Enumerable.Range(1, 16).Select(index => new WorkflowCheck("Review item " + index,
-                    CheckState.Attention, "Fixture attention item")).ToArray()
+                Checks = [.. Enumerable.Range(1, 16).Select(index => new WorkflowCheck("Review item " + index,
+                    CheckState.Attention, "Fixture attention item"))]
             };
             typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [largeWorkflow]);
             var reportContent = (StackPanel)window.FindName("ReportContent");
@@ -1615,8 +1615,8 @@ internal static class Program
                 ]
             };
             typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [prioritizedWorkflow]);
-            string[] cardTitles = ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>()
-                .Select(card => ((StackPanel)card.Child).Children.OfType<TextBlock>().First().Text).ToArray();
+            string[] cardTitles = [.. ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>()
+                .Select(card => ((StackPanel)card.Child).Children.OfType<TextBlock>().First().Text)];
             Require(cardTitles.Take(4).SequenceEqual(["Recommended next step", "Repairable item", "Attention item", "Unknown item"]),
                 "Report orders actionable findings before attention and incomplete evidence");
             var repairNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review System files repair"));
@@ -1690,7 +1690,7 @@ internal static class Program
         await File.WriteAllBytesAsync(path, [65, 0, 66, 0, 67]);
         try { await TextEvidence.ReadAsync(path, CancellationToken.None); throw new Exception("Binary input accepted"); }
         catch (InvalidDataException) { }
-        var many = new TextEvidence("synthetic", Enumerable.Repeat("line", 3000).ToArray(), false);
+        var many = new TextEvidence("synthetic", [.. Enumerable.Repeat("line", 3000)], false);
         Require(many.Excerpt("", out matches).Contains("Display limited") && matches == 3000, "Display bound is explicit");
         Console.WriteLine("PASS: newlines, search references, source bound, cancellation, binary rejection, display bound.");
     }

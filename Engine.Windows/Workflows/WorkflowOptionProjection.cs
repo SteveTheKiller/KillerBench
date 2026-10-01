@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Workflows;
 
 public static class WorkflowOptionProjection
 {
@@ -160,7 +160,7 @@ public static class WorkflowOptionProjection
                 value == option.DefaultValue)
                 continue;
             if (option.Control == WorkflowOptionControl.Toggle && value == "false") continue;
-            selections.Add(option.Label + ": " + DisplayValue(set.WorkflowKey, option.Key, value));
+            selections.Add(option.Label + ": " + DisplayValue(option.Key, value));
         }
 
         string detail = selections.Count == 0
@@ -173,7 +173,7 @@ public static class WorkflowOptionProjection
     private static bool IsEnabled(WorkflowOptionDefinition option, IReadOnlyDictionary<string, string> values) =>
         option.EnabledWhen is null || values.GetValueOrDefault(option.EnabledWhen.OptionKey) == option.EnabledWhen.Value;
 
-    private static string DisplayValue(string workflowKey, string key, string value)
+    private static string DisplayValue(string key, string value)
     {
         if (key is "backupFile" or "installSwitches" or "protectorId") return "supplied";
         if (key == "targetHostnames")
@@ -201,7 +201,7 @@ public static class WorkflowOptionProjection
         EnumValue(values, "source", UpdateSearchSource.Configured));
 
     private static PrivacyOptions PrivacySelection(IReadOnlyDictionary<string, string> values) => new(
-        Enum.GetValues<PrivacyArea>().Where(value => Boolean(values, "area." + Lower(value))).ToArray());
+        [.. Enum.GetValues<PrivacyArea>().Where(value => Boolean(values, "area." + Lower(value)))]);
 
     private static BitLockerOptions BitLockerSelection(IReadOnlyDictionary<string, string> values) => new(
         Text(values, "volume") ?? "C:", EnumValue(values, "operation", BitLockerOperation.Inspect),

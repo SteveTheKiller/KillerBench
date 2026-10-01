@@ -16,9 +16,9 @@ internal static class RemoteDesktopOperationalCorrelationChecks
         incompleteConfiguration.Add(new("Remote Desktop configuration", CheckState.Unknown, "fixture"));
         Require(RemoteDesktopOperationalCorrelation.Check(incompleteConfiguration).State == CheckState.Unknown,
             "A single incomplete Remote Desktop configuration result fails closed without requiring fabricated subresults");
-        Require(RemoteDesktopOperationalCorrelation.Check(Inputs().Append(Info("Recent Remote Desktop session events")).ToArray()).State == CheckState.Unknown,
+        Require(RemoteDesktopOperationalCorrelation.Check([.. Inputs(), Info("Recent Remote Desktop session events")]).State == CheckState.Unknown,
             "Duplicate Remote Desktop evidence identity fails closed");
-        Require(RemoteDesktopOperationalCorrelation.Check(Inputs().Where(check => check.Name != "Remote Desktop listener port").ToArray()).State == CheckState.Unknown,
+        Require(RemoteDesktopOperationalCorrelation.Check([.. Inputs().Where(check => check.Name != "Remote Desktop listener port")]).State == CheckState.Unknown,
             "Missing Remote Desktop configuration identity fails closed");
         try
         {

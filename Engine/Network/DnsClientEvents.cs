@@ -1,6 +1,6 @@
 using System.Xml;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public static class DnsClientEvents
 {
@@ -34,7 +34,7 @@ public static class DnsClientEvents
         catch (OperationCanceledException) when (!token.IsCancellationRequested && deadline.IsCancellationRequested)
         {
             var evidence = new ToolResult(-1, "", "DNS Client event deadline expired.", false) { TimedOut = true };
-            return Definitions.Select(definition => Interpret(definition.Channel, evidence)).ToArray();
+            return [.. Definitions.Select(definition => Interpret(definition.Channel, evidence))];
         }
     }
 

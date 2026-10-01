@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 [Flags]
 public enum DhcpRenewalReason { None = 0, MissingAddress = 1, ExpiredLease = 2 }

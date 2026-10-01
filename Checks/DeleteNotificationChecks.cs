@@ -2,9 +2,11 @@ using KillerBench.Engine;
 
 internal static class DeleteNotificationChecks
 {
+    private static readonly string[] ExpectedQueryArguments = ["behavior", "query", "DisableDeleteNotify"];
+
     internal static async Task RunAsync()
     {
-        ToolResult Evidence(string text) => new(0, text, "", false);
+        static ToolResult Evidence(string text) => new(0, text, "", false);
         var enabled = DeleteNotificationDiagnostics.Interpret(Evidence(
             "NTFS DisableDeleteNotify = 0  (Allows TRIM operations to be sent to the storage device)\r\nReFS DisableDeleteNotify = 0  (Disabled = 0)"));
         Require(enabled.Count == 2 && enabled.All(check => check.State == CheckState.Information) &&
@@ -31,7 +33,7 @@ internal static class DeleteNotificationChecks
             return Task.FromResult(Evidence("NTFS DisableDeleteNotify = 0"));
         });
         Require(observed is { Tool: "fsutil.exe", Verification: true } &&
-            observed.Arguments.SequenceEqual(new[] { "behavior", "query", "DisableDeleteNotify" }) &&
+            observed.Arguments.SequenceEqual(ExpectedQueryArguments) &&
             collected.Single().State == CheckState.Information,
             "Native plan is a bounded exact read-only delete-notification query");
 

@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace KillerBench.Engine.Core;
+namespace KillerBench.Engine.Core.Symptoms;
 
 public enum GoalOutcome { Resolved, Unresolved, RuledOut, NeedsHuman, OutOfScope, Blocked, BudgetExhausted, RestartRequired, Canceled, NoTriage }
 
@@ -69,8 +69,8 @@ public sealed class GoalRunner(SymptomCatalog catalog, IReadOnlyList<RecipePack>
         var open = new List<TriageQuestion>();
         GoalReport Report(GoalOutcome outcome, string detail, string? guidance = null) => new(symptom.Id, symptom.Title, outcome, detail, steps.AsReadOnly())
         {
-            RuledOut = ruledOut.Distinct(StringComparer.Ordinal).ToArray(), Repaired = repaired.ToArray(), Unresolved = unresolved.Distinct(StringComparer.Ordinal).ToArray(),
-            OpenQuestions = open.ToArray(), Guidance = CombineGuidance(guidance, symptom.Guidance), Elapsed = watch.Elapsed
+            RuledOut = [.. ruledOut.Distinct(StringComparer.Ordinal)], Repaired = [.. repaired], Unresolved = [.. unresolved.Distinct(StringComparer.Ordinal)],
+            OpenQuestions = [.. open], Guidance = CombineGuidance(guidance, symptom.Guidance), Elapsed = watch.Elapsed
         };
 
         using var budget = CancellationTokenSource.CreateLinkedTokenSource(token);

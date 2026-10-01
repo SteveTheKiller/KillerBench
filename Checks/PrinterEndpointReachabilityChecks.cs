@@ -57,7 +57,7 @@ internal static class PrinterEndpointReachabilityChecks
         {
             Configuration(evidence with { ExitCode = 5 }), Configuration(evidence with { Truncated = true }),
             Configuration(Evidence(queues, ports, "false")), Configuration(evidence with { Output = "{}" }),
-            new WorkflowCheck[] { new("a", CheckState.Information, "fixture", Evidence: evidence), new("b", CheckState.Information, "fixture", Evidence: evidence with { Output = "{}" }) }
+            [new("a", CheckState.Information, "fixture", Evidence: evidence), new("b", CheckState.Information, "fixture", Evidence: evidence with { Output = "{}" })]
         })
         {
             var result = await PrinterEndpointReachability.CheckAsync(invalid, probe: (_, _, _) => throw new Exception("Invalid evidence must not be contacted."));

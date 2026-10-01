@@ -4,7 +4,7 @@ internal static class DnsServerChecks
 {
     public static void Run()
     {
-        ToolResult Evidence(string complete = "true", string rows = "[]") =>
+        static ToolResult Evidence(string complete = "true", string rows = "[]") =>
             new(0, $"{{\"complete\":{complete},\"rows\":{rows}}}", "", false);
         var configured = Evidence(rows: "[{\"interfaceIndex\":7,\"interfaceAlias\":\"Ethernet\",\"addressFamily\":2,\"serverAddresses\":[\"192.0.2.53\",\"192.0.2.54\"]},{\"interfaceIndex\":7,\"interfaceAlias\":\"Ethernet\",\"addressFamily\":23,\"serverAddresses\":[\"2001:db8::53\"]}]");
         var configuredResult = DnsServerDiagnostics.Interpret(configured);

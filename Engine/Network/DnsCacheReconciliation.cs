@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public sealed record DnsCachePendingRecord(int Schema, DateTimeOffset StartedUtc, DnsLookupResult Before)
 {

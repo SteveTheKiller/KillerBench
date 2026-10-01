@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Workflows;
 
 public sealed record BootStamp(long RecordId, DateTimeOffset StartedUtc);
 public sealed record RepairRecoveryRecord(int Schema, string Machine, string JournalPath, bool Pending, BootStamp? Boot);
@@ -12,6 +12,7 @@ public sealed record RepairRecoveryRecord(int Schema, string Machine, string Jou
 public sealed class RepairRecoveryStore(string folder, Func<CancellationToken, Task<BootStamp?>> readBoot)
 {
     private static readonly JsonSerializerOptions RecoveryJson = new(Capture.JsonOptions) { RespectRequiredConstructorParameters = true };
+    private static readonly string[] BootEventSystemElements = ["Provider", "EventID", "EventRecordID", "TimeCreated"];
     private readonly string path = Path.Combine(folder, "recovery.json");
     private RepairRecoveryRecord? active;
 
@@ -108,7 +109,7 @@ public sealed class RepairRecoveryStore(string folder, Func<CancellationToken, T
             var systems = events[0].Elements(ns + "System").ToArray();
             if (systems.Length != 1) return null;
             var system = systems[0];
-            if (new[] { "Provider", "EventID", "EventRecordID", "TimeCreated" }
+            if (BootEventSystemElements
                 .Any(name => system.Elements(ns + name).Count() != 1)) return null;
             if ((string?)system?.Element(ns + "Provider")?.Attribute("Name") != "Microsoft-Windows-Kernel-General" ||
                 (string?)system.Element(ns + "EventID") != "12" ||

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public static class FocusedStorageServiceOperationalCorrelation
 {
@@ -15,7 +15,7 @@ public static class FocusedStorageServiceOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Storage Service readiness";
         const string boundary = " This bounded conclusion does not establish device, pool, virtual-disk, partition, volume, filesystem, Storage Sense, notification or application I/O health. A completed job state is not an operation-result verdict. It does not start, stop, resume or remove a job, change a disk, pool, virtual disk, partition, volume, filesystem, file, mount point, service, policy or setting, or select a repair.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var selected = new List<WorkflowCheck>();
         foreach (string required in RequiredNames)

@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Debloat;
 
 public sealed record DebloatRecallEvidence(string FeatureName, string State, bool Present,
     bool Complete, ToolResult Evidence, string Detail);

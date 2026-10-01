@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Automation;
 
 [Flags]
 public enum MaceTargets
@@ -145,10 +145,10 @@ public static class MacePlanning
         AddPackages(candidates, options, packages);
         if (provisioned is not null) AddProvisioned(candidates, options, provisioned);
         if (clickToRun is not null) AddClickToRun(candidates, options, clickToRun);
-        candidates = candidates.GroupBy(item => item.RegistrationType + "\0" + item.Scope + "\0" + item.Identity,
+        candidates = [.. candidates.GroupBy(item => item.RegistrationType + "\0" + item.Scope + "\0" + item.Identity,
                 StringComparer.OrdinalIgnoreCase).Select(group => group.First())
             .OrderBy(item => item.Target).ThenBy(item => item.Name, StringComparer.Ordinal)
-            .ThenBy(item => item.Identity, StringComparer.Ordinal).ToList();
+            .ThenBy(item => item.Identity, StringComparer.Ordinal)];
         removalProviders ??= MaceRemovalProviderReview.Classify(candidates);
         bool complete = machine.Complete && account.Complete && packages.Complete && clickToRun?.Complete == true &&
             processes?.Complete == true && (options.Scope != MaceScope.AllUsers || provisioned?.Complete == true) &&
@@ -157,8 +157,8 @@ public static class MacePlanning
             (options.PreserveApplicationData || applicationData?.Complete == true) && managedPolicy?.Complete == true &&
             removalProviders.Complete;
         int activeProcesses = processes?.RelevantCount(options.Targets) ?? 0;
-        var checks = new List<WorkflowCheck>
-        {
+        List<WorkflowCheck> checks =
+        [
             new("Microsoft app removal review coverage", complete ? CheckState.Information : CheckState.Unknown,
                 $"{candidates.Count} exact registrations matched the selected products. " +
                 (complete ? "Every requested inventory source completed. " : "At least one requested inventory source was incomplete. Absence is not established. ") +
@@ -167,14 +167,14 @@ public static class MacePlanning
                 "Application data: " + (options.PreserveApplicationData ? "preserve" : "removal requested for future review") +
                 "; cached credentials: " + (options.PreserveCachedCredentials ? "preserve" : "removal requested for future review") +
                 "; OneDrive folder locations: " + (options.RestoreOneDriveFolderLocations ? "review requested" : "leave unchanged") +
-                ". These choices describe a future plan and do not change the computer.")
-        };
-        checks.Add(new("Microsoft app removal process readiness", processes is null || !processes.Complete ? CheckState.Unknown :
+                ". These choices describe a future plan and do not change the computer."),
+            new("Microsoft app removal process readiness", processes is null || !processes.Complete ? CheckState.Unknown :
             activeProcesses > 0 ? CheckState.Attention : CheckState.Information,
             processes is null ? "Selected-application process evidence was not supplied. Future removal eligibility must remain blocked." :
             !processes.Complete ? "Selected-application process evidence is incomplete. Future removal eligibility must remain blocked. " + processes.Limitation :
             activeProcesses > 0 ? $"{activeProcesses} selected Microsoft application process{(activeProcesses == 1 ? " is" : "es are")} active. Close the selected applications and collect fresh evidence before any removal. " + processes.Limitation :
-            "No selected Microsoft application process was found in the bounded inventory. Registration, ownership, data, credential and removal eligibility checks are still required. " + processes.Limitation));
+            "No selected Microsoft application process was found in the bounded inventory. Registration, ownership, data, credential and removal eligibility checks are still required. " + processes.Limitation)
+        ];
         if (options.Targets.HasFlag(MaceTargets.OneDrive))
         {
             checks.Add(new("OneDrive known-folder review", oneDriveFolders is null || !oneDriveFolders.Complete ? CheckState.Unknown :
@@ -356,7 +356,7 @@ public static class MaceProcessInventory
         }
     }
 
-    private static MaceProcessEvidence Evidence(IReadOnlyDictionary<MaceTargets, int> values, bool complete, string limitation)
+    private static MaceProcessEvidence Evidence(Dictionary<MaceTargets, int> values, bool complete, string limitation)
     {
         int Value(MaceTargets target) => values.TryGetValue(target, out int value) ? value : 0;
         return new(Value(MaceTargets.OneDrive), Value(MaceTargets.Outlook), Value(MaceTargets.Office),

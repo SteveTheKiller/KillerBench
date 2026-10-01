@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Knowledge;
 
 public sealed record WindowsInstallerCodeReference(int Code, string Symbol, string Summary,
     string DiagnosticScope, bool Success, bool RestartRequired = false);
@@ -9,8 +9,8 @@ public static class WindowsInstallerErrorCatalog
 
     public static string SourceUrl => Source;
 
-    public static IReadOnlyList<WindowsInstallerCodeReference> All { get; } = new[]
-    {
+    public static IReadOnlyList<WindowsInstallerCodeReference> All { get; } =
+    [
         Entry(0, "ERROR_SUCCESS", "The action completed successfully.", "Review the requested product outcome only if application validation is still required.", true),
         Entry(13, "ERROR_INVALID_DATA", "The data is invalid.", "Review the package, command input and detailed Installer log."),
         Entry(87, "ERROR_INVALID_PARAMETER", "A parameter was invalid.", "Review the exact command line and package documentation."),
@@ -70,9 +70,9 @@ public static class WindowsInstallerErrorCatalog
         Entry(1653, "ERROR_ROLLBACK_DISABLED", "Disabled rollback blocked a multiple-package transaction.", "Review rollback policy with its owner and preserve managed settings."),
         Entry(1654, "ERROR_INSTALL_REJECTED", "This application is not supported on this Windows version.", "Confirm application compatibility and obtain a supported vendor release."),
         Entry(3010, "ERROR_SUCCESS_REBOOT_REQUIRED", "The operation succeeded and a restart is required.", "Restart at an approved time, then verify the exact product state before another action.", true, true)
-    };
+    ];
 
-    private static readonly IReadOnlyDictionary<int, WindowsInstallerCodeReference> ByCode =
+    private static readonly Dictionary<int, WindowsInstallerCodeReference> ByCode =
         All.ToDictionary(entry => entry.Code);
 
     public static WindowsInstallerCodeReference? Find(int code) => ByCode.TryGetValue(code, out var entry) ? entry : null;

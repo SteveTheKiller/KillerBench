@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Applications;
 
 public static class ApplicationStabilityCorrelation
 {
@@ -10,7 +10,7 @@ public static class ApplicationStabilityCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Application stability history conclusion";
         const string boundary = " This is a bounded review of retained local history, not a current application-health verdict or proof of root cause. Application launch, dependencies, files, settings, accounts, licensing, network access and vendor-specific logs remain outside this workflow. No process was started or stopped, no application was repaired or removed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         bool invalidReliability = reliabilityHistory.Count is 0 or > 65 || reliabilityHistory.Any(item =>
             item is null || string.IsNullOrWhiteSpace(item.Name) || item.Name.Length > 512);

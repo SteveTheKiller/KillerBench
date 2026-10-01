@@ -1,6 +1,6 @@
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Packs;
 
 /// <summary>Identity, performance and hardware triage recipes. Most are diagnostic; every action is an explicit option.</summary>
 public static class WindowsSystemPack

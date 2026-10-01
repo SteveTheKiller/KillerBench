@@ -29,10 +29,10 @@ internal static class NativeValidationEvidenceChecks
         Reject(record with { RecipeVersion = 99 }, now, "stale recipe version");
         Reject(record with { ScenarioId = "windows.system-files.unknown" }, now, "unknown scenario");
         Reject(record with { RecordedUtc = now.AddMinutes(6) }, now, "future timestamp");
-        Reject(record with { Artifacts = record.Artifacts.Skip(1).ToArray() }, now, "missing required artifact");
-        Reject(record with { Artifacts = record.Artifacts.Select(artifact => artifact with { Name = "C:\\secret\\artifact.json" }).ToArray() }, now,
+        Reject(record with { Artifacts = [.. record.Artifacts.Skip(1)] }, now, "missing required artifact");
+        Reject(record with { Artifacts = [.. record.Artifacts.Select(artifact => artifact with { Name = "C:\\secret\\artifact.json" })] }, now,
             "artifact path disclosure");
-        Reject(record with { Artifacts = record.Artifacts.Select(artifact => artifact with { Sha256 = "bad" }).ToArray() }, now,
+        Reject(record with { Artifacts = [.. record.Artifacts.Select(artifact => artifact with { Sha256 = "bad" })] }, now,
             "invalid artifact digest");
         Console.WriteLine("PASS: native VM validation records require current scenario identity, bounded metadata and complete hashed artifacts.");
     }
@@ -41,8 +41,8 @@ internal static class NativeValidationEvidenceChecks
         NativeValidationOutcome outcome, DateTimeOffset recordedUtc) =>
         new(NativeValidationEvidence.SchemaVersion, scenario.Id, recipeId, recipeVersion, outcome,
             "Windows 11 Pro", "24H2", "26100.1", "x64", "0.1.0", recordedUtc,
-            scenario.RequiredArtifacts.Select((kind, index) => new NativeValidationArtifact(kind, "artifact-" + index + ".json",
-                new string(index % 2 == 0 ? 'a' : 'b', 64))).ToArray(), "Disposable VM fixture.");
+            [.. scenario.RequiredArtifacts.Select((kind, index) => new NativeValidationArtifact(kind, "artifact-" + index + ".json",
+                new string(index % 2 == 0 ? 'a' : 'b', 64)))], "Disposable VM fixture.");
 
     private static void Reject(NativeValidationRecord record, DateTimeOffset now, string label)
     {

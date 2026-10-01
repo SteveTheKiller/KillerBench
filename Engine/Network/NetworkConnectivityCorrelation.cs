@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public static class NetworkConnectivityCorrelation
 {
@@ -21,7 +21,7 @@ public static class NetworkConnectivityCorrelation
         const string name = "Network connectivity correlation";
         const string boundary = " Windows connectivity labels and ICMP responses are point-in-time evidence. They do not prove DNS, application, VPN or Internet availability. No network setting changed.";
         WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary,
-            Evidence: routes.Evidence ?? gateways.Evidence ?? profiles.FirstOrDefault()?.Evidence);
+            Evidence: routes.Evidence ?? gateways.Evidence ?? (profiles.Count > 0 ? profiles[0]?.Evidence : null));
         try
         {
             var profileRows = ReadProfiles(profiles);
@@ -68,7 +68,7 @@ public static class NetworkConnectivityCorrelation
         }
     }
 
-    private static IReadOnlyList<Profile> ReadProfiles(IReadOnlyList<WorkflowCheck> checks)
+    private static List<Profile> ReadProfiles(IReadOnlyList<WorkflowCheck> checks)
     {
         if (checks.Count == 0 || checks.Any(check => check is null || check.EffectiveState == CheckState.Unknown || check.Evidence is null))
             throw new InvalidDataException("Profile evidence is incomplete.");
@@ -93,7 +93,7 @@ public static class NetworkConnectivityCorrelation
         return result;
     }
 
-    private static IReadOnlyList<Path> ReadPaths(WorkflowCheck routes)
+    private static List<Path> ReadPaths(WorkflowCheck routes)
     {
         if (routes.EffectiveState == CheckState.Unknown || routes.Evidence is null) throw new InvalidDataException("Route evidence is incomplete.");
         using var document = JsonDocument.Parse(routes.Evidence.Output, new JsonDocumentOptions { MaxDepth = 8 });
@@ -121,7 +121,7 @@ public static class NetworkConnectivityCorrelation
         return result;
     }
 
-    private static IReadOnlyList<Probe> ReadProbes(WorkflowCheck gateways)
+    private static List<Probe> ReadProbes(WorkflowCheck gateways)
     {
         if (gateways.EffectiveState == CheckState.Unknown || gateways.Evidence is null) throw new InvalidDataException("Gateway evidence is incomplete.");
         using var document = JsonDocument.Parse(gateways.Evidence.Output, new JsonDocumentOptions { MaxDepth = 8 });

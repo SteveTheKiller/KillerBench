@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public sealed record BitsObservationResult(DateTimeOffset FirstCollected, DateTimeOffset SecondCollected,
     BitsJobComparison Comparison, ToolResult BeforeEvidence, ToolResult AfterEvidence);

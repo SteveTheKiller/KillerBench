@@ -49,7 +49,8 @@ internal static class CleanupChecks
         Directory.CreateDirectory(cache);
         File.WriteAllText(Path.Combine(profile, "Cookies"), "fixture");
         var browser = BrowserCacheRoots.Discover(local);
-        Require(browser.Roots.SequenceEqual(new[] { cache }) && !browser.Partial, "Browser discovery selects cache folders only");
+        string[] expectedBrowserRoots = [cache];
+        Require(browser.Roots.SequenceEqual(expectedBrowserRoots) && !browser.Partial, "Browser discovery selects cache folders only");
         Require(BrowserCacheRoots.IsKnownRoot(cache, local) && !BrowserCacheRoots.IsKnownRoot(profile, local) && !BrowserCacheRoots.IsKnownRoot(Path.Combine(profile, "Cookies"), local), "Browser root gate rejects profile and cookie targets");
         for (int i = 0; i < 33; i++) Directory.CreateDirectory(Path.Combine(Path.GetDirectoryName(profile)!, "Profile " + i, "Cache"));
         var cappedBrowsers = BrowserCacheRoots.Discover(local);
@@ -278,7 +279,7 @@ internal static class CleanupChecks
         {
             Options = options;
             return new(options, DateTimeOffset.UtcNow, [new("fixture", "fixture", Count, Count, 0, false,
-                Enumerable.Range(0, Count).Select(i => new CleanupCandidate("fake" + i, 1, DateTime.UtcNow.AddDays(-30))).ToArray(), "fixture")]);
+                [.. Enumerable.Range(0, Count).Select(i => new CleanupCandidate("fake" + i, 1, DateTime.UtcNow.AddDays(-30)))], "fixture")]);
         }
         public CleanupFileOutcome Remove(string root, CleanupCandidate candidate, DateTime cutoffUtc)
         {

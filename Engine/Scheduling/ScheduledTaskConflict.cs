@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Scheduling;
 
 public enum ScheduledTaskConflictState { ExistingTask, NotObserved, Unknown }
 public sealed record ScheduledTaskConflictResult(ScheduledTaskConflictState State, string Detail);

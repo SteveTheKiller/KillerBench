@@ -5,6 +5,7 @@
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup><ProjectReference Include="../KillerBench.csproj" /></ItemGroup>
   <ItemGroup><Compile Include="../Cli/TaskPlanCommands.cs" Link="TaskPlanCommands.cs" /></ItemGroup>

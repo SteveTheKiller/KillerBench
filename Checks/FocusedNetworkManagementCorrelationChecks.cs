@@ -8,7 +8,7 @@ internal static class FocusedNetworkManagementCorrelationChecks
         Require(WinHttp(history: CheckState.Attention).State == CheckState.Information, "Historical WinHTTP failures remain informational");
         Require(WinHttp(service: CheckState.Attention).State == CheckState.Attention, "Current WinHTTP service concern requests review");
         Require(WinHttp(proxy: CheckState.Unknown, service: CheckState.Attention).State == CheckState.Unknown, "Incomplete proxy evidence takes precedence");
-        Require(WinHttpAutoProxyOperationalCorrelation.Check(WinHttpInputs().Append(new("WinHTTP default proxy", CheckState.Information, "duplicate")).ToArray()).State == CheckState.Unknown,
+        Require(WinHttpAutoProxyOperationalCorrelation.Check([.. WinHttpInputs().Append(new("WinHTTP default proxy", CheckState.Information, "duplicate"))]).State == CheckState.Unknown,
             "Duplicate WinHTTP evidence fails closed");
 
         Require(Connection().State == CheckState.Information, "Complete clear Connection Manager evidence remains informational");
@@ -16,7 +16,7 @@ internal static class FocusedNetworkManagementCorrelationChecks
             "Profile and historical Connection Manager context remain informational");
         Require(Connection(service: CheckState.Attention).State == CheckState.Attention, "Current Connection Manager service concern requests review");
         Require(Connection(profile: CheckState.Unknown, service: CheckState.Attention).State == CheckState.Unknown, "Incomplete profiles take precedence");
-        Require(ConnectionManagerOperationalCorrelation.Check(ConnectionInputs().Where(check => check.Name != "Windows Connection Manager failure history").ToArray()).State == CheckState.Unknown,
+        Require(ConnectionManagerOperationalCorrelation.Check([.. ConnectionInputs().Where(check => check.Name != "Windows Connection Manager failure history")]).State == CheckState.Unknown,
             "Missing Connection Manager evidence fails closed");
 
         try { WinHttpAutoProxyOperationalCorrelation.Check(WinHttpInputs(), new CancellationToken(true)); throw new Exception("Canceled WinHTTP correlation completed"); }

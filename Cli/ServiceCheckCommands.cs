@@ -8,9 +8,9 @@ internal static class ServiceCheckCommands
         var supported = Enum.GetValues<RepairKind>().Where(kind => ServiceRecovery.ServiceName(kind) is not null)
             .ToDictionary(kind => ServiceRecovery.ServiceName(kind)!, kind => kind, StringComparer.OrdinalIgnoreCase);
         RepairKind[] selected;
-        if (args is ["service-check", "--all"]) selected = supported.Values.ToArray();
+        if (args is ["service-check", "--all"]) selected = [.. supported.Values];
         else if (args.Length is >= 2 and <= 129 && args.Skip(1).All(supported.ContainsKey))
-            selected = args.Skip(1).Select(name => supported[name]).Distinct().ToArray();
+            selected = [.. args.Skip(1).Select(name => supported[name]).Distinct()];
         else
         {
             Console.Error.WriteLine("Usage: service-check NAME [NAME ...] | service-check --all");

@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public static class DhcpLeaseDiagnostics
 {

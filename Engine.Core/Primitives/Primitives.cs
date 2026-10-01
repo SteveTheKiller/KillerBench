@@ -1,4 +1,4 @@
-namespace KillerBench.Engine.Core;
+namespace KillerBench.Engine.Core.Primitives;
 
 /// <summary>Raw evidence returned by a primitive. Value is the observation the expectation is matched against; Raw is retained verbatim.</summary>
 public sealed record PrimitiveResult(bool Complete, string? Value, string Raw, string? Error = null)

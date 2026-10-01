@@ -1,7 +1,7 @@
 using System.Xml;
 using System.Xml.Linq;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public static class DiskDiagnosticEvents
 {

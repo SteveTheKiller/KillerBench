@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Backup;
 
 public static class FocusedBackupOperationalCorrelation
 {
@@ -39,7 +39,7 @@ public static class FocusedBackupOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Focused backup services conclusion";
         const string boundary = " This bounded local review does not prove that a backup is configured, current, restorable or successful. Backup destinations, application-specific jobs and restore tests are outside this focused workflow. No backup, restore, snapshot, writer, provider, service, shadow storage, File History, policy, destination or restart state changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var selected = evidence.Where(item => RequiredNames.Contains(item.Name, StringComparer.Ordinal)).ToArray();
         bool exact = selected.Length == RequiredNames.Length && RequiredNames.All(required =>

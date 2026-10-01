@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Automation;
 
 public sealed class WindowsMacePackageRemovalHost : IMacePackageRemovalHost
 {

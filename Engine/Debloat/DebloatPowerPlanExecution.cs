@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Debloat;
 
 public enum DebloatPowerPlanOutcome { Preview, Blocked, Verified, Failed, Uncertain, Stopped }
 

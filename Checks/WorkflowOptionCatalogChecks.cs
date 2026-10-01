@@ -2,6 +2,11 @@ using KillerBench.Engine;
 
 internal static class WorkflowOptionCatalogChecks
 {
+    private static readonly string[] BackgroundTransferScopes = ["RunningAccount", "AllUsers"];
+    private static readonly string[] FirewallToggleKeys = ["profile.domain", "profile.private", "profile.public", "execute"];
+    private static readonly string[] BitLockerExecuteKeys = ["executeBackup", "executeEncryption", "executeResume"];
+    private static readonly string[] ExpectedChangingKeys = ["applyHighPerformance", "applyPowerTimers", "cancelJob", "clearOffline", "disableHibernation", "execute", "execute", "execute", "execute", "execute", "execute", "execute", "execute", "execute", "execute", "executeBackup", "executeEncryption", "executeResume", "makeDefault", "rebuildIndex", "startScan"];
+
     internal static void Run()
     {
         Require(WorkflowOptionCatalog.All.Count == 27, "Option catalog exposes the twenty-seven option-rich workflows");
@@ -122,7 +127,7 @@ internal static class WorkflowOptionCatalogChecks
 
         WorkflowOptionSet transfers = Required("background-transfers");
         Require(Value(transfers, "scope") == "RunningAccount" &&
-            transfers.Options.Single().Choices?.Select(choice => choice.Value).SequenceEqual(new[] { "RunningAccount", "AllUsers" }) == true,
+            transfers.Options.Single().Choices?.Select(choice => choice.Value).SequenceEqual(BackgroundTransferScopes) == true,
             "BITS metadata defaults to running-account inventory and exposes the administrator scope");
 
         WorkflowOptionSet packages = Required("app-packages");
@@ -150,7 +155,7 @@ internal static class WorkflowOptionCatalogChecks
             "Windows Recovery metadata defaults to inspection and exposes explicit guarded enablement");
 
         WorkflowOptionSet firewall = Required("firewall-services");
-        Require(new[] { "profile.domain", "profile.private", "profile.public", "execute" }
+        Require(FirewallToggleKeys
                 .All(key => Value(firewall, key) == "false") &&
             firewall.Options.Single(option => option.Key == "execute") is { Advanced: true, ChangesMachine: true },
             "Firewall metadata defaults to diagnosis with no selected profile or execution");
@@ -163,7 +168,7 @@ internal static class WorkflowOptionCatalogChecks
         Require(Value(bitLocker, "volume") == "C:" && Value(bitLocker, "operation") == nameof(BitLockerOperation.Inspect) &&
             Value(bitLocker, "encryption") == nameof(BitLockerEncryption.XtsAes128) &&
             Value(bitLocker, "backup") == nameof(RecoveryDestination.None) && Value(bitLocker, "protectorId") == "" &&
-            new[] { "executeBackup", "executeEncryption", "executeResume" }.All(key => Value(bitLocker, key) == "false"),
+            BitLockerExecuteKeys.All(key => Value(bitLocker, key) == "false"),
             "BitLocker metadata matches inspection defaults and keeps every action explicit");
 
         WorkflowOptionSet defender = Required("defender");
@@ -190,9 +195,9 @@ internal static class WorkflowOptionCatalogChecks
                 "Desktop bindings name a control for every option in " + set.WorkflowKey);
         }
 
-        string[] changing = WorkflowOptionCatalog.All.SelectMany(set => set.Options)
-            .Where(option => option.ChangesMachine).Select(option => option.Key).Order(StringComparer.Ordinal).ToArray();
-        Require(changing.SequenceEqual(new[] { "applyHighPerformance", "applyPowerTimers", "cancelJob", "clearOffline", "disableHibernation", "execute", "execute", "execute", "execute", "execute", "execute", "execute", "execute", "execute", "execute", "executeBackup", "executeEncryption", "executeResume", "makeDefault", "rebuildIndex", "startScan" }.Order(StringComparer.Ordinal)),
+        string[] changing = [.. WorkflowOptionCatalog.All.SelectMany(set => set.Options)
+            .Where(option => option.ChangesMachine).Select(option => option.Key).Order(StringComparer.Ordinal)];
+        Require(changing.SequenceEqual(ExpectedChangingKeys.Order(StringComparer.Ordinal)),
             "Only implemented explicit execution controls are marked as machine-changing");
 
         Require(WorkflowOptionCatalog.Find(" NETWORK ")?.Kind == WorkflowKind.Network &&
@@ -200,279 +205,279 @@ internal static class WorkflowOptionCatalogChecks
             WorkflowOptionCatalog.Find("missing") is null && WorkflowOptionCatalog.ForWorkflow(WorkflowKind.ScheduledTasks) is null,
             "Workflows without host-option metadata remain explicit");
 
-        WorkflowOptionValidationResult normalized = WorkflowOptionValidation.Validate("servicing-monitor", new[]
-        {
+        WorkflowOptionValidationResult normalized = WorkflowOptionValidation.Validate("servicing-monitor",
+        [
             KeyValuePair.Create("refreshSeconds", "05"),
             KeyValuePair.Create("includeEvents", "False")
-        });
+        ]);
         Require(normalized is { IsValid: true, ChangesMachineRequested: false } &&
             normalized.Values["refreshSeconds"] == "5" && normalized.Values["includeEvents"] == "false" &&
             normalized.Values["samples"] == "3", "Validation normalizes supplied values and fills defaults");
-        Require(!WorkflowOptionValidation.Validate("updates", new[]
-        {
+        Require(!WorkflowOptionValidation.Validate("updates",
+        [
             KeyValuePair.Create("software", "false"), KeyValuePair.Create("drivers", "false"),
             KeyValuePair.Create("thirdPartyApplications", "false")
-        }).IsValid && WorkflowOptionValidation.Validate("updates", new[]
-        {
+        ]).IsValid && WorkflowOptionValidation.Validate("updates",
+        [
             KeyValuePair.Create("software", "false"), KeyValuePair.Create("thirdPartyApplications", "true")
-        }).IsValid && !WorkflowOptionValidation.Validate("updates", new[]
-        {
+        ]).IsValid && !WorkflowOptionValidation.Validate("updates",
+        [
             KeyValuePair.Create("software", "false"), KeyValuePair.Create("thirdPartyApplications", "true"),
             KeyValuePair.Create("source", nameof(UpdateSearchSource.MicrosoftUpdate))
-        }).IsValid, "Update discovery requires a selected source and applies Windows source choice only to Windows discovery");
-        WorkflowOptionValidationResult caseInsensitiveOption = WorkflowOptionValidation.Validate("SERVICING-MONITOR", new[]
-        {
+        ]).IsValid, "Update discovery requires a selected source and applies Windows source choice only to Windows discovery");
+        WorkflowOptionValidationResult caseInsensitiveOption = WorkflowOptionValidation.Validate("SERVICING-MONITOR",
+        [
             KeyValuePair.Create(" REFRESHSECONDS ", "05"),
             KeyValuePair.Create("INCLUDEEVENTS", "False")
-        });
+        ]);
         Require(caseInsensitiveOption is { IsValid: true } && caseInsensitiveOption.Values["refreshSeconds"] == "5" &&
-            !WorkflowOptionValidation.Validate("servicing-monitor", new[]
-            {
+            !WorkflowOptionValidation.Validate("servicing-monitor",
+            [
                 KeyValuePair.Create("refreshSeconds", "5"), KeyValuePair.Create("REFRESHSECONDS", "6")
-            }).IsValid, "Workflow option keys trim input, accept case-insensitive values and reject duplicates across casing");
-        WorkflowOptionValidationResult caseInsensitiveChoice = WorkflowOptionValidation.Validate("audio", new[]
-        {
+            ]).IsValid, "Workflow option keys trim input, accept case-insensitive values and reject duplicates across casing");
+        WorkflowOptionValidationResult caseInsensitiveChoice = WorkflowOptionValidation.Validate("audio",
+        [
             KeyValuePair.Create("direction", " output "), KeyValuePair.Create("role", "communications")
-        });
+        ]);
         Require(caseInsensitiveChoice is { IsValid: true } && caseInsensitiveChoice.Values["direction"] == "Output" &&
             caseInsensitiveChoice.Values["role"] == "Communications",
             "Workflow choices trim input, accept case-insensitive values and retain canonical values");
 
-        WorkflowOptionValidationResult invalid = WorkflowOptionValidation.Validate("cleanup", new[]
-        {
+        WorkflowOptionValidationResult invalid = WorkflowOptionValidation.Validate("cleanup",
+        [
             KeyValuePair.Create("minimumAgeDays", "0"),
             KeyValuePair.Create("unknown", "true"),
             KeyValuePair.Create("execute", "yes"),
             KeyValuePair.Create("execute", "true")
-        });
+        ]);
         Require(!invalid.IsValid && invalid.Errors.Any(error => error.Key == "minimumAgeDays") &&
             invalid.Errors.Any(error => error.Key == "unknown") && invalid.Errors.Any(error => error.Key == "execute"),
             "Validation rejects bounds, unknown keys, invalid toggles and duplicates");
 
-        WorkflowOptionValidationResult conditional = WorkflowOptionValidation.Validate("bitlocker", new[]
-        {
+        WorkflowOptionValidationResult conditional = WorkflowOptionValidation.Validate("bitlocker",
+        [
             KeyValuePair.Create("backupFile", "C:\\fixture.txt")
-        });
+        ]);
         Require(!conditional.IsValid && conditional.Errors.Any(error => error.Key == "backupFile"),
             "Validation rejects a disabled conditional value");
 
-        WorkflowOptionValidationResult bitLockerBackup = WorkflowOptionValidation.Validate("bitlocker", new[]
-        {
+        WorkflowOptionValidationResult bitLockerBackup = WorkflowOptionValidation.Validate("bitlocker",
+        [
             KeyValuePair.Create("volume", "c:"),
             KeyValuePair.Create("operation", nameof(BitLockerOperation.BackupRecovery)),
             KeyValuePair.Create("backup", nameof(RecoveryDestination.File)),
             KeyValuePair.Create("backupFile", "D:\\recovery.txt"),
             KeyValuePair.Create("protectorId", "{00000000-0000-0000-0000-000000000001}"),
             KeyValuePair.Create("executeBackup", "true")
-        });
+        ]);
         Require(bitLockerBackup is { IsValid: true, ChangesMachineRequested: true } &&
             bitLockerBackup.Values["volume"] == "C:" &&
             bitLockerBackup.Values["protectorId"] == "00000000-0000-0000-0000-000000000001" &&
-            !WorkflowOptionValidation.Validate("bitlocker", new[]
-            {
+            !WorkflowOptionValidation.Validate("bitlocker",
+            [
                 KeyValuePair.Create("operation", nameof(BitLockerOperation.Encrypt)),
                 KeyValuePair.Create("backup", nameof(RecoveryDestination.File)),
                 KeyValuePair.Create("backupFile", "D:\\recovery.txt"),
                 KeyValuePair.Create("executeEncryption", "true")
-            }).IsValid,
+            ]).IsValid,
             "BitLocker validation requires one exact protector and matching explicit action");
 
-        WorkflowOptionValidationResult defenderExecution = WorkflowOptionValidation.Validate("defender", new[]
-        {
+        WorkflowOptionValidationResult defenderExecution = WorkflowOptionValidation.Validate("defender",
+        [
             KeyValuePair.Create("scanType", nameof(DefenderScanType.Full)),
             KeyValuePair.Create("startScan", "true")
-        });
+        ]);
         Require(defenderExecution is { IsValid: true, ChangesMachineRequested: true } &&
-            !WorkflowOptionValidation.Validate("defender", new[] { KeyValuePair.Create("startScan", "true") }).IsValid,
+            !WorkflowOptionValidation.Validate("defender", [KeyValuePair.Create("startScan", "true")]).IsValid,
             "Validation identifies explicit Defender execution and requires a scan type");
 
-        WorkflowOptionValidationResult required = WorkflowOptionValidation.Validate("computer-name", Array.Empty<KeyValuePair<string, string>>());
+        WorkflowOptionValidationResult required = WorkflowOptionValidation.Validate("computer-name", []);
         Require(!required.IsValid && required.Errors.Select(error => error.Key).ToHashSet(StringComparer.Ordinal)
             .Contains("proposedName"),
             "Validation reports active required text fields");
 
-        WorkflowOptionValidationResult networkTarget = WorkflowOptionValidation.Validate("network", new[]
-        {
+        WorkflowOptionValidationResult networkTarget = WorkflowOptionValidation.Validate("network",
+        [
             KeyValuePair.Create("lookupHost", " example.com "),
             KeyValuePair.Create("tcpHost", "127.0.0.1"),
             KeyValuePair.Create("tcpPort", "00443"),
             KeyValuePair.Create("timeoutSeconds", "15")
-        });
+        ]);
         Require(networkTarget.IsValid && networkTarget.Values["lookupHost"] == "example.com" &&
             networkTarget.Values["tcpPort"] == "443" && networkTarget.Values["timeoutSeconds"] == "15",
             "Network target validation normalizes one exact diagnostic target");
-        Require(!WorkflowOptionValidation.Validate("network", new[]
-        {
+        Require(!WorkflowOptionValidation.Validate("network",
+        [
             KeyValuePair.Create("tcpHost", "example.com")
-        }).IsValid && !WorkflowOptionValidation.Validate("network", new[]
-        {
+        ]).IsValid && !WorkflowOptionValidation.Validate("network",
+        [
             KeyValuePair.Create("tcpHost", "example.com"), KeyValuePair.Create("tcpPort", "70000")
-        }).IsValid, "Network validation requires a complete bounded TCP target");
+        ]).IsValid, "Network validation requires a complete bounded TCP target");
 
-        WorkflowOptionValidationResult audioScope = WorkflowOptionValidation.Validate("audio", new[]
-        {
+        WorkflowOptionValidationResult audioScope = WorkflowOptionValidation.Validate("audio",
+        [
             KeyValuePair.Create("direction", nameof(AudioEndpointDirection.Output)),
             KeyValuePair.Create("role", nameof(AudioEndpointRole.Communications))
-        });
+        ]);
         Require(audioScope.IsValid && audioScope.Values["direction"] == "Output" &&
             audioScope.Values["role"] == "Communications" &&
-            !WorkflowOptionValidation.Validate("audio", new[] { KeyValuePair.Create("role", "Games") }).IsValid,
+            !WorkflowOptionValidation.Validate("audio", [KeyValuePair.Create("role", "Games")]).IsValid,
             "Audio scope validation accepts only supported endpoint directions and roles");
 
-        WorkflowOptionValidationResult restoreExecution = WorkflowOptionValidation.Validate("system-restore", new[]
-        {
+        WorkflowOptionValidationResult restoreExecution = WorkflowOptionValidation.Validate("system-restore",
+        [
             KeyValuePair.Create("prepare", "true"),
             KeyValuePair.Create("description", "Before maintenance"),
             KeyValuePair.Create("reason", nameof(SystemRestorePointReason.ApplicationInstall)),
             KeyValuePair.Create("execute", "true")
-        });
+        ]);
         Require(restoreExecution is { IsValid: true, ChangesMachineRequested: true } &&
-            !WorkflowOptionValidation.Validate("system-restore", new[] { KeyValuePair.Create("execute", "true") }).IsValid,
+            !WorkflowOptionValidation.Validate("system-restore", [KeyValuePair.Create("execute", "true")]).IsValid,
             "System Restore validation keeps execution behind an explicit prepared request");
 
-        WorkflowOptionValidationResult storageRepair = WorkflowOptionValidation.Validate("storage", new[]
-        {
+        WorkflowOptionValidationResult storageRepair = WorkflowOptionValidation.Validate("storage",
+        [
             KeyValuePair.Create("volume", "d:\\"),
             KeyValuePair.Create("repairReview", "true"),
             KeyValuePair.Create("repairMode", nameof(FileSystemRepairMode.OfflineScanAndFix)),
             KeyValuePair.Create("allowDismount", "true"),
             KeyValuePair.Create("backupConfirmed", "true"),
             KeyValuePair.Create("execute", "true")
-        });
+        ]);
         Require(storageRepair is { IsValid: true, ChangesMachineRequested: true } && storageRepair.Values["volume"] == "D:" &&
-            !WorkflowOptionValidation.Validate("storage", new[]
-            {
+            !WorkflowOptionValidation.Validate("storage",
+            [
                 KeyValuePair.Create("repairReview", "true"), KeyValuePair.Create("execute", "true")
-            }).IsValid && !WorkflowOptionValidation.Validate("storage", new[]
-            {
+            ]).IsValid && !WorkflowOptionValidation.Validate("storage",
+            [
                 KeyValuePair.Create("repairReview", "true"), KeyValuePair.Create("optimizationReview", "true")
-            }).IsValid, "Storage validation enforces one exact action and backup confirmation before execution");
+            ]).IsValid, "Storage validation enforces one exact action and backup confirmation before execution");
 
-        WorkflowOptionValidationResult printingAction = WorkflowOptionValidation.Validate("printing", new[]
-        {
+        WorkflowOptionValidationResult printingAction = WorkflowOptionValidation.Validate("printing",
+        [
             KeyValuePair.Create("jobQueue", "Office Printer"),
             KeyValuePair.Create("jobId", "00042"),
             KeyValuePair.Create("cancelJob", "true")
-        });
+        ]);
         Require(printingAction is { IsValid: true, ChangesMachineRequested: true } && printingAction.Values["jobId"] == "42" &&
-            !WorkflowOptionValidation.Validate("printing", new[] { KeyValuePair.Create("makeDefault", "true") }).IsValid &&
-            !WorkflowOptionValidation.Validate("printing", new[]
-            {
+            !WorkflowOptionValidation.Validate("printing", [KeyValuePair.Create("makeDefault", "true")]).IsValid &&
+            !WorkflowOptionValidation.Validate("printing",
+            [
                 KeyValuePair.Create("queue", "Office Printer"), KeyValuePair.Create("clearOffline", "true"),
                 KeyValuePair.Create("makeDefault", "true")
-            }).IsValid, "Printing validation requires one exact target and one explicit action");
+            ]).IsValid, "Printing validation requires one exact target and one explicit action");
 
-        WorkflowOptionValidationResult installerAction = WorkflowOptionValidation.Validate("installer", new[]
-        {
+        WorkflowOptionValidationResult installerAction = WorkflowOptionValidation.Validate("installer",
+        [
             KeyValuePair.Create("scope", nameof(InstalledApplicationScope.CurrentAccount)),
             KeyValuePair.Create("productCode", "{00000000-0000-0000-0000-000000000001}"),
             KeyValuePair.Create("execute", "true")
-        });
+        ]);
         Require(installerAction is { IsValid: true, ChangesMachineRequested: true } &&
             installerAction.Values["productCode"] == "{00000000-0000-0000-0000-000000000001}" &&
-            !WorkflowOptionValidation.Validate("installer", new[]
-            {
+            !WorkflowOptionValidation.Validate("installer",
+            [
                 KeyValuePair.Create("productCode", "not-a-product-code")
-            }).IsValid, "Installer validation accepts only an exact optional MSI product code");
+            ]).IsValid, "Installer validation accepts only an exact optional MSI product code");
 
-        WorkflowOptionValidationResult timeAction = WorkflowOptionValidation.Validate("time", new[]
-        {
+        WorkflowOptionValidationResult timeAction = WorkflowOptionValidation.Validate("time",
+        [
             KeyValuePair.Create("source", nameof(TimeSourceMode.CustomPeers)),
             KeyValuePair.Create("peers", "time.example.test 192.0.2.1"),
             KeyValuePair.Create("execute", "true")
-        });
+        ]);
         Require(timeAction is { IsValid: true, ChangesMachineRequested: true } &&
-            !WorkflowOptionValidation.Validate("time", new[] { KeyValuePair.Create("execute", "true") }).IsValid &&
-            !WorkflowOptionValidation.Validate("time", new[]
-            {
+            !WorkflowOptionValidation.Validate("time", [KeyValuePair.Create("execute", "true")]).IsValid &&
+            !WorkflowOptionValidation.Validate("time",
+            [
                 KeyValuePair.Create("source", nameof(TimeSourceMode.CustomPeers)),
                 KeyValuePair.Create("peers", "time.example.test time.example.test")
-            }).IsValid, "Time validation requires a non-default source and valid unique custom peers");
+            ]).IsValid, "Time validation requires a non-default source and valid unique custom peers");
 
-        WorkflowOptionValidationResult eventChannelAction = WorkflowOptionValidation.Validate("eventlog", new[]
-        {
+        WorkflowOptionValidationResult eventChannelAction = WorkflowOptionValidation.Validate("eventlog",
+        [
             KeyValuePair.Create("channel", "Microsoft-Windows-WindowsUpdateClient/Operational"),
             KeyValuePair.Create("execute", "true")
-        });
+        ]);
         Require(eventChannelAction is { IsValid: true, ChangesMachineRequested: true } &&
-            !WorkflowOptionValidation.Validate("eventlog", new[]
-            {
+            !WorkflowOptionValidation.Validate("eventlog",
+            [
                 KeyValuePair.Create("channel", "Security")
-            }).IsValid, "Event Log validation accepts only one supported diagnostic channel");
+            ]).IsValid, "Event Log validation accepts only one supported diagnostic channel");
 
-        WorkflowOptionValidationResult computerRename = WorkflowOptionValidation.Validate("computer-name", new[]
-        {
+        WorkflowOptionValidationResult computerRename = WorkflowOptionValidation.Validate("computer-name",
+        [
             KeyValuePair.Create("proposedName", "NEW-PC"),
             KeyValuePair.Create("execute", "true")
-        });
+        ]);
         Require(computerRename is { IsValid: true, ChangesMachineRequested: true } &&
             computerRename.Values["proposedName"] == "NEW-PC" &&
-            !WorkflowOptionValidation.Validate("computer-name", new[]
-            {
+            !WorkflowOptionValidation.Validate("computer-name",
+            [
                 KeyValuePair.Create("proposedName", "12345")
-            }).IsValid && !WorkflowOptionValidation.Validate("computer-name", Array.Empty<KeyValuePair<string, string>>()).IsValid,
+            ]).IsValid && !WorkflowOptionValidation.Validate("computer-name", []).IsValid,
             "Computer Name validation requires one valid exact name and identifies explicit rename execution");
 
-        WorkflowOptionValidationResult transferScope = WorkflowOptionValidation.Validate("background-transfers", new[]
-        {
+        WorkflowOptionValidationResult transferScope = WorkflowOptionValidation.Validate("background-transfers",
+        [
             KeyValuePair.Create("scope", "AllUsers")
-        });
+        ]);
         Require(transferScope is { IsValid: true, ChangesMachineRequested: false } &&
-            !WorkflowOptionValidation.Validate("background-transfers", new[]
-            {
+            !WorkflowOptionValidation.Validate("background-transfers",
+            [
                 KeyValuePair.Create("scope", "Everyone")
-            }).IsValid, "BITS option validation accepts only the two implemented inventory scopes");
+            ]).IsValid, "BITS option validation accepts only the two implemented inventory scopes");
 
-        WorkflowOptionValidationResult packageScope = WorkflowOptionValidation.Validate("app-packages", new[]
-        {
+        WorkflowOptionValidationResult packageScope = WorkflowOptionValidation.Validate("app-packages",
+        [
             KeyValuePair.Create("scope", nameof(AppPackageScope.AllUsers)),
             KeyValuePair.Create("includeProvisioned", "true")
-        });
+        ]);
         Require(packageScope is { IsValid: true, ChangesMachineRequested: false } &&
-            !WorkflowOptionValidation.Validate("app-packages", new[]
-            {
+            !WorkflowOptionValidation.Validate("app-packages",
+            [
                 KeyValuePair.Create("scope", "Machine")
-            }).IsValid, "App package validation accepts only implemented inventory scopes");
+            ]).IsValid, "App package validation accepts only implemented inventory scopes");
 
-        WorkflowOptionValidationResult applicationScope = WorkflowOptionValidation.Validate("installed-apps", new[]
-        {
+        WorkflowOptionValidationResult applicationScope = WorkflowOptionValidation.Validate("installed-apps",
+        [
             KeyValuePair.Create("scope", nameof(InstalledApplicationScope.CurrentAccount))
-        });
+        ]);
         Require(applicationScope is { IsValid: true, ChangesMachineRequested: false } &&
-            !WorkflowOptionValidation.Validate("installed-apps", new[]
-            {
+            !WorkflowOptionValidation.Validate("installed-apps",
+            [
                 KeyValuePair.Create("scope", "AllUsers")
-            }).IsValid, "Installed application validation accepts only implemented registration scopes");
+            ]).IsValid, "Installed application validation accepts only implemented registration scopes");
 
-        Require(WorkflowOptionValidation.Validate("search", new[]
-        {
+        Require(WorkflowOptionValidation.Validate("search",
+        [
             KeyValuePair.Create("rebuildIndex", "true")
-        }) is { IsValid: true, ChangesMachineRequested: true },
+        ]) is { IsValid: true, ChangesMachineRequested: true },
             "Search validation identifies an explicit index rebuild request");
 
-        Require(WorkflowOptionValidation.Validate("component-cleanup", new[]
-        {
+        Require(WorkflowOptionValidation.Validate("component-cleanup",
+        [
             KeyValuePair.Create("execute", "true")
-        }) is { IsValid: true, ChangesMachineRequested: true },
+        ]) is { IsValid: true, ChangesMachineRequested: true },
             "Component cleanup validation identifies explicit maintenance execution");
 
-        Require(WorkflowOptionValidation.Validate("windows-recovery", new[]
-        {
+        Require(WorkflowOptionValidation.Validate("windows-recovery",
+        [
             KeyValuePair.Create("execute", "true")
-        }) is { IsValid: true, ChangesMachineRequested: true },
+        ]) is { IsValid: true, ChangesMachineRequested: true },
             "Windows Recovery validation identifies explicit enablement");
 
-        WorkflowOptionValidationResult firewallEnable = WorkflowOptionValidation.Validate("firewall-services", new[]
-        {
+        WorkflowOptionValidationResult firewallEnable = WorkflowOptionValidation.Validate("firewall-services",
+        [
             KeyValuePair.Create("profile.private", "true"),
             KeyValuePair.Create("profile.public", "true"),
             KeyValuePair.Create("execute", "true")
-        });
+        ]);
         Require(firewallEnable is { IsValid: true, ChangesMachineRequested: true } &&
-            !WorkflowOptionValidation.Validate("firewall-services", new[]
-            {
+            !WorkflowOptionValidation.Validate("firewall-services",
+            [
                 KeyValuePair.Create("execute", "true")
-            }).IsValid, "Firewall validation requires at least one exact profile before enablement");
+            ]).IsValid, "Firewall validation requires at least one exact profile before enablement");
 
         WindowsWorkflowHost projectedNetwork = WorkflowOptionProjection.CreateHost(networkTarget);
         Require(projectedNetwork.NetworkLookupHost == "example.com" &&
@@ -482,60 +487,60 @@ internal static class WorkflowOptionCatalogChecks
             "Validated network options project into the shared workflow host");
 
         WindowsWorkflowHost projectedFirewall = WorkflowOptionProjection.CreateHost(
-            WorkflowOptionValidation.Validate("firewall-services", new[]
-            {
+            WorkflowOptionValidation.Validate("firewall-services",
+            [
                 KeyValuePair.Create("profile.private", "true"),
                 KeyValuePair.Create("profile.public", "true")
-            }));
+            ]));
         Require(projectedFirewall.FirewallProfileSelection?.Profiles.SequenceEqual(
-                new[] { FirewallProfileTarget.Private, FirewallProfileTarget.Public }) == true,
+                [FirewallProfileTarget.Private, FirewallProfileTarget.Public]) == true,
             "Selected firewall profiles project into the shared read-only review host");
 
         WindowsWorkflowHost projectedRestore = WorkflowOptionProjection.CreateHost(
-            WorkflowOptionValidation.Validate("system-restore", new[]
-            {
+            WorkflowOptionValidation.Validate("system-restore",
+            [
                 KeyValuePair.Create("prepare", "true"),
                 KeyValuePair.Create("description", "Before driver maintenance"),
                 KeyValuePair.Create("reason", nameof(SystemRestorePointReason.DeviceDriverInstall))
-            }));
+            ]));
         Require(projectedRestore.SystemRestoreRequest ==
                 new SystemRestoreCreationRequest("Before driver maintenance", SystemRestorePointReason.DeviceDriverInstall) &&
             projectedRestore.OptionPlanCheck?.Detail.Contains("Before driver maintenance", StringComparison.Ordinal) == true,
             "System Restore preparation projects the selected description and reason into its readiness review");
 
         WindowsWorkflowHost projectedStorage = WorkflowOptionProjection.CreateHost(
-            WorkflowOptionValidation.Validate("storage", new[]
-            {
+            WorkflowOptionValidation.Validate("storage",
+            [
                 KeyValuePair.Create("volume", "D:"),
                 KeyValuePair.Create("optimizationReview", "true"),
                 KeyValuePair.Create("optimizationMode", nameof(VolumeOptimizationMode.Defragment))
-            }));
+            ]));
         Require(projectedStorage.StorageVolume == "D:" && projectedStorage.VolumeOptimizationRequest ==
                 new VolumeOptimizationRequest("D:", VolumeOptimizationMode.Defragment) &&
             projectedStorage.OptionPlanCheck?.Detail.Contains("Defragment", StringComparison.Ordinal) == true,
             "Storage optimization selections project into the exact-volume read-only review");
 
         WindowsWorkflowHost projectedFileSystem = WorkflowOptionProjection.CreateHost(
-            WorkflowOptionValidation.Validate("storage", new[]
-            {
+            WorkflowOptionValidation.Validate("storage",
+            [
                 KeyValuePair.Create("volume", "D:"),
                 KeyValuePair.Create("repairReview", "true"),
                 KeyValuePair.Create("repairMode", nameof(FileSystemRepairMode.OfflineScanAndFix)),
                 KeyValuePair.Create("allowDismount", "true"),
                 KeyValuePair.Create("backupConfirmed", "true")
-            }));
+            ]));
         Require(projectedFileSystem.FileSystemRepairSelection ==
                 new FileSystemRepairSelection("D:", FileSystemRepairMode.OfflineScanAndFix, true, true) &&
             projectedFileSystem.OptionPlanCheck?.Detail.Contains("OfflineScanAndFix", StringComparison.Ordinal) == true,
             "Filesystem repair selections project into a bounded exact-volume evidence review");
 
         WindowsWorkflowHost projectedPrinting = WorkflowOptionProjection.CreateHost(
-            WorkflowOptionValidation.Validate("printing", new[]
-            {
+            WorkflowOptionValidation.Validate("printing",
+            [
                 KeyValuePair.Create("queue", "Office Printer"),
                 KeyValuePair.Create("jobQueue", "Office Printer"),
                 KeyValuePair.Create("jobId", "42")
-            }));
+            ]));
         Require(projectedPrinting.PrintingTargetSelection ==
                 new PrintingTargetSelection("Office Printer", "Office Printer", 42) &&
             projectedPrinting.OptionPlanCheck?.Detail.Contains("Blocked job ID: 42", StringComparison.Ordinal) == true,
@@ -546,24 +551,24 @@ internal static class WorkflowOptionCatalogChecks
             "Validated package inventory scope projects into the shared workflow host");
 
         WindowsWorkflowHost projectedCleanup = WorkflowOptionProjection.CreateHost(
-            WorkflowOptionValidation.Validate("cleanup", new[]
-            {
+            WorkflowOptionValidation.Validate("cleanup",
+            [
                 KeyValuePair.Create("target.windowsTemp", "true"),
                 KeyValuePair.Create("minimumAgeDays", "30"),
                 KeyValuePair.Create("maximumFilesPerTarget", "250")
-            }));
+            ]));
         Require(projectedCleanup.CleanupOptions.Targets.HasFlag(CleanupTargets.UserTemp) &&
             projectedCleanup.CleanupOptions.Targets.HasFlag(CleanupTargets.WindowsTemp) &&
             projectedCleanup.CleanupOptions.MinimumAgeDays == 30 && projectedCleanup.CleanupOptions.MaximumFilesPerTarget == 250,
             "Validated cleanup selections project without requesting removal");
 
         WindowsWorkflowHost projectedMace = WorkflowOptionProjection.CreateHost(
-            WorkflowOptionValidation.Validate("mace", new[]
-            {
+            WorkflowOptionValidation.Validate("mace",
+            [
                 KeyValuePair.Create("target.oneDrive", "true"),
                 KeyValuePair.Create("scope", nameof(MaceScope.AllUsers)),
                 KeyValuePair.Create("restoreOneDriveFolderLocations", "true")
-            }));
+            ]));
         Require(projectedMace.MaceOptions.Targets == MaceTargets.OneDrive &&
             projectedMace.MaceOptions.Scope == MaceScope.AllUsers && projectedMace.MaceOptions.RestoreOneDriveFolderLocations,
             "Validated Microsoft app removal selections project into a read-only removal review");

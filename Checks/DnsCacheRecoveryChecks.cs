@@ -5,6 +5,8 @@ using KillerBench.Engine;
 
 internal static class DnsCacheRecoveryChecks
 {
+    private static readonly string[] DnsClientDependency = ["network.dns-client"];
+
     private static DnsLookupResult Failed(string host = "fixture.example", SocketError error = SocketError.HostNotFound) =>
         new(host, DnsLookupState.Failed, [], "fixture") { ErrorCode = error };
 
@@ -249,7 +251,7 @@ internal static class DnsCacheRecoveryChecks
             unresolvedDns.Flushes == 0,
             "Conclusive repeated failure remains unresolved and never repeats the cache flush");
         Require(RecipeCatalog.ForWorkflow(WorkflowKind.Network).Single(recipe => recipe.Action == RepairKind.DnsCache)
-            .Dependencies.SequenceEqual(new[] { "network.dns-client" }),
+            .Dependencies.SequenceEqual(DnsClientDependency),
             "Network workflow exposes DNS cache recovery after the DNS Client prerequisite");
 
         Console.WriteLine("PASS: hostname-bound DNS cache preview, repeated fresh eligibility, administrator gate, durable preparation, exact-target verification and interruption reconciliation; simulated flush only.");

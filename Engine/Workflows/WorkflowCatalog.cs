@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Workflows;
 
 public sealed record WorkflowDefinition(WorkflowKind Kind, string Key, string Title)
 {
@@ -7,8 +7,8 @@ public sealed record WorkflowDefinition(WorkflowKind Kind, string Key, string Ti
 
 public static class WorkflowCatalog
 {
-    public static IReadOnlyList<WorkflowDefinition> All { get; } = Array.AsReadOnly(new[]
-    {
+    public static IReadOnlyList<WorkflowDefinition> All { get; } = Array.AsReadOnly<WorkflowDefinition>(
+    [
         new WorkflowDefinition(WorkflowKind.WindowsUpdate, "update", "Windows Update"),
         new WorkflowDefinition(WorkflowKind.SystemFiles, "files", "System files"),
         new WorkflowDefinition(WorkflowKind.Vitals, "vitals", "Vitals"),
@@ -110,7 +110,7 @@ public static class WorkflowCatalog
         new WorkflowDefinition(WorkflowKind.Depot, "depot", "Onboarding"),
         new WorkflowDefinition(WorkflowKind.Debloat, "debloat", "Declutter Windows"),
         new WorkflowDefinition(WorkflowKind.ServicingActivity, "servicing-monitor", "Servicing activity monitor")
-    });
+    ]);
 
     public static string CommandChoices => string.Join("|", All.Select(x => x.Key));
     public static WorkflowDefinition? Find(string key)

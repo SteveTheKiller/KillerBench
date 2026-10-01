@@ -4,7 +4,7 @@ internal static class AccountBrokerEventChecks
 {
     public static void Run()
     {
-        string Entry(int id, int level = 2, string provider = "Microsoft-Windows-AAD", ulong record = 1) =>
+        static string Entry(int id, int level = 2, string provider = "Microsoft-Windows-AAD", ulong record = 1) =>
             $"<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='{provider}'/><EventID>{id}</EventID><Version>0</Version><Level>{level}</Level><Task>103</Task><Opcode>0</Opcode><Keywords>0x10</Keywords><TimeCreated SystemTime='2026-09-14T00:00:00Z'/><EventRecordID>{record}</EventRecordID><Correlation ActivityID='{{PRIVATE-ACTIVITY}}'/><Execution ProcessID='42' ThreadID='7'/><Computer>PRIVATE-PC</Computer><Security UserID='S-1-5-21-PRIVATE'/></System><EventData><Data Name='Account'>PRIVATE\\User</Data><Data Name='Token'>PRIVATE-TOKEN</Data><Data Name='Uri'>https://private.invalid</Data></EventData></Event>";
         var raw = new ToolResult(0, "<Events>" + Entry(1097, record: 1) + Entry(1097, record: 2) + Entry(1006, 4, record: 3) + "</Events>", "", false);
         var sanitized = AccountBrokerEvents.Sanitize(raw);

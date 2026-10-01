@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Printing;
 
 public static class PrinterEndpointReachability
 {
@@ -33,12 +33,12 @@ public static class PrinterEndpointReachability
 
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(token);
         deadline.CancelAfter(OverallLimit);
-        var checks = await Task.WhenAll(targets.Select(target => ProbeAsync(target, evidence, probe, token, deadline.Token))).ConfigureAwait(false);
+        var checks = await Task.WhenAll(targets.Select(target => ProbeAsync(target, probe, token, deadline.Token))).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
         return System.Array.AsReadOnly(checks);
     }
 
-    private static async Task<WorkflowCheck> ProbeAsync(Target target, ToolResult evidence,
+    private static async Task<WorkflowCheck> ProbeAsync(Target target,
         Func<string, int, CancellationToken, Task<TcpCheckResult>>? probe, CancellationToken callerToken, CancellationToken deadlineToken)
     {
         string name = $"Printer endpoint reachability: {target.Host}:{target.Port}";
@@ -128,7 +128,7 @@ public static class PrinterEndpointReachability
                 } :
                     new(endpoint.Host, endpoint.Port, endpoint.Protocol, 1);
             }
-            targets = grouped.Values.OrderBy(item => item.Host, StringComparer.OrdinalIgnoreCase).ThenBy(item => item.Port).ToList();
+            targets = [.. grouped.Values.OrderBy(item => item.Host, StringComparer.OrdinalIgnoreCase).ThenBy(item => item.Port)];
             error = "";
             return true;
         }

@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Evidence;
 
 public sealed record TextEvidence(string Source, string[] Lines, bool Truncated)
 {

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Diagnostics;
 
 public static class DiagnosticPolicyOperationalCorrelation
 {
@@ -15,7 +15,7 @@ public static class DiagnosticPolicyOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Diagnostic Policy readiness";
         const string boundary = " This bounded conclusion does not establish a current fault, root cause, scenario applicability, troubleshooter result, diagnosis completion or repair outcome. It does not start a service, run a troubleshooter, accept a suggested fix, change policy or troubleshooting data, or select a repair.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var selected = new List<WorkflowCheck>();
         foreach (string required in RequiredNames)

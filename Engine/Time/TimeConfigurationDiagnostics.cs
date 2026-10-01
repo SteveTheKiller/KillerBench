@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Time;
 
 public static class TimeConfigurationDiagnostics
 {
@@ -38,7 +38,7 @@ public static class TimeConfigurationDiagnostics
         {
             string message = string.IsNullOrWhiteSpace(command.Error) ? command.Output : command.Error;
             detail += $" Effective configuration query was incomplete (exit {command.ExitCode}, timeout {command.TimedOut}, truncated {command.Truncated}). " +
-                new string(message.Take(1000).Select(character => char.IsControl(character) ? ' ' : character).ToArray());
+                new string([.. message.Take(1000).Select(character => char.IsControl(character) ? ' ' : character)]);
         }
         return new("Time source configuration", state, scope + detail + " No source or clock changes selected.",
             Evidence: new(0, JsonSerializer.Serialize(environment, Capture.JsonOptions), "", false));

@@ -372,11 +372,11 @@ public partial class MainWindow
                 restartRequired ? "Restart Windows when convenient, then check the interrupted update result before another installation." :
                     verified ? "Review the installed updates and test the affected computer before considering another installation." :
                     "Review Windows Update and the saved journal before another installation attempt.", verified, restartRequired);
-            WorkflowCheck[] checks = result.Outcomes.Select(outcome => new WorkflowCheck(
+            WorkflowCheck[] checks = [.. result.Outcomes.Select(outcome => new WorkflowCheck(
                 "Update " + outcome.Selection.Id + " revision " + outcome.Selection.Revision,
-                outcome.Installed ? CheckState.Information : CheckState.Unknown, outcome.Detail)).Append(
+                outcome.Installed ? CheckState.Information : CheckState.Unknown, outcome.Detail)),
                 new WorkflowCheck("Installation boundary", CheckState.Information,
-                    "Only the explicitly selected updates were requested. No automatic restart was requested.")).ToArray();
+                    "Only the explicitly selected updates were requested. No automatic restart was requested.")];
             RegisterWorkflowResult(new WorkflowResult(WorkflowKind.AvailableUpdates, Environment.MachineName, DateTimeOffset.UtcNow,
                 restartRequired ? "Restart required" : result.Status, checks, [], result.JournalPath)
             { Actions = [action] }, "Windows Update installation");

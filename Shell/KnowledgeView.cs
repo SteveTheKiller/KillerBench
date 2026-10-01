@@ -49,7 +49,7 @@ public partial class MainWindow
                 if (change.After is not null) lines.Add("After: " + JsonSerializer.Serialize(change.After));
                 lines.Add("");
             }
-            RegisterSource(new TextEvidence("Pack comparison: " + comparison.PackId, lines.ToArray(), comparison.Truncated));
+            RegisterSource(new TextEvidence("Pack comparison: " + comparison.PackId, [.. lines], comparison.Truncated));
             Report("Knowledge comparison ready. Source files preserved; no pack installed.");
             SetScanLight("incomplete", "Reference comparison only; machine health was not assessed.");
         }
@@ -84,16 +84,16 @@ public partial class MainWindow
         var lines = new List<string> { "WINDOWS SYSTEM MESSAGE", "Code: " + code + " (0x" + code.ToString("X") + ")",
             result.Message ?? "No system message found for this code.", "Source: " + result.Source, result.Limitation };
         if (code <= int.MaxValue && WindowsInstallerErrorCatalog.Find((int)code) is { } installer)
-            lines.AddRange(new[] { "", "WINDOWS INSTALLER RETURN CODE", installer.Symbol, installer.Summary,
+            lines.AddRange(["", "WINDOWS INSTALLER RETURN CODE", installer.Symbol, installer.Summary,
                 "Next: " + installer.DiagnosticScope, "Successful outcome: " + (installer.Success ? "Yes" : "No"),
                 "Restart required: " + (installer.RestartRequired ? "Yes" : "No"),
                 "Source: " + WindowsInstallerErrorCatalog.SourceUrl,
-                "Reference only. The code does not identify a failing action, prove current product state or authorize repair." });
+                "Reference only. The code does not identify a failing action, prove current product state or authorize repair."]);
         if (WindowsUpdateErrorCatalog.Find(code) is { } update)
-            lines.AddRange(new[] { "", "WINDOWS UPDATE RESULT CODE", update.Symbol, update.Meaning,
+            lines.AddRange(["", "WINDOWS UPDATE RESULT CODE", update.Symbol, update.Meaning,
                 "Next: " + update.DiagnosticScope, "Source: " + WindowsUpdateErrorCatalog.SourceUrl,
-                "Reference only. The code does not identify the failing update, prove current update state or authorize repair." });
-        RegisterSource(new TextEvidence("Win32 code: " + code, lines.ToArray(), false));
+                "Reference only. The code does not identify the failing update, prove current update state or authorize repair."]);
+        RegisterSource(new TextEvidence("Win32 code: " + code, [.. lines], false));
         Report(result.Message is null ? "No Windows system message found." : "Windows system reference loaded. No diagnostic verdict.");
         SetScanLight("incomplete", "Reference only; machine health was not assessed.");
     }
@@ -105,8 +105,7 @@ public partial class MainWindow
         { Report("Enter an unsigned decimal or 0x hexadecimal Device Manager code."); return; }
         var entry = DeviceProblemCodeCatalog.Find(code);
         RegisterSource(new TextEvidence("Device Manager code: " + code,
-            new[]
-            {
+            [
                 "DEVICE MANAGER PROBLEM CODE",
                 "Code: " + code + " (0x" + code.ToString("X") + ")",
                 "Identity: " + entry.Symbol,
@@ -114,7 +113,7 @@ public partial class MainWindow
                 "Next: " + entry.NextAction,
                 "Restart may resolve this reported state: " + (entry.RestartMayResolve ? "Yes" : "No"),
                 "Reference only. Current device state was not inspected and no repair was selected."
-            }, false));
+            ], false));
         Report(entry.Symbol == "CM_PROB_UNKNOWN" ? "Unknown Device Manager code retained for review." :
             "Device Manager reference loaded. No diagnostic verdict.");
         SetScanLight("incomplete", "Reference only; machine health was not assessed.");
@@ -150,18 +149,18 @@ public partial class MainWindow
             var lines = new List<string> { "KNOWLEDGE / LOCAL REFERENCE", "Pack: " + catalog.PackId + " / revision " + catalog.Revision,
                 "Published: " + catalog.PublishedOn, "License: " + catalog.License, "Context: " + context, "Code: " + code, "" };
             if (entry is null) lines.Add("No entry matches this context and code.");
-            else lines.AddRange(new[] { entry.Title, entry.Explanation, "Applies to: " + entry.AppliesTo,
-                "Source: " + entry.SourceUrl, "Verified on: " + entry.VerifiedOn.ToString() });
+            else lines.AddRange([entry.Title, entry.Explanation, "Applies to: " + entry.AppliesTo,
+                "Source: " + entry.SourceUrl, "Verified on: " + entry.VerifiedOn.ToString()]);
             if (entry?.Driver is { } driver)
-                lines.AddRange(new[] { "", "DRIVER REFERENCE / DECLARED APPLICABILITY",
+                lines.AddRange(["", "DRIVER REFERENCE / DECLARED APPLICABILITY",
                     "Hardware ID: " + driver.HardwareId, "Architecture: " + driver.Architecture,
                     "Windows product: " + driver.WindowsProduct,
                     "Build range: " + driver.MinimumBuild + " to " + driver.MaximumBuild,
                     "Vendor: " + driver.Vendor, "Version: " + driver.DriverVersion,
                     "Download reference: " + driver.DownloadUrl,
-                    "Device match and package compatibility have not been checked. No download or installation performed." });
+                    "Device match and package compatibility have not been checked. No download or installation performed."]);
             lines.Add("Local reference only. Publisher signature has not been verified. This match does not diagnose the machine or authorize a repair.");
-            RegisterSource(new TextEvidence("Reference: " + context + " / " + code, lines.ToArray(), false));
+            RegisterSource(new TextEvidence("Reference: " + context + " / " + code, [.. lines], false));
             Report(entry is null
                 ? $"No contextual reference found. {catalog.PackId} joined {sessionKnowledgeCatalogs.Count} session knowledge pack(s)."
                 : $"Reference loaded. {catalog.PackId} joined {sessionKnowledgeCatalogs.Count} session knowledge pack(s).");
@@ -180,9 +179,9 @@ public partial class MainWindow
         if (result.Truncated) lines.Add("Result limit reached. Narrow the search text to see other matches.");
         if (result.TotalMatches == 0) lines.Add("No reference text matches in this context.");
         foreach (var entry in result.Matches)
-            lines.AddRange(new[] { entry.Code + " / " + entry.Title, entry.Explanation, "Applies to: " + entry.AppliesTo,
-                "Source: " + entry.SourceUrl, "Verified on: " + entry.VerifiedOn, "" });
+            lines.AddRange([entry.Code + " / " + entry.Title, entry.Explanation, "Applies to: " + entry.AppliesTo,
+                "Source: " + entry.SourceUrl, "Verified on: " + entry.VerifiedOn, ""]);
         lines.Add("Local reference only. Publisher signature has not been verified. Text matches do not diagnose the machine or authorize repairs or driver installation.");
-        return new("Reference search: " + context + " / " + query, lines.ToArray(), result.Truncated);
+        return new("Reference search: " + context + " / " + query, [.. lines], result.Truncated);
     }
 }

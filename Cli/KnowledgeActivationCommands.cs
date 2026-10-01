@@ -37,9 +37,9 @@ internal static class KnowledgeActivationCommands
             else if (!recover)
             {
                 byte[] key = await ReadAsync(args[2], 1024, stop.Token);
-                var result = await KnowledgeActivation.LoadActiveAsync(args[1], key, args[3], minimumRevision, stop.Token);
-                Console.WriteLine(JsonSerializer.Serialize(new { result.Catalog.PackId, result.Catalog.Revision, result.Catalog.PublishedOn,
-                    result.Catalog.Count, result.Pointer.ActivatedUtc, result.DataPath,
+                var (catalog, pointer, dataPath) = await KnowledgeActivation.LoadActiveAsync(args[1], key, args[3], minimumRevision, stop.Token);
+                Console.WriteLine(JsonSerializer.Serialize(new { catalog.PackId, catalog.Revision, catalog.PublishedOn,
+                    catalog.Count, pointer.ActivatedUtc, DataPath = dataPath,
                     Scope = "Verified active local reference data. No download, activation or repair execution." }, Capture.JsonOptions));
                 return 0;
             }

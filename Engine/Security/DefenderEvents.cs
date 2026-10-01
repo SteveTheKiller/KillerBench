@@ -1,6 +1,6 @@
 using System.Xml;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public static class DefenderEvents
 {

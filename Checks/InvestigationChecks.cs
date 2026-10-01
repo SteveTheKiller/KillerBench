@@ -1,8 +1,13 @@
 using System.Text.Json;
 using KillerBench.Engine;
 
-internal static class InvestigationChecks
+internal static partial class InvestigationChecks
 {
+    private static readonly int[] ActionFailureLineOrder = [3, 1, 2];
+
+    [System.Text.RegularExpressions.GeneratedRegex("Detail=line1 +line2")]
+    private static partial System.Text.RegularExpressions.Regex DetailLineRegex();
+
     internal static void Run()
     {
         var providerEvidence = new ToolResult(0, "{\"count\":1,\"version\":\"10.0.26200\",\"build\":\"26200\"}", "", false);
@@ -60,7 +65,7 @@ internal static class InvestigationChecks
         var payloadEvidence = storageEvidence with { Output = storageEvidence.Output.Replace("</Event>", storagePayload + "</Event>") };
         var payloadHistory = StorageEvents.Interpret(payloadEvidence);
         Check(payloadHistory.Detail.Contains(@"DeviceName=\Device\Harddisk2\DR2") && payloadHistory.Detail.Contains("Status=0xC0000185") &&
-            System.Text.RegularExpressions.Regex.IsMatch(payloadHistory.Detail, "Detail=line1 +line2") && payloadHistory.Detail.Contains("value=unnamed") &&
+            DetailLineRegex().IsMatch(payloadHistory.Detail) && payloadHistory.Detail.Contains("value=unnamed") &&
             payloadHistory.Detail.Contains("[shortened]") && payloadHistory.Detail.Contains("Additional fields retained") &&
             !payloadHistory.Detail.Contains("hidden-preview") && payloadHistory.Evidence == payloadEvidence && payloadHistory.Repair is null,
             "Storage payload preview retains device evidence, bounds fields, neutralizes line breaks and preserves full XML: " + payloadHistory.Detail);
@@ -151,8 +156,8 @@ internal static class InvestigationChecks
         const string actionFailure = "Action ended 12:34:56: InstallFiles. Return value 3.";
         var actionReport = Investigation.Analyze(new("install.log", [msi.Replace("1603", "0"), "Package-specific detail", actionFailure], false));
         var actionFinding = actionReport.Findings.Single();
-        Check(actionFinding.RuleId == "KB-MSI-ACTION" && actionFinding.Evidence.Select(e => e.LineNumber).SequenceEqual(new[] { 3, 1, 2 }) &&
-            actionFinding.Evidence.First().Excerpt.Contains("InstallFiles"), "MSI action failure leads with the failed action before bounded context");
+        Check(actionFinding.RuleId == "KB-MSI-ACTION" && actionFinding.Evidence.Select(e => e.LineNumber).SequenceEqual(ActionFailureLineOrder) &&
+            actionFinding.Evidence[0].Excerpt.Contains("InstallFiles"), "MSI action failure leads with the failed action before bounded context");
         Check(Investigation.Analyze(new("notes.txt", [actionFailure], false)).Findings.Count == 0, "Action phrase alone does not establish MSI context");
         foreach (string invalidAction in new[] { actionFailure.Replace("value 3", "value 1"), actionFailure.Replace("12:34", "99:34"), "example " + actionFailure })
             Check(Investigation.Analyze(new("install.log", [msi.Replace("1603", "0"), invalidAction], false)).Findings.Count == 0,
@@ -187,7 +192,7 @@ internal static class InvestigationChecks
             Check(Investigation.Analyze(new("install.log", [invalid], false)).Findings.Count == 0,
                 "MSI success, restart-success, malformed and unrelated text cannot become failure findings");
         Check(Investigation.Analyze(new("install.log", [msi], true)).Findings.Count == 0, "Incomplete MSI outcome excluded");
-        var installationRepeated = Investigation.Analyze(new("install.log", Enumerable.Repeat(msi, 12).ToArray(), false));
+        var installationRepeated = Investigation.Analyze(new("install.log", [.. Enumerable.Repeat(msi, 12)], false));
         Check(installationRepeated.Findings.Single().Occurrences == 12 && installationRepeated.Findings.Single().Evidence.Count == 8,
             "Repeated MSI outcomes retain bounded evidence without claiming unique installations");
         var report = Investigation.Analyze(new("CBS.log", [error, error.Replace("Error", "Info"), error.Replace("800f081f", "80073712")], false));
@@ -223,9 +228,9 @@ internal static class InvestigationChecks
         Check(Investigation.Analyze(new("setupact.log", [setup.Replace("800f081f", "C1900210")], false)).Findings.Single().Severity == "Information",
             "Informational Setup results remain distinct from repair-review findings");
         Check(Investigation.Analyze(new("random.log", [setup], false)).Findings.Count == 0, "Require setup source identity");
-        var repeated = Investigation.Analyze(new("CBS.log", Enumerable.Repeat(error, 15).ToArray(), false));
+        var repeated = Investigation.Analyze(new("CBS.log", [.. Enumerable.Repeat(error, 15)], false));
         Check(repeated.Findings.Single().Occurrences == 15 && repeated.Findings.Single().Evidence.Count == 8, "Bound finding references");
-        var bounded = Investigation.Analyze(new("CBS.log", Enumerable.Repeat("2026-09-12 12:00:01, Info CBS x", 10002).ToArray(), false));
+        var bounded = Investigation.Analyze(new("CBS.log", [.. Enumerable.Repeat("2026-09-12 12:00:01, Info CBS x", 10002)], false));
         Check(bounded.ParsedLines == 10000 && bounded.Partial, "Bound parsed entries");
         try { Investigation.Analyze(new("CBS.log", [error], false), new CancellationToken(true)); throw new Exception("Cancellation ignored"); }
         catch (OperationCanceledException) { }

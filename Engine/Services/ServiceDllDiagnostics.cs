@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public sealed record ServiceDllObservation(string Name, string? DllFile, string Status, string? Signature, string? SignatureIssue, bool Complete, string? Issue);
 

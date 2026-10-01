@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine.Core;
+namespace KillerBench.Engine.Core.Symptoms;
 
 /// <summary>Reads and writes symptom catalogs with the same strict JSON rules as recipe packs.</summary>
 public static class SymptomCatalogJson

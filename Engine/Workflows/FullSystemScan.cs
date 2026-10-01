@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Workflows;
 
 public static class FullSystemScan
 {

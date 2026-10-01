@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.BitLocker;
 
 public enum BitLockerBackupReconciliationOutcome { NoPendingRecord, Verified, Missing, Invalid, Inconclusive }
 
@@ -44,7 +44,7 @@ public static class BitLockerBackupReconciliation
             return new(BitLockerBackupReconciliationOutcome.Inconclusive,
                 "The interrupted backup record could not be verified for this computer. The record was retained and no file was written.", pendingPath);
         }
-        if (pending.Volume != options.Volume.ToUpperInvariant() || pending.Protector != protector ||
+        if (!string.Equals(pending.Volume, options.Volume, StringComparison.OrdinalIgnoreCase) || pending.Protector != protector ||
             pending.DestinationHash != BitLockerBackupExecution.DestinationHash(options.BackupFile!))
             return new(BitLockerBackupReconciliationOutcome.Inconclusive,
                 "The selected volume, protector or destination does not match the pending backup. The record was retained and no file was written.", pendingPath);

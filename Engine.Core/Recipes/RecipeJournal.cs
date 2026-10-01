@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine.Core;
+namespace KillerBench.Engine.Core.Recipes;
 
 public enum RecipeJournalStage { Detected, PreconditionsChecked, Prepared, Dispatched, Verified, Completed }
 

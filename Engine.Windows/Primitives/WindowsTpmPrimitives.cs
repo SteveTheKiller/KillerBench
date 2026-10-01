@@ -1,6 +1,6 @@
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Primitives;
 
 /// <summary>Reports TPM readiness from Get-Tpm. Value is Ready, NotReady or Absent; Raw keeps the present, ready, enabled and owned flags only.</summary>
 public sealed class WindowsTpmStatusProbe : IProbePrimitive

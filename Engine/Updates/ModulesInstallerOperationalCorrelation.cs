@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public static class ModulesInstallerOperationalCorrelation
 {
@@ -12,7 +12,7 @@ public static class ModulesInstallerOperationalCorrelation
 
         const string name = "Windows Modules Installer conclusion";
         const string boundary = " This bounded conclusion does not establish component-store health, package applicability, servicing completion or restart readiness. It does not install, remove, clean up or roll back a package, change a source or policy, request a restart, start a service, or select a repair.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         if (service.Name != "Windows Modules Installer state" ||
             packages.Name != "Servicing packages" ||

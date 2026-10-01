@@ -52,7 +52,7 @@ internal static class PrintServiceOperationalEventChecks
             return Task.FromResult(Configuration(disabledXml));
         });
         Require(disabledCollected.State == CheckState.Information && disabledPlans.Single() is { Tool: "wevtutil.exe", Verification: true } configurationStep &&
-            configurationStep.Arguments.SequenceEqual(new[] { "gl", PrintServiceOperationalEvents.Channel, "/f:xml" }),
+            configurationStep.Arguments.SequenceEqual(["gl", PrintServiceOperationalEvents.Channel, "/f:xml"]),
             "Disabled channel collection stops after one read-only configuration query");
 
         var enabledPlans = new ConcurrentBag<RepairStep>();

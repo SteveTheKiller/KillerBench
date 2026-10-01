@@ -1,6 +1,6 @@
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Packs;
 
 /// <summary>
 /// The built-in Windows symptom catalog. Each tree walks the service recipes that can explain a symptom in dependency

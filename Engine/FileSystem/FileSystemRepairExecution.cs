@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.FileSystem;
 
 public enum FileSystemRepairOutcome { Preview, Blocked, Verified, RestartRequired, Failed, Uncertain, Stopped }
 

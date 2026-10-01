@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Applications;
 
 public enum ApplicationRegistrationChange { Added, Removed, VersionChanged, MetadataChanged }
 public sealed record ApplicationRegistrationDifference(ApplicationRegistrationChange Change, InstalledApplication? Before, InstalledApplication? After);

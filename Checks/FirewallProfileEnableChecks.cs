@@ -20,11 +20,11 @@ internal static class FirewallProfileEnableChecks
         if (selectedEnabled is not { State: CheckState.Information, Repair: null })
             throw new Exception("Enabled selected firewall profiles did not remain informational");
         var selectedManaged = FirewallProfileEnable.ReviewSelection(options,
-            disabled.Select(item => item.Profile == FirewallProfileTarget.Private ? item with { Managed = true } : item).ToArray());
+            [.. disabled.Select(item => item.Profile == FirewallProfileTarget.Private ? item with { Managed = true } : item)]);
         if (selectedManaged is not { State: CheckState.Attention, Repair: null } ||
             !selectedManaged.Detail.Contains("policy owner", StringComparison.Ordinal))
             throw new Exception("Managed selected firewall profile did not retain policy ownership boundary");
-        var selectedIncomplete = FirewallProfileEnable.ReviewSelection(options, disabled.Take(2).ToArray());
+        var selectedIncomplete = FirewallProfileEnable.ReviewSelection(options, [.. disabled.Take(2)]);
         if (selectedIncomplete is not { State: CheckState.Unknown, Repair: null })
             throw new Exception("Incomplete selected firewall evidence did not remain unknown");
         const string nativeJson = "[{\"Profile\":\"Domain\",\"Enabled\":true,\"Managed\":false},{\"Profile\":\"Private\",\"Enabled\":false,\"Managed\":false},{\"Profile\":\"Public\",\"Enabled\":true,\"Managed\":null}]";
@@ -47,15 +47,15 @@ internal static class FirewallProfileEnableChecks
         var managedCheck = FirewallProfileEnable.Assess(managed);
         if (managedCheck is not { State: CheckState.Attention, Repair: null } || !managedCheck.Detail.Contains("policy owner", StringComparison.Ordinal))
             throw new Exception("Managed disabled firewall profiles offered a local repair");
-        var incompleteCheck = FirewallProfileEnable.Assess(disabled.Take(2).ToArray());
+        var incompleteCheck = FirewallProfileEnable.Assess([.. disabled.Take(2)]);
         if (incompleteCheck is not { State: CheckState.Unknown, Repair: null })
             throw new Exception("Incomplete firewall profile state offered a repair or health claim");
         foreach (var invalid in new IReadOnlyList<FirewallProfileState>[]
         {
-            disabled.Take(2).ToArray(), disabled.Concat([disabled[0]]).ToArray(),
-            disabled.Select(item => item.Profile == FirewallProfileTarget.Private ? item with { Managed = true } : item).ToArray(),
-            disabled.Select(item => item.Profile == FirewallProfileTarget.Public ? item with { Enabled = null } : item).ToArray(),
-            disabled.Select(item => item.Profile == FirewallProfileTarget.Private ? item with { Enabled = true } : item).ToArray()
+            [.. disabled.Take(2)], [.. disabled, disabled[0]],
+            [.. disabled.Select(item => item.Profile == FirewallProfileTarget.Private ? item with { Managed = true } : item)],
+            [.. disabled.Select(item => item.Profile == FirewallProfileTarget.Public ? item with { Enabled = null } : item)],
+            [.. disabled.Select(item => item.Profile == FirewallProfileTarget.Private ? item with { Enabled = true } : item)]
         }) if (FirewallProfileEnable.Eligible(options, invalid)) throw new Exception("Unsafe firewall profile state was accepted");
         foreach (var bad in new[]
         {
@@ -129,7 +129,7 @@ internal static class FirewallProfileEnableChecks
         string retainedFolder = Folder(scratch, "firewall-retained");
         var retainedHost = new Host(disabled, States(false, true, true)) { CommandResult = new(5, "", "denied", false) };
         await FirewallProfileEnable.RunAsync(options, true, retainedFolder, retainedHost);
-        retainedHost.Current = disabled.Select(item => item.Profile == FirewallProfileTarget.Private ? item with { Managed = true } : item).ToArray();
+        retainedHost.Current = [.. disabled.Select(item => item.Profile == FirewallProfileTarget.Private ? item with { Managed = true } : item)];
         var retained = await FirewallProfileEnable.ReconcileAsync(retainedFolder, retainedHost);
         if (retained.Outcome != FirewallProfileEnableOutcome.Uncertain || retainedHost.Commands != 1 ||
             !File.Exists(Path.Combine(retainedFolder, "firewall-profile-enable.pending.json")))
@@ -176,9 +176,9 @@ internal static class FirewallProfileEnableChecks
                 return Task.FromException<IReadOnlyList<FirewallProfileState>>(new InvalidDataException("fixture final inspection failure"));
             IReadOnlyList<FirewallProfileState> value = Current ?? (Commands > 0 ? after : before);
             if (ChangeSecondInspection && inspections == 2)
-                value = before.Select(item => item.Profile == FirewallProfileTarget.Private ? item with { Managed = true } : item).ToArray();
+                value = [.. before.Select(item => item.Profile == FirewallProfileTarget.Private ? item with { Managed = true } : item)];
             if (ChangeFinalInspection && inspections == 3)
-                value = before.Select(item => item.Profile == FirewallProfileTarget.Private ? item with { Managed = true } : item).ToArray();
+                value = [.. before.Select(item => item.Profile == FirewallProfileTarget.Private ? item with { Managed = true } : item)];
             return Task.FromResult(value);
         }
         public Task<ToolResult> EnableAsync(IReadOnlyList<FirewallProfileTarget> profiles, CancellationToken token)

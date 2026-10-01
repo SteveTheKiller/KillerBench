@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public sealed record BitsJobReviewResult(Guid JobId, string? Scope, bool Complete, BitsJobSnapshot? Selected, IReadOnlyList<string> Notes);
 public sealed record BitsJobComparison(Guid JobId, bool Comparable, ulong? BytesAdvanced, string Detail,

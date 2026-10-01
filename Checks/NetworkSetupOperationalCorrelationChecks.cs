@@ -9,9 +9,9 @@ internal static class NetworkSetupOperationalCorrelationChecks
         Require(Check(service: CheckState.Attention).State == CheckState.Attention, "Current Network Setup service concern requests review");
         Require(Check(history: CheckState.Attention).State == CheckState.Information, "Historical Network Setup failures remain informational");
         Require(Check(bindings: CheckState.Unknown, service: CheckState.Attention).State == CheckState.Unknown, "Incomplete binding evidence takes precedence");
-        Require(NetworkSetupOperationalCorrelation.Check(Inputs().Append(new("Network adapter bindings", CheckState.Information, "duplicate")).ToArray()).State == CheckState.Unknown,
+        Require(NetworkSetupOperationalCorrelation.Check([.. Inputs().Append(new("Network adapter bindings", CheckState.Information, "duplicate"))]).State == CheckState.Unknown,
             "Duplicate Network Setup evidence fails closed");
-        Require(NetworkSetupOperationalCorrelation.Check(Inputs().Where(check => check.Name != "Focused service readiness").ToArray()).State == CheckState.Unknown,
+        Require(NetworkSetupOperationalCorrelation.Check([.. Inputs().Where(check => check.Name != "Focused service readiness")]).State == CheckState.Unknown,
             "Missing Network Setup evidence fails closed");
         try { NetworkSetupOperationalCorrelation.Check(Inputs(), new CancellationToken(true)); throw new Exception("Canceled Network Setup correlation completed"); }
         catch (OperationCanceledException) { }

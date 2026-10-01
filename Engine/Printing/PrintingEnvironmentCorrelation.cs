@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Printing;
 
 public static class PrintingEnvironmentCorrelation
 {
@@ -22,7 +22,7 @@ public static class PrintingEnvironmentCorrelation
 
         const string name = "Printing environment correlation";
         const string boundary = " This is bounded registration, policy, file and configured-endpoint evidence. It does not render a document, submit a job, query supplies, identify a physical printer, prove queue acceptance or establish application output. No policy, driver, package, file, processor, monitor, port, queue, job or print setting changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         if (pointAndPrint.Name != "Point and Print policy" || rendering.Name != "Print rendering and isolation policy" ||
             driverModels.Name != "Printer driver models" || extensions.Name != "Print processors and monitors" ||

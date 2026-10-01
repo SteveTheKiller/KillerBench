@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Monitoring;
 
 public sealed record ServicingMonitorOptions(
     int RefreshSeconds = 3,
@@ -235,7 +235,7 @@ public static class ProcessActivityDiagnostics
 
 public sealed class ServicingProcessSampler
 {
-    private readonly object _gate = new();
+    private readonly Lock _gate = new();
     private readonly Dictionary<int, double> _previousCpuSeconds = [];
     private DateTimeOffset? _previousCapturedUtc;
 

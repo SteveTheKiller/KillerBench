@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public enum VolumeOptimizationMode { Recommended, ReTrim, Defragment }
 public enum VolumeMediaKind { HardDisk, SolidState, ThinProvisioned, TieredStorage, Unknown }

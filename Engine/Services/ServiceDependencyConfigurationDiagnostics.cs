@@ -2,7 +2,7 @@ using System.Security;
 using System.Text.Json;
 using Microsoft.Win32;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public sealed record ServiceDependencyConfigurationEntry(string Name, bool Readable,
     IReadOnlyList<string> ServiceDependencies, IReadOnlyList<string> AbsentDependencies, bool HasGroupDependencies);
@@ -24,7 +24,7 @@ public static class ServiceDependencyConfigurationDiagnostics
         collect ??= CollectAsync;
         try
         {
-            var pending = collect(installed.Services.Select(service => service.Name).ToArray(), token);
+            var pending = collect([.. installed.Services.Select(service => service.Name)], token);
             if (pending is null) return Unknown(inventory.Evidence);
             var snapshot = await pending.WaitAsync(token).ConfigureAwait(false);
             if (snapshot is null) return Unknown(inventory.Evidence);
@@ -75,7 +75,7 @@ public static class ServiceDependencyConfigurationDiagnostics
             if (service.HasGroupDependencies) groupConfigured++;
             selfDependencies += dependencies.Count(dependency => dependency.Equals(service.Name, StringComparison.OrdinalIgnoreCase));
             missingDependencies += absent.Length;
-            graph.Add(service.Name, dependencies.Where(installedNames.Contains).ToArray());
+            graph.Add(service.Name, [.. dependencies.Where(installedNames.Contains)]);
         }
         if (seen.Count != installedNames.Count) return Unknown(evidence);
         int cycleNodes = CountCycleNodes(graph, token);
@@ -124,8 +124,8 @@ public static class ServiceDependencyConfigurationDiagnostics
     {
         if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Service dependency configuration requires Windows.");
         using var root = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
-        using var services = root.OpenSubKey(@"SYSTEM\CurrentControlSet\Services", writable: false);
-        if (services is null) throw new IOException("The installed service registry was unavailable.");
+        using var services = root.OpenSubKey(@"SYSTEM\CurrentControlSet\Services", writable: false)
+            ?? throw new IOException("The installed service registry was unavailable.");
         string[] registryNames = services.GetSubKeyNames();
         if (registryNames.Length > 4096) return new(false, []);
         var registered = registryNames.ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -141,7 +141,7 @@ public static class ServiceDependencyConfigurationDiagnostics
                 object? groups = key?.GetValue("DependOnGroup", null, RegistryValueOptions.DoNotExpandEnvironmentNames);
                 bool readable = key is not null && (direct is null or string[]) && (groups is null or string[]);
                 string[] dependencies = direct as string[] ?? [];
-                string[] absent = dependencies.Where(dependency => !registered.Contains(dependency)).ToArray();
+                string[] absent = [.. dependencies.Where(dependency => !registered.Contains(dependency))];
                 bool hasGroups = groups is string[] groupNames && groupNames.Length > 0;
                 entries.Add(new(name, readable, dependencies, absent, hasGroups));
                 complete &= readable;

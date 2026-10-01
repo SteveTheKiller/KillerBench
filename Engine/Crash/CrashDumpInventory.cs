@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Crash;
 
 public sealed record CrashDumpFile(string Path, long Bytes, DateTime LastWriteUtc);
 public sealed record CrashDumpInventoryResult(IReadOnlyList<CrashDumpFile> Files, bool Complete, IReadOnlyList<string> Notes);

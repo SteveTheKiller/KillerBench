@@ -5,7 +5,7 @@ internal static class NtfsSelfHealingChecks
 {
     internal static async Task RunAsync()
     {
-        ToolResult Evidence(string volume, string flags) => new(0,
+        static ToolResult Evidence(string volume, string flags) => new(0,
             $"Self healing state on {volume} is: {flags}\r\n", "", false);
 
         var enabled = NtfsSelfHealingDiagnostics.Interpret("C:", Evidence("C:", "0x1"));
@@ -36,7 +36,7 @@ internal static class NtfsSelfHealingChecks
             return Task.FromResult(Evidence("C:", "0x9"));
         });
         Require(collected.State == CheckState.Clear && boundedToken && planned is { Tool: "fsutil.exe", Verification: true } &&
-            planned.Arguments.SequenceEqual(new[] { "repair", "query", "C:" }),
+            planned.Arguments.SequenceEqual(["repair", "query", "C:"]),
             "Native collection uses only the exact selected-volume query form");
 
         var failure = await NtfsSelfHealingDiagnostics.CheckAsync("C:", execute: (_, _) => throw new IOException("fixture failure"));

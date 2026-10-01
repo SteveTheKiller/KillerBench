@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record UpdateSelection(Guid Id, int Revision);
 public sealed record UpdateInstallOptions(bool AllowRestartRequired = false, bool AllowFeatureUpgrade = false);

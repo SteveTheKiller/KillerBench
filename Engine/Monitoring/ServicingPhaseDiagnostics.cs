@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Monitoring;
 
 public static class ServicingPhaseDiagnostics
 {
@@ -140,7 +140,7 @@ public static class ServicingPhaseDiagnostics
     }
 
     private static string[] Active(IReadOnlyList<ServicingProcessGroup> groups, params string[] names) =>
-        names.Where(name => groups.Any(group => group.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && group.Count > 0)).ToArray();
+        [.. names.Where(name => groups.Any(group => group.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && group.Count > 0))];
 
     private static WorkflowCheck Result(CheckState state, string detail) => new("Live servicing state", state,
         detail + " This is a point-in-time signal summary, not a progress percentage, completion claim, stall diagnosis or root-cause finding. No action was requested.");

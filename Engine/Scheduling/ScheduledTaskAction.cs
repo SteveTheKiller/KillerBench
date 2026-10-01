@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Scheduling;
 
 public sealed record ScheduledTaskAction(string Executable, string Arguments, string? WorkingDirectory = null)
 {

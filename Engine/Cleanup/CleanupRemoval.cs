@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Win32.SafeHandles;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Cleanup;
 
 public sealed record CleanupFileOutcome(string Path, string Status, string Detail);
 public sealed record CleanupRemovalResult(CleanupOptions Options, string Status, string JournalPath,
@@ -91,7 +91,7 @@ public static class CleanupRemoval
     }
 }
 
-public sealed class WindowsCleanupRemovalHost : ICleanupRemovalHost
+public sealed partial class WindowsCleanupRemovalHost : ICleanupRemovalHost
 {
     public CleanupPreviewResult Inspect(CleanupOptions options, IProgress<string>? progress, CancellationToken token) =>
         CleanupPreview.Inspect(options, progress, token);
@@ -133,7 +133,7 @@ public sealed class WindowsCleanupRemovalHost : ICleanupRemovalHost
             if (resolved.StartsWith(@"\\?\", StringComparison.Ordinal)) resolved = resolved[4..];
             if (length == 0 || length >= finalPath.Capacity || !resolved.Equals(path, StringComparison.OrdinalIgnoreCase))
                 return new(path, "Skipped", "Resolved file path changed or could not be verified.");
-            if (!GetFileInformationByHandle(handle, out var info)) return new(path, "Skipped", "File metadata could not be verified.");
+            if (!TryGetFileInformation(handle, out var info)) return new(path, "Skipped", "File metadata could not be verified.");
             const uint excluded = 0x1 | 0x4 | 0x10 | 0x400 | 0x1000;
             long bytes = ((long)info.SizeHigh << 32) | info.SizeLow;
             if ((info.Attributes & excluded) != 0 || info.Links != 1 || bytes != candidate.Bytes ||
@@ -164,16 +164,23 @@ public sealed class WindowsCleanupRemovalHost : ICleanupRemovalHost
         public System.Runtime.InteropServices.ComTypes.FILETIME Created, Accessed, Written;
         public uint Volume, SizeHigh, SizeLow, Links, IndexHigh, IndexLow;
     }
-    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    private static extern SafeFileHandle CreateFileW(string name, uint access, uint share, IntPtr security, uint creation, uint flags, IntPtr template);
+    [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+    private static partial SafeFileHandle CreateFileW(string name, uint access, uint share, IntPtr security, uint creation, uint flags, IntPtr template);
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern uint GetFinalPathNameByHandleW(SafeFileHandle handle, StringBuilder path, uint size, uint flags);
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool GetFileInformationByHandle(SafeFileHandle handle, out FileInformation info);
-    [DllImport("kernel32.dll", SetLastError = true)]
+    private static unsafe partial bool GetFileInformationByHandle(SafeFileHandle handle, FileInformation* info);
+    private static unsafe bool TryGetFileInformation(SafeFileHandle handle, out FileInformation info)
+    {
+        FileInformation value;
+        bool ok = GetFileInformationByHandle(handle, &value);
+        info = value;
+        return ok;
+    }
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool SetFileInformationByHandle(SafeFileHandle handle, int kind, ref byte info, uint size);
-    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    private static extern uint GetFileAttributesW(string path);
+    private static partial bool SetFileInformationByHandle(SafeFileHandle handle, int kind, ref byte info, uint size);
+    [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+    private static partial uint GetFileAttributesW(string path);
 }

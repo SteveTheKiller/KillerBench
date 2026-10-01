@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Primitives;
 
 /// <summary>Shared helpers for network adapter primitives. Adapter names come from Get-NetAdapter and are validated before use.</summary>
 public static class WindowsNetAdapterPrimitives
@@ -24,8 +24,11 @@ public static class WindowsNetAdapterPrimitives
 }
 
 /// <summary>Counts physical adapters that are administratively disabled. Value is the count; Raw lists each physical adapter with its status.</summary>
-public sealed class WindowsDisabledAdaptersProbe : IProbePrimitive
+public sealed partial class WindowsDisabledAdaptersProbe : IProbePrimitive
 {
+    [GeneratedRegex("^" + WindowsNetAdapterPrimitives.AdapterNamePattern + "$")]
+    private static partial Regex AdapterNameRegex();
+
     public string Name => "netadapter.disabled-physical";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [];
     private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
@@ -43,7 +46,7 @@ public sealed class WindowsDisabledAdaptersProbe : IProbePrimitive
         foreach (string line in lines)
         {
             var parts = line.Split('|');
-            if (parts.Length != 3 || !Regex.IsMatch(parts[0], "^" + WindowsNetAdapterPrimitives.AdapterNamePattern + "$")) return PrimitiveResult.Unavailable("Adapter inventory line was not recognized.");
+            if (parts.Length != 3 || !AdapterNameRegex().IsMatch(parts[0])) return PrimitiveResult.Unavailable("Adapter inventory line was not recognized.");
             if (parts[1].Equals("Disabled", StringComparison.OrdinalIgnoreCase) || parts[2].Equals("Down", StringComparison.OrdinalIgnoreCase)) disabled++;
         }
         return new PrimitiveResult(true, disabled.ToString(CultureInfo.InvariantCulture), string.Join("\n", lines))

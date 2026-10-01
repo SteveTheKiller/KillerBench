@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public static class WinRmOperationalCorrelation
 {
@@ -16,7 +16,7 @@ public static class WinRmOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Windows Remote Management readiness";
         const string boundary = " This bounded conclusion does not establish effective policy, listener binding, firewall access, certificate validity, authentication, permissions, client reachability or remote command execution. It does not start a service, create or change a listener, firewall rule, TrustedHosts entry, certificate, credential, permission or remote session, or select a repair.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var selected = new List<WorkflowCheck>();
         foreach (string required in RequiredNames)

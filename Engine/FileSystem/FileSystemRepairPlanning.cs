@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.FileSystem;
 
 public enum FileSystemRepairMode { SpotFix, OfflineScanAndFix }
 
@@ -61,7 +61,7 @@ public static class FileSystemRepairPlanning
             !state.Fixed ? "Only fixed local volumes are supported." :
             !string.Equals(state.FileSystem, "NTFS", StringComparison.OrdinalIgnoreCase) ? "Only NTFS volumes are supported." :
             requiresDismount && !allowDismount ? "Explicit dismount consent is required for a non-system volume." : null;
-        var arguments = mode == FileSystemRepairMode.SpotFix ? new[] { volume, "/spotfix" } : new[] { volume, "/offlinescanandfix" };
+        string[] arguments = mode == FileSystemRepairMode.SpotFix ? [volume, "/spotfix"] : [volume, "/offlinescanandfix"];
         return new(volume, mode, blocker is null, requiresRestart, requiresDismount, backupConfirmed, effects, blocker,
             blocker is null ? new RepairStep("chkdsk.exe", arguments, false) : null);
     }

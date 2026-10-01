@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Applications;
 
 public sealed record FoxitProduct(string View, string Key, string Name, string? Version, string? Publisher);
 public sealed record FoxitInventoryResult(IReadOnlyList<FoxitProduct> Products, bool Complete, ToolResult Evidence);

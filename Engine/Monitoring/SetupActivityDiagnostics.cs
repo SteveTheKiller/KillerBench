@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Xml;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Monitoring;
 
 public sealed record SetupLogObservation(string Kind, DateTimeOffset LastWriteUtc, long Length, string FeatureCode = "", string Mode = "");
 
@@ -31,8 +31,8 @@ public static class SetupActivityDiagnostics
                 string path = source.Path();
                 if (!File.Exists(path)) continue;
                 var file = new FileInfo(path);
-                var tail = ReadTail(path);
-                logs.Add(new(source.Kind, file.LastWriteTimeUtc, file.Length, tail.FeatureCode, tail.Mode));
+                var (featureCode, mode) = ReadTail(path);
+                logs.Add(new(source.Kind, file.LastWriteTimeUtc, file.Length, featureCode, mode));
             }
             return Assess(new(logs.AsReadOnly(), true), DateTimeOffset.UtcNow);
         }
@@ -77,10 +77,10 @@ public static class SetupActivityDiagnostics
         {
             detail += " Bounded tails contain feature-upgrade code" + (codes.Length == 1 ? " " : "s ") + string.Join(", ", codes) +
                 (currentCodes.Length > 0 ? "." : "; the code-bearing logs are outside the 12-hour current-review window.");
-            foreach (var item in references)
-                detail += item.Reference is null
-                    ? $" {item.Code}: no installed reference is available; retain the exact code and review fresh Setup evidence."
-                    : $" {item.Code} {item.Reference.Symbol}: {item.Reference.Meaning} Next: {item.Reference.DiagnosticScope}";
+            foreach (var (itemCode, itemReference) in references)
+                detail += itemReference is null
+                    ? $" {itemCode}: no installed reference is available; retain the exact code and review fresh Setup evidence."
+                    : $" {itemCode} {itemReference.Symbol}: {itemReference.Meaning} Next: {itemReference.DiagnosticScope}";
         }
         detail += " File paths and log contents are excluded. A recent write is activity evidence, not proof of progress, completion, a stall or a fault. No setup file was changed.";
         return new("Windows Setup activity", requiresReview ? CheckState.Attention : CheckState.Information, detail, Evidence: evidence);

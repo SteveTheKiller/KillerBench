@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public sealed record ServiceInventoryEntry(string Name, string DisplayName, string State, string StartMode, bool DelayedAutoStart, string ServiceType);
 public sealed record ServiceInventorySnapshot(bool Complete, IReadOnlyList<ServiceInventoryEntry> Services);

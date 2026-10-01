@@ -85,23 +85,23 @@ internal static class InstallerRegistrationRepairChecks
             becameHealthy.Detail.Contains("No registration command", StringComparison.Ordinal),
             "Registration that becomes healthy after preparation records a no-command outcome and closes the guard");
 
-        foreach (var fixture in new[]
+        foreach (var (error, outcome) in new[]
         {
             (Error: (Exception)new IOException("final activity unavailable"), Outcome: InstallerRegistrationRepairOutcome.Blocked),
             (Error: (Exception)new OperationCanceledException("final activity canceled"), Outcome: InstallerRegistrationRepairOutcome.Stopped)
         })
         {
             string folder = Folder(scratch, "final-unavailable-" + Guid.NewGuid().ToString("N"));
-            var host = new Host { FinalActivityError = fixture.Error };
+            var host = new Host { FinalActivityError = error };
             var result = await InstallerRegistrationRepair.RunAsync(true, folder, host);
-            Require(result.Outcome == fixture.Outcome && host.Registrations == 0 &&
+            Require(result.Outcome == outcome && host.Registrations == 0 &&
                 !File.Exists(Path.Combine(folder, "installer-registration-repair.pending.json")) &&
                 File.Exists(result.JournalPath + ".prepared.json") &&
                 result.Detail.Contains("No registration command was requested", StringComparison.Ordinal),
                 "Unavailable or canceled final Installer evidence records an exact no-command outcome");
         }
 
-        foreach (var fixture in new[]
+        foreach (var (commands, outcome, exit) in new[]
         {
             (Commands: new Func<IReadOnlyList<RepairStep>, IReadOnlyList<ToolResult>>(s =>
                 Results(s, new(3010, "restart", "", false))), Outcome: InstallerRegistrationRepairOutcome.RestartRequired, Exit: 4),
@@ -114,9 +114,9 @@ internal static class InstallerRegistrationRepairChecks
         })
         {
             string folder = Folder(scratch, "command-" + Guid.NewGuid().ToString("N"));
-            var host = new Host { CommandFactory = fixture.Commands };
+            var host = new Host { CommandFactory = commands };
             var result = await InstallerRegistrationRepair.RunAsync(true, folder, host);
-            Require(result.Outcome == fixture.Outcome && result.GetExitCode() == fixture.Exit &&
+            Require(result.Outcome == outcome && result.GetExitCode() == exit &&
                 File.Exists(Path.Combine(folder, "installer-registration-repair.pending.json")),
                 "Restart, failure and incomplete command evidence retain no-repeat registration state");
         }
@@ -240,8 +240,8 @@ internal static class InstallerRegistrationRepairChecks
     }
 
     private static ToolResult CompleteEvidence() => new(0, "{}", "", false);
-    private static IReadOnlyList<ToolResult> Results(IReadOnlyList<RepairStep> steps, ToolResult result) =>
-        Enumerable.Repeat(result, steps.Count).ToArray();
+    private static ToolResult[] Results(IReadOnlyList<RepairStep> steps, ToolResult result) =>
+        [.. Enumerable.Repeat(result, steps.Count)];
     private static string Folder(string scratch, string name) =>
         Path.Combine(scratch, "installer-registration-repair-" + name);
     private static void Require(bool condition, string message)

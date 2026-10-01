@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public static class DnsOperationalCorrelation
 {
@@ -20,7 +20,7 @@ public static class DnsOperationalCorrelation
 
         const string name = "DNS operational correlation";
         const string boundary = " This is a bounded current-state and recent-history correlation. It does not send a DNS query, prove resolver response, select the interface Windows will use, establish Internet or application connectivity, or identify root cause. No service, cache, server, suffix, adapter, route, namespace, VPN, DirectAccess, DNSSEC, IPsec or policy setting changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         if (service.Name != RepairKind.DnsClient.ToString() || servers.Name != "DNS server configuration" ||
             policy.Name != "Effective DNS policy" || path.Name != "Network path readiness" ||

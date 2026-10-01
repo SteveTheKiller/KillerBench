@@ -19,7 +19,7 @@ public partial class MainWindow
 
     private void OnPrinterSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
-        if (PrinterMakeDefault is not null) PrinterMakeDefault.IsChecked = false;
+        PrinterMakeDefault?.IsChecked = false;
         OnWorkflowOptionsChanged(sender, e);
     }
 

@@ -1,14 +1,14 @@
 using System.Runtime.InteropServices;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public enum ProxyScope { WinHttpDefault, CurrentUserInternet }
 public sealed record ProxyConfiguration(ProxyScope Scope, bool Complete, uint? AccessType = null,
     bool? AutoDetect = null, string? AutoConfigUrl = null, string? Proxy = null, string? Bypass = null,
     int? ErrorCode = null, string? CollectionIssue = null);
 
-public static class ProxyDiagnostics
+public static partial class ProxyDiagnostics
 {
     public static IReadOnlyList<WorkflowCheck> Check()
     {
@@ -78,12 +78,12 @@ public static class ProxyDiagnostics
     private struct ProxyInfo { public uint AccessType; public IntPtr Proxy; public IntPtr Bypass; }
     [StructLayout(LayoutKind.Sequential)]
     private struct UserProxyInfo { public int AutoDetect; public IntPtr AutoConfigUrl; public IntPtr Proxy; public IntPtr Bypass; }
-    [DllImport("winhttp.dll", SetLastError = true)]
+    [LibraryImport("winhttp.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool WinHttpGetDefaultProxyConfiguration(out ProxyInfo info);
-    [DllImport("winhttp.dll", SetLastError = true)]
+    private static partial bool WinHttpGetDefaultProxyConfiguration(out ProxyInfo info);
+    [LibraryImport("winhttp.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool WinHttpGetIEProxyConfigForCurrentUser(out UserProxyInfo info);
-    [DllImport("kernel32.dll")]
-    private static extern IntPtr GlobalFree(IntPtr memory);
+    private static partial bool WinHttpGetIEProxyConfigForCurrentUser(out UserProxyInfo info);
+    [LibraryImport("kernel32.dll")]
+    private static partial IntPtr GlobalFree(IntPtr memory);
 }

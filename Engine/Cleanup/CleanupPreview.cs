@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Cleanup;
 
 [Flags]
 public enum CleanupTargets { None = 0, UserTemp = 1, WindowsTemp = 2, ShaderCaches = 4, BrowserCaches = 8, ErrorReports = 16, CrashDumps = 32, WindowsMinidumps = 64, OfficeCaches = 128, DeliveryOptimizationCache = 256, RecycleBin = 512, ThumbnailCache = 1024, IconCache = 2048, SystemTemp = 4096 }
@@ -129,12 +129,12 @@ public static class CleanupPreview
             : new CleanupEstimate("Delivery Optimization cache", root, 0, 0, 0, false, [], "Target is absent; no cached delivery files are retained at the standard service location.");
     }
 
-    public static IReadOnlyList<string> ShaderRoots() => new[]
-    {
+    public static IReadOnlyList<string> ShaderRoots() =>
+    [
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "D3DSCache"),
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AMD", "DxCache"),
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "NVIDIA", "GLCache")
-    };
+    ];
 
     public static IReadOnlyList<string> OfficeCacheRoots() => OfficeCacheRoots(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
@@ -143,11 +143,11 @@ public static class CleanupPreview
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(localApplicationData);
         string root = Path.GetFullPath(localApplicationData);
-        return new[]
-        {
+        return
+        [
             Path.Combine(root, "Microsoft", "Office", "16.0", "OfficeFileCache"),
             Path.Combine(root, "Microsoft", "Office", "OTele")
-        };
+        ];
     }
 
     public static IReadOnlyList<CleanupEstimate> InspectOfficeCaches(string localApplicationData, CleanupOptions options,
@@ -157,9 +157,9 @@ public static class CleanupPreview
         if (!options.Targets.HasFlag(CleanupTargets.OfficeCaches))
             throw new ArgumentException("Select the Office cache cleanup target.");
         token.ThrowIfCancellationRequested();
-        return OfficeCacheRoots(localApplicationData).Select(root => Directory.Exists(root)
+        return [.. OfficeCacheRoots(localApplicationData).Select(root => Directory.Exists(root)
             ? InspectDirectory("Current user Office cache: " + Path.GetFileName(root), root, options.MinimumAgeDays, now, progress, token, maximumCandidates: options.MaximumFilesPerTarget)
-            : new CleanupEstimate("Current user Office cache: " + Path.GetFileName(root), root, 0, 0, 0, false, [], "Target is absent; no cache files are retained at this standard location.")).ToArray();
+            : new CleanupEstimate("Current user Office cache: " + Path.GetFileName(root), root, 0, 0, 0, false, [], "Target is absent; no cache files are retained at this standard location."))];
     }
 
     public static IReadOnlyList<string> ErrorReportRoots() => ErrorReportRoots(
@@ -169,11 +169,11 @@ public static class CleanupPreview
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(localApplicationData);
         string root = Path.GetFullPath(localApplicationData);
-        return new[]
-        {
+        return
+        [
             Path.Combine(root, "Microsoft", "Windows", "WER", "ReportArchive"),
             Path.Combine(root, "Microsoft", "Windows", "WER", "ReportQueue")
-        };
+        ];
     }
 
     public static string CrashDumpRoot() => CrashDumpRoot(
@@ -227,9 +227,9 @@ public static class CleanupPreview
         if (!options.Targets.HasFlag(CleanupTargets.ErrorReports))
             throw new ArgumentException("Select the error-report cleanup target.");
         token.ThrowIfCancellationRequested();
-        return ErrorReportRoots(localApplicationData).Select(root => Directory.Exists(root)
+        return [.. ErrorReportRoots(localApplicationData).Select(root => Directory.Exists(root)
             ? InspectDirectory("Current user Windows error reports", root, options.MinimumAgeDays, now, progress, token, maximumCandidates: options.MaximumFilesPerTarget)
-            : new CleanupEstimate("Current user Windows error reports", root, 0, 0, 0, false, [], "Target is absent; no reports are retained at this standard location.")).ToArray();
+            : new CleanupEstimate("Current user Windows error reports", root, 0, 0, 0, false, [], "Target is absent; no reports are retained at this standard location."))];
     }
 
     public static CleanupPreviewResult Inspect(CleanupOptions options, IProgress<string>? progress = null, CancellationToken token = default)

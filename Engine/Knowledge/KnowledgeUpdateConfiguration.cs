@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Knowledge;
 
 public sealed record KnowledgeDatabaseConfiguration(string PackId, long MinimumRevision, Uri PayloadUri,
     Uri SignatureUri, ReadOnlyMemory<byte> TrustedPublicKey);
@@ -95,10 +95,10 @@ public sealed class KnowledgeUpdateConfiguration
             token.ThrowIfCancellationRequested();
             try
             {
-                var active = await KnowledgeActivation.LoadActiveAsync(request.StorageDirectory, request.TrustedPublicKey,
+                var (activeCatalog, activePointer, _) = await KnowledgeActivation.LoadActiveAsync(request.StorageDirectory, request.TrustedPublicKey,
                     request.PackId, request.MinimumRevision, token).ConfigureAwait(false);
-                results.Add(new(request.PackId, true, true, active.Catalog.Revision, active.Catalog.Count,
-                    active.Catalog.PublishedOn, active.Pointer.ActivatedUtc, "Installed database is verified."));
+                results.Add(new(request.PackId, true, true, activeCatalog.Revision, activeCatalog.Count,
+                    activeCatalog.PublishedOn, activePointer.ActivatedUtc, "Installed database is verified."));
             }
             catch (Exception error) when (error is FileNotFoundException or DirectoryNotFoundException)
             { results.Add(new(request.PackId, false, false, null, null, null, null, "Database is not installed.")); }

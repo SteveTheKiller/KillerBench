@@ -1,9 +1,9 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Applications;
 
 public sealed record AppPackageReviewResult(AppPackageScope Scope, string SelectedFullName, AppPackage? Selected,
     IReadOnlyList<string> DependentPackages, IReadOnlyList<string> ReviewItems)
 {
-    public bool RemovalSupported => false;
+    public static bool RemovalSupported => false;
 }
 
 public static class AppPackageReview

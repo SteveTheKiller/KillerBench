@@ -22,7 +22,7 @@ internal static class WorkflowChecks
         var focusedHost = new Host();
         var focusedWorkflow = await Workflows.RunAsync(WorkflowKind.CommonProblems, false, folder, host: focusedHost,
             selectedDiagnosticScopes: [CommonDiagnosticScope.PrinterPorts, CommonDiagnosticScope.Vitals, CommonDiagnosticScope.PrinterPorts]);
-        Require(focusedWorkflow.SelectedDiagnosticScopes!.SequenceEqual(new[] { CommonDiagnosticScope.Vitals, CommonDiagnosticScope.PrinterPorts }) &&
+        Require(focusedWorkflow.SelectedDiagnosticScopes!.SequenceEqual([CommonDiagnosticScope.Vitals, CommonDiagnosticScope.PrinterPorts]) &&
             focusedWorkflow.PlannedRecipeIds.Count == 0 && focusedHost.Scanned.Count == 0 && focusedHost.Repaired.Count == 0,
             "Focused workflow retains selected areas without adding integrity scans or repair recipes");
         using (var focusedJournal = JsonDocument.Parse(await File.ReadAllTextAsync(focusedWorkflow.JournalPath)))
@@ -132,7 +132,7 @@ internal static class WorkflowChecks
                 "Recipe-only contradictory evidence remains incomplete in exit codes and reports");
         }
         var subset = await Workflows.RunAsync(WorkflowKind.CommonProblems, false, folder, host: subsetHost, selectedRecipes: ["windows.system-files"]);
-        Require(subset.Recipes.Count == 2 && subsetHost.Scanned.SequenceEqual(new[] { RepairKind.ComponentStore, RepairKind.SystemFiles }) && subsetHost.Repaired.Count == 0,
+        Require(subset.Recipes.Count == 2 && subsetHost.Scanned.SequenceEqual([RepairKind.ComponentStore, RepairKind.SystemFiles]) && subsetHost.Repaired.Count == 0,
             "Journaled selected workflow includes servicing prerequisite without running unrelated recipes");
         using (var subsetJournal = JsonDocument.Parse(await File.ReadAllTextAsync(subset.JournalPath)))
             Require(subsetJournal.RootElement.GetProperty("requestedRecipeIds").GetArrayLength() == 1 && subsetJournal.RootElement.GetProperty("plannedRecipeIds").GetArrayLength() == 2,
@@ -208,7 +208,7 @@ internal static class WorkflowChecks
         var recoveryFixture = new WorkflowResult(WorkflowKind.SystemFiles, "fixture", DateTimeOffset.UtcNow, "Needs attention", [], [], "fixture")
         { Recipes = [new("windows.system-files", 1, RecipeOutcome.RepairAvailable, originalCheck, null, "fixture")] };
         Require(recoveryFixture.RecoveryPlan.Action == RecoveryNextAction.ReviewAvailableRepairs &&
-            recoveryFixture.RecoveryPlan.AvailableRecipeIds.SequenceEqual(new[] { "windows.system-files" }),
+            recoveryFixture.RecoveryPlan.AvailableRecipeIds.SequenceEqual(SystemFilesRecipeIds),
             "Recovery plan exposes matching eligible recipe identities");
         foreach (var duplicateOutcome in new[] { RecipeOutcome.RepairAvailable, RecipeOutcome.Clear, RecipeOutcome.Unknown })
         {
@@ -276,7 +276,7 @@ internal static class WorkflowChecks
             new("available", 1, RecipeOutcome.RepairAvailable, null, null, "fixture"), new("blocked", 1, RecipeOutcome.Blocked, null, null, "fixture")] };
         Require(summaryFixture.Summary is { VerifiedRepairs: 1, AvailableRepairs: 1, NeedsAttention: 1, Incomplete: 1, Deferred: 1, ReviewItems: 4 },
             "Summary separates verified recovery, incomplete evidence and deferred work without counting original findings twice");
-        var invalidVerification = repairedFixture with { Steps = repairedFixture.Steps.Select(step => step with { Result = step.Result with { Error = "fixture error" } }).ToArray() };
+        var invalidVerification = repairedFixture with { Steps = [.. repairedFixture.Steps.Select(step => step with { Result = step.Result with { Error = "fixture error" } })] };
         var invalidSummary = summaryFixture with { Recipes = [summaryFixture.Recipes[0] with { Repair = invalidVerification }] };
         Require(invalidSummary.Summary is { VerifiedRepairs: 0, Incomplete: 2 } && WorkflowReport.Format(invalidSummary).Contains("fixture error"),
             "Summary and report never call error-bearing repair evidence verified and expose command errors");
@@ -304,8 +304,8 @@ internal static class WorkflowChecks
         {
             var success = RecipeChecks.Success(kind);
             if (kind == RepairKind.ComponentCleanup)
-                success = success with { Steps = success.Steps.Select(step => step with { Result = new ToolResult(0,
-                    "Component Store Cleanup Recommended : No\nThe operation completed successfully.", "", false) }).ToArray() };
+                success = success with { Steps = [.. success.Steps.Select(step => step with { Result = new ToolResult(0,
+                    "Component Store Cleanup Recommended : No\nThe operation completed successfully.", "", false) })] };
             Require(Repairs.IsVerified(success), "Clean servicing fixture verifies");
             for (int index = 0; index < success.Steps.Count; index++)
             {
@@ -421,7 +421,7 @@ internal static class WorkflowChecks
             IncludeThirdPartyUpdates = true,
             ThirdPartyUpdates = _ => Task.FromResult(new ThirdPartyUpdateResult(true, "fixture", true, 0, [], "No updates offered."))
         });
-        Require(thirdPartyOnly.Checks.Select(check => check.Name).SequenceEqual(new[] { "Windows Update discovery", "Third-party application updates" }) &&
+        Require(thirdPartyOnly.Checks.Select(check => check.Name).SequenceEqual(DiscoveryCheckNames) &&
             thirdPartyOnly.Checks[0].Detail.Contains("not selected", StringComparison.OrdinalIgnoreCase),
             "Third-party-only discovery does not collect or search Windows Update");
         var maintenance = await Workflows.RunAsync(WorkflowKind.ComponentCleanup, false, folder, host: new Host { State = CheckState.Repairable });
@@ -513,61 +513,61 @@ internal static class WorkflowChecks
         }
         var failedAudio = new Host { State = CheckState.Repairable, Verified = false };
         var audioResult = await Workflows.RunAsync(WorkflowKind.Audio, true, folder, host: failedAudio);
-        Require(failedAudio.Scanned.SequenceEqual(new[] { RepairKind.AudioEndpoints }) && audioResult.Recipes[1].Outcome == RecipeOutcome.Blocked, "Audio service waits for verified endpoint builder");
+        Require(failedAudio.Scanned.SequenceEqual([RepairKind.AudioEndpoints]) && audioResult.Recipes[1].Outcome == RecipeOutcome.Blocked, "Audio service waits for verified endpoint builder");
         Require(ServiceRecovery.ServiceName(RepairKind.AudioEndpoints) == "AudioEndpointBuilder" && ServiceRecovery.ServiceName(RepairKind.WindowsAudio) == "Audiosrv", "Audio recipes use exact service names");
         var ipHelperPlan = Repairs.Plan(RepairKind.IpHelper);
-        Require(ipHelperPlan.Steps.Count == 2 && ipHelperPlan.Steps[0].Arguments.SequenceEqual(new[] { "start", "iphlpsvc" }) &&
-            ipHelperPlan.Steps[1].Arguments.SequenceEqual(new[] { "query", "iphlpsvc" }) && ipHelperPlan.Steps[1].Verification &&
+        Require(ipHelperPlan.Steps.Count == 2 && ipHelperPlan.Steps[0].Arguments.SequenceEqual(["start", "iphlpsvc"]) &&
+            ipHelperPlan.Steps[1].Arguments.SequenceEqual(["query", "iphlpsvc"]) && ipHelperPlan.Steps[1].Verification &&
             ipHelperPlan.Effects.Contains("Preserves transition configuration", StringComparison.Ordinal),
             "IP Helper recovery starts and verifies only the exact service while declaring preserved settings");
         var bluetoothPlan = Repairs.Plan(RepairKind.BluetoothSupport);
         Require(WorkflowCatalog.Find("bluetooth")?.Kind == WorkflowKind.Bluetooth &&
-            Workflows.Scopes(WorkflowKind.Bluetooth).SequenceEqual(new[] { RepairKind.BluetoothSupport }) &&
-            bluetoothPlan.Steps.Count == 2 && bluetoothPlan.Steps[0].Arguments.SequenceEqual(new[] { "start", "bthserv" }) &&
-            bluetoothPlan.Steps[1].Arguments.SequenceEqual(new[] { "query", "bthserv" }) && bluetoothPlan.Steps[1].Verification &&
+            Workflows.Scopes(WorkflowKind.Bluetooth).SequenceEqual([RepairKind.BluetoothSupport]) &&
+            bluetoothPlan.Steps.Count == 2 && bluetoothPlan.Steps[0].Arguments.SequenceEqual(["start", "bthserv"]) &&
+            bluetoothPlan.Steps[1].Arguments.SequenceEqual(["query", "bthserv"]) && bluetoothPlan.Steps[1].Verification &&
             bluetoothPlan.Effects.Contains("Preserves pairings", StringComparison.Ordinal),
             "Bluetooth recovery is an isolated exact-service workflow with preserved pairing settings");
         var cameraPlan = Repairs.Plan(RepairKind.CameraFrameServer);
         Require(WorkflowCatalog.Find("camera")?.Kind == WorkflowKind.Camera &&
-            Workflows.Scopes(WorkflowKind.Camera).SequenceEqual(new[] { RepairKind.CameraFrameServer }) &&
-            cameraPlan.Steps.Count == 2 && cameraPlan.Steps[0].Arguments.SequenceEqual(new[] { "start", "FrameServer" }) &&
-            cameraPlan.Steps[1].Arguments.SequenceEqual(new[] { "query", "FrameServer" }) && cameraPlan.Steps[1].Verification &&
+            Workflows.Scopes(WorkflowKind.Camera).SequenceEqual([RepairKind.CameraFrameServer]) &&
+            cameraPlan.Steps.Count == 2 && cameraPlan.Steps[0].Arguments.SequenceEqual(["start", "FrameServer"]) &&
+            cameraPlan.Steps[1].Arguments.SequenceEqual(["query", "FrameServer"]) && cameraPlan.Steps[1].Verification &&
             cameraPlan.Effects.Contains("Preserves camera privacy settings", StringComparison.Ordinal),
             "Camera recovery is an isolated exact-service workflow with preserved privacy settings");
         var smartCardPlan = Repairs.Plan(RepairKind.SmartCardService);
         Require(WorkflowCatalog.Find("smart-card")?.Kind == WorkflowKind.SmartCard &&
-            Workflows.Scopes(WorkflowKind.SmartCard).SequenceEqual(new[] { RepairKind.SmartCardService }) &&
-            smartCardPlan.Steps.Count == 2 && smartCardPlan.Steps[0].Arguments.SequenceEqual(new[] { "start", "SCardSvr" }) &&
-            smartCardPlan.Steps[1].Arguments.SequenceEqual(new[] { "query", "SCardSvr" }) && smartCardPlan.Steps[1].Verification &&
+            Workflows.Scopes(WorkflowKind.SmartCard).SequenceEqual([RepairKind.SmartCardService]) &&
+            smartCardPlan.Steps.Count == 2 && smartCardPlan.Steps[0].Arguments.SequenceEqual(["start", "SCardSvr"]) &&
+            smartCardPlan.Steps[1].Arguments.SequenceEqual(["query", "SCardSvr"]) && smartCardPlan.Steps[1].Verification &&
             smartCardPlan.Effects.Contains("Preserves certificates, PINs, credentials", StringComparison.Ordinal),
             "Smart-card recovery is an isolated exact-service workflow with preserved credential material");
         var biometricPlan = Repairs.Plan(RepairKind.BiometricService);
         Require(WorkflowCatalog.Find("biometric")?.Kind == WorkflowKind.Biometric &&
-            Workflows.Scopes(WorkflowKind.Biometric).SequenceEqual(new[] { RepairKind.BiometricService }) &&
-            biometricPlan.Steps.Count == 2 && biometricPlan.Steps[0].Arguments.SequenceEqual(new[] { "start", "WbioSrvc" }) &&
-            biometricPlan.Steps[1].Arguments.SequenceEqual(new[] { "query", "WbioSrvc" }) && biometricPlan.Steps[1].Verification &&
+            Workflows.Scopes(WorkflowKind.Biometric).SequenceEqual([RepairKind.BiometricService]) &&
+            biometricPlan.Steps.Count == 2 && biometricPlan.Steps[0].Arguments.SequenceEqual(["start", "WbioSrvc"]) &&
+            biometricPlan.Steps[1].Arguments.SequenceEqual(["query", "WbioSrvc"]) && biometricPlan.Steps[1].Verification &&
             biometricPlan.Effects.Contains("Preserves biometric templates, Windows Hello data", StringComparison.Ordinal),
             "Biometric recovery is an isolated exact-service workflow that preserves enrolled identity data");
         var fileSharingPlan = Repairs.Plan(RepairKind.ServerService);
         Require(WorkflowCatalog.Find("file-sharing")?.Kind == WorkflowKind.FileSharing &&
-            Workflows.Scopes(WorkflowKind.FileSharing).SequenceEqual(new[] { RepairKind.ServerService }) &&
+            Workflows.Scopes(WorkflowKind.FileSharing).SequenceEqual([RepairKind.ServerService]) &&
             ServiceRecovery.ServiceName(RepairKind.ServerService) == "LanmanServer" &&
-            fileSharingPlan.Steps.Count == 2 && fileSharingPlan.Steps[0].Arguments.SequenceEqual(new[] { "start", "LanmanServer" }) &&
-            fileSharingPlan.Steps[1].Arguments.SequenceEqual(new[] { "query", "LanmanServer" }) && fileSharingPlan.Steps[1].Verification &&
+            fileSharingPlan.Steps.Count == 2 && fileSharingPlan.Steps[0].Arguments.SequenceEqual(["start", "LanmanServer"]) &&
+            fileSharingPlan.Steps[1].Arguments.SequenceEqual(["query", "LanmanServer"]) && fileSharingPlan.Steps[1].Verification &&
             fileSharingPlan.Effects.Contains("Preserves shares, permissions, SMB signing and encryption settings", StringComparison.Ordinal),
             "File-sharing recovery is an isolated exact-service workflow with preserved shares and security settings");
         var taskSchedulerPlan = Repairs.Plan(RepairKind.TaskSchedulerService);
         Require(WorkflowCatalog.Find("task-scheduler-service")?.Kind == WorkflowKind.TaskSchedulerService &&
-            Workflows.Scopes(WorkflowKind.TaskSchedulerService).SequenceEqual(new[] { RepairKind.TaskSchedulerService }) &&
+            Workflows.Scopes(WorkflowKind.TaskSchedulerService).SequenceEqual([RepairKind.TaskSchedulerService]) &&
             ServiceRecovery.ServiceName(RepairKind.TaskSchedulerService) == "Schedule" &&
-            taskSchedulerPlan.Steps.Count == 2 && taskSchedulerPlan.Steps[0].Arguments.SequenceEqual(new[] { "start", "Schedule" }) &&
-            taskSchedulerPlan.Steps[1].Arguments.SequenceEqual(new[] { "query", "Schedule" }) && taskSchedulerPlan.Steps[1].Verification &&
+            taskSchedulerPlan.Steps.Count == 2 && taskSchedulerPlan.Steps[0].Arguments.SequenceEqual(["start", "Schedule"]) &&
+            taskSchedulerPlan.Steps[1].Arguments.SequenceEqual(["query", "Schedule"]) && taskSchedulerPlan.Steps[1].Verification &&
             taskSchedulerPlan.Effects.Contains("Existing enabled tasks can begin running", StringComparison.Ordinal) &&
             taskSchedulerPlan.Effects.Contains("Preserves every task definition", StringComparison.Ordinal) &&
             Workflows.Preview(WorkflowKind.TaskSchedulerService).Contains("runtime results and missed-run counts", StringComparison.Ordinal) &&
             Workflows.Preview(WorkflowKind.TaskSchedulerService).Contains("cannot authorize a service start", StringComparison.Ordinal),
             "Task Scheduler recovery is an isolated evidence-backed service workflow with explicit missed-task effects and preserved definitions");
-        foreach (var focused in new[]
+        foreach (var (focusedKey, focusedKind, focusedRepair, focusedService, focusedPreserved) in new[]
         {
             (Key: "windows-update-service", Kind: WorkflowKind.WindowsUpdateService, Repair: RepairKind.UpdateService, Service: "wuauserv", Preserved: "Update policy, source enrollment, schedules, restart settings"),
             (Key: "bits-service", Kind: WorkflowKind.BitsService, Repair: RepairKind.BackgroundTransfer, Service: "BITS", Preserved: "Jobs, priorities, owners, destinations"),
@@ -612,12 +612,12 @@ internal static class WorkflowChecks
             (Key: "device-install-service", Kind: WorkflowKind.DeviceInstallService, Repair: RepairKind.DeviceInstallService, Service: "DeviceInstall", Preserved: "Devices, drivers, packages, configuration")
         })
         {
-            Require(WorkflowCatalog.Find(focused.Key)?.Kind == focused.Kind &&
-                Workflows.Scopes(focused.Kind).SequenceEqual(new[] { focused.Repair }) &&
-                ServiceRecovery.ServiceName(focused.Repair) == focused.Service &&
-                Workflows.Preview(focused.Kind).Contains(focused.Preserved, StringComparison.Ordinal) &&
-                RecipeCatalog.ForWorkflow(focused.Kind).Single().Action == focused.Repair,
-                "Focused service workflow exposes the exact existing recipe and declares preserved state: " + focused.Key);
+            Require(WorkflowCatalog.Find(focusedKey)?.Kind == focusedKind &&
+                Workflows.Scopes(focusedKind).SequenceEqual([focusedRepair]) &&
+                ServiceRecovery.ServiceName(focusedRepair) == focusedService &&
+                Workflows.Preview(focusedKind).Contains(focusedPreserved, StringComparison.Ordinal) &&
+                RecipeCatalog.ForWorkflow(focusedKind).Single().Action == focusedRepair,
+                "Focused service workflow exposes the exact existing recipe and declares preserved state: " + focusedKey);
         }
         var focusedBitsPreview = Workflows.Preview(WorkflowKind.BitsService);
         var focusedUpdateServicePreview = Workflows.Preview(WorkflowKind.WindowsUpdateService);
@@ -697,8 +697,8 @@ internal static class WorkflowChecks
         {
             var plan = Repairs.Plan(repair);
             string service = ServiceRecovery.ServiceName(repair)!;
-            Require(plan.Steps.Count == 2 && plan.Steps[0].Arguments.SequenceEqual(new[] { "start", service }) &&
-                plan.Steps[1].Arguments.SequenceEqual(new[] { "query", service }) && plan.Steps[1].Verification &&
+            Require(plan.Steps.Count == 2 && plan.Steps[0].Arguments.SequenceEqual(["start", service]) &&
+                plan.Steps[1].Arguments.SequenceEqual(["query", service]) && plan.Steps[1].Verification &&
                 plan.Effects.Contains("Preserves", StringComparison.Ordinal) && plan.Effects.Contains("Verification covers stable service running state only", StringComparison.Ordinal),
                 "Focused recovery plans start and verify only their exact service with explicit preservation limits: " + repair);
         }
@@ -749,18 +749,18 @@ internal static class WorkflowChecks
         var eventSystemPlan = Repairs.Plan(RepairKind.ComPlusEventSystem);
         var sensPlan = Repairs.Plan(RepairKind.SystemEventNotificationService);
         Require(WorkflowCatalog.Find("system-notifications")?.Kind == WorkflowKind.SystemNotifications &&
-            Workflows.Scopes(WorkflowKind.SystemNotifications).SequenceEqual(new[] { RepairKind.ComPlusEventSystem, RepairKind.SystemEventNotificationService }) &&
-            notificationRecipes.Select(recipe => recipe.Action).SequenceEqual(new[] { RepairKind.ComPlusEventSystem, RepairKind.SystemEventNotificationService }) &&
-            notificationRecipes[1].Dependencies.SequenceEqual(new[] { notificationRecipes[0].Id }) &&
+            Workflows.Scopes(WorkflowKind.SystemNotifications).SequenceEqual([RepairKind.ComPlusEventSystem, RepairKind.SystemEventNotificationService]) &&
+            notificationRecipes.Select(recipe => recipe.Action).SequenceEqual([RepairKind.ComPlusEventSystem, RepairKind.SystemEventNotificationService]) &&
+            notificationRecipes[1].Dependencies.SequenceEqual([notificationRecipes[0].Id]) &&
             ServiceRecovery.ServiceName(RepairKind.ComPlusEventSystem) == "EventSystem" &&
             ServiceRecovery.ServiceName(RepairKind.SystemEventNotificationService) == "SENS" &&
             Workflows.Preview(WorkflowKind.SystemNotifications).Contains("COM+ catalogs, subscriptions, notification registrations, consumers", StringComparison.Ordinal) &&
             Workflows.Preview(WorkflowKind.SystemNotifications).Contains("not end-to-end notification delivery", StringComparison.Ordinal),
             "System notifications exposes an ordered two-service workflow with explicit preservation and verification limits");
-        Require(eventSystemPlan.Steps.Count == 2 && eventSystemPlan.Steps[0].Arguments.SequenceEqual(new[] { "start", "EventSystem" }) &&
-            eventSystemPlan.Steps[1].Arguments.SequenceEqual(new[] { "query", "EventSystem" }) && eventSystemPlan.Steps[1].Verification &&
-            sensPlan.Steps.Count == 2 && sensPlan.Steps[0].Arguments.SequenceEqual(new[] { "start", "SENS" }) &&
-            sensPlan.Steps[1].Arguments.SequenceEqual(new[] { "query", "SENS" }) && sensPlan.Steps[1].Verification &&
+        Require(eventSystemPlan.Steps.Count == 2 && eventSystemPlan.Steps[0].Arguments.SequenceEqual(["start", "EventSystem"]) &&
+            eventSystemPlan.Steps[1].Arguments.SequenceEqual(["query", "EventSystem"]) && eventSystemPlan.Steps[1].Verification &&
+            sensPlan.Steps.Count == 2 && sensPlan.Steps[0].Arguments.SequenceEqual(["start", "SENS"]) &&
+            sensPlan.Steps[1].Arguments.SequenceEqual(["query", "SENS"]) && sensPlan.Steps[1].Verification &&
             eventSystemPlan.Effects.Contains("Preserves COM+ catalogs, subscriptions", StringComparison.Ordinal) &&
             sensPlan.Effects.Contains("after the COM+ Event System prerequisite is verified", StringComparison.Ordinal),
             "System notification recovery plans start and verify only their exact services");
@@ -787,29 +787,29 @@ internal static class WorkflowChecks
         {
             var plan = Repairs.Plan(repair);
             string service = ServiceRecovery.ServiceName(repair)!;
-            Require(plan.Steps.Count == 2 && plan.Steps[0].Arguments.SequenceEqual(new[] { "start", service }) &&
-                plan.Steps[1].Arguments.SequenceEqual(new[] { "query", service }) && plan.Steps[1].Verification &&
+            Require(plan.Steps.Count == 2 && plan.Steps[0].Arguments.SequenceEqual(["start", service]) &&
+                plan.Steps[1].Arguments.SequenceEqual(["query", service]) && plan.Steps[1].Verification &&
                 plan.Effects.Contains("Preserves", StringComparison.Ordinal) && plan.Effects.Contains("Verification covers stable service running state only", StringComparison.Ordinal),
                 "Core service recovery starts and verifies only its exact service: " + repair);
         }
         var notificationHost = new Host { State = CheckState.Repairable };
         var notificationResult = await Workflows.RunAsync(WorkflowKind.SystemNotifications, true, folder, host: notificationHost);
-        Require(notificationHost.Scanned.SequenceEqual(new[] { RepairKind.ComPlusEventSystem, RepairKind.SystemEventNotificationService }) &&
-            notificationHost.Repaired.SequenceEqual(new[] { RepairKind.ComPlusEventSystem, RepairKind.SystemEventNotificationService }) &&
+        Require(notificationHost.Scanned.SequenceEqual([RepairKind.ComPlusEventSystem, RepairKind.SystemEventNotificationService]) &&
+            notificationHost.Repaired.SequenceEqual([RepairKind.ComPlusEventSystem, RepairKind.SystemEventNotificationService]) &&
             notificationResult.Repairs.Count == 2,
             "System notifications verifies Event System before dispatching SENS recovery");
         notificationHost = new Host { State = CheckState.Repairable, Verified = false };
         notificationResult = await Workflows.RunAsync(WorkflowKind.SystemNotifications, true, folder, host: notificationHost);
-        Require(notificationHost.Scanned.SequenceEqual(new[] { RepairKind.ComPlusEventSystem }) &&
-            notificationHost.Repaired.SequenceEqual(new[] { RepairKind.ComPlusEventSystem }) &&
+        Require(notificationHost.Scanned.SequenceEqual([RepairKind.ComPlusEventSystem]) &&
+            notificationHost.Repaired.SequenceEqual([RepairKind.ComPlusEventSystem]) &&
             notificationResult.Recipes[1].Outcome == RecipeOutcome.Blocked,
             "Failed Event System verification blocks SENS inspection and repair");
         var eventLogPlan = Repairs.Plan(RepairKind.WindowsEventLog);
         var eventChannelPlan = Repairs.Plan(RepairKind.EventChannelEnable);
         Require(WorkflowCatalog.Find("eventlog")?.Kind == WorkflowKind.EventLog &&
-            Workflows.Scopes(WorkflowKind.EventLog).SequenceEqual(new[] { RepairKind.WindowsEventLog, RepairKind.EventChannelEnable }) &&
-            eventLogPlan.Steps.Count == 2 && eventLogPlan.Steps[0].Arguments.SequenceEqual(new[] { "start", "EventLog" }) &&
-            eventLogPlan.Steps[1].Arguments.SequenceEqual(new[] { "query", "EventLog" }) && eventLogPlan.Steps[1].Verification &&
+            Workflows.Scopes(WorkflowKind.EventLog).SequenceEqual([RepairKind.WindowsEventLog, RepairKind.EventChannelEnable]) &&
+            eventLogPlan.Steps.Count == 2 && eventLogPlan.Steps[0].Arguments.SequenceEqual(["start", "EventLog"]) &&
+            eventLogPlan.Steps[1].Arguments.SequenceEqual(["query", "EventLog"]) && eventLogPlan.Steps[1].Verification &&
             eventChannelPlan.Steps.Count == 0 && eventChannelPlan.Effects.Contains("one exact supported channel", StringComparison.Ordinal) &&
             RepairRecoveryCatalog.For(RepairKind.EventChannelEnable) == RepairRecoveryContract.EventChannelState,
             "Event Log workflow keeps service recovery separate from exact-channel guarded enablement");
@@ -874,7 +874,7 @@ internal static class WorkflowChecks
             result.Status.StartsWith("No issues"), "Clean scans do not repair");
         var damaged = new Host { State = CheckState.Repairable };
         result = await Workflows.RunAsync(WorkflowKind.WindowsUpdate, true, folder, host: damaged);
-        Require(damaged.Repaired.SequenceEqual(new[] { RepairKind.UpdateService, RepairKind.BackgroundTransfer, RepairKind.CryptographicServices, RepairKind.ModulesInstaller, RepairKind.UpdateOrchestrator, RepairKind.DeliveryOptimization, RepairKind.ComponentStore, RepairKind.SystemFiles }) &&
+        Require(damaged.Repaired.SequenceEqual([RepairKind.UpdateService, RepairKind.BackgroundTransfer, RepairKind.CryptographicServices, RepairKind.ModulesInstaller, RepairKind.UpdateOrchestrator, RepairKind.DeliveryOptimization, RepairKind.ComponentStore, RepairKind.SystemFiles]) &&
             result.Status == "Needs attention" && result.Recipes.Any(recipe => recipe.RecipeId == "update.data-store-reset" && recipe.Outcome == RecipeOutcome.RepairAvailable),
             "Update recovery verifies automatic repairs while preserving the focused data-store option for review");
         using var journal = JsonDocument.Parse(await File.ReadAllTextAsync(result.JournalPath));
@@ -970,7 +970,7 @@ internal static class WorkflowChecks
             "Malformed gateway evidence remains unknown");
         var files = new Host();
         await Workflows.RunAsync(WorkflowKind.SystemFiles, false, folder, host: files);
-        Require(files.Scanned.SequenceEqual(new[] { RepairKind.SystemFiles }), "System files selects SFC only");
+        Require(files.Scanned.SequenceEqual([RepairKind.SystemFiles]), "System files selects SFC only");
         using var stop = new CancellationTokenSource();
         var canceled = new Host { State = CheckState.Repairable, AfterScan = stop.Cancel };
         result = await Workflows.RunAsync(WorkflowKind.WindowsUpdate, true, folder, token: stop.Token, host: canceled);
@@ -1014,7 +1014,7 @@ internal static class WorkflowChecks
         public Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token,
             Func<IReadOnlyList<WorkflowCheck>, Task> checkpoint, IReadOnlyList<CommonDiagnosticScope>? selectedScopes) =>
             selectedScopes is null ? InspectAsync(kind, token) : Task.FromResult<IReadOnlyList<WorkflowCheck>>(
-                selectedScopes.Select(scope => new WorkflowCheck(scope.ToString(), CheckState.Information, "Fixture selected scope")).ToArray());
+                [.. selectedScopes.Select(scope => new WorkflowCheck(scope.ToString(), CheckState.Information, "Fixture selected scope"))]);
         public Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token)
         {
             Inspections++;
@@ -1082,5 +1082,7 @@ internal static class WorkflowChecks
         }
         return evidence;
     }
+    private static readonly string[] SystemFilesRecipeIds = ["windows.system-files"];
+    private static readonly string[] DiscoveryCheckNames = ["Windows Update discovery", "Third-party application updates"];
     private static void Require(bool condition, string message) { if (!condition) throw new Exception(message); }
 }

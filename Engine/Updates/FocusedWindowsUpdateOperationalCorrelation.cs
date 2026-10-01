@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public static class FocusedWindowsUpdateOperationalCorrelation
 {
@@ -21,7 +21,7 @@ public static class FocusedWindowsUpdateOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Windows Update focused conclusion";
         const string boundary = " This focused conclusion does not test external update-source or Internet reachability, search for updates, establish applicability, download or install content, prove component-store health, restart Windows, or authorize another repair. No service, DLL, transfer, cache, source, policy, package, capability, feature, file, network or restart state changed, and no additional repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var selected = RequiredNames.Select(required => evidence.Where(item => item.Name == required).ToArray()).ToArray();
         if (selected.Any(matches => matches.Length != 1))

@@ -1,6 +1,6 @@
 using System.Xml;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public static class StorageEvents
 {
@@ -34,8 +34,8 @@ public static class StorageEvents
                 group.Key is "paging-io" or "disk-error"
                     ? "https://learn.microsoft.com/en-us/troubleshoot/windows-server/backup-and-storage/event-id-51-information"
                     : "https://learn.microsoft.com/en-us/troubleshoot/windows-server/backup-and-storage/troubleshoot-data-corruption-and-disk-errors",
-                group.Count(), group.Take(8).Select(e => new EvidenceReference(source, e.Entry.LineNumber,
-                    e.Entry.Timestamp + " | " + e.Entry.Component + " | " + e.Entry.Message)).ToArray());
+                group.Count(), [.. group.Take(8).Select(e => new EvidenceReference(source, e.Entry.LineNumber,
+                    e.Entry.Timestamp + " | " + e.Entry.Component + " | " + e.Entry.Message))]);
         }
     }
 

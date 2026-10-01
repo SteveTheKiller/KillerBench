@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public static class FocusedServiceOperationalCorrelation
 {
@@ -34,7 +34,7 @@ public static class FocusedServiceOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Focused service readiness";
         const string boundary = " This conclusion covers exact service availability and retained Service Control Manager history only. It does not prove dependent feature behavior, identify root cause, authorize configuration changes, or select a repair. Startup settings, dependencies, service permissions, accounts, credentials, policy and user data remain unchanged.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         if (recipes.Count == 0 || recipes.Any(recipe => recipe is null || ServiceRecovery.ServiceName(recipe.Action) is null) ||
             recipes.Select(recipe => recipe.Id).Distinct(StringComparer.Ordinal).Count() != recipes.Count ||

@@ -4,7 +4,7 @@ internal static class MsiCacheChecks
 {
     public static void Run()
     {
-        ToolResult Evidence(string products, bool complete = true) => new(0,
+        static ToolResult Evidence(string products, bool complete = true) => new(0,
             "{\"complete\":" + complete.ToString().ToLowerInvariant() + ",\"products\":[" + products + "]}", "", false);
         const string product = "{\"productCode\":\"{11111111-2222-3333-4444-555555555555}\",\"name\":\"Fixture App\",\"context\":\"Machine\",\"complete\":true,\"packageConfigured\":true,\"packageFile\":\"abc123.msi\",\"packageVisible\":true,\"issue\":null}";
         var visible = MsiCacheDiagnostics.Interpret(Evidence(product));

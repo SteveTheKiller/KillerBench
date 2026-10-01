@@ -18,7 +18,7 @@ internal static class PrintingEnvironmentCorrelationChecks
         Require(incomplete is { State: CheckState.Unknown, Repair: null } && incomplete.Detail.Contains("1 incomplete"),
             "Incomplete printing environment evidence takes precedence over attention");
 
-        Require(Check(drivers: Array.Empty<WorkflowCheck>()).State == CheckState.Unknown,
+        Require(Check(drivers: []).State == CheckState.Unknown,
             "Missing printing environment groups fail closed");
         Require(Check(endpoints: Group("Other endpoint")).State == CheckState.Unknown,
             "Unexpected printing environment identities fail closed");

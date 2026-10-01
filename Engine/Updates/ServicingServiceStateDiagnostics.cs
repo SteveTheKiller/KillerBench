@@ -1,20 +1,20 @@
 using Microsoft.Win32;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record ServicingServiceDefinition(string Name, string DisplayName);
 
 public static class ServicingServiceStateDiagnostics
 {
-    public static IReadOnlyList<ServicingServiceDefinition> Services { get; } = Array.AsReadOnly(new[]
-    {
+    public static IReadOnlyList<ServicingServiceDefinition> Services { get; } = Array.AsReadOnly<ServicingServiceDefinition>(
+    [
         new ServicingServiceDefinition("wuauserv", "Windows Update"),
         new ServicingServiceDefinition("BITS", "Background Intelligent Transfer Service"),
         new ServicingServiceDefinition("CryptSvc", "Cryptographic Services"),
         new ServicingServiceDefinition("TrustedInstaller", "Windows Modules Installer"),
         new ServicingServiceDefinition("WaaSMedicSvc", "Windows Update Medic Service"),
         new ServicingServiceDefinition("UsoSvc", "Update Orchestrator Service")
-    });
+    ]);
 
     public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default,
         Func<ServicingServiceDefinition, CancellationToken, Task<(ToolResult Result, int? Startup)>>? inspect = null)
@@ -26,7 +26,7 @@ public static class ServicingServiceStateDiagnostics
     {
         ArgumentNullException.ThrowIfNull(serviceNames);
         inspect ??= InspectAsync;
-        string[] requested = serviceNames.ToArray();
+        string[] requested = [.. serviceNames];
         if (requested.Length is < 1 or > 6 || requested.Any(string.IsNullOrWhiteSpace) ||
             requested.Distinct(StringComparer.OrdinalIgnoreCase).Count() != requested.Length)
             throw new ArgumentException("Select one through six unique servicing service names.", nameof(serviceNames));
@@ -39,9 +39,9 @@ public static class ServicingServiceStateDiagnostics
             token.ThrowIfCancellationRequested();
             try
             {
-                var evidence = await (inspect(service, token) ?? throw new InvalidOperationException("The service-state provider returned no task."))
+                var (result, startup) = await (inspect(service, token) ?? throw new InvalidOperationException("The service-state provider returned no task."))
                     .WaitAsync(TimeSpan.FromSeconds(20), token).ConfigureAwait(false);
-                checks.Add(Interpret(service, evidence.Result, evidence.Startup));
+                checks.Add(Interpret(service, result, startup));
             }
             catch (OperationCanceledException) when (!token.IsCancellationRequested)
             {

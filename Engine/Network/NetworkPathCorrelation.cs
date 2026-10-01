@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public static class NetworkPathCorrelation
 {
@@ -81,7 +81,7 @@ public static class NetworkPathCorrelation
                 throw new InvalidDataException("Default route identity is invalid or duplicated.");
             result.Add(new(index, family, nextHop, metric));
         }
-        return result.OrderBy(path => path.Metric).ThenBy(path => path.InterfaceIndex).ThenBy(path => path.Family).ToList();
+        return [.. result.OrderBy(path => path.Metric).ThenBy(path => path.InterfaceIndex).ThenBy(path => path.Family)];
     }
 
     private static HashSet<(int InterfaceIndex, int Family)> ReadDns(string json)

@@ -65,16 +65,16 @@ internal static class ComputerRenameChecks
             Directory.GetFiles(changedFolder, "*.prepared.json").Length == 1,
             "A target that becomes active after preparation records final evidence without another rename request");
 
-        foreach (var fixture in new[]
+        foreach (var (error, outcome) in new[]
         {
             (Error: (Exception)new IOException("final identity unavailable"), Outcome: ComputerRenameOutcome.Blocked),
             (Error: (Exception)new OperationCanceledException("final identity canceled"), Outcome: ComputerRenameOutcome.Stopped)
         })
         {
             string folder = Folder(scratch, "final-unavailable-" + Guid.NewGuid().ToString("N"));
-            var host = new Host { FinalContextError = fixture.Error };
+            var host = new Host { FinalContextError = error };
             var result = await ComputerRename.RunAsync("NEW-PC", true, folder, host);
-            Require(result.Outcome == fixture.Outcome && host.Renames == 0 &&
+            Require(result.Outcome == outcome && host.Renames == 0 &&
                 !File.Exists(Path.Combine(folder, "computer-rename.pending.json")) &&
                 Directory.GetFiles(folder, "*.prepared.json").Length == 1 &&
                 result.Detail.Contains("No rename was requested", StringComparison.Ordinal),

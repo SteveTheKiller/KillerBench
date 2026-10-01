@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Profiles;
 
 public static class ProfileReview
 {

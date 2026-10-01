@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Scheduling;
 
 public sealed class WindowsTaskRegistrationRecoveryHost : ITaskRegistrationRecoveryHost
 {

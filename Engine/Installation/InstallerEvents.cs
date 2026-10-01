@@ -1,6 +1,6 @@
 using System.Xml;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Installation;
 
 public static class InstallerEvents
 {
@@ -19,7 +19,7 @@ public static class InstallerEvents
             yield return new("KB-MSI-" + group.Key, 1, title, "Warning", "Recorded event",
                 "Windows Installer recorded this event. It does not identify a current root cause or authorize product repair or removal.", next,
                 "https://learn.microsoft.com/en-us/windows/win32/msi/event-logging", group.Count(),
-                group.Take(8).Select(e => new EvidenceReference(source, e.LineNumber, e.Timestamp + " | " + e.Message)).ToArray());
+                [.. group.Take(8).Select(e => new EvidenceReference(source, e.LineNumber, e.Timestamp + " | " + e.Message))]);
         }
     }
 

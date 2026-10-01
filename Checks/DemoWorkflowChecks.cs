@@ -19,7 +19,7 @@ internal static class DemoWorkflowChecks
             Require(repaired.Status == "Demo repair simulated" && repaired.Checks.Count == 3 && repaired.Repairs.Count == 0 &&
                 repaired.Checks.Any(check => check.Name == "Simulated repair" && check.State == CheckState.Clear),
                 "Repair demonstrations remain visibly simulated and create no repair result");
-            Require(DemoWorkflow.Progress(kind, true).Last().Contains("No command was executed", StringComparison.Ordinal),
+            Require(DemoWorkflow.Progress(kind, true)[^1].Contains("No command was executed", StringComparison.Ordinal),
                 "Demo progress states the execution boundary");
         }
         Require(KillerBench.App.IsDemoArgument("--demo") && KillerBench.App.IsDemoArgument("/DEMO") && !KillerBench.App.IsDemoArgument("demo"),

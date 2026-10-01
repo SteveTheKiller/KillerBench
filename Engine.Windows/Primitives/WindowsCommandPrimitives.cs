@@ -2,11 +2,17 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Primitives;
 
 /// <summary>Reads the current boot entry's safeboot setting. Value is the mode (Minimal, Network, DsRepair) or absent when Windows will boot normally.</summary>
-public sealed class WindowsBcdSafebootProbe : IProbePrimitive
+public sealed partial class WindowsBcdSafebootProbe : IProbePrimitive
 {
+    [GeneratedRegex(@"(?m)^identifier\s+\{current\}\s*$", RegexOptions.CultureInvariant)]
+    private static partial Regex CurrentIdentifierPattern();
+
+    [GeneratedRegex(@"(?m)^safeboot\s+(\S+)\s*$", RegexOptions.CultureInvariant)]
+    private static partial Regex SafebootPattern();
+
     public string Name => "bcd.safeboot";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [];
 
@@ -24,9 +30,9 @@ public sealed class WindowsBcdSafebootProbe : IProbePrimitive
         if (result.TimedOut) return new PrimitiveResult(false, null, raw, "bcdedit timed out.") { TimedOut = true };
         if (result.Truncated) return new PrimitiveResult(false, null, raw, "bcdedit output was truncated.") { Truncated = true };
         if (result.ExitCode != 0) return PrimitiveResult.Unavailable("bcdedit exited with " + result.ExitCode + "; administrator access is usually required.");
-        if (!Regex.IsMatch(result.Output, @"(?m)^identifier\s+\{current\}\s*$", RegexOptions.CultureInvariant))
+        if (!CurrentIdentifierPattern().IsMatch(result.Output))
             return PrimitiveResult.Unavailable("bcdedit output did not describe the {current} entry.");
-        var matches = Regex.Matches(result.Output, @"(?m)^safeboot\s+(\S+)\s*$", RegexOptions.CultureInvariant);
+        var matches = SafebootPattern().Matches(result.Output);
         if (matches.Count > 1) return PrimitiveResult.Unavailable("bcdedit reported more than one safeboot value.");
         if (matches.Count == 0) return new PrimitiveResult(true, null, raw) { Detail = "No safeboot value is set on the current boot entry." };
         string mode = matches[0].Groups[1].Value;

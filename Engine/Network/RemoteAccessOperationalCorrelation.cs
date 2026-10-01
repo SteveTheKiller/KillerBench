@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public static class RemoteAccessOperationalCorrelation
 {
@@ -15,7 +15,7 @@ public static class RemoteAccessOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Remote Access readiness";
         const string boundary = " This bounded conclusion does not establish profile applicability, server reachability, authentication, tunnel negotiation, route installation, name resolution or connectivity. It does not initiate a connection, start a service, expose credentials, change a profile, adapter, route, firewall or policy setting, or select a repair.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var selected = new List<WorkflowCheck>(RequiredNames.Length);
         foreach (string required in RequiredNames)

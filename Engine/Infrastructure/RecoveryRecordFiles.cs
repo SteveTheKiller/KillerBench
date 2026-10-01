@@ -1,9 +1,9 @@
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Infrastructure;
 
-internal static class RecoveryRecordFiles
+internal static partial class RecoveryRecordFiles
 {
     internal static FileStream OpenLocked(string path)
     {
@@ -25,9 +25,9 @@ internal static class RecoveryRecordFiles
             throw new IOException("Verified recovery evidence could not be archived.", Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error()));
     }
 
-    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    private static extern SafeFileHandle CreateFileW(string name, uint access, uint share, IntPtr security, uint creation, uint flags, IntPtr template);
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+    private static partial SafeFileHandle CreateFileW(string name, uint access, uint share, IntPtr security, uint creation, uint flags, IntPtr template);
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool SetFileInformationByHandle(SafeFileHandle handle, int kind, byte[] info, uint size);
+    private static partial bool SetFileInformationByHandle(SafeFileHandle handle, int kind, byte[] info, uint size);
 }

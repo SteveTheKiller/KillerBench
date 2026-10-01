@@ -3,7 +3,7 @@ using Microsoft.Win32;
 using System.Runtime.Versioning;
 using System.Security;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Automation;
 
 public enum OrcaOutlookMode { New, Classic, Both }
 public enum OrcaScope { RunningAccount, AllUsers }

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Scheduling;
 
 public sealed record ScheduledTaskInspectionReport(DateTimeOffset InspectedUtc, ScheduledTaskPlan Plan,
     ScheduledTaskExecutableResult? Executable, ScheduledTaskAccountResult? Account,
@@ -8,9 +8,11 @@ public sealed record ScheduledTaskInspectionReport(DateTimeOffset InspectedUtc, 
     public string? Failure { get; init; }
     public FileSignatureResult? Signature { get; init; }
     public ScheduledTaskDefinitionResult? ExistingDefinition { get; init; }
+#pragma warning disable CA1822 // Instance properties are serialized into exported inspection reports.
     public int SchemaVersion => 1;
     public bool TaskRegistered => false;
     public string Limitation => "Read-only inspection snapshot. Registration eligibility, executable trust and logon permissions are not verified.";
+#pragma warning restore CA1822
     public string Format() => ScheduledTaskReview.Format(Plan, InspectedUtc) +
         (Incomplete ? "\n\nINSPECTION INCOMPLETE\n" + Failure : "") +
         "\n\nEXECUTABLE FILE\n" + (Executable is { } file ? file.ImageReview + "\n" + file.Detail +

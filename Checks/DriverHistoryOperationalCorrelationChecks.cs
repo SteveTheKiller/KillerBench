@@ -27,7 +27,7 @@ internal static class DriverHistoryOperationalCorrelationChecks
             "Incomplete current inventory takes precedence over historical and current concerns");
         Require(DriverHistoryOperationalCorrelation.Check([]).State == CheckState.Unknown &&
             DriverHistoryOperationalCorrelation.Check([Info("Wrong result")]).State == CheckState.Unknown &&
-            DriverHistoryOperationalCorrelation.Check(Enumerable.Range(0, 67).Select(index => Info(index == 0 ? "Driver installation history" : "Result " + index)).ToArray()).State == CheckState.Unknown,
+            DriverHistoryOperationalCorrelation.Check([.. Enumerable.Range(0, 67).Select(index => Info(index == 0 ? "Driver installation history" : "Result " + index))]).State == CheckState.Unknown,
             "Missing, unexpected and oversized driver history inputs fail closed");
 
         try { DriverHistoryOperationalCorrelation.Check([Info("Driver installation history")], new CancellationToken(true)); throw new Exception("Driver history correlation cancellation ignored"); }

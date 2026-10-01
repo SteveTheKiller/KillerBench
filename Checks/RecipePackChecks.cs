@@ -139,7 +139,7 @@ internal static class RecipePackChecks
         };
         var packValidation = RecipePackValidation.Validate(Pack(recipe), library);
         if (!packValidation.IsValid) throw new Exception("Recipe with options reported issues: " + string.Join("; ", packValidation.Issues.Select(i => i.Message)));
-        if (!RecipeOptions.References(recipe).SetEquals(new[] { "target" })) throw new Exception("Option references were not detected.");
+        if (!RecipeOptions.References(recipe).SetEquals(["target"])) throw new Exception("Option references were not detected.");
         Check(Pack(recipe with { Options = [option with { Name = "Bad Name" }] }), "short lower-case", "Bad option name");
         Check(Pack(recipe with { Options = [option, option] }), "Duplicate option", "Duplicate option");
         Check(Pack(recipe with { Options = [option with { Pattern = "(" }] }), "invalid pattern", "Invalid option pattern");
@@ -174,7 +174,7 @@ internal static class RecipePackChecks
         if (unconfirmed.Outcome != RecipeRunOutcome.RepairAvailable || seen.Count != 0) throw new Exception("Unconfirmed explicit recipe dispatched.");
         state = "Stopped";
         var confirmed = await runner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true, Elevated = true, Options = new Dictionary<string, string> { ["target"] = "Spooler" }, ExplicitOptionsConfirmed = true });
-        if (confirmed.Outcome != RecipeRunOutcome.NeedsAttention || seen.SequenceEqual(new[] { "Spooler" }) == false) throw new Exception("Confirmed explicit recipe did not dispatch with the substituted target: " + confirmed.Outcome + " " + confirmed.Detail);
+        if (confirmed.Outcome != RecipeRunOutcome.NeedsAttention || seen.SequenceEqual(["Spooler"]) == false) throw new Exception("Confirmed explicit recipe did not dispatch with the substituted target: " + confirmed.Outcome + " " + confirmed.Detail);
 
         static void Check(RecipePack broken, string fragment, string what)
         {

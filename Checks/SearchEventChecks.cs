@@ -4,7 +4,7 @@ internal static class SearchEventChecks
 {
     internal static void Run()
     {
-        string Entry(int id, string provider = "Microsoft-Windows-Search", int level = 2) =>
+        static string Entry(int id, string provider = "Microsoft-Windows-Search", int level = 2) =>
             $"<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='{provider}'/><EventID>{id}</EventID><EventRecordID>1</EventRecordID><Level>{level}</Level><TimeCreated SystemTime='2026-09-13T00:00:00Z'/></System><EventData><Data Name='Source'>fixture-source</Data></EventData></Event>";
         var evidence = new ToolResult(0, "<Events>" + Entry(3036) + Entry(3036) + Entry(1, level: 4) + "</Events>", "", false);
         var result = SearchEvents.Interpret(evidence);

@@ -4,7 +4,7 @@ internal static class BootPerformanceEventChecks
 {
     public static void Run()
     {
-        string Entry(int id, int level, ulong record, string extra = "") =>
+        static string Entry(int id, int level, ulong record, string extra = "") =>
             $"<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='Microsoft-Windows-Diagnostics-Performance'/><EventID>{id}</EventID><EventRecordID>{record}</EventRecordID><Level>{level}</Level><TimeCreated SystemTime='2026-09-14T00:00:00Z'/><Computer>PRIVATE-PC</Computer></System><EventData><Data Name='BootDuration'>120000</Data><Data Name='MainPathBootTime'>45000</Data><Data Name='Path'>C:\\PRIVATE\\app.exe</Data><Data Name='User'>PRIVATE\\User</Data>{extra}</EventData></Event>";
         var raw = new ToolResult(0, "<Events>" + Entry(100, 4, 1) + Entry(101, 3, 2) + Entry(201, 2, 3, "<Data Name='ShutdownDuration'>9000</Data>") + "</Events>", "", false);
         var sanitized = BootPerformanceEvents.Sanitize(raw);

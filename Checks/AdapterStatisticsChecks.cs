@@ -21,7 +21,7 @@ internal static class AdapterStatisticsChecks
         foreach (var invalid in new[]
         {
             Evidence([Row()], false), Evidence([Row(), Row("ethernet", 8)]), Evidence([Row(), Row("Wi-Fi", 7)]),
-            Evidence(Enumerable.Range(0, 257).Select(i => Row("Adapter " + i, i + 1)).ToArray()),
+            Evidence([.. Enumerable.Range(0, 257).Select(i => Row("Adapter " + i, i + 1))]),
             new ToolResult(0, "{}", "", false), new ToolResult(0, "not json", "", false),
             new ToolResult(0, "{\"complete\":true,\"adapters\":[{\"name\":\"Ethernet\",\"interfaceIndex\":7,\"status\":\"Up\",\"hardware\":true,\"receivedBytes\":-1,\"sentBytes\":0,\"receivedErrors\":0,\"outboundErrors\":0,\"receivedDiscards\":0,\"outboundDiscards\":0}]}", "", false),
             clearEvidence with { ExitCode = 5 }, clearEvidence with { Error = "denied" }, clearEvidence with { TimedOut = true }, clearEvidence with { Truncated = true }

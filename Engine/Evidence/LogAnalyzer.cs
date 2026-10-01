@@ -57,7 +57,7 @@ public static partial class LogAnalyzer
         }
         cancellationToken.ThrowIfCancellationRequested();
         return new("1", source.Source, lines, source.Truncated, truncated,
-            codes.OrderBy(pair => pair.Key, StringComparer.Ordinal)
-                .Select(pair => new CodeObservation(pair.Key, pair.Value.Count, pair.Value.References.AsReadOnly())).ToArray(), Limitation);
+            [.. codes.OrderBy(pair => pair.Key, StringComparer.Ordinal)
+                .Select(pair => new CodeObservation(pair.Key, pair.Value.Count, pair.Value.References.AsReadOnly()))], Limitation);
     }
 }

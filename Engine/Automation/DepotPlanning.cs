@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Automation;
 
 [Flags]
 public enum DepotApplications
@@ -110,7 +110,7 @@ public static class DepotPlanning
         if (target == DepotApplications.Microsoft365)
             registrations.AddRange(office.Products.Where(product => !product.ProductId.StartsWith("Project", StringComparison.OrdinalIgnoreCase))
                 .Select(product => "ClickToRun/" + product.View + "/" + product.ProductId));
-        registrations = registrations.Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.Ordinal).ToList();
+        registrations = [.. registrations.Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.Ordinal)];
         var detection = registrations.Count > 0 ? DepotDetection.Installed : complete ? DepotDetection.NotDetected : DepotDetection.Unknown;
         return new(target, detection, registrations.AsReadOnly(),
             "Registration evidence does not establish application health, edition, entitlement or provisioning eligibility");

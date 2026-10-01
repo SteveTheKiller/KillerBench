@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Installation;
 
 public sealed record MsiProductCandidate(string ProductCode, string Name, string? Version, string View)
 {
@@ -19,11 +19,10 @@ public static class MsiProductDiagnostics
             string code = product.ToString("B").ToUpperInvariant();
             registrations.Add(new(code, application.Name, application.Version, application.View));
         }
-        return registrations.GroupBy(candidate => candidate.ProductCode, StringComparer.OrdinalIgnoreCase)
+        return [.. registrations.GroupBy(candidate => candidate.ProductCode, StringComparer.OrdinalIgnoreCase)
             .Select(group => group.OrderByDescending(candidate => candidate.View == "Registry64").ThenBy(candidate => candidate.Name, StringComparer.CurrentCultureIgnoreCase).First())
             .OrderBy(candidate => candidate.Name, StringComparer.CurrentCultureIgnoreCase)
-            .ThenBy(candidate => candidate.Version, StringComparer.CurrentCultureIgnoreCase)
-            .ToArray();
+            .ThenBy(candidate => candidate.Version, StringComparer.CurrentCultureIgnoreCase)];
     }
 
     public static string NormalizeProductCode(string productCode)

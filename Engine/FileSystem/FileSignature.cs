@@ -1,11 +1,13 @@
 using System.Text;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.FileSystem;
 
 public sealed record FileSignatureResult(string Path, string? Status, string? Signer, string? Thumbprint, string Detail, ToolResult Evidence)
 {
+#pragma warning disable CA1822 // Instance property is part of the serialized inspection report.
     public string Limitation => "Signature observation only. File identity can change after inspection. This does not establish executable safety, permissions or registration eligibility.";
+#pragma warning restore CA1822
 }
 
 public static class FileSignature

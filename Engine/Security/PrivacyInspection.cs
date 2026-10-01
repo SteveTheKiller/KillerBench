@@ -1,6 +1,6 @@
 using Microsoft.Win32;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public sealed record PrivacyRegistryTarget(PrivacyArea Area, bool Machine, string Path, string Name, bool Policy);
 public sealed record PrivacyRegistryValue(PrivacyRegistryTarget Target, string State, string? Value, string? Kind);

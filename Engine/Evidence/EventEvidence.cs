@@ -2,11 +2,12 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Globalization;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Evidence;
 
 public static class EventEvidence
 {
     private static readonly XNamespace Ns = "http://schemas.microsoft.com/win/2004/08/events/event";
+    private static readonly string[] RequiredSystemElements = ["Provider", "TimeCreated", "EventID", "EventRecordID", "Level"];
     private static XElement Read(string text)
     {
         using var reader = XmlReader.Create(new StringReader(text), new XmlReaderSettings
@@ -42,7 +43,7 @@ public static class EventEvidence
                 var entry = Read(evidence.Lines[i]);
                 var system = entry.Element(Ns + "System");
                 if (entry.Name != Ns + "Event" || system is null || entry.Elements(Ns + "System").Count() != 1 ||
-                    new[] { "Provider", "TimeCreated", "EventID", "EventRecordID", "Level" }.Any(name => system.Elements(Ns + name).Count() != 1))
+                    RequiredSystemElements.Any(name => system.Elements(Ns + name).Count() != 1))
                 { partial = true; continue; }
                 string provider = (string?)system.Element(Ns + "Provider")?.Attribute("Name") ?? "Unknown";
                 string time = (string?)system.Element(Ns + "TimeCreated")?.Attribute("SystemTime") ?? "Unknown";
@@ -81,8 +82,8 @@ public static class EventEvidence
                 "Windows recorded an unclean shutdown. These records do not identify its cause, establish a current fault or count unique shutdown incidents.",
                 "Correlate nearby shutdown, restart and bugcheck records with the reported incident time. Review retained dump evidence and the event payload before attributing the interruption to power, hardware or a driver. Do not select a repair from this event alone.",
                 "https://learn.microsoft.com/en-us/troubleshoot/windows-server/performance/troubleshoot-unexpected-reboots-system-event-logs",
-                group.Count(), group.Take(8).Select(entry => new EvidenceReference(evidence.Source, entry.LineNumber,
-                    entry.Timestamp + " | " + entry.Component + " | " + entry.Message)).ToArray()));
+                group.Count(), [.. group.Take(8).Select(entry => new EvidenceReference(evidence.Source, entry.LineNumber,
+                    entry.Timestamp + " | " + entry.Component + " | " + entry.Message))]));
         }
         foreach (var group in serviceErrors.OrderBy(pair => pair.Key, StringComparer.Ordinal))
         {
@@ -101,12 +102,12 @@ public static class EventEvidence
             findings.Add(new("KB-SCM-" + group.Key, 1, title, "Warning", "Recorded event",
                 "Service Control Manager recorded this failure in the captured history. The service may have recovered; current state and cause remain unverified.", next,
                 "https://learn.microsoft.com/en-us/troubleshoot/windows-server/windows-security/troubleshoot-netlogon-service-startup-failures",
-                group.Value.Count, group.Value.Take(8).ToArray()));
+                group.Value.Count, [.. group.Value.Take(8)]));
         }
         if (errors.Count > 0) findings.Add(new("KB-EVENT-001", 1, "Update or servicing error events recorded", "Warning", "Recorded event",
             "Windows Update or Servicing emitted error/critical events in the captured window. These are investigation leads, not a proven cause or a current fault.",
             "Review the raw event payload and nearby successful events alongside CBS and Setup logs.",
-            "https://learn.microsoft.com/en-us/windows/deployment/update/windows-update-logs", errors.Count, errors.Take(8).ToArray()));
+            "https://learn.microsoft.com/en-us/windows/deployment/update/windows-update-logs", errors.Count, [.. errors.Take(8)]));
         return new("1", evidence.Source, "Windows event XML", Math.Min(evidence.Lines.Length, 200), timeline.Count, partial || evidence.Lines.Length > 200,
             timeline, findings, LogAnalyzer.Analyze(evidence, cancellationToken),
             "Event SystemTime is retained as recorded (normally UTC). Newest events first; limited capture window. No repairs executed and no health verdict.");

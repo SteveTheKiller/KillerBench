@@ -2,6 +2,8 @@ using KillerBench.Engine;
 
 internal static class MacePlanningChecks
 {
+    private static readonly string[] ProcessInventoryNames = ["olk", "OneDrive", "OUTLOOK", "WINPROJ"];
+
     internal static void Run()
     {
         var ok = new ToolResult(0, "{}", "", false);
@@ -223,9 +225,9 @@ internal static class MacePlanningChecks
             provisionedProvider.Candidates[0].ProviderKind == MaceRemovalProviderKind.ProvisionedAppPackage &&
             provisionedProvider.Candidates[0].Identity == "MSTeams_fixture",
             "Provisioned-package classification preserves exact identity and blocks automatic execution");
-        Require(!MaceRemovalProviderReview.Classify(Enumerable.Range(0, 513).Select(index =>
+        Require(!MaceRemovalProviderReview.Classify([.. Enumerable.Range(0, 513).Select(index =>
                 new MaceCandidate(MaceTargets.Teams, "Registered app package", "CurrentAccount",
-                    "MSTeams_" + index, "MSTeams", null, false)).ToArray()).Complete &&
+                    "MSTeams_" + index, "MSTeams", null, false))]).Complete &&
             !MacePlanning.Review(options, machine, account, packages, clickToRun: clickToRun,
                 processes: closed, oneDriveFolders: folders, managedPolicy: policy,
                 removalProviders: new([], false, "fixture")).Complete,
@@ -245,7 +247,7 @@ internal static class MacePlanningChecks
             name => { queried.Add(name); return name.Equals("OUTLOOK", StringComparison.OrdinalIgnoreCase) ? 2 : 0; });
         Require(inventory is { Complete: true, OutlookProcesses: 2, OneDriveProcesses: 0, ProjectProcesses: 0 } &&
             queried.OrderBy(value => value, StringComparer.OrdinalIgnoreCase).SequenceEqual(
-                new[] { "olk", "OneDrive", "OUTLOOK", "WINPROJ" }.OrderBy(value => value, StringComparer.OrdinalIgnoreCase),
+                ProcessInventoryNames.OrderBy(value => value, StringComparer.OrdinalIgnoreCase),
                 StringComparer.OrdinalIgnoreCase) && !queried.Contains("WINWORD", StringComparer.OrdinalIgnoreCase) &&
             inventory.Limitation.Contains("Process IDs, paths, command lines, users and window titles were excluded"),
             "Process inventory queries only fixed names for selected products and retains bounded counts");

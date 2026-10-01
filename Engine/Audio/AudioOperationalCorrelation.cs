@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Audio;
 
 public static class AudioOperationalCorrelation
 {
@@ -16,7 +16,7 @@ public static class AudioOperationalCorrelation
 
         const string name = "Audio operational correlation";
         const string boundary = " This bounded correlation does not open an audio stream or prove playback, recording, application permissions, routing, live signal, per-application volume, Bluetooth transport or physical device operation. No endpoint, device, driver, service, format, effect, volume, mute, policy or audio setting changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         if (!ValidGroup(devices, "Audio ", 1_024) || !ValidGroup(endpoints, "Default audio ", 16) ||
             !ExactNames(serviceHistory, HistoryNames))
@@ -39,7 +39,7 @@ public static class AudioOperationalCorrelation
         checks.Count is > 0 && checks.Count <= maximum && checks.All(item => item is not null &&
             item.Name.StartsWith(prefix, StringComparison.Ordinal));
 
-    private static bool ExactNames(IReadOnlyList<WorkflowCheck> checks, IReadOnlyList<string> names) =>
-        checks.Count == names.Count && checks.Select(item => item.Name).OrderBy(value => value, StringComparer.Ordinal)
+    private static bool ExactNames(IReadOnlyList<WorkflowCheck> checks, string[] names) =>
+        checks.Count == names.Length && checks.Select(item => item.Name).OrderBy(value => value, StringComparer.Ordinal)
             .SequenceEqual(names.OrderBy(value => value, StringComparer.Ordinal), StringComparer.Ordinal);
 }

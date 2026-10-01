@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Time;
 
 public interface ITimeConfigurationHost
 {
@@ -16,8 +16,11 @@ public sealed record TimeConfigurationResult(string Status, string Journal)
     public string Detail { get; init; } = "";
 }
 
-public static class TimeConfiguration
+public static partial class TimeConfiguration
 {
+    [System.Text.RegularExpressions.GeneratedRegex(@"(?m)^Source:[ \t]*([^\r\n]+)", System.Text.RegularExpressions.RegexOptions.CultureInvariant)]
+    private static partial System.Text.RegularExpressions.Regex SourceLineRegex();
+
     public static async Task<bool> VerifyAsync(TimeOptions options, CancellationToken token = default,
         Func<CancellationToken, Task<TimeEnvironment>>? inspect = null,
         Func<CancellationToken, Task<ToolResult>>? queryStatus = null)
@@ -52,8 +55,7 @@ public static class TimeConfiguration
     {
         if (options.Source != TimeSourceMode.CustomPeers || !MatchesStoredConfiguration(options, current) ||
             TimeRecovery.Interpret(status).State != CheckState.Clear) return false;
-        var sources = System.Text.RegularExpressions.Regex.Matches(status.Output, @"(?m)^Source:[ \t]*([^\r\n]+)",
-            System.Text.RegularExpressions.RegexOptions.CultureInvariant);
+        var sources = SourceLineRegex().Matches(status.Output);
         if (sources.Count != 1) return false;
         string source = sources[0].Groups[1].Value.Trim();
         return options.Peers is not null && options.Peers.Contains(source, StringComparer.OrdinalIgnoreCase);

@@ -1,13 +1,13 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Profiles;
 
 public sealed record ProfileRegistration(string Sid, string Path, string KeyName, bool BackupKey, uint? State, uint? RefCount);
 
 public sealed record ProfileRegistrationResult(IReadOnlyList<ProfileRegistration> Items, bool Complete)
 {
     public IReadOnlyList<ProfileRegistration> ForSid(string sid) =>
-        Items.Where(item => item.Sid.Equals(sid, StringComparison.OrdinalIgnoreCase)).ToArray();
+        [.. Items.Where(item => item.Sid.Equals(sid, StringComparison.OrdinalIgnoreCase))];
 }
 
 public static class ProfileRegistrations

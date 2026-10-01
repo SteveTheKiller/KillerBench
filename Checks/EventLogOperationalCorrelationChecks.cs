@@ -49,8 +49,8 @@ internal static class EventLogOperationalCorrelationChecks
         return EventLogOperationalCorrelation.Check(channels, History(state: historyState));
     }
 
-    private static WorkflowCheck[] Channels() => EventLogCapacityDiagnostics.Channels
-        .Select(channel => new WorkflowCheck("Event log capacity: " + channel, CheckState.Information, "fixture")).ToArray();
+    private static WorkflowCheck[] Channels() => [.. EventLogCapacityDiagnostics.Channels
+        .Select(channel => new WorkflowCheck("Event log capacity: " + channel, CheckState.Information, "fixture"))];
 
     private static WorkflowCheck History(string name = "Windows Event Log service failure history",
         CheckState state = CheckState.Information) => new(name, state, "fixture");

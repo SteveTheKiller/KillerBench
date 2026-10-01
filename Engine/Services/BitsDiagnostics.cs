@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public sealed record BitsJobSnapshot(Guid Id, string Name, string State, string Error,
     string? Owner, int? ErrorCode, ulong? BytesTotal, ulong? BytesTransferred);
@@ -8,6 +8,9 @@ public sealed record BitsInventoryResult(string? Scope, bool Complete, IReadOnly
 
 public static class BitsDiagnostics
 {
+    private static readonly string[] SavedOwnerFields = ["owner", "errorCode", "bytesTotal", "bytesTransferred"];
+
+
     public static async Task<WorkflowCheck> CheckAsync(bool allUsers = false, CancellationToken token = default) =>
         Interpret((await ReadAsync(allUsers, token).ConfigureAwait(false)).Evidence, token);
 
@@ -71,7 +74,7 @@ public static class BitsDiagnostics
                 string? owner = null;
                 int? savedError = null;
                 ulong? savedTotal = null, savedTransferred = null;
-                if (new[] { "owner", "errorCode", "bytesTotal", "bytesTransferred" }.Any(field => job.TryGetProperty(field, out _)))
+                if (SavedOwnerFields.Any(field => job.TryGetProperty(field, out _)))
                 {
                     owner = job.GetProperty("owner").GetString();
                     if (string.IsNullOrWhiteSpace(owner) || owner.Length > 1024 || owner.Any(char.IsControl) ||

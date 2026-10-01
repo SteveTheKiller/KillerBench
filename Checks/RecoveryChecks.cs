@@ -29,7 +29,7 @@ internal static class RecoveryChecks
                 RepairKind.SystemFiles) &&
             !RepairRecoveryStore.IsRelatedJournal(linkedPending, linkedJournal, RepairKind.ComponentStore),
             "Recovery linkage distinguishes another repair from invalid machine ownership");
-        foreach (var mismatch in new (RepairRecoveryRecord? Pending, RepairResult? Journal, RepairKind Kind)[]
+        foreach (var (pending, journal, kind) in new (RepairRecoveryRecord? Pending, RepairResult? Journal, RepairKind Kind)[]
         {
             (linkedPending with { Pending = false }, linkedJournal, RepairKind.SystemFiles),
             (linkedPending with { Machine = "OTHER-MACHINE" }, linkedJournal, RepairKind.SystemFiles),
@@ -39,7 +39,7 @@ internal static class RecoveryChecks
             (null, linkedJournal, RepairKind.SystemFiles),
             (linkedPending, null, RepairKind.SystemFiles)
         })
-            Require(!RepairRecoveryStore.MatchesPendingJournal(mismatch.Pending, mismatch.Journal, mismatch.Kind),
+            Require(!RepairRecoveryStore.MatchesPendingJournal(pending, journal, kind),
                 "Mismatched recovery identity cannot release a pending repair guard");
         string folder = Path.Combine(scratch, "recovery-state");
         RepairRecoveryStore Store() => new(folder, _ => Task.FromResult<BootStamp?>(boot));

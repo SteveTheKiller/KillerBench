@@ -5,7 +5,7 @@ internal static class EventChannelChecks
     internal static void Run()
     {
         const string xml = "<channel xmlns='http://schemas.microsoft.com/win/2004/08/events' name='System' enabled='true'><logging><retention>false</retention><autoBackup>false</autoBackup><maxSize>20971520</maxSize></logging></channel>";
-        ToolResult Evidence(string text) => new(0, text, "", false);
+        static ToolResult Evidence(string text) => new(0, text, "", false);
         var good = EventChannelDiagnostics.Interpret("System", Evidence(xml));
         Require(good.State == CheckState.Information && good.Repair is null && good.Detail.Contains("20971520"), "Valid channel configuration is informational, not health or repair eligibility");
         var disabled = EventChannelDiagnostics.Interpret("System", Evidence(xml.Replace("enabled='true'", "enabled='false'")));

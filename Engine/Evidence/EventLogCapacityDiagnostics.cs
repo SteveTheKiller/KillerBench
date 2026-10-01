@@ -1,16 +1,16 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Evidence;
 
 public sealed record EventLogCapacitySnapshot(string Channel, bool? Enabled, string? Mode, long? FileSize,
     long? MaximumSize, long? RecordCount, bool? Full);
 
 public static class EventLogCapacityDiagnostics
 {
-    public static IReadOnlyList<string> Channels { get; } = Array.AsReadOnly(new[]
-    {
+    public static IReadOnlyList<string> Channels { get; } = Array.AsReadOnly<string>(
+    [
         "System", "Application", "Setup", "Microsoft-Windows-WindowsUpdateClient/Operational"
-    });
+    ]);
 
     public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default,
         Func<string, CancellationToken, Task<ToolResult>>? collect = null)

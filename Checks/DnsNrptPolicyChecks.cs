@@ -3,6 +3,8 @@ using KillerBench.Engine;
 
 internal static class DnsNrptPolicyChecks
 {
+    private static readonly string[] CorpNamespaces = [".corp.example"];
+
     internal static async Task RunAsync()
     {
         ToolResult Evidence(object[] rules, bool complete = true) =>
@@ -39,14 +41,14 @@ internal static class DnsNrptPolicyChecks
         {
             Evidence([], false), Evidence([Rule([])]),
             Evidence([Rule([".corp.example"]), Rule([".CORP.EXAMPLE"])]),
-            Evidence([new { namespaces = new[] { ".corp.example" } }]),
+            Evidence([new { namespaces = CorpNamespaces }]),
             Evidence([Rule([" bad.example"])]),
             Evidence([Rule([".corp.example"], servers: ["192.0.2.53", "192.0.2.53"])]),
             new ToolResult(1, "{}", "failed", false), new ToolResult(0, "{}", "", true)
         }) Require(DnsNrptPolicyDiagnostics.Interpret(invalid).State == CheckState.Unknown,
             "Incomplete, malformed, duplicate, failed and truncated effective policy remains unknown");
 
-        var capped = Evidence(Enumerable.Range(1, 257).Select(index => Rule(["rule" + index + ".example"])).ToArray());
+        var capped = Evidence([.. Enumerable.Range(1, 257).Select(index => Rule(["rule" + index + ".example"]))]);
         Require(DnsNrptPolicyDiagnostics.Interpret(capped).State == CheckState.Unknown,
             "Oversized effective policy cannot claim complete coverage");
 

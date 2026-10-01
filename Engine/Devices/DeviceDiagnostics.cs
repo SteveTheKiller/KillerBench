@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Devices;
 
 public enum DeviceCategory { Audio, Network, Storage, Printing, Display, Input, Portable, Bluetooth, Camera, SmartCard, Biometric, Problems }
 
@@ -26,6 +26,21 @@ public static class DeviceDiagnostics
                 DriverPlatformContext.FromCurrentWindows(), token));
         return checks.AsReadOnly();
     }
+
+    private static string[] ExpectedPnpClasses(DeviceCategory category) => category switch
+    {
+        DeviceCategory.Audio => ["AudioEndpoint", "MEDIA"],
+        DeviceCategory.Network => ["Net"],
+        DeviceCategory.Printing => ["Printer", "PrintQueue"],
+        DeviceCategory.Display => ["Display", "Monitor"],
+        DeviceCategory.Input => ["Keyboard", "Mouse", "HIDClass"],
+        DeviceCategory.Portable => ["WPD"],
+        DeviceCategory.Bluetooth => ["Bluetooth"],
+        DeviceCategory.Camera => ["Camera", "Image"],
+        DeviceCategory.SmartCard => ["SmartCardReader"],
+        DeviceCategory.Biometric => ["Biometric"],
+        _ => ["DiskDrive", "HDC", "SCSIAdapter"]
+    };
 
     public static IReadOnlyList<WorkflowCheck> Interpret(ToolResult result, DeviceCategory category)
     {
@@ -53,7 +68,7 @@ public static class DeviceDiagnostics
             if (driverCollectionFailed)
             {
                 string reason = driverError.ValueKind == JsonValueKind.String ? driverError.GetString() ?? "" : "Invalid provider error data.";
-                reason = new string(reason.Take(512).Select(c => char.IsControl(c) ? ' ' : c).ToArray());
+                reason = new string([.. reason.Take(512).Select(c => char.IsControl(c) ? ' ' : c)]);
                 checks.Add(new(label + " driver collection", CheckState.Unknown,
                     "Driver inventory collection failed. " + reason + " Device configuration observations remain separate; no driver change is authorized.", Evidence: result));
             }
@@ -67,20 +82,8 @@ public static class DeviceDiagnostics
                 if (string.IsNullOrWhiteSpace(name)) name = "Unnamed device";
                 string? deviceClass = device.TryGetProperty("PNPClass", out var reportedClass) ? reportedClass.GetString() : null;
                 if (id is null || !DriverReference.ValidText(id, 1024) || !DriverReference.ValidText(name, 512) ||
-                    !seen.Add(id) || (category != DeviceCategory.Problems && !(category switch
-                    {
-                        DeviceCategory.Audio => new[] { "AudioEndpoint", "MEDIA" },
-                        DeviceCategory.Network => new[] { "Net" },
-                        DeviceCategory.Printing => new[] { "Printer", "PrintQueue" },
-                        DeviceCategory.Display => new[] { "Display", "Monitor" },
-                        DeviceCategory.Input => new[] { "Keyboard", "Mouse", "HIDClass" },
-                        DeviceCategory.Portable => new[] { "WPD" },
-                        DeviceCategory.Bluetooth => new[] { "Bluetooth" },
-                        DeviceCategory.Camera => new[] { "Camera", "Image" },
-                        DeviceCategory.SmartCard => new[] { "SmartCardReader" },
-                        DeviceCategory.Biometric => new[] { "Biometric" },
-                        _ => new[] { "DiskDrive", "HDC", "SCSIAdapter" }
-                    }).Contains(deviceClass, StringComparer.OrdinalIgnoreCase)))
+                    !seen.Add(id) || (category != DeviceCategory.Problems &&
+                    !ExpectedPnpClasses(category).Contains(deviceClass, StringComparer.OrdinalIgnoreCase)))
                 { checks.Add(Unknown()); continue; }
                 bool present = device.GetProperty("Present").GetBoolean();
                 uint code = device.GetProperty("ConfigManagerErrorCode").GetUInt32();

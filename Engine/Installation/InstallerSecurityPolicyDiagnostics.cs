@@ -1,7 +1,7 @@
 using Microsoft.Win32;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Installation;
 
 public sealed record InstallerSecurityPolicyEnvironment(
     object? DisableUserInstalls,

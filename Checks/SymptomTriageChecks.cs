@@ -74,7 +74,7 @@ internal static class SymptomTriageChecks
         if (!valid.IsValid) throw new Exception("Valid catalog reported issues: " + string.Join("; ", valid.Issues.Select(i => i.Subject + ": " + i.Message)));
         Expect(catalog with { Symptoms = [catalog.Symptoms[0] with { TreeId = "test.missing" }] }, "does not exist", "Missing tree");
         Expect(catalog with { Trees = [tree with { RootNodeId = "nope" }] }, "Root node", "Missing root");
-        Expect(catalog with { Trees = [tree with { Nodes = tree.Nodes.Append(new TriageNode("orphan", TriageNodeKind.Terminal) { Terminal = TriageTerminal.RuledOut }).ToArray() }] }, "unreachable", "Unreachable node");
+        Expect(catalog with { Trees = [tree with { Nodes = [.. tree.Nodes.Append(new TriageNode("orphan", TriageNodeKind.Terminal) { Terminal = TriageTerminal.RuledOut })] }] }, "unreachable", "Unreachable node");
         var loop = tree.Nodes.Select(node => node.Id == "r2" ? node with { Next = new Dictionary<string, string> { ["Clear"] = "r1", ["default"] = "handoff" } } : node).ToArray();
         Expect(catalog with { Trees = [tree with { Nodes = loop }] }, "Cycle", "Cycle");
         var badKey = tree.Nodes.Select(node => node.Id == "r1" ? node with { Next = new Dictionary<string, string> { ["Fixed"] = "r2", ["default"] = "r2" } } : node).ToArray();
@@ -91,7 +91,7 @@ internal static class SymptomTriageChecks
 
         string json = SymptomCatalogJson.Serialize(catalog);
         if (SymptomCatalogJson.Serialize(SymptomCatalogJson.Deserialize(json)) != json) throw new Exception("Catalog did not round-trip through JSON.");
-        if (catalog.Search("thing broken").FirstOrDefault()?.Id != "test.symptom" || catalog.Search("zzz").Count != 0) throw new Exception("Symptom search misbehaved.");
+        if (catalog.Search("thing broken") is not [{ Id: "test.symptom" }, ..] || catalog.Search("zzz").Count != 0) throw new Exception("Symptom search misbehaved.");
 
         // Goal runner walks: rule out alpha, repair beta, resolved by verified repair.
         var states = new Dictionary<string, string> { ["Alpha"] = "Clear", ["Beta"] = "Repairable" };
@@ -150,7 +150,7 @@ internal static class SymptomTriageChecks
         var windowsValidation = SymptomCatalogValidation.Validate(windows, WindowsPacks.All(), WindowsPrimitiveLibrary.Create());
         if (!windowsValidation.IsValid) throw new Exception("Windows symptom catalog is invalid: " + string.Join("; ", windowsValidation.Issues.Select(i => i.Subject + ": " + i.Message)));
         if (windows.Symptoms.Count < 15 || windows.Symptoms.Count(symptom => symptom.TreeId is not null) < 14) throw new Exception("Windows symptom catalog is incomplete.");
-        if (windows.Search("no sound").FirstOrDefault()?.Id != "audio.no-sound" || windows.Search("can't print").FirstOrDefault()?.Id != "printing.nothing-prints")
+        if (windows.Search("no sound") is not [{ Id: "audio.no-sound" }, ..] || windows.Search("can't print") is not [{ Id: "printing.nothing-prints" }, ..])
             throw new Exception("Windows symptom search did not rank the expected symptom first.");
         if (SymptomCatalogJson.Serialize(SymptomCatalogJson.Deserialize(SymptomCatalogJson.Serialize(windows))) != SymptomCatalogJson.Serialize(windows)) throw new Exception("Windows catalog did not round-trip.");
 

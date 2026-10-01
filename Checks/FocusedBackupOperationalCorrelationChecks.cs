@@ -21,8 +21,8 @@ internal static class FocusedBackupOperationalCorrelationChecks
         Require(incomplete is { State: CheckState.Unknown, Repair: null } && incomplete.Detail.Contains("1 incomplete"),
             "Incomplete focused backup evidence takes precedence");
 
-        Require(FocusedBackupOperationalCorrelation.Check(Evidence().Skip(1).ToArray()).State == CheckState.Unknown &&
-            FocusedBackupOperationalCorrelation.Check(Evidence().Append(Evidence()[0]).ToArray()).State == CheckState.Unknown,
+        Require(FocusedBackupOperationalCorrelation.Check([.. Evidence().Skip(1)]).State == CheckState.Unknown &&
+            FocusedBackupOperationalCorrelation.Check([.. Evidence().Append(Evidence()[0])]).State == CheckState.Unknown,
             "Missing and duplicate focused backup identities fail closed");
 
         try { FocusedBackupOperationalCorrelation.Check(Evidence(), new CancellationToken(true)); throw new Exception("Backup correlation cancellation ignored"); }
@@ -41,7 +41,7 @@ internal static class FocusedBackupOperationalCorrelationChecks
             "Windows Backup service failure history", "Block Level Backup Engine failure history",
             "VSS shadow copies", "VSS shadow storage", "Administrator", "Restart"
         ];
-        return names.Select(name => new WorkflowCheck(name, name == changed ? state : CheckState.Information, "fixture")).ToArray();
+        return [.. names.Select(name => new WorkflowCheck(name, name == changed ? state : CheckState.Information, "fixture"))];
     }
 
     private static void Require(bool condition, string message) { if (!condition) throw new Exception(message); }

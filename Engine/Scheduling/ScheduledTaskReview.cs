@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Scheduling;
 
 public static class ScheduledTaskReview
 {

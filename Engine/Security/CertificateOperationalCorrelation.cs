@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public static class CertificateOperationalCorrelation
 {
@@ -10,7 +10,7 @@ public static class CertificateOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Certificate operational conclusion";
         const string boundary = " This bounded local review does not verify revocation, server presentation, bindings, enrollment, private-key access, policy ownership, remote trust or application authentication. No certificate, trust setting, enrollment, binding, private key, application, service or policy is changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
         if (expiration.Name != "Personal certificate expiration" || chainTrust.Name != "Personal certificate chain trust")
             return Unknown("Certificate evidence carried an unexpected identity.");
         var evidence = new[] { expiration, chainTrust };

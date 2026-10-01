@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public sealed record CertificateObservation(string Store, string Thumbprint, string Subject, string Issuer,
     DateTimeOffset NotBeforeUtc, DateTimeOffset NotAfterUtc);
@@ -123,8 +123,8 @@ public static class CertificateDiagnostics
                 }
             }
         }
-        return new(true, observations.OrderBy(item => item.NotAfterUtc).ThenBy(item => item.Store)
-            .ThenBy(item => item.Thumbprint).ToArray());
+        return new(true, [.. observations.OrderBy(item => item.NotAfterUtc).ThenBy(item => item.Store)
+            .ThenBy(item => item.Thumbprint)]);
     }
 
     private static bool Text(JsonElement owner, string name, int maximum, out string value)

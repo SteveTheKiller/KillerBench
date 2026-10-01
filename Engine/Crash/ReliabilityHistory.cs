@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Crash;
 
 public sealed record ReliabilityRecord(DateTimeOffset TimeUtc, string Source, string Product, uint EventId, string Message);
 

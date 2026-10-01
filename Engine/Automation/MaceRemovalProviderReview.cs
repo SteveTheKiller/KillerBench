@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Automation;
 
 public enum MaceRemovalProviderKind
 {

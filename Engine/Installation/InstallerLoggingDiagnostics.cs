@@ -1,13 +1,13 @@
 using Microsoft.Win32;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Installation;
 
 public sealed record InstallerLoggingEnvironment(object? Logging, object? DisableLoggingFromPackage, object? Debug);
 
 public static class InstallerLoggingDiagnostics
 {
-    private static readonly HashSet<char> LoggingModes = new("iweaprcvmuox!".ToCharArray());
+    private static readonly HashSet<char> LoggingModes = [.. "iweaprcvmuox!"];
 
     public static WorkflowCheck Check(Func<InstallerLoggingEnvironment>? collect = null)
     {

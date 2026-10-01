@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public static class DiskQuotaDiagnostics
 {
@@ -64,7 +64,7 @@ public static class DiskQuotaDiagnostics
             foreach (var item in settings.EnumerateArray())
             {
                 if (!Unique(item, 6) || !Text(item, "drive", out string drive) ||
-                    drive.Length != 2 || !char.IsAsciiLetter(drive[0]) || drive[1] != ':' || drive != drive.ToUpperInvariant() ||
+                    drive.Length != 2 || !char.IsAsciiLetterUpper(drive[0]) || drive[1] != ':' ||
                     !Integer(item, "state", 0, 2, out long state) ||
                     !Integer(item, "defaultLimitBytes", -1, long.MaxValue, out long limit) ||
                     !Integer(item, "defaultWarningBytes", -1, long.MaxValue, out long warning) ||

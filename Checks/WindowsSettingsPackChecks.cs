@@ -4,6 +4,8 @@ using Microsoft.Win32;
 
 internal static class WindowsSettingsPackChecks
 {
+    private static readonly string[] MultiStringFixture = ["a", "b"];
+
     private sealed class FakeProbe(string name, IReadOnlyList<PrimitiveParameter> parameters, Func<IReadOnlyDictionary<string, string>, PrimitiveResult> observe) : IProbePrimitive
     {
         public string Name => name;
@@ -45,7 +47,7 @@ internal static class WindowsSettingsPackChecks
             throw new Exception("Safeboot expectations misbehaved.");
 
         // Registry rendering and path rules.
-        if (WindowsRegistryPrimitives.Render(unchecked((int)0xFFFFFFFF), RegistryValueKind.DWord) != "4294967295" || WindowsRegistryPrimitives.Render(new[] { "a", "b" }, RegistryValueKind.MultiString) != "a;b" ||
+        if (WindowsRegistryPrimitives.Render(unchecked((int)0xFFFFFFFF), RegistryValueKind.DWord) != "4294967295" || WindowsRegistryPrimitives.Render(MultiStringFixture,RegistryValueKind.MultiString) != "a;b" ||
             WindowsRegistryPrimitives.Render(new byte[] { 1, 255 }, RegistryValueKind.Binary) != "01FF") throw new Exception("Registry rendering misbehaved.");
         foreach (string bad in new[] { @"..\Foo", @"\Foo", @"Foo\", @"Foo\\Bar" })
         {

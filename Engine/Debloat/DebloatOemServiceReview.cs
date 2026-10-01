@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Debloat;
 
 public sealed record DebloatOemServiceEvidence(IReadOnlyList<ServiceInventoryEntry> Matches,
     bool Complete, ToolResult Evidence, string Detail);

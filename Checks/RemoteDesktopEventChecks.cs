@@ -4,7 +4,7 @@ internal static class RemoteDesktopEventChecks
 {
     internal static void Run()
     {
-        string Entry(string provider, int id, int level = 2, ulong record = 1) =>
+        static string Entry(string provider, int id, int level = 2, ulong record = 1) =>
             $"<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='{provider}'/><EventID>{id}</EventID><EventRecordID>{record}</EventRecordID><Level>{level}</Level><TimeCreated SystemTime='2026-09-14T00:00:00Z'/></System><EventData><Data Name='User'>PRIVATE\\User</Data><Data Name='Address'>10.1.2.3</Data><Data Name='SessionID'>42</Data></EventData></Event>";
         foreach (var source in new[]
         {

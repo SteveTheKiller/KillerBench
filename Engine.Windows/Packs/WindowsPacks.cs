@@ -1,6 +1,6 @@
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Packs;
 
 /// <summary>The built-in Windows recipe packs, in load order.</summary>
 public static class WindowsPacks

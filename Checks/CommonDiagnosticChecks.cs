@@ -12,8 +12,8 @@ internal static class CommonDiagnosticChecks
         Require(CommonDiagnosticCatalog.SummaryAreas.Count == 11 &&
             CommonDiagnosticCatalog.SummaryAreas.Select(area => area.Scope).SequenceEqual(CommonDiagnosticCatalog.All.TakeLast(11).Select(area => area.Scope)),
             "The simple focused selector exposes only stable aggregate outcome areas in canonical order");
-        Require(CommonDiagnosticCatalog.All.Count == 49 && CommonDiagnosticCatalog.All.TakeLast(22).Select(area => area.Scope).SequenceEqual(
-            new[] { CommonDiagnosticScope.DriverInstallHistory,
+        CommonDiagnosticScope[] expectedTailScopes =
+            [CommonDiagnosticScope.DriverInstallHistory,
                 CommonDiagnosticScope.CrashEvidence, CommonDiagnosticScope.FirewallProfiles, CommonDiagnosticScope.WindowsUpdateContext,
                 CommonDiagnosticScope.SystemVolumeDirtyBit, CommonDiagnosticScope.InstallerActivity, CommonDiagnosticScope.SearchHealth,
                 CommonDiagnosticScope.SystemRestore, CommonDiagnosticScope.WindowsRecovery, CommonDiagnosticScope.Certificates,
@@ -21,10 +21,11 @@ internal static class CommonDiagnosticChecks
                 CommonDiagnosticScope.StorageReadiness, CommonDiagnosticScope.PrintingReadiness, CommonDiagnosticScope.InstallationReadiness,
                 CommonDiagnosticScope.ServiceReadiness, CommonDiagnosticScope.WindowsUpdateReadiness, CommonDiagnosticScope.BackupReadiness,
                 CommonDiagnosticScope.SystemStabilityReadiness, CommonDiagnosticScope.SecurityReadiness,
-                CommonDiagnosticScope.ApplicationDeploymentReadiness }),
+                CommonDiagnosticScope.ApplicationDeploymentReadiness];
+        Require(CommonDiagnosticCatalog.All.Count == 49 && CommonDiagnosticCatalog.All.TakeLast(22).Select(area => area.Scope).SequenceEqual(expectedTailScopes),
             "Common problems includes bounded driver, crash, firewall, update, filesystem, installer, Search, recovery, certificate, restart, servicing, network, storage, printing, installation, service, Windows Update, backup, system stability, security and application deployment readiness areas");
-        var requested = new[] { CommonDiagnosticScope.EventChannels, CommonDiagnosticScope.PrinterPorts, CommonDiagnosticScope.Vitals,
-            CommonDiagnosticScope.WindowsLicensing, CommonDiagnosticScope.PrinterPorts };
+        CommonDiagnosticScope[] requested = [CommonDiagnosticScope.EventChannels, CommonDiagnosticScope.PrinterPorts, CommonDiagnosticScope.Vitals,
+            CommonDiagnosticScope.WindowsLicensing, CommonDiagnosticScope.PrinterPorts];
         var focusedVisits = new List<CommonDiagnosticScope>();
         var focused = await CommonDiagnostics.CheckAsync(selectedScopes: requested, collect: (scope, _) =>
         {
@@ -32,8 +33,9 @@ internal static class CommonDiagnosticChecks
             requested[0] = CommonDiagnosticScope.Security;
             return Task.FromResult<IReadOnlyList<WorkflowCheck>>([new(scope.ToString(), CheckState.Information, "fixture")]);
         });
-        Require(focusedVisits.SequenceEqual(new[] { CommonDiagnosticScope.Vitals, CommonDiagnosticScope.PrinterPorts,
-            CommonDiagnosticScope.WindowsLicensing, CommonDiagnosticScope.EventChannels }) && focused.Count == 4,
+        CommonDiagnosticScope[] expectedVisits = [CommonDiagnosticScope.Vitals, CommonDiagnosticScope.PrinterPorts,
+            CommonDiagnosticScope.WindowsLicensing, CommonDiagnosticScope.EventChannels];
+        Require(focusedVisits.SequenceEqual(expectedVisits) && focused.Count == 4,
             "Focused diagnostics snapshot selections, deduplicate and retain canonical order without collecting other scopes");
         var repeatedFinding = new WorkflowCheck("Shared retained evidence", CheckState.Information, "One exact observation");
         var deduplicatedFindings = await CommonDiagnostics.CheckAsync(
@@ -41,8 +43,9 @@ internal static class CommonDiagnosticChecks
             collect: (_, _) => Task.FromResult<IReadOnlyList<WorkflowCheck>>([repeatedFinding]));
         Require(deduplicatedFindings.SequenceEqual([repeatedFinding]),
             "Aggregate scopes do not repeat an exact finding already retained by an earlier scope");
-        foreach (var invalid in new[] { Array.Empty<CommonDiagnosticScope>(), new[] { (CommonDiagnosticScope)999 },
-            Enumerable.Repeat(CommonDiagnosticScope.Vitals, 65).ToArray() })
+        CommonDiagnosticScope[][] invalidSelections = [[], [(CommonDiagnosticScope)999],
+            [.. Enumerable.Repeat(CommonDiagnosticScope.Vitals, 65)]];
+        foreach (var invalid in invalidSelections)
         {
             try
             {

@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public enum TcpCheckState { Connected, Failed, TimedOut }
 public sealed record TcpCheckResult(string Host, int Port, TcpCheckState State, string Detail)

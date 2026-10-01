@@ -6,7 +6,7 @@ using System.Text.Json;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Evidence;
 
 public sealed record EventChannelState(string Channel, bool Enabled, bool Retention, bool AutoBackup,
     ulong MaximumSize, string ConfigurationHash);

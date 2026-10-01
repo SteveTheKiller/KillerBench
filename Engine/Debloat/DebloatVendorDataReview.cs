@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Debloat;
 
 public sealed record DebloatVendorPathTarget(string Label, string Path, string SourcePattern);
 public sealed record DebloatVendorPathValue(DebloatVendorPathTarget Target, string State,
@@ -14,12 +14,12 @@ public static class DebloatVendorDataReview
         string[] roots = [programData, programFiles, windows];
         if (roots.Any(root => string.IsNullOrWhiteSpace(root) || !Path.IsPathFullyQualified(root)))
             throw new ArgumentException("Vendor data roots must be absolute paths.");
-        return Array.AsReadOnly(new[]
-        {
+        return Array.AsReadOnly<DebloatVendorPathTarget>(
+        [
             new DebloatVendorPathTarget("McAfee program data", Path.Combine(programData, "McAfee"), @"$env:ProgramData\McAfee"),
             new DebloatVendorPathTarget("Norton Security program files", Path.Combine(programFiles, "Norton Security"), @"$env:ProgramFiles\Norton Security"),
             new DebloatVendorPathTarget("Rivet Networks driver folder", Path.Combine(windows, "System32", "drivers", "RivetNetworks"), @"C:\Windows\System32\drivers\RivetNetworks")
-        });
+        ]);
     }
 
     public static DebloatVendorDataEvidence Review(Func<DebloatVendorPathTarget, DebloatVendorPathValue>? reader = null,

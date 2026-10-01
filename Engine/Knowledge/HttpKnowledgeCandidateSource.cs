@@ -1,6 +1,6 @@
 using System.Net.Http.Headers;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Knowledge;
 
 public sealed record KnowledgeEndpoint(string PackId, Uri PayloadUri, Uri SignatureUri);
 
@@ -8,7 +8,7 @@ public sealed class HttpKnowledgeCandidateSource : IKnowledgeCandidateSource
 {
     private const int MaximumPayloadBytes = 32_000_000;
     private readonly HttpClient client;
-    private readonly IReadOnlyDictionary<string, KnowledgeEndpoint> endpoints;
+    private readonly Dictionary<string, KnowledgeEndpoint> endpoints;
 
     public HttpKnowledgeCandidateSource(HttpClient client, IReadOnlyCollection<KnowledgeEndpoint> endpoints)
     {

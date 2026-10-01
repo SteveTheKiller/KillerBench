@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record UpdateServiceRegistration(string Id, string Name, bool Managed, bool RegisteredWithAutomaticUpdates, bool OffersWindowsUpdates);
 

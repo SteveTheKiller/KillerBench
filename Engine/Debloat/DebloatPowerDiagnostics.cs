@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Debloat;
 
 public sealed record DebloatPowerRequest(uint SleepAcMinutes, uint SleepDcMinutes,
     uint DisplayAcMinutes, uint DisplayDcMinutes)

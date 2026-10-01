@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public sealed record ServiceBinaryObservation(string Name, string DisplayName, string ServiceType,
     string? BinaryFile, string Status, string? Signature, string? SignatureIssue, bool Complete, string? Issue);

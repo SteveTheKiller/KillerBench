@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Primitives;
 
 /// <summary>Known folders that maintenance primitives may count or clear. Packs name a token, never a path.</summary>
 public static class WindowsMaintenanceFolders
@@ -158,8 +158,14 @@ public sealed class WindowsInterfaceMtuSetAction : IActionPrimitive
 }
 
 /// <summary>Counts active wake timers reported by powercfg. Value is the count; Raw lists the owners.</summary>
-public sealed class WindowsWakeTimersProbe : IProbePrimitive
+public sealed partial class WindowsWakeTimersProbe : IProbePrimitive
 {
+    [GeneratedRegex(@"(?i)no active wake timers|There are no active wake timers")]
+    private static partial Regex NoWakeTimersPattern();
+
+    [GeneratedRegex(@"(?m)^Timer set by \[(.+?)\]", RegexOptions.CultureInvariant)]
+    private static partial Regex WakeTimerOwnerPattern();
+
     public string Name => "powercfg.wake-timers";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [];
 
@@ -176,9 +182,9 @@ public sealed class WindowsWakeTimersProbe : IProbePrimitive
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
         if (result.TimedOut) return new PrimitiveResult(false, null, raw, "powercfg timed out.") { TimedOut = true };
         if (result.ExitCode != 0) return PrimitiveResult.Unavailable("powercfg exited with " + result.ExitCode + "; administrator access is required.");
-        if (Regex.IsMatch(result.Output, @"(?i)no active wake timers|There are no active wake timers"))
+        if (NoWakeTimersPattern().IsMatch(result.Output))
             return new PrimitiveResult(true, "0", raw) { Detail = "No active wake timers." };
-        var owners = Regex.Matches(result.Output, @"(?m)^Timer set by \[(.+?)\]", RegexOptions.CultureInvariant);
+        var owners = WakeTimerOwnerPattern().Matches(result.Output);
         if (owners.Count == 0) return PrimitiveResult.Unavailable("powercfg output was not recognized.");
         return new PrimitiveResult(true, owners.Count.ToString(CultureInfo.InvariantCulture), string.Join("\n", owners.Select(match => match.Groups[1].Value)))
         { Detail = owners.Count + " active wake timer(s) can wake the PC from sleep." };

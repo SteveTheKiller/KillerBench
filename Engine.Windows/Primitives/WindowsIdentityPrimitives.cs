@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Primitives;
 
 /// <summary>Domain secure-channel state through Test-ComputerSecureChannel. Value is True, False or NotDomainJoined.</summary>
 public sealed class WindowsSecureChannelProbe : IProbePrimitive

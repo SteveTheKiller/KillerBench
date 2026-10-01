@@ -1,7 +1,7 @@
 using Microsoft.Win32;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Applications;
 
 public sealed record FoxitUpdaterValue(string View, string Path, string Name, string Kind, string? Value);
 public sealed record FoxitRegistryValue(string Kind, object? Value);
@@ -13,6 +13,8 @@ public sealed record FoxitUpdaterSnapshot(IReadOnlyList<FoxitUpdaterValue> Value
 
 public static class FoxitUpdaterSettings
 {
+    private static readonly string[] UpdaterValueNames = ["UpdateMode", "bNoUpdate"];
+
     public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
         Func<CancellationToken, FoxitUpdaterSnapshot>? collector = null)
     {
@@ -50,7 +52,7 @@ public static class FoxitUpdaterSettings
             if (key is null) return null;
             var entries = new Dictionary<string, FoxitRegistryValue>();
             if (path.EndsWith("\\Updater", StringComparison.OrdinalIgnoreCase))
-                foreach (string name in new[] { "UpdateMode", "bNoUpdate" })
+                foreach (string name in UpdaterValueNames)
                 {
                     object? value = key.GetValue(name, null, RegistryValueOptions.DoNotExpandEnvironmentNames);
                     if (value is not null) entries.Add(name, new(key.GetValueKind(name).ToString(), value));
@@ -80,7 +82,7 @@ public static class FoxitUpdaterSettings
                     token.ThrowIfCancellationRequested();
                     if (key is null) { if (next.Depth > 0) issues.Add(view + ": key disappeared: " + next.Path); continue; }
                     if (next.Path.EndsWith("\\Updater", StringComparison.OrdinalIgnoreCase))
-                        foreach (string name in new[] { "UpdateMode", "bNoUpdate" })
+                        foreach (string name in UpdaterValueNames)
                         {
                             if (!key.Values.TryGetValue(name, out var entry)) continue;
                             object? value = entry.Value;

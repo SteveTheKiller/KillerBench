@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Cleanup;
 
 public sealed record BrowserCacheDiscovery(IReadOnlyList<string> Roots, bool Partial);
 

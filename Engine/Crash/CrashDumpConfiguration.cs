@@ -1,6 +1,6 @@
 using Microsoft.Win32;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Crash;
 
 public sealed record CrashDumpSettings(int? Mode, int? FilterPages, string? DumpFile, string? MinidumpDirectory, string? Error = null);
 

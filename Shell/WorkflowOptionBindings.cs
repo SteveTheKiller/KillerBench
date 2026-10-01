@@ -26,12 +26,11 @@ public static class DesktopWorkflowOptionBindings
                 ("repairMode", "StorageRepairModeChoice"), ("allowDismount", "StorageAllowDismount"),
                 ("backupConfirmed", "StorageBackupConfirmed"), ("optimizationReview", "StorageOptimizationReview"),
                 ("optimizationMode", "StorageOptimizationModeChoice"), ("execute", "MainAutoRepair")),
-            [WorkflowKind.Printing] = new DesktopWorkflowOptionBinding[]
-            {
+            [WorkflowKind.Printing] = [
                 new("queue", "PrinterQueues"), new("clearOffline", "MainAutoRepair"),
                 new("makeDefault", "PrinterMakeDefault"), new("jobQueue", "PrintJobChoice", Aggregate: true),
                 new("jobId", "PrintJobChoice", Aggregate: true), new("cancelJob", "PrintJobCancelConsent")
-            },
+            ],
             [WorkflowKind.Installer] = Bindings(
                 ("scope", "InstallerProductScopeChoice"), ("productCode", "InstallerProductCode"),
                 ("execute", "RepairConsent")),
@@ -65,8 +64,8 @@ public static class DesktopWorkflowOptionBindings
             [WorkflowKind.AvailableUpdates] = Bindings(
                 ("software", "UpdateSoftware"), ("drivers", "UpdateDrivers"),
                 ("thirdPartyApplications", "UpdateThirdParty"), ("source", "UpdateSourceChoice")),
-            [WorkflowKind.Privacy] = WorkflowOptionCatalog.ForWorkflow(WorkflowKind.Privacy)!.Options
-                .Select(option => new DesktopWorkflowOptionBinding(option.Key, "PrivacyAreas", Aggregate: true)).ToArray(),
+            [WorkflowKind.Privacy] = [.. WorkflowOptionCatalog.ForWorkflow(WorkflowKind.Privacy)!.Options
+                .Select(option => new DesktopWorkflowOptionBinding(option.Key, "PrivacyAreas", Aggregate: true))],
             [WorkflowKind.BitLocker] = Bindings(
                 ("volume", "BitLockerVolume"), ("operation", "BitLockerOperationChoice"),
                 ("encryption", "BitLockerEncryptionChoice"), ("usedSpaceOnly", "BitLockerUsedSpace"),
@@ -75,14 +74,13 @@ public static class DesktopWorkflowOptionBindings
                 ("executeEncryption", "BitLockerEncryptConsent"), ("executeResume", "BitLockerResumeConsent")),
             [WorkflowKind.Defender] = Bindings(
                 ("scanType", "DefenderScanChoice"), ("startScan", "DefenderScanConsent")),
-            [WorkflowKind.Mace] = new DesktopWorkflowOptionBinding[]
-            {
+            [WorkflowKind.Mace] = [
                 new("target.oneDrive", "MaceOneDrive"), new("target.outlook", "MaceOutlook"),
                 new("target.office", "MaceOffice"), new("target.project", "MaceProject"), new("target.teams", "MaceTeams"),
                 new("scope", "MaceScopeChoice"), new("preserveApplicationData", "MaceRemoveData", Inverted: true),
                 new("preserveCachedCredentials", "MaceRemoveCredentials", Inverted: true),
                 new("restoreOneDriveFolderLocations", "MaceRestoreFolders")
-            },
+            ],
             [WorkflowKind.Orca] = Bindings(
                 ("mode", "OrcaModeChoice"), ("scope", "OrcaScopeChoice"),
                 ("action.clearCaches", "OrcaClearCaches"), ("action.resetProfileSettings", "OrcaResetProfiles"),
@@ -123,8 +121,8 @@ public static class DesktopWorkflowOptionBindings
                 ("includeScheduledTask", "ServicingMonitorScheduledTask"))
         };
 
-    private static IReadOnlyList<DesktopWorkflowOptionBinding> Bindings(params (string Key, string Control)[] values) =>
-        values.Select(value => new DesktopWorkflowOptionBinding(value.Key, value.Control)).ToArray();
+    private static DesktopWorkflowOptionBinding[] Bindings(params (string Key, string Control)[] values) =>
+        [.. values.Select(value => new DesktopWorkflowOptionBinding(value.Key, value.Control))];
 }
 
 public partial class MainWindow
@@ -172,7 +170,7 @@ public partial class MainWindow
             }
         }
 
-        if (control.ToolTip is null) control.ToolTip = option.Description;
+        control.ToolTip ??= option.Description;
         AutomationProperties.SetHelpText(control, option.Description);
     }
 }

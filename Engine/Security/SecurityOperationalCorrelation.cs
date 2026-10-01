@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public static class SecurityOperationalCorrelation
 {
@@ -15,7 +15,7 @@ public static class SecurityOperationalCorrelation
         ArgumentNullException.ThrowIfNull(restartState); token.ThrowIfCancellationRequested();
         const string name = "Security operational correlation";
         const string boundary = " This is a bounded configuration and history review, not proof of protection, compliance, threat removal, trustworthiness or future security. No scan, quarantine, exclusion, signature, certificate, license, policy, service, hardware or restart state changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
         var license = licensing.Where(item => item.Name == "Windows activation").ToArray();
         var productSummary = products.Where(item => item.Name == "Registered antivirus products").ToArray();
         var restart = restartState.Where(item => item.Name == "Restart").ToArray();
@@ -32,7 +32,7 @@ public static class SecurityOperationalCorrelation
         return new(name, CheckState.Information, detail + "No collected source requested review. Effective protection and compliance remain unverified." + boundary);
     }
 
-    private static bool ExactNames(IReadOnlyList<WorkflowCheck> checks, IReadOnlyList<string> names) =>
-        checks.Count == names.Count && checks.Select(item => item.Name).OrderBy(value => value, StringComparer.Ordinal)
+    private static bool ExactNames(IReadOnlyList<WorkflowCheck> checks, string[] names) =>
+        checks.Count == names.Length && checks.Select(item => item.Name).OrderBy(value => value, StringComparer.Ordinal)
             .SequenceEqual(names.OrderBy(value => value, StringComparer.Ordinal), StringComparer.Ordinal);
 }

@@ -2,7 +2,7 @@ using Microsoft.Win32;
 using System.Runtime.Versioning;
 using System.Security;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Applications;
 
 public sealed record OfficeClickToRunProduct(string View, string ProductId, string? Version,
     string? Platform, string? Culture);
@@ -52,8 +52,8 @@ public static class OfficeClickToRunInventory
                 issues.Add(view + ": " + error.GetType().Name);
             }
         }
-        return new(products.OrderBy(product => product.View, StringComparer.Ordinal)
-            .ThenBy(product => product.ProductId, StringComparer.Ordinal).ToArray(), issues.Count == 0,
+        return new([.. products.OrderBy(product => product.View, StringComparer.Ordinal)
+            .ThenBy(product => product.ProductId, StringComparer.Ordinal)], issues.Count == 0,
             issues.Count == 0 ? null : string.Join(" ", issues));
     }
 

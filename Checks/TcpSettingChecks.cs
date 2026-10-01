@@ -29,7 +29,7 @@ internal static class TcpSettingChecks
         {
             Evidence([], true), Evidence([Row()], false), Evidence([Row(), Row("internet")]),
             Evidence([Row(local: 256)]),
-            Evidence(Enumerable.Range(0, 65).Select(index => Row("Template" + index)).ToArray()),
+            Evidence([.. Enumerable.Range(0, 65).Select(index => Row("Template" + index))]),
             new ToolResult(0, "{}", "", false), new ToolResult(0, "not json", "", false),
             evidence with { ExitCode = 5 }, evidence with { Error = "denied" },
             evidence with { TimedOut = true }, evidence with { Truncated = true }

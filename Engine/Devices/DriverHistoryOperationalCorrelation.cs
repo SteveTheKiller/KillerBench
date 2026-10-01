@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Devices;
 
 public static class DriverHistoryOperationalCorrelation
 {
@@ -11,7 +11,7 @@ public static class DriverHistoryOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Driver installation history conclusion";
         const string boundary = " This is a bounded correlation of retained SetupAPI history and current Plug and Play configuration codes. It does not establish driver correctness, version suitability, device feature operation or root cause. No device, driver, driver-store content, firmware, service, file or setting changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         bool invalid = results.Count is 0 or > 66 || results.Any(item => item is null ||
             string.IsNullOrWhiteSpace(item.Name) || item.Name.Length > 1024);

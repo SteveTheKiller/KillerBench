@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Printing;
 
 public enum PrintJobCancellationOutcome
 {

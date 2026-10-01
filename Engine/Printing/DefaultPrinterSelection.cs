@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Printing;
 
 public sealed record DefaultPrinterState(bool Complete, IReadOnlyList<string> Queues,
     IReadOnlyList<string> Defaults, bool ModePresent, int? LegacyDefaultPrinterMode);
@@ -313,7 +313,7 @@ public static class DefaultPrinterSelection
     }
 }
 
-public sealed class WindowsDefaultPrinterSelectionHost : IDefaultPrinterSelectionHost
+public sealed partial class WindowsDefaultPrinterSelectionHost : IDefaultPrinterSelectionHost
 {
     public async Task<DefaultPrinterState> InspectAsync(CancellationToken token)
     {
@@ -333,8 +333,8 @@ public sealed class WindowsDefaultPrinterSelectionHost : IDefaultPrinterSelectio
             var root = document.RootElement;
             if (root.ValueKind != JsonValueKind.Object || root.EnumerateObject().Count() != 5 ||
                 !root.GetProperty("complete").GetBoolean()) throw new InvalidDataException("Default-printer state is incomplete.");
-            string[] queues = root.GetProperty("queues").EnumerateArray().Select(item => item.GetString()!).ToArray();
-            string[] defaults = root.GetProperty("defaults").EnumerateArray().Select(item => item.GetString()!).ToArray();
+            string[] queues = [.. root.GetProperty("queues").EnumerateArray().Select(item => item.GetString()!)];
+            string[] defaults = [.. root.GetProperty("defaults").EnumerateArray().Select(item => item.GetString()!)];
             string kind = root.GetProperty("modeKind").GetString()!;
             var modeValue = root.GetProperty("mode");
             int? mode = modeValue.ValueKind == JsonValueKind.Null ? null : modeValue.GetInt32();
@@ -356,7 +356,7 @@ public sealed class WindowsDefaultPrinterSelectionHost : IDefaultPrinterSelectio
             : new ToolResult(error == 0 ? 1 : error, "", new Win32Exception(error).Message, false));
     }
 
-    [DllImport("winspool.drv", CharSet = CharSet.Unicode, SetLastError = true)]
+    [LibraryImport("winspool.drv", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool SetDefaultPrinterW(string printerName);
+    private static partial bool SetDefaultPrinterW(string printerName);
 }

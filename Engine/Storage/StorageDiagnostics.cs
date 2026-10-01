@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public sealed record StorageVolumeState(bool Ready, bool Fixed, string? FileSystem);
 public interface IStorageDiagnosticHost
@@ -20,10 +20,10 @@ public static class StorageDiagnostics
         if (result.Truncated || result.TimedOut) return new("Filesystem", CheckState.Unknown, "Filesystem output was truncated or the check timed out. No conclusion can be made.", Evidence: result);
         if (result.ExitCode == 0 && !string.IsNullOrWhiteSpace(result.Error))
             return new("Filesystem", CheckState.Unknown, "The filesystem check returned diagnostic error output despite exit zero. Review both output streams before concluding the check passed. No repair was attempted.", Evidence: result);
-        string[] cleanVerdicts = result.Output.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+        string[] cleanVerdicts = [.. result.Output.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Select(line => line.EndsWith('.') ? line[..^1].TrimEnd() : line)
             .Where(line => line.Equals("Windows has scanned the file system and found no problems", StringComparison.OrdinalIgnoreCase) ||
-                line.Equals("Windows has checked the file system and found no problems", StringComparison.OrdinalIgnoreCase)).ToArray();
+                line.Equals("Windows has checked the file system and found no problems", StringComparison.OrdinalIgnoreCase))];
         return result.ExitCode switch
         {
             0 when cleanVerdicts.Length == 1

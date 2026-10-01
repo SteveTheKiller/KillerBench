@@ -830,7 +830,7 @@ internal static class DiagnosticCommands
                 var historyTask = DefenderScanHistory.CheckAsync(stop.Token);
                 var threatsTask = DefenderThreatSummary.CheckAsync(stop.Token);
                 await Task.WhenAll(protectionTask, historyTask, threatsTask);
-                WorkflowCheck[] overview = protectionTask.Result.Concat([historyTask.Result, threatsTask.Result]).ToArray();
+                WorkflowCheck[] overview = [.. protectionTask.Result, historyTask.Result, threatsTask.Result];
                 Console.WriteLine(defenderReport ? FormatDefenderOverview(overview) : JsonSerializer.Serialize(overview, Capture.JsonOptions));
                 return overview.All(check => check.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
@@ -1007,7 +1007,7 @@ internal static class DiagnosticCommands
         return string.Join(Environment.NewLine, lines);
     }
 
-    private static string FormatDefenderOverview(IReadOnlyList<WorkflowCheck> overview)
+    private static string FormatDefenderOverview(WorkflowCheck[] overview)
     {
         ArgumentNullException.ThrowIfNull(overview);
         int attention = overview.Count(check => check.State == CheckState.Attention);
@@ -1020,7 +1020,7 @@ internal static class DiagnosticCommands
         var lines = new List<string>
         {
             "MICROSOFT DEFENDER OVERVIEW",
-            "Checks completed: " + overview.Count,
+            "Checks completed: " + overview.Length,
             "Needs review: " + attention,
             "Incomplete: " + unknown,
             "",

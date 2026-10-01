@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Cleanup;
 
 public enum ComponentCleanupReconciliationOutcome { NoPending, Verified, NotApplied, Inconclusive }
 public sealed record ComponentCleanupReconciliationResult(ComponentCleanupReconciliationOutcome Outcome, string Detail);

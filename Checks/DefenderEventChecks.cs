@@ -4,7 +4,7 @@ internal static class DefenderEventChecks
 {
     internal static void Run()
     {
-        string Entry(int id, int level = 2, string provider = "Microsoft-Windows-Windows Defender", ulong record = 1) =>
+        static string Entry(int id, int level = 2, string provider = "Microsoft-Windows-Windows Defender", ulong record = 1) =>
             $"<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='{provider}'/><EventID>{id}</EventID><EventRecordID>{record}</EventRecordID><Level>{level}</Level><TimeCreated SystemTime='2026-09-14T00:00:00Z'/></System><EventData><Data Name='Threat Name'>Private.Sample</Data><Data Name='Path'>C:\\Private\\sample.exe</Data><Data Name='User'>PRIVATE\\User</Data></EventData></Event>";
         var evidence = new ToolResult(0, "<Events>" + Entry(1116, record: 1) + Entry(1116, record: 2) + Entry(1151, level: 4, record: 3) + "</Events>", "", false);
         var result = DefenderEvents.Interpret(evidence);

@@ -35,11 +35,11 @@ public partial class MainWindow
 
     private void OnBitLockerBackupChanged(object sender, RoutedEventArgs e)
     {
-        if (BitLockerBackupConsent is not null) BitLockerBackupConsent.IsChecked = false;
-        if (BitLockerEncryptConsent is not null) BitLockerEncryptConsent.IsChecked = false;
-        if (BitLockerResumeConsent is not null) BitLockerResumeConsent.IsChecked = false;
-        if (BitLockerActionConsent is not null) BitLockerActionConsent.IsChecked = false;
-        if (BitLockerDecryptConsent is not null) BitLockerDecryptConsent.IsChecked = false;
+        BitLockerBackupConsent?.IsChecked = false;
+        BitLockerEncryptConsent?.IsChecked = false;
+        BitLockerResumeConsent?.IsChecked = false;
+        BitLockerActionConsent?.IsChecked = false;
+        BitLockerDecryptConsent?.IsChecked = false;
     }
 
     private void OnBitLockerResumeConsentChanged(object sender, RoutedEventArgs e)
@@ -53,8 +53,8 @@ public partial class MainWindow
     private void OnBitLockerEncryptConsentChanged(object sender, RoutedEventArgs e)
     {
         if (BitLockerEncryptConsent.IsChecked != true) return;
-        if (BitLockerBackupConsent is not null) BitLockerBackupConsent.IsChecked = false;
-        if (BitLockerResumeConsent is not null) BitLockerResumeConsent.IsChecked = false;
+        BitLockerBackupConsent?.IsChecked = false;
+        BitLockerResumeConsent?.IsChecked = false;
     }
 
     private async void OnFindRecoveryProtectors(object sender, RoutedEventArgs e)
@@ -77,7 +77,7 @@ public partial class MainWindow
                 BitLockerProtectorChoice.ItemsSource = inventory.Protectors.Where(p => p.Type == "RecoveryPassword").Select(p => p.Id).ToArray();
             }
             return new BitLockerOperationOutcome(inventory.Complete ? "Protector discovery complete. Select a recovery protector before backup." : "Protector discovery incomplete. Backup selection unavailable.",
-                inventory.Complete, inventory.Protectors.Select(p => p.Id + " / " + p.Type).ToArray());
+                inventory.Complete, [.. inventory.Protectors.Select(p => p.Id + " / " + p.Type)]);
         });
     }
 

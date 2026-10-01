@@ -2,13 +2,13 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public sealed record ServiceTriggerObservation(string Type, string Action, uint DataItemCount);
 public sealed record ServiceTriggerEntry(string Name, bool Readable, IReadOnlyList<ServiceTriggerObservation> Triggers);
 public sealed record ServiceTriggerSnapshot(bool Complete, IReadOnlyList<ServiceTriggerEntry> Services);
 
-public static class ServiceTriggerDiagnostics
+public static partial class ServiceTriggerDiagnostics
 {
     public const int MaximumTriggersPerService = 64;
     private static readonly HashSet<string> Types = new([
@@ -25,7 +25,7 @@ public static class ServiceTriggerDiagnostics
         collect ??= NativeCollector.CollectAsync;
         try
         {
-            var pending = collect(installed.Services.Select(service => service.Name).ToArray(), token);
+            var pending = collect([.. installed.Services.Select(service => service.Name)], token);
             if (pending is null) return Unknown(inventory.Evidence);
             var snapshot = await pending.WaitAsync(token).ConfigureAwait(false);
             if (snapshot is null) return Unknown(inventory.Evidence);
@@ -91,7 +91,7 @@ public static class ServiceTriggerDiagnostics
     private static WorkflowCheck Unknown(ToolResult? evidence) => new("Service triggers", CheckState.Unknown,
         "Complete installed-service and trigger evidence is required." + Scope, Evidence: evidence);
 
-    private static class NativeCollector
+    private static partial class NativeCollector
     {
         private const uint ScManagerConnect = 0x0001;
         private const uint ServiceQueryConfig = 0x0001;
@@ -116,16 +116,16 @@ public static class ServiceTriggerDiagnostics
             public IntPtr DataItems;
         }
 
-        [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        private static extern IntPtr OpenSCManagerW(string? machineName, string? databaseName, uint desiredAccess);
-        [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        private static extern IntPtr OpenServiceW(IntPtr manager, string serviceName, uint desiredAccess);
-        [DllImport("advapi32.dll", SetLastError = true)]
+        [LibraryImport("advapi32.dll", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+        private static partial IntPtr OpenSCManagerW(string? machineName, string? databaseName, uint desiredAccess);
+        [LibraryImport("advapi32.dll", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+        private static partial IntPtr OpenServiceW(IntPtr manager, string serviceName, uint desiredAccess);
+        [LibraryImport("advapi32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool QueryServiceConfig2W(IntPtr service, uint informationLevel, IntPtr buffer, uint bufferSize, out uint bytesNeeded);
-        [DllImport("advapi32.dll", SetLastError = true)]
+        private static partial bool QueryServiceConfig2W(IntPtr service, uint informationLevel, IntPtr buffer, uint bufferSize, out uint bytesNeeded);
+        [LibraryImport("advapi32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool CloseServiceHandle(IntPtr handle);
+        private static partial bool CloseServiceHandle(IntPtr handle);
 
         public static Task<ServiceTriggerSnapshot> CollectAsync(IReadOnlyList<string> names, CancellationToken token) =>
             Task.Run(() => Collect(names, token), token);

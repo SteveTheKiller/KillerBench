@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Printing;
 
 public sealed record PrintQueueSnapshot(string[] Names, string[] PausedNames, string[] Targets, string[] WaitingNames);
 
@@ -76,8 +76,8 @@ public static class PrintRecovery
         try
         {
             using var json = JsonDocument.Parse(result.Output, new JsonDocumentOptions { MaxDepth = 4 });
-            string[] Values(string name) => json.RootElement.GetProperty(name).EnumerateArray()
-                .Select(value => value.ValueKind == JsonValueKind.String ? value.GetString() : null).OfType<string>().ToArray();
+            string[] Values(string name) => [.. json.RootElement.GetProperty(name).EnumerateArray()
+                .Select(value => value.ValueKind == JsonValueKind.String ? value.GetString() : null).OfType<string>()];
             var names = Values("names");
             var paused = Values("pausedNames");
             var targets = Values("targets");

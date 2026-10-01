@@ -4,7 +4,7 @@ internal static class MsiSourceChecks
 {
     public static void Run()
     {
-        ToolResult Evidence(string products, bool complete = true) => new(0,
+        static ToolResult Evidence(string products, bool complete = true) => new(0,
             "{\"complete\":" + complete.ToString().ToLowerInvariant() + ",\"products\":[" + products + "]}", "", false);
         const string product = "{\"productKey\":\"01B76DD8676DFCC41B141EA7B6310561\",\"name\":\"Fixture App\",\"packageConfigured\":true,\"packageFile\":\"fixture.msi\",\"lastUsedType\":\"n\",\"networkSources\":2,\"urlSources\":0,\"mediaSources\":1,\"complete\":true,\"issue\":null}";
         var healthy = MsiSourceDiagnostics.Interpret(Evidence(product)).Single();

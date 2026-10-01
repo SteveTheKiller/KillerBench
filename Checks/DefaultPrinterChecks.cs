@@ -4,7 +4,7 @@ internal static class DefaultPrinterChecks
 {
     public static void Run()
     {
-        ToolResult Evidence(string complete = "true", int total = 0, string defaults = "[]", string kind = "Absent", string mode = "null") =>
+        static ToolResult Evidence(string complete = "true", int total = 0, string defaults = "[]", string kind = "Absent", string mode = "null") =>
             new(0, $"{{\"complete\":{complete},\"total\":{total},\"defaults\":{defaults},\"modeKind\":\"{kind}\",\"mode\":{mode}}}", "", false);
         var selected = DefaultPrinterDiagnostics.Interpret(Evidence(total: 3, defaults: "[\"Office Printer\"]", kind: "DWord", mode: "1"));
         Require(selected.State == CheckState.Information && selected.Repair is null && selected.Detail.Contains("one default: Office Printer", StringComparison.Ordinal) &&

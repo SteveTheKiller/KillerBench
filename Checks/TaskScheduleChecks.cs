@@ -3,6 +3,7 @@ using System.Text.Json;
 
 internal static class TaskScheduleChecks
 {
+    private static readonly int[] SortedMonthDays = [1, 20];
     internal static void Run()
     {
         TaskRegistrationChecks.Run();
@@ -25,7 +26,7 @@ internal static class TaskScheduleChecks
         string executableFixture = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "KillerBench-task-file-" + Guid.NewGuid().ToString("N") + ".exe");
         System.IO.File.WriteAllBytes(executableFixture, [1, 2, 3]);
         var fileReview = ScheduledTaskExecutable.InspectAsync(new(executableFixture, "")).GetAwaiter().GetResult();
-        if (!fileReview.HasContentIdentity || fileReview.Bytes != 3 || fileReview.Sha256 != Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(new byte[] { 1, 2, 3 })))
+        if (!fileReview.HasContentIdentity || fileReview.Bytes != 3 || fileReview.Sha256 != Convert.ToHexString(System.Security.Cryptography.SHA256.HashData([1, 2, 3])))
             throw new Exception("Executable content snapshot lost identity");
         var missingFile = ScheduledTaskExecutable.InspectAsync(new(executableFixture + ".missing", "")).GetAwaiter().GetResult();
         if (fileReview.HasPeHeader != false || fileReview.IsDll is not null || fileReview.Machine is not null)
@@ -267,7 +268,7 @@ internal static class TaskScheduleChecks
         var days = new[] { 20, 1 };
         var plan = TaskSchedule.Validate(new(TaskScheduleKind.Monthly, time, MonthDays: days));
         days[0] = 99;
-        if (!plan.MonthDays!.SequenceEqual(new[] { 1, 20 })) throw new Exception("Validated schedule changed through caller collection");
+        if (!plan.MonthDays!.SequenceEqual(SortedMonthDays)) throw new Exception("Validated schedule changed through caller collection");
         var last = new TaskScheduleOptions(TaskScheduleKind.Monthly, time, LastDay: true);
         foreach (int year in new[] { 2024, 2025, 2100, 2000 })
         foreach (int month in Enumerable.Range(1, 12))
@@ -285,7 +286,7 @@ internal static class TaskScheduleChecks
             throw new Exception("Weekly/startup date classification failed");
         Console.WriteLine("PASS: task schedule options, conflicting selections and immutable normalized days.");
         var preview = TaskSchedule.PreviewDates(new(TaskScheduleKind.Monthly, time, MonthDays: [31]), new(2026, 2, 1), 3);
-        if (!preview.SequenceEqual(new[] { new DateOnly(2026, 3, 31), new(2026, 5, 31), new(2026, 7, 31) }))
+        if (!preview.SequenceEqual([new DateOnly(2026, 3, 31), new(2026, 5, 31), new(2026, 7, 31)]))
             throw new Exception("Monthly preview shifted missing dates");
         if (TaskSchedule.PreviewDates(new(TaskScheduleKind.Startup), new(2026, 1, 1)).Count != 0 ||
             TaskSchedule.PreviewDates(new(TaskScheduleKind.Daily, time), DateOnly.MaxValue, 5).Count != 1)

@@ -1,6 +1,6 @@
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Packs;
 
 /// <summary>
 /// Builds the Windows service recipe pack from the Engine's recipe catalog. Every catalog recipe whose plan is
@@ -52,7 +52,7 @@ public static class WindowsServicePack
         return new RecipeDefinition(recipe.Id, recipe.Version, recipe.Title, recipe.Area, recipe.VerificationScope,
             new ProbeSpec("service.check", target, expect) { Name = "Service state and dependencies" })
         {
-            Dependencies = recipe.Dependencies.Where(included.Contains).ToArray(),
+            Dependencies = [.. recipe.Dependencies.Where(included.Contains)],
             Action = new ActionSpec("service.start", target) { Timeout = TimeSpan.FromSeconds(20), Effects = plan.Effects },
             Verify = new ProbeSpec("service.running", target, ExpectSpec.ClearWhenEquals("Running", ProbeVerdict.Attention)) { Name = "Service stays running" },
             Risk = RecipeRisk.Reversible,

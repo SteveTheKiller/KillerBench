@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Security;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record FeatureUpdatePolicySnapshot(bool Complete,
     object? TargetReleaseVersion = null, object? ProductVersion = null, object? TargetReleaseVersionInfo = null,

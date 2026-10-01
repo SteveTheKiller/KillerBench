@@ -12,17 +12,16 @@ public partial class MainWindow
         if (DiagnosticAreaList is null || DiagnosticAreaSummary is null || FocusDiagnosticAreas is null || MainAutoRepair is null) return;
         bool focused = FocusDiagnosticAreas.IsChecked == true;
         DiagnosticAreaList.Visibility = focused ? Visibility.Visible : Visibility.Collapsed;
-        if (ShowDetailedDiagnosticAreas is not null)
-            ShowDetailedDiagnosticAreas.Visibility = focused ? Visibility.Visible : Visibility.Collapsed;
+        ShowDetailedDiagnosticAreas?.Visibility = focused ? Visibility.Visible : Visibility.Collapsed;
         if (focused && DiagnosticAreaList.ItemsSource is null)
             SetDiagnosticAreaChoices(false);
         if (focused && ReferenceEquals(sender, FocusDiagnosticAreas) && DiagnosticAreaList.SelectedItems.Count == 0)
             DiagnosticAreaList.SelectAll();
-        if (focused && CustomizeRecipes is not null) CustomizeRecipes.IsChecked = false;
+        if (focused) CustomizeRecipes?.IsChecked = false;
         MainAutoRepair.IsChecked = false;
         DiagnosticAreaSummary.Text = focused ? DiagnosticAreaList.SelectedItems.Count + " diagnostic areas selected. Other areas and repair recipes will not run." : "Full system scan remains selected.";
-        if (RecipeSelectionList is not null) RecipeSelectionList.Visibility = focused ? Visibility.Collapsed : Visibility.Visible;
-        if (CustomizeRecipes is not null) CustomizeRecipes.IsEnabled = !focused;
+        RecipeSelectionList?.Visibility = focused ? Visibility.Collapsed : Visibility.Visible;
+        CustomizeRecipes?.IsEnabled = !focused;
         OnWorkflowOptionsChanged(this, null);
     }
 
@@ -60,10 +59,10 @@ public partial class MainWindow
         if (FocusDiagnosticAreas?.IsChecked == true)
         {
             RecipeSelectionSummary.Text = "Recipe checks are excluded from this focused diagnostic run.";
-            if (RecipeEffectsSummary is not null) RecipeEffectsSummary.Text = "No repairs selected.";
+            RecipeEffectsSummary?.Text = "No repairs selected.";
             return;
         }
-        if (MainAutoRepair is not null) MainAutoRepair.IsChecked = false;
+        MainAutoRepair?.IsChecked = false;
         var ids = RecipeSelectionList.SelectedItems.Cast<RepairRecipe>().Select(recipe => recipe.Id).ToArray();
         var plan = RecipeCatalog.SelectForWorkflow(WorkflowKind.CommonProblems, ids);
         RecipeSelectionSummary.Text = CustomizeRecipes.IsChecked != true

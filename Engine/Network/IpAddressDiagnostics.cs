@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public sealed record IpAddressObservation(int InterfaceIndex, string InterfaceAlias, int AddressFamily, string Address,
     int PrefixLength, string PrefixOrigin, string SuffixOrigin, string AddressState, bool SkipAsSource, string ConnectionState);

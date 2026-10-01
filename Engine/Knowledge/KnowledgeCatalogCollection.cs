@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Knowledge;
 
 public sealed record KnowledgeCatalogMatch(KnowledgeEntry? Entry, string? PackId, long? Revision,
     bool Ambiguous, IReadOnlyList<string> MatchingPackIds)
@@ -16,7 +16,7 @@ public sealed record KnowledgeDriverSearchResult(int TotalMatches, IReadOnlyList
 
 public sealed class KnowledgeCatalogCollection
 {
-    private readonly object sync = new();
+    private readonly Lock sync = new();
     private readonly Dictionary<string, KnowledgeCatalog> catalogs = new(StringComparer.Ordinal);
 
     public int Count { get { lock (sync) return catalogs.Count; } }
@@ -56,7 +56,7 @@ public sealed class KnowledgeCatalogCollection
             return new(null, null, null, true,
                 Array.AsReadOnly(matches.Select(match => match.Catalog.PackId).Order(StringComparer.Ordinal).ToArray()));
         return new(matches[0].Entry, matches[0].Catalog.PackId, matches[0].Catalog.Revision, false,
-            Array.AsReadOnly(new[] { matches[0].Catalog.PackId }));
+            Array.AsReadOnly<string>([matches[0].Catalog.PackId]));
     }
 
     public KnowledgeDriverSearchResult FindDriverReferences(string hardwareId, string architecture,

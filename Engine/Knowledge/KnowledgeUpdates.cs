@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Knowledge;
 
 public enum KnowledgeUpdateState { Activated, Current, Failed }
 
@@ -33,10 +33,10 @@ public static class KnowledgeUpdates
             reporter.Report(new(request.PackId, "Inspecting", "Checking the installed database."));
             try
             {
-                var active = await KnowledgeActivation.LoadActiveAsync(request.StorageDirectory, request.TrustedPublicKey,
+                var (activeCatalog, activePointer, _) = await KnowledgeActivation.LoadActiveAsync(request.StorageDirectory, request.TrustedPublicKey,
                     request.PackId, request.MinimumRevision, deadline.Token).ConfigureAwait(false);
-                current = active.Catalog;
-                activatedUtc = active.Pointer.ActivatedUtc;
+                current = activeCatalog;
+                activatedUtc = activePointer.ActivatedUtc;
             }
             catch (FileNotFoundException) { }
             catch (DirectoryNotFoundException) { }
@@ -54,21 +54,21 @@ public static class KnowledgeUpdates
             reporter.Report(new(request.PackId, "Fetching", "Retrieving the signed candidate."));
             var candidate = await (source.FetchAsync(request.PackId, deadline.Token)
                 ?? throw new InvalidOperationException("The database source returned no operation."))
-                .WaitAsync(deadline.Token).ConfigureAwait(false);
-            if (candidate is null) throw new InvalidDataException("The database source returned no candidate.");
+                .WaitAsync(deadline.Token).ConfigureAwait(false)
+                ?? throw new InvalidDataException("The database source returned no candidate.");
 
             reporter.Report(new(request.PackId, "Verifying", "Verifying the candidate and revision."));
             var activation = await KnowledgeActivation.ActivateAsync(request.StorageDirectory, candidate,
                 request.TrustedPublicKey, request.PackId, request.MinimumRevision, deadline.Token).ConfigureAwait(false);
-            var selected = await KnowledgeActivation.LoadActiveAsync(request.StorageDirectory, request.TrustedPublicKey,
+            var (selectedCatalog, selectedPointer, _) = await KnowledgeActivation.LoadActiveAsync(request.StorageDirectory, request.TrustedPublicKey,
                 request.PackId, request.MinimumRevision, deadline.Token).ConfigureAwait(false);
             var state = activation.Changed ? KnowledgeUpdateState.Activated : KnowledgeUpdateState.Current;
             string detail = activation.Changed
-                ? $"Database revision {selected.Catalog.Revision} activated and verified."
-                : $"Database revision {selected.Catalog.Revision} is already current and verified.";
+                ? $"Database revision {selectedCatalog.Revision} activated and verified."
+                : $"Database revision {selectedCatalog.Revision} is already current and verified.";
             reporter.Report(new(request.PackId, state.ToString(), detail));
-            return new(request.PackId, state, selected.Catalog.Revision, selected.Catalog.Count,
-                selected.Pointer.ActivatedUtc, detail);
+            return new(request.PackId, state, selectedCatalog.Revision, selectedCatalog.Count,
+                selectedPointer.ActivatedUtc, detail);
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested) { throw; }
         catch (OperationCanceledException)

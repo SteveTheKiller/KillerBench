@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public static class DiskDiagnosticTaskDiagnostics
 {
@@ -8,13 +8,13 @@ public static class DiskDiagnosticTaskDiagnostics
 
     public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default)
     {
-        var collector = await ExactScheduledTaskDiagnostics.ReadAsync(TaskPath, CollectorTaskName, TimeSpan.FromSeconds(20), token).ConfigureAwait(false);
-        var resolver = await ExactScheduledTaskDiagnostics.ReadAsync(TaskPath, ResolverTaskName, TimeSpan.FromSeconds(20), token).ConfigureAwait(false);
-        return Array.AsReadOnly(new[]
-        {
-            InterpretRead(collector.Read, collector.Evidence, "Disk diagnostic data collector task"),
-            InterpretRead(resolver.Read, resolver.Evidence, "Disk diagnostic resolver task")
-        });
+        var (collectorRead, collectorEvidence) = await ExactScheduledTaskDiagnostics.ReadAsync(TaskPath, CollectorTaskName, TimeSpan.FromSeconds(20), token).ConfigureAwait(false);
+        var (resolverRead, resolverEvidence) = await ExactScheduledTaskDiagnostics.ReadAsync(TaskPath, ResolverTaskName, TimeSpan.FromSeconds(20), token).ConfigureAwait(false);
+        return Array.AsReadOnly<WorkflowCheck>(
+        [
+            InterpretRead(collectorRead, collectorEvidence, "Disk diagnostic data collector task"),
+            InterpretRead(resolverRead, resolverEvidence, "Disk diagnostic resolver task")
+        ]);
     }
 
     public static RepairStep CreateCollectorReadStep() => ExactScheduledTaskDiagnostics.CreateReadStep(TaskPath, CollectorTaskName);

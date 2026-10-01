@@ -9,9 +9,9 @@ internal static class FocusedStorageServiceOperationalCorrelationChecks
         Require(Check(service: CheckState.Attention).State == CheckState.Attention, "Current Storage Service concern requests review");
         Require(Check(history: CheckState.Attention).State == CheckState.Information, "Historical Storage Service failures remain informational");
         Require(Check(jobs: CheckState.Unknown, service: CheckState.Attention).State == CheckState.Unknown, "Incomplete storage jobs take precedence");
-        Require(FocusedStorageServiceOperationalCorrelation.Check(Inputs().Append(new("Storage jobs", CheckState.Information, "duplicate")).ToArray()).State == CheckState.Unknown,
+        Require(FocusedStorageServiceOperationalCorrelation.Check([.. Inputs().Append(new("Storage jobs", CheckState.Information, "duplicate"))]).State == CheckState.Unknown,
             "Duplicate focused Storage Service evidence fails closed");
-        Require(FocusedStorageServiceOperationalCorrelation.Check(Inputs().Where(check => check.Name != "Focused service readiness").ToArray()).State == CheckState.Unknown,
+        Require(FocusedStorageServiceOperationalCorrelation.Check([.. Inputs().Where(check => check.Name != "Focused service readiness")]).State == CheckState.Unknown,
             "Missing focused Storage Service evidence fails closed");
         try { FocusedStorageServiceOperationalCorrelation.Check(Inputs(), new CancellationToken(true)); throw new Exception("Canceled Storage Service correlation completed"); }
         catch (OperationCanceledException) { }

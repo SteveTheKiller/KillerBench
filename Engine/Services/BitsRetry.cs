@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public enum BitsRetryOutcome { Blocked, RetryRequested, TransferReported, Failed, Uncertain, Stopped }
 public sealed record BitsRetryResult(Guid JobId, BitsRetryOutcome Outcome, string Detail, BitsInventoryResult Before,
@@ -109,8 +109,8 @@ public static class BitsRetry
             }
             Report(progress, "Requesting an asynchronous retry for " + jobId + ".");
             requestDispatched = true;
-            request = await host.RequestRetryAsync(finalJob, deadline.Token).WaitAsync(deadline.Token).ConfigureAwait(false);
-            if (request is null) throw new InvalidDataException("Retry provider returned no request evidence.");
+            request = await host.RequestRetryAsync(finalJob, deadline.Token).WaitAsync(deadline.Token).ConfigureAwait(false)
+                ?? throw new InvalidDataException("Retry provider returned no request evidence.");
             if (request.TimedOut || request.Truncated)
                 result = new(jobId, BitsRetryOutcome.Uncertain, "Retry request evidence is incomplete. Reconcile the job before another request.", before, request);
             else if (request.ExitCode != 0 || !string.IsNullOrWhiteSpace(request.Error))

@@ -4,7 +4,7 @@ internal static class DiagnosticPolicyEventChecks
 {
     internal static void Run()
     {
-        string Entry(int id, int level = 2, string provider = DiagnosticPolicyEvents.Provider, ulong record = 1) =>
+        static string Entry(int id, int level = 2, string provider = DiagnosticPolicyEvents.Provider, ulong record = 1) =>
             $"<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='{provider}'/><EventID>{id}</EventID><EventRecordID>{record}</EventRecordID><Level>{level}</Level><TimeCreated SystemTime='2026-09-17T00:00:00Z'/></System><EventData><Data Name='User'>PRIVATE\\User</Data><Data Name='Process'>private.exe</Data><Data Name='Scenario'>private-scenario</Data><Data Name='Session'>42</Data></EventData></Event>";
         var evidence = new ToolResult(0, "<Events>" + Entry(100, record: 1) + Entry(100, record: 2) + Entry(101, 4, record: 3) + "</Events>", "", false);
         var result = DiagnosticPolicyEvents.Interpret(evidence);

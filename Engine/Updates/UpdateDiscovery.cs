@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public enum UpdateSearchSource { Configured, WindowsUpdate, MicrosoftUpdate }
 public sealed record UpdateSearchOptions(bool Software = true, bool Drivers = false, UpdateSearchSource Source = UpdateSearchSource.Configured)

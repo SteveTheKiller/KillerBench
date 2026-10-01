@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Crash;
 
 public static class WindowsErrorReportingOperationalCorrelation
 {
@@ -17,7 +17,7 @@ public static class WindowsErrorReportingOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Windows Error Reporting conclusion";
         const string boundary = " This bounded conclusion does not establish report creation, upload, delivery, problem resolution, dump validity, crash time or root cause. It does not start a service, submit or delete a report, open dump contents, change consent or upload policy, or select a repair.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var selected = new List<WorkflowCheck>(RequiredNames.Length);
         foreach (string required in RequiredNames)

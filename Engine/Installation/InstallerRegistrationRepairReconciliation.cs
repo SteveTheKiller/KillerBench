@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Installation;
 
 public sealed record InstallerRegistrationRepairPendingRecord(int Schema, string Machine,
     DateTimeOffset StartedUtc, string JournalPath, WorkflowCheck Before, WorkflowCheck EngineFiles);

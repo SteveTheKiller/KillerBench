@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Printing;
 
 public static class PrinterDriverDiagnostics
 {
@@ -34,7 +34,7 @@ public static class PrinterDriverDiagnostics
             {
                 driverComplete = false;
                 if (driverError.ValueKind == JsonValueKind.String)
-                    errorDetail = " Reported error: " + new string((driverError.GetString() ?? "").Take(512).Select(c => char.IsControl(c) ? ' ' : c).ToArray());
+                    errorDetail = " Reported error: " + new string([.. (driverError.GetString() ?? "").Take(512).Select(c => char.IsControl(c) ? ' ' : c)]);
             }
             var known = new List<(string Name, string Environment)>();
             if (driverComplete)

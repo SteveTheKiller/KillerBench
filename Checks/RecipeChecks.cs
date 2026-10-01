@@ -57,7 +57,7 @@ internal static class RecipeChecks
     {
         string[] requested = ["windows.system-files", "printing.paused-queues", "windows.system-files"];
         var selected = RecipeCatalog.SelectForWorkflow(WorkflowKind.CommonProblems, requested);
-        Require(selected.Select(recipe => recipe.Id).SequenceEqual(new[] { "windows.component-store", "windows.system-files", "printing.spooler", "printing.paused-queues" }),
+        Require(selected.Select(recipe => recipe.Id).SequenceEqual(["windows.component-store", "windows.system-files", "printing.spooler", "printing.paused-queues"]),
             "Selected recipes include only required prerequisites in workflow order and deduplicate requests");
         requested[0] = "changed";
         Require(selected[0].Id == "windows.component-store" && RecipeCatalog.SelectForWorkflow(WorkflowKind.CommonProblems, []).Count == 0,
@@ -310,7 +310,7 @@ internal static class RecipeChecks
             "Generic automatic recovery exposes selected MSI product damage without dispatching a package repair");
         var eventChannelRecipe = RecipeCatalog.All.Single(recipe => recipe.Id == "eventlog.channel-enable");
         Require(eventChannelRecipe.Action == RepairKind.EventChannelEnable && eventChannelRecipe.RequiresExplicitOptions &&
-            !eventChannelRecipe.CanAutoExecute && eventChannelRecipe.Dependencies.SequenceEqual(new[] { "eventlog.service" }) &&
+            !eventChannelRecipe.CanAutoExecute && eventChannelRecipe.Dependencies.SequenceEqual(["eventlog.service"]) &&
             eventChannelRecipe.RecoveryContract == RepairRecoveryContract.EventChannelState &&
             Repairs.Plan(eventChannelRecipe.Action).Steps.Count == 0 &&
             RecipeCatalog.ForWorkflow(WorkflowKind.EventLog).Any(recipe => recipe.Id == eventChannelRecipe.Id) &&
@@ -506,11 +506,11 @@ internal static class RecipeChecks
             !TimeRecovery.IsServiceNotStarted(serviceNotStarted with { Truncated = true }),
             "Only complete exact Windows service-not-started evidence enters focused time recovery");
         var timePlan = Repairs.Plan(RepairKind.TimeSynchronization);
-        Require(timePlan.Steps.Count == 3 && timePlan.Steps[0].Tool == "sc.exe" && timePlan.Steps[0].Arguments.SequenceEqual(new[] { "start", "W32Time" }) && !timePlan.Steps[0].Verification &&
-            timePlan.Steps[1].Tool == TimeRecovery.Tool && timePlan.Steps[1].Arguments.SequenceEqual(new[] { "/resync" }) && !timePlan.Steps[1].Verification &&
-            timePlan.Steps[2].Tool == TimeRecovery.Tool && timePlan.Steps[2].Arguments.SequenceEqual(new[] { "/query", "/status", "/verbose" }) && timePlan.Steps[2].Verification &&
-            RecipeCatalog.ForWorkflow(WorkflowKind.TimeService).First().Action == RepairKind.TimeSynchronization &&
-            RecipeCatalog.ForWorkflow(WorkflowKind.TimeService).Last().Action == RepairKind.TimeSourceConfiguration,
+        Require(timePlan.Steps.Count == 3 && timePlan.Steps[0].Tool == "sc.exe" && timePlan.Steps[0].Arguments.SequenceEqual(["start", "W32Time"]) && !timePlan.Steps[0].Verification &&
+            timePlan.Steps[1].Tool == TimeRecovery.Tool && timePlan.Steps[1].Arguments.SequenceEqual(["/resync"]) && !timePlan.Steps[1].Verification &&
+            timePlan.Steps[2].Tool == TimeRecovery.Tool && timePlan.Steps[2].Arguments.SequenceEqual(["/query", "/status", "/verbose"]) && timePlan.Steps[2].Verification &&
+            RecipeCatalog.ForWorkflow(WorkflowKind.TimeService)[0].Action == RepairKind.TimeSynchronization &&
+            RecipeCatalog.ForWorkflow(WorkflowKind.TimeService)[^1].Action == RepairKind.TimeSourceConfiguration,
             "Time recovery owns service start, resync and fresh status verification in one recipe");
         Require(Repairs.IsVerified(Success(RepairKind.TimeSynchronization)), "Resync verifies reported synchronization");
         Require(WmiRecovery.Interpret(new(0, "WMI repository is consistent", "", false)).State == CheckState.Clear, "WMI clean result recognized");
@@ -599,7 +599,7 @@ internal static class RecipeChecks
         Require(new WindowsWorkflowHost { StorageVolume = "d:\\" }.StorageVolume == "D:" &&
             new WindowsWorkflowHost().StorageVolume is null, "Workflow host retains selected volume and defaults to the system volume");
         var selectedVolumePlan = StorageDiagnostics.PlanCheck("d:\\");
-        Require(selectedVolumePlan.Tool == "chkdsk.exe" && selectedVolumePlan.Arguments.SequenceEqual(new[] { "D:" }),
+        Require(selectedVolumePlan.Tool == "chkdsk.exe" && selectedVolumePlan.Arguments.SequenceEqual(["D:"]),
             "Selected-drive preview contains only the intended target and no repair or dismount switches");
         foreach (string invalidVolume in new[] { "", "C", "C:/", "C:\\folder", "\\\\server\\share", "C: /f", "/r", "1:", " C:" })
         {
@@ -614,27 +614,27 @@ internal static class RecipeChecks
         var verified = Success(RepairKind.ComponentStore);
         Require(Repairs.IsVerified(verified), "Complete matching evidence verifies repair");
         Require(!Repairs.IsVerified(verified with { Steps = [] }), "Success text alone cannot verify repair");
-        Require(!Repairs.IsVerified(verified with { Steps = verified.Steps.Select(s => s with { Result = s.Result with { ExitCode = 5 } }).ToArray() }), "Failed commands cannot verify repair");
+        Require(!Repairs.IsVerified(verified with { Steps = [.. verified.Steps.Select(s => s with { Result = s.Result with { ExitCode = 5 } })] }), "Failed commands cannot verify repair");
         var first = RecipeCatalog.All[0];
         var wmiRecipes = RecipeCatalog.ForWorkflow(WorkflowKind.Wmi);
         var wmiSuccess = Success(RepairKind.WindowsManagement);
         Require(Repairs.IsVerified(wmiSuccess), "WMI service repair verifies exact running identity");
         foreach (string wrongIdentity in new[] { "STATE : 4 RUNNING", "SERVICE_NAME: Spooler\nSTATE : 4 RUNNING", "SERVICE_NAME: winmgmt\nSERVICE_NAME: winmgmt\nSTATE : 4 RUNNING" })
-            Require(!Repairs.IsVerified(wmiSuccess with { Steps = wmiSuccess.Steps.Select(s => s.Step.Verification ? s with { Result = s.Result with { Output = wrongIdentity } } : s).ToArray() }),
+            Require(!Repairs.IsVerified(wmiSuccess with { Steps = [.. wmiSuccess.Steps.Select(s => s.Step.Verification ? s with { Result = s.Result with { Output = wrongIdentity } } : s)] }),
                 "Missing, wrong or duplicate service identity cannot verify WMI recovery");
         var recoveringWmi = new Host { State = CheckState.Repairable };
         var recoveredWmi = await RecipeEngine.RunAsync(wmiRecipes, true, folder, recoveringWmi);
-        Require(recoveredWmi.Take(2).All(r => r.Outcome == RecipeOutcome.Repaired) && recoveredWmi[2].Outcome == RecipeOutcome.NeedsAttention && recoveringWmi.Checked.SequenceEqual(new[] { RepairKind.WindowsManagement, RepairKind.WmiRepository, RepairKind.WmiProvider }) &&
+        Require(recoveredWmi.Take(2).All(r => r.Outcome == RecipeOutcome.Repaired) && recoveredWmi[2].Outcome == RecipeOutcome.NeedsAttention && recoveringWmi.Checked.SequenceEqual([RepairKind.WindowsManagement, RepairKind.WmiRepository, RepairKind.WmiProvider]) &&
             recoveringWmi.Repairs == 2, "Verified WMI service recovery permits repository recovery in order");
         var healthyWmi = await RecipeEngine.RunAsync(wmiRecipes, false, folder, new Host { State = CheckState.Clear });
         Require(healthyWmi.All(r => r.Outcome == RecipeOutcome.Clear && r.Repair is null), "Healthy WMI workflow requires no repairs");
-        Require(wmiRecipes.Select(r => r.Action).SequenceEqual(new[] { RepairKind.WindowsManagement, RepairKind.WmiRepository, RepairKind.WmiProvider }) &&
-            wmiRecipes[1].Dependencies.SequenceEqual(new[] { wmiRecipes[0].Id }), "WMI service readiness precedes repository checks");
+        Require(wmiRecipes.Select(r => r.Action).SequenceEqual([RepairKind.WindowsManagement, RepairKind.WmiRepository, RepairKind.WmiProvider]) &&
+            wmiRecipes[1].Dependencies.SequenceEqual([wmiRecipes[0].Id]), "WMI service readiness precedes repository checks");
         var unavailableWmi = new Host { State = CheckState.Attention };
         var blockedWmi = await RecipeEngine.RunAsync(wmiRecipes, true, folder, unavailableWmi);
-        Require(unavailableWmi.Checked.SequenceEqual(new[] { RepairKind.WindowsManagement }) && unavailableWmi.Repairs == 0 &&
+        Require(unavailableWmi.Checked.SequenceEqual([RepairKind.WindowsManagement]) && unavailableWmi.Repairs == 0 &&
             blockedWmi[1].Outcome == RecipeOutcome.Blocked, "Unavailable WMI service prevents repository execution");
-        var dependent = RecipeCatalog.All[1] with { Dependencies = new[] { first.Id } };
+        var dependent = RecipeCatalog.All[1] with { Dependencies = [first.Id] };
         var failedClearHost = new Host { State = CheckState.Clear, DiagnosticEvidence = new(5, "Failed provider", "", false) };
         var failedClear = await RecipeEngine.RunAsync([first, dependent], true, folder, failedClearHost);
         Require(failedClear[0].Outcome == RecipeOutcome.Unknown && failedClear[0].Check?.Evidence?.ExitCode == 5 &&
@@ -684,8 +684,8 @@ internal static class RecipeChecks
         }
         var live = new LiveProgress();
         var results = await RecipeEngine.RunAsync([first, dependent, unrelated], true, folder, host, live);
-        Require(results[1].Outcome == RecipeOutcome.Blocked && host.Checked.SequenceEqual(new[] { first.Action, unrelated.Action }), "Blocked dependency does not prevent independent recipes");
-        Require(results[1].BlockingRecipes.SequenceEqual(new[] { first.Id }) && results[1].Detail.Contains(first.Title) &&
+        Require(results[1].Outcome == RecipeOutcome.Blocked && host.Checked.SequenceEqual([first.Action, unrelated.Action]), "Blocked dependency does not prevent independent recipes");
+        Require(results[1].BlockingRecipes.SequenceEqual([first.Id]) && results[1].Detail.Contains(first.Title) &&
             results[1].Detail.Contains(results[0].Outcome.ToString()), "Blocked recipe identifies the prerequisite and its outcome");
         Require(live.Messages.First() == "Repair check 1 of 3: " + first.Title + "..." &&
             live.Messages.Any(message => message == "Repair check 3 of 3: " + unrelated.Title + "...") &&
@@ -756,7 +756,7 @@ internal static class RecipeChecks
         var restartWorkflow = await Workflows.RunAsync(WorkflowKind.WindowsUpdate, true, folder, host: new Host { State = CheckState.Repairable, RestartRepair = true });
         Require(restartWorkflow.RequiresRestart && restartWorkflow.Status.StartsWith("Restart required") && restartWorkflow.Repairs.Count == 1, "Workflow exposes restart requirement without running later operations");
         Require(!Success(RepairKind.ComponentStore).RequiresRestart && !(Success(RepairKind.ComponentStore) with { Status = "Restart required" }).RequiresRestart, "Restart state uses recorded exit evidence, not status text");
-        foreach (var invalid in new IReadOnlyList<RepairRecipe>[] { new[] { first, first }, new[] { dependent }, new[] { first with { Dependencies = new[] { first.Id } } } })
+        foreach (var invalid in new IReadOnlyList<RepairRecipe>[] { [first, first], [dependent], [first with { Dependencies = [first.Id] }] })
         {
             host = new Host();
             try { await RecipeEngine.RunAsync(invalid, true, folder, host); throw new Exception("Invalid recipe graph accepted"); }
@@ -787,7 +787,7 @@ internal static class RecipeChecks
             WorkflowReport.Format(mismatchedWorkflow).Contains("different repair identity") &&
             !WorkflowReport.Format(mismatchedWorkflow).Contains("Repaired and verified"),
             "Mismatched provider evidence reaches the report without a verified claim");
-        var forged = mismatchedWorkflow with { Recipes = mismatchedWorkflow.Recipes.Select(r => r with { Outcome = RecipeOutcome.Repaired }).ToArray() };
+        var forged = mismatchedWorkflow with { Recipes = [.. mismatchedWorkflow.Recipes.Select(r => r with { Outcome = RecipeOutcome.Repaired })] };
         var failedRecipe = mismatchedWorkflow.Recipes.First(r => r.Repair is not null);
         string failureText = "Service start deferred: disabled dependency\n" + new string('x', 1200);
         var failedReport = mismatchedWorkflow with { Recipes = [failedRecipe with
@@ -915,7 +915,7 @@ internal static class RecipeChecks
             var result = Success(WrongResult ? RepairKind.PrintSpooler : kind);
             if (TransformRepair is not null) result = TransformRepair(result);
             if (RestartRepair) result = result with { Status = "Restart required", Steps = [result.Steps[0] with { Result = new(3010, "Restart required", "", false) }] };
-            if (TimeoutRepair) result = result with { Steps = result.Steps.Select(s => s with { Result = s.Result with { TimedOut = true } }).ToArray() };
+            if (TimeoutRepair) result = result with { Steps = [.. result.Steps.Select(s => s with { Result = s.Result with { TimedOut = true } })] };
             return Task.FromResult(result);
         }
     }
@@ -932,7 +932,7 @@ internal static class RecipeChecks
                 [new(DnsCacheRecovery.FlushStep(), flush)]) { DnsCacheRecovery = recovery };
         }
         if (kind == RepairKind.DefenderSignatures) return new("Synthetic", kind, DateTimeOffset.UtcNow, "Verification reported", "synthetic",
-            Repairs.Plan(kind).Steps.Select(step => new RepairStepResult(step, new(0, DefenderChecks.Fresh, "", false))).ToArray());
+            [.. Repairs.Plan(kind).Steps.Select(step => new RepairStepResult(step, new(0, DefenderChecks.Fresh, "", false)))]);
         if (kind == RepairKind.PrintQueues)
         {
             var plan = PrintRecovery.Plan(["A"]);
@@ -942,21 +942,21 @@ internal static class RecipeChecks
             { SelectedPrinterQueues = ["A"] };
         }
         if (kind == RepairKind.PrinterOffline) return new("Synthetic", kind, DateTimeOffset.UtcNow, "Verification reported", "synthetic",
-            Repairs.Plan(kind).Steps.Select(step => new RepairStepResult(step, new(0, "{\"targets\":[\"A\"],\"queues\":[{\"id\":\"A\",\"offline\":false}]}", "", false))).ToArray());
+            [.. Repairs.Plan(kind).Steps.Select(step => new RepairStepResult(step, new(0, "{\"targets\":[\"A\"],\"queues\":[{\"id\":\"A\",\"offline\":false}]}", "", false)))]);
         if (kind == RepairKind.DhcpLease) return new("Synthetic", kind, DateTimeOffset.UtcNow, "Verification reported", "synthetic",
-            Repairs.Plan(kind).Steps.Select(step => new RepairStepResult(step, new(0, "{\"targets\":[1],\"adapters\":[{\"id\":1,\"settingId\":\"11111111-1111-1111-1111-111111111111\",\"addresses\":[\"192.0.2.10\"]}]}", "", false))).ToArray());
+            [.. Repairs.Plan(kind).Steps.Select(step => new RepairStepResult(step, new(0, "{\"targets\":[1],\"adapters\":[{\"id\":1,\"settingId\":\"11111111-1111-1111-1111-111111111111\",\"addresses\":[\"192.0.2.10\"]}]}", "", false)))]);
         if (kind == RepairKind.PrintSpoolDirectory)
         {
             string path = Path.Combine(Environment.SystemDirectory, "spool", "PRINTERS");
             string snapshotJson = System.Text.Json.JsonSerializer.Serialize(new PrintSpoolDirectorySnapshot(true, path, path,
                 true, false, DriveType.Fixed, 10L * 1024 * 1024 * 1024, true), Capture.JsonOptions);
             return new("Synthetic", kind, DateTimeOffset.UtcNow, "Verification reported", "synthetic",
-                Repairs.Plan(kind).Steps.Select(step => new RepairStepResult(step, new(0, snapshotJson, "", false))).ToArray());
+                [.. Repairs.Plan(kind).Steps.Select(step => new RepairStepResult(step, new(0, snapshotJson, "", false)))]);
         }
         string output = kind == RepairKind.ComponentStore ? "No component store corruption detected" : kind == RepairKind.SystemFiles ? "Windows Resource Protection did not find any integrity violations" : kind == RepairKind.PrintQueues ? "{\"count\":1,\"paused\":0}" : kind == RepairKind.WmiRepository ? "WMI repository is consistent" : kind == RepairKind.TimeSynchronization ? "Leap Indicator: 0(no warning)\nStratum: 3\nSource: dc.example.test\nLast Sync Error: 0" : kind == RepairKind.DeliveryOptimization ? "SERVICE_NAME: DoSvc\nSTATE : 4 RUNNING" : "STATE : 4 RUNNING";
         if (ServiceRecovery.ServiceName(kind) is { } service) output = "SERVICE_NAME: " + service + "\n" + output;
         return new("Synthetic", kind, DateTimeOffset.UtcNow, "Verification reported", "synthetic",
-            Repairs.Plan(kind).Steps.Select(step => new RepairStepResult(step, new(0, output, "", false))).ToArray());
+            [.. Repairs.Plan(kind).Steps.Select(step => new RepairStepResult(step, new(0, output, "", false)))]);
     }
     private static void Require(bool condition, string message) { if (!condition) throw new Exception(message); }
 }

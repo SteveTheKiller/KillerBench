@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Knowledge;
 
 public sealed record MacVendorResult(string PackId, long Revision, string Address, bool LocallyAdministered,
     bool Multicast, string? MatchedPrefix, KnowledgeEntry? Match, string Detail);

@@ -2,7 +2,7 @@ using Microsoft.Win32;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Time;
 
 public interface ITimeRecoveryHost
 {
@@ -10,8 +10,14 @@ public interface ITimeRecoveryHost
     Task<ToolResult> RunAsync(RepairStep step, IProgress<string>? progress, CancellationToken token);
 }
 
-public static class TimeRecovery
+public static partial class TimeRecovery
 {
+    [GeneratedRegex(@"^[ \t]*([0-9]+)(?:[ \t]*\([^\r\n]*\))?[ \t]*$", RegexOptions.CultureInvariant)]
+    private static partial Regex NumberValueRegex();
+
+    [GeneratedRegex(@"(?m)^Source:[ \t]*([^\r\n]+)", RegexOptions.CultureInvariant)]
+    private static partial Regex SourceLineRegex();
+
     public const string Tool = "w32tm.exe";
     public static RepairStep ServiceStartStep() => new("sc.exe", ["start", "W32Time"], false);
     public static RepairStep Step(bool verification) => new(Tool,
@@ -23,7 +29,7 @@ public static class TimeRecovery
         {
             var fields = Regex.Matches(result.Output, @"(?m)^" + Regex.Escape(name) + @":([^\r\n]*)", RegexOptions.CultureInvariant);
             if (fields.Count != 1) return null;
-            var number = Regex.Match(fields[0].Groups[1].Value, @"^[ \t]*([0-9]+)(?:[ \t]*\([^\r\n]*\))?[ \t]*$", RegexOptions.CultureInvariant);
+            var number = NumberValueRegex().Match(fields[0].Groups[1].Value);
             return number.Success && int.TryParse(number.Groups[1].Value, NumberStyles.None, CultureInfo.InvariantCulture, out int value) ? value : null;
         }
         int? leap = Number("Leap Indicator"), stratum = Number("Stratum"), error = Number("Last Sync Error");
@@ -31,7 +37,7 @@ public static class TimeRecovery
             return new("Time synchronization", CheckState.Unknown, "Synchronization status is incomplete or unrecognized. No resync selected.", Evidence: result);
         if (leap == 3)
             return new("Time synchronization", CheckState.Repairable, "Windows Time reports it is not synchronized. Requesting a resync uses existing configured sources and can adjust the system clock.", RepairKind.TimeSynchronization, result);
-        var sources = Regex.Matches(result.Output, @"(?m)^Source:[ \t]*([^\r\n]+)", RegexOptions.CultureInvariant);
+        var sources = SourceLineRegex().Matches(result.Output);
         string source = sources.Count == 1 ? sources[0].Groups[1].Value.Trim() : "";
         if (error == 0 && stratum is >= 1 and <= 15 && source.Length > 0 &&
             !source.Equals("Local CMOS Clock", StringComparison.OrdinalIgnoreCase) && !source.Equals("Free-running System Clock", StringComparison.OrdinalIgnoreCase))

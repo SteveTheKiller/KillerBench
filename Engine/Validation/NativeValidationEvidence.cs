@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Validation;
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum NativeValidationOutcome

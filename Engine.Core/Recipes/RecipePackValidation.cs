@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace KillerBench.Engine.Core;
+namespace KillerBench.Engine.Core.Recipes;
 
 public sealed record RecipePackIssue(string RecipeId, string Message);
 
@@ -94,7 +94,7 @@ public static class RecipePackValidation
         foreach (var recipe in pack.Recipes.Where(recipe => recipe is not null))
             foreach (string dependency in recipe.Dependencies ?? [])
                 if (IsValidRecipeId(dependency) && !ids.Contains(dependency)) Issue(recipe.Id, "Dependency '" + dependency + "' is not in this pack.");
-        foreach (string cycle in FindCycles(pack.Recipes.Where(recipe => recipe is not null && ids.Contains(recipe.Id)).DistinctBy(recipe => recipe.Id, StringComparer.Ordinal).ToArray()))
+        foreach (string cycle in FindCycles([.. pack.Recipes.Where(recipe => recipe is not null && ids.Contains(recipe.Id)).DistinctBy(recipe => recipe.Id, StringComparer.Ordinal)]))
             Issue(cycle.Split(" -> ")[0], "Dependency cycle: " + cycle + ".");
         return new(issues.AsReadOnly());
     }
@@ -157,7 +157,7 @@ public static class RecipePackValidation
             if (!declared.Any(parameter => parameter.Name == name)) issue(id, role + ": parameter '" + name + "' is not accepted by this primitive.");
     }
 
-    private static IEnumerable<string> FindCycles(IReadOnlyList<RecipeDefinition> recipes)
+    private static List<string> FindCycles(IReadOnlyList<RecipeDefinition> recipes)
     {
         var graph = recipes.ToDictionary(recipe => recipe.Id, recipe => recipe.Dependencies ?? [], StringComparer.Ordinal);
         var state = new Dictionary<string, int>(StringComparer.Ordinal);

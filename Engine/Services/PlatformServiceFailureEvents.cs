@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public enum PlatformServiceFailureArea
 {
@@ -29,7 +29,7 @@ public enum PlatformServiceFailureArea
 
 public static class PlatformServiceFailureEvents
 {
-    private static readonly IReadOnlyDictionary<PlatformServiceFailureArea, ExactServiceFailureEventDefinition> Definitions =
+    private static readonly Dictionary<PlatformServiceFailureArea, ExactServiceFailureEventDefinition> Definitions =
         new Dictionary<PlatformServiceFailureArea, ExactServiceFailureEventDefinition>
         {
             [PlatformServiceFailureArea.AppReadiness] = Definition("AppReadiness", "App Readiness", "App Readiness service failure history", "first sign-in provisioning or application readiness"),
@@ -70,7 +70,7 @@ public static class PlatformServiceFailureEvents
     {
         token.ThrowIfCancellationRequested();
         return await ExactServiceFailureEvents.CheckManyAsync(
-            Enum.GetValues<PlatformServiceFailureArea>().Select(area => Definitions[area]).ToArray(), token, execute)
+            [.. Enum.GetValues<PlatformServiceFailureArea>().Select(area => Definitions[area])], token, execute)
             .ConfigureAwait(false);
     }
 

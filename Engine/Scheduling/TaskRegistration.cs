@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Scheduling;
 
 public sealed record TaskRegistrationPreflight(ScheduledTaskIdentity Target, bool Eligible, string Detail, ToolResult Evidence);
 public sealed record TaskRegistrationVerification(ScheduledTaskPlan? Observed, ToolResult Evidence);

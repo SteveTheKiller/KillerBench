@@ -1,4 +1,4 @@
-namespace KillerBench.Engine.Core;
+namespace KillerBench.Engine.Core.Symptoms;
 
 public sealed record SymptomCatalogIssue(string Subject, string Message);
 
@@ -64,7 +64,7 @@ public static class SymptomCatalogValidation
         return new(issues.AsReadOnly());
     }
 
-    private static void ValidateTree(TriageTree tree, IReadOnlySet<string> recipeIds, bool checkRecipes, PrimitiveLibrary? library, Action<string, string> issue)
+    private static void ValidateTree(TriageTree tree, HashSet<string> recipeIds, bool checkRecipes, PrimitiveLibrary? library, Action<string, string> issue)
     {
         string subject = tree.Id ?? "";
         if (tree.Nodes is null || tree.Nodes.Count == 0) { issue(subject, "Tree has no nodes."); return; }

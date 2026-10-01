@@ -4,7 +4,7 @@ internal static class ServiceStartupConfigurationChecks
 {
     internal static void Run()
     {
-        WorkflowCheck Inventory(string services, bool complete = true) => new("Installed services", CheckState.Information, "fixture",
+        static WorkflowCheck Inventory(string services, bool complete = true) => new("Installed services", CheckState.Information, "fixture",
             Evidence: new ToolResult(0, "{\"complete\":" + complete.ToString().ToLowerInvariant() + ",\"services\":[" + services + "]}", "", false));
         const string automatic = "{\"name\":\"AutoSvc\",\"displayName\":\"Automatic Service\",\"state\":\"Running\",\"startMode\":\"Auto\",\"delayedAutoStart\":true,\"serviceType\":\"Own Process\"}";
         const string manual = "{\"name\":\"ManualSvc\",\"displayName\":\"Manual Service\",\"state\":\"Stopped\",\"startMode\":\"Manual\",\"delayedAutoStart\":false,\"serviceType\":\"Own Process\"}";

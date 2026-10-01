@@ -2,7 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Security.Cryptography;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.BitLocker;
 
 public sealed record BitLockerBackupResult(string Status, string JournalPath, RecoveryBackupReceipt? Receipt);
 public sealed record BitLockerBackupPendingRecord(int Schema, DateTimeOffset StartedUtc, string Volume,

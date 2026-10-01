@@ -22,8 +22,8 @@ internal static class UpdateFailureFollowupChecks
         var dataStore = WindowsUpdateErrorCatalog.Find(unchecked((int)0x80248003))!;
         var installerPolicy = WindowsUpdateErrorCatalog.Find(unchecked((int)0x80241003))!;
         var plan = UpdateFailureFollowup.Plan([download, proxy, install, policy, download, servicing, service, timeout, source, access, applicability, bitsConnection, dns, agentSetup, fileLocked]);
-        Require(plan.SequenceEqual(new[]
-        {
+        Require(plan.SequenceEqual(
+        [
             UpdateDiagnosticArea.ExecutionContext,
             UpdateDiagnosticArea.ApplicabilityContext,
             UpdateDiagnosticArea.UpdateServices,
@@ -38,13 +38,13 @@ internal static class UpdateFailureFollowupChecks
             UpdateDiagnosticArea.InstallerActivity,
             UpdateDiagnosticArea.ManagedUpdatePolicy,
             UpdateDiagnosticArea.ComponentServicing
-        }), "Recognized failures produce a stable, deduplicated diagnostic plan");
-        Require(UpdateFailureFollowup.Plan([bitsConnection]).SequenceEqual(new[] { UpdateDiagnosticArea.UpdateServices, UpdateDiagnosticArea.BackgroundTransfers }) &&
-            UpdateFailureFollowup.Plan([dns]).SequenceEqual(new[] { UpdateDiagnosticArea.NetworkConfiguration, UpdateDiagnosticArea.DnsServerConfiguration, UpdateDiagnosticArea.RoutingTable, UpdateDiagnosticArea.HostsFile, UpdateDiagnosticArea.ProxyConfiguration }) &&
-            UpdateFailureFollowup.Plan([agentSetup]).SequenceEqual(new[] { UpdateDiagnosticArea.UpdateServices, UpdateDiagnosticArea.ManagedUpdatePolicy }) &&
-            UpdateFailureFollowup.Plan([fileLocked]).SequenceEqual(new[] { UpdateDiagnosticArea.InstallerActivity }) &&
-            UpdateFailureFollowup.Plan([dataStore]).SequenceEqual(new[] { UpdateDiagnosticArea.UpdateDataStore }) &&
-            UpdateFailureFollowup.Plan([installerPolicy]).SequenceEqual(new[] { UpdateDiagnosticArea.InstallerActivity, UpdateDiagnosticArea.ManagedUpdatePolicy }),
+        ]), "Recognized failures produce a stable, deduplicated diagnostic plan");
+        Require(UpdateFailureFollowup.Plan([bitsConnection]).SequenceEqual([UpdateDiagnosticArea.UpdateServices, UpdateDiagnosticArea.BackgroundTransfers]) &&
+            UpdateFailureFollowup.Plan([dns]).SequenceEqual([UpdateDiagnosticArea.NetworkConfiguration, UpdateDiagnosticArea.DnsServerConfiguration, UpdateDiagnosticArea.RoutingTable, UpdateDiagnosticArea.HostsFile, UpdateDiagnosticArea.ProxyConfiguration]) &&
+            UpdateFailureFollowup.Plan([agentSetup]).SequenceEqual([UpdateDiagnosticArea.UpdateServices, UpdateDiagnosticArea.ManagedUpdatePolicy]) &&
+            UpdateFailureFollowup.Plan([fileLocked]).SequenceEqual([UpdateDiagnosticArea.InstallerActivity]) &&
+            UpdateFailureFollowup.Plan([dataStore]).SequenceEqual([UpdateDiagnosticArea.UpdateDataStore]) &&
+            UpdateFailureFollowup.Plan([installerPolicy]).SequenceEqual([UpdateDiagnosticArea.InstallerActivity, UpdateDiagnosticArea.ManagedUpdatePolicy]),
             "New update families select only their relevant read-only follow-up areas");
 
         var called = new List<UpdateDiagnosticArea>();
@@ -56,7 +56,7 @@ internal static class UpdateFailureFollowupChecks
             IReadOnlyList<WorkflowCheck> findings = [new(area.ToString(), CheckState.Repairable, "Fixture evidence", RepairKind.BackgroundTransfer)];
             return Task.FromResult(findings);
         });
-        Require(called.SequenceEqual(new[] { UpdateDiagnosticArea.BackgroundTransfers, UpdateDiagnosticArea.DeliveryOptimization, UpdateDiagnosticArea.NetworkConfiguration, UpdateDiagnosticArea.DnsServerConfiguration, UpdateDiagnosticArea.RoutingTable, UpdateDiagnosticArea.HostsFile, UpdateDiagnosticArea.ProxyConfiguration }) &&
+        Require(called.SequenceEqual([UpdateDiagnosticArea.BackgroundTransfers, UpdateDiagnosticArea.DeliveryOptimization, UpdateDiagnosticArea.NetworkConfiguration, UpdateDiagnosticArea.DnsServerConfiguration, UpdateDiagnosticArea.RoutingTable, UpdateDiagnosticArea.HostsFile, UpdateDiagnosticArea.ProxyConfiguration]) &&
             results.Count == 7 && results.All(result => result.Name.StartsWith("Update follow-up: ") && result.Repair is null) && progress.Count == 7,
             "Automatic follow-up runs each selected area once, reports progress and cannot authorize repair");
 

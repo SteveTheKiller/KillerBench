@@ -44,7 +44,7 @@ internal static class FullSystemScanChecks
         var result = await FullSystemScan.RunAsync(folder, progress: new InlineProgress(progress.Add), host: host,
             selectedDiagnosticAreas: [CommonDiagnosticScope.SystemVolumeCapacity]);
         Require(result.Kind == WorkflowKind.CommonProblems && result.SelectedDiagnosticScopes?.SequenceEqual(
-                new[] { CommonDiagnosticScope.SystemVolumeCapacity }) == true && result.PlannedRecipeIds.Count == 0 &&
+                [CommonDiagnosticScope.SystemVolumeCapacity]) == true && result.PlannedRecipeIds.Count == 0 &&
             result.Repairs.Count == 0 && result.Checks.Count == 1 && host.Inspections == 1 &&
             progress.Any(message => message.Contains("Checking this PC's current state")),
             "Named full scan uses the journaled workflow and preserves focused read-only selection");
@@ -61,7 +61,7 @@ internal static class FullSystemScanChecks
         {
             Inspections++;
             Require(kind == WorkflowKind.CommonProblems && selectedScopes?.SequenceEqual(
-                new[] { CommonDiagnosticScope.SystemVolumeCapacity }) == true, "Named full scan lost its selected area");
+                [CommonDiagnosticScope.SystemVolumeCapacity]) == true, "Named full scan lost its selected area");
             return Task.FromResult<IReadOnlyList<WorkflowCheck>>(
                 [new("Volume capacity", CheckState.Information, "Fixture read-only capacity evidence")]);
         }

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Workflows;
 
 public static class DemoWorkflow
 {
@@ -25,9 +25,9 @@ public static class DemoWorkflow
         }
 
         return new WorkflowResult(kind, MachineName, startedUtc ?? DateTimeOffset.UtcNow, status,
-            checks.AsReadOnly(), Array.Empty<RepairResult>(), "Demo mode: no journal was written.")
+            checks.AsReadOnly(), [], "Demo mode: no journal was written.")
         {
-            PlannedRecipeIds = Array.Empty<string>()
+            PlannedRecipeIds = []
         };
     }
 

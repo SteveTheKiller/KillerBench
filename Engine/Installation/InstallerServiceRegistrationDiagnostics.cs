@@ -2,7 +2,7 @@ using Microsoft.Win32;
 using System.Runtime.Versioning;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Installation;
 
 public sealed record InstallerServiceRegistrationSnapshot(bool Complete, bool ServiceKeyPresent,
     bool ImagePathPresent, bool ImageTargetExpected, bool VerificationSwitchExpected,

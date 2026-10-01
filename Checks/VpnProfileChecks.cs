@@ -2,13 +2,15 @@ using KillerBench.Engine;
 
 internal static class VpnProfileChecks
 {
+    private static readonly string[] ExpectedAuthenticationMethods = ["Eap", "MachineCertificate"];
+
     internal static void Run()
     {
-        ToolResult Evidence(string json) => new(0, json, "", false);
+        static ToolResult Evidence(string json) => new(0, json, "", false);
         const string json = "{\"complete\":true,\"profiles\":[{\"name\":\"Field VPN\",\"server\":\"vpn.example.test\",\"tunnel\":\"Ikev2\",\"authentication\":[\"Eap\",\"MachineCertificate\"],\"split\":true,\"remember\":false,\"status\":\"Disconnected\"}]}";
         var inventory = VpnProfileDiagnostics.Interpret(Evidence(json));
         var checks = VpnProfileDiagnostics.Describe(inventory);
-        Require(inventory.Complete && inventory.Profiles.Count == 1 && inventory.Profiles[0].AuthenticationMethods.SequenceEqual(new[] { "Eap", "MachineCertificate" }) &&
+        Require(inventory.Complete && inventory.Profiles.Count == 1 && inventory.Profiles[0].AuthenticationMethods.SequenceEqual(ExpectedAuthenticationMethods) &&
             checks.Count == 2 && checks.All(check => check.Repair is null) && checks[0].Evidence == inventory.Evidence &&
             checks[0].Detail.Contains("Passwords, certificates and keys are not collected", StringComparison.Ordinal),
             "Complete VPN profile evidence retains configuration without credentials or repair eligibility");

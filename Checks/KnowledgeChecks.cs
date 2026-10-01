@@ -81,7 +81,7 @@ internal static class KnowledgeChecks
         if (comparison.Added != 1 || comparison.Removed != 1 || comparison.Changed != 1 || !comparison.Truncated ||
             comparison.Changes.Count != 2 || comparison.BeforeRevision != 1 || comparison.AfterRevision != 2)
             throw new Exception("Pack comparison lost changed, added or removed reference coverage.");
-        var reordered = KnowledgeCatalog.Read(JsonSerializer.SerializeToUtf8Bytes(pack with { Entries = pack.Entries.Reverse().ToArray() }));
+        var reordered = KnowledgeCatalog.Read(JsonSerializer.SerializeToUtf8Bytes(pack with { Entries = [.. pack.Entries.Reverse()] }));
         if (catalog.Compare(reordered).Changes.Count != 0) throw new Exception("Entry ordering changed pack comparison.");
         foreach (var metadataPack in new[] { pack with { License = "Updated fixture license" }, pack with { PublishedOn = day.AddDays(1) }, pack with { SchemaVersion = 2 } })
         {
@@ -172,8 +172,8 @@ internal static class KnowledgeChecks
         var macCatalog = KnowledgeCatalog.Read(JsonSerializer.SerializeToUtf8Bytes(macPack));
         var smallMac = MacVendorLookup.Find(macCatalog, "00:11:22:33:44:55");
         if (smallMac.MatchedPrefix != "001122334" || smallMac.Match?.Title != "Small assignment" || smallMac.Address != "001122334455" ||
-            MacVendorLookup.Find(KnowledgeCatalog.Read(JsonSerializer.SerializeToUtf8Bytes(macPack with { Entries = macPack.Entries.Take(2).ToArray() })), "0011.2233.4455").MatchedPrefix != "0011223" ||
-            MacVendorLookup.Find(KnowledgeCatalog.Read(JsonSerializer.SerializeToUtf8Bytes(macPack with { Entries = macPack.Entries.Take(1).ToArray() })), "00-11-22-33-44-55").MatchedPrefix != "001122")
+            MacVendorLookup.Find(KnowledgeCatalog.Read(JsonSerializer.SerializeToUtf8Bytes(macPack with { Entries = [.. macPack.Entries.Take(2)] })), "0011.2233.4455").MatchedPrefix != "0011223" ||
+            MacVendorLookup.Find(KnowledgeCatalog.Read(JsonSerializer.SerializeToUtf8Bytes(macPack with { Entries = [.. macPack.Entries.Take(1)] })), "00-11-22-33-44-55").MatchedPrefix != "001122")
             throw new Exception("MAC vendor lookup did not prefer the longest exact IEEE assignment prefix");
         var localMac = MacVendorLookup.Find(macCatalog, "02:11:22:33:44:55");
         var multicastMac = MacVendorLookup.Find(macCatalog, "01:11:22:33:44:55");
@@ -323,8 +323,8 @@ internal static class KnowledgeChecks
             catch (System.IO.InvalidDataException) { }
         }
         var largeEntry = entry with { Context = "scale", Title = "Test", Explanation = "Synthetic", AppliesTo = "Fixture" };
-        var largePack = pack with { Entries = Enumerable.Range(0, 100_000)
-            .Select(i => largeEntry with { Code = i.ToString(System.Globalization.CultureInfo.InvariantCulture) }).ToArray() };
+        var largePack = pack with { Entries = [.. Enumerable.Range(0, 100_000)
+            .Select(i => largeEntry with { Code = i.ToString(System.Globalization.CultureInfo.InvariantCulture) })] };
         var largeBytes = JsonSerializer.SerializeToUtf8Bytes(largePack);
         var timer = System.Diagnostics.Stopwatch.StartNew();
         var largeCatalog = KnowledgeCatalog.Read(largeBytes);
@@ -337,7 +337,7 @@ internal static class KnowledgeChecks
                 throw new Exception("Full-size knowledge pack lost an indexed entry");
         Console.WriteLine($"Knowledge scale fixture: {largeCatalog.Count} entries, {largeBytes.Length} bytes, load {loadMilliseconds} ms, lookup loop {timer.ElapsedMilliseconds - loadMilliseconds} ms.");
         foreach (var invalidBytes in new[] { new byte[32_000_001],
-            JsonSerializer.SerializeToUtf8Bytes(largePack with { Entries = largePack.Entries.Append(largeEntry with { Code = "100000" }).ToArray() }),
+            JsonSerializer.SerializeToUtf8Bytes(largePack with { Entries = [.. largePack.Entries.Append(largeEntry with { Code = "100000" })] }),
             System.Text.Encoding.UTF8.GetBytes("{\"SchemaVersion\":1,\"SchemaVersion\":2}") })
         {
             try { KnowledgeCatalog.Read(invalidBytes); throw new Exception("Oversized or ambiguous knowledge pack accepted"); }
@@ -380,7 +380,7 @@ internal static class KnowledgeChecks
         if (!directResolution.Found || directResolution.DerivedFromHResult || directResolution.MatchedContext != "windows-update" ||
             !derivedResolution.Found || !derivedResolution.DerivedFromHResult || derivedResolution.MatchedCode != "5" ||
             missingResolution.Found || missingResolution.MatchedContext is not null ||
-            !derivedResolution.Limitation.Contains("does not establish a diagnosis", StringComparison.Ordinal))
+            !KnowledgeResolution.Limitation.Contains("does not establish a diagnosis", StringComparison.Ordinal))
             throw new Exception("Standalone knowledge resolution lost precedence, derivation or honest missing outcomes");
         foreach (var invalid in new[] { ("", "5"), ("context", ""), (" context", "5"), ("context", " 5") })
         {

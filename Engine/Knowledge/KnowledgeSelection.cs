@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Knowledge;
 
 public sealed record SignedKnowledgePack(byte[] Payload, byte[] Signature);
 public sealed record KnowledgeSelectionResult(KnowledgeCatalog Catalog, bool UsingExternal, string Detail)

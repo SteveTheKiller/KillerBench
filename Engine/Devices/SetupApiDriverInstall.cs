@@ -89,7 +89,7 @@ public static partial class SetupApiDriverInstall
             if (!line.StartsWith("<<<", StringComparison.Ordinal) || !line.Contains("[Exit status:", StringComparison.OrdinalIgnoreCase)) continue;
             string? code = ExitCodePattern().Match(line) is { Success: true } match ? match.Value.ToUpperInvariant() : null;
             bool failed = line.Contains("FAILURE", StringComparison.OrdinalIgnoreCase) || errors.Count > 0;
-            sections.Add(new(identity, failed ? code ?? "unreported" : null, startLine, index + 1, errors.ToArray()));
+            sections.Add(new(identity, failed ? code ?? "unreported" : null, startLine, index + 1, [.. errors]));
             identity = null;
             errors.Clear();
         }

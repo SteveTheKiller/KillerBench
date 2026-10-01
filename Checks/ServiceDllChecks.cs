@@ -2,9 +2,11 @@ using KillerBench.Engine;
 
 internal static class ServiceDllChecks
 {
+    private static readonly string[] ExpectedServices = ["wuauserv", "BITS", "CryptSvc", "TrustedInstaller", "WaaSMedicSvc", "UsoSvc"];
+
     public static void Run()
     {
-        ToolResult Evidence(string services, bool complete = true) => new(0,
+        static ToolResult Evidence(string services, bool complete = true) => new(0,
             "{\"complete\":" + complete.ToString().ToLowerInvariant() + ",\"services\":[" + services + "]}", "", false);
         const string present = "{\"name\":\"ExampleSvc\",\"dllFile\":\"example.dll\",\"status\":\"Present\",\"signature\":\"Valid\",\"signatureIssue\":null,\"complete\":true,\"issue\":null}";
         var clear = ServiceDllDiagnostics.Interpret(Evidence(present));
@@ -42,13 +44,13 @@ internal static class ServiceDllChecks
         var selected = ServiceDllDiagnostics.CreateReadStep(["wuauserv", "BITS", "CryptSvc", "TrustedInstaller", "WaaSMedicSvc", "UsoSvc"]);
         string selectedScript = selected.Arguments[^1];
         Require(selected.Verification && selected.Tool == PrintRecovery.Tool &&
-            new[] { "wuauserv", "BITS", "CryptSvc", "TrustedInstaller", "WaaSMedicSvc", "UsoSvc" }.All(selectedScript.Contains) &&
+            ExpectedServices.All(selectedScript.Contains) &&
             !selectedScript.Contains("GetSubKeyNames", StringComparison.Ordinal) && !selectedScript.Contains("SetValue", StringComparison.Ordinal) &&
             !selectedScript.Contains("Start-Service", StringComparison.Ordinal),
             "Selected service DLL plan reads only the exact requested registrations without changing files, services or registry values");
         foreach (IReadOnlyCollection<string> invalidSelection in new IReadOnlyCollection<string>[]
         {
-            Array.Empty<string>(), new[] { "wuauserv", "WUAUSERV" }, new[] { "bad/name" }
+            [], ["wuauserv", "WUAUSERV"], ["bad/name"]
         })
         {
             try { ServiceDllDiagnostics.CreateReadStep(invalidSelection); throw new Exception("Invalid selected service DLL scope was accepted"); }

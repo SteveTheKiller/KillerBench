@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.BitLocker;
 
 public sealed record BitLockerReadiness(string Volume, string VolumeIdentity, bool CanEncrypt, string Detail);
 public sealed record RecoveryBackupReceipt(string VolumeIdentity, Guid ProtectorId, RecoveryDestination Destination, bool Verified);

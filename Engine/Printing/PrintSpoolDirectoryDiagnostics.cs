@@ -2,7 +2,7 @@ using Microsoft.Win32;
 using System.Security;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Printing;
 
 public sealed record PrintSpoolDirectorySnapshot(bool Complete, string? ConfiguredPath, string? ResolvedPath,
     bool? Exists, bool? ReparsePoint, DriveType? DriveType, long? AvailableBytes, bool UsedWindowsDefault, string? CollectionIssue = null);

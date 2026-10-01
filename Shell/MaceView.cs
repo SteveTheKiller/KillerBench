@@ -13,7 +13,7 @@ public partial class MainWindow
     private void OnMaceOptionChanged(object sender, RoutedEventArgs e)
     {
         if (MacePackageSelection is not null) SetMaceReview(null);
-        if (MainAutoRepair is not null) MainAutoRepair.IsChecked = false;
+        MainAutoRepair?.IsChecked = false;
         OnWorkflowOptionsChanged(sender, null);
     }
 

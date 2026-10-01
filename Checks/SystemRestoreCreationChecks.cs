@@ -133,7 +133,7 @@ internal static class SystemRestoreCreationChecks
     private static SystemRestorePoint NewPoint(SystemRestoreCreationRequest request, uint sequence = 2) =>
         new(sequence, request.Description, SystemRestoreCreation.ReasonCode(request.Reason), DateTimeOffset.UtcNow.AddSeconds(1));
     private static SystemRestoreInventory Inventory(bool complete, params SystemRestorePoint[] additional) =>
-        new(complete, new[] { new SystemRestorePoint(1, "Existing", 12, DateTimeOffset.UtcNow.AddDays(-2)) }.Concat(additional).ToArray());
+        new(complete, [new SystemRestorePoint(1, "Existing", 12, DateTimeOffset.UtcNow.AddDays(-2)), .. additional]);
     private static void Require(bool condition, string message) { if (!condition) throw new Exception(message); }
 
     private sealed class Host : ISystemRestoreCreationHost

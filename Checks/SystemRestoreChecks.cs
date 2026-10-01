@@ -5,7 +5,7 @@ internal static class SystemRestoreChecks
     internal static void Run()
     {
         var now = DateTimeOffset.Parse("2026-09-14T12:00:00.0000000+00:00");
-        string Point(uint sequence, string description, uint type, string created) =>
+        static string Point(uint sequence, string description, uint type, string created) =>
             $"{{\"sequence\":{sequence},\"description\":\"{description}\",\"type\":{type},\"created\":\"{created}\"}}";
         var evidence = new ToolResult(0,
             "{\"complete\":true,\"points\":[" + Point(7, "Before update", 0, "2026-09-13T10:00:00.0000000+00:00") + "," +

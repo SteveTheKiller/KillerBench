@@ -3,6 +3,9 @@ using KillerBench.Engine;
 
 internal static class ValidationPlanCommands
 {
+    private static readonly string[] SupportedTargets = ["Windows 10", "Windows 11", "Supported Windows Server when the recipe applies"];
+
+
     internal static int Run(string[] args)
     {
         IReadOnlyList<NativeRecipeValidationPlan> plans;
@@ -35,7 +38,7 @@ internal static class ValidationPlanCommands
             schemaVersion = 1,
             generatedFromInstalledCatalog = true,
             executionPerformed = false,
-            supportedTargets = new[] { "Windows 10", "Windows 11", "Supported Windows Server when the recipe applies" },
+            supportedTargets = SupportedTargets,
             limitations = "This plan defines required scenarios. It is not evidence that native VM validation has been completed.",
             recipes = plans
         }, Capture.JsonOptions));

@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public sealed record FirewallRuleSummary(int Total, int Enabled, int Disabled,
     int InboundAllow, int InboundBlock, int OutboundAllow, int OutboundBlock,

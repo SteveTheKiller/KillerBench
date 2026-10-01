@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public enum DhcpLeaseReconciliationOutcome { NoPending, Verified, NotApplied, Inconclusive }
 public sealed record DhcpLeaseReconciliationResult(DhcpLeaseReconciliationOutcome Outcome, string Detail);

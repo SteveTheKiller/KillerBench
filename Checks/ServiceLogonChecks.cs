@@ -4,7 +4,7 @@ internal static class ServiceLogonChecks
 {
     public static void Run()
     {
-        ToolResult Evidence(string services, bool complete = true) => new(0,
+        static ToolResult Evidence(string services, bool complete = true) => new(0,
             "{\"complete\":" + complete.ToString().ToLowerInvariant() + ",\"services\":[" + services + "]}", "", false);
         const string system = "{\"name\":\"SystemSvc\",\"displayName\":\"System Service\",\"serviceType\":\"Own Process\",\"accountClass\":\"LocalSystem\",\"interactive\":false,\"complete\":true,\"issue\":null}";
         const string virtualAccount = "{\"name\":\"VirtualSvc\",\"displayName\":\"Virtual Service\",\"serviceType\":\"Own Process\",\"accountClass\":\"VirtualAccount\",\"interactive\":false,\"complete\":true,\"issue\":null}";

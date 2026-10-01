@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Crash;
 
 public sealed record CrashIncident(DateTimeOffset OccurredUtc, ulong EventRecordId, string? BugCheckCode,
     string? ReportedDumpPath, CrashDumpFile? DumpFile, MinidumpSummary? DumpAnalysis);

@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public sealed record FirewallLoggingProfile(string Name, string Allowed, string Blocked, string Ignored,
     int? MaximumKilobytes, bool HasLogFilePath);
@@ -58,7 +58,7 @@ public static class FirewallLoggingDiagnostics
                     return [Unknown("Firewall logging identities or settings were invalid or duplicated.")];
                 profiles.Add(profile);
             }
-            return profiles.OrderBy(profile => profile.Name, StringComparer.Ordinal).Select(profile =>
+            return [.. profiles.OrderBy(profile => profile.Name, StringComparer.Ordinal).Select(profile =>
             {
                 bool writes = profile.Allowed == "True" || profile.Blocked == "True" || profile.Ignored == "True";
                 bool coherent = !writes || profile.HasLogFilePath && profile.MaximumKilobytes is > 0;
@@ -69,7 +69,7 @@ public static class FirewallLoggingDiagnostics
                     (coherent ? "This is configuration evidence, not proof that records are being written or retained." : "Logging is enabled without a complete destination and positive size; review the effective policy before relying on the log.") + Scope;
                 return new WorkflowCheck("Firewall logging: " + profile.Name,
                     coherent ? CheckState.Information : CheckState.Attention, detail, Evidence: result);
-            }).ToArray();
+            })];
         }
         catch (Exception error) when (error is JsonException or InvalidOperationException or FormatException or OverflowException)
         {

@@ -3,9 +3,10 @@ using System.Text.RegularExpressions;
 using KillerBench.Engine;
 
 /// <summary>Keeps SYMPTOM-MATRIX.md honest: pack rows must be runnable symptoms, catalog symptoms must be matrix rows, and the counts section must match the table.</summary>
-internal static class SymptomMatrixChecks
+internal static partial class SymptomMatrixChecks
 {
-    private static readonly Regex Row = new(@"^\| ([a-z]+\.[a-z0-9-]+) \|(.*)\|\s*$", RegexOptions.Compiled);
+    [GeneratedRegex(@"^\| ([a-z]+\.[a-z0-9-]+) \|(.*)\|\s*$")]
+    private static partial Regex Row();
 
     internal static void Run()
     {
@@ -15,7 +16,7 @@ internal static class SymptomMatrixChecks
         var rows = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (string line in lines)
         {
-            var match = Row.Match(line);
+            var match = Row().Match(line);
             if (!match.Success) continue;
             string id = match.Groups[1].Value;
             string status = match.Groups[2].Value.Split('|')[^1].Trim().Split(' ', '(')[0];

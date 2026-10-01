@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Applications;
 
 public sealed record ApplicationFolderObservation(string Area, string State, bool? ReparsePoint, string Detail);
 public sealed record ApplicationFolderReviewResult(string FolderName, IReadOnlyList<ApplicationFolderObservation> Locations,
@@ -28,7 +28,7 @@ public static class ApplicationFolderReview
             "Only exact child paths named by the caller were inspected at five fixed local roots. No directory was traversed and no path, file, content, owner, timestamp or size was retained. A matching folder does not establish application ownership or safe deletion. Nothing was changed.");
     }
 
-    private static IReadOnlyList<LocationDefinition> Definitions(string folderName)
+    private static System.Collections.ObjectModel.ReadOnlyCollection<LocationDefinition> Definitions(string folderName)
     {
         string[] roots =
         [
@@ -40,14 +40,14 @@ public static class ApplicationFolderReview
         ];
         if (roots.Any(root => string.IsNullOrWhiteSpace(root) || !Path.IsPathFullyQualified(root)))
             throw new InvalidOperationException("A fixed application-folder root is unavailable.");
-        return Array.AsReadOnly(new[]
-        {
+        return Array.AsReadOnly<LocationDefinition>(
+        [
             new LocationDefinition("Local application data", Path.Combine(roots[0], folderName)),
             new LocationDefinition("Roaming application data", Path.Combine(roots[1], folderName)),
             new LocationDefinition("Shared application data", Path.Combine(roots[2], folderName)),
             new LocationDefinition("Program files", Path.Combine(roots[3], folderName)),
             new LocationDefinition("Program files (x86)", Path.Combine(roots[4], folderName))
-        });
+        ]);
     }
 
     private static ApplicationFolderObservation Read(LocationDefinition definition)

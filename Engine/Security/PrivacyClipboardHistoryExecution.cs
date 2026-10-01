@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Microsoft.Win32;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public enum PrivacyChangeOutcome { Preview, Blocked, Verified, Uncertain, Stopped }
 
@@ -417,11 +417,11 @@ public sealed class WindowsPrivacyClipboardHistoryHost : IPrivacyClipboardHistor
         if (!OperatingSystem.IsWindows()) return Task.FromResult(new PrivacyClipboardHistoryEvidence(false, false, null, false, null, "Windows is required."));
         try
         {
-            var user = Read(RegistryHive.CurrentUser, UserPath, UserName);
-            var policy = Read(RegistryHive.LocalMachine, PolicyPath, PolicyName);
-            bool complete = user.Supported && policy.Supported;
-            return Task.FromResult(new PrivacyClipboardHistoryEvidence(complete, user.Present, user.Value,
-                policy.Present, policy.Value, complete ? "Exact current-user and machine-policy values were read." : "A value has an unsupported type or range."));
+            var (userPresent, userValue, userSupported) = Read(RegistryHive.CurrentUser, UserPath, UserName);
+            var (policyPresent, policyValue, policySupported) = Read(RegistryHive.LocalMachine, PolicyPath, PolicyName);
+            bool complete = userSupported && policySupported;
+            return Task.FromResult(new PrivacyClipboardHistoryEvidence(complete, userPresent, userValue,
+                policyPresent, policyValue, complete ? "Exact current-user and machine-policy values were read." : "A value has an unsupported type or range."));
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or System.Security.SecurityException)
         {

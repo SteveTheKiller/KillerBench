@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Workflows;
 
 public sealed record DiagnosticArea(CommonDiagnosticScope Scope, string Title, string Description);
 

@@ -1,19 +1,19 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public static class ServicingChainCorrelation
 {
     private static readonly IReadOnlyList<string> StateNames = Array.AsReadOnly(
         ServicingServiceStateDiagnostics.Services.Select(service => service.DisplayName + " state").ToArray());
 
-    private static readonly IReadOnlyList<string> HistoryNames = Array.AsReadOnly(new[]
-    {
+    private static readonly IReadOnlyList<string> HistoryNames = Array.AsReadOnly<string>(
+    [
         "Windows Update service failure history",
         "BITS service failure history",
         "Cryptographic Services failure history",
         "Windows Modules Installer failure history",
         "Windows Update Medic failure history",
         "Update Orchestrator failure history"
-    });
+    ]);
 
     public static WorkflowCheck Check(IReadOnlyList<WorkflowCheck> states, WorkflowCheck serviceDlls,
         IReadOnlyList<WorkflowCheck> context, CancellationToken token = default)

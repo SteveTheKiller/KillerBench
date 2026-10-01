@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 internal sealed record ExactServiceFailureEventDefinition(
     string InternalName,
@@ -226,7 +226,7 @@ internal static class ExactServiceFailureEvents
             definition.InternalName.Any(character => !char.IsAsciiLetterOrDigit(character) && character != '_'))
             throw new ArgumentException("Service identity is invalid.", nameof(definition));
     }
-    private static IReadOnlyList<WorkflowCheck> MalformedMany(IReadOnlyList<ExactServiceFailureEventDefinition> definitions, ToolResult evidence) =>
+    private static System.Collections.ObjectModel.ReadOnlyCollection<WorkflowCheck> MalformedMany(IReadOnlyList<ExactServiceFailureEventDefinition> definitions, ToolResult evidence) =>
         Array.AsReadOnly(definitions.Select(definition => Unknown(definition,
             definition.DisplayLabel + " event evidence was malformed or exceeded its bounds.", evidence)).ToArray());
     private static WorkflowCheck Unknown(ExactServiceFailureEventDefinition definition, string detail, ToolResult evidence) =>

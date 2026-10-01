@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Workflows;
 
 public sealed record WorkflowOptionValidationError(string Key, string Message);
 
@@ -14,6 +14,8 @@ public sealed record WorkflowOptionValidationResult(
 
 public static class WorkflowOptionValidation
 {
+    private static readonly string[] FirewallProfileKeys = ["profile.domain", "profile.private", "profile.public"];
+
     public const int MaximumTextLength = 4096;
 
     public static WorkflowOptionValidationResult Validate(string workflowKey,
@@ -120,7 +122,7 @@ public static class WorkflowOptionValidation
         }
 
         if (set.Kind == WorkflowKind.FirewallServices && normalized.GetValueOrDefault("execute") == "true" &&
-            !new[] { "profile.domain", "profile.private", "profile.public" }
+            !FirewallProfileKeys
                 .Any(key => normalized.GetValueOrDefault(key) == "true"))
             errors.Add(new("execute", "Choose at least one firewall profile before requesting enablement."));
 
@@ -352,7 +354,7 @@ public static class WorkflowOptionValidation
                 normalized = selected.Value;
                 return true;
             case WorkflowOptionControl.Text:
-                if (value.Length > MaximumTextLength || value.IndexOf('\0') >= 0)
+                if (value.Length > MaximumTextLength || value.Contains('\0'))
                 {
                     error = $"Text must contain at most {MaximumTextLength} characters and no null character.";
                     return false;

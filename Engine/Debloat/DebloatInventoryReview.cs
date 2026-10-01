@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Debloat;
 
 public sealed record DebloatInventoryCandidate(DebloatAreas Area, string Kind, string Identity,
     string Name, string? Publisher, string? Version, bool Protected, string SourcePattern);

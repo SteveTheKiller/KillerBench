@@ -11,7 +11,7 @@ public partial class MainWindow
     private CaptureSession? capture;
     private string? capturePath;
 
-    private static WorkflowResult BuildCaptureWorkflowReport(CaptureSession session, IReadOnlyList<DiagnosticFinding> findings,
+    private static WorkflowResult BuildCaptureWorkflowReport(CaptureSession session, DiagnosticFinding[] findings,
         bool partial)
     {
         var checks = new List<WorkflowCheck>
@@ -24,7 +24,7 @@ public partial class MainWindow
             finding.Severity == "Information" ? CheckState.Information : CheckState.Attention,
             finding.Explanation + " Next: " + finding.NextStep)));
         return new WorkflowResult(WorkflowKind.WindowsUpdate, session.Machine, session.StartedUtc,
-            findings.Count == 0 ? "Windows Update capture reviewed" : "Windows Update capture needs review", checks, [],
+            findings.Length == 0 ? "Windows Update capture reviewed" : "Windows Update capture needs review", checks, [],
             "Read-only Windows Update capture. No repair journal was written.");
     }
 

@@ -150,10 +150,10 @@ public partial class MainWindow : Window
             ModeLabel.Text = "SAVED WORKFLOW / HISTORICAL";
             EvidenceBox.Text = evidence.Excerpt(SearchBox.Text, out int historicalMatches);
             CoverageLabel.Text = $"Recorded status: {historical.RecordedStatus} | {historicalMatches:N0} matching lines. No current-health verdict.";
-            SourceInfo.Text = historical.Source + "\n\n" + historical.Scope;
+            SourceInfo.Text = historical.Source + "\n\n" + WorkflowJournalSnapshot.Scope;
             shownReport = null;
             FindingCards.Children.Clear();
-            FindingsSummary.Text = "Saved workflow record. Diagnostic rules were not rerun against the journal text.\n" + historical.Scope;
+            FindingsSummary.Text = "Saved workflow record. Diagnostic rules were not rerun against the journal text.\n" + WorkflowJournalSnapshot.Scope;
             return;
         }
         SourceInfo.Text = $"{evidence.Source}\n\n{evidence.Lines.Length:N0} loaded lines\n" + (evidence.Truncated ? "Partial source: input limit reached" : "Source read completed") + "\n\nEvidence inspection only";

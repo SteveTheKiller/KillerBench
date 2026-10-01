@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Infrastructure;
 
 /// <summary>
 /// Registry of platform-specific providers used by the platform-neutral core.
@@ -47,5 +47,5 @@ public static class PlatformProviders
     public static IServicingRepairCommandHost CreateServicingRepairCommandHost() => Create<IServicingRepairCommandHost>();
 
     private static PlatformNotSupportedException Unregistered(string provider) =>
-        new("No platform provider is registered for " + provider + ". Call the platform engine's Register method at startup, for example KillerBench.Engine.WindowsEngine.Register().");
+        new("No platform provider is registered for " + provider + ". Call the platform engine's Register method at startup, for example KillerBench.Engine.Windows.WindowsEngine.Register().");
 }

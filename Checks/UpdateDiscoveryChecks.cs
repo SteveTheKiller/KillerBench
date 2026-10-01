@@ -117,7 +117,7 @@ internal static class UpdateDiscoveryChecks
         catch (ArgumentException) { }
         var repeatedCategories = categorySource with { Updates = [classified, classified with { Behavior = new(false, 0, 0, false,
             [new(categoryId.ToString("B"), "Fixture category"), new("invalid", "Invalid category"), new(Guid.Empty.ToString(), "Empty category")]) }, secondUpdate] };
-        Require(repeatedCategories.GetClassifications().SequenceEqual(new[] { new UpdateClassification(categoryId.ToString("D"), "Fixture category") }) &&
+        Require(repeatedCategories.GetClassifications().SequenceEqual([new UpdateClassification(categoryId.ToString("D"), "Fixture category")]) &&
             (categorySource with { Updates = [secondUpdate] }).GetClassifications().Count == 0,
             "Classification choices deduplicate GUID formats, exclude invalid identities and preserve missing metadata");
         foreach (var failed in new[] { result with { Error = "Search provider error" }, result with { TimedOut = true },
@@ -230,12 +230,12 @@ internal static class UpdateDiscoveryChecks
             Require(rejected, "Complete provider label cannot override failed collection evidence during planning");
         }
         var goodCategory = licensed.Updates[0].Behavior!.Classifications[0];
-        foreach (IReadOnlyList<UpdateClassification>? categories in new IReadOnlyList<UpdateClassification>?[]
-        {
+        foreach (IReadOnlyList<UpdateClassification>? categories in (IReadOnlyList<UpdateClassification>?[])
+        [
             null, [], [null!], [goodCategory with { Id = Guid.Empty.ToString() }], [goodCategory with { Id = "invalid" }],
             [goodCategory with { Name = "" }], [goodCategory with { Name = "invalid\nname" }],
-            [goodCategory, goodCategory with { Id = "{" + goodCategory.Id + "}" }], Enumerable.Repeat(goodCategory, 33).ToArray()
-        })
+            [goodCategory, goodCategory with { Id = "{" + goodCategory.Id + "}" }], [.. Enumerable.Repeat(goodCategory, 33)]
+        ])
         {
             var unrecognized = licensed.Updates[0] with { Behavior = licensed.Updates[0].Behavior! with { Classifications = categories! } };
             Require(!UpdatePlanning.Create(licensed with { Updates = [unrecognized] }, [selection], new(true)).Eligible,
@@ -256,7 +256,7 @@ internal static class UpdateDiscoveryChecks
         var featurePair = featureDiscovery with { Updates = [featureUpdate, second] };
         Require(!UpdatePlanning.Create(featurePair, [selection, new(Guid.Parse(second.Id), second.Revision)], new(true, true)).Eligible,
             "Feature upgrade cannot share an installation plan");
-        foreach (var selections in new[] { new[] { selection, selection }, new[] { selection with { Revision = 3 } } })
+        foreach (var selections in (UpdateSelection[][])[[selection, selection], [selection with { Revision = 3 }]])
         {
             try { UpdatePlanning.Create(licensed, selections, new(true)); throw new Exception("Invalid selection accepted"); }
             catch (ArgumentException) { }

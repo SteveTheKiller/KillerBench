@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Knowledge;
 
 public static class SearchOperationalCorrelation
 {
@@ -12,7 +12,7 @@ public static class SearchOperationalCorrelation
 
         const string name = "Windows Search operational correlation";
         const string boundary = " This bounded correlation does not issue a query or prove indexed-location coverage, result completeness, ranking, freshness, application integration or file accessibility. Historical failures do not establish a current outage. No index, service, file, location, policy, database, query or Search setting changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         if (catalog.Name != "Windows Search catalog" || events.Name != "Recent Windows Search events" ||
             serviceHistory.Name != "Windows Search service failure history")

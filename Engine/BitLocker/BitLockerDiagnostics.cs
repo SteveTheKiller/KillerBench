@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.BitLocker;
 
 public static class BitLockerDiagnostics
 {
@@ -35,7 +35,7 @@ public static class BitLockerDiagnostics
 
     public static IReadOnlyList<WorkflowCheck> Interpret(ToolResult result)
     {
-        WorkflowCheck Unknown() => new("BitLocker", CheckState.Unknown,
+        static WorkflowCheck Unknown() => new("BitLocker", CheckState.Unknown,
             "BitLocker status is unavailable or incomplete. Check elevation and BitLocker support. No protection settings changed.");
         if (result.ExitCode != 0 || result.Truncated || result.TimedOut) return [Unknown()];
         try

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public enum FeatureServiceFailureGroup
 {
@@ -11,7 +11,7 @@ public enum FeatureServiceFailureGroup
 
 public static class FeatureServiceFailureEvents
 {
-    private static readonly IReadOnlyDictionary<FeatureServiceFailureGroup, ExactServiceFailureEventDefinition[]> Definitions =
+    private static readonly Dictionary<FeatureServiceFailureGroup, ExactServiceFailureEventDefinition[]> Definitions =
         new Dictionary<FeatureServiceFailureGroup, ExactServiceFailureEventDefinition[]>
         {
             [FeatureServiceFailureGroup.Time] =
@@ -56,7 +56,7 @@ public static class FeatureServiceFailureEvents
     {
         token.ThrowIfCancellationRequested();
         return await ExactServiceFailureEvents.CheckManyAsync(
-            Enum.GetValues<FeatureServiceFailureGroup>().SelectMany(group => Definitions[group]).ToArray(), token, execute)
+            [.. Enum.GetValues<FeatureServiceFailureGroup>().SelectMany(group => Definitions[group])], token, execute)
             .ConfigureAwait(false);
     }
 

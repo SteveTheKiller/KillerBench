@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Printing;
 
 public static class PrinterEndpointDiagnostics
 {

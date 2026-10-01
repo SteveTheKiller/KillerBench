@@ -1,7 +1,7 @@
 using System.Net.Sockets;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public enum DnsCacheRecoveryOutcome { Blocked, Preview, Verified, Failed, Uncertain, Stopped }
 

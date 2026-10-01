@@ -13,8 +13,8 @@ internal static class FocusedDefenderOperationalCorrelationChecks
         var incomplete = FocusedDefenderOperationalCorrelation.Check(Evidence("Cloud protection", CheckState.Unknown));
         Require(incomplete is { State: CheckState.Unknown, Repair: null } && incomplete.Detail.Contains("1 incomplete"),
             "Incomplete focused Defender evidence takes precedence");
-        Require(FocusedDefenderOperationalCorrelation.Check(Evidence().Skip(1).ToArray()).State == CheckState.Unknown &&
-            FocusedDefenderOperationalCorrelation.Check(Evidence().Append(Evidence()[0]).ToArray()).State == CheckState.Unknown,
+        Require(FocusedDefenderOperationalCorrelation.Check([.. Evidence().Skip(1)]).State == CheckState.Unknown &&
+            FocusedDefenderOperationalCorrelation.Check([.. Evidence().Append(Evidence()[0])]).State == CheckState.Unknown,
             "Missing and duplicate focused Defender identities fail closed");
         try { FocusedDefenderOperationalCorrelation.Check(Evidence(), new CancellationToken(true)); throw new Exception("Defender correlation cancellation ignored"); }
         catch (OperationCanceledException) { }
@@ -32,7 +32,7 @@ internal static class FocusedDefenderOperationalCorrelationChecks
             "Automatic sample submission", "Controlled folder access", "Microsoft Defender threat history", "Microsoft Defender scan history",
             "Recent Microsoft Defender events", "Administrator", "Restart"
         ];
-        return names.Select(name => new WorkflowCheck(name, name == changed ? state : CheckState.Information, "fixture")).ToArray();
+        return [.. names.Select(name => new WorkflowCheck(name, name == changed ? state : CheckState.Information, "fixture"))];
     }
     private static void Require(bool condition, string message) { if (!condition) throw new Exception(message); }
 }

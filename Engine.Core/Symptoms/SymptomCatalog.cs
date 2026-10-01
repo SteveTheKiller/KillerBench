@@ -1,4 +1,4 @@
-namespace KillerBench.Engine.Core;
+namespace KillerBench.Engine.Core.Symptoms;
 
 /// <summary>A user-facing problem statement, the entry point for triage. Ids are lower-case dotted identifiers such as printing.nothing-prints.</summary>
 public sealed record Symptom(string Id, string Title, string Area, string Description)
@@ -54,11 +54,11 @@ public sealed record SymptomCatalog(int SchemaVersion, string Id, int Revision, 
     {
         if (string.IsNullOrWhiteSpace(query)) return [];
         string needle = query.Trim();
-        return Symptoms
+        return [.. Symptoms
             .Select(symptom => (symptom, score: Score(symptom, needle)))
             .Where(pair => pair.score > 0)
             .OrderByDescending(pair => pair.score).ThenBy(pair => pair.symptom.Id, StringComparer.Ordinal)
-            .Take(Math.Max(1, limit)).Select(pair => pair.symptom).ToArray();
+            .Take(Math.Max(1, limit)).Select(pair => pair.symptom)];
     }
 
     private static int Score(Symptom symptom, string needle)

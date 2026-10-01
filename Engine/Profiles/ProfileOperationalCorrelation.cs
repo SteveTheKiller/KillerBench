@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Profiles;
 
 public static class ProfileDependencyAssessment
 {
@@ -35,7 +35,7 @@ public static class ProfileOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Profile review conclusion";
         const string boundary = " Age and snapshot checks do not prove that profile data is backed up, restorable, unused or safe to remove. No profile, folder, registry key, account, service, task, credential, policy or file is changed, and no removal is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
         if (inventory.Name != "Profile inventory" || registrations.Name != "Profile registrations" ||
             dependencies.Name != "Profile account dependencies")
             return Unknown("Profile evidence carried an unexpected identity.");

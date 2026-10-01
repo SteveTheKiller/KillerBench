@@ -10,7 +10,7 @@ internal static class ServiceDependencyConfigurationChecks
             new("left", "Left", "Running", "Manual", false, "Own Process"),
             new("right", "Right", "Running", "Manual", false, "Own Process")
         ]);
-        ServiceDependencyConfigurationSnapshot Snapshot(params ServiceDependencyConfigurationEntry[] entries) => new(true, entries);
+        static ServiceDependencyConfigurationSnapshot Snapshot(params ServiceDependencyConfigurationEntry[] entries) => new(true, entries);
         var clear = ServiceDependencyConfigurationDiagnostics.Assess(installed: installed, snapshot: Snapshot(
             new("root", true, ["left", "right"], [], false), new("left", true, [], [], true), new("right", true, [], [], false)));
         Require(clear.State == CheckState.Information && clear.Repair is null && clear.Detail.Contains("2 direct service dependency references", StringComparison.Ordinal) &&

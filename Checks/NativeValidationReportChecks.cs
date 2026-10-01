@@ -7,7 +7,7 @@ internal static class NativeValidationReportChecks
         var scenario = NativeValidationCatalog.Find("windows.system-files")!.Scenarios.Single(item => item.Kind == NativeValidationScenarioKind.Healthy);
         var record = new NativeValidationRecord(NativeValidationEvidence.SchemaVersion, scenario.Id, "windows.system-files", 1,
             NativeValidationOutcome.Passed, "Windows 11 Pro", "24H2", "26100.1", "x64", "0.1.0", DateTimeOffset.UtcNow.AddMinutes(-1),
-            scenario.RequiredArtifacts.Select((kind, index) => new NativeValidationArtifact(kind, "artifact-" + index + ".json", new string('a', 64))).ToArray(),
+            [.. scenario.RequiredArtifacts.Select((kind, index) => new NativeValidationArtifact(kind, "artifact-" + index + ".json", new string('a', 64)))],
             "<script>must not render</script>");
         var coverage = NativeValidationEvidence.Summarize([record]);
         string html = NativeValidationReport.BuildHtml(coverage, "dark", "orange");

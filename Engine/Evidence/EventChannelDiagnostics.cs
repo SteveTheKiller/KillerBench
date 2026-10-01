@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Evidence;
 
 public static class EventChannelDiagnostics
 {

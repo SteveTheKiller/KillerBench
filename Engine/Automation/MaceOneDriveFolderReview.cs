@@ -1,7 +1,7 @@
 using Microsoft.Win32;
 using System.Runtime.Versioning;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Automation;
 
 public sealed record MaceKnownFolderObservation(string Folder, bool UnderRegisteredOneDriveRoot);
 
@@ -25,24 +25,24 @@ public static class MaceOneDriveFolderReview
         if (!Enum.IsDefined(scope)) throw new ArgumentOutOfRangeException(nameof(scope));
         token.ThrowIfCancellationRequested();
         if (scope == MaceScope.AllUsers)
-            return new(0, Array.Empty<MaceKnownFolderObservation>(), false,
+            return new(0, [], false,
                 "All-user folder-location review does not load other users' registry hives. Current-account paths were not substituted for all-user evidence.");
         if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("OneDrive folder-location review requires Windows.");
         try
         {
             var roots = ReadRoots(token, out bool complete);
             var folders = new Dictionary<string, string?>(StringComparer.Ordinal);
-            foreach (var definition in KnownFolders)
+            foreach (var (name, folder) in KnownFolders)
             {
                 token.ThrowIfCancellationRequested();
-                folders[definition.Name] = Environment.GetFolderPath(definition.Folder,
+                folders[name] = Environment.GetFolderPath(folder,
                     Environment.SpecialFolderOption.DoNotVerify);
             }
             return Analyze(scope, roots, folders, complete, token);
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or System.Security.SecurityException)
         {
-            return new(0, Array.Empty<MaceKnownFolderObservation>(), false,
+            return new(0, [], false,
                 "Current-account OneDrive folder-location evidence was unavailable: " + error.GetType().Name + ".");
         }
     }
@@ -56,7 +56,7 @@ public static class MaceOneDriveFolderReview
         if (!Enum.IsDefined(scope)) throw new ArgumentOutOfRangeException(nameof(scope));
         token.ThrowIfCancellationRequested();
         if (scope == MaceScope.AllUsers)
-            return new(0, Array.Empty<MaceKnownFolderObservation>(), false,
+            return new(0, [], false,
                 "All-user folder-location review does not load other users' registry hives. Current-account paths were not substituted for all-user evidence.");
 
         bool complete = sourceComplete && roots.Count <= 32;
@@ -87,7 +87,7 @@ public static class MaceOneDriveFolderReview
     }
 
     [SupportedOSPlatform("windows")]
-    private static IReadOnlyList<string> ReadRoots(CancellationToken token, out bool complete)
+    private static List<string> ReadRoots(CancellationToken token, out bool complete)
     {
         complete = true;
         var roots = new List<string>();

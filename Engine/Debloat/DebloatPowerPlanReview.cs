@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Debloat;
 
 public sealed record DebloatPowerPlan(string Id, string Name, bool Active);
 public sealed record DebloatPowerPlanEvidence(IReadOnlyList<DebloatPowerPlan> Plans,

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public static class SecurityCenterOperationalCorrelation
 {
@@ -15,7 +15,7 @@ public static class SecurityCenterOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Windows Security Center readiness";
         const string boundary = " This bounded conclusion does not interpret raw provider state or establish antivirus presence, protection state, signature freshness, notification delivery, registration ownership or effective policy. It does not start a service, scan the system, update signatures, change a provider registration, protection setting, exclusion, notification or policy, or select a repair.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var selected = new List<WorkflowCheck>(RequiredNames.Length);
         foreach (string required in RequiredNames)

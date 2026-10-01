@@ -34,7 +34,7 @@ internal static class AdapterBindingChecks
             Evidence([Adapter(), Adapter(name: "ethernet", index: 8)]), Evidence([Adapter(), Adapter(name: "Wi-Fi", index: 7)]),
             Evidence([Adapter(bindings: [Binding("ms_tcpip", true), Binding("ms_tcpip", false)])]),
             Evidence([Adapter(bindings: [Binding("vendor_filter", true)])]),
-            Evidence(Enumerable.Range(0, 257).Select(i => Adapter("Adapter " + i, i + 1, "Disconnected", false, [])).ToArray()),
+            Evidence([.. Enumerable.Range(0, 257).Select(i => Adapter("Adapter " + i, i + 1, "Disconnected", false, []))]),
             new ToolResult(0, "{}", "", false), new ToolResult(0, "not json", "", false),
             clearEvidence with { ExitCode = 5 }, clearEvidence with { Error = "denied" },
             clearEvidence with { TimedOut = true }, clearEvidence with { Truncated = true }

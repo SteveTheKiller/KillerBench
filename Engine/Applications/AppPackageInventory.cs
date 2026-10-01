@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Applications;
 
 public enum AppPackageScope { CurrentAccount, AllUsers }
 public sealed record AppPackage(string Name, string FullName, string FamilyName, bool Framework, bool NonRemovable)
@@ -79,8 +79,8 @@ public static class AppPackageInventory
                 }
                 catch (Exception error) when (error is InvalidOperationException or KeyNotFoundException) { complete = false; }
             }
-            return new(scope, packages.Where(package => !ambiguous.Contains(package.FullName))
-                .OrderBy(package => package.FullName, StringComparer.Ordinal).ToArray(), complete, evidence);
+            return new(scope, [.. packages.Where(package => !ambiguous.Contains(package.FullName))
+                .OrderBy(package => package.FullName, StringComparer.Ordinal)], complete, evidence);
         }
         catch (Exception error) when (error is JsonException or InvalidOperationException or KeyNotFoundException) { return new(scope, [], false, evidence); }
     }

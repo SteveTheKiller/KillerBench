@@ -13,6 +13,17 @@ internal static class TaskRegistrationChecks
         public Task<TaskRegistrationVerification> ReadBackAsync(ScheduledTaskIdentity target, CancellationToken token) =>
             Reply(new TaskRegistrationVerification(plan, new(0, "Fixture", "", false)), ++calls);
     }
+    private static readonly string[] ExpectedProgressMessages =
+    [
+        "Checking the exact task target, account and signed executable.",
+        "Saving the pending recovery record before task creation.",
+        "Repeating exact registration eligibility after preparation.",
+        "Creating one disabled task definition with create-only semantics.",
+        "Reading back the exact disabled task definition.",
+        "Saving verified registration evidence.",
+        "Disabled task definition verified. The task was not run."
+    ];
+    private static readonly string[] ExpectedReviewStates = ["DefinitionVerified", "Pending"];
     internal static void Run()
     {
         var plan = new ScheduledTaskPlan(new("\\Fixture\\", "Create"), new("C:\\Fixture\\tool.exe", ""),
@@ -28,16 +39,8 @@ internal static class TaskRegistrationChecks
         var progressHost = new Host(plan, "success");
         var progressResult = TaskRegistration.RunAsync(plan, progressHost, true, journal: new Journal(),
             progress: executionProgress).GetAwaiter().GetResult();
-        if (progressResult.Status != "Registered" || !executionProgress.Messages.SequenceEqual(new[]
-        {
-            "Checking the exact task target, account and signed executable.",
-            "Saving the pending recovery record before task creation.",
-            "Repeating exact registration eligibility after preparation.",
-            "Creating one disabled task definition with create-only semantics.",
-            "Reading back the exact disabled task definition.",
-            "Saving verified registration evidence.",
-            "Disabled task definition verified. The task was not run."
-        })) throw new Exception("Task registration did not report the deterministic guarded stage sequence.");
+        if (progressResult.Status != "Registered" || !executionProgress.Messages.SequenceEqual(ExpectedProgressMessages))
+            throw new Exception("Task registration did not report the deterministic guarded stage sequence.");
         var throwingProgressResult = TaskRegistration.RunAsync(plan, new Host(plan, "success"), true,
             journal: new Journal(), progress: new ThrowingProgress()).GetAwaiter().GetResult();
         if (throwingProgressResult.Status != "Registered")
@@ -199,7 +202,7 @@ internal static class TaskRegistrationChecks
         if (TaskJournalReview.ReadPairAsync(intentPath, Directory.GetFiles(otherRoot, "*.verified.json").Single()).GetAwaiter().GetResult().State != "Unverified")
             throw new Exception("Completion from a different attempt verified.");
         var reviews = new[] { intentPath, completionPath }.Select(path => TaskJournalReview.ReadAsync(path).GetAwaiter().GetResult()).ToArray();
-        if (!reviews.Select(review => review.State).Order().SequenceEqual(new[] { "DefinitionVerified", "Pending" }) ||
+        if (!reviews.Select(review => review.State).Order().SequenceEqual(ExpectedReviewStates) ||
             reviews.Any(review => review.RecordedEvidence is null)) throw new Exception("Journal review lost valid historical evidence.");
         foreach (var target in new[] { plan, plan with { Identity = new("\\fixture\\", "CREATE") } })
         {

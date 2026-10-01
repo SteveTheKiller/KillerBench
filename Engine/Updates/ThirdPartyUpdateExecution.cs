@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record ThirdPartyUpdateSelection(string Id, string Source, string TargetVersion);
 public sealed record ThirdPartyUpdatePlan(ThirdPartyUpdateSelection Selection, bool Eligible, IReadOnlyList<string> Blockers)

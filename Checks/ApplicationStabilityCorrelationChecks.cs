@@ -20,7 +20,7 @@ internal static class ApplicationStabilityCorrelationChecks
         Require(ApplicationStabilityCorrelation.Check(Info("Wrong name"), [Info("Reliability history")]).State == CheckState.Unknown &&
             ApplicationStabilityCorrelation.Check(Info("Recent application errors"), []).State == CheckState.Unknown &&
             ApplicationStabilityCorrelation.Check(Info("Recent application errors"),
-                Enumerable.Range(0, 66).Select(index => Info("Reliability " + index)).ToArray()).State == CheckState.Unknown,
+                [.. Enumerable.Range(0, 66).Select(index => Info("Reliability " + index))]).State == CheckState.Unknown,
             "Unexpected, empty and oversized application history inputs fail closed");
 
         try { ApplicationStabilityCorrelation.Check(Info("Recent application errors"), [Info("Reliability history")], new CancellationToken(true)); throw new Exception("Application stability cancellation ignored"); }

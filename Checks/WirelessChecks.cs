@@ -11,7 +11,7 @@ internal static class WirelessChecks
     {
         string service = ServiceRecovery.ServiceName(kind)!;
         Require(WorkflowCatalog.Find(key)?.Kind == workflow &&
-            Workflows.Scopes(workflow).SequenceEqual(new[] { kind }) &&
+            Workflows.Scopes(workflow).SequenceEqual([kind]) &&
             RecipeCatalog.ForWorkflow(WorkflowKind.CommonProblems).Any(recipe => recipe.Action == kind),
             "Wireless recovery remains available in its focused workflow and Full system scan");
         var stopped = new ToolResult(0, "SERVICE_NAME: " + service + "\nSTATE : 1 STOPPED", "", false);

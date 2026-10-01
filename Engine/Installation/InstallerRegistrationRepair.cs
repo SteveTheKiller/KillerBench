@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Installation;
 
 public enum InstallerRegistrationRepairOutcome { Preview, Blocked, Verified, RestartRequired, Failed, Uncertain, Stopped }
 public enum InstallerRegistrationRepairAction { None, Reconcile, Repair }

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Audio;
 
 public static class AudioDeviceDiagnostics
 {

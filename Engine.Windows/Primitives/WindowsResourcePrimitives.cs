@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Primitives;
 
 /// <summary>Reports the process with the largest working set as a percentage of physical memory. Raw lists the top five by image name only.</summary>
 public sealed class WindowsTopMemoryProbe : IProbePrimitive
@@ -37,8 +37,11 @@ public sealed class WindowsTopMemoryProbe : IProbePrimitive
 }
 
 /// <summary>Samples total physical disk busy time through typeperf. Value is the average percent over the sample.</summary>
-public sealed class WindowsDiskBusyProbe : IProbePrimitive
+public sealed partial class WindowsDiskBusyProbe : IProbePrimitive
 {
+    [GeneratedRegex("^\"[^\"]+\",\"([0-9.]+)\"$", RegexOptions.CultureInvariant)]
+    private static partial Regex SamplePattern();
+
     public string Name => "disk.busy-percent";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [new("samples", false, "Number of one-second samples, 2 through 10 (default 3)") { Pattern = "[2-9]|10" }];
 
@@ -60,7 +63,7 @@ public sealed class WindowsDiskBusyProbe : IProbePrimitive
         var values = new List<double>();
         foreach (string line in result.Output.Split('\n'))
         {
-            var match = Regex.Match(line.Trim(), "^\"[^\"]+\",\"([0-9.]+)\"$", RegexOptions.CultureInvariant);
+            var match = SamplePattern().Match(line.Trim());
             if (match.Success && double.TryParse(match.Groups[1].Value, NumberStyles.Float, CultureInfo.InvariantCulture, out double value)) values.Add(value);
         }
         if (values.Count == 0) return PrimitiveResult.Unavailable("typeperf output held no samples.");
@@ -71,8 +74,14 @@ public sealed class WindowsDiskBusyProbe : IProbePrimitive
 }
 
 /// <summary>Counts VSS writers that are not in a stable state. Value is the count; Raw lists writer names and states.</summary>
-public sealed class WindowsVssWritersProbe : IProbePrimitive
+public sealed partial class WindowsVssWritersProbe : IProbePrimitive
 {
+    [GeneratedRegex(@"(?m)^Writer name:\s*'([^']+)'", RegexOptions.CultureInvariant)]
+    private static partial Regex WriterNamePattern();
+
+    [GeneratedRegex(@"(?m)^\s*State:\s*\[(\d+)\]\s*(.+?)\s*$", RegexOptions.CultureInvariant)]
+    private static partial Regex WriterStatePattern();
+
     public string Name => "vss.unstable-writers";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [];
 
@@ -89,8 +98,8 @@ public sealed class WindowsVssWritersProbe : IProbePrimitive
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
         if (result.TimedOut) return new PrimitiveResult(false, null, raw, "vssadmin timed out.") { TimedOut = true };
         if (result.ExitCode != 0) return PrimitiveResult.Unavailable("vssadmin exited with " + result.ExitCode + "; administrator access is required.");
-        var names = Regex.Matches(result.Output, @"(?m)^Writer name:\s*'([^']+)'", RegexOptions.CultureInvariant);
-        var states = Regex.Matches(result.Output, @"(?m)^\s*State:\s*\[(\d+)\]\s*(.+?)\s*$", RegexOptions.CultureInvariant);
+        var names = WriterNamePattern().Matches(result.Output);
+        var states = WriterStatePattern().Matches(result.Output);
         if (names.Count == 0 || names.Count != states.Count) return PrimitiveResult.Unavailable("vssadmin output did not pair every writer with a state.");
         int unstable = 0;
         var summary = new StringBuilder();
@@ -107,8 +116,17 @@ public sealed class WindowsVssWritersProbe : IProbePrimitive
 }
 
 /// <summary>Reads shadow storage use for each volume. Value is the highest used percentage of its maximum; unlimited maximums count as 0.</summary>
-public sealed class WindowsShadowStorageProbe : IProbePrimitive
+public sealed partial class WindowsShadowStorageProbe : IProbePrimitive
 {
+    [GeneratedRegex(@"(?m)^\s*Used Shadow Copy Storage space:\s*(.+?)\s*$", RegexOptions.CultureInvariant)]
+    private static partial Regex UsedStoragePattern();
+
+    [GeneratedRegex(@"(?m)^\s*Maximum Shadow Copy Storage space:\s*(.+?)\s*$", RegexOptions.CultureInvariant)]
+    private static partial Regex MaximumStoragePattern();
+
+    [GeneratedRegex(@"^([0-9]+(?:\.[0-9]+)?)\s*(bytes|KB|MB|GB|TB)", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
+    private static partial Regex SizePattern();
+
     public string Name => "vss.shadowstorage-percent";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [];
 
@@ -127,8 +145,8 @@ public sealed class WindowsShadowStorageProbe : IProbePrimitive
         if (result.ExitCode != 0) return PrimitiveResult.Unavailable("vssadmin exited with " + result.ExitCode + "; administrator access is required.");
         if (result.Output.Contains("No items found", StringComparison.OrdinalIgnoreCase))
             return new PrimitiveResult(true, "0", raw) { Detail = "No shadow storage associations exist." };
-        var used = Regex.Matches(result.Output, @"(?m)^\s*Used Shadow Copy Storage space:\s*(.+?)\s*$", RegexOptions.CultureInvariant);
-        var maximum = Regex.Matches(result.Output, @"(?m)^\s*Maximum Shadow Copy Storage space:\s*(.+?)\s*$", RegexOptions.CultureInvariant);
+        var used = UsedStoragePattern().Matches(result.Output);
+        var maximum = MaximumStoragePattern().Matches(result.Output);
         if (used.Count == 0 || used.Count != maximum.Count) return PrimitiveResult.Unavailable("vssadmin output did not pair used and maximum storage for every association.");
         int highest = 0;
         var summary = new StringBuilder();
@@ -150,7 +168,7 @@ public sealed class WindowsShadowStorageProbe : IProbePrimitive
     private static bool Bytes(string text, out double bytes)
     {
         bytes = 0;
-        var match = Regex.Match(text, @"^([0-9]+(?:\.[0-9]+)?)\s*(bytes|KB|MB|GB|TB)", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+        var match = SizePattern().Match(text);
         if (!match.Success || !double.TryParse(match.Groups[1].Value, NumberStyles.Float, CultureInfo.InvariantCulture, out double number)) return false;
         double scale = match.Groups[2].Value.ToUpperInvariant() switch { "KB" => 1024, "MB" => 1048576, "GB" => 1073741824, "TB" => 1099511627776, _ => 1 };
         bytes = number * scale;

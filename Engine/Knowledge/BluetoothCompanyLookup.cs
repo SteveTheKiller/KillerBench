@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Knowledge;
 
 public sealed record BluetoothCompanyResult(string PackId, long Revision, string CompanyId,
     ushort NumericId, KnowledgeEntry? Match, string Detail);

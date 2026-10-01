@@ -26,34 +26,34 @@ internal static class PrintSpoolDirectoryReconciliationChecks
         }
 
         BootStamp? boot = firstBoot;
-        var sameBoot = await Pending("same-boot", RepairKind.PrintSpoolDirectory, () => boot);
-        var sameResult = await PrintSpoolDirectoryRecovery.ReconcileAsync(sameBoot.Store, () => Snapshot(true));
+        var (sameBootStore, _) = await Pending("same-boot", RepairKind.PrintSpoolDirectory, () => boot);
+        var sameResult = await PrintSpoolDirectoryRecovery.ReconcileAsync(sameBootStore, () => Snapshot(true));
         Require(sameResult.Outcome == PrintSpoolDirectoryReconciliationOutcome.Inconclusive &&
-            (await sameBoot.Store.ReadAsync())?.Pending == true,
+            (await sameBootStore.ReadAsync())?.Pending == true,
             "Same-boot evidence cannot clear or repeat an interrupted directory operation");
 
         boot = firstBoot;
-        var verified = await Pending("verified", RepairKind.PrintSpoolDirectory, () => boot);
+        var (verifiedStore, _) = await Pending("verified", RepairKind.PrintSpoolDirectory, () => boot);
         boot = new(101, firstBoot.StartedUtc.AddMinutes(5));
-        var verifiedResult = await PrintSpoolDirectoryRecovery.ReconcileAsync(verified.Store, () => Snapshot(true));
+        var verifiedResult = await PrintSpoolDirectoryRecovery.ReconcileAsync(verifiedStore, () => Snapshot(true));
         Require(verifiedResult.Outcome == PrintSpoolDirectoryReconciliationOutcome.Verified &&
-            (await verified.Store.ReadAsync())?.Pending == false,
+            (await verifiedStore.ReadAsync())?.Pending == false,
             "Later-boot exact directory evidence resolves the pending guard without repeating creation");
 
         boot = firstBoot;
-        var absent = await Pending("not-applied", RepairKind.PrintSpoolDirectory, () => boot);
+        var (absentStore, _) = await Pending("not-applied", RepairKind.PrintSpoolDirectory, () => boot);
         boot = new(102, firstBoot.StartedUtc.AddMinutes(5));
-        var absentResult = await PrintSpoolDirectoryRecovery.ReconcileAsync(absent.Store, () => Snapshot(false));
+        var absentResult = await PrintSpoolDirectoryRecovery.ReconcileAsync(absentStore, () => Snapshot(false));
         Require(absentResult.Outcome == PrintSpoolDirectoryReconciliationOutcome.NotApplied &&
-            (await absent.Store.ReadAsync())?.Pending == false,
+            (await absentStore.ReadAsync())?.Pending == false,
             "Later-boot exact absent evidence records no applied change without retrying it");
 
         boot = firstBoot;
-        var unrelated = await Pending("unrelated", RepairKind.SystemFiles, () => boot);
+        var (unrelatedStore, _) = await Pending("unrelated", RepairKind.SystemFiles, () => boot);
         boot = new(103, firstBoot.StartedUtc.AddMinutes(5));
-        var unrelatedResult = await PrintSpoolDirectoryRecovery.ReconcileAsync(unrelated.Store, () => throw new Exception("reader dispatched"));
+        var unrelatedResult = await PrintSpoolDirectoryRecovery.ReconcileAsync(unrelatedStore, () => throw new Exception("reader dispatched"));
         Require(unrelatedResult.Outcome == PrintSpoolDirectoryReconciliationOutcome.NoPending &&
-            (await unrelated.Store.ReadAsync())?.Pending == true,
+            (await unrelatedStore.ReadAsync())?.Pending == true,
             "Spool-directory reconciliation preserves unrelated repair guards without reading directory state");
 
         Console.WriteLine("PASS: interrupted print spool directory recovery requires later-boot exact evidence and never repeats creation; scratch records only.");

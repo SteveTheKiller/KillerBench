@@ -26,7 +26,7 @@ internal static class ServicingChainCorrelationChecks
             incomplete.Detail.Contains("cannot be fully correlated", StringComparison.Ordinal),
             "Incomplete current evidence takes precedence over attention and cannot select repair");
 
-        var malformed = ServicingChainCorrelation.Check(States().Take(5).ToArray(), Dll(), Histories());
+        var malformed = ServicingChainCorrelation.Check([.. States().Take(5)], Dll(), Histories());
         var duplicateHistory = Histories();
         duplicateHistory[5] = duplicateHistory[0];
         var duplicate = ServicingChainCorrelation.Check(States(), Dll(), duplicateHistory);
@@ -44,8 +44,8 @@ internal static class ServicingChainCorrelationChecks
     }
 
     private static WorkflowCheck[] States(int changed = -1, CheckState state = CheckState.Information) =>
-        ServicingServiceStateDiagnostics.Services.Select((service, index) => new WorkflowCheck(service.DisplayName + " state",
-            index == changed ? state : CheckState.Information, "fixture")).ToArray();
+        [.. ServicingServiceStateDiagnostics.Services.Select((service, index) => new WorkflowCheck(service.DisplayName + " state",
+            index == changed ? state : CheckState.Information, "fixture"))];
 
     private static WorkflowCheck Dll(CheckState state = CheckState.Information) =>
         new("Windows Update service DLLs", state, "fixture");

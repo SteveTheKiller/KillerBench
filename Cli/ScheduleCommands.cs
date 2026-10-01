@@ -14,9 +14,9 @@ internal static class ScheduleCommands
             TaskScheduleOptions options = args[1] switch
             {
                 "daily" when args.Length == 5 => new(TaskScheduleKind.Daily, time),
-                "weekly" when args.Length == 6 => new(TaskScheduleKind.Weekly, time, args[5].Split(',').Select(ParseDay).ToArray()),
+                "weekly" when args.Length == 6 => new(TaskScheduleKind.Weekly, time, [.. args[5].Split(',').Select(ParseDay)]),
                 "monthly" when args.Length == 6 && args[5] == "last" => new(TaskScheduleKind.Monthly, time, LastDay: true),
-                "monthly" when args.Length == 6 => new(TaskScheduleKind.Monthly, time, MonthDays: args[5].Split(',').Select(value => int.Parse(value, CultureInfo.InvariantCulture)).ToArray()),
+                "monthly" when args.Length == 6 => new(TaskScheduleKind.Monthly, time, MonthDays: [.. args[5].Split(',').Select(value => int.Parse(value, CultureInfo.InvariantCulture))]),
                 _ => throw new ArgumentException("Choose daily, weekly with weekdays, or monthly with month days or last.")
             };
             var zone = TimeZoneInfo.FindSystemTimeZoneById(args[4]);

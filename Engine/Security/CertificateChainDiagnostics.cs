@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public sealed record CertificateChainObservation(string Store, string Thumbprint, string Subject,
     bool Trusted, IReadOnlyList<string> Statuses);
@@ -130,7 +130,7 @@ public static class CertificateChainDiagnostics
                     chain.ChainPolicy.UrlRetrievalTimeout = TimeSpan.Zero;
                     chain.ChainPolicy.VerificationFlags = X509VerificationFlags.NoFlag;
                     bool trusted = chain.Build(certificate);
-                    string[] statuses = chain.ChainStatus.Select(item => item.Status.ToString()).Distinct(StringComparer.Ordinal).ToArray();
+                    string[] statuses = [.. chain.ChainStatus.Select(item => item.Status.ToString()).Distinct(StringComparer.Ordinal)];
                     if (!trusted && statuses.Length == 0) statuses = [X509ChainStatusFlags.PartialChain.ToString()];
                     observations.Add(new(location + "/My", certificate.Thumbprint ?? "", certificate.Subject ?? "", trusted, statuses));
                 }

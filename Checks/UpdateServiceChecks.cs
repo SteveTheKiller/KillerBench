@@ -6,7 +6,7 @@ internal static class UpdateServiceChecks
     {
         const string windowsUpdate = "9482f4b4-e343-43b6-b170-9a65bc822c77";
         const string microsoftUpdate = "7971f918-a847-4430-9279-4a52d1efe18d";
-        ToolResult Evidence(string services, int total = 1) => new(0, $"{{\"total\":{total},\"services\":{services}}}", "", false);
+        static ToolResult Evidence(string services, int total = 1) => new(0, $"{{\"total\":{total},\"services\":{services}}}", "", false);
 
         var step = UpdateServiceDiagnostics.Step();
         Require(step.Verification && step.Tool.EndsWith("powershell.exe", StringComparison.OrdinalIgnoreCase) &&

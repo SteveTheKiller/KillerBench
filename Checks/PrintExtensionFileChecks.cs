@@ -29,7 +29,7 @@ internal static class PrintExtensionFileChecks
         {
             Evidence([Row(kind: "Port")]), Evidence([Row(file: @"C:\bad.dll")]), Evidence([Row(exists: false)]),
             Evidence([Row(), Row(name: "WINPRINT")]), Evidence([Row(signature: "Unavailable")]),
-            Evidence(Enumerable.Range(0, 385).Select(index => Row(name: "Extension " + index)).ToArray()),
+            Evidence([.. Enumerable.Range(0, 385).Select(index => Row(name: "Extension " + index))]),
             new ToolResult(0, "{}", "", false), new ToolResult(0, "not json", "", false),
             clearEvidence with { ExitCode = 5 }, clearEvidence with { TimedOut = true }, clearEvidence with { Truncated = true }, clearEvidence with { Error = "denied" }
         })

@@ -38,11 +38,11 @@ public partial class MainWindow
             ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "0.1.0");
         AboutReleaseDateBlock.Text = Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyMetadataAttribute>()
             .FirstOrDefault(attribute => attribute.Key == "ReleaseDate")?.Value ?? "";
-        var signer = GetSignerInfo();
-        AboutPublisherBlock.Text = signer.Valid ? signer.Subject : "(not signed or chain failed)";
-        AboutThumbprintBlock.Text = signer.Thumbprint;
+        var (signerValid, signerSubject, signerThumbprint) = GetSignerInfo();
+        AboutPublisherBlock.Text = signerValid ? signerSubject : "(not signed or chain failed)";
+        AboutThumbprintBlock.Text = signerThumbprint;
         AboutAkaRun.Text = (char)0x201C + "Steve the Killer" + (char)0x201D;
-        AboutAkaBlock.Visibility = signer.Valid && signer.Subject.Contains(SignerName, StringComparison.OrdinalIgnoreCase)
+        AboutAkaBlock.Visibility = signerValid && signerSubject.Contains(SignerName, StringComparison.OrdinalIgnoreCase)
             ? Visibility.Visible : Visibility.Collapsed;
         AboutSha256Block.Text = "computing...";
         AboutDatabaseUpdate.IsEnabled = false;
@@ -216,6 +216,6 @@ public partial class MainWindow
 
     private static readonly Guid WinTrustGenericVerify = new("00AAC56B-CD44-11d0-8CC2-00C04FC295EE");
 
-    [DllImport("wintrust.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
-    private static extern uint WinVerifyTrust(IntPtr window, ref Guid action, IntPtr data);
+    [LibraryImport("wintrust.dll")]
+    private static partial uint WinVerifyTrust(IntPtr window, ref Guid action, IntPtr data);
 }

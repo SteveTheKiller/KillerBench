@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public enum DefenderRefreshReconciliationOutcome { NoPending, Verified, NotApplied, Inconclusive }
 public sealed record DefenderRefreshReconciliationResult(DefenderRefreshReconciliationOutcome Outcome, string Detail);

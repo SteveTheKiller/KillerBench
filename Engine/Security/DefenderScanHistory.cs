@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public sealed record DefenderScanHistoryObservation(DateTimeOffset CollectedUtc, bool ScanInProgress,
     DateTimeOffset? QuickStartUtc, DateTimeOffset? QuickEndUtc, int? QuickAgeDays, bool QuickOverdue,

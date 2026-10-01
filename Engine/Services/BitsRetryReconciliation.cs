@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public sealed record BitsRetryPendingRecord(Guid JobId, DateTimeOffset Started, BitsInventoryResult Before)
 {

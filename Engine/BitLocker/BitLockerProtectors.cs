@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.BitLocker;
 
 public sealed record BitLockerProtector(Guid Id, string Type);
 public sealed record BitLockerProtectorInventory(string Volume, IReadOnlyList<BitLockerProtector> Protectors, bool Complete);

@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Automation;
 
 public sealed record TaskJournalReviewResult(string State, string Detail, JsonElement? RecordedEvidence);
 

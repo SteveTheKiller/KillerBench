@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public enum DefenderScanType { Quick, Full }
 public enum DefenderScanOutcome { Preview, Started, Verified, Blocked, Inconclusive }
@@ -26,8 +26,8 @@ public static class DefenderScanExecution
         CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(host);
-        var eligibility = await InspectAsync(type, host, token).ConfigureAwait(false);
-        return new(type, eligibility.Eligible ? DefenderScanOutcome.Preview : DefenderScanOutcome.Blocked, eligibility.Detail);
+        var (eligible, detail, _) = await InspectAsync(type, host, token).ConfigureAwait(false);
+        return new(type, eligible ? DefenderScanOutcome.Preview : DefenderScanOutcome.Blocked, detail);
     }
 
     public static async Task<DefenderScanResult> ExecuteAsync(string folder, DefenderScanType type, bool confirmed,
@@ -40,10 +40,10 @@ public static class DefenderScanExecution
         if (File.Exists(pendingPath)) return new(type, DefenderScanOutcome.Blocked,
             "A previous Defender scan request is unresolved. Reconcile it before starting another scan.", pendingPath);
 
-        var first = await InspectAsync(type, host, token).ConfigureAwait(false);
-        if (!first.Eligible) return new(type, DefenderScanOutcome.Blocked, first.Detail);
+        var (firstEligible, firstDetail, firstHistory) = await InspectAsync(type, host, token).ConfigureAwait(false);
+        if (!firstEligible) return new(type, DefenderScanOutcome.Blocked, firstDetail);
         var pending = new DefenderScanPending(1, Environment.MachineName, type, DateTimeOffset.UtcNow,
-            Completion(first.History!, type), false);
+            Completion(firstHistory!, type), false);
         Directory.CreateDirectory(folder);
         await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
 

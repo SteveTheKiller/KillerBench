@@ -4,7 +4,7 @@ internal static class ServicingPackageChecks
 {
     public static void Run()
     {
-        ToolResult Evidence(string complete = "true", string packages = "[]") =>
+        static ToolResult Evidence(string complete = "true", string packages = "[]") =>
             new(0, $"{{\"complete\":{complete},\"packages\":{packages}}}", "", false);
         var stable = Evidence(packages: "[{\"identity\":\"Package_for_KB000000~31bf~amd64~~1.0.0.0\",\"state\":\"Installed\",\"releaseType\":\"SecurityUpdate\"},{\"identity\":\"Foundation-Package~31bf~amd64~~10.0.0.0\",\"state\":\"Superseded\",\"releaseType\":\"Foundation\"}]");
         var stableResult = ServicingPackageDiagnostics.Interpret(stable);

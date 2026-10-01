@@ -58,8 +58,8 @@ internal static class ServiceDependencyChecks
                 "Never-started code preserves startup guards and still requires dependency evidence");
         }
         var managementPlan = Repairs.Plan(RepairKind.WindowsManagement);
-        Require(managementPlan.Steps.Count == 2 && managementPlan.Steps[0].Arguments.SequenceEqual(new[] { "start", "winmgmt" }) &&
-            managementPlan.Steps[1].Verification && managementPlan.Steps[1].Arguments.SequenceEqual(new[] { "query", "winmgmt" }),
+        Require(managementPlan.Steps.Count == 2 && managementPlan.Steps[0].Arguments.SequenceEqual(["start", "winmgmt"]) &&
+            managementPlan.Steps[1].Verification && managementPlan.Steps[1].Arguments.SequenceEqual(["query", "winmgmt"]),
             "WMI availability uses start-only recovery and exact service verification");
         Require(ServiceRecovery.Interpret(RepairKind.WindowsManagement, new(0, "SERVICE_NAME: winmgmt\nSTATE : 1 STOPPED", "", false), 4).Repair is null,
             "Disabled WMI service cannot authorize a start or startup-type change");
@@ -236,7 +236,7 @@ internal static class ServiceDependencyChecks
             "Conflicting duplicate dependency identities cannot authorize recovery");
         Require(ServiceRecovery.AssessDependencies(eligible with { Repair = RepairKind.SystemFiles }, [], true).Repair is null,
             "Dependency assessment cannot preserve an unsupported repair target");
-        Require(ServiceRecovery.AssessDependencies(eligible, Enumerable.Repeat(new ServiceRecovery.Dependency("dependency", 3), 65).ToArray(), true).Repair is null, "Dependency bound blocks oversized input");
+        Require(ServiceRecovery.AssessDependencies(eligible, [.. Enumerable.Repeat(new ServiceRecovery.Dependency("dependency", 3), 65)], true).Repair is null, "Dependency bound blocks oversized input");
         var running = eligible with { State = CheckState.Clear, Repair = null };
         var incompleteEvidence = evidence with { TimedOut = true, Truncated = true, Error = "Fixture provider error" };
         var deferred = ServiceRecovery.DeferredStart(eligible with { State = CheckState.Unknown, Repair = null, Evidence = incompleteEvidence });

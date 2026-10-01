@@ -23,7 +23,8 @@ internal static class EvidenceBatchChecks
         }
         catch (OperationCanceledException) { }
         if (received != 1) throw new Exception("Canceled batch lost its completed result boundary.");
-        foreach (var invalid in new[] { Array.Empty<string>(), Enumerable.Repeat(first, 13).ToArray(), new[] { first, "capture.kbench" } })
+        string[][] invalidBatches = [[], [.. Enumerable.Repeat(first, 13)], [first, "capture.kbench"]];
+        foreach (var invalid in invalidBatches)
         {
             try { await foreach (var item in EvidenceBatch.ReadAsync(invalid)) throw new Exception("Invalid batch dispatched."); }
             catch (ArgumentException) { continue; }

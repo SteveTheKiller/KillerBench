@@ -58,9 +58,9 @@ internal static class KnowledgeActivationChecks
         damaged[12] ^= 1;
         await File.WriteAllBytesAsync(recoverySecond.DataPath, damaged);
         var recovered = await KnowledgeActivation.RecoverAsync(recoveryRoot, publicKey, "fixture-active");
-        var recoveredActive = await KnowledgeActivation.LoadActiveAsync(recoveryRoot, publicKey, "fixture-active");
+        var (recoveredCatalog, _, _) = await KnowledgeActivation.LoadActiveAsync(recoveryRoot, publicKey, "fixture-active");
         Require(recovered.Catalog.Revision == 1 && recovered.DataPath == recoveryFirst.DataPath && recovered.FilesInspected == 2 &&
-            recovered.FilesRejected == 1 && recoveredActive.Catalog.Revision == 1,
+            recovered.FilesRejected == 1 && recoveredCatalog.Revision == 1,
             "Recovery rejects damaged active data and atomically selects the newest retained verified version");
 
         string emptyRecoveryRoot = Path.Combine(scratch, "knowledge-no-recovery");

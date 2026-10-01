@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text;
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Primitives;
 
 /// <summary>Shared parsing for the machine-wide WinHTTP proxy stored in the WinHttpSettings registry value.</summary>
 public static class WindowsWinHttpProxy

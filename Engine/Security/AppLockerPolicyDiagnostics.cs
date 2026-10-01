@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public sealed record AppLockerCollectionStatus(string Collection, string EnforcementMode, int RuleCount);
 
@@ -33,8 +33,8 @@ public static class AppLockerPolicyDiagnostics
     public static IReadOnlyList<WorkflowCheck> Interpret(ToolResult evidence)
     {
         ArgumentNullException.ThrowIfNull(evidence);
-        WorkflowCheck[] unknown = CollectionNames.Select(name => new WorkflowCheck("AppLocker " + name,
-            CheckState.Unknown, "Effective AppLocker policy is unavailable or incomplete. Rule identities, paths, publishers, hashes, users and SIDs were not retained. No application-control policy or rule was changed.", Evidence: evidence)).ToArray();
+        WorkflowCheck[] unknown = [.. CollectionNames.Select(name => new WorkflowCheck("AppLocker " + name,
+            CheckState.Unknown, "Effective AppLocker policy is unavailable or incomplete. Rule identities, paths, publishers, hashes, users and SIDs were not retained. No application-control policy or rule was changed.", Evidence: evidence))];
         if (evidence.ExitCode != 0 || evidence.TimedOut || evidence.Truncated || !string.IsNullOrWhiteSpace(evidence.Error)) return unknown;
         try
         {

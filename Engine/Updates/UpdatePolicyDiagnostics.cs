@@ -2,7 +2,7 @@ using Microsoft.Win32;
 using System.Security;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record UpdatePolicySnapshot(bool Complete,
     object? WUServer = null, object? WUStatusServer = null, object? UseWUServer = null,
@@ -141,15 +141,17 @@ public static class UpdatePolicyDiagnostics
 
     private static string TimingSummary(UpdatePolicySnapshot snapshot, int activeHoursLength)
     {
-        var parts = new List<string>();
-        parts.Add(snapshot.NoAutoUpdate is 1 ? "Automatic updating is disabled by policy." : snapshot.AUOptions switch
-        {
-            2 => "Automatic updates notify before download and installation.",
-            3 => "Automatic updates download automatically and notify before installation.",
-            4 => "Automatic updates download and use a managed installation schedule.",
-            5 => "Local administrators may choose the automatic update mode.",
-            _ => "Automatic update timing is not configured here."
-        });
+        List<string> parts =
+        [
+            snapshot.NoAutoUpdate is 1 ? "Automatic updating is disabled by policy." : snapshot.AUOptions switch
+            {
+                2 => "Automatic updates notify before download and installation.",
+                3 => "Automatic updates download automatically and notify before installation.",
+                4 => "Automatic updates download and use a managed installation schedule.",
+                5 => "Local administrators may choose the automatic update mode.",
+                _ => "Automatic update timing is not configured here."
+            }
+        ];
         if (snapshot.SetActiveHours is 1 && snapshot.ActiveHoursStart is int start && snapshot.ActiveHoursEnd is int end)
             parts.Add($"Managed active hours run from {start:00}:00 to {end:00}:00 ({activeHoursLength} hours)." );
         if (snapshot.AUOptions is 4 && snapshot.ScheduledInstallDay is int day && snapshot.ScheduledInstallTime is int hour)

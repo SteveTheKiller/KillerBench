@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Installation;
 
 public sealed record InstallerEngineFileEntry(string Architecture, string File, bool Exists, string Signature);
 public sealed record InstallerEngineFileSnapshot(bool Complete, IReadOnlyList<InstallerEngineFileEntry> Files);

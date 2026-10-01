@@ -4,7 +4,7 @@ internal static class WmiActivityEventChecks
 {
     internal static void Run()
     {
-        string Entry(int id, int level = 2, string provider = "Microsoft-Windows-WMI-Activity", ulong record = 1) =>
+        static string Entry(int id, int level = 2, string provider = "Microsoft-Windows-WMI-Activity", ulong record = 1) =>
             $"<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='{provider}'/><EventID>{id}</EventID><EventRecordID>{record}</EventRecordID><Level>{level}</Level><TimeCreated SystemTime='2026-09-14T00:00:00Z'/></System><UserData><Failure><User>PRIVATE\\User</User><ClientProcessId>4321</ClientProcessId><Operation>SELECT Secret FROM PrivateClass</Operation></Failure></UserData></Event>";
         var evidence = new ToolResult(0, "<Events>" + Entry(5858, record: 1) + Entry(5858, record: 2) + Entry(5857, level: 4, record: 3) + "</Events>", "", false);
         var result = WmiActivityEvents.Interpret(evidence);

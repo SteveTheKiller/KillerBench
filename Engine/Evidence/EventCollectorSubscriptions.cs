@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Evidence;
 
 public sealed record EventCollectorSubscriptionInventory(IReadOnlyList<string> Names, bool Complete, ToolResult Evidence);
 

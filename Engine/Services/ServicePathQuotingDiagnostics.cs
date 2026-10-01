@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public sealed record ServicePathQuotingObservation(string Name, string DisplayName, string ServiceType,
     string? BinaryFile, string Status, bool Complete, string? Issue);

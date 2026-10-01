@@ -4,6 +4,8 @@ using KillerBench.Engine;
 
 internal static class PrinterOfflineReconciliationChecks
 {
+    private static readonly string[] SelectedQueueNames = ["Queue A"];
+
     internal static async Task RunAsync(string scratch)
     {
         string root = Path.Combine(scratch, "printer-offline-reconciliation");
@@ -41,7 +43,7 @@ internal static class PrinterOfflineReconciliationChecks
         bool exactSelection = false;
         Require((await PrinterOfflineReconciliation.ReconcileAsync(verified, (selected, _) =>
         {
-            exactSelection = selected.SequenceEqual(new[] { "Queue A" });
+            exactSelection = selected.SequenceEqual(SelectedQueueNames);
             return Task.FromResult(Snapshot([("Queue A", false)], []));
         })).Outcome == PrinterOfflineReconciliationOutcome.Verified && exactSelection &&
             (await verified.ReadAsync())?.Pending == false, "Exact online queue resolves without another setting change");

@@ -3,11 +3,14 @@ using KillerBench.Engine;
 
 internal static class DeliveryOptimizationChecks
 {
+    private static readonly string[] QueryArguments = ["query", "DoSvc"];
+    private static readonly string[] ContinueArguments = ["continue", "DoSvc"];
+
     internal static async Task RunAsync(string scratch)
     {
-        ToolResult State(int state, string label) => new(0, $"SERVICE_NAME: DoSvc\nSTATE : {state} {label}", "", false);
+        static ToolResult State(int state, string label) => new(0, $"SERVICE_NAME: DoSvc\nSTATE : {state} {label}", "", false);
         Require(DeliveryOptimizationDiagnostics.Step() is { Tool: "sc.exe", Verification: true } step &&
-            step.Arguments.SequenceEqual(new[] { "query", "DoSvc" }), "Delivery Optimization uses an exact read-only service query");
+            step.Arguments.SequenceEqual(QueryArguments), "Delivery Optimization uses an exact read-only service query");
         Require(DeliveryOptimizationDiagnostics.Interpret(State(1, "STOPPED")) is { State: CheckState.Information, Repair: null },
             "Stopped demand-start Delivery Optimization is informational");
         Require(DeliveryOptimizationDiagnostics.Interpret(State(4, "RUNNING")) is { State: CheckState.Information, Repair: null },
@@ -31,8 +34,8 @@ internal static class DeliveryOptimizationChecks
             Require(DeliveryOptimizationDiagnostics.Interpret(invalid) is { State: CheckState.Unknown, Repair: null },
                 "Incomplete or mismatched Delivery Optimization evidence remains unknown");
         var plan = Repairs.Plan(RepairKind.DeliveryOptimization);
-        Require(plan.Steps.Count == 2 && plan.Steps[0].Arguments.SequenceEqual(new[] { "continue", "DoSvc" }) &&
-            plan.Steps[1].Arguments.SequenceEqual(new[] { "query", "DoSvc" }) &&
+        Require(plan.Steps.Count == 2 && plan.Steps[0].Arguments.SequenceEqual(ContinueArguments) &&
+            plan.Steps[1].Arguments.SequenceEqual(QueryArguments) &&
             !RecipeCatalog.All.Single(recipe => recipe.Action == RepairKind.DeliveryOptimization).DiagnosticOnly,
             "Delivery Optimization recipe uses exact continue and verification commands");
         Require(WorkflowCatalog.Find("delivery-optimization-service")?.Kind == WorkflowKind.DeliveryOptimizationService &&

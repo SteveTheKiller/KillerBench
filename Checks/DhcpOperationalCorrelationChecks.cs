@@ -28,7 +28,7 @@ internal static class DhcpOperationalCorrelationChecks
         Require(incomplete is { State: CheckState.Unknown, Repair: null } && incomplete.Detail.Contains("incomplete sources: 1"),
             "Incomplete DHCP evidence takes precedence over current and historical attention");
 
-        Require(DhcpOperationalCorrelation.Check(Service(), Lease(), Array.Empty<WorkflowCheck>(), Events()).State == CheckState.Unknown,
+        Require(DhcpOperationalCorrelation.Check(Service(), Lease(), [], Events()).State == CheckState.Unknown,
             "Missing IP address evidence fails closed");
         Require(DhcpOperationalCorrelation.Check(Service(), Lease(), Addresses(), [Events()[0], Events()[0], Events()[2], Events()[3]]).State == CheckState.Unknown,
             "Duplicate DHCP event identities fail closed");

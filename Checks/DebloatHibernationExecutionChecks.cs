@@ -71,16 +71,16 @@ internal static class DebloatHibernationExecutionChecks
             File.Exists(finalBlocked.JournalPath + ".prepared.json") &&
             !File.Exists(Path.Combine(root, "final-disabled", "debloat-hibernation.pending.json")),
             "Hibernation disabled after preparation is not rewritten and closes the prepared guard");
-        foreach (var fixture in new[]
+        foreach (var (error, outcome) in new[]
         {
             (Error: (Exception)new IOException("final hibernation evidence unavailable"), Outcome: DebloatHibernationOutcome.Blocked),
             (Error: (Exception)new OperationCanceledException("final hibernation evidence canceled"), Outcome: DebloatHibernationOutcome.Stopped)
         })
         {
             string folder = Path.Combine(root, "final-unavailable-" + Guid.NewGuid().ToString("N"));
-            var unavailable = new Host([enabled]) { ReadErrorAt = 2, ReadError = fixture.Error };
+            var unavailable = new Host([enabled]) { ReadErrorAt = 2, ReadError = error };
             var result = await DebloatHibernationExecution.RunAsync(true, folder, unavailable);
-            Require(result.Outcome == fixture.Outcome && unavailable.Commands == 0 &&
+            Require(result.Outcome == outcome && unavailable.Commands == 0 &&
                 !File.Exists(Path.Combine(folder, "debloat-hibernation.pending.json")) &&
                 File.Exists(result.JournalPath + ".prepared.json"),
                 "Unavailable or canceled final hibernation evidence records an exact no-command outcome");

@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.BitLocker;
 
 public enum BitLockerNewProtector { Tpm, RecoveryPassword }
 

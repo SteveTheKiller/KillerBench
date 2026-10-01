@@ -17,7 +17,7 @@ internal static class PrintQueueReconciliationChecks
             names,
             pausedNames = paused,
             targets,
-            waitingNames = waiting ?? Array.Empty<string>()
+            waitingNames = waiting ?? []
         }, Capture.JsonOptions), "", false);
         async Task<RepairRecoveryStore> Pending(string name, bool complete = true)
         {

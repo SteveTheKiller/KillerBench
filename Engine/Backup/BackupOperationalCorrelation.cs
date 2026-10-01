@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Backup;
 
 public static class BackupOperationalCorrelation
 {
@@ -27,7 +27,7 @@ public static class BackupOperationalCorrelation
 
         const string name = "Backup operational correlation";
         const string boundary = " This is a bounded prerequisite review, not proof that a backup is configured, current, restorable or successful. No backup, restore, snapshot, writer, provider, service, storage, File History, policy, destination or restart state changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var current = new[]
         {
@@ -58,7 +58,7 @@ public static class BackupOperationalCorrelation
         return new(name, CheckState.Information, detail + "No correlated prerequisite requested review. A successful backup and restore remain unverified." + boundary);
     }
 
-    private static bool ExactNames(IReadOnlyList<WorkflowCheck> checks, IReadOnlyList<string> names) =>
-        checks.Count == names.Count && checks.Select(item => item.Name).OrderBy(value => value, StringComparer.Ordinal)
+    private static bool ExactNames(IReadOnlyList<WorkflowCheck> checks, string[] names) =>
+        checks.Count == names.Length && checks.Select(item => item.Name).OrderBy(value => value, StringComparer.Ordinal)
             .SequenceEqual(names.OrderBy(value => value, StringComparer.Ordinal), StringComparer.Ordinal);
 }

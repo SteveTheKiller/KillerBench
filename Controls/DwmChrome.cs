@@ -6,10 +6,10 @@ using System.Windows.Media;
 
 namespace KillerBench.Controls
 {
-    internal static class DwmChrome
+    internal static partial class DwmChrome
     {
-        [DllImport("dwmapi.dll")]
-        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int value, int size);
+        [LibraryImport("dwmapi.dll")]
+        private static partial int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int value, int size);
 
         private const int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
         private const int DWMWA_BORDER_COLOR = 34;
@@ -24,7 +24,8 @@ namespace KillerBench.Controls
                 var hwnd = new WindowInteropHelper(w).Handle;
                 if (hwnd == IntPtr.Zero) return;
                 int pref = rounded ? DWMWCP_ROUND : DWMWCP_DONOTROUND;
-                DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, ref pref, sizeof(int));
+                // Result ignored: styling is cosmetic and the attribute may be unsupported on older Windows builds.
+                _ = DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, ref pref, sizeof(int));
             }
             catch { /* pre-Win11: attribute unsupported */ }
         }
@@ -39,7 +40,8 @@ namespace KillerBench.Controls
                      ?? Application.Current.TryFindResource("PaneBorderBrush")) is SolidColorBrush b)
                 {
                     int colorref = b.Color.R | (b.Color.G << 8) | (b.Color.B << 16);
-                    DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, ref colorref, sizeof(int));
+                    // Result ignored: styling is cosmetic and the attribute may be unsupported on older Windows builds.
+                    _ = DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, ref colorref, sizeof(int));
                 }
             }
             catch { /* pre-Win11: attribute unsupported */ }

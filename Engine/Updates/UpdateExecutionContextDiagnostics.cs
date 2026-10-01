@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record UpdateExecutionContextSnapshot(bool Complete, bool Administrator,
     bool UserInteractive, int SessionId, string? CollectionIssue = null);

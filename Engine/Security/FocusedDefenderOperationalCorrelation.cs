@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public static class FocusedDefenderOperationalCorrelation
 {
@@ -18,7 +18,7 @@ public static class FocusedDefenderOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Microsoft Defender focused conclusion";
         const string boundary = " This is a bounded configuration and history review, not a malware scan or proof of protection, compliance, threat removal, trustworthiness or future security. No scan, quarantine, exclusion, signature, application-control, policy, service, hardware or restart state changed, and no additional repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
         var selected = RequiredNames.Select(required => evidence.Where(item => item.Name == required).ToArray()).ToArray();
         if (selected.Any(matches => matches.Length != 1))
         {

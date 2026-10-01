@@ -3,7 +3,7 @@ using System.Runtime.Versioning;
 using System.Security;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public sealed record UpdatePolicySurfaceSnapshot(bool Complete, IReadOnlyList<string> ClassicPolicyNames,
     IReadOnlyList<string> ClassicAutomaticUpdateNames, IReadOnlyList<string> PolicyCspNames,
@@ -62,8 +62,8 @@ public static class UpdatePolicySurfaceDiagnostics
                 PolicyCspNames.Contains(name[..^"_ProviderSet".Length])) ?? 0;
             bool complete = classicNames.Length <= MaximumNames && automaticNames.Length <= MaximumNames &&
                 cspNames.Length <= MaximumNames && providerMetadata <= MaximumNames;
-            return new(complete, classicNames.Take(MaximumNames).ToArray(), automaticNames.Take(MaximumNames).ToArray(),
-                cspNames.Take(MaximumNames).ToArray(), Math.Min(providerMetadata, MaximumNames));
+            return new(complete, [.. classicNames.Take(MaximumNames)], [.. automaticNames.Take(MaximumNames)],
+                [.. cspNames.Take(MaximumNames)], Math.Min(providerMetadata, MaximumNames));
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or SecurityException)
         {

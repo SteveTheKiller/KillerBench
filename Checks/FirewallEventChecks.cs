@@ -4,7 +4,7 @@ internal static class FirewallEventChecks
 {
     internal static async Task RunAsync()
     {
-        string Entry(int id, int level = 2, ulong record = 1,
+        static string Entry(int id, int level = 2, ulong record = 1,
             string provider = "Microsoft-Windows-Windows Firewall With Advanced Security") =>
             $"<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='{provider}'/><EventID>{id}</EventID><EventRecordID>{record}</EventRecordID><Level>{level}</Level><TimeCreated SystemTime='2026-09-16T00:00:00Z'/></System><EventData><Data Name='ApplicationPath'>PRIVATE-APPLICATION</Data><Data Name='RemoteAddress'>192.0.2.44</Data><Data Name='RemotePort'>445</Data><Data Name='RuleName'>PRIVATE-RULE</Data></EventData></Event>";
 

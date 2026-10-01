@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public static class WindowsUpdateServiceOperationalCorrelation
 {
@@ -13,7 +13,7 @@ public static class WindowsUpdateServiceOperationalCorrelation
 
         const string name = "Windows Update Service conclusion";
         const string boundary = " This bounded conclusion does not establish source reachability, update applicability, download progress, installation progress, completion or restart readiness. It does not start the service, replace a component, select, approve, download or install an update, request a restart, change policy or select a repair.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         if (service.Name != "Windows Update state" ||
             registration.Name != "Windows Update Service registration" ||

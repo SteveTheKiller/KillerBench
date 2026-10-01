@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Updates;
 
 public static class WindowsUpdateMedicOperationalCorrelation
 {
@@ -13,7 +13,7 @@ public static class WindowsUpdateMedicOperationalCorrelation
 
         const string name = "Windows Update Medic conclusion";
         const string boundary = " This bounded conclusion does not establish remediation success, component health, update applicability, download progress, installation progress or restart readiness. It does not start the service, replace a component, select, approve, download or install an update, request a restart, change policy or select a repair.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         if (service.Name != "Windows Update Medic Service state" ||
             registration.Name != "Windows Update Medic registration" ||

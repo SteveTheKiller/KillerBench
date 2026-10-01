@@ -11,11 +11,11 @@ internal static class StorageDispatchChecks
             blockedRepair.Blocker!.Contains("dismount consent"), "Non-system filesystem repair requires explicit dismount consent");
         var spotFix = FileSystemRepairPlanning.Create("d:\\", FileSystemRepairMode.SpotFix, new(true, true, "ntfs"), false, true, true);
         Require(spotFix is { VolumeEligible: true, RequiresDismount: true, RequiresRestart: false, Blocker: null } &&
-            spotFix.Step is { Tool: "chkdsk.exe", Verification: false } && spotFix.Step.Arguments.SequenceEqual(new[] { "D:", "/spotfix" }),
+            spotFix.Step is { Tool: "chkdsk.exe", Verification: false } && spotFix.Step.Arguments.SequenceEqual(["D:", "/spotfix"]),
             "Spot-fix draft retains exact selected volume and explicit dismount effects");
         var systemRepair = FileSystemRepairPlanning.Create("C:", FileSystemRepairMode.OfflineScanAndFix, new(true, true, "NTFS"), true, false, true);
         Require(systemRepair is { VolumeEligible: true, RequiresRestart: true, RequiresDismount: false } &&
-            systemRepair.Step!.Arguments.SequenceEqual(new[] { "C:", "/offlinescanandfix" }),
+            systemRepair.Step!.Arguments.SequenceEqual(["C:", "/offlinescanandfix"]),
             "System-volume offline repair draft reports restart and exact command without executing it");
         var systemAttention = new WorkflowCheck("Filesystem", CheckState.Attention, "Volume: C:. Filesystem errors were reported.",
             Evidence: new(1, "Synthetic repairable fixture", "", false));
@@ -134,7 +134,7 @@ internal static class StorageDispatchChecks
         catch (OperationCanceledException) { }
         var host = new Host();
         var check = await StorageDiagnostics.CheckVolumeAsync("d:\\", host: host);
-        Require(host.Volume == "D:" && host.Step!.Arguments.SequenceEqual(new[] { "D:" }) && host.Timeout == TimeSpan.FromMinutes(10) &&
+        Require(host.Volume == "D:" && host.Step!.Arguments.SequenceEqual(["D:"]) && host.Timeout == TimeSpan.FromMinutes(10) &&
             check.Detail.StartsWith("Volume: D:") && check.State == CheckState.Clear, "Selected volume reaches bounded read-only execution and result");
         var displayFailure = new ThrowingProgress();
         var withFailedDisplay = await StorageDiagnostics.CheckVolumeAsync("D:", new Host(), displayFailure);

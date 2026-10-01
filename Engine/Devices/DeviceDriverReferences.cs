@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Devices;
 
 public sealed record DriverPlatformContext(string Architecture, string WindowsProduct, int Build)
 {

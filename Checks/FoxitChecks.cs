@@ -74,7 +74,7 @@ internal static class FoxitChecks
         var wide = FoxitUpdaterSettings.Collect((_, _) =>
         {
             calls++;
-            return new(Enumerable.Range(0, 300).Select(i => "Key" + i).ToArray(), empty);
+            return new([.. Enumerable.Range(0, 300).Select(i => "Key" + i)], empty);
         });
         if (wide.Complete || calls != 512) throw new Exception("Foxit key traversal exceeded its per-view bound");
         calls = 0;

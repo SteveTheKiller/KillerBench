@@ -1,6 +1,6 @@
 using Microsoft.Win32;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Debloat;
 
 public sealed record DebloatRegistryTarget(DebloatAreas Area, bool Machine, string Path,
     string Name, int ProposedValue, bool Policy);

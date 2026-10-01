@@ -74,7 +74,7 @@ internal static class ComponentCleanupChecks
         {
             Calls++;
             return Task.FromResult(new RepairResult("fixture", kind, DateTimeOffset.UtcNow, "Verification reported", "fixture",
-                Repairs.Plan(kind).Steps.Select(s => new RepairStepResult(s, new(0, s.Verification ? No : "The operation completed successfully.", "", false))).ToArray()));
+                [.. Repairs.Plan(kind).Steps.Select(s => new RepairStepResult(s, new(0, s.Verification ? No : "The operation completed successfully.", "", false)))]));
         }
     }
 

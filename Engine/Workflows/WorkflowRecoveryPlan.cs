@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Workflows;
 
 public enum RecoveryNextAction { Wait, ReviewInterruptedRun, RecheckTimedOutWork, RestartThenRecheck, ElevateAndRecheck, ConfigureRepairOptions, ReviewAvailableRepairs, ReviewFindings, TestAffectedFeature }
 
@@ -7,7 +7,7 @@ public sealed record WorkflowRecoveryPlan(RecoveryNextAction Action, IReadOnlyLi
     public static WorkflowRecoveryPlan From(WorkflowResult result)
     {
         ArgumentNullException.ThrowIfNull(result);
-        WorkflowRecoveryPlan Gate(RecoveryNextAction action) => new(action, Array.Empty<string>());
+        WorkflowRecoveryPlan Gate(RecoveryNextAction action) => new(action, []);
         if (result.Status == "Running") return Gate(RecoveryNextAction.Wait);
         if (result.Status.StartsWith("Stopped", StringComparison.Ordinal) || result.Recipes.Any(recipe => recipe.ExecutionUncertain ||
             recipe.Repair is not null && recipe.Repair.Kind != recipe.Check?.Repair))

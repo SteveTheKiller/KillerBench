@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Knowledge;
 
 public sealed record WindowsSetupCodeReference(uint Code, string Symbol, string Meaning, string DiagnosticScope, bool RequiresReview = true);
 
@@ -6,8 +6,8 @@ public static class WindowsSetupErrorCatalog
 {
     public const string SourceUrl = "https://learn.microsoft.com/en-us/troubleshoot/windows-client/setup-upgrade-and-drivers/windows-10-upgrade-resolution-procedures";
 
-    public static IReadOnlyList<WindowsSetupCodeReference> All { get; } = Array.AsReadOnly(new[]
-    {
+    public static IReadOnlyList<WindowsSetupCodeReference> All { get; } = Array.AsReadOnly<WindowsSetupCodeReference>(
+    [
         new WindowsSetupCodeReference(0xC1900100, "MOSETUP_E_VERSION_MISMATCH", "Setup Platform binaries have an unexpected version.", "Review installation media identity and Setup Platform package contents."),
         new WindowsSetupCodeReference(0xC1900101, "MOSETUP_E_SETUP_PLATFORM", "Setup Platform reported an unspecified error. This result is also used for generic rollback failures.", "Review the extend code, rollback logs, setup memory dump and exact driver evidence."),
         new WindowsSetupCodeReference(0xC1900102, "MOSETUP_E_SHUTDOWN_BLOCK", "Setup could not create or destroy its shutdown block message.", "Review Setup phase logs and shutdown history."),
@@ -58,7 +58,7 @@ public static class WindowsSetupErrorCatalog
         new WindowsSetupCodeReference(0xC1900403, "MOSETUP_E_UA_CORRUPT_PAYLOAD_FILES", "Update Agent found corrupt payload files.", "Review transfer integrity, download cache and source metadata evidence."),
         new WindowsSetupCodeReference(0xC1900404, "MOSETUP_E_UA_BOX_NOT_FOUND", "The installation executable was not found.", "Review installation-media contents and source identity."),
         new WindowsSetupCodeReference(0xC1900405, "MOSETUP_E_UA_BOX_CRASHED", "The installation process terminated unexpectedly.", "Review Setup crash, dump, application and rollback evidence.")
-    });
+    ]);
 
     public static WindowsSetupCodeReference? Find(uint code) => All.FirstOrDefault(entry => entry.Code == code);
 }

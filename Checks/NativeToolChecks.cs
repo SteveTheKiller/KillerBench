@@ -5,11 +5,11 @@ internal static class NativeToolChecks
 {
     internal static async Task RunAsync()
     {
-        var method = typeof(ToolResult).Assembly.GetType("KillerBench.Engine.NativeTool")!
+        var method = typeof(ToolResult).Assembly.GetType("KillerBench.Engine.Infrastructure.NativeTool")!
             .GetMethod("RunAsync", BindingFlags.Static | BindingFlags.NonPublic)!;
         Task<ToolResult> Run(string script, CancellationToken token, IProgress<string>? progress = null) =>
-            (Task<ToolResult>)method.Invoke(null, new object?[] { PrintRecovery.Tool,
-                new[] { "-NoLogo", "-NoProfile", "-NonInteractive", "-Command", script }, false, progress, token })!;
+            (Task<ToolResult>)method.Invoke(null, [PrintRecovery.Tool,
+                new[] { "-NoLogo", "-NoProfile", "-NonInteractive", "-Command", script }, false, progress, token])!;
 
         using var stop = new CancellationTokenSource(TimeSpan.FromSeconds(10));
         bool started = false;
@@ -24,10 +24,10 @@ internal static class NativeToolChecks
             .WaitAsync(TimeSpan.FromSeconds(15));
         if (output.ExitCode != 7 || !output.Truncated || output.Output.Length != 250000 || output.Error != "fixture error")
             throw new Exception("Native output bounds or stderr/exit capture failed");
-        var bounded = typeof(ToolResult).Assembly.GetType("KillerBench.Engine.BoundedTool")!
+        var bounded = typeof(ToolResult).Assembly.GetType("KillerBench.Engine.Infrastructure.BoundedTool")!
             .GetMethod("RunAsync", BindingFlags.Static | BindingFlags.NonPublic)!;
         var step = new RepairStep(PrintRecovery.Tool, ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", "Start-Sleep -Seconds 30"], true);
-        var timed = await ((Task<ToolResult>)bounded.Invoke(null, new object?[] { step, TimeSpan.FromSeconds(1), null, CancellationToken.None })!)
+        var timed = await ((Task<ToolResult>)bounded.Invoke(null, [step, TimeSpan.FromSeconds(1), null, CancellationToken.None])!)
             .WaitAsync(TimeSpan.FromSeconds(10));
         if (!timed.TimedOut || timed.ExitCode == 0) throw new Exception("Native timeout must be explicit and unsuccessful");
         Console.WriteLine("PASS: native cancellation, timeout, output bounds, stderr and exit capture (harmless child processes only).");

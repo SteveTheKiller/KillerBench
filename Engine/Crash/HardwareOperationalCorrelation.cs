@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Crash;
 
 public static class HardwareOperationalCorrelation
 {
@@ -13,7 +13,7 @@ public static class HardwareOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Hardware operational conclusion";
         const string boundary = " This bounded correlation is not a memory test, disk surface test, SMART verdict, firmware diagnostic, vendor hardware test, backup check or proof of fault-free operation. WHEA records do not identify a replaceable component by themselves. No hardware, firmware, driver, disk, pool, volume, file, service, power, restart or setting change is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
         bool invalidDevices = deviceProblems.Count is < 1 or > 256 || deviceProblems.Any(check => check is null ||
             !(check.Name == "Device problems" || check.Name.StartsWith("Problems ", StringComparison.Ordinal)));
         if (hardwareHistory.Name != "Recent Windows hardware error records" ||

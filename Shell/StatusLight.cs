@@ -11,18 +11,18 @@ public partial class MainWindow
         if (readCancellation is not null) return;
         OnWorkflows(sender, e);
         RepairChoice.SelectedIndex = MainWorkflow.SelectedIndex;
-        var kind = (KillerBench.Engine.WorkflowKind)MainWorkflow.SelectedIndex;
-        if (kind == KillerBench.Engine.WorkflowKind.Defender && DefenderScanChoice.SelectedIndex > 0)
+        var kind = (WorkflowKind)MainWorkflow.SelectedIndex;
+        if (kind == WorkflowKind.Defender && DefenderScanChoice.SelectedIndex > 0)
         {
             SetDetailsOpen(false);
             await RunDefenderScanAsync(DefenderScanConsent.IsChecked == true);
             return;
         }
-        bool focusedOperation = kind == KillerBench.Engine.WorkflowKind.Storage &&
+        bool focusedOperation = kind == WorkflowKind.Storage &&
             (StorageRepairReview.IsChecked == true || StorageOptimizationReview.IsChecked == true) ||
-            kind == KillerBench.Engine.WorkflowKind.SystemRestore && SystemRestoreCreate.IsChecked == true ||
-            kind == KillerBench.Engine.WorkflowKind.Orca && IsOrcaCacheRetentionSelected();
-        RepairConsent.IsChecked = (KillerBench.Engine.Workflows.SupportsRepair(kind) || focusedOperation) && MainAutoRepair.IsChecked == true;
+            kind == WorkflowKind.SystemRestore && SystemRestoreCreate.IsChecked == true ||
+            kind == WorkflowKind.Orca && IsOrcaCacheRetentionSelected();
+        RepairConsent.IsChecked = (Workflows.SupportsRepair(kind) || focusedOperation) && MainAutoRepair.IsChecked == true;
         SetDetailsOpen(false);
         await RunWorkflowAsync();
     }

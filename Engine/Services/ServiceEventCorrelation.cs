@@ -1,7 +1,7 @@
 using System.Xml;
 using System.Xml.Linq;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public static class ServiceEventCorrelation
 {
@@ -33,7 +33,7 @@ public static class ServiceEventCorrelation
             {
                 token.ThrowIfCancellationRequested();
                 if (check?.Evidence is not { } evidence) return Unknown("A focused current service observation is incomplete.");
-                string[] matches = entries.Keys.Where(service => ServiceRecovery.MatchesService(evidence, service)).ToArray();
+                string[] matches = [.. entries.Keys.Where(service => ServiceRecovery.MatchesService(evidence, service))];
                 if (matches.Length != 1 || !currentStates.TryAdd(matches[0], check))
                     return Unknown("A focused current service identity is missing or duplicated.");
             }
@@ -56,11 +56,11 @@ public static class ServiceEventCorrelation
                 string? level = system.Element(EventNamespace + "Level")?.Value;
                 if (!string.Equals(provider, "Service Control Manager", StringComparison.Ordinal) || level is not ("1" or "2"))
                     throw new InvalidDataException("Unexpected service event record.");
-                string[] matches = (root.Element(EventNamespace + "EventData")?.Elements(EventNamespace + "Data") ?? [])
+                string[] matches = [.. (root.Element(EventNamespace + "EventData")?.Elements(EventNamespace + "Data") ?? [])
                     .Select(field => field.Value.Trim())
                     .Concat((root.Element(EventNamespace + "UserData")?.Descendants() ?? []).Where(field => !field.HasElements).Select(field => field.Value.Trim()))
                     .Where(value => identities.TryGetValue(value, out string? service) && service is not null)
-                    .Select(value => identities[value]!).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+                    .Select(value => identities[value]!).Distinct(StringComparer.OrdinalIgnoreCase)];
                 if (matches.Length != 1) { unresolved++; continue; }
                 counts[matches[0]] = counts.GetValueOrDefault(matches[0]) + 1;
             }

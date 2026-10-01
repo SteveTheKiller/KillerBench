@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public enum PrivacyArea
 {
@@ -41,7 +41,7 @@ public sealed record PrivacyOptions(IReadOnlyList<PrivacyArea> Selected)
         var copy = Selected.ToArray();
         if (copy.Length > PrivacyCatalog.All.Count || copy.Any(a => !Enum.IsDefined(a)) || copy.Distinct().Count() != copy.Length)
             throw new ArgumentException("Select each supported privacy area at most once.");
-        return PrivacyCatalog.All.Where(c => copy.Contains(c.Area)).ToArray();
+        return [.. PrivacyCatalog.All.Where(c => copy.Contains(c.Area))];
     }
 
     public string Describe()

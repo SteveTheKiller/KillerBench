@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public static class ConnectionManagerOperationalCorrelation
 {
@@ -8,7 +8,7 @@ public static class ConnectionManagerOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Windows Connection Manager readiness";
         const string boundary = " This bounded conclusion does not establish adapter availability, profile applicability, connection selection, metering, roaming, authentication, route selection, name resolution or connectivity. It does not connect, disconnect, enable, disable, reset or reconfigure an adapter, profile, credential, firewall rule, VPN, service or policy, and it selects no repair.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var profiles = checks.Where(check => check is not null && (check.Name == "Network profiles" ||
             check.Name.StartsWith("Network profile: ", StringComparison.Ordinal))).ToArray();

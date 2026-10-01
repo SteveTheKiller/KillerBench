@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Automation;
 
 public enum OrcaCacheResetOutcome { Preview, Blocked, Verified, Uncertain, Stopped }
 public enum OrcaCacheReconciliationOutcome { NoPendingRecord, Verified, NotChanged, Inconclusive }
@@ -259,7 +259,7 @@ public static class OrcaCacheReset
             paths.Add(Path.Combine(local, "Microsoft", "Outlook", "RoamCache"));
             paths.Add(Path.Combine(local, "Microsoft", "Outlook", "Offline Address Books"));
         }
-        return paths.Select(Path.GetFullPath).ToArray();
+        return [.. paths.Select(Path.GetFullPath)];
     }
 
     private static bool TryValidate(OrcaOutlookMode mode, OrcaProcessEvidence processes,
@@ -267,7 +267,7 @@ public static class OrcaCacheReset
     {
         if (!processes.Complete) { reason = "Outlook process evidence is incomplete."; return false; }
         if (processes.RelevantCount(mode) != 0) { reason = "Close every selected Outlook edition before retaining caches."; return false; }
-        string[] expected = ExpectedPaths(mode).OrderBy(path => path, StringComparer.OrdinalIgnoreCase).ToArray();
+        string[] expected = [.. ExpectedPaths(mode).OrderBy(path => path, StringComparer.OrdinalIgnoreCase)];
         if (targets is null || targets.Count != expected.Length || targets.Any(target => target is null || !target.Complete || target.ReparsePoint) ||
             !targets.Select(target => Path.GetFullPath(target.SourcePath)).OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
                 .SequenceEqual(expected, StringComparer.OrdinalIgnoreCase))
@@ -314,7 +314,7 @@ public static class OrcaCacheReset
             !pending.OperationId.All(Uri.IsHexDigit) || !pending.Machine.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase) ||
             !Enum.IsDefined(pending.Mode) || string.IsNullOrWhiteSpace(pending.JournalPath) || pending.Targets is null || pending.Targets.Count is < 1 or > 3)
             throw new InvalidDataException("Outlook cache reset record is invalid.");
-        string[] expected = ExpectedPaths(pending.Mode).OrderBy(value => value, StringComparer.OrdinalIgnoreCase).ToArray();
+        string[] expected = [.. ExpectedPaths(pending.Mode).OrderBy(value => value, StringComparer.OrdinalIgnoreCase)];
         foreach (var target in pending.Targets)
         {
             string source = Path.GetFullPath(target.SourcePath), retained = Path.GetFullPath(target.RetainedPath);

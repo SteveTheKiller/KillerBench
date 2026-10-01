@@ -2,7 +2,7 @@ using System.Buffers.Binary;
 using System.Globalization;
 using System.Text;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Crash;
 
 public sealed record MinidumpSummary(string FileName, string Format, string? Architecture, string? WindowsVersion,
     string? ExceptionCode, string? FaultModule, bool Complete, string Detail);

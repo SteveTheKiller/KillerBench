@@ -30,7 +30,7 @@ internal static class PageFileChecks
             Evidence([Row()], complete: false), Evidence([Row(drive: "c:")]), Evidence([Row(drive: "C:\\pagefile.sys")]),
             Evidence([Row(allocatedMiB: 0)]), Evidence([Row(allocatedMiB: 100, currentMiB: 101, peakMiB: 101)]),
             Evidence([Row(allocatedMiB: 100, currentMiB: 50, peakMiB: 40)]), Evidence([Row(), Row(drive: "c:")]),
-            Evidence(Enumerable.Range(0, 17).Select(index => Row(((char)('A' + index)).ToString() + ":")).ToArray()),
+            Evidence([.. Enumerable.Range(0, 17).Select(index => Row(((char)('A' + index)).ToString() + ":"))]),
             new ToolResult(0, "{}", "", false), new ToolResult(0, "not json", "", false),
             clearEvidence with { ExitCode = 5 }, clearEvidence with { Error = "denied" },
             clearEvidence with { TimedOut = true }, clearEvidence with { Truncated = true }

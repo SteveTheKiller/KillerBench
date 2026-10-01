@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.BitLocker;
 
 public sealed record BitLockerAutoUnlockState(string Volume, string Identity, string VolumeType, string VolumeStatus, string LockStatus,
     bool AutoUnlockEnabled, string SystemVolumeStatus, string SystemProtectionStatus, bool Complete);

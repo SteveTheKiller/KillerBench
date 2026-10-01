@@ -251,7 +251,7 @@ public partial class MainWindow
             string folder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Profiles");
             string journal = await ProfileReview.SavePlanAsync(plan, folder, days, stop.Token);
             string summary = "PROFILE PLAN / SNAPSHOT REVIEW\n" + string.Join("\n", plan.Targets.Select(p => p.Path + " | " + p.Sid)) +
-                "\n\n" + (plan.ReviewPassed ? "Snapshot review passed. No deletion authorized." : string.Join("\n", plan.Blockers)) + "\n" + plan.Limitation;
+                "\n\n" + (plan.ReviewPassed ? "Snapshot review passed. No deletion authorized." : string.Join("\n", plan.Blockers)) + "\n" + ProfileSelectionPlan.Limitation;
             AppendWorkflowOutput(summary);
             string reviewDetail = plan.ReviewPassed
                 ? "Snapshot review passed. No profile deletion was authorized."

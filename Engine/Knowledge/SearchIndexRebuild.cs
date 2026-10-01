@@ -1,7 +1,7 @@
 using System.Security.Principal;
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Knowledge;
 
 public enum SearchIndexRebuildOutcome { Preview, Blocked, Verified, Uncertain, Stopped }
 public enum SearchIndexReconciliationOutcome { NoPendingRecord, Verified, NotChanged, Inconclusive }

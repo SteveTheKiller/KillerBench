@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Workflows;
 
 public sealed class WindowsRepairHost : IRepairHost
 {

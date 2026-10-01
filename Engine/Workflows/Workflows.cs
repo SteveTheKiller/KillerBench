@@ -2,7 +2,7 @@ using System.Text.Json;
 using Microsoft.Win32;
 using System.Net.NetworkInformation;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Workflows;
 
 public enum WorkflowKind { WindowsUpdate, SystemFiles, Vitals, Network, Printing, TimeService, Installer, Storage, Wmi, Audio, Search, Cleanup, Defender, AvailableUpdates, Privacy, BitLocker, ComponentCleanup, Profiles, ComputerName, Foxit, ScheduledTasks, Services, EventLog, Applications, Display, Input, DeviceProblems, CommonProblems, AppPackages, InstalledApps, BackupServices, BackgroundTransfers, FirewallServices, Wireless, WiredAuthentication, Bluetooth, Camera, SmartCard, Biometric, ReliabilityHistory, HardwareErrors, DriverInstallHistory, SystemRestore, WindowsRecovery, Certificates, FileSharing, TaskSchedulerService, WindowsUpdateService, DeliveryOptimizationService, BitsService, CryptographicService, ModulesInstallerService, WindowsUpdateMedicService, UpdateOrchestratorService, DiagnosticPolicyService, WindowsErrorReportingService, WindowsEventCollectorService, RemoteAccessConnectionManagerService, RemoteDesktopServices, WindowsRemoteManagement, SecurityCenterService, NetworkConnectionsService, WinHttpAutoProxyService, WindowsConnectionManagerService, NetworkSetupService, AppReadinessService, StateRepositoryService, UserProfileService, CredentialManagerService, ShellHardwareDetectionService, DeviceInstallService, AppxDeploymentService, ClientLicenseService, StoreInstallService, WindowsLicenseManagerService, PushToInstallService, WebAccountManagerService, MicrosoftAccountSignInService, StorageService, OptimizeDrivesService, WindowsImageAcquisitionService, FunctionDiscoveryProviderHostService, FunctionDiscoveryResourcePublicationService, HumanInterfaceDeviceService, PortableDeviceEnumeratorService, WindowsFontCacheService, DeviceAssociationService, TextInputManagementService, DisplayEnhancementService, SystemNotifications, CoreWindowsServices, StorageSpaces, WindowsActivation, StartupPerformance, StartupApplications, Mace, Orca, Depot, Debloat, ServicingActivity, BrowserExtensions }
 public enum CheckState { Clear, Repairable, Attention, Unknown, Information }
@@ -36,7 +36,7 @@ public sealed record WorkflowResult(WorkflowKind Kind, string Machine, DateTimeO
         if (Status == "Needs attention" || Checks.Count == 0 || Summary.ReviewItems > 0 ||
             Checks.Any(check => check.State == CheckState.Clear && (check.Evidence is { ExitCode: not 0 } or { TimedOut: true } or { Truncated: true } ||
                 !string.IsNullOrWhiteSpace(check.Evidence?.Error))) || Recipes.Any(recipe => recipe.ExecutionUncertain) ||
-            Repairs.Any(repair => !KillerBench.Engine.Repairs.IsVerified(repair)) || Actions.Any(action => !action.Verified)) return 3;
+            Repairs.Any(repair => !KillerBench.Engine.Workflows.Repairs.IsVerified(repair)) || Actions.Any(action => !action.Verified)) return 3;
         return 0;
     }
 }
@@ -157,7 +157,7 @@ public static class Workflows
             WorkflowKind.WindowsErrorReportingService, WorkflowKind.WindowsEventCollectorService }.SelectMany(Scopes);
         var inspectedServices = Enum.GetValues<RepairKind>().Where(kind =>
             ServiceRecovery.ServiceName(kind) is not null && RecipeCatalog.All.Any(recipe => recipe.Action == kind));
-        return established.Concat(inspectedServices).Where(scope => scope is not (RepairKind.DnsCache or RepairKind.UpdateDataStoreReset or RepairKind.TimeSourceConfiguration or RepairKind.EventChannelEnable or RepairKind.WindowsUpdateMedicService)).Distinct().ToArray();
+        return [.. established.Concat(inspectedServices).Where(scope => scope is not (RepairKind.DnsCache or RepairKind.UpdateDataStoreReset or RepairKind.TimeSourceConfiguration or RepairKind.EventChannelEnable or RepairKind.WindowsUpdateMedicService)).Distinct()];
     }
     public static string Preview(WorkflowKind kind) =>
         $"TARGET: THIS PC ({Environment.MachineName})\n\n" + (kind switch
@@ -277,7 +277,7 @@ public static class Workflows
         var requestedRecipes = selectedRecipes is null ? null : Array.AsReadOnly(selectedRecipes.ToArray());
         var plannedRecipes = diagnosticScopes is not null || kind == WorkflowKind.BackgroundTransfers && requestedRecipes is null
             ? [] : requestedRecipes is null
-                ? RecipeCatalog.ForWorkflow(kind).Where(recipe => kind != WorkflowKind.ComputerName || !recipe.RequiresExplicitOptions).ToArray()
+                ? [.. RecipeCatalog.ForWorkflow(kind).Where(recipe => kind != WorkflowKind.ComputerName || !recipe.RequiresExplicitOptions)]
                 : RecipeCatalog.SelectForWorkflow(kind, requestedRecipes);
         progress = progress is null ? null : new DiagnosticProgress(progress);
         host ??= PlatformProviders.CreateWorkflowHost(progress);
@@ -527,7 +527,7 @@ public static class Workflows
             }
         }
 
-        WorkflowResult Current() => new(kind, Environment.MachineName, started, status, checks.ToArray(), recipeResults.Where(r => r.Repair is not null).Select(r => r.Repair!).ToArray(), path)
+        WorkflowResult Current() => new(kind, Environment.MachineName, started, status, [.. checks], [.. recipeResults.Where(r => r.Repair is not null).Select(r => r.Repair!)], path)
         { Recipes = recipeResults, RequestedRecipeIds = requestedRecipes, PlannedRecipeIds = Array.AsReadOnly(plannedRecipes.Select(recipe => recipe.Id).ToArray()), SelectedDiagnosticScopes = diagnosticScopes };
         Task Save() => Write(Current());
         Task Write(WorkflowResult snapshot) => JournalPersistence.WriteAsync(path,

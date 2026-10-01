@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Services;
 
 public enum ServiceStartReconciliationOutcome { NoPending, Verified, NotApplied, Inconclusive }
 public sealed record ServiceStartReconciliationResult(ServiceStartReconciliationOutcome Outcome, string Detail);

@@ -4,7 +4,7 @@ internal static class SecurityProductChecks
 {
     internal static void Run()
     {
-        ToolResult Evidence(string json) => new(0, json, "", false);
+        static ToolResult Evidence(string json) => new(0, json, "", false);
         const string json = "{\"complete\":true,\"products\":[{\"name\":\"Fixture Security\",\"id\":\"{11111111-2222-3333-4444-555555555555}\",\"state\":397568,\"timestamp\":\"2026-09-14T12:00:00Z\"}]}";
         var inventory = SecurityProductDiagnostics.Interpret(Evidence(json));
         var checks = SecurityProductDiagnostics.Describe(inventory);

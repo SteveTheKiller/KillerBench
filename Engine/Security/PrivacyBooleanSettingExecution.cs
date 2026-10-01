@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Microsoft.Win32;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public enum PrivacyRegistryScope { CurrentUser, LocalMachine }
 public enum PrivacyBooleanValueKind { DWord, ConsentString }
@@ -413,19 +413,19 @@ public sealed class WindowsPrivacyBooleanSettingHost(PrivacyBooleanSettingDefini
         token.ThrowIfCancellationRequested();
         try
         {
-            var user = definition.ValueKind == PrivacyBooleanValueKind.ConsentString
+            var (userPresent, userValue, userSupported) = definition.ValueKind == PrivacyBooleanValueKind.ConsentString
                 ? ReadConsent(RegistryHive.CurrentUser, definition.UserPath, definition.UserValueName)
                 : ReadDWord(RegistryHive.CurrentUser, definition.UserPath, definition.UserValueName, 1);
-            var policy = ReadDWord(definition.PolicyScope == PrivacyRegistryScope.CurrentUser ? RegistryHive.CurrentUser : RegistryHive.LocalMachine,
+            var (policyPresent, policyValue, policySupported) = ReadDWord(definition.PolicyScope == PrivacyRegistryScope.CurrentUser ? RegistryHive.CurrentUser : RegistryHive.LocalMachine,
                 definition.PolicyPath, definition.PolicyValueName, definition.ValueKind == PrivacyBooleanValueKind.ConsentString ? 2 : 1);
-            var machine = definition.ValueKind == PrivacyBooleanValueKind.ConsentString &&
+            var (machinePresent, machineValue, machineSupported) = definition.ValueKind == PrivacyBooleanValueKind.ConsentString &&
                 definition.MachinePath is not null && definition.MachineValueName is not null
                 ? ReadConsent(RegistryHive.LocalMachine, definition.MachinePath, definition.MachineValueName)
                 : (Present: false, Value: (int?)null, Supported: true);
-            bool complete = user.Supported && policy.Supported && machine.Supported;
-            return Task.FromResult(new PrivacyBooleanEvidence(complete, user.Present, user.Value, policy.Present, policy.Value,
+            bool complete = userSupported && policySupported && machineSupported;
+            return Task.FromResult(new PrivacyBooleanEvidence(complete, userPresent, userValue, policyPresent, policyValue,
                 complete ? "Exact current-user, machine-default and policy values were read." : "A value has an unsupported type or range.",
-                machine.Present, machine.Value));
+                machinePresent, machineValue));
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or System.Security.SecurityException)
         { return Task.FromResult(new PrivacyBooleanEvidence(false, false, null, false, null, "Privacy-setting evidence is unavailable: " + error.Message)); }

@@ -16,7 +16,7 @@ internal static class WorkflowCommands
             if (!extension.Equals(".html", StringComparison.OrdinalIgnoreCase) && !extension.Equals(".txt", StringComparison.OrdinalIgnoreCase))
             { Console.Error.WriteLine("--report output must use .html or .txt."); return 2; }
             if (File.Exists(reportPath)) { Console.Error.WriteLine("--report output already exists. Choose a new path."); return 2; }
-            args = args.Where((_, index) => index != reportIndex && index != reportIndex + 1).ToArray();
+            args = [.. args.Where((_, index) => index != reportIndex && index != reportIndex + 1)];
         }
         var definition = args.Length > 1 ? WorkflowCatalog.Find(args[1]) : null;
         if (args.Contains("--set"))
@@ -37,7 +37,7 @@ internal static class WorkflowCommands
                 { Console.Error.WriteLine("Invalid diagnostic scope. Use diagnostic-scopes to list supported names."); return 2; }
                 diagnosticScopes.Add(scope);
             }
-            args = remaining.ToArray();
+            args = [.. remaining];
         }
         if (definition?.Kind == WorkflowKind.BackgroundTransfers && args.Contains("--auto-repair"))
         { Console.Error.WriteLine("Background transfer inspection does not support --auto-repair."); return 2; }
@@ -46,26 +46,26 @@ internal static class WorkflowCommands
         if (bitsAllUsers)
         {
             if (args.Count(value => value == "--all-users") != 1) { Console.Error.WriteLine("Specify --all-users once."); return 2; }
-            args = args.Where(value => value != "--all-users").ToArray();
+            args = [.. args.Where(value => value != "--all-users")];
         }
         var applicationScope = InstalledApplicationScope.Machine;
         if (definition?.Kind == WorkflowKind.InstalledApps && args.Contains("--current-user"))
         {
             if (args.Count(value => value == "--current-user") != 1) { Console.Error.WriteLine("Specify --current-user once."); return 2; }
             applicationScope = InstalledApplicationScope.CurrentAccount;
-            args = args.Where(value => value != "--current-user").ToArray();
+            args = [.. args.Where(value => value != "--current-user")];
         }
         bool includeProvisioned = definition?.Kind == WorkflowKind.AppPackages && args.Contains("--include-provisioned");
         if (includeProvisioned)
         {
             if (args.Count(value => value == "--include-provisioned") != 1) { Console.Error.WriteLine("Specify --include-provisioned once."); return 2; }
-            args = args.Where(value => value != "--include-provisioned").ToArray();
+            args = [.. args.Where(value => value != "--include-provisioned")];
         }
         if (definition?.Kind == WorkflowKind.AppPackages && args.Contains("--all-users"))
         {
             if (args.Count(value => value == "--all-users") != 1) { Console.Error.WriteLine("Specify --all-users once."); return 2; }
             packageScope = AppPackageScope.AllUsers;
-            args = args.Where(value => value != "--all-users").ToArray();
+            args = [.. args.Where(value => value != "--all-users")];
         }
         string[]? selectedRecipes = null;
         int selectionIndex = Array.IndexOf(args, "--recipes");
@@ -76,7 +76,7 @@ internal static class WorkflowCommands
             selectedRecipes = args[selectionIndex + 1].Split(',');
             try { RecipeCatalog.SelectForWorkflow(definition.Kind, selectedRecipes); }
             catch (ArgumentException error) { Console.Error.WriteLine("Invalid recipe selection: " + error.Message); return 2; }
-            args = args.Where((_, index) => index != selectionIndex && index != selectionIndex + 1).ToArray();
+            args = [.. args.Where((_, index) => index != selectionIndex && index != selectionIndex + 1)];
         }
         string? proposedName = null;
         string? storageVolume = null;
@@ -108,7 +108,7 @@ internal static class WorkflowCommands
                 else
                 { Console.Error.WriteLine("Usage: workflow network [--host HOST] [--tcp HOST PORT] [--auto-repair] [--json]"); return 2; }
             }
-            args = remaining.ToArray();
+            args = [.. remaining];
         }
         if (definition?.Kind == WorkflowKind.Storage)
         {
@@ -126,7 +126,7 @@ internal static class WorkflowCommands
                 else
                 { Console.Error.WriteLine("Usage: workflow storage [--volume D:] [--json]. This workflow is read-only."); return 2; }
             }
-            args = remaining.ToArray();
+            args = [.. remaining];
         }
         if (definition?.Kind == WorkflowKind.Installer && args.Contains("--product-code"))
         {
@@ -135,7 +135,7 @@ internal static class WorkflowCommands
             { Console.Error.WriteLine("Usage: workflow installer [--product-code {PRODUCT-CODE}] [--auto-repair] [--json]"); return 2; }
             try { msiProductCode = MsiProductDiagnostics.NormalizeProductCode(args[productIndex + 1]); }
             catch (ArgumentException error) { Console.Error.WriteLine(error.Message); return 2; }
-            args = args.Where((_, index) => index != productIndex && index != productIndex + 1).ToArray();
+            args = [.. args.Where((_, index) => index != productIndex && index != productIndex + 1)];
         }
         if (definition?.Kind == WorkflowKind.ComputerName)
         {
@@ -167,7 +167,7 @@ internal static class WorkflowCommands
             if (definition?.Kind != WorkflowKind.AvailableUpdates || sourceIndex + 1 >= args.Length || args.Count(value => value == "--source") != 1 ||
                 !Enum.TryParse(args[sourceIndex + 1], true, out updateSource) || !Enum.IsDefined(updateSource))
             { Console.Error.WriteLine("Update source must be Configured, WindowsUpdate or MicrosoftUpdate."); return 2; }
-            args = args.Where((_, index) => index != sourceIndex && index != sourceIndex + 1).ToArray();
+            args = [.. args.Where((_, index) => index != sourceIndex && index != sourceIndex + 1)];
         }
         if (definition?.Kind == WorkflowKind.AppPackages && args.Contains("--auto-repair"))
         { Console.Error.WriteLine("Package inventory is read-only. No package removal is supported."); return 2; }

@@ -1,9 +1,12 @@
 using System.Text.RegularExpressions;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.FileSystem;
 
-public static class VolumeDirtyStatus
+public static partial class VolumeDirtyStatus
 {
+    [GeneratedRegex(@"^Volume - ([A-Za-z]:) is (NOT )?Dirty$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex DirtyLine();
+
     public static RepairStep Step(string volume) => new("fsutil.exe", ["dirty", "query", StorageDiagnostics.NormalizeVolume(volume)], true);
 
     public static async Task<WorkflowCheck> CheckAsync(string volume, CancellationToken token = default)
@@ -21,7 +24,7 @@ public static class VolumeDirtyStatus
         if (result is null || result.ExitCode != 0 || result.TimedOut || result.Truncated || !string.IsNullOrWhiteSpace(result.Error))
             return new(name, CheckState.Unknown, $"Dirty-bit status for {volume} is unavailable or incomplete. No repair or restart was scheduled.", Evidence: result);
         var lines = result.Output.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        var matches = lines.Select(line => Regex.Match(line, @"^Volume - ([A-Za-z]:) is (NOT )?Dirty$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        var matches = lines.Select(line => DirtyLine().Match(line))
             .Where(match => match.Success).ToArray();
         if (matches.Length != 1 || !matches[0].Groups[1].Value.Equals(volume, StringComparison.OrdinalIgnoreCase))
             return new(name, CheckState.Unknown, $"Dirty-bit output did not identify exactly one result for {volume}. No repair or restart was scheduled.", Evidence: result);

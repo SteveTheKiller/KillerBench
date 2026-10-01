@@ -1,6 +1,6 @@
 using System.Net.NetworkInformation;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public static class NetworkAssessment
 {
@@ -10,10 +10,10 @@ public static class NetworkAssessment
         ArgumentNullException.ThrowIfNull(read);
         try
         {
-            var snapshot = read();
-            if (snapshot.Addresses is null || snapshot.Gateways is null || snapshot.Dns is null)
+            var (addresses, gateways, dns) = read();
+            if (addresses is null || gateways is null || dns is null)
                 return new(name, CheckState.Unknown, "Adapter configuration was incomplete. Other interfaces can still be inspected; no repair selected.");
-            return NetworkSnapshot.Assess(new(name, snapshot.Addresses, snapshot.Gateways, snapshot.Dns));
+            return NetworkSnapshot.Assess(new(name, addresses, gateways, dns));
         }
         catch (Exception error) when (error is NetworkInformationException or InvalidOperationException or UnauthorizedAccessException or System.Security.SecurityException)
         {

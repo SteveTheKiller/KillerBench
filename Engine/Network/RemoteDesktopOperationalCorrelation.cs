@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public static class RemoteDesktopOperationalCorrelation
 {
@@ -23,7 +23,7 @@ public static class RemoteDesktopOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Remote Desktop readiness";
         const string boundary = " This bounded conclusion does not establish effective policy, listener binding, firewall access, certificate identity, permissions, authentication, network reachability, connection success or session creation. It does not enable Remote Desktop, start a service, create or change a listener, firewall rule, certificate, permission or session, disconnect a user, or select a repair.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         var selected = new List<WorkflowCheck>();
         var configurationFailure = checks.Where(check => check is not null && check.Name == "Remote Desktop configuration").ToArray();

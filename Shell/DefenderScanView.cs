@@ -20,7 +20,7 @@ public partial class MainWindow
             Task<WorkflowCheck> scanHistory = DefenderScanHistory.CheckAsync(stop.Token);
             Task<WorkflowCheck> threatHistory = DefenderThreatSummary.CheckAsync(stop.Token);
             await Task.WhenAll(protection, scanHistory, threatHistory);
-            WorkflowCheck[] checks = protection.Result.Concat([scanHistory.Result, threatHistory.Result]).ToArray();
+            WorkflowCheck[] checks = [.. protection.Result, scanHistory.Result, threatHistory.Result];
             AppendWorkflowOutput(string.Join("\n\n", checks.Select(check => check.Name + " / " + check.State + "\n" + check.Detail)));
             bool needsAttention = checks.Any(check => check.State is CheckState.Attention or CheckState.Unknown);
             string summary = needsAttention ? "Defender overview needs review" : "Defender overview collected";

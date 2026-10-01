@@ -5,7 +5,7 @@ internal static class ReservedStorageChecks
 {
     internal static async Task RunAsync()
     {
-        ToolResult Evidence(string state) => new(0, "{\"state\":\"" + state + "\"}", "", false);
+        static ToolResult Evidence(string state) => new(0, "{\"state\":\"" + state + "\"}", "", false);
         foreach (string state in new[] { "Enabled", "Disabled", "InUse" })
         {
             var finding = ReservedStorageDiagnostics.Interpret(Evidence(state));

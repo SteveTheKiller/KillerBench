@@ -4,7 +4,7 @@ internal static class StoreInstallEventChecks
 {
     internal static void Run()
     {
-        string Entry(int id, int level = 2, string provider = "Microsoft-Windows-Install-Agent", ulong record = 1) =>
+        static string Entry(int id, int level = 2, string provider = "Microsoft-Windows-Install-Agent", ulong record = 1) =>
             $"<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='{provider}'/><EventID>{id}</EventID><EventRecordID>{record}</EventRecordID><Level>{level}</Level><TimeCreated SystemTime='2026-09-14T00:00:00Z'/></System><EventData><Data Name='Package'>PRIVATE.PACKAGE</Data><Data Name='Uri'>https://private.invalid/content</Data><Data Name='Account'>PRIVATE\\User</Data></EventData></Event>";
         var evidence = new ToolResult(0, "<Events>" + Entry(2001, record: 1) + Entry(2001, record: 2) + Entry(2006, 4, record: 3) + "</Events>", "", false);
         var result = StoreInstallEvents.Interpret(evidence);

@@ -1,8 +1,8 @@
 using System.Runtime.InteropServices;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Cleanup;
 
-public static class RecycleBinCleanup
+public static partial class RecycleBinCleanup
 {
     public const string TargetName = "Current user Recycle Bin";
     public const string ShellRoot = "shell:RecycleBinFolder";
@@ -42,8 +42,8 @@ public static class RecycleBinCleanup
     [StructLayout(LayoutKind.Sequential, Pack = 8)]
     private struct QueryInfo { public int Size; public long Bytes; public long Items; }
 
-    [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-    private static extern int SHQueryRecycleBinW(string? rootPath, ref QueryInfo info);
-    [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-    private static extern int SHEmptyRecycleBinW(IntPtr window, string? rootPath, uint flags);
+    [LibraryImport("shell32.dll", StringMarshalling = StringMarshalling.Utf16)]
+    private static partial int SHQueryRecycleBinW(string? rootPath, ref QueryInfo info);
+    [LibraryImport("shell32.dll", StringMarshalling = StringMarshalling.Utf16)]
+    private static partial int SHEmptyRecycleBinW(IntPtr window, string? rootPath, uint flags);
 }

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.BitLocker;
 
 public enum BitLockerOperation { Inspect, BackupRecovery, Encrypt, ResumeProtection }
 public enum BitLockerEncryption { Aes128, Aes256, XtsAes128, XtsAes256 }

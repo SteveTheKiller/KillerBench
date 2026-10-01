@@ -146,8 +146,8 @@ internal static class OrcaCacheResetChecks
         {
             token.ThrowIfCancellationRequested();
             Require(selectedMode == mode, "Fixture target mode remains stable");
-            IReadOnlyList<OrcaCacheTarget> result = OrcaCacheReset.ExpectedPaths(mode)
-                .Select(path => new OrcaCacheTarget(Path.GetFileName(path), path, Exists(path), Reparse, true)).ToArray();
+            IReadOnlyList<OrcaCacheTarget> result = [.. OrcaCacheReset.ExpectedPaths(mode)
+                .Select(path => new OrcaCacheTarget(Path.GetFileName(path), path, Exists(path), Reparse, true))];
             return Task.FromResult(result);
         }
 

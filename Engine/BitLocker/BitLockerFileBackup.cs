@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.BitLocker;
 
 public static class BitLockerFileBackup
 {

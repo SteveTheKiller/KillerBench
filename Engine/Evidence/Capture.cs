@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Evidence;
 
 public enum CollectionStatus { Collected, Unavailable, AccessDenied, Failed, Canceled, Truncated }
 public sealed record CaptureSource(string Name, string Kind, CollectionStatus Status, string Detail, TextEvidence? Evidence);
@@ -105,8 +105,8 @@ public static class Capture
         if (file.Length > MaximumFileBytes) throw new InvalidDataException("Capture exceeds the 64 MB limit.");
         try
         {
-            var session = await JsonSerializer.DeserializeAsync<CaptureSession>(file, JsonOptions, cancellationToken).ConfigureAwait(false);
-            if (session is null) throw new InvalidDataException("Empty capture.");
+            var session = await JsonSerializer.DeserializeAsync<CaptureSession>(file, JsonOptions, cancellationToken).ConfigureAwait(false)
+                ?? throw new InvalidDataException("Empty capture.");
             Validate(session);
             return session;
         }

@@ -47,11 +47,11 @@ internal static class BitLockerChecks
         }
         Require(!new BitLockerOptions("C:", Backup: RecoveryDestination.File, BackupFile: @"D:\private\key.txt").Describe().Contains("private"), "Ordinary option report omits backup path");
         const string fixture = "function Get-BitLockerVolume($ErrorAction) { [pscustomobject]@{MountPoint='C:';VolumeStatus='FullyEncrypted';ProtectionStatus='On';EncryptionPercentage=100;LockStatus='Unlocked';KeyProtector=@{RecoveryPassword='SECRET_FIXTURE_ONLY'}} }; ";
-        var method = typeof(ToolResult).Assembly.GetType("KillerBench.Engine.NativeTool")!.GetMethod("RunAsync", BindingFlags.Static | BindingFlags.NonPublic)!;
+        var method = typeof(ToolResult).Assembly.GetType("KillerBench.Engine.Infrastructure.NativeTool")!.GetMethod("RunAsync", BindingFlags.Static | BindingFlags.NonPublic)!;
         var args = BitLockerDiagnostics.QueryStep().Arguments.ToArray();
         args[^1] = fixture + args[^1];
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(15));
-        var output = await (Task<ToolResult>)method.Invoke(null, new object?[] { PrintRecovery.Tool, args, false, null, timeout.Token })!;
+        var output = await (Task<ToolResult>)method.Invoke(null, [PrintRecovery.Tool, args, false, null, timeout.Token])!;
         Require(output.ExitCode == 0 && !output.Output.Contains("SECRET") && !output.Output.Contains("KeyProtector"), "Collector exports only selected status fields");
         Require(BitLockerDiagnostics.Interpret(output).Single().State == CheckState.Clear, "Protected volume recognized");
         var selectedStep = BitLockerDiagnostics.QueryStep("D:");

@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Time;
 
 public enum TimeSynchronizationReconciliationOutcome { NoPending, Verified, NotApplied, Inconclusive }
 public sealed record TimeSynchronizationReconciliationResult(TimeSynchronizationReconciliationOutcome Outcome, string Detail);

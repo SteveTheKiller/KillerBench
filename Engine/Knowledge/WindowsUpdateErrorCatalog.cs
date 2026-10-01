@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Knowledge;
 
 public sealed record WindowsUpdateCodeReference(uint Code, string Symbol, string Meaning, string DiagnosticScope);
 
@@ -6,8 +6,8 @@ public static class WindowsUpdateErrorCatalog
 {
     public const string SourceUrl = "https://learn.microsoft.com/en-us/windows/deployment/update/windows-update-error-reference";
 
-    public static IReadOnlyList<WindowsUpdateCodeReference> All { get; } = Array.AsReadOnly(new[]
-    {
+    public static IReadOnlyList<WindowsUpdateCodeReference> All { get; } = Array.AsReadOnly<WindowsUpdateCodeReference>(
+    [
         new WindowsUpdateCodeReference(0x00240003, "WU_S_UPDATE_ERROR", "The operation completed but one or more updates reported errors.", "Review the individual update outcomes and CBS evidence."),
         new WindowsUpdateCodeReference(0x00240005, "WU_S_REBOOT_REQUIRED", "A restart is required to complete the update.", "Review pending restart evidence before another repair."),
         new WindowsUpdateCodeReference(0x00240006, "WU_S_ALREADY_INSTALLED", "The update is already installed.", "Verify the exact installed revision if the caller expected a new change."),
@@ -89,7 +89,7 @@ public static class WindowsUpdateErrorCatalog
         new WindowsUpdateCodeReference(0x80070005, "E_ACCESSDENIED", "The operation was denied access.", "Review elevation, policy and target permissions."),
         new WindowsUpdateCodeReference(0x800F081F, "CBS_E_SOURCE_MISSING", "Required component source files were not found.", "Review CBS evidence and the approved component repair source."),
         new WindowsUpdateCodeReference(0x800F0831, "CBS_E_STORE_CORRUPTION", "A required package manifest is missing.", "Review CBS evidence and component-store health.")
-    });
+    ]);
 
     public static WindowsUpdateCodeReference? Find(int hresult)
     {

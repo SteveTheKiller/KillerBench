@@ -1,6 +1,6 @@
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Packs;
 
 /// <summary>Procedures and targeted repairs that need explicit confirmation and, mostly, an option naming the exact target.</summary>
 public static class WindowsMaintenancePack

@@ -4,7 +4,7 @@ internal static class ServicePathQuotingChecks
 {
     public static void Run()
     {
-        ToolResult Evidence(string services, bool complete = true) => new(0,
+        static ToolResult Evidence(string services, bool complete = true) => new(0,
             "{\"complete\":" + complete.ToString().ToLowerInvariant() + ",\"services\":[" + services + "]}", "", false);
         const string quoted = "{\"name\":\"QuotedSvc\",\"displayName\":\"Quoted Service\",\"serviceType\":\"Own Process\",\"binaryFile\":\"service.exe\",\"status\":\"Quoted\",\"complete\":true,\"issue\":null}";
         const string noSpaces = "{\"name\":\"CompactSvc\",\"displayName\":\"Compact Service\",\"serviceType\":\"Share Process\",\"binaryFile\":\"svchost.exe\",\"status\":\"NoSpaces\",\"complete\":true,\"issue\":null}";

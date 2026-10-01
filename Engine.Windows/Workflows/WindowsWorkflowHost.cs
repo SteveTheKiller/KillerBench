@@ -2,7 +2,7 @@ using System.Text.Json;
 using Microsoft.Win32;
 using System.Net.NetworkInformation;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Workflows;
 
 public sealed class WindowsWorkflowHost : IWorkflowHost
 {
@@ -240,8 +240,8 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
                 InfrastructureServiceFailureArea.TaskScheduler, token).ConfigureAwait(false);
             findings.AddRange(serviceHistory);
             Progress?.Report("Correlating task runtime results with exact service history...");
-            findings.Add(ScheduledTaskOperationalCorrelation.Check(findings
-                .Where(check => check.Name != "Task Scheduler service failure history").ToArray(), serviceHistory, token));
+            findings.Add(ScheduledTaskOperationalCorrelation.Check([.. findings
+                .Where(check => check.Name != "Task Scheduler service failure history")], serviceHistory, token));
             return findings;
         }
         if (kind == WorkflowKind.AppPackages)
@@ -266,8 +266,8 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
                     findings.Add(provisionedSummary);
                 }
             }
-            var registeredSummary = AppPackageDiagnostics.Summarize(findings
-                .Where(check => check.Name != "Provisioned app packages" && !check.Name.StartsWith("Provisioned: ", StringComparison.Ordinal)).ToArray());
+            var registeredSummary = AppPackageDiagnostics.Summarize([.. findings
+                .Where(check => check.Name != "Provisioned app packages" && !check.Name.StartsWith("Provisioned: ", StringComparison.Ordinal))]);
             findings.Add(registeredSummary);
             Progress?.Report("Reading recent AppX deployment and Microsoft Store installation history...");
             var deploymentHistory = await AppDeploymentEvents.CheckAsync(token).ConfigureAwait(false);
@@ -1274,7 +1274,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             if (!networkAdministrator)
             {
                 Progress?.Report("Reading DHCP service and lease state without elevation...");
-                checks.AddRange(await ServiceInspection.ReadAsync(Workflows.Scopes(kind).Where(scope => scope is not (RepairKind.DnsClient or RepairKind.DhcpClient)), ServiceRecovery.CheckAsync, token, Progress).ConfigureAwait(false));
+                checks.AddRange(await ServiceInspection.ReadAsync(KillerBench.Engine.Workflows.Workflows.Scopes(kind).Where(scope => scope is not (RepairKind.DnsClient or RepairKind.DhcpClient)), ServiceRecovery.CheckAsync, token, Progress).ConfigureAwait(false));
                 var lease = await DhcpRecovery.CheckAsync(token).ConfigureAwait(false);
                 checks.Add(lease with
                 {
@@ -1547,7 +1547,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             Progress?.Report("Reading Windows capability states without changing capabilities...");
             checks.Add(await WindowsCapabilityDiagnostics.CheckAsync(token).ConfigureAwait(false));
         }
-        var scopes = Workflows.Scopes(kind);
+        var scopes = KillerBench.Engine.Workflows.Workflows.Scopes(kind);
         bool focusedService = kind == WorkflowKind.DeliveryOptimizationService ||
             scopes.Length > 0 && scopes.All(scope => ServiceRecovery.ServiceName(scope) is not null);
         if (!administrator && kind is not (WorkflowKind.Printing or WorkflowKind.BitsService or WorkflowKind.CryptographicService or WorkflowKind.ModulesInstallerService or WorkflowKind.UpdateOrchestratorService))
@@ -1900,7 +1900,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         }
         var step = Repairs.Plan(kind).Steps.Single(s => s.Verification);
         var result = await BoundedTool.RunAsync(step, TimeSpan.FromHours(1), progress, token).ConfigureAwait(false);
-        return Workflows.Interpret(kind, result) with { Evidence = result };
+        return KillerBench.Engine.Workflows.Workflows.Interpret(kind, result) with { Evidence = result };
     }
 
     private static async Task<WorkflowCheck> InspectDefenderAsync(IProgress<string>? progress, CancellationToken token) =>
@@ -1910,7 +1910,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
     private static async Task<WorkflowCheck> InspectServicingAsync(RepairKind kind, IProgress<string>? progress, CancellationToken token)
     {
         var step = Repairs.Plan(kind).Steps.Single(candidate => candidate.Verification);
-        return Workflows.Interpret(kind, await BoundedTool.RunAsync(step, TimeSpan.FromHours(1), progress, token).ConfigureAwait(false));
+        return KillerBench.Engine.Workflows.Workflows.Interpret(kind, await BoundedTool.RunAsync(step, TimeSpan.FromHours(1), progress, token).ConfigureAwait(false));
     }
     private static async Task<WorkflowCheck> InspectWmiRepositoryAsync(IProgress<string>? progress, CancellationToken token) =>
         WmiRecovery.Interpret(await WmiRecovery.ExecuteAsync(WmiRecovery.Step(true), progress, token).ConfigureAwait(false));

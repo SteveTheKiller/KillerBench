@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Scheduling;
 
 /// <summary>Creates a disabled review definition. Does not register or execute tasks.</summary>
 public static class ScheduledTaskXml
@@ -37,7 +37,7 @@ public static class ScheduledTaskXml
                 TaskScheduleKind.Weekly => E("ScheduleByWeek", new object[] { E("WeeksInterval", 1),
                     E("DaysOfWeek", plan.Schedule.Weekdays!.Select(day => E(day.ToString()))) }),
                 TaskScheduleKind.Monthly => E("ScheduleByMonth", new object[] {
-                    E("DaysOfMonth", plan.Schedule.LastDay ? new[] { E("Day", "Last") } :
+                    E("DaysOfMonth", plan.Schedule.LastDay ? [E("Day", "Last")] :
                         plan.Schedule.MonthDays!.Select(day => E("Day", day))),
                     E("Months", CultureInfo.InvariantCulture.DateTimeFormat.MonthNames.Take(12).Select(month => E(month))) }),
                 _ => throw new ArgumentOutOfRangeException(nameof(draft))

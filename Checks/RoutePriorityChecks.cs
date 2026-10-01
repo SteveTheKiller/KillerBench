@@ -33,7 +33,7 @@ internal static class RoutePriorityChecks
         {
             Evidence([Row()], false), Evidence([Row(effectiveMetric: 99)]), Evidence([Row(family: 2, nextHop: "2001:db8::1")]),
             Evidence([Row(automaticMetric: "Maybe")]), Evidence([Row(), Row(protocol: "dhcp")]),
-            Evidence(Enumerable.Range(0, 129).Select(i => Row(index: i + 1, nextHop: "192.0.2." + ((i % 250) + 1), routeMetric: i)).ToArray()),
+            Evidence([.. Enumerable.Range(0, 129).Select(i => Row(index: i + 1, nextHop: "192.0.2." + ((i % 250) + 1), routeMetric: i))]),
             new ToolResult(0, "{}", "", false), new ToolResult(0, "not json", "", false),
             clearEvidence with { ExitCode = 5 }, clearEvidence with { Error = "denied" },
             clearEvidence with { TimedOut = true }, clearEvidence with { Truncated = true }

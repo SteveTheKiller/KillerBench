@@ -1,6 +1,6 @@
 using Microsoft.Win32;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public sealed record UacPolicySnapshot(int? EnableLua, int? AdministratorPrompt,
     int? StandardUserPrompt, int? SecureDesktop, bool Complete, string Detail);
@@ -28,7 +28,7 @@ public static class UacPolicyDiagnostics
 
     public static IReadOnlyList<WorkflowCheck> Interpret(UacPolicySnapshot? snapshot)
     {
-        WorkflowCheck Unknown(string name, string detail) => new(name, CheckState.Unknown, detail + Scope);
+        static WorkflowCheck Unknown(string name, string detail) => new(name, CheckState.Unknown, detail + Scope);
         if (snapshot is null || !snapshot.Complete)
             return [Unknown("User Account Control", (snapshot?.Detail ?? "UAC evidence is unavailable.") + " ")];
         if (!Valid(snapshot.EnableLua, 0, 1) || !Valid(snapshot.AdministratorPrompt, 0, 5) ||

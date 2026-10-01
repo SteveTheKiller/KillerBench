@@ -3,6 +3,8 @@ using KillerBench.Engine;
 
 internal static class PrinterOfflineChecks
 {
+    private static readonly string[] SelectedQueueA = ["A"];
+
     internal static async Task RunAsync()
     {
         var success = RecipeChecks.Success(RepairKind.PrinterOffline);
@@ -10,7 +12,7 @@ internal static class PrinterOfflineChecks
         string scopedFolder = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "KillerBench-printer-run-" + Guid.NewGuid().ToString("N"));
         var scopedResult = await Repairs.RunAsync(RepairKind.PrinterOffline, scopedFolder, host: scopedHost, selectedPrinterQueues: ["A"]);
         Require(scopedHost.Calls == 3 && scopedHost.Prerequisites == 2 && Repairs.IsVerified(scopedResult) &&
-            scopedResult.SelectedPrinterQueues!.SequenceEqual(new[] { "A" }), "Shared runner diagnoses, checks prerequisites and verifies selected queues");
+            scopedResult.SelectedPrinterQueues!.SequenceEqual(SelectedQueueA), "Shared runner diagnoses, checks prerequisites and verifies selected queues");
         Require(System.IO.File.ReadAllText(scopedResult.JournalPath).Contains("selectedPrinterQueues"), "Selected queue scope is journaled");
         for (int index = 0; index < scopedResult.Steps.Count; index++)
         {
@@ -21,11 +23,12 @@ internal static class PrinterOfflineChecks
             Require(PrinterOfflineRecovery.Read(steps[index].Result) is null,
                 "Error-bearing printer snapshots cannot establish eligibility or final state");
         }
-        foreach (string[] targets in new[] { Array.Empty<string>(), new[] { "A", "a" }, new[] { "" }, new[] { "A\nB" } })
+        string[][] malformedSelections = [[], ["A", "a"], [""], ["A\nB"]];
+        foreach (string[] targets in malformedSelections)
             Require(!Repairs.IsVerified(scopedResult with { SelectedPrinterQueues = targets }),
                 "Malformed saved selections remain unverified without throwing");
         Require(!Repairs.IsVerified(scopedResult with { Steps = null! }) &&
-            !Repairs.IsVerified(scopedResult with { Steps = new RepairStepResult[] { null! } }),
+            !Repairs.IsVerified(scopedResult with { Steps = [null!] }),
             "Missing saved repair evidence remains unverified");
         foreach (string evidence in new[] {
             "{\"targets\":[],\"queues\":[{\"id\":\"A\",\"offline\":false}]}",
@@ -132,25 +135,25 @@ internal static class PrinterOfflineChecks
                 if($Class -ne 'Win32_Printer') { throw 'Unexpected query' }; return $global:queues
             }
             """;
-        var method = typeof(ToolResult).Assembly.GetType("KillerBench.Engine.NativeTool")!.GetMethod("RunAsync", BindingFlags.Static | BindingFlags.NonPublic)!;
+        var method = typeof(ToolResult).Assembly.GetType("KillerBench.Engine.Infrastructure.NativeTool")!.GetMethod("RunAsync", BindingFlags.Static | BindingFlags.NonPublic)!;
         async Task<ToolResult> Run(string providers, string[]? selected = null)
         {
             var args = (selected is null ? PrinterOfflineRecovery.Step(false) : PrinterOfflineRecovery.Step(false, selected)).Arguments.ToArray();
             args[^1] = providers + "\n" + args[^1];
             using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(15));
-            return await ((Task<ToolResult>)method.Invoke(null, new object?[] { PrintRecovery.Tool, args, false, null, timeout.Token })!);
+            return await ((Task<ToolResult>)method.Invoke(null, [PrintRecovery.Tool, args, false, null, timeout.Token])!);
         }
         var output = await Run(fixture);
         var selectedOutput = await Run(fixture, ["A"]);
-        Require(PrinterOfflineRecovery.Read(selectedOutput)?.Targets.SequenceEqual(new[] { "A" }) == true, "Explicit local queue selection executes");
+        Require(PrinterOfflineRecovery.Read(selectedOutput)?.Targets.SequenceEqual(["A"]) == true, "Explicit local queue selection executes");
         var anotherLocal = fixture.Replace("Network=$true", "Network=$false");
         var isolated = await Run(anotherLocal, ["A"]);
-        Require(PrinterOfflineRecovery.Read(isolated)?.Targets.SequenceEqual(new[] { "A" }) == true,
+        Require(PrinterOfflineRecovery.Read(isolated)?.Targets.SequenceEqual(["A"]) == true,
             "An unselected offline local queue must not receive a provider write");
         const string punctuatedName = "O'Brien; $(throw 'unexpected')";
         string quotedName = "'" + punctuatedName.Replace("'", "''") + "'";
         var punctuated = await Run(fixture.Replace("'A'", quotedName), [punctuatedName]);
-        Require(PrinterOfflineRecovery.Read(punctuated)?.Targets.SequenceEqual(new[] { punctuatedName }) == true,
+        Require(PrinterOfflineRecovery.Read(punctuated)?.Targets.SequenceEqual([punctuatedName]) == true,
             "Queue punctuation stays literal and cannot become a command");
         var missingOutput = await Run(fixture, ["Missing"]);
         Require(missingOutput.ExitCode != 0, "Missing selected queue blocks mutation");
@@ -172,13 +175,14 @@ internal static class PrinterOfflineChecks
                 !skipped.Evidence.Error.Contains("MUTATION_CALLED", StringComparison.Ordinal),
                 "A queue that became online records an exact no-change result without calling the provider");
         }
-        foreach (var invalid in new[] { Array.Empty<string>(), new[] { "A", "a" }, new[] { "bad\nqueue" } })
+        string[][] invalidSelections = [[], ["A", "a"], ["bad\nqueue"]];
+        foreach (var invalid in invalidSelections)
         {
             try { PrinterOfflineRecovery.Step(false, invalid); throw new Exception("Invalid queue selection accepted"); }
             catch (ArgumentException) { }
         }
         var state = PrinterOfflineRecovery.Read(output);
-        Require(state is not null && state.Targets.SequenceEqual(new[] { "A" }) && state.Queues.Count == 1 && !state.Queues["A"], "Script changes only the affected local queue: " + output.Error);
+        Require(state is not null && state.Targets.SequenceEqual(["A"]) && state.Queues.Count == 1 && !state.Queues["A"], "Script changes only the affected local queue: " + output.Error);
         var failed = await Run(fixture.Replace("return $null", "throw 'Synthetic provider denied update'"));
         Require(failed.ExitCode != 0 && PrinterOfflineRecovery.Read(failed) is null, "Provider write failures cannot verify");
         var unavailable = await Run(fixture.Replace("WorkOffline=$true", "WorkOffline=$null"));

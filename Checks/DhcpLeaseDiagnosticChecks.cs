@@ -38,7 +38,7 @@ internal static class DhcpLeaseDiagnosticChecks
             Evidence([Row()], false), Evidence([Row(obtained: null)]), Evidence([Row(expires: null)]),
             Evidence([Row(setting: "invalid")]), Evidence([Row(), Row(index: 7, setting: "22222222-2222-2222-2222-222222222222")]),
             Evidence([Row(), Row(index: 8)]), Evidence([Row(obtained: "2026-09-15T10:00:00-07:00")]),
-            Evidence(Enumerable.Range(0, 257).Select(index => Row(index + 1, Guid.NewGuid().ToString())).ToArray()),
+            Evidence([.. Enumerable.Range(0, 257).Select(index => Row(index + 1, Guid.NewGuid().ToString()))]),
             new ToolResult(0, "{}", "", false), new ToolResult(0, "not json", "", false),
             ordinaryEvidence with { ExitCode = 5 }, ordinaryEvidence with { Error = "denied" },
             ordinaryEvidence with { TimedOut = true }, ordinaryEvidence with { Truncated = true }

@@ -24,7 +24,7 @@ internal static class ReliabilityOperationalCorrelationChecks
         Require(Invoke(application: Check("Wrong application source", CheckState.Information)).State == CheckState.Unknown &&
             Invoke(shutdown: Check("Wrong shutdown source", CheckState.Information)).State == CheckState.Unknown &&
             Invoke(reliability: []).State == CheckState.Unknown &&
-            Invoke(reliability: Enumerable.Range(0, 66).Select(index => Check("Reliability " + index, CheckState.Information)).ToArray()).State == CheckState.Unknown,
+            Invoke(reliability: [.. Enumerable.Range(0, 66).Select(index => Check("Reliability " + index, CheckState.Information))]).State == CheckState.Unknown,
             "Unexpected, empty and oversized reliability inputs fail closed");
 
         try { Invoke(token: new CancellationToken(true)); throw new Exception("Reliability correlation cancellation ignored"); }

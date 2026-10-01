@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Security;
 
 public static class WindowsActivationOperationalCorrelation
 {
@@ -10,7 +10,7 @@ public static class WindowsActivationOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "Windows activation operational conclusion";
         const string boundary = " Provider status and sanitized history do not verify subscription entitlement, activation-server reachability, token-store integrity, future validity or root cause. No activation, product-key, token, license, account, service or policy action is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
         if (licensing.Name != "Windows activation" || history.Name != "Recent Software Protection events")
             return Unknown("Activation evidence carried an unexpected identity.");
         if (licensing.EffectiveState == CheckState.Unknown || history.EffectiveState == CheckState.Unknown)

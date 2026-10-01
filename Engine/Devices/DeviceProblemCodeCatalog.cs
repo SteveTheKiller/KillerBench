@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Devices;
 
 public sealed record DeviceProblemCodeEntry(uint Code, string Symbol, string Summary, string NextAction,
     bool RestartMayResolve = false);

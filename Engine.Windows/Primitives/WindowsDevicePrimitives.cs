@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using KillerBench.Engine.Core;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Windows.Primitives;
 
 /// <summary>Counts devices with a problem code through Get-PnpDevice. Value is the count; Raw lists instance id, class and status.</summary>
 public sealed class WindowsProblemDevicesProbe : IProbePrimitive
@@ -27,8 +27,11 @@ public sealed class WindowsProblemDevicesProbe : IProbePrimitive
 }
 
 /// <summary>Reports one device's status by instance id. Value is the PnP status such as OK, Error or Degraded.</summary>
-public sealed class WindowsDeviceStatusProbe : IProbePrimitive
+public sealed partial class WindowsDeviceStatusProbe : IProbePrimitive
 {
+    [GeneratedRegex("^[A-Za-z]+$")]
+    private static partial Regex StatusPattern();
+
     public const string InstancePattern = @"[A-Za-z0-9&{}_#.\\-]{4,200}";
     public static readonly PrimitiveParameter InstanceParameter = new("instance", true, "Exact device instance id from Device Manager or pnp.problem-devices") { Pattern = InstancePattern };
     public string Name => "pnp.device-status";
@@ -44,7 +47,7 @@ public sealed class WindowsDeviceStatusProbe : IProbePrimitive
     }
 
     public static PrimitiveResult Interpret(ToolResult result) => WindowsNetAdapterPrimitives.Lines(result, "Get-PnpDevice", lines =>
-        lines.Length == 1 && Regex.IsMatch(lines[0], "^[A-Za-z]+$")
+        lines.Length == 1 && StatusPattern().IsMatch(lines[0])
             ? new PrimitiveResult(true, lines[0], lines[0]) { Detail = "The device reports " + lines[0] + "." }
             : PrimitiveResult.Unavailable("Device status output was not recognized."));
 }
@@ -70,8 +73,11 @@ public sealed class WindowsDeviceRestartAction : IActionPrimitive
 }
 
 /// <summary>Counts formatted volumes without a drive letter. Value is the count; Raw lists disk, partition, size and file system.</summary>
-public sealed class WindowsUnletteredVolumesProbe : IProbePrimitive
+public sealed partial class WindowsUnletteredVolumesProbe : IProbePrimitive
 {
+    [GeneratedRegex(@"^\d+\|\d+\|[0-9.]+\|[A-Za-z0-9]+$")]
+    private static partial Regex VolumeLinePattern();
+
     public string Name => "volume.unlettered";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [];
     private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
@@ -86,7 +92,7 @@ public sealed class WindowsUnletteredVolumesProbe : IProbePrimitive
 
     public static PrimitiveResult Interpret(ToolResult result) => WindowsNetAdapterPrimitives.Lines(result, "Get-Partition", lines =>
     {
-        foreach (string line in lines) if (!Regex.IsMatch(line, @"^\d+\|\d+\|[0-9.]+\|[A-Za-z0-9]+$")) return PrimitiveResult.Unavailable("Volume inventory line was not recognized.");
+        foreach (string line in lines) if (!VolumeLinePattern().IsMatch(line)) return PrimitiveResult.Unavailable("Volume inventory line was not recognized.");
         return new PrimitiveResult(true, lines.Length.ToString(CultureInfo.InvariantCulture), string.Join("\n", lines))
         { Detail = lines.Length == 0 ? "Every formatted data volume has a drive letter." : lines.Length + " formatted volume(s) have no drive letter; the evidence lists disk and partition numbers." };
     });
@@ -119,8 +125,11 @@ public sealed class WindowsAssignDriveLetterAction : IActionPrimitive
 }
 
 /// <summary>Reports the status of one installed app package for the current account. Value is the package status such as Ok.</summary>
-public sealed class WindowsAppxStatusProbe : IProbePrimitive
+public sealed partial class WindowsAppxStatusProbe : IProbePrimitive
 {
+    [GeneratedRegex("^[A-Za-z, ]+$")]
+    private static partial Regex PackageStatusPattern();
+
     public const string FullNamePattern = @"[A-Za-z0-9][A-Za-z0-9._-]{2,255}";
     public static readonly PrimitiveParameter FullNameParameter = new("package", true, "Exact package full name from Get-AppxPackage") { Pattern = FullNamePattern };
     public string Name => "appx.status";
@@ -136,7 +145,7 @@ public sealed class WindowsAppxStatusProbe : IProbePrimitive
     }
 
     public static PrimitiveResult Interpret(ToolResult result) => WindowsNetAdapterPrimitives.Lines(result, "Get-AppxPackage", lines =>
-        lines.Length == 1 && Regex.IsMatch(lines[0], "^[A-Za-z, ]+$")
+        lines.Length == 1 && PackageStatusPattern().IsMatch(lines[0])
             ? new PrimitiveResult(true, lines[0], lines[0]) { Detail = "The package reports " + lines[0] + "." }
             : PrimitiveResult.Unavailable("Package status output was not recognized."));
 }

@@ -28,10 +28,10 @@ internal static class FileSignatureChecks
         var arguments = command.Arguments.ToArray();
         arguments[^1] = "function Get-AuthenticodeSignature { param([string]$LiteralPath) " +
             "[pscustomobject]@{Path=$LiteralPath;Status='NotSigned';SignerCertificate=$null;StatusMessage='Fixture unsigned'} }; " + arguments[^1];
-        var runner = typeof(ToolResult).Assembly.GetType("KillerBench.Engine.BoundedTool")!
+        var runner = typeof(ToolResult).Assembly.GetType("KillerBench.Engine.Infrastructure.BoundedTool")!
             .GetMethod("RunAsync", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!;
-        var output = ((Task<ToolResult>)runner.Invoke(null, new object?[] { command with { Arguments = arguments },
-            TimeSpan.FromSeconds(15), null, CancellationToken.None })!).GetAwaiter().GetResult();
+        var output = ((Task<ToolResult>)runner.Invoke(null, [command with { Arguments = arguments },
+            TimeSpan.FromSeconds(15), null, CancellationToken.None])!).GetAwaiter().GetResult();
         var observed = FileSignature.Interpret(literal, output);
         if (observed.Status != "NotSigned" || observed.Path != literal.Executable || observed.Signer is not null)
             throw new Exception("Signature command failed to preserve the literal path with a substituted provider");

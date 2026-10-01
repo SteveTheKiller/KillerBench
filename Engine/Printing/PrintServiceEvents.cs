@@ -1,6 +1,6 @@
 using System.Xml;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Printing;
 
 public static class PrintServiceEvents
 {
@@ -15,8 +15,8 @@ public static class PrintServiceEvents
                 "PrintService recorded warning or failure evidence. Counts describe records, not unique print jobs. This does not establish a current queue, driver or physical-printer failure.",
                 "Review the event payload for the queue, client and reported error. Match its time to the reported printing problem, then inspect that queue's current state and driver registration. Preserve queued jobs and managed configuration; do not select a repair from this event alone.",
                 "https://learn.microsoft.com/en-us/troubleshoot/windows-server/printing/troubleshoot-printer-guidance",
-                group.Count(), group.Take(8).Select(item => new EvidenceReference(source, item.LineNumber,
-                    item.Timestamp + " | " + item.Message)).ToArray());
+                group.Count(), [.. group.Take(8).Select(item => new EvidenceReference(source, item.LineNumber,
+                    item.Timestamp + " | " + item.Message))]);
         }
     }
 

@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Installation;
 
 public sealed record MsiRepairPendingRecord(int Schema, string ProductCode, DateTimeOffset StartedUtc,
     string JournalPath, string LogPath, WorkflowCheck Before)

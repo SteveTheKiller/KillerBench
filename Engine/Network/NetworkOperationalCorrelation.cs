@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Network;
 
 public static class NetworkOperationalCorrelation
 {
@@ -15,7 +15,7 @@ public static class NetworkOperationalCorrelation
 
         const string name = "Network operational correlation";
         const string boundary = " This is a bounded configuration and point-in-time correlation. It does not query a public host, prove DNS response, Internet, VPN or application connectivity, inspect third-party filtering, or authorize a reset. No adapter, route, address, lease, resolver, cache, Hosts entry, proxy, firewall, Winsock catalog, provider, service or policy setting changed, and no repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
         var inputs = new[]
         {
             (Check: firewall, Name: "Active network firewall alignment"),

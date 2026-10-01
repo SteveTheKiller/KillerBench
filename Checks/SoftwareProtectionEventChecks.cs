@@ -4,7 +4,7 @@ internal static class SoftwareProtectionEventChecks
 {
     public static void Run()
     {
-        string Entry(int id, int level = 2, string provider = "Microsoft-Windows-Security-SPP", ulong record = 1) =>
+        static string Entry(int id, int level = 2, string provider = "Microsoft-Windows-Security-SPP", ulong record = 1) =>
             $"<Event xmlns='http://schemas.microsoft.com/win/2004/08/events/event'><System><Provider Name='{provider}'/><EventID>{id}</EventID><EventRecordID>{record}</EventRecordID><Level>{level}</Level><TimeCreated SystemTime='2026-09-14T00:00:00Z'/><Computer>PRIVATE-PC</Computer></System><EventData><Data Name='License'>PRIVATE-LICENSE</Data><Data Name='PartialProductKey'>ABCDE</Data><Data Name='Account'>PRIVATE\\User</Data></EventData></Event>";
         var raw = new ToolResult(0, "<Events>" + Entry(8200, record: 1) + Entry(8200, record: 2) + Entry(1003, 4, record: 3) + "</Events>", "", false);
         var sanitized = SoftwareProtectionEvents.Sanitize(raw);

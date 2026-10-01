@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace KillerBench.Engine.Core;
+namespace KillerBench.Engine.Core.Recipes;
 
 /// <summary>Evaluates a probe result against an expectation. The first matching clause wins; incomplete evidence is always Unknown.</summary>
 public static class Expectation

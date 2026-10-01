@@ -2,6 +2,8 @@ using KillerBench.Engine;
 
 internal static class AppPackageChecks
 {
+    private static readonly string[] ExpectedGraphDependents = ["B_1", "C_1"];
+
     internal static void Run()
     {
         const string row = "{\"name\":\"Fixture\",\"fullName\":\"Fixture_1_x64__test\",\"familyName\":\"Fixture_test\",\"framework\":false,\"nonRemovable\":true,\"developmentMode\":true,\"dependencies\":[\"Framework_1_x64__test\"]}";
@@ -53,7 +55,7 @@ internal static class AppPackageChecks
             throw new Exception("Package inventory lost scope, protection flags or evidence.");
         if (result.Packages.Single().Dependencies?.Single() != "Framework_1_x64__test") throw new Exception("Package dependency identity was lost.");
         var dependencyReview = AppPackageReview.Review(result, "Framework_1_x64__test");
-        if (dependencyReview.RemovalSupported || dependencyReview.Selected is not null || dependencyReview.DependentPackages.Single() != "Fixture_1_x64__test")
+        if (AppPackageReviewResult.RemovalSupported || dependencyReview.Selected is not null || dependencyReview.DependentPackages.Single() != "Fixture_1_x64__test")
             throw new Exception("Package review lost a dependent or authorized removal of an absent target.");
         var protectedReview = AppPackageReview.Review(result, "Fixture_1_x64__test");
         var graphRows = new[]
@@ -66,8 +68,8 @@ internal static class AppPackageChecks
         var graph = AppPackageInventory.Interpret(AppPackageScope.CurrentAccount, raw with
         { Output = System.Text.Json.JsonSerializer.Serialize(new { complete = true, packages = graphRows }) });
         var graphReview = AppPackageReview.Review(graph, "A_1");
-        if (!graph.Complete || !graphReview.DependentPackages.SequenceEqual(new[] { "B_1", "C_1" }) ||
-            graphReview.RemovalSupported || !graphReview.ReviewItems.Any(item => item.Contains("framework")))
+        if (!graph.Complete || !graphReview.DependentPackages.SequenceEqual(ExpectedGraphDependents) ||
+            AppPackageReviewResult.RemovalSupported || !graphReview.ReviewItems.Any(item => item.Contains("framework")))
             throw new Exception("Cyclic package graph lost indirect dependents, isolation or framework warning.");
         using var canceled = new CancellationTokenSource();
         canceled.Cancel();

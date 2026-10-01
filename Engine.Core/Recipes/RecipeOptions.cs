@@ -1,13 +1,17 @@
 using System.Text.RegularExpressions;
 
-namespace KillerBench.Engine.Core;
+namespace KillerBench.Engine.Core.Recipes;
 
 /// <summary>Validates caller-supplied option values against a recipe's declarations and substitutes ${name} references in probe and action parameters.</summary>
-public static class RecipeOptions
+public static partial class RecipeOptions
 {
-    private static readonly Regex Reference = new(@"\$\{([a-z][a-z0-9-]*)\}", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+    [GeneratedRegex(@"\$\{([a-z][a-z0-9-]*)\}", RegexOptions.CultureInvariant)]
+    private static partial Regex Reference();
 
-    public static bool IsValidName(string? name) => !string.IsNullOrEmpty(name) && name.Length <= 32 && Regex.IsMatch(name, "^[a-z][a-z0-9-]*$");
+    [GeneratedRegex("^[a-z][a-z0-9-]*$")]
+    private static partial Regex NamePattern();
+
+    public static bool IsValidName(string? name) => !string.IsNullOrEmpty(name) && name.Length <= 32 && NamePattern().IsMatch(name);
 
     /// <summary>Option names referenced anywhere in the recipe's parameters.</summary>
     public static IReadOnlySet<string> References(RecipeDefinition recipe)
@@ -16,10 +20,10 @@ public static class RecipeOptions
         var names = new HashSet<string>(StringComparer.Ordinal);
         foreach (var parameters in AllParameters(recipe))
             foreach (string value in parameters.Values)
-                foreach (Match match in Reference.Matches(value ?? "")) names.Add(match.Groups[1].Value);
+                foreach (Match match in Reference().Matches(value ?? "")) names.Add(match.Groups[1].Value);
         foreach (var probe in new[] { recipe.Detect, recipe.Verify }.Concat(recipe.Preconditions ?? []))
             foreach (var clause in probe?.Expect?.Clauses ?? [])
-                foreach (Match match in Reference.Matches(clause?.Value ?? "")) names.Add(match.Groups[1].Value);
+                foreach (Match match in Reference().Matches(clause?.Value ?? "")) names.Add(match.Groups[1].Value);
         return names;
     }
 
@@ -61,7 +65,7 @@ public static class RecipeOptions
         return recipe with
         {
             Detect = Substitute(recipe.Detect, values),
-            Preconditions = recipe.Preconditions.Select(probe => Substitute(probe, values)).ToArray(),
+            Preconditions = [.. recipe.Preconditions.Select(probe => Substitute(probe, values))],
             Verify = recipe.Verify is null ? null : Substitute(recipe.Verify, values),
             Action = recipe.Action is null ? null : Substitute(recipe.Action, values),
             Rollback = recipe.Rollback is null ? null : Substitute(recipe.Rollback, values)
@@ -72,17 +76,17 @@ public static class RecipeOptions
         probe with
         {
             Parameters = Substitute(probe.Parameters, values),
-            Expect = new ExpectSpec(probe.Expect.Clauses.Select(clause => clause with { Value = Replace(clause.Value, values) }).ToArray())
+            Expect = new ExpectSpec([.. probe.Expect.Clauses.Select(clause => clause with { Value = Replace(clause.Value, values) })])
         };
 
     private static string Replace(string? text, IReadOnlyDictionary<string, string> values) =>
-        Reference.Replace(text ?? "", match => values.TryGetValue(match.Groups[1].Value, out string? value) ? value : match.Value);
+        Reference().Replace(text ?? "", match => values.TryGetValue(match.Groups[1].Value, out string? value) ? value : match.Value);
 
     private static ActionSpec Substitute(ActionSpec action, IReadOnlyDictionary<string, string> values) =>
         action with { Parameters = Substitute(action.Parameters, values) };
 
-    private static IReadOnlyDictionary<string, string> Substitute(IReadOnlyDictionary<string, string> parameters, IReadOnlyDictionary<string, string> values) =>
-        parameters.ToDictionary(pair => pair.Key, pair => Reference.Replace(pair.Value ?? "", match => values.TryGetValue(match.Groups[1].Value, out string? value) ? value : match.Value), StringComparer.Ordinal);
+    private static Dictionary<string, string> Substitute(IReadOnlyDictionary<string, string> parameters, IReadOnlyDictionary<string, string> values) =>
+        parameters.ToDictionary(pair => pair.Key, pair => Reference().Replace(pair.Value ?? "", match => values.TryGetValue(match.Groups[1].Value, out string? value) ? value : match.Value), StringComparer.Ordinal);
 
     private static IEnumerable<IReadOnlyDictionary<string, string>> AllParameters(RecipeDefinition recipe)
     {

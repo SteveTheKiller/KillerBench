@@ -5,7 +5,7 @@ internal static class TcpPortPressureChecks
 {
     internal static async Task RunAsync()
     {
-        ToolResult Evidence(int used4 = 100, int wait4 = 20, int used6 = 50, int wait6 = 10, bool complete = true) => new(0,
+        static ToolResult Evidence(int used4 = 100, int wait4 = 20, int used6 = 50, int wait6 = 10, bool complete = true) => new(0,
             JsonSerializer.Serialize(new { complete, ipv4Start = 49152, ipv4Count = 16384, ipv4InUse = used4, ipv4TimeWait = wait4,
                 ipv6Start = 49152, ipv6Count = 16384, ipv6InUse = used6, ipv6TimeWait = wait6 }, Capture.JsonOptions), "", false);
         var ordinary = TcpPortPressureDiagnostics.Interpret(Evidence());

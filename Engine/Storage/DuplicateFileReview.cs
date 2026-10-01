@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Storage;
 
 public sealed record DuplicateFile(string Path, long Length, string Sha256);
 public sealed record DuplicateFileGroup(long Length, string Sha256, IReadOnlyList<DuplicateFile> Files);
@@ -13,7 +13,7 @@ public static class DuplicateFileReview
         int maximumFiles = 10_000, CancellationToken token = default)
     {
         if (string.IsNullOrWhiteSpace(root)) throw new ArgumentException("Choose a folder to review.", nameof(root));
-        if (minimumBytes < 0) throw new ArgumentOutOfRangeException(nameof(minimumBytes));
+        ArgumentOutOfRangeException.ThrowIfNegative(minimumBytes);
         if (maximumFiles is < 1 or > 100_000) throw new ArgumentOutOfRangeException(nameof(maximumFiles));
         string fullRoot = Path.GetFullPath(root);
         if (!Path.IsPathFullyQualified(fullRoot) || fullRoot.StartsWith("\\\\", StringComparison.Ordinal))

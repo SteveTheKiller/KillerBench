@@ -16,9 +16,9 @@ internal static class EventCollectorOperationalCorrelationChecks
             attention.Detail.Contains("cannot authorize recovery or subscription changes", StringComparison.Ordinal) &&
             attention.Detail.Contains("does not establish source reachability", StringComparison.Ordinal),
             "Current service concern requests review without widening repair authority");
-        Require(EventCollectorOperationalCorrelation.Check(Inputs().Append(Info("Event Collector subscriptions")).ToArray()).State == CheckState.Unknown,
+        Require(EventCollectorOperationalCorrelation.Check([.. Inputs().Append(Info("Event Collector subscriptions"))]).State == CheckState.Unknown,
             "Duplicate Event Collector evidence identity fails closed");
-        Require(EventCollectorOperationalCorrelation.Check(Inputs().Where(check => check.Name != "Focused service readiness").ToArray()).State == CheckState.Unknown,
+        Require(EventCollectorOperationalCorrelation.Check([.. Inputs().Where(check => check.Name != "Focused service readiness")]).State == CheckState.Unknown,
             "Missing Event Collector evidence identity fails closed");
         try
         {

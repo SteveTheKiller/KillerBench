@@ -4,10 +4,10 @@ internal static class EventCollectorSubscriptionChecks
 {
     internal static void Run()
     {
-        ToolResult Evidence(string output) => new(0, output, "", false);
+        static ToolResult Evidence(string output) => new(0, output, "", false);
         var inventory = EventCollectorSubscriptions.Interpret(Evidence("Operations\r\nSecurity forwarders\r\n"));
         var check = EventCollectorSubscriptions.Describe(inventory);
-        Require(inventory.Complete && inventory.Names.SequenceEqual(new[] { "Operations", "Security forwarders" }) &&
+        Require(inventory.Complete && inventory.Names.SequenceEqual(["Operations", "Security forwarders"]) &&
             check.State == CheckState.Information && check.Repair is null && check.Evidence == inventory.Evidence &&
             check.Detail.Contains("source reachability", StringComparison.Ordinal),
             "Complete subscription inventory retains exact identities without health or repair claims");

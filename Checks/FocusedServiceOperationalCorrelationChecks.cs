@@ -73,7 +73,7 @@ internal static class FocusedServiceOperationalCorrelationChecks
     }
 
     private static RecipeResult[] Results(IReadOnlyList<RepairRecipe> recipes, RecipeOutcome outcome) =>
-        recipes.Select(recipe => Result(recipe, outcome)).ToArray();
+        [.. recipes.Select(recipe => Result(recipe, outcome))];
 
     private static RecipeResult Result(RepairRecipe recipe, RecipeOutcome outcome) =>
         new(recipe.Id, recipe.Version, outcome,

@@ -1,4 +1,4 @@
-namespace KillerBench.Engine;
+namespace KillerBench.Engine.Crash;
 
 public static class SystemStabilityOperationalCorrelation
 {
@@ -19,7 +19,7 @@ public static class SystemStabilityOperationalCorrelation
         token.ThrowIfCancellationRequested();
         const string name = "System stability operational correlation";
         const string boundary = " This is a bounded correlation of current snapshots and retained history, not proof of stable hardware, software, drivers, firmware or future operation. No test was scheduled, no application was launched and no hardware, driver, service, file, dump, firmware, power or restart state changed. No repair is selected.";
-        WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
+        static WorkflowCheck Unknown(string detail) => new(name, CheckState.Unknown, detail + boundary);
 
         bool invalidSize = new[] { vitals, devices, reliability, hardwareErrors, crashes, shutdowns }
             .Any(group => group.Count is 0 or > 256);
