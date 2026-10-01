@@ -929,10 +929,10 @@
     </Grid>
     <Grid x:Name="AboutOverlay" Grid.RowSpan="3" Panel.ZIndex="9000" Background="#88000000" Visibility="Collapsed" MouseLeftButtonDown="OnAboutBackdrop">
       <Grid HorizontalAlignment="Center" VerticalAlignment="Center" MouseLeftButtonDown="OnAboutCard">
-        <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="{DynamicResource PanelCornerRadius}" IsHitTestVisible="False">
+        <Border Background="{DynamicResource BackgroundBrush}" CornerRadius="{DynamicResource PanelCornerRadius}" IsHitTestVisible="False">
           <Border.Effect><DropShadowEffect Color="Black" BlurRadius="26" ShadowDepth="5" Direction="270" Opacity="{DynamicResource FlyoutShadowOpacity}"/></Border.Effect>
         </Border>
-        <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}">
+        <Border Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}">
           <Grid>
             <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
             <Button Content="&#xE8BB;" Style="{StaticResource ChromeCloseButton}" Click="OnAboutClose" HorizontalAlignment="Right" VerticalAlignment="Top" Panel.ZIndex="2" Width="{DynamicResource AboutCloseWidth}" Height="{DynamicResource AboutCloseHeight}" Margin="{DynamicResource AboutCloseMargin}"/>
