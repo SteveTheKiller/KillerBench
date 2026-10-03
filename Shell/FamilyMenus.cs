@@ -109,7 +109,13 @@ public partial class MainWindow
     {
         if (languageMenu?.IsOpen == true) { languageMenu.IsOpen = false; return; }
         languageMenu = new ContextMenu { Template = ThemeFlyout.Template, ItemContainerStyle = (Style)FindResource("PanelMenuItem") };
-        var panel = new StackPanel { Margin = new Thickness(12, 10, 14, 10) };
+        var panel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(12, 10, 14, 10) };
+        var left = new StackPanel { Width = 200 };
+        var right = new StackPanel { Width = 200, Margin = new Thickness(14, 0, 0, 0) };
+        panel.Children.Add(left);
+        panel.Children.Add(right);
+        int split = (Languages.Length + 1) / 2;
+        int index = 0;
         foreach (var (locale, name, code) in Languages)
         {
             var grid = new Grid();
@@ -127,7 +133,7 @@ public partial class MainWindow
                 Report($"Language: {name}.");
                 languageMenu.IsOpen = false;
             };
-            panel.Children.Add(radio);
+            (index++ < split ? left : right).Children.Add(radio);
         }
         languageMenu.Items.Add(panel);
         LangButton.ContextMenu = languageMenu;

@@ -1381,7 +1381,11 @@ internal static class Program
             Pump();
             var languages = ((Button)window.FindName("LangButton")).ContextMenu;
             Capture(languages, Path.Combine(scratch, "language-menu.png"));
-            Require(((StackPanel)languages.Items[0]).Children.OfType<RadioButton>().Count() == 16, "All 16 languages visible");
+            var languageColumns = ((StackPanel)languages.Items[0]).Children.OfType<StackPanel>().ToArray();
+            Require(languageColumns.Length == 2 &&
+                    languageColumns[0].Children.OfType<RadioButton>().Count() == 10 &&
+                    languageColumns[1].Children.OfType<RadioButton>().Count() == 9,
+                "All 19 languages visible in two columns");
             languages.IsOpen = false;
             foreach (var locale in Enum.GetValues<KillerBench.Services.Locale>())
             {
