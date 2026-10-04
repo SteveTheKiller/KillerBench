@@ -29,5 +29,5 @@ internal static partial class RecoveryRecordFiles
     private static partial SafeFileHandle CreateFileW(string name, uint access, uint share, IntPtr security, uint creation, uint flags, IntPtr template);
     [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool SetFileInformationByHandle(SafeFileHandle handle, int kind, byte[] info, uint size);
+    private static partial bool SetFileInformationByHandle(SafeFileHandle handle, int kind, [In] byte[] info, uint size);
 }

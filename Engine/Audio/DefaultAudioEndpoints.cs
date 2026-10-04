@@ -367,7 +367,7 @@ public static partial class DefaultAudioEndpoints
     }
 
     [StructLayout(LayoutKind.Explicit)]
-    internal struct PropVariant
+    internal readonly struct PropVariant
     {
         [FieldOffset(0)] private readonly ushort valueType;
         [FieldOffset(8)] private readonly IntPtr pointerValue;

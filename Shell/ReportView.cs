@@ -110,7 +110,7 @@ public partial class MainWindow
             : "This focused report summarizes retained evidence from the selected review. It does not by itself establish a current fault, ownership, or authority to make a change.", 12, new Thickness(0, 0, 0, 4)));
     }
 
-    private Border Card(string title, string state, string detail, string action)
+    private static Border Card(string title, string state, string detail, string action)
     {
         var content = new StackPanel();
         content.Children.Add(Heading(title, 15));
@@ -265,7 +265,7 @@ public partial class MainWindow
         return block;
     }
 
-    private void AddMetric(WrapPanel host, string label, int value)
+    private static void AddMetric(WrapPanel host, string label, int value)
     {
         var metric = new StackPanel { Width = 132, Margin = new Thickness(0, 0, 8, 8) };
         metric.Children.Add(Heading(value.ToString(), 22));
