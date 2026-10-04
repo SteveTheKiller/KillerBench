@@ -8,7 +8,7 @@
         Foreground="{DynamicResource TextBrush}" FontFamily="Segoe UI" FontSize="13"
         AllowDrop="True" Drop="OnDrop" PreviewDragOver="OnDragOver" PreviewKeyDown="OnKeyDown">
   <shell:WindowChrome.WindowChrome><shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0"/></shell:WindowChrome.WindowChrome>
-  <Border BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="{DynamicResource WindowEdgeThickness}">
+  <Border x:Name="WindowEdgeBorder" BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="{DynamicResource WindowEdgeThickness}">
   <Grid x:Name="RootGrid">
     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="24"/></Grid.RowDefinitions>
     <Border x:Name="WorkspaceGrain" Grid.Row="1" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>

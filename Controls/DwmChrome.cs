@@ -17,17 +17,16 @@ namespace KillerBench.Controls
         private const int DWMWCP_DONOTROUND = 1;
         private const int DWMWCP_ROUND = 2;
 
-        internal static void SetRoundedCorners(Window w, bool rounded)
+        internal static bool SetRoundedCorners(Window w, bool rounded)
         {
             try
             {
                 var hwnd = new WindowInteropHelper(w).Handle;
-                if (hwnd == IntPtr.Zero) return;
+                if (hwnd == IntPtr.Zero) return false;
                 int pref = rounded ? DWMWCP_ROUND : DWMWCP_DONOTROUND;
-                // Result ignored: styling is cosmetic and the attribute may be unsupported on older Windows builds.
-                _ = DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, ref pref, sizeof(int));
+                return DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, ref pref, sizeof(int)) == 0;
             }
-            catch { /* pre-Win11: attribute unsupported */ }
+            catch { return false; }
         }
 
         internal static void SetThemeBorder(Window w)

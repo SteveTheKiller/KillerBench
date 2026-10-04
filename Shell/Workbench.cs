@@ -25,10 +25,10 @@ public partial class MainWindow
         GrainTexture.Apply(this);
         Shell.SidebarChrome.WireEdgeFades(SourcesList, SourceFadeTop, SourceFadeBottom);
         InitializeShortcuts();
-        SourceInitialized += (_, _) => { DwmChrome.SetRoundedCorners(this, true); DwmChrome.SetThemeBorder(this); };
+        SourceInitialized += (_, _) => { RefreshWindowEdge(); DwmChrome.SetThemeBorder(this); };
         StateChanged += (_, _) =>
         {
-            DwmChrome.SetRoundedCorners(this, WindowState != WindowState.Maximized);
+            RefreshWindowEdge();
             MaximizeButton.Content = ((char)(WindowState == WindowState.Maximized ? 0xE923 : 0xE922)).ToString();
         };
         ThemeManager.ThemeChanged += RefreshTheme;
@@ -53,7 +53,15 @@ public partial class MainWindow
     private void RefreshTheme()
     {
         ThemeStatus.Text = "v0.1.0";
+        RefreshWindowEdge();
         DwmChrome.SetThemeBorder(this);
+    }
+    private void RefreshWindowEdge()
+    {
+        bool nativeCorners = DwmChrome.SetRoundedCorners(this,
+            WindowState != WindowState.Maximized && ThemeManager.Current != Theme.Retro98);
+        if (nativeCorners) WindowEdgeBorder.BorderBrush = Brushes.Transparent;
+        else WindowEdgeBorder.SetResourceReference(Border.BorderBrushProperty, "AppBorderBrush");
     }
     private static string ThemeLabel(Theme theme) => theme == Theme.Retro98 ? "98SE" : theme.ToString();
 
