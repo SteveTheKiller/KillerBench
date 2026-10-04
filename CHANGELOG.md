@@ -5,6 +5,7 @@
 - Add Ukrainian localization.
 - Add Norwegian (Bokmål) localization.
 - Add Brazilian Portuguese localization.
+- Selected states now use subtle gradients outside 98SE, Light buttons have softer gray borders, and yellow wordmarks match their accent.
 - Show the language menu in two columns.
 - Rebuild the landing site with a current home page, a searchable user guide and static Engine guide pages.
 - Add More BitLocker actions to the BitLocker section for auto-unlock, protectors, directory backup and decryption.
