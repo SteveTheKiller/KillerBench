@@ -124,6 +124,8 @@ namespace KillerBench.Services
                 d["SurfaceHoverBrush"] = d["RowHoverBrush"];
             if (!d.Contains("RadioHoverFgBrush") && d.Contains("PrimaryBrush"))
                 d["RadioHoverFgBrush"] = d["PrimaryBrush"];
+            if (!d.Contains("ComboHighlightTextBrush"))
+                d["ComboHighlightTextBrush"] = d["PrimaryBrush"];
 
             if (!d.Contains("WindowEdgeBrush") && d.Contains("AppBorderBrush"))
                 d["WindowEdgeBrush"] = d["AppBorderBrush"];

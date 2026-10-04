@@ -1,5 +1,6 @@
 # Changelog
 
+- Menu rows show accent text and icons on the theme's hover color.
 - Add yellow and magenta accents to the neutral and 98SE themes.
 - Add Ukrainian localization.
 - Add Norwegian (Bokmål) localization.
