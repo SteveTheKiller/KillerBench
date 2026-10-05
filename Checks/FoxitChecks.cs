@@ -19,7 +19,7 @@ internal static class FoxitChecks
         using (var stopped = new CancellationTokenSource())
         {
             stopped.Cancel();
-            try { FoxitUpdaterSettings.CheckAsync(stopped.Token, _ => throw new Exception("Canceled collector ran")).GetAwaiter().GetResult(); throw new Exception("Foxit cancellation ignored"); }
+            try { FoxitUpdaterSettings.CheckAsync(_ => throw new Exception("Canceled collector ran"), token: stopped.Token).GetAwaiter().GetResult(); throw new Exception("Foxit cancellation ignored"); }
             catch (OperationCanceledException) { }
         }
         const string row = "{\"view\":\"Registry64\",\"key\":\"fixture\",\"name\":\"Foxit PDF\",\"version\":\"1\",\"publisher\":null}";

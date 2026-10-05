@@ -57,11 +57,11 @@ internal static class ShadowStorageChecks
         using var stop = new CancellationTokenSource();
         try
         {
-            await ShadowStorageDiagnostics.CheckAsync(stop.Token, (_, _) =>
+            await ShadowStorageDiagnostics.CheckAsync((_, _) =>
             {
                 stop.Cancel();
                 return new TaskCompletionSource<ToolResult>().Task;
-            }).WaitAsync(TimeSpan.FromSeconds(2));
+            }, token: stop.Token).WaitAsync(TimeSpan.FromSeconds(2));
             throw new Exception("Shadow storage collection ignored Stop");
         }
         catch (OperationCanceledException) when (stop.IsCancellationRequested) { }

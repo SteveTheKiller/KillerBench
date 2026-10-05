@@ -13,7 +13,7 @@ public static class BackupEvents
         _ => throw new ArgumentOutOfRangeException(nameof(source))
     };
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default, IProgress<string>? progress = null)
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(IProgress<string>? progress = null, CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Backup event history requires Windows.");

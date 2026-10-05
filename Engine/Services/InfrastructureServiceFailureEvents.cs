@@ -36,7 +36,7 @@ public enum InfrastructureServiceFailureArea
 public static class InfrastructureServiceFailureEvents
 {
     private static readonly Dictionary<InfrastructureServiceFailureArea, ExactServiceFailureEventDefinition> Definitions =
-        new Dictionary<InfrastructureServiceFailureArea, ExactServiceFailureEventDefinition>
+        new()
         {
             [InfrastructureServiceFailureArea.Bluetooth] = Definition("bthserv", "Bluetooth Support Service", "Bluetooth service failure history", "Bluetooth discovery, pairing or device operation"),
             [InfrastructureServiceFailureArea.Camera] = Definition("FrameServer", "Windows Camera Frame Server", "Camera Frame Server failure history", "camera permission, stream availability or device operation"),
@@ -70,28 +70,28 @@ public static class InfrastructureServiceFailureEvents
         };
 
     public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(InfrastructureServiceFailureArea area,
-        CancellationToken token = default, Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null, CancellationToken token = default)
     {
         if (!Enum.IsDefined(area)) throw new ArgumentOutOfRangeException(nameof(area));
         token.ThrowIfCancellationRequested();
-        return await ExactServiceFailureEvents.CheckManyAsync([Definitions[area]], token, execute).ConfigureAwait(false);
+        return await ExactServiceFailureEvents.CheckManyAsync([Definitions[area]], execute, token: token).ConfigureAwait(false);
     }
 
     public static async Task<IReadOnlyList<WorkflowCheck>> CheckManyAsync(IEnumerable<InfrastructureServiceFailureArea> areas,
-        CancellationToken token = default, Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null, CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(areas);
         token.ThrowIfCancellationRequested();
         var selected = areas.ToArray();
         if (selected.Length == 0 || selected.Distinct().Count() != selected.Length || selected.Any(area => !Enum.IsDefined(area)))
             throw new ArgumentException("Use one or more distinct infrastructure service areas.", nameof(areas));
-        return await ExactServiceFailureEvents.CheckManyAsync([.. selected.Select(area => Definitions[area])], token, execute)
+        return await ExactServiceFailureEvents.CheckManyAsync([.. selected.Select(area => Definitions[area])], execute, token: token)
             .ConfigureAwait(false);
     }
 
-    public static Task<IReadOnlyList<WorkflowCheck>> CheckAllAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null) =>
-        CheckManyAsync(Enum.GetValues<InfrastructureServiceFailureArea>(), token, execute);
+    public static Task<IReadOnlyList<WorkflowCheck>> CheckAllAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default) =>
+        CheckManyAsync(Enum.GetValues<InfrastructureServiceFailureArea>(), execute, token: token);
 
     private static ExactServiceFailureEventDefinition Definition(string service, string display, string check, string excludedClaim) =>
         new(service, display, check,

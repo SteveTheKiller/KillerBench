@@ -142,7 +142,7 @@ public static class PreviousWindowsInstallationRemoval
         var pending = new PreviousWindowsRemovalPendingRecord(1, operationId, DateTimeOffset.UtcNow,
             Environment.MachineName, Environment.GetFolderPath(Environment.SpecialFolder.Windows),
             Path.Combine(Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.Windows))!, "Windows.old"), true);
-        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
         bool dispatched = false;
         try
         {
@@ -167,7 +167,7 @@ public static class PreviousWindowsInstallationRemoval
                 return new(PreviousWindowsRemovalOutcome.Uncertain,
                     "Fresh evidence does not yet prove rollback removal. The pending record remains and the command will not be repeated automatically.", pendingPath);
             string journal = Path.Combine(directory, $"previous-windows-removal.{operationId}.verified.json");
-            await JournalPersistence.WriteAsync(journal, JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
+            await JournalPersistence.WriteAsync(journal, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
             File.Delete(pendingPath);
             return new(PreviousWindowsRemovalOutcome.Verified,
                 "Windows reports that operating-system rollback is no longer available. Windows controls any remaining cleanup of Windows.old.", journal);
@@ -232,7 +232,7 @@ public static class PreviousWindowsInstallationRemoval
             else return new(PreviousWindowsReconciliationOutcome.Inconclusive,
                 "Fresh evidence cannot prove a completed or unchanged rollback state. No removal command was repeated.", pendingPath);
             string archive = Path.Combine(directory, $"previous-windows-removal.{pending.OperationId}.reconciled.json");
-            await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
+            await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
             File.Delete(pendingPath);
             return new(outcome, detail, pendingPath, archive);
         }
@@ -266,7 +266,7 @@ public static class PreviousWindowsInstallationRemoval
         string detail)
     {
         string archive = Path.Combine(directory, $"previous-windows-removal.{pending.OperationId}.{outcome.ToString().ToLowerInvariant()}.json");
-        await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(pending, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         File.Move(pendingPath, archive + ".prepared.json");
         return new(outcome, detail, archive);
     }

@@ -12,7 +12,7 @@ public enum FeatureServiceFailureGroup
 public static class FeatureServiceFailureEvents
 {
     private static readonly Dictionary<FeatureServiceFailureGroup, ExactServiceFailureEventDefinition[]> Definitions =
-        new Dictionary<FeatureServiceFailureGroup, ExactServiceFailureEventDefinition[]>
+        new()
         {
             [FeatureServiceFailureGroup.Time] =
             [
@@ -44,19 +44,19 @@ public static class FeatureServiceFailureEvents
         };
 
     public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(FeatureServiceFailureGroup group,
-        CancellationToken token = default, Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null, CancellationToken token = default)
     {
         if (!Enum.IsDefined(group)) throw new ArgumentOutOfRangeException(nameof(group));
         token.ThrowIfCancellationRequested();
-        return await ExactServiceFailureEvents.CheckManyAsync(Definitions[group], token, execute).ConfigureAwait(false);
+        return await ExactServiceFailureEvents.CheckManyAsync(Definitions[group], execute, token: token).ConfigureAwait(false);
     }
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAllAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAllAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         return await ExactServiceFailureEvents.CheckManyAsync(
-            [.. Enum.GetValues<FeatureServiceFailureGroup>().SelectMany(group => Definitions[group])], token, execute)
+            [.. Enum.GetValues<FeatureServiceFailureGroup>().SelectMany(group => Definitions[group])], execute, token: token)
             .ConfigureAwait(false);
     }
 

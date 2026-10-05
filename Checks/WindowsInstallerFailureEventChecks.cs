@@ -60,7 +60,7 @@ internal static class WindowsInstallerFailureEventChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await WindowsInstallerFailureEvents.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await WindowsInstallerFailureEvents.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents Installer event collection");
         Console.WriteLine("PASS: exact Windows Installer service failure history, grouping, bounds and non-mutating collection; fixtures only.");

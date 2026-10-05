@@ -11,11 +11,11 @@ public sealed record UpdateRecoveryResult(bool Resolved, string Detail);
 
 public static class UpdateReconciliation
 {
-    public static async Task<bool> TryResolveAsync(string folder, IUpdateReconciliationHost host, CancellationToken token = default,
-        TimeSpan? verificationLimit = null) => (await ResolveAsync(folder, host, token, verificationLimit).ConfigureAwait(false)).Resolved;
+    public static async Task<bool> TryResolveAsync(string folder, IUpdateReconciliationHost host, TimeSpan? verificationLimit = null,
+        CancellationToken token = default) => (await ResolveAsync(folder, host, verificationLimit, token: token).ConfigureAwait(false)).Resolved;
 
-    public static async Task<UpdateRecoveryResult> ResolveAsync(string folder, IUpdateReconciliationHost host, CancellationToken token = default,
-        TimeSpan? verificationLimit = null)
+    public static async Task<UpdateRecoveryResult> ResolveAsync(string folder, IUpdateReconciliationHost host, TimeSpan? verificationLimit = null,
+        CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(host);
         var limit = verificationLimit ?? TimeSpan.FromMinutes(10);

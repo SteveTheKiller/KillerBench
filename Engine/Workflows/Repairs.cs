@@ -186,13 +186,13 @@ public static class Repairs
     }
 
     public static Task<RepairResult> RunAsync(RepairKind kind, string journalDirectory, IProgress<string>? progress = null,
-        CancellationToken cancellationToken = default, IRepairHost? host = null, RepairRecoveryStore? recoveryStore = null,
-        IReadOnlyList<string>? selectedPrinterQueues = null)
-        => RunAsync(kind, journalDirectory, TimeSpan.FromMinutes(65), progress, cancellationToken, host, recoveryStore, selectedPrinterQueues);
+        IRepairHost? host = null, RepairRecoveryStore? recoveryStore = null, IReadOnlyList<string>? selectedPrinterQueues = null,
+        CancellationToken cancellationToken = default)
+        => RunAsync(kind, journalDirectory, TimeSpan.FromMinutes(65), progress, host, recoveryStore, selectedPrinterQueues, cancellationToken: cancellationToken);
 
     public static async Task<RepairResult> RunAsync(RepairKind kind, string journalDirectory, TimeSpan commandTimeout,
-        IProgress<string>? progress = null, CancellationToken cancellationToken = default, IRepairHost? host = null,
-        RepairRecoveryStore? recoveryStore = null, IReadOnlyList<string>? selectedPrinterQueues = null)
+        IProgress<string>? progress = null, IRepairHost? host = null, RepairRecoveryStore? recoveryStore = null,
+        IReadOnlyList<string>? selectedPrinterQueues = null, CancellationToken cancellationToken = default)
     {
         var commandLimit = commandTimeout;
         if (commandLimit <= TimeSpan.Zero || commandLimit > TimeSpan.FromHours(2))

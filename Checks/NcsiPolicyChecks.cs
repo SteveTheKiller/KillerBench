@@ -45,7 +45,7 @@ internal static class NcsiPolicyChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await NcsiPolicyDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await NcsiPolicyDiagnostics.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents NCSI collection");
         Console.WriteLine("PASS: NCSI classification policy, privacy bounds, incomplete handling and read-only collection; fixtures only.");

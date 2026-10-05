@@ -51,7 +51,7 @@ internal static class WinsockProviderFileChecks
         Require(failure.State == CheckState.Unknown, "Provider failure remains unknown");
         using var canceled = new CancellationTokenSource();
         canceled.Cancel();
-        await RequireCanceled(() => WinsockProviderFileDiagnostics.CheckAsync(canceled.Token, (_, _) => Task.FromResult(valid)));
+        await RequireCanceled(() => WinsockProviderFileDiagnostics.CheckAsync((_, _) => Task.FromResult(valid), token: canceled.Token));
         Console.WriteLine("PASS: Winsock provider file presence, signatures, privacy, bounds and cancellation; fixtures only.");
     }
 

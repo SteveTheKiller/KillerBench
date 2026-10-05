@@ -49,7 +49,7 @@ public static class BitsRetry
     }
 
     public static async Task<BitsRetryResult> RunAsync(BitsInventoryResult selectedInventory, Guid jobId,
-        IBitsRetryHost host, IBitsRetryJournal journal, CancellationToken token = default, IProgress<string>? progress = null)
+        IBitsRetryHost host, IBitsRetryJournal journal, IProgress<string>? progress = null, CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(selectedInventory);
         ArgumentNullException.ThrowIfNull(host);

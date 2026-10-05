@@ -23,7 +23,7 @@ internal static class ServiceCheckCommands
         Console.CancelKeyPress += cancel;
         try
         {
-            var checks = await ServiceInspection.ReadAsync(selected, stop.Token, new ServiceProgress());
+            var checks = await ServiceInspection.ReadAsync(selected, new ServiceProgress(), token: stop.Token);
             Console.WriteLine(JsonSerializer.Serialize(checks, Capture.JsonOptions));
             return checks.All(check => check.State == CheckState.Clear) ? 0 : 3;
         }

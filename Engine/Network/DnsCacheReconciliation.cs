@@ -25,8 +25,8 @@ public static class DnsCacheReconciliation
     };
 
     public static async Task<DnsCacheReconciliationResult> RunAsync(string directory,
-        Func<string, CancellationToken, Task<DnsLookupResult>> resolve, CancellationToken token = default,
-        IProgress<string>? progress = null)
+        Func<string, CancellationToken, Task<DnsLookupResult>> resolve, IProgress<string>? progress = null,
+        CancellationToken token = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(directory);
         ArgumentNullException.ThrowIfNull(resolve);
@@ -89,7 +89,7 @@ public static class DnsCacheReconciliation
         string archivePath = Path.Combine(root, "dns-cache-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
             "-" + Guid.NewGuid().ToString("N") + ".json");
         var result = new DnsCacheReconciliationResult(outcome, detail, pendingPath, pending, current, archivePath);
-        await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
         File.Move(pendingPath, archivePath + ".prepared.json");
         Report(progress, detail);
         return result;

@@ -83,7 +83,7 @@ internal static class ServicingLogChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await ServicingLogDiagnostics.CheckAsync(stop.Token, Read, Exists, () => null, () => null); }
+        try { await ServicingLogDiagnostics.CheckAsync(Read, Exists, () => null, () => null, token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents servicing-log collection");
 

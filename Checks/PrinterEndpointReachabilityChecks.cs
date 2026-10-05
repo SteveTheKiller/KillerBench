@@ -82,11 +82,11 @@ internal static class PrinterEndpointReachabilityChecks
         using var stop = new CancellationTokenSource();
         try
         {
-            await PrinterEndpointReachability.CheckAsync(Configuration(evidence), stop.Token, (_, _, _) =>
+            await PrinterEndpointReachability.CheckAsync(Configuration(evidence), (_, _, _) =>
             {
                 stop.Cancel();
                 return new TaskCompletionSource<TcpCheckResult>().Task;
-            }).WaitAsync(TimeSpan.FromSeconds(2));
+            }, token: stop.Token).WaitAsync(TimeSpan.FromSeconds(2));
             throw new Exception("Printer endpoint reachability ignored Stop");
         }
         catch (OperationCanceledException) when (stop.IsCancellationRequested) { }

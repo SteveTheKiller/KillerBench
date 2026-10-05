@@ -6,7 +6,7 @@ public static class TimeConfigurationDiagnostics
 {
     public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default)
     {
-        var snapshot = await TimePlanning.PreviewAsync(new(), token).ConfigureAwait(false);
+        var snapshot = await TimePlanning.PreviewAsync(new(), token: token).ConfigureAwait(false);
         return Assess(snapshot.Environment);
     }
 

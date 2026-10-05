@@ -34,7 +34,7 @@ internal static class TcpPortPressureChecks
             observed.Arguments.Last().Contains("Select-Object -First 200001") && collected.Count == 2,
             "Native plan uses bounded aggregate collection without endpoint output");
         using var stop = new CancellationTokenSource(); stop.Cancel(); bool canceled = false;
-        try { await TcpPortPressureDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("provider should not run")); }
+        try { await TcpPortPressureDiagnostics.CheckAsync((_, _) => throw new Exception("provider should not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents TCP port-pressure collection");
         Console.WriteLine("PASS: dynamic TCP port range and aggregate pressure, privacy, bounds, invalid evidence and cancellation; fixtures only.");

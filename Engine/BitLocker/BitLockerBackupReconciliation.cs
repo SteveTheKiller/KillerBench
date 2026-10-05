@@ -19,7 +19,7 @@ public static class BitLockerBackupReconciliation
     };
 
     public static async Task<BitLockerBackupReconciliationResult> RunAsync(BitLockerOptions options, Guid protector,
-        string folder, IBitLockerBackupHost host, CancellationToken token = default, IProgress<string>? progress = null)
+        string folder, IBitLockerBackupHost host, IProgress<string>? progress = null, CancellationToken token = default)
     {
         options.Validate();
         if (options.Operation != BitLockerOperation.BackupRecovery || options.Backup != RecoveryDestination.File || protector == Guid.Empty)
@@ -82,7 +82,7 @@ public static class BitLockerBackupReconciliation
         string archive = Path.Combine(root, "backup-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
             "-" + Guid.NewGuid().ToString("N") + ".json");
         var result = new BitLockerBackupReconciliationResult(outcome, detail, pendingPath, archive);
-        await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(result, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
         File.Move(pendingPath, archive + ".prepared.json");
         Report(progress, detail);
         return result;

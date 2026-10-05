@@ -80,7 +80,7 @@ public partial class MainWindow
         CancelButton.IsEnabled = true;
         try
         {
-            await Task.Run(() => ApplicationInventoryFiles.SaveAsync(inventory, picker.FileName, cancellation.Token, overwrite: true));
+            await Task.Run(() => ApplicationInventoryFiles.SaveAsync(inventory, picker.FileName, overwrite: true, token: cancellation.Token));
             Report("Application inventory saved: " + picker.FileName + ". Collection coverage is retained.");
         }
         catch (OperationCanceledException) { Report("Inventory save stopped or timed out."); }

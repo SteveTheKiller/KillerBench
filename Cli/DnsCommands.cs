@@ -14,7 +14,7 @@ internal static class DnsCommands
         try
         {
             Console.Error.WriteLine("Resolving " + args[1] + "...");
-            var result = await DnsDiagnostics.CheckAsync(args[1], timeout, stop.Token);
+            var result = await DnsDiagnostics.CheckAsync(args[1], timeout, token: stop.Token);
             stop.Token.ThrowIfCancellationRequested();
             Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
             return result.State == DnsLookupState.Resolved ? 0 : 3;

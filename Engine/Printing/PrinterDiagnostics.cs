@@ -2,8 +2,8 @@ namespace KillerBench.Engine.Printing;
 
 public static class PrinterDiagnostics
 {
-    public static async Task<PrinterOfflineSnapshot?> DiscoverAsync(CancellationToken token = default,
-        IProgress<string>? progress = null, Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<PrinterOfflineSnapshot?> DiscoverAsync(IProgress<string>? progress = null,
+        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null, CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(token);
@@ -17,8 +17,8 @@ public static class PrinterDiagnostics
     }
 
     public static async Task<WorkflowCheck> CheckOfflineAsync(IReadOnlyList<string> selectedQueues,
-        CancellationToken token = default, IProgress<string>? progress = null,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+        IProgress<string>? progress = null, Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(selectedQueues);
         var selected = selectedQueues.ToArray();

@@ -52,7 +52,7 @@ internal static class DebloatCommands
         Console.CancelKeyPress += cancel;
         try
         {
-            var review = await DebloatPlanning.ReviewAsync(options, new Progress<string>(Console.Error.WriteLine), stop.Token);
+            var review = await DebloatPlanning.ReviewAsync(options, new Progress<string>(Console.Error.WriteLine), token: stop.Token);
             if (!applyHighPerformance && !applyPowerTimers && !disableHibernation)
             {
                 Console.WriteLine(json ? JsonSerializer.Serialize(review, Capture.JsonOptions) : review.Format());
@@ -73,7 +73,7 @@ internal static class DebloatCommands
                     return reconciliation.GetExitCode();
                 }
                 var hibernation = await DebloatHibernationExecution.RunAsync(true, debloatFolder, host,
-                    new Progress<string>(Console.Error.WriteLine), stop.Token);
+                    new Progress<string>(Console.Error.WriteLine), token: stop.Token);
                 Console.WriteLine(json ? JsonSerializer.Serialize(hibernation, Capture.JsonOptions) : hibernation.Detail);
                 return hibernation.GetExitCode();
             }
@@ -89,7 +89,7 @@ internal static class DebloatCommands
                     return reconciliation.GetExitCode();
                 }
                 var timers = await DebloatPowerTimerExecution.RunAsync(options.PowerRequest, true, debloatFolder, host,
-                    new Progress<string>(Console.Error.WriteLine), stop.Token);
+                    new Progress<string>(Console.Error.WriteLine), token: stop.Token);
                 Console.WriteLine(json ? JsonSerializer.Serialize(timers, Capture.JsonOptions) : timers.Detail);
                 return timers.GetExitCode();
             }
@@ -103,7 +103,7 @@ internal static class DebloatCommands
                 return reconciliation.GetExitCode();
             }
             var result = await DebloatPowerPlanExecution.RunAsync(DebloatPowerPlanExecution.CreateHighPerformance(), true,
-                debloatFolder, planHost, new Progress<string>(Console.Error.WriteLine), stop.Token);
+                debloatFolder, planHost, new Progress<string>(Console.Error.WriteLine), token: stop.Token);
             Console.WriteLine(json ? JsonSerializer.Serialize(result, Capture.JsonOptions) : result.Detail);
             return result.GetExitCode();
         }

@@ -58,7 +58,7 @@ internal static class PrintSpoolerFailureEventChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await PrintSpoolerFailureEvents.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await PrintSpoolerFailureEvents.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents collection");
         Console.WriteLine("PASS: exact Print Spooler failure history, grouping, bounds and non-mutating collection; fixtures only.");

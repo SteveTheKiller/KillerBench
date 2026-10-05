@@ -89,8 +89,8 @@ internal static class ServicingServiceFailureEventChecks
 
         using var canceled = new CancellationTokenSource();
         canceled.Cancel();
-        await RequireCanceled(() => ServicingServiceFailureEvents.CheckAsync(canceled.Token,
-            (_, _) => throw new Exception("A canceled servicing collection must not invoke its provider.")));
+        await RequireCanceled(() => ServicingServiceFailureEvents.CheckAsync((_, _) => throw new Exception("A canceled servicing collection must not invoke its provider."),
+            token: canceled.Token));
         Console.WriteLine("PASS: six exact servicing service failure histories, parallel bounded collection and non-mutating results; fixtures only.");
     }
 

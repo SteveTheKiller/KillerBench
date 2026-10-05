@@ -55,7 +55,7 @@ public partial class MainWindow
         try
         {
             Report("Discovering local printer queues...");
-            var snapshot = await Task.Run(() => PrinterDiagnostics.DiscoverAsync(stop.Token));
+            var snapshot = await Task.Run(() => PrinterDiagnostics.DiscoverAsync(token: stop.Token));
             if (snapshot is not null)
             {
                 if (selectedQueue is not null && !snapshot.Queues.ContainsKey(selectedQueue))
@@ -85,7 +85,7 @@ public partial class MainWindow
         {
             Report("Finding print jobs currently reported as Error or Blocked...");
             BeginWorkflowOutput(WorkflowKind.Printing);
-            ToolResult evidence = await Task.Run(() => PrintJobDiagnostics.CaptureAsync(stop.Token));
+            ToolResult evidence = await Task.Run(() => PrintJobDiagnostics.CaptureAsync(token: stop.Token));
             PrintJobInventory? inventory = PrintJobDiagnostics.ReadInventory(evidence);
             if (inventory is not { Complete: true })
             {

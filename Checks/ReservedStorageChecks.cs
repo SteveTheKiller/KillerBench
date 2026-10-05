@@ -21,7 +21,7 @@ internal static class ReservedStorageChecks
         Require(collected.State == CheckState.Information && bounded && planned is { Verification: true } && planned.Arguments.Last().Contains("Get-WindowsReservedStorageState", StringComparison.Ordinal) && !planned.Arguments.Last().Contains("Set-WindowsReservedStorageState", StringComparison.Ordinal), "Native plan reads reserved storage without changing it");
         Require((await ReservedStorageDiagnostics.CheckAsync(execute: (_, _) => throw new IOException("fixture failure"))).State == CheckState.Unknown, "Provider failure remains unknown");
         using var stop = new CancellationTokenSource(); stop.Cancel(); bool canceled = false;
-        try { await ReservedStorageDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); } catch (OperationCanceledException) { canceled = true; }
+        try { await ReservedStorageDiagnostics.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); } catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents collection");
         Console.WriteLine("PASS: reserved-storage states, malformed evidence and read-only planning; fixtures only.");
     }

@@ -69,7 +69,7 @@ internal static class PrintServiceOperationalEventChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await PrintServiceOperationalEvents.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await PrintServiceOperationalEvents.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents Operational collection");
         Console.WriteLine("PASS: PrintService Operational channel state, event grouping, summary privacy, isolation and cancellation; no print changes.");

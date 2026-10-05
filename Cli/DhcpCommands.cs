@@ -45,7 +45,7 @@ internal static class DhcpCommands
                 return 3;
             }
             string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Repairs");
-            var result = await Repairs.RunAsync(RepairKind.DhcpLease, folder, new ConsoleProgress(), stop.Token);
+            var result = await Repairs.RunAsync(RepairKind.DhcpLease, folder, new ConsoleProgress(), cancellationToken: stop.Token);
             Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
             return result.GetExitCode(stop.IsCancellationRequested);
         }

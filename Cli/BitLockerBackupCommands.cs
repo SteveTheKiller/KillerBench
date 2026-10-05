@@ -49,12 +49,12 @@ internal static class BitLockerBackupCommands
             {
                 Console.Error.WriteLine("Checking the selected existing recovery backup without writing it again.");
                 var result = await BitLockerBackupReconciliation.RunAsync(options, protector, folder,
-                    new WindowsBitLockerBackupHost(), stop.Token, new ConsoleProgress());
+                    new WindowsBitLockerBackupHost(), new ConsoleProgress(), token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
                 return result.GetExitCode();
             }
             Console.Error.WriteLine("Backing up the selected recovery protector. Journal directory: " + folder);
-            var backup = await BitLockerBackupExecution.RunAsync(options, protector, folder, new WindowsBitLockerBackupHost(), stop.Token, new ConsoleProgress());
+            var backup = await BitLockerBackupExecution.RunAsync(options, protector, folder, new WindowsBitLockerBackupHost(), new ConsoleProgress(), token: stop.Token);
             Console.WriteLine(JsonSerializer.Serialize(backup, Capture.JsonOptions));
             return backup.Status.StartsWith("Stopped", StringComparison.Ordinal) ? 130 : backup.Receipt is { Verified: true } ? 0 : 3;
         }

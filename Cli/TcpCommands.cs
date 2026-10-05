@@ -15,7 +15,7 @@ internal static class TcpCommands
         try
         {
             Console.Error.WriteLine("Checking the selected TCP endpoint...");
-            var result = await TcpDiagnostics.CheckAsync(args[1], port, timeout, stop.Token);
+            var result = await TcpDiagnostics.CheckAsync(args[1], port, timeout, token: stop.Token);
             stop.Token.ThrowIfCancellationRequested();
             Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
             return result.State == TcpCheckState.Connected ? 0 : 3;

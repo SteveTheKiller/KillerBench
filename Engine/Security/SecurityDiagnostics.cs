@@ -17,7 +17,7 @@ public static class SecurityDiagnostics
         "[pscustomobject]@{tpm=$t; secureBoot=$b; guard=$g} | ConvertTo-Json -Depth 4 -Compress"], true);
     }
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default, SecurityOptions? options = null)
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(SecurityOptions? options = null, CancellationToken token = default)
     {
         options ??= new();
         token.ThrowIfCancellationRequested();

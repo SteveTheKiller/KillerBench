@@ -120,7 +120,7 @@ internal static class CrashDumpChecks
         string invalidRoot = Path.Combine(scratch, "dump-nonfile");
         Directory.CreateDirectory(Path.Combine(invalidRoot, "MEMORY.DMP"));
         if (CrashDumpInventory.InspectDirectory(invalidRoot).Complete) throw new Exception("Directory masquerading as dump established coverage.");
-        try { CrashDumpInventory.InspectDirectory(root, new CancellationToken(true)); throw new Exception("Cancellation ignored."); }
+        try { CrashDumpInventory.InspectDirectory(root, token: new CancellationToken(true)); throw new Exception("Cancellation ignored."); }
         catch (OperationCanceledException) { }
         Console.WriteLine("PASS: dump metadata discovery bounds, absent paths, preserved content and cancellation; scratch files only.");
     }

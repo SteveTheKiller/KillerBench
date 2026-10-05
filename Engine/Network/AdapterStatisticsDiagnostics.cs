@@ -13,8 +13,8 @@ public static class AdapterStatisticsDiagnostics
         "$rows+=[pscustomobject]@{name=[string]$x.Name;interfaceIndex=[int64]$x.ifIndex;status=[string]$x.Status;hardware=[bool]$x.HardwareInterface;receivedBytes=[uint64]$v.ReceivedBytes;sentBytes=[uint64]$v.SentBytes;receivedErrors=[uint64]$v.ReceivedPacketErrors;outboundErrors=[uint64]$v.OutboundPacketErrors;receivedDiscards=[uint64]$v.ReceivedDiscardedPackets;outboundDiscards=[uint64]$v.OutboundDiscardedPackets}};" +
         "[pscustomobject]@{complete=$complete;adapters=$rows}|ConvertTo-Json -Depth 4 -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

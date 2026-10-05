@@ -57,7 +57,7 @@ internal static class DnsClientCacheChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await DnsClientCacheDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await DnsClientCacheDiagnostics.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents DNS cache collection");
         Console.WriteLine("PASS: privacy-bounded DNS client cache aggregates, negative-entry handling and read-only collection; fixtures only.");

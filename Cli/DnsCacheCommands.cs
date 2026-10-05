@@ -35,14 +35,14 @@ internal static class DnsCacheCommands
             {
                 Console.Error.WriteLine("Rechecking an interrupted DNS cache operation without repeating the flush.");
                 var reconciliation = await DnsCacheReconciliation.RunAsync(folder, recoveryHost.ResolveAsync,
-                    stop.Token, new ConsoleProgress());
+                    new ConsoleProgress(), token:                     stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(reconciliation, Capture.JsonOptions));
                 return reconciliation.GetExitCode();
             }
             Console.Error.WriteLine("Resolving " + host + " before reviewing DNS cache recovery.");
             var selected = await recoveryHost.ResolveAsync(host!, stop.Token);
             var result = await DnsCacheRecovery.RunAsync(selected, execute, recoveryHost,
-                new DnsCacheRecoveryJournal(folder), stop.Token, new ConsoleProgress());
+                new DnsCacheRecoveryJournal(folder), new ConsoleProgress(), token: stop.Token);
             Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
             return result.GetExitCode();
         }

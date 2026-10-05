@@ -25,8 +25,8 @@ internal static class ExactServiceFailureEvents
         "[pscustomobject]@{complete=($events.Count-le 2000-and$records.Count-le 200);scanned=[Math]::Min($events.Count,2000);service=$display;records=@($records|Select-Object -First 200)}|ConvertTo-Json -Depth 4 -Compress";
 
     internal static async Task<IReadOnlyList<WorkflowCheck>> CheckManyAsync(
-        IReadOnlyList<ExactServiceFailureEventDefinition> definitions, CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+        IReadOnlyList<ExactServiceFailureEventDefinition> definitions, Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(definitions);
         token.ThrowIfCancellationRequested();
@@ -77,7 +77,7 @@ internal static class ExactServiceFailureEvents
     }
 
     internal static async Task<WorkflowCheck> CheckAsync(ExactServiceFailureEventDefinition definition,
-        CancellationToken token = default, Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null, CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(definition);
         token.ThrowIfCancellationRequested();

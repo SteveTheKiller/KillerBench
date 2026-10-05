@@ -53,8 +53,8 @@ internal static class StorageServiceFailureEventChecks
 
         using var canceled = new CancellationTokenSource();
         canceled.Cancel();
-        await RequireCanceled(() => StorageServiceFailureEvents.CheckAsync(canceled.Token,
-            (_, _) => throw new Exception("Canceled storage service collection must not invoke its provider.")));
+        await RequireCanceled(() => StorageServiceFailureEvents.CheckAsync((_, _) => throw new Exception("Canceled storage service collection must not invoke its provider."),
+            token: canceled.Token));
         Console.WriteLine("PASS: four exact storage service failure histories, bounded collection and non-mutating results; fixtures only.");
     }
 

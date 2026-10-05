@@ -61,13 +61,13 @@ public static class BitLockerProtectionResume
         ArgumentNullException.ThrowIfNull(host);
         volume = NormalizeVolume(volume);
         BitLockerProtectionState before;
-        try { before = await Required(ct => host.InspectAsync(volume, ct), "BitLocker inspection", token, TimeSpan.FromSeconds(45)).ConfigureAwait(false); }
+        try { before = await Required(ct => host.InspectAsync(volume, ct), "BitLocker inspection", TimeSpan.FromSeconds(45), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(volume, BitLockerProtectionResumeOutcome.Blocked, "BitLocker eligibility could not be established: " + error.Message); }
         string? blocker = EligibilityBlocker(volume, before);
         if (blocker is not null) return new(volume, BitLockerProtectionResumeOutcome.Blocked, blocker, before);
         RestartSnapshot restart;
-        try { restart = await Required(host.ReadRestartAsync, "Restart inspection", token, TimeSpan.FromSeconds(20)).ConfigureAwait(false); }
+        try { restart = await Required(host.ReadRestartAsync, "Restart inspection", TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(volume, BitLockerProtectionResumeOutcome.Blocked, "Restart readiness could not be established: " + error.Message, before); }
         WorkflowCheck restartCheck = RestartDiagnostics.Assess(restart);
@@ -92,7 +92,7 @@ public static class BitLockerProtectionResume
 
     public static async Task<BitLockerProtectionResumeResult> RunAsync(string volume, bool execute,
         string journalFolder, IBitLockerProtectionResumeHost host, IProgress<string>? progress = null,
-        CancellationToken token = default, TimeSpan? operationTimeout = null)
+        TimeSpan? operationTimeout = null, CancellationToken token = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(journalFolder);
         ArgumentNullException.ThrowIfNull(host);
@@ -112,7 +112,7 @@ public static class BitLockerProtectionResume
 
         Report(progress, "Inspecting " + volume + " and its protector identities.");
         BitLockerProtectionState before;
-        try { before = await Required(ct => host.InspectAsync(volume, ct), "BitLocker inspection", token, TimeSpan.FromSeconds(45)).ConfigureAwait(false); }
+        try { before = await Required(ct => host.InspectAsync(volume, ct), "BitLocker inspection", TimeSpan.FromSeconds(45), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(volume, BitLockerProtectionResumeOutcome.Blocked, "BitLocker eligibility could not be established: " + error.Message); }
         string? blocker = EligibilityBlocker(volume, before);
@@ -120,7 +120,7 @@ public static class BitLockerProtectionResume
 
         Report(progress, "Checking restart readiness.");
         RestartSnapshot restart;
-        try { restart = await Required(host.ReadRestartAsync, "Restart inspection", token, TimeSpan.FromSeconds(20)).ConfigureAwait(false); }
+        try { restart = await Required(host.ReadRestartAsync, "Restart inspection", TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(volume, BitLockerProtectionResumeOutcome.Blocked, "Restart readiness could not be established: " + error.Message, before); }
         WorkflowCheck restartCheck = RestartDiagnostics.Assess(restart);
@@ -133,7 +133,7 @@ public static class BitLockerProtectionResume
 
         Report(progress, "Rechecking " + volume + " and its protector identities immediately before resume.");
         BitLockerProtectionState fresh;
-        try { fresh = await Required(ct => host.InspectAsync(volume, ct), "BitLocker preflight inspection", token, TimeSpan.FromSeconds(45)).ConfigureAwait(false); }
+        try { fresh = await Required(ct => host.InspectAsync(volume, ct), "BitLocker preflight inspection", TimeSpan.FromSeconds(45), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(volume, BitLockerProtectionResumeOutcome.Blocked, "Fresh BitLocker eligibility could not be established: " + error.Message, before); }
         blocker = EligibilityBlocker(volume, fresh);
@@ -147,7 +147,7 @@ public static class BitLockerProtectionResume
 
         var pending = new PendingRecord(1, Environment.MachineName, DateTimeOffset.UtcNow, volume, before, null);
         await JournalPersistence.WriteAsync(pendingPath,
-            JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
+            JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
         string journalPath = Path.Combine(root, "bitlocker-resume-" + Guid.NewGuid().ToString("N") + ".json");
         ToolResult? command = null;
         bool resumeDispatched = false;
@@ -156,9 +156,9 @@ public static class BitLockerProtectionResume
         {
             Report(progress, "Repeating BitLocker protection-resume eligibility immediately before the request.");
             var immediate = await Required(ct => host.InspectAsync(volume, ct), "Final BitLocker inspection",
-                token, TimeSpan.FromSeconds(45)).ConfigureAwait(false);
+                TimeSpan.FromSeconds(45), token:                 token).ConfigureAwait(false);
             var immediateRestart = await Required(host.ReadRestartAsync, "Final restart inspection",
-                token, TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+                TimeSpan.FromSeconds(20), token:                 token).ConfigureAwait(false);
             string? finalBlocker = EligibilityBlocker(volume, immediate);
             bool finalRestartClear = RestartDiagnostics.Assess(immediateRestart).State == CheckState.Clear;
             if (finalBlocker is not null || !SameIdentity(before, immediate) || !finalRestartClear || !host.IsAdministrator)
@@ -175,7 +175,7 @@ public static class BitLockerProtectionResume
                         Initial = new { State = before, Restart = restart },
                         Current = new { State = immediate, Restart = immediateRestart, Administrator = host.IsAdministrator },
                         Result = result
-                    }, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                    }, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
                 File.Move(pendingPath, journalPath + ".prepared.json");
                 Report(progress, result.Detail);
                 return result;
@@ -184,9 +184,9 @@ public static class BitLockerProtectionResume
             Report(progress, "Resuming BitLocker protection on " + volume + ".");
             resumeDispatched = true;
             command = await Required(ct => host.ResumeAsync(volume, progress, ct),
-                "BitLocker resume", token, limit).ConfigureAwait(false);
+                "BitLocker resume", limit, token: token).ConfigureAwait(false);
             await JournalPersistence.WriteAsync(pendingPath,
-                JsonSerializer.Serialize(pending with { Command = command }, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                JsonSerializer.Serialize(pending with { Command = command }, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
             result = await VerifyAsync(volume, before, command, journalPath, host, progress, token).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
@@ -206,7 +206,7 @@ public static class BitLockerProtectionResume
                 before, command, JournalPath: journalPath);
         }
         await JournalPersistence.WriteAsync(journalPath,
-            JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+            JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (result.Outcome is BitLockerProtectionResumeOutcome.Verified or BitLockerProtectionResumeOutcome.NotApplied or BitLockerProtectionResumeOutcome.Failed || !resumeDispatched)
             File.Move(pendingPath, journalPath + ".prepared.json");
         Report(progress, result.Detail);
@@ -244,7 +244,7 @@ public static class BitLockerProtectionResume
         var result = await VerifyAsync(pending.Volume, pending.Before, pending.Command, journalPath,
             host, progress, token).ConfigureAwait(false);
         await JournalPersistence.WriteAsync(journalPath,
-            JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+            JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (result.Outcome is BitLockerProtectionResumeOutcome.Verified or BitLockerProtectionResumeOutcome.NotApplied or BitLockerProtectionResumeOutcome.Failed)
             File.Move(pendingPath, journalPath + ".prepared.json");
         return result;
@@ -307,7 +307,7 @@ public static class BitLockerProtectionResume
     {
         Report(progress, "Verifying protection and protector identities on " + volume + ".");
         BitLockerProtectionState after;
-        try { after = await Required(ct => host.InspectAsync(volume, ct), "BitLocker verification", token, TimeSpan.FromSeconds(45)).ConfigureAwait(false); }
+        try { after = await Required(ct => host.InspectAsync(volume, ct), "BitLocker verification", TimeSpan.FromSeconds(45), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         {
             return new(volume, BitLockerProtectionResumeOutcome.Uncertain,
@@ -346,7 +346,7 @@ public static class BitLockerProtectionResume
         InvalidOperationException or NotSupportedException or TimeoutException or System.ComponentModel.Win32Exception or
         System.Security.SecurityException or OperationCanceledException;
     private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name,
-        CancellationToken token, TimeSpan limit)
+        TimeSpan limit, CancellationToken token)
     {
         var pending = operation(token) ?? throw new InvalidOperationException(name + " provider returned no task.");
         return await pending.WaitAsync(limit, token).ConfigureAwait(false) ??

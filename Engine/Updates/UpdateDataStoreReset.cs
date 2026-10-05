@@ -119,7 +119,7 @@ public static class UpdateDataStoreResetReconciliation
             string archivePath = Path.Combine(root, "update-store-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
                 "-" + Guid.NewGuid().ToString("N") + ".json");
             var result = new UpdateDataStoreReconciliationResult(outcome, detail, pendingPath, pending, search, services, archivePath);
-            await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token).ConfigureAwait(false);
+            await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
             File.Move(pendingPath, archivePath + ".prepared.json");
             Report(progress, detail);
             return result;
@@ -303,7 +303,7 @@ public static class UpdateDataStoreReset
         string journalPath = Path.Combine(root, "update-store-reset-" + operationId + ".jsonl");
         var pending = new UpdateDataStoreResetPendingRecord(1, operationId, DateTimeOffset.UtcNow,
             journalPath, store.Path, retainedPath, failedSearch, services) { Machine = Environment.MachineName };
-        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
         await using var journal = new FileStream(journalPath, FileMode.CreateNew, FileAccess.Write, FileShare.Read,
             4096, FileOptions.Asynchronous | FileOptions.WriteThrough);
         async Task RecordAsync(object value)

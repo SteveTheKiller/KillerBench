@@ -53,8 +53,8 @@ internal static class BackupServiceFailureEventChecks
 
         using var canceled = new CancellationTokenSource();
         canceled.Cancel();
-        await RequireCanceled(() => BackupServiceFailureEvents.CheckAllAsync(canceled.Token,
-            (_, _) => throw new Exception("Canceled backup service collection must not invoke its provider.")));
+        await RequireCanceled(() => BackupServiceFailureEvents.CheckAllAsync((_, _) => throw new Exception("Canceled backup service collection must not invoke its provider."),
+            token: canceled.Token));
         Console.WriteLine("PASS: four exact backup service failure histories, bounded collection and non-mutating results; fixtures only.");
     }
 

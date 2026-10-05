@@ -93,8 +93,8 @@ public static class ComputerRename
     }
 
     public static async Task<ComputerRenameResult> RunAsync(string targetName, bool execute, string directory,
-        IComputerRenameHost host, IProgress<string>? progress = null, CancellationToken token = default,
-        TimeSpan? executionTimeout = null)
+        IComputerRenameHost host, IProgress<string>? progress = null, TimeSpan? executionTimeout = null,
+        CancellationToken token = default)
     {
         string target = ComputerNameReview.Review(targetName, new(null, null, null)).ProposedName;
         ArgumentException.ThrowIfNullOrWhiteSpace(directory);
@@ -127,7 +127,7 @@ public static class ComputerRename
         string journalPath = Path.Combine(root, "computer-rename-" + operationId + ".jsonl");
         await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(new ComputerRenamePendingRecord(1,
             before.CurrentName!, target, DateTimeOffset.UtcNow, journalPath, before)
-        { Machine = Environment.MachineName }, Capture.JsonOptions), token).ConfigureAwait(false);
+        { Machine = Environment.MachineName }, Capture.JsonOptions), token: token).ConfigureAwait(false);
         await AppendRecordAsync(journalPath, new { Stage = "Prepared", Target = target, Before = before, Restart = restart }, token).ConfigureAwait(false);
 
         ToolResult? command = null;
@@ -262,7 +262,7 @@ public static class ComputerRename
         if (outcome is ComputerRenameOutcome.Verified or ComputerRenameOutcome.NotChanged)
         {
             record = Path.Combine(root, "computer-rename-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") + ".json");
-            await JournalPersistence.WriteAsync(record, JsonSerializer.Serialize(new { Outcome = outcome, Pending = pending, Current = context, Restart = restart }, Capture.JsonOptions), token).ConfigureAwait(false);
+            await JournalPersistence.WriteAsync(record, JsonSerializer.Serialize(new { Outcome = outcome, Pending = pending, Current = context, Restart = restart }, Capture.JsonOptions), token: token).ConfigureAwait(false);
             File.Move(pendingPath, record + ".prepared.json");
         }
         return new(pending.TargetName, outcome, detail, record, pending.Before, After: context, Restart: restart);

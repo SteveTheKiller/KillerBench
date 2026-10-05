@@ -17,7 +17,7 @@ internal static class ServiceDependencyConfigurationCommands
         {
             Console.Error.WriteLine("Checking service dependency identities and direct cycles. No service or dependency configuration will change.");
             var inventory = await ServiceInventoryDiagnostics.CheckAsync(stop.Token);
-            var check = await ServiceDependencyConfigurationDiagnostics.CheckAsync(inventory, stop.Token);
+            var check = await ServiceDependencyConfigurationDiagnostics.CheckAsync(inventory, token: stop.Token);
             Console.WriteLine(JsonSerializer.Serialize(check, Capture.JsonOptions));
             return check.EffectiveState is CheckState.Attention or CheckState.Unknown ? 3 : 0;
         }

@@ -100,7 +100,7 @@ public static class MsiRepairReconciliation
         string archivePath = Path.Combine(root, "msi-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
             "-" + Guid.NewGuid().ToString("N") + ".json");
         var result = new MsiRepairReconciliationResult(outcome, detail, pendingPath, pending, product, activity, restart, archivePath);
-        await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
         File.Move(pendingPath, archivePath + ".prepared.json");
         Report(progress, detail);
         return result;

@@ -62,8 +62,8 @@ internal static class TaskPlanCommands
                 "KillerBench", "TaskRegistration");
             var journal = (journalFactory ?? (directory => new FileTaskRegistrationJournal(directory, start)))(journalDirectory)
                 ?? throw new InvalidOperationException("Task registration journal is unavailable.");
-            var result = await TaskRegistration.RunAsync(plan, host, execute, stop.Token, journal,
-                progress: new Progress<string>(Console.Error.WriteLine));
+            var result = await TaskRegistration.RunAsync(plan, host, execute, journal, progress: new Progress<string>(Console.Error.WriteLine),
+                token: stop.Token);
             if (reportPath is not null)
             {
                 await ExportTaskRegistrationReportAsync(plan, result, execute, reportPath).ConfigureAwait(false);
@@ -154,8 +154,8 @@ internal static class TaskPlanCommands
                 "KillerBench", "TaskRegistration");
             var host = (hostFactory ?? (() => new WindowsTaskRegistrationRecoveryHost()))()
                 ?? throw new InvalidOperationException("Task registration recovery host is unavailable.");
-            var result = await TaskRegistrationRecovery.RecoverAsync(plan, journalDirectory, host, stop.Token,
-                progress: new Progress<string>(Console.Error.WriteLine));
+            var result = await TaskRegistrationRecovery.RecoverAsync(plan, journalDirectory, host, progress: new Progress<string>(Console.Error.WriteLine),
+                token: stop.Token);
             if (reportPath is not null)
             {
                 await ExportTaskRecoveryReportAsync(plan, result, reportPath).ConfigureAwait(false);

@@ -48,8 +48,8 @@ public static class CleanupPreview
         token.ThrowIfCancellationRequested();
         string root = SystemTempRoot(windowsDirectory);
         return Directory.Exists(root)
-            ? InspectDirectory("Windows SystemTemp files", root, options.MinimumAgeDays, now, progress, token,
-                maximumCandidates: options.MaximumFilesPerTarget)
+            ? InspectDirectory("Windows SystemTemp files", root, options.MinimumAgeDays, now, progress, maximumCandidates: options.MaximumFilesPerTarget,
+                token: token)
             : new CleanupEstimate("Windows SystemTemp files", root, 0, 0, 0, false, [],
                 "Target is absent; no temporary files are retained at the standard system location.");
     }
@@ -86,8 +86,8 @@ public static class CleanupPreview
         token.ThrowIfCancellationRequested();
         string root = ThumbnailCacheRoot(localApplicationData);
         return Directory.Exists(root)
-            ? InspectDirectory("Current user thumbnail cache", root, options.MinimumAgeDays, now, progress, token,
-                maximumCandidates: options.MaximumFilesPerTarget, includeFile: IsThumbnailCacheFile)
+            ? InspectDirectory("Current user thumbnail cache", root, options.MinimumAgeDays, now, progress, maximumCandidates: options.MaximumFilesPerTarget,
+                includeFile: IsThumbnailCacheFile, token: token)
             : new CleanupEstimate("Current user thumbnail cache", root, 0, 0, 0, false, [],
                 "Target is absent; no thumbnail database files are retained at the standard location.");
     }
@@ -101,8 +101,8 @@ public static class CleanupPreview
         token.ThrowIfCancellationRequested();
         string root = ThumbnailCacheRoot(localApplicationData);
         return Directory.Exists(root)
-            ? InspectDirectory("Current user icon cache", root, options.MinimumAgeDays, now, progress, token,
-                maximumCandidates: options.MaximumFilesPerTarget, includeFile: IsIconCacheFile)
+            ? InspectDirectory("Current user icon cache", root, options.MinimumAgeDays, now, progress, maximumCandidates: options.MaximumFilesPerTarget,
+                includeFile: IsIconCacheFile, token: token)
             : new CleanupEstimate("Current user icon cache", root, 0, 0, 0, false, [],
                 "Target is absent; no icon database files are retained at the standard location.");
     }
@@ -125,7 +125,7 @@ public static class CleanupPreview
         token.ThrowIfCancellationRequested();
         string root = DeliveryOptimizationCacheRoot(windowsDirectory);
         return Directory.Exists(root)
-            ? InspectDirectory("Delivery Optimization cache", root, options.MinimumAgeDays, now, progress, token, maximumCandidates: options.MaximumFilesPerTarget)
+            ? InspectDirectory("Delivery Optimization cache", root, options.MinimumAgeDays, now, progress, maximumCandidates: options.MaximumFilesPerTarget, token: token)
             : new CleanupEstimate("Delivery Optimization cache", root, 0, 0, 0, false, [], "Target is absent; no cached delivery files are retained at the standard service location.");
     }
 
@@ -158,7 +158,7 @@ public static class CleanupPreview
             throw new ArgumentException("Select the Office cache cleanup target.");
         token.ThrowIfCancellationRequested();
         return [.. OfficeCacheRoots(localApplicationData).Select(root => Directory.Exists(root)
-            ? InspectDirectory("Current user Office cache: " + Path.GetFileName(root), root, options.MinimumAgeDays, now, progress, token, maximumCandidates: options.MaximumFilesPerTarget)
+            ? InspectDirectory("Current user Office cache: " + Path.GetFileName(root), root, options.MinimumAgeDays, now, progress, maximumCandidates: options.MaximumFilesPerTarget, token: token)
             : new CleanupEstimate("Current user Office cache: " + Path.GetFileName(root), root, 0, 0, 0, false, [], "Target is absent; no cache files are retained at this standard location."))];
     }
 
@@ -194,7 +194,7 @@ public static class CleanupPreview
         token.ThrowIfCancellationRequested();
         string root = CrashDumpRoot(localApplicationData);
         return Directory.Exists(root)
-            ? InspectDirectory("Current user application crash dumps", root, options.MinimumAgeDays, now, progress, token, maximumCandidates: options.MaximumFilesPerTarget)
+            ? InspectDirectory("Current user application crash dumps", root, options.MinimumAgeDays, now, progress, maximumCandidates: options.MaximumFilesPerTarget, token: token)
             : new CleanupEstimate("Current user application crash dumps", root, 0, 0, 0, false, [], "Target is absent; no dumps are retained at this standard location.");
     }
 
@@ -216,7 +216,7 @@ public static class CleanupPreview
         token.ThrowIfCancellationRequested();
         string root = WindowsMinidumpRoot(windowsDirectory);
         return Directory.Exists(root)
-            ? InspectDirectory("Windows crash minidumps", root, options.MinimumAgeDays, now, progress, token, maximumCandidates: options.MaximumFilesPerTarget)
+            ? InspectDirectory("Windows crash minidumps", root, options.MinimumAgeDays, now, progress, maximumCandidates: options.MaximumFilesPerTarget, token: token)
             : new CleanupEstimate("Windows crash minidumps", root, 0, 0, 0, false, [], "Target is absent; no minidumps are retained at this standard location.");
     }
 
@@ -228,7 +228,7 @@ public static class CleanupPreview
             throw new ArgumentException("Select the error-report cleanup target.");
         token.ThrowIfCancellationRequested();
         return [.. ErrorReportRoots(localApplicationData).Select(root => Directory.Exists(root)
-            ? InspectDirectory("Current user Windows error reports", root, options.MinimumAgeDays, now, progress, token, maximumCandidates: options.MaximumFilesPerTarget)
+            ? InspectDirectory("Current user Windows error reports", root, options.MinimumAgeDays, now, progress, maximumCandidates: options.MaximumFilesPerTarget, token: token)
             : new CleanupEstimate("Current user Windows error reports", root, 0, 0, 0, false, [], "Target is absent; no reports are retained at this standard location."))];
     }
 
@@ -238,14 +238,14 @@ public static class CleanupPreview
         var now = DateTimeOffset.UtcNow;
         var targets = new List<CleanupEstimate>();
         if (options.Targets.HasFlag(CleanupTargets.UserTemp))
-            targets.Add(InspectDirectory("Current user temporary files", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Temp"), options.MinimumAgeDays, now, progress, token, maximumCandidates: options.MaximumFilesPerTarget));
+            targets.Add(InspectDirectory("Current user temporary files", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Temp"), options.MinimumAgeDays, now, progress, maximumCandidates: options.MaximumFilesPerTarget, token: token));
         if (options.Targets.HasFlag(CleanupTargets.WindowsTemp))
-            targets.Add(InspectDirectory("Windows temporary files", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Temp"), options.MinimumAgeDays, now, progress, token, maximumCandidates: options.MaximumFilesPerTarget));
+            targets.Add(InspectDirectory("Windows temporary files", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Temp"), options.MinimumAgeDays, now, progress, maximumCandidates: options.MaximumFilesPerTarget, token: token));
         if (options.Targets.HasFlag(CleanupTargets.SystemTemp))
             targets.Add(InspectSystemTemp(Environment.GetFolderPath(Environment.SpecialFolder.Windows), options, now, progress, token));
         if (options.Targets.HasFlag(CleanupTargets.ShaderCaches))
             foreach (string root in ShaderRoots())
-                targets.Add(InspectDirectory("Current user shader cache: " + Path.GetFileName(root), root, options.MinimumAgeDays, now, progress, token, maximumCandidates: options.MaximumFilesPerTarget));
+                targets.Add(InspectDirectory("Current user shader cache: " + Path.GetFileName(root), root, options.MinimumAgeDays, now, progress, maximumCandidates: options.MaximumFilesPerTarget, token: token));
         if (options.Targets.HasFlag(CleanupTargets.BrowserCaches))
         {
             var discovery = BrowserCacheRoots.Discover(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), token);
@@ -254,7 +254,7 @@ public static class CleanupPreview
             foreach (string root in discovery.Roots)
             {
                 if (timer.Elapsed > TimeSpan.FromSeconds(60)) { partial = true; break; }
-                targets.Add(InspectDirectory("Current user browser cache", root, options.MinimumAgeDays, now, progress, token, maximumCandidates: options.MaximumFilesPerTarget));
+                targets.Add(InspectDirectory("Current user browser cache", root, options.MinimumAgeDays, now, progress, maximumCandidates: options.MaximumFilesPerTarget, token: token));
             }
             targets.Add(new("Browser profile discovery", "", 0, 0, 0, partial, [],
                 "Default Chrome, Edge, Brave, Firefox and Opera cache locations only; custom locations are not searched. Cookies, saved logins and profile settings are outside these targets."));
@@ -282,8 +282,8 @@ public static class CleanupPreview
     }
 
     public static CleanupEstimate InspectDirectory(string target, string root, int minimumAgeDays, DateTimeOffset now,
-        IProgress<string>? progress = null, CancellationToken token = default, int maximumEntries = 100_000, int maximumCandidates = 100,
-        Func<string, bool>? includeFile = null)
+        IProgress<string>? progress = null, int maximumEntries = 100_000, int maximumCandidates = 100, Func<string, bool>? includeFile = null,
+        CancellationToken token = default)
     {
         new CleanupOptions(CleanupTargets.UserTemp, minimumAgeDays).Validate();
         token.ThrowIfCancellationRequested();

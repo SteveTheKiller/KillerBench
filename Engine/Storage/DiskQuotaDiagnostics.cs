@@ -13,8 +13,8 @@ public static class DiskQuotaDiagnostics
         "defaultWarningBytes=[int64]$x.DefaultWarningLimit;limitNotification=[bool]$x.ExceededNotification;warningNotification=[bool]$x.WarningExceededNotification}};" +
         "[pscustomobject]@{complete=($all.Count-le 64);unresolved=[uint32]$unresolved;settings=$rows}|ConvertTo-Json -Depth 4 -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

@@ -32,7 +32,7 @@ public static class FileSystemRepairExecution
 {
     public static async Task<FileSystemRepairResult> RunAsync(FileSystemRepairDraft draft, bool execute,
         string journalFolder, IFileSystemRepairHost host, IProgress<string>? progress = null,
-        CancellationToken token = default, TimeSpan? executionTimeout = null)
+        TimeSpan? executionTimeout = null, CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(draft);
         ArgumentException.ThrowIfNullOrWhiteSpace(journalFolder);
@@ -59,13 +59,13 @@ public static class FileSystemRepairExecution
             "A prior filesystem repair needs reconciliation before another repair can start.", pendingPath);
 
         Report(progress, "Rechecking selected volume identity and readiness.");
-        var state = await Required(ct => host.InspectAsync(draft.Volume, ct), "Volume inspection", token, TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+        var state = await Required(ct => host.InspectAsync(draft.Volume, ct), "Volume inspection", TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false);
         var fresh = FileSystemRepairPlanning.Create(draft.Volume, draft.Mode, state, draft.RequiresRestart,
             draft.RequiresDismount, draft.BackupConfirmed);
         if (!fresh.VolumeEligible || fresh.Step is null || !fresh.Step.Arguments.SequenceEqual(draft.Step.Arguments))
             return new(draft, FileSystemRepairOutcome.Blocked, fresh.Blocker ?? "The selected repair plan changed during reinspection.");
         Report(progress, "Repeating read-only filesystem diagnosis.");
-        var before = await Required(ct => host.DiagnoseAsync(draft.Volume, ct), "Filesystem diagnosis", token, TimeSpan.FromMinutes(11)).ConfigureAwait(false);
+        var before = await Required(ct => host.DiagnoseAsync(draft.Volume, ct), "Filesystem diagnosis", TimeSpan.FromMinutes(11), token: token).ConfigureAwait(false);
         if (!FileSystemRepairPlanning.Review(fresh, before).EvidenceMatched)
             return new(draft, FileSystemRepairOutcome.Blocked,
                 "Fresh complete evidence did not confirm repair eligibility for this exact volume.", Before: before);
@@ -74,7 +74,7 @@ public static class FileSystemRepairExecution
         if (fresh.RequiresRestart)
         {
             Report(progress, "Checking for an existing Windows restart requirement.");
-            var restart = await Required(host.CheckRestartAsync, "Restart inspection", token, TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+            var restart = await Required(host.CheckRestartAsync, "Restart inspection", TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false);
             if (restart.State != CheckState.Clear || restart.Evidence is not { ExitCode: 0, TimedOut: false, Truncated: false } restartEvidence ||
                 !string.IsNullOrWhiteSpace(restartEvidence.Error))
                 return new(draft, FileSystemRepairOutcome.Blocked,
@@ -86,23 +86,23 @@ public static class FileSystemRepairExecution
         {
             Schema = 1, Machine = Environment.MachineName, StartedUtc = DateTimeOffset.UtcNow,
             Draft = fresh, Before = before, JournalPath = journalPath
-        }, Capture.JsonOptions), token).ConfigureAwait(false);
+        }, Capture.JsonOptions), token: token).ConfigureAwait(false);
         ToolResult? command = null;
         bool repairDispatched = false;
         FileSystemRepairResult result;
         try
         {
             Report(progress, "Confirming final filesystem-repair eligibility.");
-            var currentState = await Required(ct => host.InspectAsync(fresh.Volume, ct), "Final volume inspection", token,
-                TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+            var currentState = await Required(ct => host.InspectAsync(fresh.Volume, ct), "Final volume inspection", TimeSpan.FromSeconds(20),
+                token: token).ConfigureAwait(false);
             var currentDraft = FileSystemRepairPlanning.Create(fresh.Volume, fresh.Mode, currentState,
                 fresh.RequiresRestart, fresh.RequiresDismount, fresh.BackupConfirmed);
-            var current = await Required(ct => host.DiagnoseAsync(fresh.Volume, ct), "Final filesystem diagnosis", token,
-                TimeSpan.FromMinutes(11)).ConfigureAwait(false);
+            var current = await Required(ct => host.DiagnoseAsync(fresh.Volume, ct), "Final filesystem diagnosis", TimeSpan.FromMinutes(11),
+                token: token).ConfigureAwait(false);
             WorkflowCheck? currentRestart = null;
             if (fresh.RequiresRestart)
-                currentRestart = await Required(host.CheckRestartAsync, "Final restart inspection", token,
-                    TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+                currentRestart = await Required(host.CheckRestartAsync, "Final restart inspection", TimeSpan.FromSeconds(20),
+                    token: token).ConfigureAwait(false);
             bool finalRestartClear = !fresh.RequiresRestart ||
                 currentRestart is { State: CheckState.Clear, Evidence: { ExitCode: 0, TimedOut: false, Truncated: false } restartEvidence } &&
                 string.IsNullOrWhiteSpace(restartEvidence.Error);
@@ -121,7 +121,7 @@ public static class FileSystemRepairExecution
                             ? "Administrator access changed after preparation. No repair was started or scheduled."
                             : "Restart state changed after preparation. No filesystem repair was scheduled.";
                 result = new(fresh, FileSystemRepairOutcome.Blocked, detail, journalPath, before, After: currentRestart ?? current);
-                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
                 File.Move(pendingPath, journalPath + ".prepared.json");
                 Report(progress, result.Detail);
                 return result;
@@ -131,7 +131,7 @@ public static class FileSystemRepairExecution
                 : "Repairing " + fresh.Volume + ". The volume may be dismounted.");
             repairDispatched = true;
             command = await Required(ct => fresh.RequiresRestart ? host.ScheduleAsync(fresh.Step, ct) : host.RepairAsync(fresh.Step, ct),
-                fresh.RequiresRestart ? "Filesystem repair scheduling" : "Filesystem repair", token, limit).ConfigureAwait(false);
+                fresh.RequiresRestart ? "Filesystem repair scheduling" : "Filesystem repair", limit, token: token).ConfigureAwait(false);
             if (command.TimedOut || command.Truncated || !string.IsNullOrWhiteSpace(command.Error))
                 result = new(fresh, FileSystemRepairOutcome.Uncertain,
                     "Repair evidence is incomplete. The volume may have changed; reconcile it before retrying.", journalPath, before, command);
@@ -145,7 +145,7 @@ public static class FileSystemRepairExecution
             else
             {
                 Report(progress, "Verifying the repaired volume with a read-only check.");
-                var after = await Required(ct => host.DiagnoseAsync(fresh.Volume, ct), "Filesystem verification", token, TimeSpan.FromMinutes(11)).ConfigureAwait(false);
+                var after = await Required(ct => host.DiagnoseAsync(fresh.Volume, ct), "Filesystem verification", TimeSpan.FromMinutes(11), token: token).ConfigureAwait(false);
                 bool verified = after.State == CheckState.Clear && after.Evidence is { TimedOut: false, Truncated: false } evidence &&
                     evidence.ExitCode == 0 && string.IsNullOrWhiteSpace(evidence.Error);
                 result = new(fresh, verified ? FileSystemRepairOutcome.Verified : FileSystemRepairOutcome.Uncertain,
@@ -171,7 +171,7 @@ public static class FileSystemRepairExecution
                     : "Final filesystem inspection was unavailable before command dispatch: " + error.Message + ". No repair was started or scheduled.",
                 journalPath, before, command);
         }
-        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (result.Outcome == FileSystemRepairOutcome.Verified || !repairDispatched)
             File.Move(pendingPath, journalPath + ".prepared.json");
         Report(progress, result.Detail);
@@ -179,7 +179,7 @@ public static class FileSystemRepairExecution
     }
 
     private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name,
-        CancellationToken token, TimeSpan limit)
+        TimeSpan limit, CancellationToken token)
     {
         var pending = operation(token) ?? throw new InvalidOperationException(name + " provider returned no task.");
         return await pending.WaitAsync(limit, token).ConfigureAwait(false) ?? throw new InvalidDataException(name + " provider returned no evidence.");

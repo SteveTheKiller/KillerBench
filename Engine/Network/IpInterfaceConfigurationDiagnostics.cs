@@ -11,8 +11,8 @@ public static class IpInterfaceConfigurationDiagnostics
         "$rows=@($all|Select-Object -First 512|ForEach-Object{[pscustomobject]@{interfaceIndex=[uint64]$_.InterfaceIndex;interfaceAlias=[string]$_.InterfaceAlias;addressFamily=[string]$_.AddressFamily;connectionState=[string]$_.ConnectionState;dhcp=[string]$_.Dhcp;nlMtu=[uint64]$_.NlMtu;forwarding=[string]$_.Forwarding;advertising=[string]$_.Advertising;routerDiscovery=[string]$_.RouterDiscovery;automaticMetric=[string]$_.AutomaticMetric;interfaceMetric=[uint64]$_.InterfaceMetric}});" +
         "[pscustomobject]@{complete=($all.Count-le 512);interfaces=$rows}|ConvertTo-Json -Depth 4 -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

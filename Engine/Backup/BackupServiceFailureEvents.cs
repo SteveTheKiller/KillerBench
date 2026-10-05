@@ -10,22 +10,22 @@ public static class BackupServiceFailureEvents
             "block-level transfer, destination access, backup completion or restore success")
     ];
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         var checks = await Task.WhenAll(Definitions.Select(definition =>
-            ExactServiceFailureEvents.CheckAsync(definition, token, execute))).ConfigureAwait(false);
+            ExactServiceFailureEvents.CheckAsync(definition, execute, token: token))).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
         return Array.AsReadOnly(checks);
     }
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAllAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAllAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
-        var shadowCopy = StorageServiceFailureEvents.CheckShadowCopyAsync(token, execute);
-        var backup = CheckAsync(token, execute);
+        var shadowCopy = StorageServiceFailureEvents.CheckShadowCopyAsync(execute, token: token);
+        var backup = CheckAsync(execute, token: token);
         var groups = await Task.WhenAll(shadowCopy, backup).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
         return Array.AsReadOnly(groups.SelectMany(group => group).ToArray());

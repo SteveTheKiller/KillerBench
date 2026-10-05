@@ -72,7 +72,7 @@ internal static class PrintJobChecks
         {
             try
             {
-                await PrintJobDiagnostics.CheckAsync(stop.Token, (_, _) => { stop.Cancel(); return Task.FromResult(Snapshot(16)); });
+                await PrintJobDiagnostics.CheckAsync((_, _) => { stop.Cancel(); return Task.FromResult(Snapshot(16)); }, token: stop.Token);
                 throw new Exception("Stopped print collection returned a completed snapshot");
             }
             catch (OperationCanceledException) { }

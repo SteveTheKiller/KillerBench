@@ -40,7 +40,7 @@ internal static class DeleteNotificationChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await DeleteNotificationDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("provider should not run")); }
+        try { await DeleteNotificationDiagnostics.CheckAsync((_, _) => throw new Exception("provider should not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents delete-notification collection");
         Console.WriteLine("PASS: NTFS and ReFS delete-notification states, incomplete evidence, read-only planning and cancellation; fixtures only.");

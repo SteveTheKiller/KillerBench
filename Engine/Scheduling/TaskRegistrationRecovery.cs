@@ -35,9 +35,9 @@ public static class TaskRegistrationRecovery
         ScheduledTaskPlan draft,
         string journalDirectory,
         ITaskRegistrationRecoveryHost? host = null,
-        CancellationToken token = default,
         TimeSpan? timeout = null,
-        IProgress<string>? progress = null)
+        IProgress<string>? progress = null,
+        CancellationToken token = default)
     {
         var plan = draft.Validate();
         string pendingPath = FileTaskRegistrationJournal.GetPendingPath(journalDirectory, plan.Identity);

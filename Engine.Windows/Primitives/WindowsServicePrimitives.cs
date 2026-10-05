@@ -53,7 +53,7 @@ public sealed class WindowsServiceCheckProbe : IProbePrimitive
         if (!OperatingSystem.IsWindows()) return PrimitiveResult.Unavailable("Service checks require Windows.");
         try
         {
-            var check = await ServiceRecovery.CheckAsync(kind, token, WindowsServicePrimitives.IsFocusedDemandStart(kind)).ConfigureAwait(false);
+            var check = await ServiceRecovery.CheckAsync(kind, WindowsServicePrimitives.IsFocusedDemandStart(kind), token: token).ConfigureAwait(false);
             return WindowsServicePrimitives.ToPrimitiveResult(check);
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or System.Security.SecurityException or System.ComponentModel.Win32Exception)
@@ -77,7 +77,7 @@ public sealed class WindowsServiceRunningProbe : IProbePrimitive
             return PrimitiveResult.Unavailable("The service '" + service + "' is not in the supported service catalog.");
         if (!OperatingSystem.IsWindows()) return PrimitiveResult.Unavailable("Service checks require Windows.");
         var result = await ServiceRecovery.ObserveRunningAsync(service,
-            cancellationToken => NativeTool.RunAsync("sc.exe", ["query", service], token: cancellationToken), token).ConfigureAwait(false);
+            cancellationToken => NativeTool.RunAsync("sc.exe", ["query", service], token: cancellationToken), token: token).ConfigureAwait(false);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
         if (result.TimedOut) return new PrimitiveResult(false, null, raw, "Service observation timed out.") { TimedOut = true };
         if (result.Truncated) return new PrimitiveResult(false, null, raw, "Service observation output was truncated.") { Truncated = true };

@@ -51,7 +51,7 @@ internal static class FileHistoryEventChecks
             "Collector did not use one bounded privacy-projected read-only query");
         try
         {
-            await FileHistoryEvents.CheckAsync(new CancellationToken(true), (_, _) => Task.FromResult(Result(empty)));
+            await FileHistoryEvents.CheckAsync((_, _) => Task.FromResult(Result(empty)), token: new CancellationToken(true));
             throw new Exception("File History event review ignored cancellation");
         }
         catch (OperationCanceledException) { }

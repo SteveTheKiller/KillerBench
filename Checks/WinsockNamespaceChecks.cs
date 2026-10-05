@@ -56,11 +56,11 @@ internal static class WinsockNamespaceChecks
         using var stop = new CancellationTokenSource();
         try
         {
-            await WinsockNamespaceDiagnostics.CheckAsync(stop.Token, (_, _) =>
+            await WinsockNamespaceDiagnostics.CheckAsync((_, _) =>
             {
                 stop.Cancel();
                 return new TaskCompletionSource<ToolResult>().Task;
-            }).WaitAsync(TimeSpan.FromSeconds(2));
+            }, token: stop.Token).WaitAsync(TimeSpan.FromSeconds(2));
             throw new Exception("Winsock namespace collection ignored Stop");
         }
         catch (OperationCanceledException) when (stop.IsCancellationRequested) { }

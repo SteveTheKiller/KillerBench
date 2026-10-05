@@ -16,8 +16,8 @@ public static class DeliveryOptimizationActivityDiagnostics
         "[pscustomobject]@{status=[string]$_.Name;count=[uint64]$_.Count;fileBytes=[uint64]$file;downloadedBytes=[uint64]$downloaded;peerBytes=[uint64]$peer;httpBytes=[uint64]$http;cacheServerBytes=[uint64]$cache}});" +
         "[pscustomobject]@{complete=($all.Count-le 4096);entryCount=[uint64]$limited.Count;groups=$rows}|ConvertTo-Json -Depth 4 -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

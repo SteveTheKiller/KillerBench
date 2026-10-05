@@ -43,11 +43,11 @@ public sealed record WorkflowResult(WorkflowKind Kind, string Machine, DateTimeO
 public interface IWorkflowHost
 {
     Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token);
-    Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token,
-        Func<IReadOnlyList<WorkflowCheck>, Task> checkpoint) => InspectAsync(kind, token);
-    Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token,
-        Func<IReadOnlyList<WorkflowCheck>, Task> checkpoint, IReadOnlyList<CommonDiagnosticScope>? selectedScopes) =>
-        selectedScopes is null ? InspectAsync(kind, token, checkpoint) :
+    Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, Func<IReadOnlyList<WorkflowCheck>, Task> checkpoint,
+        CancellationToken token) => InspectAsync(kind, token);
+    Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, Func<IReadOnlyList<WorkflowCheck>, Task> checkpoint,
+        IReadOnlyList<CommonDiagnosticScope>? selectedScopes, CancellationToken token) =>
+        selectedScopes is null ? InspectAsync(kind, checkpoint, token: token) :
         throw new NotSupportedException("This provider does not support focused diagnostic scopes.");
     Task<WorkflowCheck> CheckIntegrityAsync(RepairKind kind, IProgress<string>? progress, CancellationToken token);
     Task<RepairResult> RepairAsync(RepairKind kind, string folder, IProgress<string>? progress, CancellationToken token);
@@ -266,9 +266,9 @@ public static class Workflows
         }) + "\n\nReview the selected tool's options before GO. Only supported actions described above are available. No automatic restart. Workflow results and any repair outcomes are saved locally.";
 
     public static async Task<WorkflowResult> RunAsync(WorkflowKind kind, bool autoRepair, string folder,
-        IProgress<string>? progress = null, CancellationToken token = default, IWorkflowHost? host = null,
-        IReadOnlyCollection<string>? selectedRecipes = null,
-        IReadOnlyCollection<CommonDiagnosticScope>? selectedDiagnosticScopes = null)
+        IProgress<string>? progress = null, IWorkflowHost? host = null, IReadOnlyCollection<string>? selectedRecipes = null,
+        IReadOnlyCollection<CommonDiagnosticScope>? selectedDiagnosticScopes = null,
+        CancellationToken token = default)
     {
         if (!Enum.IsDefined(kind)) throw new ArgumentOutOfRangeException(nameof(kind));
         if (selectedDiagnosticScopes is not null && (kind != WorkflowKind.CommonProblems || autoRepair || selectedRecipes is { Count: > 0 }))
@@ -304,8 +304,8 @@ public static class Workflows
             bool focusedServiceSummaryAdded = false;
             if (plannedRecipes.Count > 0 && !blocked)
             {
-                recipeResults = await RecipeEngine.RunAsync(plannedRecipes, autoRepair, folder, host, progress, token,
-                    async current => { recipeResults = current; await Save(); }).ConfigureAwait(false);
+                recipeResults = await RecipeEngine.RunAsync(plannedRecipes, autoRepair, folder, host, progress, async current => { recipeResults = current; await Save(); },
+                    token: token).ConfigureAwait(false);
                 repairs.AddRange(recipeResults.Where(r => r.Repair is not null).Select(r => r.Repair!));
                 if (kind is WorkflowKind.Network or WorkflowKind.Audio or WorkflowKind.Search && recipeResults.Any(r => r.Outcome == RecipeOutcome.Repaired))
                 {
@@ -499,7 +499,7 @@ public static class Workflows
             partialInspection = [];
             try
             {
-                var pending = host.InspectAsync(kind, inspectionToken, async snapshot =>
+                var pending = host.InspectAsync(kind, async snapshot =>
                 {
                     await checkpointGate.WaitAsync().ConfigureAwait(false);
                     try
@@ -511,7 +511,7 @@ public static class Workflows
                         await Write(Current() with { Checks = partialInspection }).ConfigureAwait(false);
                     }
                     finally { checkpointGate.Release(); }
-                }, diagnosticScopes) ?? throw new InvalidOperationException("Inspection returned no task.");
+                }, diagnosticScopes, token: inspectionToken) ?? throw new InvalidOperationException("Inspection returned no task.");
                 var result = await pending.WaitAsync(inspectionToken).ConfigureAwait(false)
                     ?? throw new InvalidOperationException("Inspection returned no results.");
                 completed = true;

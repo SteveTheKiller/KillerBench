@@ -9,7 +9,7 @@ public static class DiskDiagnosticCorrelation
     {
         token.ThrowIfCancellationRequested();
         var taskRead = DiskDiagnosticTaskDiagnostics.CheckAsync(token);
-        var historyRead = DiskDiagnosticEvents.CheckAsync(token);
+        var historyRead = DiskDiagnosticEvents.CheckAsync(token: token);
         await Task.WhenAll(taskRead, historyRead).ConfigureAwait(false);
         var tasks = await taskRead.ConfigureAwait(false);
         var histories = await historyRead.ConfigureAwait(false);

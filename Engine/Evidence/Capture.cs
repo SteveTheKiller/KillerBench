@@ -81,7 +81,7 @@ public static class Capture
         sources = session.Sources.Select(s => new { s.Name, s.Status, s.Detail, report = s.Evidence is null ? null : Analyze(s) })
     }, JsonOptions);
 
-    public static async Task SaveAsync(CaptureSession session, string path, CancellationToken cancellationToken = default, bool overwrite = true)
+    public static async Task SaveAsync(CaptureSession session, string path, bool overwrite = true, CancellationToken cancellationToken = default)
     {
         Validate(session);
         string full = Path.GetFullPath(path);

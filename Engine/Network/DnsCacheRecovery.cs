@@ -40,8 +40,8 @@ public static class DnsCacheRecovery
         evidence.ErrorCode is SocketError.HostNotFound or SocketError.NoData;
 
     public static async Task<DnsCacheRecoveryResult> RunAsync(DnsLookupResult selected, bool execute,
-        IDnsCacheRecoveryHost host, IDnsCacheRecoveryJournal journal, CancellationToken token = default,
-        IProgress<string>? progress = null)
+        IDnsCacheRecoveryHost host, IDnsCacheRecoveryJournal journal, IProgress<string>? progress = null,
+        CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(selected);
         ArgumentNullException.ThrowIfNull(host);
@@ -149,7 +149,7 @@ public sealed class WindowsDnsCacheRecoveryHost : IDnsCacheRecoveryHost
 {
     public bool IsAdministrator => WindowsState.IsAdministrator();
     public Task<DnsLookupResult> ResolveAsync(string host, CancellationToken token) =>
-        DnsDiagnostics.CheckAsync(host, TimeSpan.FromSeconds(10), token);
+        DnsDiagnostics.CheckAsync(host, TimeSpan.FromSeconds(10), token: token);
     public Task<ToolResult> FlushAsync(CancellationToken token) =>
         BoundedTool.RunAsync(DnsCacheRecovery.FlushStep(), TimeSpan.FromSeconds(30), token: token);
 }
@@ -194,7 +194,7 @@ public sealed class DnsCacheRecoveryJournal(string directory) : IDnsCacheRecover
             if (pendingPath is null || result.JournalPath != pendingPath)
                 throw new InvalidOperationException("No matching DNS cache operation belongs to this journal.");
             string completed = Path.Combine(root, "dns-cache-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") + "-" + Guid.NewGuid().ToString("N") + ".json");
-            await JournalPersistence.WriteAsync(completed, JsonSerializer.Serialize(result, Capture.JsonOptions), token).ConfigureAwait(false);
+            await JournalPersistence.WriteAsync(completed, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
             if (!result.FlushDispatched || result.Outcome is not (DnsCacheRecoveryOutcome.Uncertain or DnsCacheRecoveryOutcome.Stopped))
                 File.Move(pendingPath, completed + ".prepared.json");
             pendingPath = null;

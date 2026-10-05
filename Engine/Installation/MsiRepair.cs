@@ -50,8 +50,8 @@ public static class MsiRepair
     }
 
     public static async Task<MsiRepairResult> RunAsync(string productCode, bool execute, string journalFolder,
-        IMsiRepairHost host, IProgress<string>? progress = null, CancellationToken token = default,
-        TimeSpan? executionTimeout = null)
+        IMsiRepairHost host, IProgress<string>? progress = null, TimeSpan? executionTimeout = null,
+        CancellationToken token = default)
     {
         string target = MsiProductDiagnostics.NormalizeProductCode(productCode);
         ArgumentException.ThrowIfNullOrWhiteSpace(journalFolder);
@@ -111,7 +111,7 @@ public static class MsiRepair
         {
             Schema = 1, Machine = Environment.MachineName, ProductCode = target, StartedUtc = DateTimeOffset.UtcNow,
             JournalPath = journalPath, LogPath = logPath, Before = before
-        }, Capture.JsonOptions), token).ConfigureAwait(false);
+        }, Capture.JsonOptions), token: token).ConfigureAwait(false);
         await RecordAsync(new { Stage = "Prepared", ProductCode = target, LogPath = logPath }, token).ConfigureAwait(false);
 
         ToolResult? command = null;

@@ -42,7 +42,7 @@ internal static class BitLockerProtectorCommands
                 Console.Error.WriteLine(execute
                     ? "Checking the selected volume before one protector request."
                     : "Previewing protector creation. No machine inspection or change is performed.");
-                result = await BitLockerProtectorCreation.RunAsync(volume, kind, execute, folder, host, new ConsoleProgress(), stop.Token);
+                result = await BitLockerProtectorCreation.RunAsync(volume, kind, execute, folder, host, new ConsoleProgress(), token: stop.Token);
             }
             Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
             return result.GetExitCode();

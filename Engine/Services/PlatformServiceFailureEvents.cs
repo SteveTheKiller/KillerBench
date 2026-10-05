@@ -30,7 +30,7 @@ public enum PlatformServiceFailureArea
 public static class PlatformServiceFailureEvents
 {
     private static readonly Dictionary<PlatformServiceFailureArea, ExactServiceFailureEventDefinition> Definitions =
-        new Dictionary<PlatformServiceFailureArea, ExactServiceFailureEventDefinition>
+        new()
         {
             [PlatformServiceFailureArea.AppReadiness] = Definition("AppReadiness", "App Readiness", "App Readiness service failure history", "first sign-in provisioning or application readiness"),
             [PlatformServiceFailureArea.StateRepository] = Definition("StateRepository", "State Repository Service", "State Repository service failure history", "repository consistency or application operation"),
@@ -58,19 +58,19 @@ public static class PlatformServiceFailureEvents
         };
 
     public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(PlatformServiceFailureArea area,
-        CancellationToken token = default, Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null, CancellationToken token = default)
     {
         if (!Enum.IsDefined(area)) throw new ArgumentOutOfRangeException(nameof(area));
         token.ThrowIfCancellationRequested();
-        return await ExactServiceFailureEvents.CheckManyAsync([Definitions[area]], token, execute).ConfigureAwait(false);
+        return await ExactServiceFailureEvents.CheckManyAsync([Definitions[area]], execute, token: token).ConfigureAwait(false);
     }
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAllAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAllAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         return await ExactServiceFailureEvents.CheckManyAsync(
-            [.. Enum.GetValues<PlatformServiceFailureArea>().Select(area => Definitions[area])], token, execute)
+            [.. Enum.GetValues<PlatformServiceFailureArea>().Select(area => Definitions[area])], execute, token: token)
             .ConfigureAwait(false);
     }
 

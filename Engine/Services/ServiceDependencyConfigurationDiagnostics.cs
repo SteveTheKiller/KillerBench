@@ -15,8 +15,8 @@ public static class ServiceDependencyConfigurationDiagnostics
     private const int MaximumDependenciesPerService = 64;
     private const string Scope = " Load-order group membership is counted but not expanded. Dependency configuration does not prove that a service can start or that its dependent feature works. No service, dependency, load-order group, startup setting, executable, account, permission, policy or registry value changed.";
 
-    public static async Task<WorkflowCheck> CheckAsync(WorkflowCheck inventory, CancellationToken token = default,
-        Func<IReadOnlyList<string>, CancellationToken, Task<ServiceDependencyConfigurationSnapshot>>? collect = null)
+    public static async Task<WorkflowCheck> CheckAsync(WorkflowCheck inventory, Func<IReadOnlyList<string>, CancellationToken, Task<ServiceDependencyConfigurationSnapshot>>? collect = null,
+        CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(inventory);
         token.ThrowIfCancellationRequested();

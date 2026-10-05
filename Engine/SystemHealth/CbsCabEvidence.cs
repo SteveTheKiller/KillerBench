@@ -20,9 +20,9 @@ public static class CbsCabEvidence
             .ThenByDescending(Path.GetFileName, StringComparer.OrdinalIgnoreCase).FirstOrDefault();
     }
 
-    public static async Task<TextEvidence> ReadNewestLogAsync(string cabinetPath, CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
-        string? temporaryRoot = null)
+    public static async Task<TextEvidence> ReadNewestLogAsync(string cabinetPath, Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        string? temporaryRoot = null,
+        CancellationToken token = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(cabinetPath);
         string cabinet = Path.GetFullPath(cabinetPath);

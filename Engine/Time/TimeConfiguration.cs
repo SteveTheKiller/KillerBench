@@ -21,9 +21,9 @@ public static partial class TimeConfiguration
     [System.Text.RegularExpressions.GeneratedRegex(@"(?m)^Source:[ \t]*([^\r\n]+)", System.Text.RegularExpressions.RegexOptions.CultureInvariant)]
     private static partial System.Text.RegularExpressions.Regex SourceLineRegex();
 
-    public static async Task<bool> VerifyAsync(TimeOptions options, CancellationToken token = default,
-        Func<CancellationToken, Task<TimeEnvironment>>? inspect = null,
-        Func<CancellationToken, Task<ToolResult>>? queryStatus = null)
+    public static async Task<bool> VerifyAsync(TimeOptions options, Func<CancellationToken, Task<TimeEnvironment>>? inspect = null,
+        Func<CancellationToken, Task<ToolResult>>? queryStatus = null,
+        CancellationToken token = default)
     {
         var validated = TimePlanning.Create(options, new(null, null, null, false));
         if (validated.Source == TimeSourceMode.Existing) return false;
@@ -43,12 +43,12 @@ public static partial class TimeConfiguration
             : MatchesDomainSynchronization(retained, after, status);
     }
 
-    public static async Task<bool> VerifyCustomAsync(TimeOptions options, CancellationToken token = default,
-        Func<CancellationToken, Task<TimeEnvironment>>? inspect = null,
-        Func<CancellationToken, Task<ToolResult>>? queryStatus = null)
+    public static async Task<bool> VerifyCustomAsync(TimeOptions options, Func<CancellationToken, Task<TimeEnvironment>>? inspect = null,
+        Func<CancellationToken, Task<ToolResult>>? queryStatus = null,
+        CancellationToken token = default)
     {
         if (options.Source != TimeSourceMode.CustomPeers) return false;
-        return await VerifyAsync(options, token, inspect, queryStatus).ConfigureAwait(false);
+        return await VerifyAsync(options, inspect, queryStatus, token: token).ConfigureAwait(false);
     }
 
     public static bool MatchesCustomSynchronization(TimeOptions options, TimeEnvironment current, ToolResult status)

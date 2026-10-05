@@ -62,7 +62,7 @@ internal static class ServiceRecoveryPolicyChecks
         canceled.Cancel();
         try
         {
-            ServiceRecoveryPolicyDiagnostics.CheckAsync(inventoryCheck, canceled.Token, (_, _) => Task.FromResult(snapshot)).GetAwaiter().GetResult();
+            ServiceRecoveryPolicyDiagnostics.CheckAsync(inventoryCheck, (_, _) => Task.FromResult(snapshot), token: canceled.Token).GetAwaiter().GetResult();
             throw new Exception("Recovery-policy cancellation ignored");
         }
         catch (OperationCanceledException) { }

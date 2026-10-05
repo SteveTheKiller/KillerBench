@@ -64,7 +64,7 @@ internal static class DhcpLeaseDiagnosticChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await DhcpLeaseDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await DhcpLeaseDiagnostics.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents collection");
         Console.WriteLine("PASS: DHCP lease timestamps, expiry and server evidence; fixtures only.");

@@ -16,8 +16,8 @@ public static class WindowsBackupSummary
         "[pscustomobject]@{providerAvailable=$true;complete=$true;hasSummary=$true;lastBackupUtc=(Read-Time 'LastBackupTime');lastSuccessUtc=(Read-Time 'LastSuccessfulBackupTime');nextBackupUtc=(Read-Time 'NextBackupTime');lastResult=$result}|ConvertTo-Json -Compress}" +
         "catch{Empty $true $false;exit 0}";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

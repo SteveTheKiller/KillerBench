@@ -20,8 +20,8 @@ public static class DnsNrptPolicyDiagnostics
         "$complete=($all.Count-le 256-and@($rows|Where-Object{$_.namespaces.Count-gt 32-or$_.nameServers.Count-gt 32-or$_.directAccessDnsServers.Count-gt 32}).Count-eq 0);" +
         "[pscustomobject]@{complete=$complete;rules=$rows}|ConvertTo-Json -Depth 6 -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Effective DNS policy inspection requires Windows.");

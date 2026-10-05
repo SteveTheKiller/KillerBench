@@ -8,8 +8,8 @@ public static class ReservedStorageDiagnostics
     private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';Import-Module Dism -ErrorAction Stop;" +
         "$x=Get-WindowsReservedStorageState -ErrorAction Stop;[pscustomobject]@{state=[string]$x.ReservedStorageState}|ConvertTo-Json -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Reserved storage inspection requires Windows.");

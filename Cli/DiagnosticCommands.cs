@@ -63,14 +63,14 @@ internal static class DiagnosticCommands
             if (command == "storage-jobs")
             {
                 Console.Error.WriteLine("Reading aggregate Storage module job state and progress. Target identities and provider payloads are excluded, and no job or storage object will change.");
-                var jobs = await StorageJobDiagnostics.CheckAsync(stop.Token);
+                var jobs = await StorageJobDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(jobs, Capture.JsonOptions));
                 return jobs.State == CheckState.Information ? 0 : 3;
             }
             if (command == "disk-quotas")
             {
                 Console.Error.WriteLine("Reading per-volume disk quota settings. User quota rows and identities are excluded, and no quota or volume setting will change.");
-                var quotas = await DiskQuotaDiagnostics.CheckAsync(stop.Token);
+                var quotas = await DiskQuotaDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(quotas, Capture.JsonOptions));
                 return quotas.State == CheckState.Information ? 0 : 3;
             }
@@ -78,7 +78,7 @@ internal static class DiagnosticCommands
             {
                 Console.Error.WriteLine("Reading installed-service trigger types and actions. Trigger subtype identifiers and payloads are excluded, and no service configuration will change.");
                 var inventory = await ServiceInventoryDiagnostics.CheckAsync(stop.Token);
-                var triggers = await ServiceTriggerDiagnostics.CheckAsync(inventory, stop.Token);
+                var triggers = await ServiceTriggerDiagnostics.CheckAsync(inventory, token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(triggers, Capture.JsonOptions));
                 return triggers.State == CheckState.Information ? 0 : 3;
             }
@@ -86,7 +86,7 @@ internal static class DiagnosticCommands
             {
                 Console.Error.WriteLine("Reading installed-service recovery action types and timing. Recovery commands and reboot messages are excluded, and no service configuration will change.");
                 var inventory = await ServiceInventoryDiagnostics.CheckAsync(stop.Token);
-                var recovery = await ServiceRecoveryPolicyDiagnostics.CheckAsync(inventory, stop.Token);
+                var recovery = await ServiceRecoveryPolicyDiagnostics.CheckAsync(inventory, token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(recovery, Capture.JsonOptions));
                 return recovery.State == CheckState.Information ? 0 : 3;
             }
@@ -94,7 +94,7 @@ internal static class DiagnosticCommands
             {
                 Console.Error.WriteLine("Reading installed-service state and repeating the observation only when a pending transition is present. No service will be started, stopped, continued, paused, restarted or reconfigured.");
                 var inventory = await ServiceInventoryDiagnostics.CheckAsync(stop.Token);
-                var transitions = await ServiceTransitionDiagnostics.CheckAsync(inventory, stop.Token);
+                var transitions = await ServiceTransitionDiagnostics.CheckAsync(inventory, token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(transitions, Capture.JsonOptions));
                 return transitions.State == CheckState.Information ? 0 : 3;
             }
@@ -122,30 +122,30 @@ internal static class DiagnosticCommands
             if (command == "winsock-catalog")
             {
                 Console.Error.WriteLine("Reading the native Winsock protocol catalog. Protocol names, DLL paths and namespace providers are excluded, and no catalog or network setting will change.");
-                var catalog = await WinsockCatalogDiagnostics.CheckAsync(stop.Token);
+                var catalog = await WinsockCatalogDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(catalog, Capture.JsonOptions));
                 return catalog.State == CheckState.Information ? 0 : 3;
             }
             if (command == "winsock-namespaces")
             {
                 Console.Error.WriteLine("Reading native Winsock namespace-provider registrations. Provider names, DLL paths and query contents are excluded, and no provider or network setting will change.");
-                var providers = await WinsockNamespaceDiagnostics.CheckAsync(stop.Token);
+                var providers = await WinsockNamespaceDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(providers, Capture.JsonOptions));
                 return providers.State == CheckState.Information ? 0 : 3;
             }
             if (command == "winsock-provider-files")
             {
                 Console.Error.WriteLine("Reading registered Winsock protocol provider file presence and signatures. Full paths, provider names and signer identities are excluded, and no file, provider or network setting will change.");
-                var files = await WinsockProviderFileDiagnostics.CheckAsync(stop.Token);
+                var files = await WinsockProviderFileDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(files, Capture.JsonOptions));
                 return files.State == CheckState.Information ? 0 : 3;
             }
             if (command == "winsock-readiness")
             {
                 Console.Error.WriteLine("Reading and correlating native Winsock protocol, namespace-provider and provider-file evidence. No provider, catalog, file, resolver or network setting will change.");
-                var protocols = await WinsockCatalogDiagnostics.CheckAsync(stop.Token);
-                var namespaces = await WinsockNamespaceDiagnostics.CheckAsync(stop.Token);
-                var files = await WinsockProviderFileDiagnostics.CheckAsync(stop.Token);
+                var protocols = await WinsockCatalogDiagnostics.CheckAsync(token: stop.Token);
+                var namespaces = await WinsockNamespaceDiagnostics.CheckAsync(token: stop.Token);
+                var files = await WinsockProviderFileDiagnostics.CheckAsync(token: stop.Token);
                 WorkflowCheck[] checks = [protocols, namespaces, files, WinsockReadinessCorrelation.Check(protocols, namespaces, files, stop.Token)];
                 Console.WriteLine(JsonSerializer.Serialize(checks, Capture.JsonOptions));
                 return checks.All(check => check.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
@@ -153,35 +153,35 @@ internal static class DiagnosticCommands
             if (command == "shadow-storage")
             {
                 Console.Error.WriteLine("Reading VSS shadow storage allocation and limits. No association, limit, snapshot or backup data will change.");
-                var shadowStorage = await ShadowStorageDiagnostics.CheckAsync(stop.Token);
+                var shadowStorage = await ShadowStorageDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(shadowStorage, Capture.JsonOptions));
                 return shadowStorage.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
             if (command == "vss-providers")
             {
                 Console.Error.WriteLine("Reading VSS provider registrations and types. Provider and COM class identifiers are excluded, and no registration or setting will change.");
-                var providers = await VssProviderDiagnostics.CheckAsync(stop.Token);
+                var providers = await VssProviderDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(providers, Capture.JsonOptions));
                 return providers.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
             if (command == "shadow-copies")
             {
                 Console.Error.WriteLine("Reading current VSS shadow copy states and attributes. Snapshot, provider, volume, device, machine and path identities are excluded, and no shadow copy will change.");
-                var copies = await ShadowCopyDiagnostics.CheckAsync(stop.Token);
+                var copies = await ShadowCopyDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(copies, Capture.JsonOptions));
                 return copies.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
             if (command == "delete-notifications")
             {
                 Console.Error.WriteLine("Reading NTFS and ReFS delete-notification configuration. No optimization will run and no setting will change.");
-                var deleteNotifications = await DeleteNotificationDiagnostics.CheckAsync(stop.Token);
+                var deleteNotifications = await DeleteNotificationDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(deleteNotifications, Capture.JsonOptions));
                 return deleteNotifications.All(check => check.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
             if (command == "ntfs-self-healing")
             {
                 Console.Error.WriteLine("Reading NTFS self-healing configuration. No repair will start and no setting will change.");
-                var selfHealing = await NtfsSelfHealingDiagnostics.CheckAsync(volume!, stop.Token);
+                var selfHealing = await NtfsSelfHealingDiagnostics.CheckAsync(volume!, token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(selfHealing, Capture.JsonOptions));
                 return selfHealing.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
@@ -229,83 +229,83 @@ internal static class DiagnosticCommands
             }
             if (command == "backup-events")
             {
-                var findings = await BackupEvents.CheckAsync(stop.Token, new DiagnosticProgress());
+                var findings = await BackupEvents.CheckAsync(new DiagnosticProgress(), token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(findings, Capture.JsonOptions));
                 return findings.All(item => item.State == CheckState.Information) ? 0 : 3;
             }
             if (command == "backup-summary")
             {
                 Console.Error.WriteLine("Reading the local Windows Backup operation summary. No backup, schedule, catalog, destination or setting will change.");
-                var summary = await WindowsBackupSummary.CheckAsync(stop.Token);
+                var summary = await WindowsBackupSummary.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(summary, Capture.JsonOptions));
                 return summary.State == CheckState.Information ? 0 : 3;
             }
             if (command == "file-history-status")
             {
                 Console.Error.WriteLine("Reading the current-account File History protection state through the bounded Windows interface. Protected-until time and target details are excluded, and no setting will change.");
-                var status = await FileHistoryStatus.CheckAsync(stop.Token);
+                var status = await FileHistoryStatus.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(status, Capture.JsonOptions));
                 return status.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
             if (command == "file-history-events")
             {
                 Console.Error.WriteLine("Reading privacy-projected File History warning, error and critical event counts. Event payloads and backup configuration will not be read, and no setting will change.");
-                var history = await FileHistoryEvents.CheckAsync(stop.Token);
+                var history = await FileHistoryEvents.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(history, Capture.JsonOptions));
                 return history.State == CheckState.Information ? 0 : 3;
             }
             if (command == "dns-cache-summary")
             {
                 Console.Error.WriteLine("Reading privacy-bounded local DNS cache aggregates. DNS names and record data are excluded, and the cache will not be cleared.");
-                var summary = await DnsClientCacheDiagnostics.CheckAsync(stop.Token);
+                var summary = await DnsClientCacheDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(summary, Capture.JsonOptions));
                 return summary.State == CheckState.Information ? 0 : 3;
             }
             if (command == "common-check")
             {
-                var findings = await CommonDiagnostics.CheckAsync(stop.Token, new DiagnosticProgress(), selectedScopes: selectedScopes);
+                var findings = await CommonDiagnostics.CheckAsync(new DiagnosticProgress(), selectedScopes: selectedScopes, token: stop.Token);
                 stop.Token.ThrowIfCancellationRequested();
                 Console.WriteLine(JsonSerializer.Serialize(findings, Capture.JsonOptions));
                 return findings.All(item => item.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
             if (command == "printer-ports")
             {
-                var findings = await PrinterPortDiagnostics.CheckAsync(stop.Token);
+                var findings = await PrinterPortDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(findings, Capture.JsonOptions));
                 return findings.All(item => item.State == CheckState.Information) ? 0 : 3;
             }
             if (command == "printer-queue-attributes")
             {
                 Console.Error.WriteLine("Reading local printer queue operating attributes. No queue, document, share or setting will change.");
-                var findings = await PrinterQueueAttributeDiagnostics.CheckAsync(stop.Token);
+                var findings = await PrinterQueueAttributeDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(findings, Capture.JsonOptions));
                 return findings.All(item => item.State == CheckState.Information) ? 0 : 3;
             }
             if (command == "printer-endpoint-check")
             {
                 Console.Error.WriteLine("Connecting only to exact assigned Standard TCP/IP printer endpoints. No discovery scan, SNMP request or print data will be sent.");
-                var findings = await PrinterEndpointReachability.CheckAsync(stop.Token);
+                var findings = await PrinterEndpointReachability.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(findings, Capture.JsonOptions));
                 return findings.All(item => item.State == CheckState.Information) ? 0 : 3;
             }
             if (command == "printer-driver-files")
             {
                 Console.Error.WriteLine("Checking registered printer driver files and executable signatures. Full paths are excluded and no driver will change.");
-                var findings = await PrinterDriverFileDiagnostics.CheckAsync(stop.Token);
+                var findings = await PrinterDriverFileDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(findings, Capture.JsonOptions));
                 return findings.All(item => item.State == CheckState.Information) ? 0 : 3;
             }
             if (command == "print-extension-files")
             {
                 Console.Error.WriteLine("Checking registered print processor and monitor binaries and signatures. Full paths and signer identities are excluded, and no print component will change.");
-                var findings = await PrintExtensionFileDiagnostics.CheckAsync(stop.Token);
+                var findings = await PrintExtensionFileDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(findings, Capture.JsonOptions));
                 return findings.All(item => item.State == CheckState.Information) ? 0 : 3;
             }
             if (command == "printer-driver-models")
             {
                 Console.Error.WriteLine("Reading printer driver models and package-awareness. No driver, package, queue or policy will change.");
-                var finding = await PrinterDriverModelDiagnostics.CheckAsync(stop.Token);
+                var finding = await PrinterDriverModelDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(finding, Capture.JsonOptions));
                 return finding.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
@@ -319,63 +319,63 @@ internal static class DiagnosticCommands
             if (command == "printer-conditions")
             {
                 Console.Error.WriteLine("Reading driver-reported local printer condition codes. No queue, job, port, driver or setting will change.");
-                var findings = await PrinterConditionDiagnostics.CheckAsync(stop.Token);
+                var findings = await PrinterConditionDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(findings, Capture.JsonOptions));
                 return findings.All(finding => finding.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
             if (command == "route-priority")
             {
                 Console.Error.WriteLine("Comparing default-route and interface metrics. No route, interface or metric will change.");
-                var finding = await RoutePriorityDiagnostics.CheckAsync(stop.Token);
+                var finding = await RoutePriorityDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(finding, Capture.JsonOptions));
                 return finding.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
             if (command == "ip-interface-config")
             {
                 Console.Error.WriteLine("Reading IP interface MTU, DHCP, forwarding, discovery and metric configuration. No network setting will change.");
-                var finding = await IpInterfaceConfigurationDiagnostics.CheckAsync(stop.Token);
+                var finding = await IpInterfaceConfigurationDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(finding, Capture.JsonOptions));
                 return finding.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
             if (command == "dhcp-leases")
             {
                 Console.Error.WriteLine("Reading DHCP lease timestamps, expiry and server evidence. No lease or network setting will change.");
-                var finding = await DhcpLeaseDiagnostics.CheckAsync(stop.Token);
+                var finding = await DhcpLeaseDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(finding, Capture.JsonOptions));
                 return finding.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
             if (command == "dhcp-events")
             {
                 Console.Error.WriteLine("Reading recent IPv4 and IPv6 DHCP Client event history. Ordinary summaries exclude network identities and no network setting will change.");
-                var findings = await DhcpClientEvents.CheckAsync(stop.Token);
+                var findings = await DhcpClientEvents.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(findings, Capture.JsonOptions));
                 return findings.All(finding => finding.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
             if (command == "dns-client-events")
             {
                 Console.Error.WriteLine("Reading recent DNS Client warning and failure history. Ordinary summaries exclude queried names and resolver identities, and no network setting will change.");
-                var findings = await DnsClientEvents.CheckAsync(stop.Token);
+                var findings = await DnsClientEvents.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(findings, Capture.JsonOptions));
                 return findings.All(finding => finding.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
             if (command == "neighbor-cache")
             {
                 Console.Error.WriteLine("Reading grouped neighbor reachability states without retaining addresses or link-layer identifiers. No network setting will change.");
-                var finding = await NeighborCacheDiagnostics.CheckAsync(stop.Token);
+                var finding = await NeighborCacheDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(finding, Capture.JsonOptions));
                 return finding.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
             if (command == "tcp-settings")
             {
                 Console.Error.WriteLine("Reading bounded Windows TCP template settings as configuration context. No TCP, adapter, route, firewall, service or policy setting will change.");
-                var finding = await TcpSettingDiagnostics.CheckAsync(stop.Token);
+                var finding = await TcpSettingDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(finding, Capture.JsonOptions));
                 return finding.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
             if (command == "network-offload")
             {
                 Console.Error.WriteLine("Reading global Windows network offload settings as configuration context. No offload, adapter, TCP, route, firewall, service or policy setting will change.");
-                var finding = await NetworkOffloadDiagnostics.CheckAsync(stop.Token);
+                var finding = await NetworkOffloadDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(finding, Capture.JsonOptions));
                 return finding.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
@@ -389,49 +389,49 @@ internal static class DiagnosticCommands
             if (command == "dns-nrpt-policy")
             {
                 Console.Error.WriteLine("Reading effective DNS namespace policy. No namespace, resolver, adapter, route, VPN, DirectAccess, DNSSEC, IPsec or policy setting will change.");
-                var finding = await DnsNrptPolicyDiagnostics.CheckAsync(stop.Token);
+                var finding = await DnsNrptPolicyDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(finding, Capture.JsonOptions));
                 return finding.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
             if (command == "windows-capabilities")
             {
                 Console.Error.WriteLine("Reading online Windows capability states. No capability, payload, source, package, policy or servicing setting will change.");
-                var finding = await WindowsCapabilityDiagnostics.CheckAsync(stop.Token);
+                var finding = await WindowsCapabilityDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(finding, Capture.JsonOptions));
                 return finding.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
             if (command == "adapter-bindings")
             {
                 Console.Error.WriteLine("Reading IPv4, IPv6, Microsoft network client and file-sharing binding state. No adapter or binding will change.");
-                var finding = await AdapterBindingDiagnostics.CheckAsync(stop.Token);
+                var finding = await AdapterBindingDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(finding, Capture.JsonOptions));
                 return finding.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
             if (command == "adapter-statistics")
             {
                 Console.Error.WriteLine("Reading cumulative network adapter byte, error and discard counters. No adapter or counter will change.");
-                var finding = await AdapterStatisticsDiagnostics.CheckAsync(stop.Token);
+                var finding = await AdapterStatisticsDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(finding, Capture.JsonOptions));
                 return finding.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
             if (command == "tcp-port-pressure")
             {
                 Console.Error.WriteLine("Reading configured dynamic TCP ranges and aggregate local-port usage. Endpoints and process identities are excluded; no network setting will change.");
-                var findings = await TcpPortPressureDiagnostics.CheckAsync(stop.Token);
+                var findings = await TcpPortPressureDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(findings, Capture.JsonOptions));
                 return findings.All(finding => finding.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
             if (command == "pagefile-check")
             {
                 Console.Error.WriteLine("Reading page-file management, allocation and usage. Full paths are excluded and no memory setting will change.");
-                var finding = await PageFileDiagnostics.CheckAsync(stop.Token);
+                var finding = await PageFileDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(finding, Capture.JsonOptions));
                 return finding.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
             if (command == "reserved-storage")
             {
                 Console.Error.WriteLine("Reading reserved-storage state for the online Windows image. No servicing setting will change.");
-                var finding = await ReservedStorageDiagnostics.CheckAsync(stop.Token);
+                var finding = await ReservedStorageDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(finding, Capture.JsonOptions));
                 return finding.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
@@ -480,7 +480,7 @@ internal static class DiagnosticCommands
             if (command is "vitals-check" or "printer-drivers" or "security-check")
             {
                 Console.Error.WriteLine(command == "security-check" ? "Reading TPM, Secure Boot, virtualization protection, UAC elevation policy and effective AppLocker collection summaries. No security setting will change." : command == "printer-drivers" ? "Reading queue and driver registrations. No queues or drivers will change." : "Reading Windows and system identity, local Administrators, processor, graphics, physical memory, battery and disk snapshots. No accounts, settings or disks will change.");
-                var findings = command == "security-check" ? [.. await SecurityDiagnostics.CheckAsync(stop.Token), .. UacPolicyDiagnostics.Check(), .. await AppLockerPolicyDiagnostics.CheckAsync(stop.Token)] : command == "printer-drivers" ? await PrinterDriverDiagnostics.CheckAsync(stop.Token) : [.. await VitalsDiagnostics.CheckAsync(stop.Token), await MemoryDiagnosticResults.CheckAsync(stop.Token)];
+                var findings = command == "security-check" ? [.. await SecurityDiagnostics.CheckAsync(token: stop.Token), .. UacPolicyDiagnostics.Check(), .. await AppLockerPolicyDiagnostics.CheckAsync(stop.Token)] : command == "printer-drivers" ? await PrinterDriverDiagnostics.CheckAsync(stop.Token) : [.. await VitalsDiagnostics.CheckAsync(stop.Token), await MemoryDiagnosticResults.CheckAsync(stop.Token)];
                 stop.Token.ThrowIfCancellationRequested();
                 Console.WriteLine(JsonSerializer.Serialize(findings, Capture.JsonOptions));
                 return findings.All(item => item.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
@@ -518,7 +518,7 @@ internal static class DiagnosticCommands
             if (command == "event-channels")
             {
                 Console.Error.WriteLine("Reading four event channel configurations, sizes and saturation levels. No logging settings or events will change.");
-                var channels = await EventLogCapacityDiagnostics.CheckAsync(stop.Token);
+                var channels = await EventLogCapacityDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(channels, Capture.JsonOptions));
                 return channels.All(item => item.State == CheckState.Information) ? 0 : 3;
             }
@@ -532,7 +532,7 @@ internal static class DiagnosticCommands
             if (command == "ncsi-policy")
             {
                 Console.Error.WriteLine("Reading Windows connectivity classification policy. Probe destinations and content are excluded and no settings will change.");
-                var finding = await NcsiPolicyDiagnostics.CheckAsync(stop.Token);
+                var finding = await NcsiPolicyDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(finding, Capture.JsonOptions));
                 return finding.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
@@ -562,56 +562,56 @@ internal static class DiagnosticCommands
             if (command == "firewall-events")
             {
                 Console.Error.WriteLine("Reading bounded Windows Firewall warning, error and critical operational history. Sensitive payload fields remain only in raw evidence, and no firewall or network setting will change.");
-                var history = await FirewallEvents.CheckAsync(stop.Token);
+                var history = await FirewallEvents.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(history, Capture.JsonOptions));
                 return history.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
             if (command == "firewall-service-events")
             {
                 Console.Error.WriteLine("Reading exact Base Filtering Engine and Windows Defender Firewall Service Control Manager failure history. Historical records cannot start or restart either service or change firewall policy.");
-                var histories = await FirewallServiceFailureEvents.CheckAsync(stop.Token);
+                var histories = await FirewallServiceFailureEvents.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(histories, Capture.JsonOptions));
                 return histories.All(item => item.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
             if (command == "network-service-events")
             {
                 Console.Error.WriteLine("Reading exact DHCP, DNS, Workstation, Network Location Awareness, Network List and IP Helper Service Control Manager failure history. Historical records cannot start or restart services or change network settings.");
-                var histories = await NetworkServiceFailureEvents.CheckAsync(stop.Token);
+                var histories = await NetworkServiceFailureEvents.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(histories, Capture.JsonOptions));
                 return histories.All(item => item.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
             if (command == "storage-service-events")
             {
                 Console.Error.WriteLine("Reading exact Storage Service, Optimize Drives, Volume Shadow Copy and software shadow provider Service Control Manager failure history. Historical records cannot start or restart services or change storage, snapshots or backup settings.");
-                var histories = await StorageServiceFailureEvents.CheckAsync(stop.Token);
+                var histories = await StorageServiceFailureEvents.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(histories, Capture.JsonOptions));
                 return histories.All(item => item.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
             if (command == "backup-service-events")
             {
                 Console.Error.WriteLine("Reading exact Volume Shadow Copy, software shadow provider, Windows Backup and Block Level Backup Engine Service Control Manager failure history. Historical records cannot start or restart services or change snapshots, catalogs, destinations or backup settings.");
-                var histories = await BackupServiceFailureEvents.CheckAllAsync(stop.Token);
+                var histories = await BackupServiceFailureEvents.CheckAllAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(histories, Capture.JsonOptions));
                 return histories.All(item => item.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
             if (command == "feature-service-events")
             {
                 Console.Error.WriteLine("Reading exact Windows Time, Windows Search, WMI, Windows Event Log and Windows audio Service Control Manager failure history. Historical records cannot start or restart services or change component settings.");
-                var histories = await FeatureServiceFailureEvents.CheckAllAsync(stop.Token);
+                var histories = await FeatureServiceFailureEvents.CheckAllAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(histories, Capture.JsonOptions));
                 return histories.All(item => item.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
             if (command == "platform-service-events")
             {
                 Console.Error.WriteLine("Reading one bounded Service Control Manager snapshot for exact application deployment, identity, profile and device-support service failures. Historical records cannot start or restart services, change packages, reset data or change policy.");
-                var histories = await PlatformServiceFailureEvents.CheckAllAsync(stop.Token);
+                var histories = await PlatformServiceFailureEvents.CheckAllAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(histories, Capture.JsonOptions));
                 return histories.All(item => item.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
             if (command == "infrastructure-service-events")
             {
                 Console.Error.WriteLine("Reading one bounded Service Control Manager snapshot for exact connectivity, remote-management, device, notification and core Windows service failures. Historical records cannot start or restart services, reset configuration or change policy.");
-                var histories = await InfrastructureServiceFailureEvents.CheckAllAsync(stop.Token);
+                var histories = await InfrastructureServiceFailureEvents.CheckAllAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(histories, Capture.JsonOptions));
                 return histories.All(item => item.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
@@ -669,7 +669,7 @@ internal static class DiagnosticCommands
             if (command == "delivery-optimization-activity")
             {
                 Console.Error.WriteLine("Reading aggregate current Delivery Optimization activity. File IDs, URLs, cache hosts, peer addresses and caller identities are excluded. No transfer, cache, service or policy setting will change.");
-                var activity = await DeliveryOptimizationActivityDiagnostics.CheckAsync(stop.Token);
+                var activity = await DeliveryOptimizationActivityDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(activity, Capture.JsonOptions));
                 return activity.State == CheckState.Information ? 0 : 3;
             }
@@ -730,14 +730,14 @@ internal static class DiagnosticCommands
             if (command == "update-cache")
             {
                 Console.Error.WriteLine("Measuring bounded Windows Update cache totals. No filename, file content, service, cache, update or policy setting will change.");
-                var updateCache = await UpdateCacheDiagnostics.CheckAsync(stop.Token);
+                var updateCache = await UpdateCacheDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(updateCache, Capture.JsonOptions));
                 return updateCache.State is CheckState.Clear or CheckState.Information ? 0 : 3;
             }
             if (command == "servicing-logs")
             {
                 Console.Error.WriteLine("Inspecting the newest bounded portions of CBS, archived CBS, DISM and applicable Windows Setup logs. Historical entries cannot authorize repair.");
-                var servicingLogs = await ServicingLogDiagnostics.CheckAsync(stop.Token);
+                var servicingLogs = await ServicingLogDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(servicingLogs, Capture.JsonOptions));
                 return servicingLogs.All(check => check.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
@@ -865,14 +865,14 @@ internal static class DiagnosticCommands
             if (command == "servicing-service-events")
             {
                 Console.Error.WriteLine("Reading Service Control Manager failures tied to six exact servicing service identities. No service, update, transfer, cache, source, policy or repair state will change.");
-                var histories = await ServicingServiceFailureEvents.CheckAsync(stop.Token);
+                var histories = await ServicingServiceFailureEvents.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(histories, Capture.JsonOptions));
                 return histories.All(check => check.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
             if (command == "servicing-service-states")
             {
                 Console.Error.WriteLine("Reading current state for six exact Windows Update servicing services. No service, update, transfer, cache, source, policy or startup setting will change.");
-                var states = await ServicingServiceStateDiagnostics.CheckAsync(stop.Token);
+                var states = await ServicingServiceStateDiagnostics.CheckAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(states, Capture.JsonOptions));
                 return states.All(check => check.State is CheckState.Clear or CheckState.Information) ? 0 : 3;
             }
@@ -894,11 +894,11 @@ internal static class DiagnosticCommands
             WorkflowCheck check = command switch
             {
                 "installer-check" => InstallerDiagnostics.Check(),
-                "installer-engine-files" => await InstallerEngineFileDiagnostics.CheckAsync(stop.Token),
-                "update-engine-files" => await WindowsUpdateEngineFileDiagnostics.CheckAsync(stop.Token),
+                "installer-engine-files" => await InstallerEngineFileDiagnostics.CheckAsync(token: stop.Token),
+                "update-engine-files" => await WindowsUpdateEngineFileDiagnostics.CheckAsync(token: stop.Token),
                 "update-service-files" => await ServiceDllDiagnostics.CheckSelectedAsync("Windows Update service DLLs",
                     ["wuauserv", "BITS", "CryptSvc", "TrustedInstaller", "WaaSMedicSvc", "UsoSvc"], stop.Token),
-                "update-service-events" => await WindowsUpdateServiceFailureEvents.CheckAsync(stop.Token),
+                "update-service-events" => await WindowsUpdateServiceFailureEvents.CheckAsync(token: stop.Token),
                 "installer-service-registration" => InstallerServiceRegistrationDiagnostics.Check(),
                 "installer-security-policy" => InstallerSecurityPolicyDiagnostics.Check(),
                 "installer-logging" => InstallerLoggingDiagnostics.Check(),
@@ -907,10 +907,10 @@ internal static class DiagnosticCommands
                 "volume-capacity" => VolumeCapacity.Check(volume!),
                 "volume-dirty" => await VolumeDirtyStatus.CheckAsync(volume!, stop.Token),
                 "installer-events" => await InstallerEvents.CheckAsync(stop.Token),
-                "installer-service-events" => await WindowsInstallerFailureEvents.CheckAsync(stop.Token),
+                "installer-service-events" => await WindowsInstallerFailureEvents.CheckAsync(token: stop.Token),
                 "print-events" => await PrintServiceEvents.CheckAsync(stop.Token),
-                "print-operational-events" => await PrintServiceOperationalEvents.CheckAsync(stop.Token),
-                "print-spooler-events" => await PrintSpoolerFailureEvents.CheckAsync(stop.Token),
+                "print-operational-events" => await PrintServiceOperationalEvents.CheckAsync(token: stop.Token),
+                "print-spooler-events" => await PrintSpoolerFailureEvents.CheckAsync(token: stop.Token),
                 "print-policy" => PrintPolicyDiagnostics.Check(),
                 "print-rendering-policy" => PrintRenderingPolicyDiagnostics.Check(),
                 "service-events" => await ServiceEvents.CheckAsync(stop.Token),

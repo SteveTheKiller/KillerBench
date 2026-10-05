@@ -35,7 +35,7 @@ internal static class BitLockerProtectionCommands
                     ? "Checking the selected volume before one BitLocker resume request."
                     : "Previewing BitLocker resume. No machine inspection or change is performed.");
                 result = await BitLockerProtectionResume.RunAsync(volume, execute, folder, host,
-                    new ConsoleProgress(), stop.Token);
+                    new ConsoleProgress(), token: stop.Token);
             }
             Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
             return result.GetExitCode();

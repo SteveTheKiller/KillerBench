@@ -46,7 +46,7 @@ public static class PrivacyClipboardHistoryExecution
 
     public static async Task<PrivacyClipboardHistoryResult> RunAsync(bool requestedEnabled, bool execute,
         string journalFolder, IPrivacyClipboardHistoryHost host, IProgress<string>? progress = null,
-        CancellationToken token = default, TimeSpan? commandTimeout = null)
+        TimeSpan? commandTimeout = null, CancellationToken token = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(journalFolder);
         ArgumentNullException.ThrowIfNull(host);
@@ -64,7 +64,7 @@ public static class PrivacyClipboardHistoryExecution
             "A prior Clipboard history change needs reconciliation before another change can start.", pendingPath);
 
         Report(progress, "Checking Clipboard history and policy.");
-        var before = await Required(host.ReadAsync, "Clipboard history inspection", token, TimeSpan.FromSeconds(15)).ConfigureAwait(false);
+        var before = await Required(host.ReadAsync, "Clipboard history inspection", TimeSpan.FromSeconds(15), token: token).ConfigureAwait(false);
         string? blocker = Blocker(before);
         if (blocker is not null) return new(PrivacyChangeOutcome.Blocked, requestedEnabled, blocker, Before: before);
         if (before.UserValuePresent && before.UserValue == (requestedEnabled ? 1 : 0))
@@ -74,7 +74,7 @@ public static class PrivacyClipboardHistoryExecution
         string journalPath = Path.Combine(root, "privacy-clipboard-history-" + Guid.NewGuid().ToString("N") + ".json");
         var pending = new PrivacyClipboardHistoryPending(2, Environment.MachineName, DateTimeOffset.UtcNow,
             true, requestedEnabled ? 1 : 0, before, journalPath);
-        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
 
         ToolResult? command = null;
         bool writeDispatched = false;
@@ -82,8 +82,8 @@ public static class PrivacyClipboardHistoryExecution
         try
         {
             Report(progress, "Confirming final Clipboard history eligibility.");
-            var current = await Required(host.ReadAsync, "Clipboard history final inspection", token,
-                TimeSpan.FromSeconds(15)).ConfigureAwait(false);
+            var current = await Required(host.ReadAsync, "Clipboard history final inspection", TimeSpan.FromSeconds(15),
+                token: token).ConfigureAwait(false);
             int target = requestedEnabled ? 1 : 0;
             if (Blocker(current) is not null || !Equivalent(current, before) ||
                 current.UserValuePresent && current.UserValue == target)
@@ -94,21 +94,21 @@ public static class PrivacyClipboardHistoryExecution
                         ? "Clipboard history reached the requested value after preparation. No write was required."
                         : "Clipboard history changed after preparation. The later value was preserved.";
                 result = new(PrivacyChangeOutcome.Blocked, requestedEnabled, detail, journalPath, before, After: current);
-                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
                 File.Move(pendingPath, journalPath + ".prepared.json");
                 Report(progress, result.Detail);
                 return result;
             }
             Report(progress, requestedEnabled ? "Enabling Clipboard history." : "Disabling Clipboard history.");
             writeDispatched = true;
-            command = await Required(ct => host.WriteUserValueAsync(requestedEnabled, ct), "Clipboard history change", token, limit).ConfigureAwait(false);
+            command = await Required(ct => host.WriteUserValueAsync(requestedEnabled, ct), "Clipboard history change", limit, token: token).ConfigureAwait(false);
             if (!Successful(command))
                 result = Uncertain(requestedEnabled, journalPath, before, command,
                     "The setting change did not provide complete success evidence. Clipboard history may have changed; reconcile before retrying.");
             else
             {
                 Report(progress, "Verifying Clipboard history and policy.");
-                var after = await Required(host.ReadAsync, "Clipboard history verification", token, TimeSpan.FromSeconds(15)).ConfigureAwait(false);
+                var after = await Required(host.ReadAsync, "Clipboard history verification", TimeSpan.FromSeconds(15), token: token).ConfigureAwait(false);
                 bool verified = Blocker(after) is null && after.UserValuePresent && after.UserValue == (requestedEnabled ? 1 : 0);
                 result = new(verified ? PrivacyChangeOutcome.Verified : PrivacyChangeOutcome.Uncertain, requestedEnabled,
                     verified ? "Fresh evidence confirms the requested Clipboard history value and no machine policy was changed."
@@ -133,7 +133,7 @@ public static class PrivacyClipboardHistoryExecution
                     "Final Clipboard history evidence was unavailable: " + error.Message + ". No registry write was dispatched.",
                     journalPath, before, command);
         }
-        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (result.Outcome == PrivacyChangeOutcome.Verified || !writeDispatched) File.Move(pendingPath, journalPath + ".prepared.json");
         Report(progress, result.Detail);
         return result;
@@ -141,7 +141,7 @@ public static class PrivacyClipboardHistoryExecution
 
     public static async Task<PrivacyClipboardHistoryResult> UndoAsync(string completedJournalPath,
         string journalFolder, IPrivacyClipboardHistoryHost host, IProgress<string>? progress = null,
-        CancellationToken token = default, TimeSpan? commandTimeout = null)
+        TimeSpan? commandTimeout = null, CancellationToken token = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(completedJournalPath);
         ArgumentException.ThrowIfNullOrWhiteSpace(journalFolder);
@@ -164,7 +164,7 @@ public static class PrivacyClipboardHistoryExecution
             "A prior Clipboard history change needs reconciliation before undo can start.", pendingPath);
 
         Report(progress, "Checking Clipboard history before undo.");
-        var current = await Required(host.ReadAsync, "Clipboard history undo inspection", token, TimeSpan.FromSeconds(15)).ConfigureAwait(false);
+        var current = await Required(host.ReadAsync, "Clipboard history undo inspection", TimeSpan.FromSeconds(15), token: token).ConfigureAwait(false);
         string? blocker = Blocker(current);
         if (blocker is not null) return new(PrivacyChangeOutcome.Blocked, prior.RequestedEnabled, blocker, Before: current);
         if (!current.UserValuePresent || current.UserValue != (prior.RequestedEnabled ? 1 : 0))
@@ -174,21 +174,21 @@ public static class PrivacyClipboardHistoryExecution
         string journalPath = Path.Combine(root, "privacy-clipboard-history-undo-" + Guid.NewGuid().ToString("N") + ".json");
         var pending = new PrivacyClipboardHistoryPending(2, Environment.MachineName, DateTimeOffset.UtcNow,
             prior.Before.UserValuePresent, prior.Before.UserValue, current, journalPath);
-        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
         ToolResult? command = null;
         bool writeDispatched = false;
         PrivacyClipboardHistoryResult result;
         try
         {
             Report(progress, "Confirming final Clipboard history undo eligibility.");
-            var finalCurrent = await Required(host.ReadAsync, "Clipboard history final undo inspection", token,
-                TimeSpan.FromSeconds(15)).ConfigureAwait(false);
+            var finalCurrent = await Required(host.ReadAsync, "Clipboard history final undo inspection", TimeSpan.FromSeconds(15),
+                token: token).ConfigureAwait(false);
             if (Blocker(finalCurrent) is not null || !Equivalent(finalCurrent, current))
             {
                 result = new(PrivacyChangeOutcome.Blocked, prior.RequestedEnabled,
                     "Clipboard history or policy changed after undo preparation. The later state was preserved.",
                     journalPath, current, After: finalCurrent);
-                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
                 File.Move(pendingPath, journalPath + ".prepared.json");
                 Report(progress, result.Detail);
                 return result;
@@ -196,13 +196,13 @@ public static class PrivacyClipboardHistoryExecution
             Report(progress, "Restoring the previous Clipboard history value.");
             bool? restore = prior.Before.UserValuePresent ? prior.Before.UserValue == 1 : null;
             writeDispatched = true;
-            command = await Required(ct => host.WriteUserValueAsync(restore, ct), "Clipboard history undo", token, limit).ConfigureAwait(false);
+            command = await Required(ct => host.WriteUserValueAsync(restore, ct), "Clipboard history undo", limit, token: token).ConfigureAwait(false);
             if (!Successful(command))
                 result = Uncertain(prior.RequestedEnabled, journalPath, current, command,
                     "Undo did not provide complete success evidence. The current value is uncertain; reconcile before retrying.");
             else
             {
-                var after = await Required(host.ReadAsync, "Clipboard history undo verification", token, TimeSpan.FromSeconds(15)).ConfigureAwait(false);
+                var after = await Required(host.ReadAsync, "Clipboard history undo verification", TimeSpan.FromSeconds(15), token: token).ConfigureAwait(false);
                 bool restored = Blocker(after) is null && after.UserValuePresent == prior.Before.UserValuePresent &&
                     (!after.UserValuePresent || after.UserValue == prior.Before.UserValue);
                 result = new(restored ? PrivacyChangeOutcome.Verified : PrivacyChangeOutcome.Uncertain, prior.RequestedEnabled,
@@ -227,7 +227,7 @@ public static class PrivacyClipboardHistoryExecution
                     "Final Clipboard history undo evidence was unavailable: " + error.Message + ". No registry write was dispatched.",
                     journalPath, current, command);
         }
-        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (result.Outcome == PrivacyChangeOutcome.Verified || !writeDispatched) File.Move(pendingPath, journalPath + ".prepared.json");
         Report(progress, result.Detail);
         return result;
@@ -256,7 +256,7 @@ public static class PrivacyClipboardHistoryExecution
                 !pending.TargetValuePresent && pending.TargetValue is not null)
                 throw new InvalidDataException("Pending Clipboard history record is invalid.");
             Report(progress, "Rechecking Clipboard history without repeating the change.");
-            var current = await Required(host.ReadAsync, "Clipboard history reconciliation", token, TimeSpan.FromSeconds(15)).ConfigureAwait(false);
+            var current = await Required(host.ReadAsync, "Clipboard history reconciliation", TimeSpan.FromSeconds(15), token: token).ConfigureAwait(false);
             if (Blocker(current) is not null)
                 return new(PrivacyChangeReconciliationOutcome.Inconclusive,
                     "Current Clipboard history or policy evidence is incomplete or managed. The pending record was retained.", pendingPath);
@@ -279,7 +279,7 @@ public static class PrivacyClipboardHistoryExecution
             string archivePath = Path.Combine(root, "privacy-clipboard-history-reconciliation-" +
                 DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") + "-" + Guid.NewGuid().ToString("N") + ".json");
             var result = new PrivacyClipboardHistoryReconciliationResult(outcome, detail, pendingPath, archivePath);
-            await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token).ConfigureAwait(false);
+            await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
             File.Move(pendingPath, archivePath + ".prepared.json");
             Report(progress, detail);
             return result;
@@ -380,7 +380,7 @@ public static class PrivacyClipboardHistoryExecution
         return limit;
     }
     private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name,
-        CancellationToken token, TimeSpan limit)
+        TimeSpan limit, CancellationToken token)
     {
         var pending = operation(token) ?? throw new InvalidOperationException(name + " provider returned no task.");
         return await pending.WaitAsync(limit, token).ConfigureAwait(false)

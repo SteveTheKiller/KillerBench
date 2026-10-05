@@ -45,7 +45,7 @@ public static class BitLockerDecryption
         "Preview only. Execution will require a fully encrypted, unlocked volume, no drives that auto-unlock from an operating-system volume, clear restart evidence, administrator access and a separate decryption confirmation, then start decryption once and confirm it began. The volume is unprotected while decryption runs and afterwards until it is encrypted again. Protectors and recovery backups are not changed.");
 
     public static async Task<BitLockerDecryptionResult> RunAsync(string volume, bool execute, bool confirmUnprotected, string journalFolder,
-        IBitLockerDecryptionHost host, IProgress<string>? progress = null, CancellationToken token = default, TimeSpan? operationTimeout = null)
+        IBitLockerDecryptionHost host, IProgress<string>? progress = null, TimeSpan? operationTimeout = null, CancellationToken token = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(journalFolder);
         ArgumentNullException.ThrowIfNull(host);
@@ -66,12 +66,12 @@ public static class BitLockerDecryption
 
         Report(progress, "Inspecting " + volume + " and auto-unlock drives.");
         BitLockerDecryptionState before;
-        try { before = await Required(ct => host.InspectAsync(volume, ct), "Decryption inspection", token, TimeSpan.FromSeconds(45)).ConfigureAwait(false); }
+        try { before = await Required(ct => host.InspectAsync(volume, ct), "Decryption inspection", TimeSpan.FromSeconds(45), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(volume, BitLockerDecryptionOutcome.Blocked, "Decryption eligibility could not be established: " + error.Message); }
         if (EligibilityBlocker(volume, before) is { } blocker) return new(volume, BitLockerDecryptionOutcome.Blocked, blocker, before);
         RestartSnapshot restart;
-        try { restart = await Required(host.ReadRestartAsync, "Restart inspection", token, TimeSpan.FromSeconds(20)).ConfigureAwait(false); }
+        try { restart = await Required(host.ReadRestartAsync, "Restart inspection", TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(volume, BitLockerDecryptionOutcome.Blocked, "Restart readiness could not be established: " + error.Message, before); }
         if (RestartDiagnostics.Assess(restart) is { State: not CheckState.Clear } restartCheck)
@@ -80,7 +80,7 @@ public static class BitLockerDecryption
             return new(volume, BitLockerDecryptionOutcome.Blocked, "Administrator access is required. Decryption was not started.", before);
 
         var pending = new PendingRecord(1, Environment.MachineName, DateTimeOffset.UtcNow, volume, before, null);
-        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
         string journalPath = Path.Combine(root, "bitlocker-decrypt-" + Guid.NewGuid().ToString("N") + ".json");
         ToolResult? command = null;
         bool dispatched = false;
@@ -88,22 +88,22 @@ public static class BitLockerDecryption
         try
         {
             Report(progress, "Repeating volume, auto-unlock and restart checks immediately before the request.");
-            var fresh = await Required(ct => host.InspectAsync(volume, ct), "Final decryption inspection", token, TimeSpan.FromSeconds(45)).ConfigureAwait(false);
-            var freshRestart = await Required(host.ReadRestartAsync, "Final restart inspection", token, TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+            var fresh = await Required(ct => host.InspectAsync(volume, ct), "Final decryption inspection", TimeSpan.FromSeconds(45), token: token).ConfigureAwait(false);
+            var freshRestart = await Required(host.ReadRestartAsync, "Final restart inspection", TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false);
             if (EligibilityBlocker(volume, fresh) is not null || fresh.Identity != before.Identity ||
                 RestartDiagnostics.Assess(freshRestart).State != CheckState.Clear || !host.IsAdministrator)
             {
                 result = new(volume, BitLockerDecryptionOutcome.Blocked,
                     "Final volume, auto-unlock, restart or administrator evidence no longer authorizes decryption. No request was sent.", before, After: fresh, JournalPath: journalPath);
-                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
                 File.Move(pendingPath, journalPath + ".prepared.json");
                 Report(progress, result.Detail);
                 return result;
             }
             Report(progress, "Starting decryption of " + volume + ".");
             dispatched = true;
-            command = await Required(ct => host.DecryptAsync(volume, ct), "Decryption request", token, limit).ConfigureAwait(false);
-            await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending with { Command = command }, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+            command = await Required(ct => host.DecryptAsync(volume, ct), "Decryption request", limit, token: token).ConfigureAwait(false);
+            await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending with { Command = command }, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
             result = await VerifyAsync(volume, before, command, journalPath, host, progress, token).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
@@ -118,7 +118,7 @@ public static class BitLockerDecryption
                 dispatched ? "The request was interrupted: " + error.Message + ". Reconcile before trying again."
                     : "Final eligibility was unavailable: " + error.Message + ". No request was sent.", before, command, JournalPath: journalPath);
         }
-        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (!dispatched || result.Outcome is BitLockerDecryptionOutcome.Started or BitLockerDecryptionOutcome.NotApplied or BitLockerDecryptionOutcome.Failed)
             File.Move(pendingPath, journalPath + ".prepared.json");
         Report(progress, result.Detail);
@@ -153,7 +153,7 @@ public static class BitLockerDecryption
         }
         string journalPath = Path.Combine(root, "bitlocker-decrypt-recovered-" + Guid.NewGuid().ToString("N") + ".json");
         var result = await VerifyAsync(pending.Volume, pending.Before, pending.Command, journalPath, host, progress, token).ConfigureAwait(false);
-        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (result.Outcome is BitLockerDecryptionOutcome.Started or BitLockerDecryptionOutcome.NotApplied)
             File.Move(pendingPath, journalPath + ".prepared.json");
         return result;
@@ -181,7 +181,7 @@ public static class BitLockerDecryption
     {
         Report(progress, "Confirming decryption state on " + volume + ".");
         BitLockerDecryptionState after;
-        try { after = await Required(ct => host.InspectAsync(volume, ct), "Decryption verification", token, TimeSpan.FromSeconds(45)).ConfigureAwait(false); }
+        try { after = await Required(ct => host.InspectAsync(volume, ct), "Decryption verification", TimeSpan.FromSeconds(45), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(volume, BitLockerDecryptionOutcome.Uncertain, "Verification was unavailable: " + error.Message, before, command, JournalPath: journalPath); }
         bool same = after.Complete && after.Identity == before.Identity;
@@ -200,7 +200,7 @@ public static class BitLockerDecryption
     private static bool Unavailable(Exception error) => error is IOException or InvalidDataException or UnauthorizedAccessException or
         InvalidOperationException or NotSupportedException or TimeoutException or System.ComponentModel.Win32Exception or
         System.Security.SecurityException or OperationCanceledException;
-    private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name, CancellationToken token, TimeSpan limit)
+    private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name, TimeSpan limit, CancellationToken token)
     {
         var pending = operation(token) ?? throw new InvalidOperationException(name + " provider returned no task.");
         return await pending.WaitAsync(limit, token).ConfigureAwait(false) ?? throw new InvalidDataException(name + " provider returned no evidence.");

@@ -42,7 +42,7 @@ internal static class UpdateDataStoreCommands
             }
             var options = new UpdateSearchOptions(software, drivers, source);
             Console.Error.WriteLine("Running a fresh Windows Update search to establish exact reset eligibility. No update will be installed.");
-            var search = await UpdateDiscovery.SearchAsync(options, progress, stop.Token);
+            var search = await UpdateDiscovery.SearchAsync(options, progress, token: stop.Token);
             var result = await UpdateDataStoreReset.RunAsync(search, execute, folder,
                 new WindowsUpdateDataStoreResetHost(), progress, stop.Token);
             Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));

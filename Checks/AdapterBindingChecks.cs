@@ -61,7 +61,7 @@ internal static class AdapterBindingChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await AdapterBindingDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await AdapterBindingDiagnostics.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents collection");
         Console.WriteLine("PASS: bounded adapter protocol bindings, active dual-IP review and read-only collection; fixtures only.");

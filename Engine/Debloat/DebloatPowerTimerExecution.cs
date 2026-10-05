@@ -34,7 +34,7 @@ public static class DebloatPowerTimerExecution
 
     public static async Task<DebloatPowerTimerResult> RunAsync(DebloatPowerRequest request, bool execute,
         string journalFolder, IDebloatPowerTimerHost host, IProgress<string>? progress = null,
-        CancellationToken token = default, TimeSpan? commandTimeout = null)
+        TimeSpan? commandTimeout = null, CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(request);
         request.Validate();
@@ -62,7 +62,7 @@ public static class DebloatPowerTimerExecution
             managed == true ? "Managed power policy is present. KillerBench will not override it." :
             "Managed power-policy status is unavailable. No power timer was changed.");
         Report(progress, "Rechecking current power timers.");
-        var before = await Required(host.ReadAsync, "Power-timer inspection", token, TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+        var before = await Required(host.ReadAsync, "Power-timer inspection", TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false);
         if (!Complete(before)) return new(request, DebloatPowerTimerOutcome.Blocked,
             "Fresh complete active-plan and timer evidence is required before changing power timers.", Before: before);
         if (Matches(before, request)) return new(request, DebloatPowerTimerOutcome.Blocked,
@@ -75,7 +75,7 @@ public static class DebloatPowerTimerExecution
         {
             Schema = 1, Machine = Environment.MachineName, StartedUtc = DateTimeOffset.UtcNow,
             Request = request, Before = before, JournalPath = journalPath
-        }, Capture.JsonOptions), token).ConfigureAwait(false);
+        }, Capture.JsonOptions), token: token).ConfigureAwait(false);
         var commands = new List<DebloatPowerTimerCommand>();
         bool commandDispatched = false;
         DebloatPowerTimerResult result;
@@ -85,7 +85,7 @@ public static class DebloatPowerTimerExecution
             var finalPolicyTask = host.HasManagedPowerPolicyAsync(token) ??
                 throw new InvalidOperationException("Managed power-policy inspection provider returned no task.");
             bool? finalManaged = await finalPolicyTask.WaitAsync(TimeSpan.FromSeconds(15), token).ConfigureAwait(false);
-            var current = await Required(host.ReadAsync, "Final power-timer inspection", token, TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+            var current = await Required(host.ReadAsync, "Final power-timer inspection", TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false);
             if (finalManaged != false || !host.IsAdministrator || !Complete(current) ||
                 !SamePowerState(before, current) || Matches(current, request))
             {
@@ -110,7 +110,7 @@ public static class DebloatPowerTimerExecution
                 Report(progress, "Applying " + Label(timerSetting) + ": " + timerMinutes + " minute(s).");
                 commandDispatched = true;
                 var command = await Required(ct => host.ApplyAsync(timerSetting, timerMinutes, ct),
-                    Label(timerSetting), token, limit).ConfigureAwait(false);
+                    Label(timerSetting), limit, token: token).ConfigureAwait(false);
                 commands.Add(new(timerSetting, timerMinutes, command));
                 if (command.ExitCode != 0 || command.TimedOut || command.Truncated || !string.IsNullOrWhiteSpace(command.Error))
                 {
@@ -123,7 +123,7 @@ public static class DebloatPowerTimerExecution
                 }
             }
             Report(progress, "Verifying all four power timers.");
-            var after = await Required(host.ReadAsync, "Power-timer verification", token, TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+            var after = await Required(host.ReadAsync, "Power-timer verification", TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false);
             bool verified = Complete(after) && before.ActiveSchemeId == after.ActiveSchemeId &&
                 before.HibernationEnabled == after.HibernationEnabled &&
                 before.HibernationFilePresent == after.HibernationFilePresent && Matches(after, request);
@@ -191,10 +191,10 @@ public static class DebloatPowerTimerExecution
     };
 
     private static Task SaveAsync(DebloatPowerTimerResult result, string path) =>
-        JournalPersistence.WriteAsync(path, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None);
+        JournalPersistence.WriteAsync(path, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None);
 
     private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name,
-        CancellationToken token, TimeSpan limit)
+        TimeSpan limit, CancellationToken token)
     {
         var pending = operation(token) ?? throw new InvalidOperationException(name + " provider returned no task.");
         return await pending.WaitAsync(limit, token).ConfigureAwait(false) ?? throw new InvalidDataException(name + " provider returned no evidence.");

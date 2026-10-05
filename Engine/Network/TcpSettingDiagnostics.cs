@@ -11,8 +11,8 @@ public static class TcpSettingDiagnostics
         "$rows=@($all|Select-Object -First 64|ForEach-Object{[pscustomobject]@{settingName=[string]$_.SettingName;minRto=[uint64]$_.MinRto;initialCongestionWindow=[uint64]$_.InitialCongestionWindow;congestionProvider=[uint64]$_.CongestionProvider;autoTuningLocal=[uint64]$_.AutoTuningLevelLocal;autoTuningEffective=[uint64]$_.AutoTuningLevelEffective;ecnCapability=[uint64]$_.EcnCapability;timestamps=[uint64]$_.Timestamps;initialRto=[uint64]$_.InitialRto;scalingHeuristics=[uint64]$_.ScalingHeuristics;maxSynRetransmissions=[uint64]$_.MaxSynRetransmissions}});" +
         "[pscustomobject]@{complete=($all.Count-le 64);settings=$rows}|ConvertTo-Json -Depth 4 -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

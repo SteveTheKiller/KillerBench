@@ -34,7 +34,7 @@ internal static class WindowsUpdateCodeCommands
         try
         {
             Console.Error.WriteLine("Collecting fresh read-only diagnostics selected by " + reference.Symbol + ". No repair will run.");
-            var checks = await UpdateFailureFollowup.CheckAsync([reference], new DiagnosticProgress(), stop.Token).ConfigureAwait(false);
+            var checks = await UpdateFailureFollowup.CheckAsync([reference], new DiagnosticProgress(), token: stop.Token).ConfigureAwait(false);
             Console.WriteLine(JsonSerializer.Serialize(new
             {
                 Code = code,

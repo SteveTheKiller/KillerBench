@@ -55,7 +55,7 @@ public static partial class TimeRecovery
         if (!CanSynchronize(type)) return new("Time synchronization", CheckState.Attention, "Time synchronization is disabled or its configuration is unrecognized. No configuration change or resync selected.");
         var status = await ExecuteAsync(Step(true), progress, token).ConfigureAwait(false);
         if (!IsServiceNotStarted(status)) return Interpret(status);
-        var service = await ServiceRecovery.CheckAsync(RepairKind.WindowsTime, token, true).ConfigureAwait(false);
+        var service = await ServiceRecovery.CheckAsync(RepairKind.WindowsTime, true, token: token).ConfigureAwait(false);
         if (service.State != CheckState.Repairable)
             return new("Time synchronization", service.State, "Windows Time status is unavailable because the service is stopped. " + service.Detail,
                 Evidence: status) { ServiceDependencies = service.ServiceDependencies };
@@ -114,7 +114,7 @@ public static partial class TimeRecovery
             if (serviceStart)
             {
                 progress?.Report("Rechecking Windows Time service and dependencies before start...");
-                var service = await ServiceRecovery.CheckAsync(RepairKind.WindowsTime, timeout.Token, true).ConfigureAwait(false);
+                var service = await ServiceRecovery.CheckAsync(RepairKind.WindowsTime, true, token: timeout.Token).ConfigureAwait(false);
                 if (service.State == CheckState.Clear)
                     throw new RepairStepSkippedException("Windows Time is already running. No service start command was run.", service.Evidence!);
                 if (!ServiceRecovery.CanStart(RepairKind.WindowsTime, service))

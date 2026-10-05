@@ -22,8 +22,8 @@ public static class InstallerEngineFileDiagnostics
         "}catch{$exists=$false;$signature='Unavailable';$complete=$false};[pscustomobject]@{architecture=$root.architecture;file=$name;exists=[bool]$exists;signature=$signature}}});" +
         "[pscustomobject]@{complete=$complete;files=$rows}|ConvertTo-Json -Depth 4 -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

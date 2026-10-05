@@ -41,7 +41,7 @@ public sealed record TimeConfigurationPlan(TimeSourceMode Source, IReadOnlyList<
 public static class TimePlanning
 {
     public static async Task<(TimeEnvironment Environment, TimeConfigurationPlan Plan)> PreviewAsync(TimeOptions options,
-        CancellationToken token = default, Func<CancellationToken, Task<TimeEnvironment>>? collector = null)
+        Func<CancellationToken, Task<TimeEnvironment>>? collector = null, CancellationToken token = default)
     {
         var validated = Create(options, new(null, null, null, false));
         var retained = new TimeOptions(validated.Source, validated.Peers);

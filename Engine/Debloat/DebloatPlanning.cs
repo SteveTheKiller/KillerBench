@@ -126,8 +126,7 @@ public static class DebloatPlanning
     ];
 
     public static async Task<DebloatReview> ReviewAsync(DebloatOptions options,
-        IProgress<string>? progress = null, CancellationToken token = default,
-        IDebloatEnvironmentReader? environmentReader = null,
+        IProgress<string>? progress = null, IDebloatEnvironmentReader? environmentReader = null,
         Func<PrivacyRegistryTarget, PrivacyRegistryValue>? registryReader = null,
         Func<PrivacyServiceTarget, CancellationToken, Task<ToolResult>>? serviceReader = null,
         IDebloatPowerReader? powerReader = null,
@@ -137,7 +136,8 @@ public static class DebloatPlanning
         Func<CancellationToken, Task<DebloatTaskEvidence>>? taskReader = null,
         Func<CancellationToken, Task<DebloatOemServiceEvidence>>? oemServiceReader = null,
         Func<CancellationToken, DebloatVendorDataEvidence>? vendorDataReader = null,
-        IDebloatPowerPlanReader? powerPlanReader = null)
+        IDebloatPowerPlanReader? powerPlanReader = null,
+        CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(options);
         options.Validate();

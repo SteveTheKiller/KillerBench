@@ -15,8 +15,8 @@ public static class RoutePriorityDiagnostics
         "$rows+=[pscustomobject]@{family=$f;interfaceIndex=$n;nextHop=[string]$x.NextHop;routeMetric=$rm;interfaceMetric=$im;effectiveMetric=($rm+$im);automaticMetric=[string]$ip.AutomaticMetric;state=[string]$x.State;protocol=[string]$x.Protocol}};" +
         "[pscustomobject]@{complete=$complete;routes=$rows}|ConvertTo-Json -Depth 4 -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

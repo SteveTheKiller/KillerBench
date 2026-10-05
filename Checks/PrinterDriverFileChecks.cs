@@ -55,7 +55,7 @@ internal static class PrinterDriverFileChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await PrinterDriverFileDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await PrinterDriverFileDiagnostics.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents collection");
         Console.WriteLine("PASS: printer driver file presence, signature summary, privacy bounds and read-only collection; fixtures only.");

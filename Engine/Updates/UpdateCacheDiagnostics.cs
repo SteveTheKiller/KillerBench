@@ -20,8 +20,8 @@ public static class UpdateCacheDiagnostics
         "$root=Join-Path $env:windir 'SoftwareDistribution';" +
         "[pscustomobject]@{download=(Measure-Area (Join-Path $root 'Download'));dataStore=(Measure-Area (Join-Path $root 'DataStore'))}|ConvertTo-Json -Compress -Depth 3";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

@@ -34,8 +34,8 @@ public static class UpdateFailureFollowup
     }
 
     public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(IEnumerable<WindowsUpdateCodeReference> references,
-        IProgress<string>? progress = null, CancellationToken token = default,
-        Func<UpdateDiagnosticArea, CancellationToken, Task<IReadOnlyList<WorkflowCheck>>>? inspect = null)
+        IProgress<string>? progress = null, Func<UpdateDiagnosticArea, CancellationToken, Task<IReadOnlyList<WorkflowCheck>>>? inspect = null,
+        CancellationToken token = default)
     {
         var plan = Plan(references);
         if (plan.Count == 0) return [];
@@ -129,9 +129,9 @@ public static class UpdateFailureFollowup
 
     private static async Task<IReadOnlyList<WorkflowCheck>> InspectUpdateServicesAsync(CancellationToken token)
     {
-        var states = await ServicingServiceStateDiagnostics.CheckAsync(token).ConfigureAwait(false);
+        var states = await ServicingServiceStateDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
-        var histories = await ServicingServiceFailureEvents.CheckAsync(token).ConfigureAwait(false);
+        var histories = await ServicingServiceFailureEvents.CheckAsync(token: token).ConfigureAwait(false);
         return Array.AsReadOnly(states.Concat(histories).ToArray());
     }
 }

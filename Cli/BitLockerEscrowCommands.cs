@@ -31,7 +31,7 @@ internal static class BitLockerEscrowCommands
                 ? "Checking the selected protector before one backup request to " + BitLockerEscrow.TargetName(target) + "."
                 : "Previewing BitLocker escrow. No machine inspection or request is performed.");
             var result = await BitLockerEscrow.RunAsync(volume, target, protector, execute, folder,
-                new WindowsBitLockerEscrowHost(), new ConsoleProgress(), stop.Token);
+                new WindowsBitLockerEscrowHost(), new ConsoleProgress(), token: stop.Token);
             Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
             return result.GetExitCode();
         }

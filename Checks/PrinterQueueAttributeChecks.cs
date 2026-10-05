@@ -52,7 +52,7 @@ internal static class PrinterQueueAttributeChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await PrinterQueueAttributeDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("provider should not run")); }
+        try { await PrinterQueueAttributeDiagnostics.CheckAsync((_, _) => throw new Exception("provider should not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents printer queue attribute collection");
         Console.WriteLine("PASS: local printer queue attributes, exact identities, review states, bounds and cancellation; fixtures only.");

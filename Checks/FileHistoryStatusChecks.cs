@@ -81,7 +81,7 @@ internal static class FileHistoryStatusChecks
             "Collector did not use one bounded read-only protection-state query");
         try
         {
-            await FileHistoryStatus.CheckAsync(new CancellationToken(true), (_, _) => Task.FromResult(Result(Success(0x01))));
+            await FileHistoryStatus.CheckAsync((_, _) => Task.FromResult(Result(Success(0x01))), token: new CancellationToken(true));
             throw new Exception("File History status review ignored cancellation");
         }
         catch (OperationCanceledException) { }

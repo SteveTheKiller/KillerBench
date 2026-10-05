@@ -30,8 +30,8 @@ public static class TimeConfigurationRecovery
     public static bool HasPendingRecord(string folder) =>
         !string.IsNullOrWhiteSpace(folder) && File.Exists(Path.Combine(Path.GetFullPath(folder), "pending-time.json"));
 
-    public static async Task<TimeConfigurationRecoveryResult> ReconcileAsync(string folder, CancellationToken token = default,
-        Func<TimeOptions, CancellationToken, Task<bool>>? verify = null)
+    public static async Task<TimeConfigurationRecoveryResult> ReconcileAsync(string folder, Func<TimeOptions, CancellationToken, Task<bool>>? verify = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         string root = Path.GetFullPath(folder);
@@ -66,7 +66,7 @@ public static class TimeConfigurationRecovery
         { return Invalid("The pending time-source record could not be validated: " + error.Message); }
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(token);
         deadline.CancelAfter(TimeSpan.FromMinutes(3));
-        if (!await (verify ?? ((selected, ct) => TimeConfiguration.VerifyAsync(selected, ct)))(options, deadline.Token)
+        if (!await (verify ?? ((selected, ct) => TimeConfiguration.VerifyAsync(selected, token: ct)))(options, deadline.Token)
             .WaitAsync(deadline.Token).ConfigureAwait(false))
             return new(TimeConfigurationRecoveryOutcome.StillUnverified,
                 "Fresh evidence did not verify both the recorded configuration and reported synchronization. The pending record remains and no change was retried.",
@@ -83,10 +83,10 @@ public static class TimeConfigurationRecovery
             detail + " The record remains for review and no change was retried.", pending);
     }
 
-    public static async Task<bool> TryResolveAsync(string folder, CancellationToken token = default,
-        Func<TimeOptions, CancellationToken, Task<bool>>? verify = null)
+    public static async Task<bool> TryResolveAsync(string folder, Func<TimeOptions, CancellationToken, Task<bool>>? verify = null,
+        CancellationToken token = default)
     {
-        var result = await ReconcileAsync(folder, token, verify).ConfigureAwait(false);
+        var result = await ReconcileAsync(folder, verify, token: token).ConfigureAwait(false);
         return result.Resolved;
     }
 

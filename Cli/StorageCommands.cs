@@ -58,7 +58,7 @@ internal static class StorageCommands
             var host = new WindowsVolumeOptimizationHost();
             var progress = new Progress<string>(Console.Error.WriteLine);
             var result = execute
-                ? await VolumeOptimization.RunAsync(request, true, folder, host, progress, stop.Token)
+                ? await VolumeOptimization.RunAsync(request, true, folder, host, progress, token: stop.Token)
                 : await VolumeOptimization.ReviewAsync(request, host, progress, stop.Token);
             Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
             return result.GetExitCode();
@@ -150,7 +150,7 @@ internal static class StorageCommands
             string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "KillerBench", "FileSystemRepair");
             var result = await FileSystemRepairExecution.RunAsync(draft, execute, folder,
-                new WindowsFileSystemRepairHost(), new Progress<string>(Console.Error.WriteLine), stop.Token);
+                new WindowsFileSystemRepairHost(), new Progress<string>(Console.Error.WriteLine), token: stop.Token);
             Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
             return result.GetExitCode();
         }

@@ -44,7 +44,7 @@ public static class ProfileRemoval
         async Task<bool> CheckAsync()
         {
             if (!await (host.ReadyAsync(token) ?? throw new InvalidOperationException("Readiness provider returned no operation.")).WaitAsync(token).ConfigureAwait(false)) return false;
-            var plan = await ProfileReview.RefreshAsync([target.Sid], minimumDays, token, host.InventoryAsync, host.DependenciesAsync, host.RegistrationsAsync).ConfigureAwait(false);
+            var plan = await ProfileReview.RefreshAsync([target.Sid], minimumDays, host.InventoryAsync, host.DependenciesAsync, host.RegistrationsAsync, token: token).ConfigureAwait(false);
             return plan.ReviewPassed && plan.Targets.Single() == target;
         }
         bool prepared = false;

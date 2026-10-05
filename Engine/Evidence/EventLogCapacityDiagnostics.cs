@@ -12,8 +12,8 @@ public static class EventLogCapacityDiagnostics
         "System", "Application", "Setup", "Microsoft-Windows-WindowsUpdateClient/Operational"
     ]);
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default,
-        Func<string, CancellationToken, Task<ToolResult>>? collect = null)
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(Func<string, CancellationToken, Task<ToolResult>>? collect = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (collect is null && !OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Event log capacity inspection requires Windows.");

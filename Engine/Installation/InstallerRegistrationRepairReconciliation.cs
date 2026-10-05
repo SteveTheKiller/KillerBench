@@ -131,7 +131,7 @@ public static class InstallerRegistrationRepairReconciliation
         var result = new InstallerRegistrationRepairReconciliationResult(outcome, detail, pendingPath,
             pending, registration, activity, restart, archivePath);
         await JournalPersistence.WriteAsync(archivePath,
-            JsonSerializer.Serialize(result, Capture.JsonOptions), token).ConfigureAwait(false);
+            JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
         File.Move(pendingPath, archivePath + ".prepared.json");
         Report(progress, detail);
         return result;

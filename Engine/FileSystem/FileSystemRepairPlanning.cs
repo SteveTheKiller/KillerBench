@@ -23,7 +23,7 @@ public static class FileSystemRepairPlanning
         string path = Path.Combine(Path.GetFullPath(folder), "filesystem-review-" + Guid.NewGuid().ToString("N") + ".json");
         var record = new FileSystemRepairReviewRecord(Environment.MachineName, DateTimeOffset.UtcNow,
             draft, diagnosis, review, path);
-        await JournalPersistence.WriteAsync(path, System.Text.Json.JsonSerializer.Serialize(record, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(path, System.Text.Json.JsonSerializer.Serialize(record, Capture.JsonOptions), token: token).ConfigureAwait(false);
         return record;
     }
 

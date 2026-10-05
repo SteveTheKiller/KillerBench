@@ -29,8 +29,8 @@ public static class DebloatHibernationExecution
     public const string Effects = "Disables Windows hibernation and requests removal of hiberfil.sys. Fast Startup can also become unavailable. It does not change the active power plan, sleep or display timers, managed policy or restart Windows. Re-enabling hibernation later can recreate the file.";
 
     public static async Task<DebloatHibernationResult> RunAsync(bool execute, string journalFolder,
-        IDebloatHibernationHost host, IProgress<string>? progress = null, CancellationToken token = default,
-        TimeSpan? commandTimeout = null)
+        IDebloatHibernationHost host, IProgress<string>? progress = null, TimeSpan? commandTimeout = null,
+        CancellationToken token = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(journalFolder);
         ArgumentNullException.ThrowIfNull(host);
@@ -56,7 +56,7 @@ public static class DebloatHibernationExecution
             managed == true ? "Managed power policy is present. KillerBench will not override it." :
             "Managed power-policy status is unavailable. Hibernation was not changed.");
         Report(progress, "Rechecking hibernation and active-plan state.");
-        var before = await Required(host.ReadAsync, "Hibernation inspection", token, TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+        var before = await Required(host.ReadAsync, "Hibernation inspection", TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false);
         if (!Complete(before)) return new(DebloatHibernationOutcome.Blocked,
             "Fresh complete power and hibernation evidence is required before disabling hibernation.", Before: before);
         if (before.HibernationEnabled == false && before.HibernationFilePresent == false)
@@ -72,7 +72,7 @@ public static class DebloatHibernationExecution
         {
             Schema = 1, Machine = Environment.MachineName, StartedUtc = DateTimeOffset.UtcNow,
             Effects, Before = before, JournalPath = journalPath
-        }, Capture.JsonOptions), token).ConfigureAwait(false);
+        }, Capture.JsonOptions), token: token).ConfigureAwait(false);
         ToolResult? command = null;
         bool disableDispatched = false;
         DebloatHibernationResult result;
@@ -82,7 +82,7 @@ public static class DebloatHibernationExecution
             var finalPolicyTask = host.HasManagedPowerPolicyAsync(token) ??
                 throw new InvalidOperationException("Managed power-policy inspection provider returned no task.");
             bool? finalManaged = await finalPolicyTask.WaitAsync(TimeSpan.FromSeconds(15), token).ConfigureAwait(false);
-            var current = await Required(host.ReadAsync, "Final hibernation inspection", token, TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+            var current = await Required(host.ReadAsync, "Final hibernation inspection", TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false);
             if (finalManaged != false || !host.IsAdministrator || !Complete(current) ||
                 current.HibernationEnabled != true || current.HibernationFilePresent != true ||
                 !SamePowerState(before, current))
@@ -97,14 +97,14 @@ public static class DebloatHibernationExecution
                                 ? "Hibernation became disabled after preparation. No command was required."
                                 : "The hibernation, active-plan, or timer state changed after preparation. Hibernation was not changed.";
                 result = new(DebloatHibernationOutcome.Blocked, detail, journalPath, before, After: current);
-                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
                 File.Move(pendingPath, journalPath + ".prepared.json");
                 Report(progress, result.Detail);
                 return result;
             }
             Report(progress, "Disabling Windows hibernation.");
             disableDispatched = true;
-            command = await Required(host.DisableAsync, "Hibernation command", token, limit).ConfigureAwait(false);
+            command = await Required(host.DisableAsync, "Hibernation command", limit, token: token).ConfigureAwait(false);
             if (command.ExitCode != 0 || command.TimedOut || command.Truncated || !string.IsNullOrWhiteSpace(command.Error))
                 result = new(DebloatHibernationOutcome.Uncertain,
                     "The command did not provide complete success evidence. Hibernation may have changed; reconcile before retrying.",
@@ -112,7 +112,7 @@ public static class DebloatHibernationExecution
             else
             {
                 Report(progress, "Verifying hibernation and preserved power settings.");
-                var after = await Required(host.ReadAsync, "Hibernation verification", token, TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+                var after = await Required(host.ReadAsync, "Hibernation verification", TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false);
                 bool verified = Complete(after) && after.HibernationEnabled == false && after.HibernationFilePresent == false &&
                     SamePlanAndTimers(before, after);
                 result = new(verified ? DebloatHibernationOutcome.Verified : DebloatHibernationOutcome.Uncertain,
@@ -138,7 +138,7 @@ public static class DebloatHibernationExecution
                     : "Final hibernation inspection was unavailable before command dispatch: " + error.Message + ". Hibernation was not changed.",
                 journalPath, before, command);
         }
-        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (result.Outcome == DebloatHibernationOutcome.Verified || !disableDispatched)
             File.Move(pendingPath, journalPath + ".prepared.json");
         Report(progress, result.Detail);
@@ -160,7 +160,7 @@ public static class DebloatHibernationExecution
         before.HibernationFilePresent == current.HibernationFilePresent;
 
     private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name,
-        CancellationToken token, TimeSpan limit)
+        TimeSpan limit, CancellationToken token)
     {
         var pending = operation(token) ?? throw new InvalidOperationException(name + " provider returned no task.");
         return await pending.WaitAsync(limit, token).ConfigureAwait(false) ?? throw new InvalidDataException(name + " provider returned no evidence.");

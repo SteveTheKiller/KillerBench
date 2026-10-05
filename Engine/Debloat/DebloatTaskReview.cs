@@ -8,7 +8,7 @@ public sealed record DebloatTaskEvidence(IReadOnlyList<DebloatTaskCandidate> Mat
 public static class DebloatTaskReview
 {
     private static readonly Dictionary<string, DebloatAreas> ExactTargets =
-        new Dictionary<string, DebloatAreas>(StringComparer.OrdinalIgnoreCase)
+        new(StringComparer.OrdinalIgnoreCase)
         {
             [@"\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser"] = DebloatAreas.TelemetryAndReporting,
             [@"\Microsoft\Windows\Customer Experience Improvement Program\Consolidator"] = DebloatAreas.TelemetryAndReporting,

@@ -16,8 +16,8 @@ public static class NcsiPolicyDiagnostics
         "$custom={param($defaults)@($defaults.GetEnumerator()|Where-Object{$actual=(&$v $l $_.Key);$null-ne$actual-and![string]::Equals([string]$actual,[string]$_.Value,[StringComparison]::OrdinalIgnoreCase)}).Count-gt 0};" +
         "[pscustomobject]@{policyNoActiveProbe=(&$v $p 'NoActiveProbe');policyDisablePassivePolling=(&$v $p 'DisablePassivePolling');localEnableActiveProbing=(&$v $l 'EnableActiveProbing');customWebProbe=[bool](&$custom $web);customDnsProbe=[bool](&$custom $dns)}|ConvertTo-Json -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

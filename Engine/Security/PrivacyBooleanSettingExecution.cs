@@ -157,7 +157,7 @@ public static class PrivacyBooleanSettingExecution
 
     public static async Task<PrivacyBooleanResult> RunAsync(PrivacyBooleanSettingDefinition definition, bool requestedEnabled,
         bool execute, string journalFolder, IPrivacyBooleanSettingHost host, IProgress<string>? progress = null,
-        CancellationToken token = default, TimeSpan? commandTimeout = null)
+        TimeSpan? commandTimeout = null, CancellationToken token = default)
     {
         Validate(definition, journalFolder, host);
         TimeSpan limit = Timeout(commandTimeout);
@@ -171,7 +171,7 @@ public static class PrivacyBooleanSettingExecution
         if (File.Exists(pendingPath)) return new(PrivacyChangeOutcome.Blocked, definition.Key, requestedEnabled,
             "A prior " + definition.Title + " change needs reconciliation before another change can start.", pendingPath);
         Report(progress, "Checking " + definition.Title + " and policy.");
-        var before = await Required(host.ReadAsync, definition.Title + " inspection", token, TimeSpan.FromSeconds(15)).ConfigureAwait(false);
+        var before = await Required(host.ReadAsync, definition.Title + " inspection", TimeSpan.FromSeconds(15), token: token).ConfigureAwait(false);
         string? blocker = Blocker(definition, before, requestedEnabled);
         if (blocker is not null) return new(PrivacyChangeOutcome.Blocked, definition.Key, requestedEnabled, blocker, Before: before);
         if (before.UserValuePresent && before.UserValue == (requestedEnabled ? 1 : 0))
@@ -180,14 +180,14 @@ public static class PrivacyBooleanSettingExecution
         string journalPath = Path.Combine(root, definition.Key + "-" + Guid.NewGuid().ToString("N") + ".json");
         var pending = new Pending(1, Environment.MachineName, definition.Key, DateTimeOffset.UtcNow,
             true, requestedEnabled ? 1 : 0, before, journalPath);
-        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
         ToolResult? command = null;
         bool writeDispatched = false;
         PrivacyBooleanResult result;
         try
         {
             Report(progress, "Confirming final " + definition.Title + " eligibility.");
-            var current = await Required(host.ReadAsync, definition.Title + " final inspection", token, TimeSpan.FromSeconds(15)).ConfigureAwait(false);
+            var current = await Required(host.ReadAsync, definition.Title + " final inspection", TimeSpan.FromSeconds(15), token: token).ConfigureAwait(false);
             int target = requestedEnabled ? 1 : 0;
             if (Blocker(definition, current, requestedEnabled) is not null || !Equivalent(current, before) ||
                 current.UserValuePresent && current.UserValue == target)
@@ -199,19 +199,19 @@ public static class PrivacyBooleanSettingExecution
                         : definition.Title + " changed after preparation. The later value was preserved.";
                 result = new(PrivacyChangeOutcome.Blocked, definition.Key, requestedEnabled, detail,
                     journalPath, before, After: current);
-                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
                 File.Move(pendingPath, journalPath + ".prepared.json");
                 Report(progress, result.Detail);
                 return result;
             }
             Report(progress, (requestedEnabled ? "Enabling " : "Disabling ") + definition.Title + ".");
             writeDispatched = true;
-            command = await Required(ct => host.WriteUserValueAsync(requestedEnabled, ct), definition.Title + " change", token, limit).ConfigureAwait(false);
+            command = await Required(ct => host.WriteUserValueAsync(requestedEnabled, ct), definition.Title + " change", limit, token: token).ConfigureAwait(false);
             if (!Successful(command)) result = Uncertain(definition, requestedEnabled, journalPath, before, command,
                 "The setting change did not provide complete success evidence. Current state may have changed; reconcile before retrying.");
             else
             {
-                var after = await Required(host.ReadAsync, definition.Title + " verification", token, TimeSpan.FromSeconds(15)).ConfigureAwait(false);
+                var after = await Required(host.ReadAsync, definition.Title + " verification", TimeSpan.FromSeconds(15), token: token).ConfigureAwait(false);
                 bool verified = Blocker(definition, after, requestedEnabled) is null && after.UserValuePresent && after.UserValue == (requestedEnabled ? 1 : 0);
                 result = new(verified ? PrivacyChangeOutcome.Verified : PrivacyChangeOutcome.Uncertain, definition.Key, requestedEnabled,
                     verified ? "Fresh evidence confirms the requested " + definition.Title + " value and unchanged policy state."
@@ -236,7 +236,7 @@ public static class PrivacyBooleanSettingExecution
                     "Final setting evidence was unavailable: " + error.Message + ". No registry write was dispatched.",
                     journalPath, before, command);
         }
-        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (result.Outcome == PrivacyChangeOutcome.Verified || !writeDispatched) File.Move(pendingPath, journalPath + ".prepared.json");
         Report(progress, result.Detail);
         return result;
@@ -260,7 +260,7 @@ public static class PrivacyBooleanSettingExecution
                 !pending.TargetValuePresent && pending.TargetValue is not null || Blocker(definition, pending.Before, pending.TargetValuePresent && pending.TargetValue == 1) is not null)
                 throw new InvalidDataException("Pending privacy-setting record is invalid.");
             Report(progress, "Rechecking " + definition.Title + " without repeating the change.");
-            var current = await Required(host.ReadAsync, definition.Title + " reconciliation", token, TimeSpan.FromSeconds(15)).ConfigureAwait(false);
+            var current = await Required(host.ReadAsync, definition.Title + " reconciliation", TimeSpan.FromSeconds(15), token: token).ConfigureAwait(false);
             if (Blocker(definition, current, pending.TargetValuePresent && pending.TargetValue == 1) is not null) return new(PrivacyChangeReconciliationOutcome.Inconclusive,
                 definition.Key, "Current value or policy evidence is incomplete or managed. The pending record was retained.", pendingPath);
             PrivacyChangeReconciliationOutcome outcome;
@@ -274,7 +274,7 @@ public static class PrivacyBooleanSettingExecution
                 "Current state differs from both the requested and original values. The pending record was retained.", pendingPath);
             string archive = Path.Combine(root, definition.Key + "-reconciliation-" + Guid.NewGuid().ToString("N") + ".json");
             var result = new PrivacyBooleanReconciliationResult(outcome, definition.Key, detail, pendingPath, archive);
-            await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(result, Capture.JsonOptions), token).ConfigureAwait(false);
+            await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
             File.Move(pendingPath, archive + ".prepared.json");
             return result;
         }
@@ -284,7 +284,7 @@ public static class PrivacyBooleanSettingExecution
     }
 
     public static async Task<PrivacyBooleanResult> UndoAsync(PrivacyBooleanSettingDefinition definition, string completedJournalPath,
-        string journalFolder, IPrivacyBooleanSettingHost host, CancellationToken token = default, TimeSpan? commandTimeout = null)
+        string journalFolder, IPrivacyBooleanSettingHost host, TimeSpan? commandTimeout = null, CancellationToken token = default)
     {
         Validate(definition, journalFolder, host);
         var prior = await ReadAsync<PrivacyBooleanResult>(completedJournalPath, token).ConfigureAwait(false);
@@ -299,34 +299,34 @@ public static class PrivacyBooleanSettingExecution
         string pendingPath = Path.Combine(root, definition.Key + ".pending.json");
         if (File.Exists(pendingPath)) return new(PrivacyChangeOutcome.Blocked, definition.Key, prior.RequestedEnabled,
             "A pending change needs reconciliation before undo can start.", pendingPath);
-        var current = await Required(host.ReadAsync, definition.Title + " undo inspection", token, TimeSpan.FromSeconds(15)).ConfigureAwait(false);
+        var current = await Required(host.ReadAsync, definition.Title + " undo inspection", TimeSpan.FromSeconds(15), token: token).ConfigureAwait(false);
         if (Blocker(definition, current, prior.RequestedEnabled) is not null || !current.UserValuePresent || current.UserValue != (prior.RequestedEnabled ? 1 : 0))
             return new(PrivacyChangeOutcome.Blocked, definition.Key, prior.RequestedEnabled,
                 "The current value no longer matches this journal. Undo will not overwrite a later or managed change.", Before: current);
         string journal = Path.Combine(root, definition.Key + "-undo-" + Guid.NewGuid().ToString("N") + ".json");
         await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(new Pending(1, Environment.MachineName,
             definition.Key, DateTimeOffset.UtcNow, prior.Before.UserValuePresent, prior.Before.UserValue,
-            current, journal), Capture.JsonOptions), token).ConfigureAwait(false);
+            current, journal), Capture.JsonOptions), token: token).ConfigureAwait(false);
         ToolResult? command = null;
         bool writeDispatched = false;
         PrivacyBooleanResult result;
         try
         {
-            var finalCurrent = await Required(host.ReadAsync, definition.Title + " final undo inspection", token,
-                TimeSpan.FromSeconds(15)).ConfigureAwait(false);
+            var finalCurrent = await Required(host.ReadAsync, definition.Title + " final undo inspection", TimeSpan.FromSeconds(15),
+                token: token).ConfigureAwait(false);
             if (Blocker(definition, finalCurrent, prior.Before.UserValuePresent && prior.Before.UserValue == 1) is not null || !Equivalent(finalCurrent, current))
             {
                 result = new(PrivacyChangeOutcome.Blocked, definition.Key, prior.RequestedEnabled,
                     "The value or policy changed after undo preparation. The later state was preserved.",
                     journal, current, After: finalCurrent);
-                await JournalPersistence.WriteAsync(journal, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                await JournalPersistence.WriteAsync(journal, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
                 File.Move(pendingPath, journal + ".prepared.json");
                 return result;
             }
             bool? restore = prior.Before.UserValuePresent ? prior.Before.UserValue == 1 : null;
             writeDispatched = true;
-            command = await Required(ct => host.WriteUserValueAsync(restore, ct), definition.Title + " undo", token, Timeout(commandTimeout)).ConfigureAwait(false);
-            var after = Successful(command) ? await Required(host.ReadAsync, definition.Title + " undo verification", token, TimeSpan.FromSeconds(15)).ConfigureAwait(false) : null;
+            command = await Required(ct => host.WriteUserValueAsync(restore, ct), definition.Title + " undo", Timeout(commandTimeout), token: token).ConfigureAwait(false);
+            var after = Successful(command) ? await Required(host.ReadAsync, definition.Title + " undo verification", TimeSpan.FromSeconds(15), token: token).ConfigureAwait(false) : null;
             bool verified = after is not null && Blocker(definition, after, prior.Before.UserValuePresent && prior.Before.UserValue == 1) is null && after.UserValuePresent == prior.Before.UserValuePresent &&
                 (!after.UserValuePresent || after.UserValue == prior.Before.UserValue);
             result = new(verified ? PrivacyChangeOutcome.Verified : PrivacyChangeOutcome.Uncertain, definition.Key, prior.RequestedEnabled,
@@ -348,7 +348,7 @@ public static class PrivacyBooleanSettingExecution
                     "Final undo evidence was unavailable: " + error.Message + ". No registry write was dispatched.",
                     journal, current, command);
         }
-        await JournalPersistence.WriteAsync(journal, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journal, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (result.Outcome == PrivacyChangeOutcome.Verified || !writeDispatched) File.Move(pendingPath, journal + ".prepared.json");
         return result;
     }
@@ -376,7 +376,7 @@ public static class PrivacyBooleanSettingExecution
     private static bool CurrentMachine(string machine) => machine.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase);
     private static TimeSpan Timeout(TimeSpan? value) { var result = value ?? TimeSpan.FromSeconds(15); if (result <= TimeSpan.Zero || result > TimeSpan.FromMinutes(1)) throw new ArgumentOutOfRangeException(nameof(value)); return result; }
     private static void Validate(PrivacyBooleanSettingDefinition definition, string folder, IPrivacyBooleanSettingHost host) { ArgumentNullException.ThrowIfNull(definition); ArgumentException.ThrowIfNullOrWhiteSpace(folder); ArgumentNullException.ThrowIfNull(host); }
-    private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name, CancellationToken token, TimeSpan limit) =>
+    private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name, TimeSpan limit, CancellationToken token) =>
         await (operation(token) ?? throw new InvalidOperationException(name + " provider returned no task.")).WaitAsync(limit, token).ConfigureAwait(false)
         ?? throw new InvalidDataException(name + " provider returned no evidence.");
     private static async Task<T> ReadAsync<T>(string path, CancellationToken token)

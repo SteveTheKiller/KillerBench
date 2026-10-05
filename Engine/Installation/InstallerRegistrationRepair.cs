@@ -47,8 +47,8 @@ public static class InstallerRegistrationRepair
     }
 
     public static async Task<InstallerRegistrationRepairResult> RunAsync(bool execute, string journalFolder,
-        IInstallerRegistrationRepairHost host, IProgress<string>? progress = null, CancellationToken token = default,
-        TimeSpan? executionTimeout = null)
+        IInstallerRegistrationRepairHost host, IProgress<string>? progress = null, TimeSpan? executionTimeout = null,
+        CancellationToken token = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(journalFolder);
         ArgumentNullException.ThrowIfNull(host);
@@ -103,7 +103,7 @@ public static class InstallerRegistrationRepair
         }
         await RecordAsync(new { Stage = "Started", Before = before, EngineFiles = files, Activity = activity, Restart = restart }, token).ConfigureAwait(false);
         await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(new InstallerRegistrationRepairPendingRecord(1,
-            Environment.MachineName, DateTimeOffset.UtcNow, journalPath, before, files), Capture.JsonOptions), token).ConfigureAwait(false);
+            Environment.MachineName, DateTimeOffset.UtcNow, journalPath, before, files), Capture.JsonOptions), token: token).ConfigureAwait(false);
         await RecordAsync(new { Stage = "Prepared", Architectures = steps.Count }, token).ConfigureAwait(false);
 
         IReadOnlyList<ToolResult>? commands = null;
@@ -267,7 +267,7 @@ public sealed class WindowsInstallerRegistrationRepairHost : IInstallerRegistrat
     public bool IsAdministrator => WindowsState.IsAdministrator();
     public Task<WorkflowCheck> ReadActivityAsync(CancellationToken token) => InstallerActivityDiagnostics.CheckAsync(token);
     public Task<WorkflowCheck> ReadRestartAsync(CancellationToken token) => Task.FromResult(RestartDiagnostics.Check());
-    public Task<WorkflowCheck> ReadEngineFilesAsync(CancellationToken token) => InstallerEngineFileDiagnostics.CheckAsync(token);
+    public Task<WorkflowCheck> ReadEngineFilesAsync(CancellationToken token) => InstallerEngineFileDiagnostics.CheckAsync(token: token);
     public Task<WorkflowCheck> ReadRegistrationAsync(CancellationToken token) => Task.FromResult(InstallerServiceRegistrationDiagnostics.Check());
     public async Task<IReadOnlyList<ToolResult>> RegisterAsync(IReadOnlyList<RepairStep> steps, CancellationToken token)
     {

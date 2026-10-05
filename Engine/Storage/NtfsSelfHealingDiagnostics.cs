@@ -10,8 +10,8 @@ public static class NtfsSelfHealingDiagnostics
         RegexOptions.CultureInvariant,
         TimeSpan.FromSeconds(1));
 
-    public static async Task<WorkflowCheck> CheckAsync(string volume, CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(string volume, Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         volume = StorageDiagnostics.NormalizeVolume(volume);
         token.ThrowIfCancellationRequested();

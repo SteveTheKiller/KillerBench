@@ -15,8 +15,8 @@ public static class FoxitUpdaterSettings
 {
     private static readonly string[] UpdaterValueNames = ["UpdateMode", "bNoUpdate"];
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<CancellationToken, FoxitUpdaterSnapshot>? collector = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<CancellationToken, FoxitUpdaterSnapshot>? collector = null,
+        CancellationToken token = default)
     {
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(token);
         deadline.CancelAfter(TimeSpan.FromSeconds(20));

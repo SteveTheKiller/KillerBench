@@ -44,7 +44,7 @@ internal static class NtfsSelfHealingChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await NtfsSelfHealingDiagnostics.CheckAsync("C:", stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await NtfsSelfHealingDiagnostics.CheckAsync("C:", (_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents collection");
         Console.WriteLine("PASS: NTFS self-healing flags, exact volume identity, incomplete evidence and read-only planning; fixtures only.");

@@ -51,7 +51,7 @@ internal static class DiskQuotaChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await DiskQuotaDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await DiskQuotaDiagnostics.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents disk quota collection");
         Console.WriteLine("PASS: bounded disk quota state, defaults, notification settings, privacy and read-only collection; fixtures only.");

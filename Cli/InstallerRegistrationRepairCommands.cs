@@ -40,7 +40,7 @@ internal static class InstallerRegistrationRepairCommands
             }
 
             var repairResult = await InstallerRegistrationRepair.RunAsync(
-                execute, folder, host, progress, stop.Token);
+                execute, folder, host, progress, token: stop.Token);
             Console.WriteLine(JsonSerializer.Serialize(repairResult, Capture.JsonOptions));
             return repairResult.GetExitCode();
         }

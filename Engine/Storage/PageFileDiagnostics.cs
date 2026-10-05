@@ -14,8 +14,8 @@ public static class PageFileDiagnostics
         "$rows+=[pscustomobject]@{drive=$root.Substring(0,2).ToUpperInvariant();allocatedMiB=[uint64]$x.AllocatedBaseSize;currentMiB=[uint64]$x.CurrentUsage;peakMiB=[uint64]$x.PeakUsage;temporary=[bool]$x.TempPageFile}};" +
         "[pscustomobject]@{complete=$complete;automaticManaged=$(if($c.Count-eq 1){[bool]$c[0].AutomaticManagedPagefile}else{$null});pageFiles=$rows}|ConvertTo-Json -Depth 4 -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

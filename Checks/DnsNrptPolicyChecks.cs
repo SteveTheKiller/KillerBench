@@ -66,7 +66,7 @@ internal static class DnsNrptPolicyChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await DnsNrptPolicyDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("provider should not run")); }
+        try { await DnsNrptPolicyDiagnostics.CheckAsync((_, _) => throw new Exception("provider should not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents effective DNS policy collection");
         Console.WriteLine("PASS: bounded effective DNS policy, privacy summary, malformed evidence and cancellation; fixtures only.");

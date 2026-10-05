@@ -47,8 +47,8 @@ internal static class FirewallEventChecks
             "Native firewall event plan is bounded, newest first and read only");
         using var stop = new CancellationTokenSource();
         stop.Cancel();
-        await RequireCanceled(() => FirewallEvents.CheckAsync(stop.Token,
-            (_, _) => throw new Exception("Canceled firewall collection must not invoke its provider.")));
+        await RequireCanceled(() => FirewallEvents.CheckAsync((_, _) => throw new Exception("Canceled firewall collection must not invoke its provider."),
+            token: stop.Token));
         Console.WriteLine("PASS: Windows Firewall operational event grouping, payload privacy, bounds and cancellation; no firewall changes.");
     }
 

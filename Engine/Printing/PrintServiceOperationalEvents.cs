@@ -9,8 +9,8 @@ public static class PrintServiceOperationalEvents
     private const string Provider = "Microsoft-Windows-PrintService";
     private static readonly XNamespace ConfigurationNamespace = "http://schemas.microsoft.com/win/2004/08/events";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

@@ -9,8 +9,8 @@ public static class DeleteNotificationDiagnostics
         RegexOptions.CultureInvariant,
         TimeSpan.FromSeconds(1));
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

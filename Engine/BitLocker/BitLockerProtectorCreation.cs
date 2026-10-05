@@ -55,8 +55,8 @@ public static class BitLockerProtectorCreation
     }
 
     public static async Task<BitLockerProtectorCreationResult> RunAsync(string volume, BitLockerNewProtector kind, bool execute,
-        string journalFolder, IBitLockerProtectorCreationHost host, IProgress<string>? progress = null, CancellationToken token = default,
-        TimeSpan? operationTimeout = null)
+        string journalFolder, IBitLockerProtectorCreationHost host, IProgress<string>? progress = null, TimeSpan? operationTimeout = null,
+        CancellationToken token = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(journalFolder);
         ArgumentNullException.ThrowIfNull(host);
@@ -76,12 +76,12 @@ public static class BitLockerProtectorCreation
 
         Report(progress, "Inspecting " + volume + ", its protectors and the TPM.");
         BitLockerProtectorCreationState before;
-        try { before = await Required(ct => host.InspectAsync(volume, ct), "Protector inspection", token, TimeSpan.FromSeconds(45)).ConfigureAwait(false); }
+        try { before = await Required(ct => host.InspectAsync(volume, ct), "Protector inspection", TimeSpan.FromSeconds(45), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(volume, kind, BitLockerProtectorCreationOutcome.Blocked, "Protector eligibility could not be established: " + error.Message); }
         if (EligibilityBlocker(volume, kind, before) is { } blocker) return new(volume, kind, BitLockerProtectorCreationOutcome.Blocked, blocker, before);
         RestartSnapshot restart;
-        try { restart = await Required(host.ReadRestartAsync, "Restart inspection", token, TimeSpan.FromSeconds(20)).ConfigureAwait(false); }
+        try { restart = await Required(host.ReadRestartAsync, "Restart inspection", TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(volume, kind, BitLockerProtectorCreationOutcome.Blocked, "Restart readiness could not be established: " + error.Message, before); }
         if (RestartDiagnostics.Assess(restart) is { State: not CheckState.Clear } restartCheck)
@@ -90,7 +90,7 @@ public static class BitLockerProtectorCreation
             return new(volume, kind, BitLockerProtectorCreationOutcome.Blocked, "Administrator access is required. No protector was added.", before);
 
         var pending = new PendingRecord(1, Environment.MachineName, DateTimeOffset.UtcNow, volume, kind, before, null);
-        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
         string journalPath = Path.Combine(root, "bitlocker-protector-" + Guid.NewGuid().ToString("N") + ".json");
         ToolResult? command = null;
         bool dispatched = false;
@@ -98,23 +98,23 @@ public static class BitLockerProtectorCreation
         try
         {
             Report(progress, "Repeating protector, TPM and restart checks immediately before the request.");
-            var fresh = await Required(ct => host.InspectAsync(volume, ct), "Final protector inspection", token, TimeSpan.FromSeconds(45)).ConfigureAwait(false);
-            var freshRestart = await Required(host.ReadRestartAsync, "Final restart inspection", token, TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+            var fresh = await Required(ct => host.InspectAsync(volume, ct), "Final protector inspection", TimeSpan.FromSeconds(45), token: token).ConfigureAwait(false);
+            var freshRestart = await Required(host.ReadRestartAsync, "Final restart inspection", TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false);
             if (EligibilityBlocker(volume, kind, fresh) is not null || !SameIdentity(before, fresh) ||
                 RestartDiagnostics.Assess(freshRestart).State != CheckState.Clear || !host.IsAdministrator)
             {
                 result = new(volume, kind, BitLockerProtectorCreationOutcome.Blocked,
                     "Final volume, protector, TPM, restart or administrator evidence no longer authorizes adding a protector. No request was sent.",
                     before, After: fresh, JournalPath: journalPath);
-                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
                 File.Move(pendingPath, journalPath + ".prepared.json");
                 Report(progress, result.Detail);
                 return result;
             }
             Report(progress, "Adding one " + Name(kind) + " protector to " + volume + ".");
             dispatched = true;
-            command = await Required(ct => host.AddAsync(volume, kind, ct), "Protector creation", token, limit).ConfigureAwait(false);
-            await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending with { Command = command }, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+            command = await Required(ct => host.AddAsync(volume, kind, ct), "Protector creation", limit, token: token).ConfigureAwait(false);
+            await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending with { Command = command }, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
             result = await VerifyAsync(volume, kind, before, command, journalPath, host, progress, token).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
@@ -129,7 +129,7 @@ public static class BitLockerProtectorCreation
                 dispatched ? "The request was interrupted: " + error.Message + ". Reconcile before adding another protector."
                     : "Final eligibility was unavailable: " + error.Message + ". No request was sent.", before, command, JournalPath: journalPath);
         }
-        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (!dispatched || result.Outcome is BitLockerProtectorCreationOutcome.Verified or BitLockerProtectorCreationOutcome.NotApplied or BitLockerProtectorCreationOutcome.Failed)
             File.Move(pendingPath, journalPath + ".prepared.json");
         Report(progress, result.Detail);
@@ -156,7 +156,7 @@ public static class BitLockerProtectorCreation
         }
         string journalPath = Path.Combine(root, "bitlocker-protector-recovered-" + Guid.NewGuid().ToString("N") + ".json");
         var result = await VerifyAsync(pending.Volume, pending.Kind, pending.Before, pending.Command, journalPath, host, progress, token).ConfigureAwait(false);
-        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (result.Outcome is BitLockerProtectorCreationOutcome.Verified or BitLockerProtectorCreationOutcome.NotApplied)
             File.Move(pendingPath, journalPath + ".prepared.json");
         return result;
@@ -192,7 +192,7 @@ public static class BitLockerProtectorCreation
     {
         Report(progress, "Verifying the protector set on " + volume + ".");
         BitLockerProtectorCreationState after;
-        try { after = await Required(ct => host.InspectAsync(volume, ct), "Protector verification", token, TimeSpan.FromSeconds(45)).ConfigureAwait(false); }
+        try { after = await Required(ct => host.InspectAsync(volume, ct), "Protector verification", TimeSpan.FromSeconds(45), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(volume, kind, BitLockerProtectorCreationOutcome.Uncertain, "Verification was unavailable: " + error.Message, before, command, JournalPath: journalPath); }
         if (!after.Complete || !string.Equals(before.Identity, after.Identity, StringComparison.Ordinal))
@@ -242,7 +242,7 @@ public static class BitLockerProtectorCreation
     private static bool Unavailable(Exception error) => error is IOException or InvalidDataException or UnauthorizedAccessException or
         InvalidOperationException or NotSupportedException or TimeoutException or System.ComponentModel.Win32Exception or
         System.Security.SecurityException or OperationCanceledException;
-    private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name, CancellationToken token, TimeSpan limit)
+    private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name, TimeSpan limit, CancellationToken token)
     {
         var pending = operation(token) ?? throw new InvalidOperationException(name + " provider returned no task.");
         return await pending.WaitAsync(limit, token).ConfigureAwait(false) ?? throw new InvalidDataException(name + " provider returned no evidence.");

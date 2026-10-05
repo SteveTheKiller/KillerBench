@@ -14,8 +14,8 @@ public static class FileHistoryEvents
         "$overflow=$items.Count-gt200;$kept=@($items|Select-Object -First 200);$newest=if($kept.Count-eq0){$null}else{([DateTimeOffset]$kept[0].TimeCreated).ToUniversalTime().ToString('o')};$eventId=if($kept.Count-eq0){$null}else{[int64]$kept[0].Id};$level=if($kept.Count-eq0){$null}else{[int]$kept[0].Level};" +
         "Emit $true $true $kept.Count $overflow @($kept|Where-Object Level -eq 1).Count @($kept|Where-Object Level -eq 2).Count @($kept|Where-Object Level -eq 3).Count $newest $eventId $level";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

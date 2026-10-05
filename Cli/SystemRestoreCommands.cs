@@ -30,7 +30,7 @@ internal static class SystemRestoreCommands
                 var reason = values.Length == 0 ? SystemRestorePointReason.ModifySettings :
                     Enum.Parse<SystemRestorePointReason>(values[0], ignoreCase: true);
                 var request = SystemRestoreCreation.CreateRequest(args[1], reason);
-                result = await SystemRestoreCreation.RunAsync(request, execute, folder, host, new Progress(), stop.Token);
+                result = await SystemRestoreCreation.RunAsync(request, execute, folder, host, new Progress(), token: stop.Token);
             }
             Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
             return result.GetExitCode();

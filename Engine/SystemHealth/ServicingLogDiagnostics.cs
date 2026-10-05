@@ -4,12 +4,12 @@ public static class ServicingLogDiagnostics
 {
     private sealed record Source(string Label, string Path, bool Expected, bool Compressed = false);
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default,
-        Func<string, CancellationToken, Task<TextEvidence>>? read = null,
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(Func<string, CancellationToken, Task<TextEvidence>>? read = null,
         Func<string, bool>? exists = null,
         Func<string?>? newestCbsArchive = null,
         Func<string?>? newestCbsCab = null,
-        Func<string, CancellationToken, Task<TextEvidence>>? readCompressed = null)
+        Func<string, CancellationToken, Task<TextEvidence>>? readCompressed = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (read is null && !OperatingSystem.IsWindows())
@@ -63,7 +63,7 @@ public static class ServicingLogDiagnostics
             try
             {
                 Func<string, CancellationToken, Task<TextEvidence>> selectedReader = source.Compressed
-                    ? readCompressed ?? ((path, cancellationToken) => CbsCabEvidence.ReadNewestLogAsync(path, cancellationToken))
+                    ? readCompressed ?? ((path, cancellationToken) => CbsCabEvidence.ReadNewestLogAsync(path, token: cancellationToken))
                     : read;
                 var pending = selectedReader(source.Path, deadline.Token)
                     ?? throw new InvalidOperationException("Servicing-log reader returned no task.");

@@ -213,8 +213,8 @@ public static class RecipeEngine
 {
     public static async Task<IReadOnlyList<RecipeResult>> RunAsync(IReadOnlyList<RepairRecipe> recipes,
         bool autoRepair, string journalFolder, IWorkflowHost host, IProgress<string>? progress = null,
-        CancellationToken token = default, Func<IReadOnlyList<RecipeResult>, Task>? checkpoint = null,
-        TimeSpan? checkpointTimeout = null)
+        Func<IReadOnlyList<RecipeResult>, Task>? checkpoint = null, TimeSpan? checkpointTimeout = null,
+        CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(recipes);
         ArgumentNullException.ThrowIfNull(host);

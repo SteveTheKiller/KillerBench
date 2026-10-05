@@ -98,7 +98,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
     public IProgress<string>? Progress { get; init; }
     public KnowledgeCatalogCollection? KnowledgeCatalogs { get; init; }
     public Func<string, TimeSpan, CancellationToken, Task<DnsLookupResult>> DnsLookup { get; init; } =
-        (host, timeout, token) => DnsDiagnostics.CheckAsync(host, timeout, token);
+        (host, timeout, token) => DnsDiagnostics.CheckAsync(host, timeout, token: token);
     public Func<System.Net.IPAddress, TimeSpan, CancellationToken, Task<GatewayProbeObservation>> GatewayProbe { get; init; } =
         GatewayReachabilityDiagnostics.ProbeAsync;
     public IDnsCacheRecoveryHost DnsRecoveryHost { get; init; } = new WindowsDnsCacheRecoveryHost();
@@ -130,8 +130,8 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         if (selectedScopes is not null)
         {
             if (kind != WorkflowKind.CommonProblems) throw new ArgumentException("Focused areas require Common problems.", nameof(selectedScopes));
-            return await CommonDiagnostics.CheckAsync(token, Progress, checkpoint: checkpoint, selectedScopes: selectedScopes,
-                knowledgeCatalogs: KnowledgeCatalogs).ConfigureAwait(false);
+            return await CommonDiagnostics.CheckAsync(Progress, checkpoint: checkpoint, selectedScopes: selectedScopes, knowledgeCatalogs: KnowledgeCatalogs,
+                token: token).ConfigureAwait(false);
         }
         if (kind == WorkflowKind.Display)
             return await DeviceDiagnostics.CheckAsync(DeviceCategory.Display, KnowledgeCatalogs, token).ConfigureAwait(false);
@@ -237,7 +237,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             findings.AddRange(inventory.Tasks.Select(task => ScheduledTaskDiagnostics.Assess(task)));
             Progress?.Report("Reading exact Task Scheduler service failure history...");
             var serviceHistory = await InfrastructureServiceFailureEvents.CheckAsync(
-                InfrastructureServiceFailureArea.TaskScheduler, token).ConfigureAwait(false);
+                InfrastructureServiceFailureArea.TaskScheduler, token: token).ConfigureAwait(false);
             findings.AddRange(serviceHistory);
             Progress?.Report("Correlating task runtime results with exact service history...");
             findings.Add(ScheduledTaskOperationalCorrelation.Check([.. findings
@@ -338,7 +338,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         {
             LastDebloatReview = null;
             Progress?.Report("Reviewing the selected declutter areas and preservation boundaries...");
-            LastDebloatReview = await DebloatPlanning.ReviewAsync(DebloatOptions, Progress, token).ConfigureAwait(false);
+            LastDebloatReview = await DebloatPlanning.ReviewAsync(DebloatOptions, Progress, token: token).ConfigureAwait(false);
             return LastDebloatReview.Checks;
         }
         if (kind == WorkflowKind.BackgroundTransfers)
@@ -348,9 +348,9 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             LastBitsInventory = await BitsDiagnostics.ReadAsync(BitsAllUsers, token).ConfigureAwait(false);
             var jobs = BitsDiagnostics.Interpret(LastBitsInventory.Evidence, token);
             Progress?.Report("Reading current BITS service state...");
-            var service = (await ServicingServiceStateDiagnostics.CheckSelectedAsync(["BITS"], token).ConfigureAwait(false)).Single();
+            var service = (await ServicingServiceStateDiagnostics.CheckSelectedAsync(["BITS"], token: token).ConfigureAwait(false)).Single();
             Progress?.Report("Reading exact BITS service-failure history...");
-            var history = await ServicingServiceFailureEvents.CheckBitsAsync(token).ConfigureAwait(false);
+            var history = await ServicingServiceFailureEvents.CheckBitsAsync(token: token).ConfigureAwait(false);
             Progress?.Report("Correlating background-transfer readiness...");
             return [jobs, service, history, BitsOperationalCorrelation.Check(jobs, service, history, token)];
         }
@@ -367,7 +367,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             findings.AddRange(inventory.Products.Select(product => new WorkflowCheck("Foxit product: " + product.Name, CheckState.Information,
                 $"Version: {product.Version ?? "unreported"}; publisher: {product.Publisher ?? "unreported"}; view: {product.View}; uninstall key: {product.Key}. Registry inventory only.", Evidence: inventory.Evidence)));
             Progress?.Report("Reading Foxit updater settings without changing them...");
-            findings.Add(await FoxitUpdaterSettings.CheckAsync(token).ConfigureAwait(false));
+            findings.Add(await FoxitUpdaterSettings.CheckAsync(token: token).ConfigureAwait(false));
             return findings;
         }
         if (kind == WorkflowKind.ComputerName)
@@ -449,11 +449,11 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             Progress?.Report("Reading installed Windows hotfix inventory...");
             var installedHotfixes = await InstalledHotfixDiagnostics.CheckAsync(token).ConfigureAwait(false);
             var followups = history.Evidence is null ? [] : await UpdateFailureFollowup.CheckAsync(
-                UpdateHistoryDiagnostics.RecentReferences(history.Evidence), Progress, token).ConfigureAwait(false);
+                UpdateHistoryDiagnostics.RecentReferences(history.Evidence), Progress, token: token).ConfigureAwait(false);
             if (sourceReadiness.State is CheckState.Unknown or CheckState.Attention)
                 return [featurePolicy, policySurfaces, restartPolicy, source, sourceReadiness, history, installedHotfixes, .. followups,
                     new("Available updates", CheckState.Unknown, "Update discovery was not started because the selected source could not be verified."), .. thirdParty];
-            var updates = await UpdateDiscovery.SearchAsync(UpdateOptions, Progress, token).ConfigureAwait(false);
+            var updates = await UpdateDiscovery.SearchAsync(UpdateOptions, Progress, token: token).ConfigureAwait(false);
             return [featurePolicy, policySurfaces, restartPolicy, source, sourceReadiness, history, installedHotfixes, .. followups, new("Available updates", updates.Partial ? CheckState.Unknown : CheckState.Information, updates.Format()), .. thirdParty];
         }
         if (kind == WorkflowKind.Cleanup)
@@ -479,18 +479,18 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             Progress?.Report("Checking registered local service DLL presence without retaining paths...");
             serviceChecks.Add(await ServiceDllDiagnostics.CheckAsync(token).ConfigureAwait(false));
             Progress?.Report("Reading privacy-bounded service recovery policy...");
-            var transitionTask = ServiceTransitionDiagnostics.CheckAsync(serviceInventory, token);
-            var recoveryPolicyTask = ServiceRecoveryPolicyDiagnostics.CheckAsync(serviceInventory, token);
+            var transitionTask = ServiceTransitionDiagnostics.CheckAsync(serviceInventory, token: token);
+            var recoveryPolicyTask = ServiceRecoveryPolicyDiagnostics.CheckAsync(serviceInventory, token: token);
             Progress?.Report("Checking direct service dependency identities and cycles...");
-            var dependencyConfigurationTask = ServiceDependencyConfigurationDiagnostics.CheckAsync(serviceInventory, token);
+            var dependencyConfigurationTask = ServiceDependencyConfigurationDiagnostics.CheckAsync(serviceInventory, token: token);
             Progress?.Report("Reading privacy-bounded service trigger configuration...");
-            var triggerTask = ServiceTriggerDiagnostics.CheckAsync(serviceInventory, token);
+            var triggerTask = ServiceTriggerDiagnostics.CheckAsync(serviceInventory, token: token);
             serviceChecks.Add(await recoveryPolicyTask.ConfigureAwait(false));
             serviceChecks.Add(await dependencyConfigurationTask.ConfigureAwait(false));
             serviceChecks.Add(await triggerTask.ConfigureAwait(false));
             serviceChecks.Add(await transitionTask.ConfigureAwait(false));
             var structuralServiceChecks = serviceChecks.ToArray();
-            var currentServiceChecks = await ServiceInspection.ReadAsync(Enum.GetValues<RepairKind>(), token, Progress).ConfigureAwait(false);
+            var currentServiceChecks = await ServiceInspection.ReadAsync(Enum.GetValues<RepairKind>(), Progress, token: token).ConfigureAwait(false);
             serviceChecks.AddRange(currentServiceChecks);
             Progress?.Report("Reading recent Service Control Manager failures...");
             var serviceHistory = await ServiceEvents.CheckAsync(token).ConfigureAwait(false);
@@ -644,7 +644,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         }
         if (kind == WorkflowKind.Defender)
         {
-            checks.AddRange(await SecurityDiagnostics.CheckAsync(token, SecurityOptions).ConfigureAwait(false));
+            checks.AddRange(await SecurityDiagnostics.CheckAsync(SecurityOptions, token: token).ConfigureAwait(false));
             Progress?.Report("Reading effective AppLocker collection modes and aggregate rule counts...");
             checks.AddRange(await AppLockerPolicyDiagnostics.CheckAsync(token).ConfigureAwait(false));
             Progress?.Report("Reading Microsoft Defender protection preferences and recognized policy surfaces...");
@@ -657,8 +657,8 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             checks.Add(await DefenderEvents.CheckAsync(token).ConfigureAwait(false));
         }
         if (kind == WorkflowKind.CommonProblems)
-            checks.AddRange(await CommonDiagnostics.CheckAsync(token, Progress, checkpoint: checkpoint, selectedScopes: selectedScopes,
-                knowledgeCatalogs: KnowledgeCatalogs).ConfigureAwait(false));
+            checks.AddRange(await CommonDiagnostics.CheckAsync(Progress, checkpoint: checkpoint, selectedScopes: selectedScopes, knowledgeCatalogs: KnowledgeCatalogs,
+                token: token).ConfigureAwait(false));
         if (kind == WorkflowKind.Storage)
         {
             string volume = StorageVolume ?? StorageDiagnostics.SystemVolume();
@@ -674,7 +674,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             Progress?.Report("Reading the selected volume's dirty bit without scheduling repair...");
             checks.Add(await VolumeDirtyStatus.CheckAsync(volume, token).ConfigureAwait(false));
             Progress?.Report("Reading the selected volume's NTFS self-healing state...");
-            var selfHealing = await NtfsSelfHealingDiagnostics.CheckAsync(volume, token).ConfigureAwait(false);
+            var selfHealing = await NtfsSelfHealingDiagnostics.CheckAsync(volume, token: token).ConfigureAwait(false);
             checks.Add(selfHealing);
             if (FileSystemRepairSelection is not null)
                 checks.AddRange(await FileSystemRepairReviewDiagnostics.CheckAsync(FileSystemRepairSelection,
@@ -688,13 +688,13 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
                 checks.Add(VolumeOptimization.ToWorkflowCheck(optimization));
             }
             Progress?.Report("Reading NTFS and ReFS delete-notification configuration...");
-            var deleteNotifications = await DeleteNotificationDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var deleteNotifications = await DeleteNotificationDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.AddRange(deleteNotifications);
             Progress?.Report("Reading current paging-file allocation and usage without changing memory settings...");
-            var pageFile = await PageFileDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var pageFile = await PageFileDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.Add(pageFile);
             Progress?.Report("Reading per-volume disk quota settings without collecting user quota rows...");
-            var diskQuotas = await DiskQuotaDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var diskQuotas = await DiskQuotaDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.Add(diskQuotas);
             Progress?.Report("Reading Storage Sense machine policy without changing cleanup settings...");
             var storageSensePolicy = StorageSensePolicyDiagnostics.Check();
@@ -709,7 +709,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             var diskDiagnostics = await DiskDiagnosticCorrelation.CheckAsync(token).ConfigureAwait(false);
             checks.AddRange(diskDiagnostics);
             Progress?.Report("Reading current Storage module jobs without changing or stopping them...");
-            checks.Add(await StorageJobDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await StorageJobDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             checks.Add(new("Storage scope", CheckState.Information,
                 "Filesystem checks target the selected volume. Disk health and device/controller inventory cover this PC and are not mapped to that volume. A device error does not establish filesystem damage."));
             Progress?.Report("Reading current physical-disk inventory and provider state...");
@@ -721,7 +721,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             Progress?.Report("Correlating exact physical-disk and reliability-counter identities...");
             checks.Add(PhysicalDiskCorrelation.Check(physicalDisks, reliability, token));
             Progress?.Report("Reading VSS shadow storage allocation and configured limits...");
-            var shadowStorage = await ShadowStorageDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var shadowStorage = await ShadowStorageDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.Add(shadowStorage);
             Progress?.Report("Correlating storage configuration, maintenance tasks and retained disk history...");
             checks.Add(StorageEnvironmentCorrelation.Check(storageSpaces, shadowStorage, selfHealing,
@@ -733,7 +733,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             var history = await StorageEvents.CheckAsync(token).ConfigureAwait(false);
             checks.Add(history);
             Progress?.Report("Reading exact Storage Service and Optimize Drives failure history...");
-            checks.AddRange(await StorageServiceFailureEvents.CheckStorageAsync(token).ConfigureAwait(false));
+            checks.AddRange(await StorageServiceFailureEvents.CheckStorageAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Correlating storage event volume identities with current topology...");
             checks.Add(StorageEventCorrelation.Check(topology, history, token));
         }
@@ -780,12 +780,12 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
                 checks.Add(FirewallProfileEnable.ReviewSelection(FirewallProfileSelection, selectedState));
             }
             Progress?.Report("Reading exact Base Filtering Engine and Windows Defender Firewall service failure history...");
-            checks.AddRange(await FirewallServiceFailureEvents.CheckAsync(token).ConfigureAwait(false));
+            checks.AddRange(await FirewallServiceFailureEvents.CheckAsync(token: token).ConfigureAwait(false));
         }
         if (kind == WorkflowKind.Printing)
         {
             Progress?.Report("Reading current Print Spooler state without changing the service...");
-            var printSpooler = (await ServiceInspection.ReadAsync([RepairKind.PrintSpooler], token).ConfigureAwait(false)).Single();
+            var printSpooler = (await ServiceInspection.ReadAsync([RepairKind.PrintSpooler], token: token).ConfigureAwait(false)).Single();
             checks.Add(printSpooler);
             Progress?.Report("Reading default-printer selection and automatic management without changing queues...");
             var defaultPrinter = await DefaultPrinterDiagnostics.CheckAsync(token).ConfigureAwait(false);
@@ -797,10 +797,10 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             var rendering = PrintRenderingPolicyDiagnostics.Check();
             checks.Add(rendering);
             Progress?.Report("Reading driver-reported local queue condition codes without changing queues...");
-            var printerConditions = await PrinterConditionDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var printerConditions = await PrinterConditionDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.AddRange(printerConditions);
             Progress?.Report("Reading local printer queue operating attributes without changing queues...");
-            var printerAttributes = await PrinterQueueAttributeDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var printerAttributes = await PrinterQueueAttributeDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.AddRange(printerAttributes);
             Progress?.Report("Checking print spool directory configuration and storage without reading queued documents...");
             var spoolDirectory = PrintSpoolDirectoryDiagnostics.Check();
@@ -811,25 +811,25 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             var printerDrivers = await PrinterDriverDiagnostics.CheckAsync(token).ConfigureAwait(false);
             checks.AddRange(printerDrivers);
             Progress?.Report("Checking registered printer driver files and executable signatures...");
-            var printerDriverFiles = await PrinterDriverFileDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var printerDriverFiles = await PrinterDriverFileDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.AddRange(printerDriverFiles);
             Progress?.Report("Reading printer driver models and package-awareness without changing drivers...");
-            var printerDriverModels = await PrinterDriverModelDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var printerDriverModels = await PrinterDriverModelDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.Add(printerDriverModels);
             Progress?.Report("Matching print queues to registered ports...");
-            var printerPorts = await PrinterPortDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var printerPorts = await PrinterPortDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.AddRange(printerPorts);
             Progress?.Report("Mapping local queues to Standard TCP/IP endpoint configuration...");
             var printerEndpoints = await PrinterEndpointDiagnostics.CheckAsync(token).ConfigureAwait(false);
             checks.AddRange(printerEndpoints);
             Progress?.Report("Testing exact assigned printer endpoints with bounded TCP connections...");
-            var printerReachability = await PrinterEndpointReachability.CheckAsync(printerEndpoints, token).ConfigureAwait(false);
+            var printerReachability = await PrinterEndpointReachability.CheckAsync(printerEndpoints, token: token).ConfigureAwait(false);
             checks.AddRange(printerReachability);
             Progress?.Report("Reading print processor and monitor registrations without loading extensions...");
             var printExtensions = await PrintExtensionDiagnostics.CheckAsync(token).ConfigureAwait(false);
             checks.Add(printExtensions);
             Progress?.Report("Checking registered print processor and monitor binaries and signatures...");
-            var printExtensionFiles = await PrintExtensionFileDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var printExtensionFiles = await PrintExtensionFileDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.AddRange(printExtensionFiles);
             Progress?.Report("Correlating printing policy, drivers, ports, endpoints and extensions...");
             var printingEnvironment = PrintingEnvironmentCorrelation.Check(pointAndPrint, rendering, printerDrivers,
@@ -837,7 +837,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
                 printExtensions, printExtensionFiles, token);
             checks.Add(printingEnvironment);
             Progress?.Report("Reading visible print job states...");
-            ToolResult printJobEvidence = await PrintJobDiagnostics.CaptureAsync(token).ConfigureAwait(false);
+            ToolResult printJobEvidence = await PrintJobDiagnostics.CaptureAsync(token: token).ConfigureAwait(false);
             var printJobs = PrintJobDiagnostics.Interpret(printJobEvidence);
             checks.AddRange(printJobs);
             if (PrintingTargetSelection is not null)
@@ -850,9 +850,9 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             var printHistory = await PrintServiceEvents.CheckAsync(token).ConfigureAwait(false);
             checks.Add(printHistory);
             Progress?.Report("Checking PrintService Operational logging and recent job or rendering history...");
-            checks.Add(await PrintServiceOperationalEvents.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await PrintServiceOperationalEvents.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading Service Control Manager failures tied to the local Print Spooler identity...");
-            var printSpoolerHistory = await PrintSpoolerFailureEvents.CheckAsync(token).ConfigureAwait(false);
+            var printSpoolerHistory = await PrintSpoolerFailureEvents.CheckAsync(token: token).ConfigureAwait(false);
             checks.Add(printSpoolerHistory);
             Progress?.Report("Correlating print-service failures with exact current queue identities...");
             checks.Add(PrintQueueEventCorrelation.Check(printerDrivers, printHistory, token));
@@ -863,10 +863,10 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         if (kind == WorkflowKind.EventLog)
         {
             Progress?.Report("Inspecting event channel state, retention, size and saturation without reading event content...");
-            var eventLogCapacity = await EventLogCapacityDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var eventLogCapacity = await EventLogCapacityDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.AddRange(eventLogCapacity);
             Progress?.Report("Reading exact Windows Event Log service failure history...");
-            var eventLogHistory = await FeatureServiceFailureEvents.CheckAsync(FeatureServiceFailureGroup.EventLog, token).ConfigureAwait(false);
+            var eventLogHistory = await FeatureServiceFailureEvents.CheckAsync(FeatureServiceFailureGroup.EventLog, token: token).ConfigureAwait(false);
             checks.AddRange(eventLogHistory);
             Progress?.Report("Correlating channel capacity with exact Windows Event Log service history...");
             checks.Add(EventLogOperationalCorrelation.Check(eventLogCapacity, eventLogHistory.Single(), token));
@@ -879,7 +879,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         if (kind == WorkflowKind.TimeService)
         {
             Progress?.Report("Inspecting Windows Time source configuration...");
-            var timePreview = await TimePlanning.PreviewAsync(TimeOptions, token).ConfigureAwait(false);
+            var timePreview = await TimePlanning.PreviewAsync(TimeOptions, token: token).ConfigureAwait(false);
             var timeConfiguration = TimeConfigurationDiagnostics.ReviewSelection(
                 TimeOptions, timePreview.Environment, timePreview.Plan);
             checks.Add(timeConfiguration);
@@ -887,7 +887,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             var timeEvents = await TimeServiceEvents.CheckAsync(token).ConfigureAwait(false);
             checks.Add(timeEvents);
             Progress?.Report("Reading exact Windows Time service failure history...");
-            var timeServiceHistory = await FeatureServiceFailureEvents.CheckAsync(FeatureServiceFailureGroup.Time, token).ConfigureAwait(false);
+            var timeServiceHistory = await FeatureServiceFailureEvents.CheckAsync(FeatureServiceFailureGroup.Time, token: token).ConfigureAwait(false);
             checks.AddRange(timeServiceHistory);
             Progress?.Report("Correlating Windows Time configuration and exact operational histories...");
             checks.Add(TimeOperationalCorrelation.Check(timeConfiguration, timeEvents, timeServiceHistory.Single(), token));
@@ -901,7 +901,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             var pendingOperations = PendingFileOperationDiagnostics.Check();
             checks.Add(pendingOperations);
             Progress?.Report("Checking required Windows Installer engine files and Authenticode status...");
-            checks.Add(await InstallerEngineFileDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await InstallerEngineFileDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Checking Windows Installer service registration without changing it...");
             checks.Add(InstallerServiceRegistrationDiagnostics.Check());
             Progress?.Report("Reading Windows Installer security and patch policy without changing policy...");
@@ -938,7 +938,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
                 installerLoggingPolicy, installerCache, installerSources, installerOutcome,
                 appDeploymentHistory, storeInstallHistory, token));
             Progress?.Report("Reading Service Control Manager failures tied to the local Windows Installer identity...");
-            checks.Add(await WindowsInstallerFailureEvents.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await WindowsInstallerFailureEvents.CheckAsync(token: token).ConfigureAwait(false));
             if (MsiProductCode is not null)
             {
                 Progress?.Report("Reading the selected MSI product registration state...");
@@ -952,7 +952,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             var wmiActivity = await WmiActivityEvents.CheckAsync(token).ConfigureAwait(false);
             checks.Add(wmiActivity);
             Progress?.Report("Reading exact WMI service failure history...");
-            var wmiHistory = await FeatureServiceFailureEvents.CheckAsync(FeatureServiceFailureGroup.Wmi, token).ConfigureAwait(false);
+            var wmiHistory = await FeatureServiceFailureEvents.CheckAsync(FeatureServiceFailureGroup.Wmi, token: token).ConfigureAwait(false);
             checks.AddRange(wmiHistory);
             Progress?.Report("Correlating WMI activity and exact service history...");
             checks.Add(WmiHistoricalCorrelation.Check(wmiActivity, wmiHistory.Single(), token));
@@ -966,7 +966,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             var searchEvents = await SearchEvents.CheckAsync(token).ConfigureAwait(false);
             checks.Add(searchEvents);
             Progress?.Report("Reading exact Windows Search service failure history...");
-            var searchHistory = await FeatureServiceFailureEvents.CheckAsync(FeatureServiceFailureGroup.Search, token).ConfigureAwait(false);
+            var searchHistory = await FeatureServiceFailureEvents.CheckAsync(FeatureServiceFailureGroup.Search, token: token).ConfigureAwait(false);
             checks.AddRange(searchHistory);
             Progress?.Report("Correlating Search catalog activity and exact event history...");
             checks.Add(SearchOperationalCorrelation.Check(searchCatalog, searchEvents, searchHistory.Single(), token));
@@ -1034,7 +1034,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         if (platformServiceHistory is { } platformArea)
         {
             Progress?.Report("Reading exact service failure history for the selected Windows feature...");
-            checks.AddRange(await PlatformServiceFailureEvents.CheckAsync(platformArea, token).ConfigureAwait(false));
+            checks.AddRange(await PlatformServiceFailureEvents.CheckAsync(platformArea, token: token).ConfigureAwait(false));
         }
         if (kind == WorkflowKind.WindowsErrorReportingService)
         {
@@ -1060,7 +1060,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             checks.AddRange(taskChecks);
             Progress?.Report("Reading exact Task Scheduler service failure history...");
             var schedulerHistory = await InfrastructureServiceFailureEvents.CheckAsync(
-                InfrastructureServiceFailureArea.TaskScheduler, token).ConfigureAwait(false);
+                InfrastructureServiceFailureArea.TaskScheduler, token: token).ConfigureAwait(false);
             checks.AddRange(schedulerHistory);
             Progress?.Report("Correlating task runtime results with exact service history...");
             checks.Add(ScheduledTaskOperationalCorrelation.Check(taskChecks, schedulerHistory, token));
@@ -1102,7 +1102,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         if (infrastructureServiceHistory is not null)
         {
             Progress?.Report("Reading exact service failure history for the selected Windows infrastructure...");
-            checks.AddRange(await InfrastructureServiceFailureEvents.CheckManyAsync(infrastructureServiceHistory, token).ConfigureAwait(false));
+            checks.AddRange(await InfrastructureServiceFailureEvents.CheckManyAsync(infrastructureServiceHistory, token: token).ConfigureAwait(false));
         }
         if (kind == WorkflowKind.Audio)
         {
@@ -1112,7 +1112,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             var audioEndpoints = await DefaultAudioEndpoints.CheckAsync(AudioEndpointSelection, token).ConfigureAwait(false);
             checks.AddRange(audioEndpoints);
             Progress?.Report("Reading exact Windows audio service failure history...");
-            var audioHistory = await FeatureServiceFailureEvents.CheckAsync(FeatureServiceFailureGroup.Audio, token).ConfigureAwait(false);
+            var audioHistory = await FeatureServiceFailureEvents.CheckAsync(FeatureServiceFailureGroup.Audio, token: token).ConfigureAwait(false);
             checks.AddRange(audioHistory);
             Progress?.Report("Correlating audio devices, default endpoints and exact service history...");
             checks.Add(AudioOperationalCorrelation.Check(audioDevices, audioEndpoints, audioHistory, token));
@@ -1147,7 +1147,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             var networkProfiles = await NetworkProfileDiagnostics.CheckAsync(token).ConfigureAwait(false);
             checks.AddRange(networkProfiles);
             Progress?.Report("Reading Windows connectivity classification policy without retaining probe destinations...");
-            checks.Add(await NcsiPolicyDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await NcsiPolicyDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading matching Windows firewall profile configuration...");
             var firewallProfiles = await FirewallProfiles.CheckAsync(token).ConfigureAwait(false);
             checks.AddRange(firewallProfiles);
@@ -1156,16 +1156,16 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             Progress?.Report("Summarizing effective Windows Firewall rules without collecting rule identities or endpoints...");
             checks.Add(await FirewallRuleSummaryDiagnostics.CheckAsync(token).ConfigureAwait(false));
             Progress?.Report("Reading recent Windows Firewall warning and failure history...");
-            checks.Add(await FirewallEvents.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await FirewallEvents.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading exact firewall service failure history...");
-            checks.AddRange(await FirewallServiceFailureEvents.CheckAsync(token).ConfigureAwait(false));
+            checks.AddRange(await FirewallServiceFailureEvents.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading exact network service failure history...");
-            checks.AddRange(await NetworkServiceFailureEvents.CheckAsync(token).ConfigureAwait(false));
+            checks.AddRange(await NetworkServiceFailureEvents.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Correlating active network assignments with firewall profile enablement...");
             var firewallCorrelation = NetworkFirewallCorrelation.Check(networkProfiles, firewallProfiles, token);
             checks.Add(firewallCorrelation);
             Progress?.Report("Reading current DNS Client service state without starting or changing it...");
-            var dnsService = (await ServiceInspection.ReadAsync([RepairKind.DnsClient], token, Progress).ConfigureAwait(false)).Single();
+            var dnsService = (await ServiceInspection.ReadAsync([RepairKind.DnsClient], Progress, token: token).ConfigureAwait(false)).Single();
             checks.Add(dnsService);
             Progress?.Report("Reading per-interface DNS server configuration without changing adapters...");
             var dnsServers = await DnsServerDiagnostics.CheckAsync(token).ConfigureAwait(false);
@@ -1173,52 +1173,52 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             Progress?.Report("Reading DNS suffix, registration and policy configuration without changing adapters...");
             checks.Add(await DnsClientConfigurationDiagnostics.CheckAsync(token).ConfigureAwait(false));
             Progress?.Report("Reading effective DNS namespace policy without changing DNS or network settings...");
-            var dnsPolicy = await DnsNrptPolicyDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var dnsPolicy = await DnsNrptPolicyDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.Add(dnsPolicy);
             Progress?.Report("Reading privacy-bounded DNS client cache aggregates without retaining names or record data...");
-            checks.Add(await DnsClientCacheDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await DnsClientCacheDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading recent DNS Client warning and failure history without changing resolver state...");
-            var dnsEvents = await DnsClientEvents.CheckAsync(token).ConfigureAwait(false);
+            var dnsEvents = await DnsClientEvents.CheckAsync(token: token).ConfigureAwait(false);
             checks.AddRange(dnsEvents);
             Progress?.Report("Reading the current IP routing table without changing routes...");
             var routes = await RouteDiagnostics.CheckAsync(token).ConfigureAwait(false);
             checks.Add(routes);
             Progress?.Report("Comparing default-route and interface metrics without changing priority...");
-            checks.Add(await RoutePriorityDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await RoutePriorityDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading per-interface MTU, DHCP, forwarding, discovery and metric configuration...");
-            checks.Add(await IpInterfaceConfigurationDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await IpInterfaceConfigurationDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading current DHCP Client service state without starting or changing it...");
-            var dhcpService = (await ServiceInspection.ReadAsync([RepairKind.DhcpClient], token, Progress).ConfigureAwait(false)).Single();
+            var dhcpService = (await ServiceInspection.ReadAsync([RepairKind.DhcpClient], Progress, token: token).ConfigureAwait(false)).Single();
             checks.Add(dhcpService);
             Progress?.Report("Reading DHCP lease timestamps, expiry and server evidence without renewing leases...");
-            var dhcpLease = await DhcpLeaseDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var dhcpLease = await DhcpLeaseDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.Add(dhcpLease);
             Progress?.Report("Reading recent IPv4 and IPv6 DHCP Client events without changing network state...");
-            var dhcpEvents = await DhcpClientEvents.CheckAsync(token).ConfigureAwait(false);
+            var dhcpEvents = await DhcpClientEvents.CheckAsync(token: token).ConfigureAwait(false);
             checks.AddRange(dhcpEvents);
             Progress?.Report("Correlating current DHCP readiness with recent client history...");
             var dhcpCorrelation = DhcpOperationalCorrelation.Check(dhcpService, dhcpLease, ipAddresses, dhcpEvents, token);
             checks.Add(dhcpCorrelation);
             Progress?.Report("Reading privacy-bounded neighbor reachability states without changing the cache...");
-            checks.Add(await NeighborCacheDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await NeighborCacheDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading core network adapter protocol bindings without changing adapters...");
-            checks.Add(await AdapterBindingDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await AdapterBindingDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading network adapter error and discard counters without changing adapters...");
-            checks.Add(await AdapterStatisticsDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await AdapterStatisticsDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading aggregate dynamic TCP port pressure without retaining endpoints or processes...");
-            checks.AddRange(await TcpPortPressureDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.AddRange(await TcpPortPressureDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading bounded Windows TCP template settings without changing the network stack...");
-            checks.Add(await TcpSettingDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await TcpSettingDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading global Windows network offload settings without changing the network stack...");
-            checks.Add(await NetworkOffloadDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await NetworkOffloadDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading the native Winsock protocol catalog without changing providers...");
-            var winsockProtocols = await WinsockCatalogDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var winsockProtocols = await WinsockCatalogDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.Add(winsockProtocols);
             Progress?.Report("Reading native Winsock namespace-provider registrations without changing providers...");
-            var winsockNamespaces = await WinsockNamespaceDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var winsockNamespaces = await WinsockNamespaceDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.Add(winsockNamespaces);
             Progress?.Report("Checking registered Winsock protocol provider files without loading providers...");
-            var winsockProviderFiles = await WinsockProviderFileDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var winsockProviderFiles = await WinsockProviderFileDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.Add(winsockProviderFiles);
             Progress?.Report("Correlating Winsock protocol, namespace-provider and provider-file readiness...");
             var winsockCorrelation = WinsockReadinessCorrelation.Check(winsockProtocols, winsockNamespaces, winsockProviderFiles, token);
@@ -1262,7 +1262,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             if (NetworkEndpoint is { } endpoint)
             {
                 Progress?.Report($"Checking TCP connection to {endpoint.Host}:{endpoint.Port}...");
-                targetTcp = TcpDiagnostics.ToWorkflowCheck(await TcpDiagnostics.CheckAsync(endpoint.Host, endpoint.Port, NetworkTimeout, token).ConfigureAwait(false));
+                targetTcp = TcpDiagnostics.ToWorkflowCheck(await TcpDiagnostics.CheckAsync(endpoint.Host, endpoint.Port, NetworkTimeout, token: token).ConfigureAwait(false));
                 checks.Add(targetTcp);
             }
             if (targetLookup is not null || targetTcp is not null)
@@ -1274,7 +1274,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             if (!networkAdministrator)
             {
                 Progress?.Report("Reading DHCP service and lease state without elevation...");
-                checks.AddRange(await ServiceInspection.ReadAsync(KillerBench.Engine.Workflows.Workflows.Scopes(kind).Where(scope => scope is not (RepairKind.DnsClient or RepairKind.DhcpClient)), ServiceRecovery.CheckAsync, token, Progress).ConfigureAwait(false));
+                checks.AddRange(await ServiceInspection.ReadAsync(KillerBench.Engine.Workflows.Workflows.Scopes(kind).Where(scope => scope is not (RepairKind.DnsClient or RepairKind.DhcpClient)), ServiceRecovery.CheckAsync, Progress, token: token).ConfigureAwait(false));
                 var lease = await DhcpRecovery.CheckAsync(token).ConfigureAwait(false);
                 checks.Add(lease with
                 {
@@ -1290,22 +1290,22 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         if (kind == WorkflowKind.BackupServices)
         {
             Progress?.Report("Reading Windows Backup operation summary...");
-            checks.Add(await WindowsBackupSummary.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await WindowsBackupSummary.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading current File History protection state...");
-            checks.Add(await FileHistoryStatus.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await FileHistoryStatus.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading recent File History warnings and errors...");
-            checks.Add(await FileHistoryEvents.CheckAsync(token).ConfigureAwait(false));
-            checks.AddRange(await BackupEvents.CheckAsync(token, Progress).ConfigureAwait(false));
+            checks.Add(await FileHistoryEvents.CheckAsync(token: token).ConfigureAwait(false));
+            checks.AddRange(await BackupEvents.CheckAsync(Progress, token: token).ConfigureAwait(false));
             Progress?.Report("Reading VSS writer status...");
             checks.Add(await VssWriters.CheckAsync(token).ConfigureAwait(false));
             Progress?.Report("Reading VSS provider registrations...");
-            checks.Add(await VssProviderDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await VssProviderDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading exact shadow-copy and backup service failure history...");
-            checks.AddRange(await BackupServiceFailureEvents.CheckAllAsync(token).ConfigureAwait(false));
+            checks.AddRange(await BackupServiceFailureEvents.CheckAllAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading current VSS shadow copy inventory...");
-            checks.Add(await ShadowCopyDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await ShadowCopyDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading VSS shadow storage allocation and configured limits...");
-            checks.Add(await ShadowStorageDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await ShadowStorageDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
         }
         if (kind == WorkflowKind.WindowsEventCollectorService)
         {
@@ -1359,23 +1359,23 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         if (kind == WorkflowKind.NetworkSetupService)
         {
             Progress?.Report("Reading current network adapter protocol bindings...");
-            checks.Add(await AdapterBindingDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await AdapterBindingDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
         }
         if (kind == WorkflowKind.StorageService)
         {
             Progress?.Report("Reading current Storage module jobs without changing or stopping them...");
-            checks.Add(await StorageJobDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await StorageJobDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
         }
         if (kind == WorkflowKind.StorageService)
         {
             Progress?.Report("Reading exact Storage Service failure history...");
-            var storageHistory = await StorageServiceFailureEvents.CheckStorageAsync(token).ConfigureAwait(false);
+            var storageHistory = await StorageServiceFailureEvents.CheckStorageAsync(token: token).ConfigureAwait(false);
             checks.Add(storageHistory.Single(check => check.Name == "Storage Service failure history"));
         }
         if (kind == WorkflowKind.WindowsUpdateService)
         {
             Progress?.Report("Reading exact Windows Update Service state...");
-            var focusedUpdateService = (await ServicingServiceStateDiagnostics.CheckSelectedAsync(["wuauserv"], token).ConfigureAwait(false)).Single();
+            var focusedUpdateService = (await ServicingServiceStateDiagnostics.CheckSelectedAsync(["wuauserv"], token: token).ConfigureAwait(false)).Single();
             checks.Add(focusedUpdateService);
             Progress?.Report("Checking the registered Windows Update service DLL and signature...");
             var focusedUpdateRegistration = await ServiceDllDiagnostics.CheckSelectedAsync(
@@ -1385,7 +1385,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             var focusedUpdateActivity = await WindowsUpdateActivityDiagnostics.CheckAsync(token).ConfigureAwait(false);
             checks.Add(focusedUpdateActivity);
             Progress?.Report("Reading exact Windows Update Service failure history...");
-            var focusedUpdateHistory = await WindowsUpdateServiceFailureEvents.CheckAsync(token).ConfigureAwait(false);
+            var focusedUpdateHistory = await WindowsUpdateServiceFailureEvents.CheckAsync(token: token).ConfigureAwait(false);
             checks.Add(focusedUpdateHistory);
             Progress?.Report("Correlating Windows Update Service state, registration, activity and history...");
             checks.Add(WindowsUpdateServiceOperationalCorrelation.Check(
@@ -1399,10 +1399,10 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             var bitsJobs = BitsDiagnostics.Interpret(LastBitsInventory.Evidence, token);
             checks.Add(bitsJobs);
             Progress?.Report("Reading exact BITS service state...");
-            var bitsService = (await ServicingServiceStateDiagnostics.CheckSelectedAsync(["BITS"], token).ConfigureAwait(false)).Single();
+            var bitsService = (await ServicingServiceStateDiagnostics.CheckSelectedAsync(["BITS"], token: token).ConfigureAwait(false)).Single();
             checks.Add(bitsService);
             Progress?.Report("Reading exact BITS service-failure history...");
-            var bitsHistory = await ServicingServiceFailureEvents.CheckBitsAsync(token).ConfigureAwait(false);
+            var bitsHistory = await ServicingServiceFailureEvents.CheckBitsAsync(token: token).ConfigureAwait(false);
             checks.Add(bitsHistory);
             Progress?.Report("Correlating BITS jobs, service state and failure history...");
             checks.Add(BitsOperationalCorrelation.Check(bitsJobs, bitsService, bitsHistory, token));
@@ -1410,14 +1410,14 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         if (kind == WorkflowKind.CryptographicService)
         {
             Progress?.Report("Reading exact Cryptographic Services state...");
-            var cryptographicService = (await ServicingServiceStateDiagnostics.CheckSelectedAsync(["CryptSvc"], token).ConfigureAwait(false)).Single();
+            var cryptographicService = (await ServicingServiceStateDiagnostics.CheckSelectedAsync(["CryptSvc"], token: token).ConfigureAwait(false)).Single();
             checks.Add(cryptographicService);
             Progress?.Report("Checking the registered Cryptographic Services DLL and signature...");
             var cryptographicRegistration = await ServiceDllDiagnostics.CheckSelectedAsync(
                 "Cryptographic Services registration", ["CryptSvc"], token).ConfigureAwait(false);
             checks.Add(cryptographicRegistration);
             Progress?.Report("Reading exact Cryptographic Services failure history...");
-            var cryptographicHistory = await ServicingServiceFailureEvents.CheckFocusedAsync(kind, token).ConfigureAwait(false);
+            var cryptographicHistory = await ServicingServiceFailureEvents.CheckFocusedAsync(kind, token: token).ConfigureAwait(false);
             checks.Add(cryptographicHistory);
             Progress?.Report("Correlating Cryptographic Services state, registration and history...");
             checks.Add(CryptographicServiceOperationalCorrelation.Check(
@@ -1426,13 +1426,13 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         if (kind == WorkflowKind.ModulesInstallerService)
         {
             Progress?.Report("Reading exact Windows Modules Installer state...");
-            var modulesInstallerService = (await ServicingServiceStateDiagnostics.CheckSelectedAsync(["TrustedInstaller"], token).ConfigureAwait(false)).Single();
+            var modulesInstallerService = (await ServicingServiceStateDiagnostics.CheckSelectedAsync(["TrustedInstaller"], token: token).ConfigureAwait(false)).Single();
             checks.Add(modulesInstallerService);
             Progress?.Report("Reading bounded servicing package transitions...");
             var servicingPackages = await ServicingPackageDiagnostics.CheckAsync(token).ConfigureAwait(false);
             checks.Add(servicingPackages);
             Progress?.Report("Reading exact Windows Modules Installer failure history...");
-            var modulesInstallerHistory = await ServicingServiceFailureEvents.CheckFocusedAsync(kind, token).ConfigureAwait(false);
+            var modulesInstallerHistory = await ServicingServiceFailureEvents.CheckFocusedAsync(kind, token: token).ConfigureAwait(false);
             checks.Add(modulesInstallerHistory);
             Progress?.Report("Correlating Windows Modules Installer state, packages and history...");
             checks.Add(ModulesInstallerOperationalCorrelation.Check(
@@ -1441,7 +1441,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         if (kind == WorkflowKind.WindowsUpdateMedicService)
         {
             Progress?.Report("Reading exact Windows Update Medic Service state...");
-            var medicService = (await ServicingServiceStateDiagnostics.CheckSelectedAsync(["WaaSMedicSvc"], token).ConfigureAwait(false)).Single();
+            var medicService = (await ServicingServiceStateDiagnostics.CheckSelectedAsync(["WaaSMedicSvc"], token: token).ConfigureAwait(false)).Single();
             checks.Add(medicService);
             Progress?.Report("Checking the registered Windows Update Medic service DLL and signature...");
             var medicRegistration = await ServiceDllDiagnostics.CheckSelectedAsync(
@@ -1451,7 +1451,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             var medicActivity = await WindowsUpdateActivityDiagnostics.CheckAsync(token).ConfigureAwait(false);
             checks.Add(medicActivity);
             Progress?.Report("Reading exact Windows Update Medic failure history...");
-            var medicHistory = await ServicingServiceFailureEvents.CheckMedicAsync(token).ConfigureAwait(false);
+            var medicHistory = await ServicingServiceFailureEvents.CheckMedicAsync(token: token).ConfigureAwait(false);
             checks.Add(medicHistory);
             Progress?.Report("Correlating Windows Update Medic state, registration, activity and history...");
             checks.Add(WindowsUpdateMedicOperationalCorrelation.Check(
@@ -1460,7 +1460,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         if (kind == WorkflowKind.UpdateOrchestratorService)
         {
             Progress?.Report("Reading exact Update Orchestrator Service state...");
-            var orchestratorService = (await ServicingServiceStateDiagnostics.CheckSelectedAsync(["UsoSvc"], token).ConfigureAwait(false)).Single();
+            var orchestratorService = (await ServicingServiceStateDiagnostics.CheckSelectedAsync(["UsoSvc"], token: token).ConfigureAwait(false)).Single();
             checks.Add(orchestratorService);
             Progress?.Report("Reading the exact built-in Windows Update scheduled task...");
             var updateTask = await WindowsUpdateScheduledTaskDiagnostics.CheckAsync(token).ConfigureAwait(false);
@@ -1469,7 +1469,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             var updateActivity = await WindowsUpdateActivityDiagnostics.CheckAsync(token).ConfigureAwait(false);
             checks.Add(updateActivity);
             Progress?.Report("Reading exact Update Orchestrator failure history...");
-            var orchestratorHistory = await ServicingServiceFailureEvents.CheckFocusedAsync(kind, token).ConfigureAwait(false);
+            var orchestratorHistory = await ServicingServiceFailureEvents.CheckFocusedAsync(kind, token: token).ConfigureAwait(false);
             checks.Add(orchestratorHistory);
             Progress?.Report("Correlating Update Orchestrator state, task, activity and history...");
             checks.Add(UpdateOrchestratorOperationalCorrelation.Check(
@@ -1482,13 +1482,13 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
                 await DeliveryOptimizationDiagnostics.CheckAsync(token).ConfigureAwait(false));
             checks.Add(deliveryService);
             Progress?.Report("Reading privacy-bounded Delivery Optimization activity...");
-            var deliveryActivity = await DeliveryOptimizationActivityDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var deliveryActivity = await DeliveryOptimizationActivityDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.Add(deliveryActivity);
             Progress?.Report("Reading Delivery Optimization policy surfaces...");
             var deliveryPolicy = DeliveryOptimizationPolicyDiagnostics.Check();
             checks.Add(deliveryPolicy);
             Progress?.Report("Reading exact Delivery Optimization failure history...");
-            var deliveryHistory = await DeliveryOptimizationServiceFailureEvents.CheckAsync(token).ConfigureAwait(false);
+            var deliveryHistory = await DeliveryOptimizationServiceFailureEvents.CheckAsync(token: token).ConfigureAwait(false);
             checks.Add(deliveryHistory);
             Progress?.Report("Correlating Delivery Optimization service, activity, policy and history evidence...");
             checks.Add(DeliveryOptimizationOperationalCorrelation.Check(
@@ -1498,16 +1498,16 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         if (kind == WorkflowKind.WindowsUpdate)
         {
             Progress?.Report("Checking required Windows Update engine files and signatures...");
-            checks.Add(await WindowsUpdateEngineFileDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await WindowsUpdateEngineFileDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Checking exact Windows Update service DLL registrations and signatures...");
             var updateServiceDlls = await ServiceDllDiagnostics.CheckSelectedAsync("Windows Update service DLLs",
                 ["wuauserv", "BITS", "CryptSvc", "TrustedInstaller", "WaaSMedicSvc", "UsoSvc"], token).ConfigureAwait(false);
             checks.Add(updateServiceDlls);
             Progress?.Report("Checking all six current Windows Update servicing-chain service states...");
-            var updateServiceStates = await ServicingServiceStateDiagnostics.CheckAsync(token).ConfigureAwait(false);
+            var updateServiceStates = await ServicingServiceStateDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
             checks.AddRange(updateServiceStates);
             Progress?.Report("Reading exact servicing service failure histories...");
-            var updateServiceHistory = await ServicingServiceFailureEvents.CheckAsync(token).ConfigureAwait(false);
+            var updateServiceHistory = await ServicingServiceFailureEvents.CheckAsync(token: token).ConfigureAwait(false);
             checks.AddRange(updateServiceHistory);
             Progress?.Report("Correlating current Windows Update service, DLL and exact failure-history evidence...");
             checks.Add(ServicingChainCorrelation.Check(updateServiceStates, updateServiceDlls, updateServiceHistory, token));
@@ -1518,7 +1518,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             Progress?.Report("Reading BITS transfer jobs...");
             checks.Add(await BitsDiagnostics.CheckAsync(administrator, token).ConfigureAwait(false));
             Progress?.Report("Reading privacy-bounded current Delivery Optimization activity...");
-            checks.Add(await DeliveryOptimizationActivityDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await DeliveryOptimizationActivityDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading Delivery Optimization classic and Policy CSP settings...");
             checks.Add(DeliveryOptimizationPolicyDiagnostics.Check());
             Progress?.Report("Reading managed Windows Update policy...");
@@ -1532,20 +1532,20 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             Progress?.Report("Reading managed component repair source policy...");
             checks.Add(ComponentRepairSourceDiagnostics.Check());
             Progress?.Report("Measuring Windows Update cache areas without reading filenames or file contents...");
-            checks.Add(await UpdateCacheDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await UpdateCacheDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
         }
         if (kind is WorkflowKind.WindowsUpdate or WorkflowKind.SystemFiles)
         {
             Progress?.Report("Reading the newest bounded portions of CBS, DISM and applicable Windows Setup logs...");
-            checks.AddRange(await ServicingLogDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.AddRange(await ServicingLogDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading Windows reserved-storage state without changing servicing configuration...");
-            checks.Add(await ReservedStorageDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await ReservedStorageDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
             Progress?.Report("Reading Windows servicing package states without changing packages...");
             checks.Add(await ServicingPackageDiagnostics.CheckAsync(token).ConfigureAwait(false));
             Progress?.Report("Reading optional Windows feature states without changing features...");
             checks.Add(await OptionalFeatureDiagnostics.CheckAsync(token).ConfigureAwait(false));
             Progress?.Report("Reading Windows capability states without changing capabilities...");
-            checks.Add(await WindowsCapabilityDiagnostics.CheckAsync(token).ConfigureAwait(false));
+            checks.Add(await WindowsCapabilityDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
         }
         var scopes = KillerBench.Engine.Workflows.Workflows.Scopes(kind);
         bool focusedService = kind == WorkflowKind.DeliveryOptimizationService ||
@@ -1555,9 +1555,9 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             Progress?.Report("Reading service state without elevation...");
             bool focusedDemandStart = kind is WorkflowKind.WinHttpAutoProxyService or WorkflowKind.WindowsUpdateMedicService;
             checks.AddRange(await ServiceInspection.ReadAsync(scopes,
-                (scope, cancellationToken) => ServiceRecovery.CheckAsync(scope, cancellationToken,
-                    focusedDemandStart && scope is RepairKind.WinHttpAutoProxyService or RepairKind.WindowsUpdateMedicService),
-                token, Progress).ConfigureAwait(false));
+                (scope, cancellationToken) => ServiceRecovery.CheckAsync(scope, focusedDemandStart && scope is RepairKind.WinHttpAutoProxyService or RepairKind.WindowsUpdateMedicService,
+                    token: cancellationToken),
+                Progress, token:                 token).ConfigureAwait(false));
         }
         checks.Add(new("Administrator", administrator ? CheckState.Clear : focusedService ? CheckState.Information : CheckState.Attention,
             administrator ? "This process is running as administrator." : focusedService
@@ -1629,7 +1629,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         if (kind == RepairKind.PrintJobCancellation)
         {
             progress?.Report("Inspecting exact visible print-job identities and status without changing jobs.");
-            ToolResult evidence = await PrintJobDiagnostics.CaptureAsync(token).ConfigureAwait(false);
+            ToolResult evidence = await PrintJobDiagnostics.CaptureAsync(token: token).ConfigureAwait(false);
             PrintJobInventory? inventory = PrintJobDiagnostics.ReadInventory(evidence);
             return inventory is null
                 ? new("Selected print-job cancellation", CheckState.Unknown,
@@ -1774,7 +1774,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
                     Name = "Windows Update data store",
                     Detail = sourceReadiness.Detail + " No data-store reset is eligible."
                 };
-            var search = await UpdateDiscovery.SearchAsync(UpdateOptions, progress, token).ConfigureAwait(false);
+            var search = await UpdateDiscovery.SearchAsync(UpdateOptions, progress, token: token).ConfigureAwait(false);
             return UpdateDataStoreReset.ToWorkflowCheck(search);
         }
         if (kind == RepairKind.BitsJobRetry)
@@ -1794,8 +1794,8 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         }
         if (ServiceRecovery.ServiceName(kind) is not null)
         {
-            Task<WorkflowCheck> Inspect(CancellationToken cancellationToken) => ServiceRecovery.CheckAsync(kind, cancellationToken,
-                kind is RepairKind.WinHttpAutoProxyService or RepairKind.WindowsUpdateMedicService);
+            Task<WorkflowCheck> Inspect(CancellationToken cancellationToken) => ServiceRecovery.CheckAsync(kind, kind is RepairKind.WinHttpAutoProxyService or RepairKind.WindowsUpdateMedicService,
+                token: cancellationToken);
             var reconciliation = await ServiceStartReconciliation.ReconcileAsync(kind, RepairRecoveryStore.ForCurrentUser(), Inspect, token).ConfigureAwait(false);
             if (reconciliation.Outcome != ServiceStartReconciliationOutcome.NoPending)
                 return new("Service start recovery", reconciliation.Outcome == ServiceStartReconciliationOutcome.Verified
@@ -1858,7 +1858,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         if (kind == RepairKind.TimeSourceConfiguration)
         {
             progress?.Report("Inspecting domain role, policy ownership and stored Windows Time source configuration.");
-            var preview = await TimePlanning.PreviewAsync(TimeOptions, token).ConfigureAwait(false);
+            var preview = await TimePlanning.PreviewAsync(TimeOptions, token: token).ConfigureAwait(false);
             return TimeConfigurationDiagnostics.AssessSelection(TimeOptions, preview.Environment, preview.Plan);
         }
         if (kind == RepairKind.WmiRepository)
@@ -1881,7 +1881,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
                     ? CheckState.Information : CheckState.Attention, reconciliation.Detail);
             progress?.Report("Correlating exact paused queues with visible waiting print jobs...");
             var assessment = PrintQueueRepairEligibility.Assess(await Inspect(token).ConfigureAwait(false),
-                await PrintJobDiagnostics.CaptureAsync(token).ConfigureAwait(false));
+                await PrintJobDiagnostics.CaptureAsync(token: token).ConfigureAwait(false));
             LastPrintQueueTargets = assessment.Targets;
             return assessment.Check;
         }
@@ -1920,18 +1920,18 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
         {
             if (LastPrintQueueTargets is not { Count: > 0 })
                 throw new InvalidOperationException("Fresh exact paused-queue and waiting-job evidence is required before queue resume.");
-            return await Repairs.RunAsync(kind, folder, progress, token,
-                selectedPrinterQueues: LastPrintQueueTargets).ConfigureAwait(false);
+            return await Repairs.RunAsync(kind, folder, progress, selectedPrinterQueues: LastPrintQueueTargets,
+                cancellationToken: token).ConfigureAwait(false);
         }
         if (kind != RepairKind.DnsCache)
-            return await Repairs.RunAsync(kind, folder, progress, token).ConfigureAwait(false);
+            return await Repairs.RunAsync(kind, folder, progress, cancellationToken: token).ConfigureAwait(false);
         if (LastDnsLookup is null || !DnsCacheRecovery.IsEligible(LastDnsLookup))
             throw new InvalidOperationException("Fresh exact-hostname evidence is required before DNS cache recovery.");
         string dnsFolder = Path.Combine(folder, "dns-cache");
         if (File.Exists(Path.Combine(dnsFolder, "dns-cache.pending.json")))
         {
             var reconciliation = await DnsCacheReconciliation.RunAsync(dnsFolder,
-                DnsRecoveryHost.ResolveAsync, token, progress).ConfigureAwait(false);
+                DnsRecoveryHost.ResolveAsync, progress, token: token).ConfigureAwait(false);
             return new(Environment.MachineName, kind, DateTimeOffset.UtcNow, reconciliation.Detail,
                 reconciliation.ArchivePath ?? reconciliation.PendingPath, [])
             {
@@ -1939,7 +1939,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             };
         }
         var recovery = await DnsCacheRecovery.RunAsync(LastDnsLookup, true, DnsRecoveryHost,
-            DnsRecoveryJournalFactory(dnsFolder), token, progress).ConfigureAwait(false);
+            DnsRecoveryJournalFactory(dnsFolder), progress, token: token).ConfigureAwait(false);
         IReadOnlyList<RepairStepResult> steps = recovery.Flush is null
             ? [] : [new(DnsCacheRecovery.FlushStep(), recovery.Flush)];
         return new(Environment.MachineName, kind, DateTimeOffset.UtcNow, recovery.Detail,

@@ -30,7 +30,7 @@ public static class TcpDiagnostics
     }
 
     public static async Task<TcpCheckResult> CheckAsync(string host, int port, TimeSpan? timeout = null,
-        CancellationToken token = default, Func<string, int, CancellationToken, Task>? connector = null)
+        Func<string, int, CancellationToken, Task>? connector = null, CancellationToken token = default)
     {
         Validate(host, port);
         var limit = timeout ?? TimeSpan.FromSeconds(10);

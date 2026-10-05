@@ -13,12 +13,12 @@ public static class PrintJobDiagnostics
      (32, "Offline"), (64, "Paper out"), (128, "Printed"), (256, "Deleted"),
      (512, "Blocked"), (1024, "User intervention"), (2048, "Restart")];
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null, TimeSpan? timeout = null)
-        => Interpret(await CaptureAsync(token, execute, timeout).ConfigureAwait(false));
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        TimeSpan? timeout = null, CancellationToken token = default)
+        => Interpret(await CaptureAsync(execute, timeout, token: token).ConfigureAwait(false));
 
-    public static async Task<ToolResult> CaptureAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null, TimeSpan? timeout = null)
+    public static async Task<ToolResult> CaptureAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        TimeSpan? timeout = null, CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         TimeSpan limit = timeout ?? TimeSpan.FromSeconds(40);

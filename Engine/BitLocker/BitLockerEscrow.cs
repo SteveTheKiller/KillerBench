@@ -45,8 +45,8 @@ public static class BitLockerEscrow
     }
 
     public static async Task<BitLockerEscrowResult> RunAsync(string volume, BitLockerEscrowTarget target, Guid protector, bool execute,
-        string journalFolder, IBitLockerEscrowHost host, IProgress<string>? progress = null, CancellationToken token = default,
-        TimeSpan? operationTimeout = null)
+        string journalFolder, IBitLockerEscrowHost host, IProgress<string>? progress = null, TimeSpan? operationTimeout = null,
+        CancellationToken token = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(journalFolder);
         ArgumentNullException.ThrowIfNull(host);
@@ -63,7 +63,7 @@ public static class BitLockerEscrow
 
         Report(progress, "Inspecting " + volume + ", its protectors and directory membership.");
         BitLockerEscrowState before;
-        try { before = await Required(ct => host.InspectAsync(volume, ct), "BitLocker escrow inspection", token, TimeSpan.FromSeconds(45)).ConfigureAwait(false); }
+        try { before = await Required(ct => host.InspectAsync(volume, ct), "BitLocker escrow inspection", TimeSpan.FromSeconds(45), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(volume, target, protector, BitLockerEscrowOutcome.Blocked, "BitLocker escrow eligibility could not be established: " + error.Message); }
         string? blocker = EligibilityBlocker(volume, target, protector, before);
@@ -78,7 +78,7 @@ public static class BitLockerEscrow
         try
         {
             Report(progress, "Repeating protector and membership checks immediately before the request.");
-            var fresh = await Required(ct => host.InspectAsync(volume, ct), "Final BitLocker escrow inspection", token, TimeSpan.FromSeconds(45)).ConfigureAwait(false);
+            var fresh = await Required(ct => host.InspectAsync(volume, ct), "Final BitLocker escrow inspection", TimeSpan.FromSeconds(45), token: token).ConfigureAwait(false);
             if (EligibilityBlocker(volume, target, protector, fresh) is not null || !SameIdentity(before, fresh) || !host.IsAdministrator)
             {
                 result = new(volume, target, protector, BitLockerEscrowOutcome.Blocked,
@@ -89,10 +89,10 @@ public static class BitLockerEscrow
             {
                 Report(progress, "Sending the recovery-password backup request to " + TargetName(target) + ".");
                 dispatched = true;
-                command = await Required(ct => host.EscrowAsync(volume, target, protector, ct), "BitLocker escrow", token, limit).ConfigureAwait(false);
+                command = await Required(ct => host.EscrowAsync(volume, target, protector, ct), "BitLocker escrow", limit, token: token).ConfigureAwait(false);
                 Report(progress, "Confirming the same protector remains on " + volume + ".");
                 BitLockerEscrowState? after = null;
-                try { after = await Required(ct => host.InspectAsync(volume, ct), "BitLocker escrow verification", token, TimeSpan.FromSeconds(45)).ConfigureAwait(false); }
+                try { after = await Required(ct => host.InspectAsync(volume, ct), "BitLocker escrow verification", TimeSpan.FromSeconds(45), token: token).ConfigureAwait(false); }
                 catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error)) { }
                 bool unchanged = after is not null && SameIdentity(before, after) && HasRecoveryPassword(after, protector);
                 result = !Complete(command)
@@ -121,7 +121,7 @@ public static class BitLockerEscrow
                 dispatched ? "The backup request was interrupted: " + error.Message
                     : "Final escrow eligibility was unavailable: " + error.Message + ". No backup request was sent.", before, command, JournalPath: journalPath);
         }
-        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         Report(progress, result.Detail);
         return result;
     }
@@ -163,7 +163,7 @@ public static class BitLockerEscrow
     private static bool Unavailable(Exception error) => error is IOException or InvalidDataException or UnauthorizedAccessException or
         InvalidOperationException or NotSupportedException or TimeoutException or System.ComponentModel.Win32Exception or
         System.Security.SecurityException or OperationCanceledException;
-    private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name, CancellationToken token, TimeSpan limit)
+    private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name, TimeSpan limit, CancellationToken token)
     {
         var pending = operation(token) ?? throw new InvalidOperationException(name + " provider returned no task.");
         return await pending.WaitAsync(limit, token).ConfigureAwait(false) ?? throw new InvalidDataException(name + " provider returned no evidence.");

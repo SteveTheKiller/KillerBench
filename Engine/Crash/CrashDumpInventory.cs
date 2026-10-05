@@ -10,12 +10,12 @@ public static class CrashDumpInventory
         if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Windows dump discovery requires Windows.");
         using var limit = CancellationTokenSource.CreateLinkedTokenSource(token);
         limit.CancelAfter(TimeSpan.FromSeconds(15));
-        try { return await Task.Run(() => InspectDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Windows), limit.Token, CrashDumpConfiguration.ReadSettings(limit.Token)), limit.Token).WaitAsync(limit.Token).ConfigureAwait(false); }
+        try { return await Task.Run(() => InspectDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Windows), CrashDumpConfiguration.ReadSettings(limit.Token), token: limit.Token), limit.Token).WaitAsync(limit.Token).ConfigureAwait(false); }
         catch (OperationCanceledException) when (!token.IsCancellationRequested)
         { return new([], false, ["Dump metadata discovery timed out. Coverage is unavailable."]); }
     }
 
-    public static CrashDumpInventoryResult InspectDirectory(string windowsDirectory, CancellationToken token = default, CrashDumpSettings? settings = null)
+    public static CrashDumpInventoryResult InspectDirectory(string windowsDirectory, CrashDumpSettings? settings = null, CancellationToken token = default)
     {
         string root = Path.GetFullPath(windowsDirectory);
         var files = new List<CrashDumpFile>();

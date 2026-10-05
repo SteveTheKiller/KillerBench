@@ -48,8 +48,8 @@ internal static class PrinterOfflineChecks
             using var stop = new CancellationTokenSource();
             var provider = new TaskCompletionSource<ToolResult>();
             Task operation = discovery
-                ? PrinterDiagnostics.DiscoverAsync(stop.Token, execute: (_, _) => provider.Task)
-                : PrinterDiagnostics.CheckOfflineAsync(["A"], stop.Token, execute: (_, _) => provider.Task);
+                ? PrinterDiagnostics.DiscoverAsync(execute: (_, _) => provider.Task, token: stop.Token)
+                : PrinterDiagnostics.CheckOfflineAsync(["A"], execute: (_, _) => provider.Task, token: stop.Token);
             stop.Cancel();
             try { await operation.WaitAsync(TimeSpan.FromSeconds(2)); throw new Exception("Printer query ignored cancellation"); }
             catch (OperationCanceledException) { }

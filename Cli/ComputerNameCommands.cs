@@ -35,7 +35,7 @@ internal static class ComputerNameCommands
             }
             if (rename)
             {
-                var result = await ComputerRename.RunAsync(args[1], execute, folder, new WindowsComputerRenameHost(), progress, stop.Token);
+                var result = await ComputerRename.RunAsync(args[1], execute, folder, new WindowsComputerRenameHost(), progress, token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
                 return result.GetExitCode();
             }

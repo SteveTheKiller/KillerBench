@@ -11,18 +11,18 @@ public static class CommonDiagnostics
             throw new ArgumentException("Select one or more supported diagnostic scopes, up to 64 selections.", nameof(selectedScopes));
         return Array.AsReadOnly(Enum.GetValues<CommonDiagnosticScope>().Where(scope => requested is null || requested.Contains(scope)).ToArray());
     }
-    public static Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default,
-        IProgress<string>? progress = null,
+    public static Task<IReadOnlyList<WorkflowCheck>> CheckAsync(IProgress<string>? progress = null,
         Func<CommonDiagnosticScope, CancellationToken, Task<IReadOnlyList<WorkflowCheck>>>? collect = null,
-        Func<IReadOnlyList<WorkflowCheck>, Task>? checkpoint = null, TimeSpan? scopeTimeout = null,
-        IReadOnlyCollection<CommonDiagnosticScope>? selectedScopes = null, KnowledgeCatalogCollection? knowledgeCatalogs = null) =>
-        CheckAsync(TimeSpan.FromSeconds(15), token, progress, collect, checkpoint, scopeTimeout, selectedScopes, knowledgeCatalogs);
+        Func<IReadOnlyList<WorkflowCheck>, Task>? checkpoint = null,
+        TimeSpan? scopeTimeout = null, IReadOnlyCollection<CommonDiagnosticScope>? selectedScopes = null,
+        KnowledgeCatalogCollection? knowledgeCatalogs = null, CancellationToken token = default) =>
+        CheckAsync(TimeSpan.FromSeconds(15), progress, collect, checkpoint, scopeTimeout, selectedScopes, knowledgeCatalogs, token: token);
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(TimeSpan checkpointTimeout, CancellationToken token = default,
-        IProgress<string>? progress = null,
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(TimeSpan checkpointTimeout, IProgress<string>? progress = null,
         Func<CommonDiagnosticScope, CancellationToken, Task<IReadOnlyList<WorkflowCheck>>>? collect = null,
-        Func<IReadOnlyList<WorkflowCheck>, Task>? checkpoint = null, TimeSpan? scopeTimeout = null,
-        IReadOnlyCollection<CommonDiagnosticScope>? selectedScopes = null, KnowledgeCatalogCollection? knowledgeCatalogs = null)
+        Func<IReadOnlyList<WorkflowCheck>, Task>? checkpoint = null,
+        TimeSpan? scopeTimeout = null, IReadOnlyCollection<CommonDiagnosticScope>? selectedScopes = null,
+        KnowledgeCatalogCollection? knowledgeCatalogs = null, CancellationToken token = default)
     {
         if (checkpointTimeout <= TimeSpan.Zero || checkpointTimeout > TimeSpan.FromSeconds(30))
             throw new ArgumentOutOfRangeException(nameof(checkpointTimeout));
@@ -31,7 +31,7 @@ public static class CommonDiagnostics
         var scopes = SelectScopes(selectedScopes);
         var completed = new Dictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>>();
         bool usingDefaultCollector = collect is null;
-        collect ??= (scope, innerToken) => CollectAsync(scope, innerToken, knowledgeCatalogs, completed);
+        collect ??= (scope, innerToken) => CollectAsync(scope, knowledgeCatalogs, completed, token: innerToken);
         progress = progress is null ? null : new DiagnosticProgress(progress);
         var findings = new List<WorkflowCheck>();
         for (int scopeIndex = 0; scopeIndex < scopes.Count; scopeIndex++)
@@ -91,14 +91,14 @@ public static class CommonDiagnostics
         return findings.AsReadOnly();
     }
 
-    private static async Task<IReadOnlyList<WorkflowCheck>> CollectAsync(CommonDiagnosticScope scope, CancellationToken token,
-        KnowledgeCatalogCollection? knowledgeCatalogs, IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed) => scope switch
+    private static async Task<IReadOnlyList<WorkflowCheck>> CollectAsync(CommonDiagnosticScope scope, KnowledgeCatalogCollection? knowledgeCatalogs,
+        IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed, CancellationToken token) => scope switch
     {
         CommonDiagnosticScope.DeviceProblems => await DeviceDiagnostics.CheckAsync(DeviceCategory.Problems, knowledgeCatalogs, token).ConfigureAwait(false),
         CommonDiagnosticScope.Vitals => await CollectVitalsAsync(token).ConfigureAwait(false),
         CommonDiagnosticScope.PrinterDrivers => await PrinterDriverDiagnostics.CheckAsync(token).ConfigureAwait(false),
-        CommonDiagnosticScope.PrinterPorts => await PrinterPortDiagnostics.CheckAsync(token).ConfigureAwait(false),
-        CommonDiagnosticScope.PrintJobs => await PrintJobDiagnostics.CheckAsync(token).ConfigureAwait(false),
+        CommonDiagnosticScope.PrinterPorts => await PrinterPortDiagnostics.CheckAsync(token: token).ConfigureAwait(false),
+        CommonDiagnosticScope.PrintJobs => await PrintJobDiagnostics.CheckAsync(token: token).ConfigureAwait(false),
         CommonDiagnosticScope.AppPackages => AppPackageDiagnostics.Describe(await AppPackageInventory.ReadAsync(token: token).ConfigureAwait(false)),
         CommonDiagnosticScope.Security => await CollectSecurityAsync(token).ConfigureAwait(false),
         CommonDiagnosticScope.TimeConfiguration => [await TimeConfigurationDiagnostics.CheckAsync(token).ConfigureAwait(false)],
@@ -113,16 +113,16 @@ public static class CommonDiagnostics
         CommonDiagnosticScope.TimeHistory => [await TimeServiceEvents.CheckAsync(token).ConfigureAwait(false)],
         CommonDiagnosticScope.SystemVolumeCapacity => [VolumeCapacity.Check(StorageDiagnostics.SystemVolume())],
         CommonDiagnosticScope.ShutdownHistory => [await ShutdownEvents.CheckAsync(token).ConfigureAwait(false)],
-        CommonDiagnosticScope.BackupHistory => await BackupEvents.CheckAsync(token).ConfigureAwait(false),
+        CommonDiagnosticScope.BackupHistory => await BackupEvents.CheckAsync(token: token).ConfigureAwait(false),
         CommonDiagnosticScope.VssWriters => [await VssWriters.CheckAsync(token).ConfigureAwait(false)],
         CommonDiagnosticScope.BackgroundTransfers => [await BitsDiagnostics.CheckAsync(token: token).ConfigureAwait(false)],
         CommonDiagnosticScope.ScheduledTasks => await ScheduledTaskDiagnostics.CheckAsync(token).ConfigureAwait(false),
         CommonDiagnosticScope.WindowsLicensing => [await WindowsLicensingDiagnostics.CheckAsync(token).ConfigureAwait(false)],
-        CommonDiagnosticScope.EventChannels => await EventLogCapacityDiagnostics.CheckAsync(token).ConfigureAwait(false),
+        CommonDiagnosticScope.EventChannels => await EventLogCapacityDiagnostics.CheckAsync(token: token).ConfigureAwait(false),
         CommonDiagnosticScope.ReliabilityHistory => await ReliabilityHistory.CheckAsync(token).ConfigureAwait(false),
         CommonDiagnosticScope.HardwareErrorHistory => [await HardwareErrorEvents.CheckAsync(token).ConfigureAwait(false)],
         CommonDiagnosticScope.DriverInstallHistory => await SetupApiDriverInstall.CheckAsync(token).ConfigureAwait(false),
-        CommonDiagnosticScope.CrashEvidence => await CollectCrashEvidenceAsync(token, knowledgeCatalogs).ConfigureAwait(false),
+        CommonDiagnosticScope.CrashEvidence => await CollectCrashEvidenceAsync(knowledgeCatalogs, token: token).ConfigureAwait(false),
         CommonDiagnosticScope.FirewallProfiles => await CollectFirewallConfigurationAsync(token).ConfigureAwait(false),
         CommonDiagnosticScope.WindowsUpdateContext => await CollectWindowsUpdateContextAsync(token).ConfigureAwait(false),
         CommonDiagnosticScope.SystemVolumeDirtyBit => [await VolumeDirtyStatus.CheckAsync(StorageDiagnostics.SystemVolume(), token).ConfigureAwait(false)],
@@ -136,17 +136,17 @@ public static class CommonDiagnostics
             await CertificateChainDiagnostics.CheckAsync(token).ConfigureAwait(false)
         ],
         CommonDiagnosticScope.RestartState => [RestartDiagnostics.Check(), PendingFileOperationDiagnostics.Check()],
-        CommonDiagnosticScope.ServicingTransitions => await CollectServicingTransitionsAsync(token, completed).ConfigureAwait(false),
-        CommonDiagnosticScope.NetworkPathReadiness => await CollectNetworkPathReadinessAsync(token, completed).ConfigureAwait(false),
-        CommonDiagnosticScope.StorageReadiness => await CollectStorageReadinessAsync(token, completed).ConfigureAwait(false),
-        CommonDiagnosticScope.PrintingReadiness => await CollectPrintingReadinessAsync(token, completed).ConfigureAwait(false),
-        CommonDiagnosticScope.InstallationReadiness => await CollectInstallationReadinessAsync(token, completed).ConfigureAwait(false),
-        CommonDiagnosticScope.ServiceReadiness => await CollectServiceReadinessAsync(token, completed).ConfigureAwait(false),
-        CommonDiagnosticScope.WindowsUpdateReadiness => await CollectWindowsUpdateReadinessAsync(token, completed).ConfigureAwait(false),
-        CommonDiagnosticScope.BackupReadiness => await CollectBackupReadinessAsync(token, completed).ConfigureAwait(false),
-        CommonDiagnosticScope.SystemStabilityReadiness => await CollectSystemStabilityReadinessAsync(token, knowledgeCatalogs, completed).ConfigureAwait(false),
-        CommonDiagnosticScope.SecurityReadiness => await CollectSecurityReadinessAsync(token, completed).ConfigureAwait(false),
-        CommonDiagnosticScope.ApplicationDeploymentReadiness => await CollectApplicationDeploymentReadinessAsync(token, completed).ConfigureAwait(false),
+        CommonDiagnosticScope.ServicingTransitions => await CollectServicingTransitionsAsync(completed, token: token).ConfigureAwait(false),
+        CommonDiagnosticScope.NetworkPathReadiness => await CollectNetworkPathReadinessAsync(completed, token: token).ConfigureAwait(false),
+        CommonDiagnosticScope.StorageReadiness => await CollectStorageReadinessAsync(completed, token: token).ConfigureAwait(false),
+        CommonDiagnosticScope.PrintingReadiness => await CollectPrintingReadinessAsync(completed, token: token).ConfigureAwait(false),
+        CommonDiagnosticScope.InstallationReadiness => await CollectInstallationReadinessAsync(completed, token: token).ConfigureAwait(false),
+        CommonDiagnosticScope.ServiceReadiness => await CollectServiceReadinessAsync(completed, token: token).ConfigureAwait(false),
+        CommonDiagnosticScope.WindowsUpdateReadiness => await CollectWindowsUpdateReadinessAsync(completed, token: token).ConfigureAwait(false),
+        CommonDiagnosticScope.BackupReadiness => await CollectBackupReadinessAsync(completed, token: token).ConfigureAwait(false),
+        CommonDiagnosticScope.SystemStabilityReadiness => await CollectSystemStabilityReadinessAsync(knowledgeCatalogs, completed, token: token).ConfigureAwait(false),
+        CommonDiagnosticScope.SecurityReadiness => await CollectSecurityReadinessAsync(completed, token: token).ConfigureAwait(false),
+        CommonDiagnosticScope.ApplicationDeploymentReadiness => await CollectApplicationDeploymentReadinessAsync(completed, token: token).ConfigureAwait(false),
         _ => throw new ArgumentOutOfRangeException(nameof(scope))
     };
 
@@ -159,27 +159,27 @@ public static class CommonDiagnostics
 
     private static async Task<IReadOnlyList<WorkflowCheck>> CollectSecurityAsync(CancellationToken token)
     {
-        var checks = new List<WorkflowCheck>(await SecurityDiagnostics.CheckAsync(token).ConfigureAwait(false));
+        var checks = new List<WorkflowCheck>(await SecurityDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
         checks.AddRange(UacPolicyDiagnostics.Check());
         checks.AddRange(await AppLockerPolicyDiagnostics.CheckAsync(token).ConfigureAwait(false));
         checks.AddRange(await DefenderProtectionDiagnostics.CheckAsync(token).ConfigureAwait(false));
         return checks.AsReadOnly();
     }
 
-    private static async Task<IReadOnlyList<WorkflowCheck>> CollectServicingTransitionsAsync(CancellationToken token,
-        IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed)
+    private static async Task<IReadOnlyList<WorkflowCheck>> CollectServicingTransitionsAsync(IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed,
+        CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         var packages = await ServicingPackageDiagnostics.CheckAsync(token).ConfigureAwait(false);
         var features = await OptionalFeatureDiagnostics.CheckAsync(token).ConfigureAwait(false);
-        var capabilities = await WindowsCapabilityDiagnostics.CheckAsync(token).ConfigureAwait(false);
+        var capabilities = await WindowsCapabilityDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
         var restart = Completed(completed, CommonDiagnosticScope.RestartState)?.FirstOrDefault(check => check.Name == "Restart") ?? RestartDiagnostics.Check();
         return WithReadinessSummary(CommonDiagnosticScope.ServicingTransitions,
             [packages, features, capabilities, restart, ServicingTransitionCorrelation.Check(packages, features, restart, token)], token);
     }
 
-    private static async Task<IReadOnlyList<WorkflowCheck>> CollectNetworkPathReadinessAsync(CancellationToken token,
-        IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed)
+    private static async Task<IReadOnlyList<WorkflowCheck>> CollectNetworkPathReadinessAsync(IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed,
+        CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         var checks = new List<WorkflowCheck>();
@@ -187,33 +187,33 @@ public static class CommonDiagnostics
         var ipAddresses = await IpAddressDiagnostics.CheckAsync(token).ConfigureAwait(false);
         checks.AddRange(ipAddresses);
         var profileTask = NetworkProfileDiagnostics.CheckAsync(token);
-        var ncsiPolicyTask = NcsiPolicyDiagnostics.CheckAsync(token);
+        var ncsiPolicyTask = NcsiPolicyDiagnostics.CheckAsync(token: token);
         var firewallTask = Completed(completed, CommonDiagnosticScope.FirewallProfiles) is { } savedFirewalls
             ? Task.FromResult(savedFirewalls) : FirewallProfiles.CheckAsync(token);
-        var firewallEventsTask = FirewallEvents.CheckAsync(token);
-        var firewallServiceEventsTask = FirewallServiceFailureEvents.CheckAsync(token);
-        var networkServiceEventsTask = NetworkServiceFailureEvents.CheckAsync(token);
-        var dnsServiceTask = ServiceInspection.ReadAsync([RepairKind.DnsClient], token);
-        var dhcpServiceTask = ServiceInspection.ReadAsync([RepairKind.DhcpClient], token);
+        var firewallEventsTask = FirewallEvents.CheckAsync(token: token);
+        var firewallServiceEventsTask = FirewallServiceFailureEvents.CheckAsync(token: token);
+        var networkServiceEventsTask = NetworkServiceFailureEvents.CheckAsync(token: token);
+        var dnsServiceTask = ServiceInspection.ReadAsync([RepairKind.DnsClient], token: token);
+        var dhcpServiceTask = ServiceInspection.ReadAsync([RepairKind.DhcpClient], token: token);
         var dnsTask = DnsServerDiagnostics.CheckAsync(token);
         var dnsClientTask = DnsClientConfigurationDiagnostics.CheckAsync(token);
-        var dnsPolicyTask = DnsNrptPolicyDiagnostics.CheckAsync(token);
-        var dnsCacheTask = DnsClientCacheDiagnostics.CheckAsync(token);
-        var dnsEventsTask = DnsClientEvents.CheckAsync(token);
+        var dnsPolicyTask = DnsNrptPolicyDiagnostics.CheckAsync(token: token);
+        var dnsCacheTask = DnsClientCacheDiagnostics.CheckAsync(token: token);
+        var dnsEventsTask = DnsClientEvents.CheckAsync(token: token);
         var routeTask = RouteDiagnostics.CheckAsync(token);
-        var routePriorityTask = RoutePriorityDiagnostics.CheckAsync(token);
-        var interfaceConfigurationTask = IpInterfaceConfigurationDiagnostics.CheckAsync(token);
-        var dhcpLeaseTask = DhcpLeaseDiagnostics.CheckAsync(token);
-        var dhcpEventsTask = DhcpClientEvents.CheckAsync(token);
-        var neighborCacheTask = NeighborCacheDiagnostics.CheckAsync(token);
-        var adapterBindingTask = AdapterBindingDiagnostics.CheckAsync(token);
-        var adapterStatisticsTask = AdapterStatisticsDiagnostics.CheckAsync(token);
-        var tcpPortPressureTask = TcpPortPressureDiagnostics.CheckAsync(token);
-        var tcpSettingTask = TcpSettingDiagnostics.CheckAsync(token);
-        var networkOffloadTask = NetworkOffloadDiagnostics.CheckAsync(token);
-        var winsockCatalogTask = WinsockCatalogDiagnostics.CheckAsync(token);
-        var winsockNamespaceTask = WinsockNamespaceDiagnostics.CheckAsync(token);
-        var winsockProviderFileTask = WinsockProviderFileDiagnostics.CheckAsync(token);
+        var routePriorityTask = RoutePriorityDiagnostics.CheckAsync(token: token);
+        var interfaceConfigurationTask = IpInterfaceConfigurationDiagnostics.CheckAsync(token: token);
+        var dhcpLeaseTask = DhcpLeaseDiagnostics.CheckAsync(token: token);
+        var dhcpEventsTask = DhcpClientEvents.CheckAsync(token: token);
+        var neighborCacheTask = NeighborCacheDiagnostics.CheckAsync(token: token);
+        var adapterBindingTask = AdapterBindingDiagnostics.CheckAsync(token: token);
+        var adapterStatisticsTask = AdapterStatisticsDiagnostics.CheckAsync(token: token);
+        var tcpPortPressureTask = TcpPortPressureDiagnostics.CheckAsync(token: token);
+        var tcpSettingTask = TcpSettingDiagnostics.CheckAsync(token: token);
+        var networkOffloadTask = NetworkOffloadDiagnostics.CheckAsync(token: token);
+        var winsockCatalogTask = WinsockCatalogDiagnostics.CheckAsync(token: token);
+        var winsockNamespaceTask = WinsockNamespaceDiagnostics.CheckAsync(token: token);
+        var winsockProviderFileTask = WinsockProviderFileDiagnostics.CheckAsync(token: token);
         var hostsTask = HostsFileDiagnostics.CheckAsync(token);
         var profiles = await profileTask.ConfigureAwait(false);
         checks.AddRange(profiles);
@@ -276,29 +276,29 @@ public static class CommonDiagnostics
         return WithReadinessSummary(CommonDiagnosticScope.NetworkPathReadiness, checks, token);
     }
 
-    private static async Task<IReadOnlyList<WorkflowCheck>> CollectStorageReadinessAsync(CancellationToken token,
-        IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed)
+    private static async Task<IReadOnlyList<WorkflowCheck>> CollectStorageReadinessAsync(IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed,
+        CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         var topologyTask = StorageTopologyDiagnostics.CheckAsync(token);
         var reliabilityTask = Completed(completed, CommonDiagnosticScope.StorageReliability) is { } savedReliability
             ? Task.FromResult(savedReliability) : StorageReliability.CheckAsync(token);
         var spacesTask = StorageSpacesDiagnostics.CheckAsync(token);
-        var shadowStorageTask = ShadowStorageDiagnostics.CheckAsync(token);
+        var shadowStorageTask = ShadowStorageDiagnostics.CheckAsync(token: token);
         var historyTask = Completed(completed, CommonDiagnosticScope.StorageHistory)?.SingleOrDefault() is { } savedHistory
             ? Task.FromResult(savedHistory) : StorageEvents.CheckAsync(token);
         var dirtyTask = Completed(completed, CommonDiagnosticScope.SystemVolumeDirtyBit)?.SingleOrDefault() is { } savedDirty
             ? Task.FromResult(savedDirty) : VolumeDirtyStatus.CheckAsync(StorageDiagnostics.SystemVolume(), token);
-        var selfHealingTask = NtfsSelfHealingDiagnostics.CheckAsync(StorageDiagnostics.SystemVolume(), token);
-        var deleteNotificationTask = DeleteNotificationDiagnostics.CheckAsync(token);
-        var pageFileTask = PageFileDiagnostics.CheckAsync(token);
-        var diskQuotaTask = DiskQuotaDiagnostics.CheckAsync(token);
+        var selfHealingTask = NtfsSelfHealingDiagnostics.CheckAsync(StorageDiagnostics.SystemVolume(), token: token);
+        var deleteNotificationTask = DeleteNotificationDiagnostics.CheckAsync(token: token);
+        var pageFileTask = PageFileDiagnostics.CheckAsync(token: token);
+        var diskQuotaTask = DiskQuotaDiagnostics.CheckAsync(token: token);
         var storageSenseTask = StorageSenseTaskDiagnostics.CheckAsync(token);
         var diskCleanupTask = DiskCleanupTaskDiagnostics.CheckAsync(token);
         var diskDiagnosticTask = DiskDiagnosticCorrelation.CheckAsync(token);
-        var storageJobTask = StorageJobDiagnostics.CheckAsync(token);
+        var storageJobTask = StorageJobDiagnostics.CheckAsync(token: token);
         var physicalDiskTask = PhysicalDiskDiagnostics.CheckAsync(token);
-        var serviceHistoryTask = StorageServiceFailureEvents.CheckAsync(token);
+        var serviceHistoryTask = StorageServiceFailureEvents.CheckAsync(token: token);
         var topology = await topologyTask.ConfigureAwait(false);
         var history = await historyTask.ConfigureAwait(false);
         var reliability = await reliabilityTask.ConfigureAwait(false);
@@ -345,31 +345,31 @@ public static class CommonDiagnostics
         return WithReadinessSummary(CommonDiagnosticScope.StorageReadiness, checks, token);
     }
 
-    private static async Task<IReadOnlyList<WorkflowCheck>> CollectPrintingReadinessAsync(CancellationToken token,
-        IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed)
+    private static async Task<IReadOnlyList<WorkflowCheck>> CollectPrintingReadinessAsync(IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed,
+        CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         var driverTask = Completed(completed, CommonDiagnosticScope.PrinterDrivers) is { } savedDrivers
             ? Task.FromResult(savedDrivers) : PrinterDriverDiagnostics.CheckAsync(token);
-        var driverFileTask = PrinterDriverFileDiagnostics.CheckAsync(token);
-        var driverModelTask = PrinterDriverModelDiagnostics.CheckAsync(token);
+        var driverFileTask = PrinterDriverFileDiagnostics.CheckAsync(token: token);
+        var driverModelTask = PrinterDriverModelDiagnostics.CheckAsync(token: token);
         var defaultPrinterTask = DefaultPrinterDiagnostics.CheckAsync(token);
-        var conditionTask = PrinterConditionDiagnostics.CheckAsync(token);
-        var attributeTask = PrinterQueueAttributeDiagnostics.CheckAsync(token);
+        var conditionTask = PrinterConditionDiagnostics.CheckAsync(token: token);
+        var attributeTask = PrinterQueueAttributeDiagnostics.CheckAsync(token: token);
         var portTask = Completed(completed, CommonDiagnosticScope.PrinterPorts) is { } savedPorts
-            ? Task.FromResult(savedPorts) : PrinterPortDiagnostics.CheckAsync(token);
+            ? Task.FromResult(savedPorts) : PrinterPortDiagnostics.CheckAsync(token: token);
         var endpointTask = PrinterEndpointDiagnostics.CheckAsync(token);
         var extensionTask = PrintExtensionDiagnostics.CheckAsync(token);
-        var extensionFileTask = PrintExtensionFileDiagnostics.CheckAsync(token);
+        var extensionFileTask = PrintExtensionFileDiagnostics.CheckAsync(token: token);
         var jobTask = Completed(completed, CommonDiagnosticScope.PrintJobs) is { } savedJobs
-            ? Task.FromResult(savedJobs) : PrintJobDiagnostics.CheckAsync(token);
-        var spoolerStateTask = ServiceInspection.ReadAsync([RepairKind.PrintSpooler], token);
+            ? Task.FromResult(savedJobs) : PrintJobDiagnostics.CheckAsync(token: token);
+        var spoolerStateTask = ServiceInspection.ReadAsync([RepairKind.PrintSpooler], token: token);
         var savedPrintingHistory = Completed(completed, CommonDiagnosticScope.PrintingHistory);
         var historyTask = savedPrintingHistory?.SingleOrDefault(check => check.Name == "Recent print-service events") is { } savedPrintHistory
             ? Task.FromResult(savedPrintHistory) : PrintServiceEvents.CheckAsync(token);
         var operationalHistoryTask = savedPrintingHistory?.SingleOrDefault(check => check.Name == "PrintService operational history") is { } savedOperationalHistory
-            ? Task.FromResult(savedOperationalHistory) : PrintServiceOperationalEvents.CheckAsync(token);
-        var spoolerFailureTask = PrintSpoolerFailureEvents.CheckAsync(token);
+            ? Task.FromResult(savedOperationalHistory) : PrintServiceOperationalEvents.CheckAsync(token: token);
+        var spoolerFailureTask = PrintSpoolerFailureEvents.CheckAsync(token: token);
         var spool = PrintSpoolDirectoryDiagnostics.Check();
         var drivers = await driverTask.ConfigureAwait(false);
         var history = await historyTask.ConfigureAwait(false);
@@ -385,7 +385,7 @@ public static class CommonDiagnostics
         var driverModels = await driverModelTask.ConfigureAwait(false);
         var ports = await portTask.ConfigureAwait(false);
         var endpoints = await endpointTask.ConfigureAwait(false);
-        var reachability = await PrinterEndpointReachability.CheckAsync(endpoints, token).ConfigureAwait(false);
+        var reachability = await PrinterEndpointReachability.CheckAsync(endpoints, token: token).ConfigureAwait(false);
         var extensions = await extensionTask.ConfigureAwait(false);
         var extensionFiles = await extensionFileTask.ConfigureAwait(false);
         var environment = PrintingEnvironmentCorrelation.Check(pointAndPrint, rendering, drivers, driverFiles,
@@ -413,8 +413,8 @@ public static class CommonDiagnostics
         return WithReadinessSummary(CommonDiagnosticScope.PrintingReadiness, checks, token);
     }
 
-    private static async Task<IReadOnlyList<WorkflowCheck>> CollectInstallationReadinessAsync(CancellationToken token,
-        IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed)
+    private static async Task<IReadOnlyList<WorkflowCheck>> CollectInstallationReadinessAsync(IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed,
+        CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         var historyTask = Completed(completed, CommonDiagnosticScope.InstallerHistory)?.SingleOrDefault() is { } savedHistory
@@ -423,9 +423,9 @@ public static class CommonDiagnostics
             ? savedActivity : [InstallerLoggingDiagnostics.Check(), await InstallerActivityDiagnostics.CheckAsync(token).ConfigureAwait(false)];
         var deploymentTask = AppDeploymentEvents.CheckAsync(token);
         var storeTask = StoreInstallEvents.CheckAsync(token);
-        var serviceFailureTask = WindowsInstallerFailureEvents.CheckAsync(token);
-        var engineFileTask = InstallerEngineFileDiagnostics.CheckAsync(token);
-        var serviceStateTask = ServiceInspection.ReadAsync([RepairKind.WindowsInstaller], token);
+        var serviceFailureTask = WindowsInstallerFailureEvents.CheckAsync(token: token);
+        var engineFileTask = InstallerEngineFileDiagnostics.CheckAsync(token: token);
+        var serviceStateTask = ServiceInspection.ReadAsync([RepairKind.WindowsInstaller], token: token);
         var history = await historyTask.ConfigureAwait(false);
         var pendingOperations = Completed(completed, CommonDiagnosticScope.RestartState)?
             .FirstOrDefault(check => check.Name == "Pending file operations") ?? PendingFileOperationDiagnostics.Check();
@@ -460,14 +460,14 @@ public static class CommonDiagnostics
         return WithReadinessSummary(CommonDiagnosticScope.InstallationReadiness, checks, token);
     }
 
-    private static async Task<IReadOnlyList<WorkflowCheck>> CollectServiceReadinessAsync(CancellationToken token,
-        IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed)
+    private static async Task<IReadOnlyList<WorkflowCheck>> CollectServiceReadinessAsync(IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed,
+        CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         var inventoryTask = ServiceInventoryDiagnostics.CheckAsync(token);
         var historyTask = Completed(completed, CommonDiagnosticScope.ServiceHistory)?.SingleOrDefault() is { } savedHistory
             ? Task.FromResult(savedHistory) : ServiceEvents.CheckAsync(token);
-        var currentTask = ServiceInspection.ReadAsync(Enum.GetValues<RepairKind>(), token);
+        var currentTask = ServiceInspection.ReadAsync(Enum.GetValues<RepairKind>(), token: token);
         var inventory = await inventoryTask.ConfigureAwait(false);
         var binaryTask = ServiceBinaryDiagnostics.CheckAsync(token);
         var pathQuotingTask = ServicePathQuotingDiagnostics.CheckAsync(token);
@@ -480,10 +480,10 @@ public static class CommonDiagnostics
         var pathQuoting = await pathQuotingTask.ConfigureAwait(false);
         var logon = await logonTask.ConfigureAwait(false);
         var dll = await dllTask.ConfigureAwait(false);
-        var dependencyConfigurationTask = ServiceDependencyConfigurationDiagnostics.CheckAsync(inventory, token);
-        var transitionTask = ServiceTransitionDiagnostics.CheckAsync(inventory, token);
-        var recoveryPolicyTask = ServiceRecoveryPolicyDiagnostics.CheckAsync(inventory, token);
-        var triggerTask = ServiceTriggerDiagnostics.CheckAsync(inventory, token);
+        var dependencyConfigurationTask = ServiceDependencyConfigurationDiagnostics.CheckAsync(inventory, token: token);
+        var transitionTask = ServiceTransitionDiagnostics.CheckAsync(inventory, token: token);
+        var recoveryPolicyTask = ServiceRecoveryPolicyDiagnostics.CheckAsync(inventory, token: token);
+        var triggerTask = ServiceTriggerDiagnostics.CheckAsync(inventory, token: token);
         var recoveryPolicy = await recoveryPolicyTask.ConfigureAwait(false);
         var dependencyConfiguration = await dependencyConfigurationTask.ConfigureAwait(false);
         var triggers = await triggerTask.ConfigureAwait(false);
@@ -507,27 +507,27 @@ public static class CommonDiagnostics
         return completed.AsReadOnly();
     }
 
-    private static async Task<IReadOnlyList<WorkflowCheck>> CollectWindowsUpdateReadinessAsync(CancellationToken token,
-        IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed)
+    private static async Task<IReadOnlyList<WorkflowCheck>> CollectWindowsUpdateReadinessAsync(IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed,
+        CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         var checks = new List<WorkflowCheck>();
         var updateContext = Completed(completed, CommonDiagnosticScope.WindowsUpdateContext) ??
             await CollectWindowsUpdateContextAsync(token).ConfigureAwait(false);
-        var serviceStates = await ServicingServiceStateDiagnostics.CheckAsync(token).ConfigureAwait(false);
+        var serviceStates = await ServicingServiceStateDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
         var serviceDlls = await ServiceDllDiagnostics.CheckSelectedAsync("Windows Update service DLLs",
             ["wuauserv", "BITS", "CryptSvc", "TrustedInstaller", "WaaSMedicSvc", "UsoSvc"], token).ConfigureAwait(false);
         var servicingChain = ServicingChainCorrelation.Check(serviceStates, serviceDlls, updateContext, token);
         var restartState = Completed(completed, CommonDiagnosticScope.RestartState) ?? [RestartDiagnostics.Check()];
         var servicingTransitions = Completed(completed, CommonDiagnosticScope.ServicingTransitions) ??
-            await CollectServicingTransitionsAsync(token, completed).ConfigureAwait(false);
+            await CollectServicingTransitionsAsync(completed, token: token).ConfigureAwait(false);
         var systemVolumeCapacity = Completed(completed, CommonDiagnosticScope.SystemVolumeCapacity) ??
             [VolumeCapacity.Check(StorageDiagnostics.SystemVolume())];
-        var reservedStorage = await ReservedStorageDiagnostics.CheckAsync(token).ConfigureAwait(false);
+        var reservedStorage = await ReservedStorageDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
         var backgroundTransfers = Completed(completed, CommonDiagnosticScope.BackgroundTransfers) ??
             [await BitsDiagnostics.CheckAsync(token: token).ConfigureAwait(false)];
         var networkPathReadiness = Completed(completed, CommonDiagnosticScope.NetworkPathReadiness) ??
-            await CollectNetworkPathReadinessAsync(token, completed).ConfigureAwait(false);
+            await CollectNetworkPathReadinessAsync(completed, token: token).ConfigureAwait(false);
         Add(updateContext);
         Add(serviceStates);
         Add([serviceDlls, servicingChain]);
@@ -556,25 +556,25 @@ public static class CommonDiagnostics
         IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed, CommonDiagnosticScope scope) =>
         completed.TryGetValue(scope, out var checks) ? checks : null;
 
-    private static async Task<IReadOnlyList<WorkflowCheck>> CollectBackupReadinessAsync(CancellationToken token,
-        IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed)
+    private static async Task<IReadOnlyList<WorkflowCheck>> CollectBackupReadinessAsync(IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed,
+        CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         var checks = new List<WorkflowCheck>();
-        var windowsBackup = await WindowsBackupSummary.CheckAsync(token).ConfigureAwait(false);
-        var fileHistoryState = await FileHistoryStatus.CheckAsync(token).ConfigureAwait(false);
-        var fileHistoryEvents = await FileHistoryEvents.CheckAsync(token).ConfigureAwait(false);
+        var windowsBackup = await WindowsBackupSummary.CheckAsync(token: token).ConfigureAwait(false);
+        var fileHistoryState = await FileHistoryStatus.CheckAsync(token: token).ConfigureAwait(false);
+        var fileHistoryEvents = await FileHistoryEvents.CheckAsync(token: token).ConfigureAwait(false);
         var backupEvents = Completed(completed, CommonDiagnosticScope.BackupHistory) ??
-            await BackupEvents.CheckAsync(token).ConfigureAwait(false);
+            await BackupEvents.CheckAsync(token: token).ConfigureAwait(false);
         var writerEvidence = Completed(completed, CommonDiagnosticScope.VssWriters) ??
             [await VssWriters.CheckAsync(token).ConfigureAwait(false)];
-        var providers = await VssProviderDiagnostics.CheckAsync(token).ConfigureAwait(false);
-        var serviceHistory = await BackupServiceFailureEvents.CheckAsync(token).ConfigureAwait(false);
-        var shadowCopies = await ShadowCopyDiagnostics.CheckAsync(token).ConfigureAwait(false);
+        var providers = await VssProviderDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
+        var serviceHistory = await BackupServiceFailureEvents.CheckAsync(token: token).ConfigureAwait(false);
+        var shadowCopies = await ShadowCopyDiagnostics.CheckAsync(token: token).ConfigureAwait(false);
         var restorePointEvidence = Completed(completed, CommonDiagnosticScope.SystemRestore) ??
             [await SystemRestoreDiagnostics.CheckAsync(token).ConfigureAwait(false)];
         var storageReadiness = Completed(completed, CommonDiagnosticScope.StorageReadiness) ??
-            await CollectStorageReadinessAsync(token, completed).ConfigureAwait(false);
+            await CollectStorageReadinessAsync(completed, token: token).ConfigureAwait(false);
         var restartState = Completed(completed, CommonDiagnosticScope.RestartState) ?? [RestartDiagnostics.Check()];
         Add([windowsBackup, fileHistoryState, fileHistoryEvents]);
         Add(backupEvents);
@@ -594,9 +594,9 @@ public static class CommonDiagnostics
             checks.AddRange(evidence.Where(check => !check.Name.EndsWith(" verdict", StringComparison.Ordinal)));
     }
 
-    private static async Task<IReadOnlyList<WorkflowCheck>> CollectSystemStabilityReadinessAsync(CancellationToken token,
-        KnowledgeCatalogCollection? knowledgeCatalogs,
-        IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed)
+    private static async Task<IReadOnlyList<WorkflowCheck>> CollectSystemStabilityReadinessAsync(KnowledgeCatalogCollection? knowledgeCatalogs,
+        IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed,
+        CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         var checks = new List<WorkflowCheck>();
@@ -605,7 +605,7 @@ public static class CommonDiagnostics
             await DeviceDiagnostics.CheckAsync(DeviceCategory.Problems, knowledgeCatalogs, token).ConfigureAwait(false);
         var reliability = Completed(completed, CommonDiagnosticScope.ReliabilityHistory) ?? await ReliabilityHistory.CheckAsync(token).ConfigureAwait(false);
         var hardwareErrors = Completed(completed, CommonDiagnosticScope.HardwareErrorHistory) ?? [await HardwareErrorEvents.CheckAsync(token).ConfigureAwait(false)];
-        var crashes = Completed(completed, CommonDiagnosticScope.CrashEvidence) ?? await CollectCrashEvidenceAsync(token, knowledgeCatalogs).ConfigureAwait(false);
+        var crashes = Completed(completed, CommonDiagnosticScope.CrashEvidence) ?? await CollectCrashEvidenceAsync(knowledgeCatalogs, token: token).ConfigureAwait(false);
         var shutdowns = Completed(completed, CommonDiagnosticScope.ShutdownHistory) ?? [await ShutdownEvents.CheckAsync(token).ConfigureAwait(false)];
         Add(vitals); Add(devices); Add(reliability); Add(hardwareErrors); Add(crashes); Add(shutdowns);
         checks.Add(SystemStabilityOperationalCorrelation.Check(vitals, devices, reliability, hardwareErrors, crashes, shutdowns, token));
@@ -615,8 +615,8 @@ public static class CommonDiagnostics
             checks.AddRange(evidence.Where(check => !check.Name.EndsWith(" verdict", StringComparison.Ordinal)));
     }
 
-    private static async Task<IReadOnlyList<WorkflowCheck>> CollectSecurityReadinessAsync(CancellationToken token,
-        IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed)
+    private static async Task<IReadOnlyList<WorkflowCheck>> CollectSecurityReadinessAsync(IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed,
+        CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         var checks = new List<WorkflowCheck>();
@@ -643,8 +643,8 @@ public static class CommonDiagnostics
             checks.AddRange(evidence.Where(check => !check.Name.EndsWith(" verdict", StringComparison.Ordinal)));
     }
 
-    private static async Task<IReadOnlyList<WorkflowCheck>> CollectApplicationDeploymentReadinessAsync(CancellationToken token,
-        IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed)
+    private static async Task<IReadOnlyList<WorkflowCheck>> CollectApplicationDeploymentReadinessAsync(IReadOnlyDictionary<CommonDiagnosticScope, IReadOnlyList<WorkflowCheck>> completed,
+        CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         var machineApplicationsTask = InstalledApplications.ReadAsync(InstalledApplicationScope.Machine, token);
@@ -657,7 +657,7 @@ public static class CommonDiagnostics
         var machineApplications = InstalledApplications.Describe(await machineApplicationsTask.ConfigureAwait(false))[0];
         var accountApplications = InstalledApplications.Describe(await accountApplicationsTask.ConfigureAwait(false))[0];
         var installationReadiness = Completed(completed, CommonDiagnosticScope.InstallationReadiness) ??
-            await CollectInstallationReadinessAsync(token, completed).ConfigureAwait(false);
+            await CollectInstallationReadinessAsync(completed, token: token).ConfigureAwait(false);
         var applicationHistory = Completed(completed, CommonDiagnosticScope.ApplicationHistory) ??
             [await ApplicationEvents.CheckAsync(token).ConfigureAwait(false)];
         var restartState = Completed(completed, CommonDiagnosticScope.RestartState) ?? [RestartDiagnostics.Check()];
@@ -671,8 +671,8 @@ public static class CommonDiagnostics
             checks.AddRange(evidence.Where(check => !check.Name.EndsWith(" verdict", StringComparison.Ordinal)));
     }
 
-    private static async Task<IReadOnlyList<WorkflowCheck>> CollectCrashEvidenceAsync(CancellationToken token,
-        KnowledgeCatalogCollection? knowledgeCatalogs)
+    private static async Task<IReadOnlyList<WorkflowCheck>> CollectCrashEvidenceAsync(KnowledgeCatalogCollection? knowledgeCatalogs,
+        CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         var checks = new List<WorkflowCheck> { CrashDumpConfiguration.Check(token) };
@@ -701,7 +701,7 @@ public static class CommonDiagnostics
     {
         token.ThrowIfCancellationRequested();
         var adminTask = PrintServiceEvents.CheckAsync(token);
-        var operationalTask = PrintServiceOperationalEvents.CheckAsync(token);
+        var operationalTask = PrintServiceOperationalEvents.CheckAsync(token: token);
         return
         [
             await adminTask.ConfigureAwait(false),
@@ -723,16 +723,16 @@ public static class CommonDiagnostics
             ComponentRepairSourceDiagnostics.Check(),
             DeliveryOptimizationPolicyDiagnostics.Check(),
             await UpdateServiceDiagnostics.CheckAsync(token).ConfigureAwait(false),
-            await WindowsUpdateEngineFileDiagnostics.CheckAsync(token).ConfigureAwait(false)
+            await WindowsUpdateEngineFileDiagnostics.CheckAsync(token: token).ConfigureAwait(false)
         ];
-        checks.AddRange(await ServicingServiceFailureEvents.CheckAsync(token).ConfigureAwait(false));
+        checks.AddRange(await ServicingServiceFailureEvents.CheckAsync(token: token).ConfigureAwait(false));
         checks.Add(await WindowsUpdateScheduledTaskDiagnostics.CheckAsync(token).ConfigureAwait(false));
         checks.Add(await UpdateHistoryDiagnostics.CheckAsync(token).ConfigureAwait(false));
         checks.Add(await InstalledHotfixDiagnostics.CheckAsync(token).ConfigureAwait(false));
         checks.Add(await DeliveryOptimizationDiagnostics.CheckAsync(token).ConfigureAwait(false));
-        checks.Add(await DeliveryOptimizationActivityDiagnostics.CheckAsync(token).ConfigureAwait(false));
-        checks.Add(await UpdateCacheDiagnostics.CheckAsync(token).ConfigureAwait(false));
-        checks.AddRange(await ServicingLogDiagnostics.CheckAsync(token).ConfigureAwait(false));
+        checks.Add(await DeliveryOptimizationActivityDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
+        checks.Add(await UpdateCacheDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
+        checks.AddRange(await ServicingLogDiagnostics.CheckAsync(token: token).ConfigureAwait(false));
         return checks.AsReadOnly();
     }
 

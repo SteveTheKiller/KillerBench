@@ -2,9 +2,9 @@ namespace KillerBench.Engine.Infrastructure;
 
 public static class JournalPersistence
 {
-    public static async Task WriteAsync(string path, string contents, CancellationToken token = default,
-        TimeSpan? timeout = null,
-        Func<string, string, CancellationToken, Task>? writeTemporary = null)
+    public static async Task WriteAsync(string path, string contents, TimeSpan? timeout = null,
+        Func<string, string, CancellationToken, Task>? writeTemporary = null,
+        CancellationToken token = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         ArgumentNullException.ThrowIfNull(contents);

@@ -56,7 +56,7 @@ internal static class NetworkOffloadChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await NetworkOffloadDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await NetworkOffloadDiagnostics.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents offload collection");
         Console.WriteLine("PASS: global network offload values, bounds, failures and read-only collection; fixtures only.");

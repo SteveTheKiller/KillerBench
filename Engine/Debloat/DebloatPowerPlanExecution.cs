@@ -36,8 +36,8 @@ public static class DebloatPowerPlanExecution
 
     public static async Task<DebloatPowerPlanChangeResult> RunAsync(DebloatPowerPlanChange change,
         bool execute, string journalFolder, IDebloatPowerPlanChangeHost host,
-        IProgress<string>? progress = null, CancellationToken token = default,
-        TimeSpan? executionTimeout = null)
+        IProgress<string>? progress = null, TimeSpan? executionTimeout = null,
+        CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(change);
         ArgumentException.ThrowIfNullOrWhiteSpace(journalFolder);
@@ -68,7 +68,7 @@ public static class DebloatPowerPlanExecution
             managed == true ? "Managed power policy is present. KillerBench will not override it." :
             "Managed power-policy status is unavailable. The active plan was not changed.");
         Report(progress, "Rechecking the complete power-plan inventory.");
-        var before = await Required(host.ReadAsync, "Power-plan inventory", token, TimeSpan.FromSeconds(30)).ConfigureAwait(false);
+        var before = await Required(host.ReadAsync, "Power-plan inventory", TimeSpan.FromSeconds(30), token: token).ConfigureAwait(false);
         if (!Eligible(before, change.TargetId, requireActive: false, out string reason))
             return new(change, DebloatPowerPlanOutcome.Blocked, reason, Before: before);
         if (!host.IsAdministrator)
@@ -79,7 +79,7 @@ public static class DebloatPowerPlanExecution
         {
             Schema = 1, Machine = Environment.MachineName, StartedUtc = DateTimeOffset.UtcNow,
             Change = change, Before = before, JournalPath = journalPath
-        }, Capture.JsonOptions), token).ConfigureAwait(false);
+        }, Capture.JsonOptions), token: token).ConfigureAwait(false);
         ToolResult? command = null;
         bool activationDispatched = false;
         DebloatPowerPlanChangeResult result;
@@ -89,7 +89,7 @@ public static class DebloatPowerPlanExecution
             var finalPolicyTask = host.HasManagedPowerPolicyAsync(token) ??
                 throw new InvalidOperationException("Managed power-policy inspection provider returned no task.");
             bool? finalManaged = await finalPolicyTask.WaitAsync(TimeSpan.FromSeconds(15), token).ConfigureAwait(false);
-            var current = await Required(host.ReadAsync, "Final power-plan inventory", token, TimeSpan.FromSeconds(30)).ConfigureAwait(false);
+            var current = await Required(host.ReadAsync, "Final power-plan inventory", TimeSpan.FromSeconds(30), token: token).ConfigureAwait(false);
             string finalReason = "Final power-plan eligibility changed.";
             if (finalManaged != false || !host.IsAdministrator ||
                 !Eligible(current, change.TargetId, requireActive: false, out finalReason) ||
@@ -103,14 +103,14 @@ public static class DebloatPowerPlanExecution
                             ? "The registered power-plan set changed after preparation. The active plan was not changed."
                             : finalReason + " The active plan was not changed.";
                 result = new(change, DebloatPowerPlanOutcome.Blocked, detail, journalPath, before, After: current);
-                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
                 File.Move(pendingPath, journalPath + ".prepared.json");
                 Report(progress, result.Detail);
                 return result;
             }
             Report(progress, "Activating the existing High performance power plan.");
             activationDispatched = true;
-            command = await Required(ct => host.ActivateAsync(change.TargetId, ct), "Power-plan activation", token, limit).ConfigureAwait(false);
+            command = await Required(ct => host.ActivateAsync(change.TargetId, ct), "Power-plan activation", limit, token: token).ConfigureAwait(false);
             if (command.TimedOut || command.Truncated || !string.IsNullOrWhiteSpace(command.Error))
                 result = new(change, DebloatPowerPlanOutcome.Uncertain,
                     "Activation evidence is incomplete. Reconcile the active plan before retrying.", journalPath, before, command);
@@ -120,7 +120,7 @@ public static class DebloatPowerPlanExecution
             else
             {
                 Report(progress, "Verifying the active power plan.");
-                var after = await Required(host.ReadAsync, "Power-plan verification", token, TimeSpan.FromSeconds(30)).ConfigureAwait(false);
+                var after = await Required(host.ReadAsync, "Power-plan verification", TimeSpan.FromSeconds(30), token: token).ConfigureAwait(false);
                 bool verified = Eligible(after, change.TargetId, requireActive: true, out _) &&
                     SameRegistrations(before, after);
                 result = new(change, verified ? DebloatPowerPlanOutcome.Verified : DebloatPowerPlanOutcome.Uncertain,
@@ -146,7 +146,7 @@ public static class DebloatPowerPlanExecution
                     : "Final power-plan inspection was unavailable before command dispatch: " + error.Message + ". The active plan was not changed.",
                 journalPath, before, command);
         }
-        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (result.Outcome == DebloatPowerPlanOutcome.Verified || !activationDispatched)
             File.Move(pendingPath, journalPath + ".prepared.json");
         Report(progress, result.Detail);
@@ -178,7 +178,7 @@ public static class DebloatPowerPlanExecution
                 .Select(plan => (plan.Id.ToUpperInvariant(), plan.Name)));
 
     private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name,
-        CancellationToken token, TimeSpan limit)
+        TimeSpan limit, CancellationToken token)
     {
         var pending = operation(token) ?? throw new InvalidOperationException(name + " provider returned no task.");
         return await pending.WaitAsync(limit, token).ConfigureAwait(false) ?? throw new InvalidDataException(name + " provider returned no evidence.");

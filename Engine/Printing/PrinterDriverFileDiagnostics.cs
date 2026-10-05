@@ -19,8 +19,8 @@ public static class PrinterDriverFileDiagnostics
         "$items+=[pscustomobject]@{name=[string]$driver.Name;environment=[string]$driver.PrinterEnvironment;declared=$declared;missing=$missing;signed=$signed;signatureReview=$review;nonExecutable=$nonExecutable;unknown=$unknown;errors=@($errors|Select-Object -First 8)}};" +
         "[pscustomobject]@{complete=$complete;items=$items}|ConvertTo-Json -Depth 4 -Compress";
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

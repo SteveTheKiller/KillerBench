@@ -58,7 +58,7 @@ internal static class StorageJobChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await StorageJobDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await StorageJobDiagnostics.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents storage job collection");
         Console.WriteLine("PASS: bounded Storage module job states, progress, privacy and read-only collection; fixtures only.");

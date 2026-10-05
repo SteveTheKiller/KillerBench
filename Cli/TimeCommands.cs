@@ -14,7 +14,7 @@ internal static class TimeCommands
             {
                 if (args.Length != 3 || args[1] != "--folder" || string.IsNullOrWhiteSpace(args[2]))
                     throw new ArgumentException("Use time-recover --folder PATH to check an interrupted time operation without retrying it.");
-                var recovery = await TimeConfigurationRecovery.ReconcileAsync(Path.GetFullPath(args[2]), stop.Token);
+                var recovery = await TimeConfigurationRecovery.ReconcileAsync(Path.GetFullPath(args[2]), token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(recovery, Capture.JsonOptions));
                 return recovery.GetExitCode();
             }
@@ -38,20 +38,20 @@ internal static class TimeCommands
             {
                 if (source is not (TimeSourceMode.CustomPeers or TimeSourceMode.DomainHierarchy))
                     throw new ArgumentException("time-verify requires --source DomainHierarchy or CustomPeers.");
-                bool verified = await TimeConfiguration.VerifyAsync(options, stop.Token);
+                bool verified = await TimeConfiguration.VerifyAsync(options, token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(new { Verified = verified, Note = verified
                     ? "Stored configuration and reported synchronization match the selected peers. Absolute clock accuracy is not measured. No settings changed."
                     : "Selected synchronization could not be verified. Configuration, policy ownership or status may be unavailable or different. No settings changed." }, Capture.JsonOptions));
                 return verified ? 0 : 3;
             }
-            var (environment, plan) = await TimePlanning.PreviewAsync(options, stop.Token);
+            var (environment, plan) = await TimePlanning.PreviewAsync(options, token: stop.Token);
             if (execute)
             {
                 string timeFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Time");
                 if (TimeConfigurationRecovery.HasPendingRecord(timeFolder))
                 {
                     Console.Error.WriteLine("A pending time-source change will be checked without retrying configuration or synchronization.");
-                    var recovery = await TimeConfigurationRecovery.ReconcileAsync(timeFolder, stop.Token);
+                    var recovery = await TimeConfigurationRecovery.ReconcileAsync(timeFolder, token: stop.Token);
                     Console.WriteLine(JsonSerializer.Serialize(recovery, Capture.JsonOptions));
                     return recovery.GetExitCode();
                 }

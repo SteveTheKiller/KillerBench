@@ -38,7 +38,7 @@ internal static class MsiProductCommands
             }
             if (repair)
             {
-                var result = await MsiRepair.RunAsync(productCode!, execute, folder, new WindowsMsiRepairHost(), progress, stop.Token);
+                var result = await MsiRepair.RunAsync(productCode!, execute, folder, new WindowsMsiRepairHost(), progress, token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
                 return result.GetExitCode();
             }

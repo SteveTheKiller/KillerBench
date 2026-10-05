@@ -16,8 +16,8 @@ public static class TcpPortPressureDiagnostics
         "$t6=@($c|Where-Object{$_.State-eq 'TimeWait'-and $_.LocalAddress-match ':'-and $_.LocalPort-ge $r6[0]-and $_.LocalPort-lt ($r6[0]+$r6[1])}|Select-Object -ExpandProperty LocalPort -Unique);" +
         "[pscustomobject]@{complete=$complete;ipv4Start=$r4[0];ipv4Count=$r4[1];ipv4InUse=$p4.Count;ipv4TimeWait=$t4.Count;ipv6Start=$r6[0];ipv6Count=$r6[1];ipv6InUse=$p6.Count;ipv6TimeWait=$t6.Count}|ConvertTo-Json -Compress";
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("TCP port-pressure inspection requires Windows.");

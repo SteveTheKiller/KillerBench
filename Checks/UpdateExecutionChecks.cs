@@ -106,7 +106,7 @@ internal static class UpdateExecutionChecks
         {
             try
             {
-                await UpdateReconciliation.TryResolveAsync(folder, new StalledRecovery(), recoveryStop.Token).WaitAsync(TimeSpan.FromSeconds(3));
+                await UpdateReconciliation.TryResolveAsync(folder, new StalledRecovery(), token: recoveryStop.Token).WaitAsync(TimeSpan.FromSeconds(3));
                 throw new Exception("Stalled recovery ignored cancellation");
             }
             catch (OperationCanceledException) { }
@@ -151,7 +151,7 @@ internal static class UpdateExecutionChecks
         using (var canceled = new CancellationTokenSource())
         {
             canceled.Cancel();
-            try { await UpdateReconciliation.TryResolveAsync(recoveryFolder, new RecoveryFixture(true), canceled.Token); throw new Exception("Canceled recovery completed"); }
+            try { await UpdateReconciliation.TryResolveAsync(recoveryFolder, new RecoveryFixture(true), token: canceled.Token); throw new Exception("Canceled recovery completed"); }
             catch (OperationCanceledException) { }
             Require(File.Exists(marker), "Canceled recovery retains guard");
         }

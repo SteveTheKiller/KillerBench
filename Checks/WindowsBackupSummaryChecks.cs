@@ -51,7 +51,7 @@ internal static class WindowsBackupSummaryChecks
             "Collector did not use one bounded read-only provider command");
         try
         {
-            await WindowsBackupSummary.CheckAsync(new CancellationToken(true), (_, _) => Task.FromResult(Result(success)));
+            await WindowsBackupSummary.CheckAsync((_, _) => Task.FromResult(Result(success)), token: new CancellationToken(true));
             throw new Exception("Windows Backup summary ignored cancellation");
         }
         catch (OperationCanceledException) { }

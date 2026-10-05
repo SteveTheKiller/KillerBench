@@ -16,7 +16,7 @@ internal static class ServiceDependencyChecks
                 {
                     dispatched++;
                     return Task.FromResult(new WorkflowCheck("Time", CheckState.Clear, "Running"));
-                }, stop.Token, new CancelServiceProgress(stop, atStart)).GetAwaiter().GetResult();
+                }, new CancelServiceProgress(stop, atStart), token: stop.Token).GetAwaiter().GetResult();
             }
             catch (OperationCanceledException) { canceled = true; }
             Require(canceled && dispatched == (atStart ? 0 : 1), "Stop during progress prevents dispatch or completed publication");
@@ -103,7 +103,7 @@ internal static class ServiceDependencyChecks
             { ServiceDependencies = new ServiceDependencyGraphResult([], true) { TargetStartup = 3 } })).GetAwaiter().GetResult().Single();
         Require(demandObservation.Detail.Contains("normal when idle"),
             "Read-only demand-start findings retain the idle-state explanation");
-        try { ServiceInspection.ReadAsync([RepairKind.WindowsAudio], (_, _) => throw new Exception("Provider must not run"), new CancellationToken(true)).GetAwaiter().GetResult(); throw new Exception("Inspection cancellation ignored"); }
+        try { ServiceInspection.ReadAsync([RepairKind.WindowsAudio], (_, _) => throw new Exception("Provider must not run"), token: new CancellationToken(true)).GetAwaiter().GetResult(); throw new Exception("Inspection cancellation ignored"); }
         catch (OperationCanceledException) { }
         var providerCanceled = ServiceInspection.ReadAsync([RepairKind.WindowsTime], (_, _) =>
             Task.FromCanceled<WorkflowCheck>(new CancellationToken(true))).GetAwaiter().GetResult();

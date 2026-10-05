@@ -42,7 +42,7 @@ internal static class CleanupCommands
             {
                 var removal = CleanupRemoval.RunAsync(new(targets, days, maximumFiles),
                     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Cleanup"),
-                    new Progress<string>(Console.Error.WriteLine), stop.Token).GetAwaiter().GetResult();
+                    new Progress<string>(Console.Error.WriteLine), token: stop.Token).GetAwaiter().GetResult();
                 Console.WriteLine(json ? JsonSerializer.Serialize(removal, Capture.JsonOptions) : removal.Format());
                 return removal.Status == "Stopped" ? 130 : removal.Status == "Finished" ? 0 : 3;
             }

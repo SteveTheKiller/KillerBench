@@ -216,12 +216,12 @@ internal static class CommonDiagnosticChecks
         bool canceled = false;
         try
         {
-            await CommonDiagnostics.CheckAsync(stop.Token, collect: (_, _) =>
+            await CommonDiagnostics.CheckAsync(collect: (_, _) =>
             {
                 calls++;
                 stop.Cancel();
                 return new TaskCompletionSource<IReadOnlyList<WorkflowCheck>>().Task;
-            }).WaitAsync(TimeSpan.FromSeconds(3));
+            }, token: stop.Token).WaitAsync(TimeSpan.FromSeconds(3));
         }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled && calls == 1, "Stop releases a stalled read-only collector and prevents later scopes");

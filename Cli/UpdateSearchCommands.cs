@@ -42,7 +42,7 @@ internal static class UpdateSearchCommands
         Console.CancelKeyPress += cancel;
         try
         {
-            var discovery = await UpdateDiscovery.SearchAsync(new(software, drivers, source), new Progress<string>(Console.Error.WriteLine), stop.Token);
+            var discovery = await UpdateDiscovery.SearchAsync(new(software, drivers, source), new Progress<string>(Console.Error.WriteLine), token: stop.Token);
             stop.Token.ThrowIfCancellationRequested();
             Console.WriteLine(JsonSerializer.Serialize(new
             {

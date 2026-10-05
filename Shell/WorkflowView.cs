@@ -765,7 +765,7 @@ public partial class MainWindow
                 else
                 {
                     var change = await Task.Run(() => PrivacyClipboardHistoryExecution.RunAsync(privacyAction == "On", true,
-                        privacyFolder, privacyHost, progress, stop.Token));
+                        privacyFolder, privacyHost, progress, token: stop.Token));
                     title = "CLIPBOARD HISTORY / " + change.Outcome + "\nRequested: " + (change.RequestedEnabled ? "On" : "Off");
                     detail = change.Detail;
                     journal = change.JournalPath;
@@ -802,7 +802,7 @@ public partial class MainWindow
                 else
                 {
                     var change = await Task.Run(() => PrivacyBooleanSettingExecution.RunAsync(privacyBooleanDefinition,
-                        privacyBooleanAction == "On", true, privacyFolder, privacyHost, progress, stop.Token));
+                        privacyBooleanAction == "On", true, privacyFolder, privacyHost, progress, token: stop.Token));
                     title = privacyBooleanDefinition.Title.ToUpperInvariant() + " / " + change.Outcome +
                         "\nRequested: " + (change.RequestedEnabled ? "On" : "Off");
                     detail = change.Detail;
@@ -840,7 +840,7 @@ public partial class MainWindow
                     else
                     {
                         var planResult = await Task.Run(() => DebloatPowerPlanExecution.RunAsync(
-                            DebloatPowerPlanExecution.CreateHighPerformance(), true, changeFolder, planHost, progress, stop.Token));
+                            DebloatPowerPlanExecution.CreateHighPerformance(), true, changeFolder, planHost, progress, token: stop.Token));
                         title = "HIGH PERFORMANCE POWER / " + planResult.Outcome;
                         detail = planResult.Detail;
                         journal = planResult.JournalPath;
@@ -861,7 +861,7 @@ public partial class MainWindow
                     else
                     {
                         var timerResult = await Task.Run(() => DebloatPowerTimerExecution.RunAsync(
-                            debloatOptions.PowerRequest!, true, changeFolder, timerHost, progress, stop.Token));
+                            debloatOptions.PowerRequest!, true, changeFolder, timerHost, progress, token: stop.Token));
                         title = "POWER TIMERS / " + timerResult.Outcome;
                         detail = timerResult.Detail;
                         journal = timerResult.JournalPath;
@@ -882,7 +882,7 @@ public partial class MainWindow
                     else
                     {
                         var hibernationResult = await Task.Run(() => DebloatHibernationExecution.RunAsync(true, changeFolder,
-                            hibernationHost, progress, stop.Token));
+                            hibernationHost, progress, token: stop.Token));
                         title = "HIBERNATION / " + hibernationResult.Outcome;
                         detail = hibernationResult.Detail;
                         journal = hibernationResult.JournalPath;
@@ -929,7 +929,7 @@ public partial class MainWindow
                 if (File.Exists(Path.Combine(renameFolder, "computer-rename.pending.json")))
                     rename = await Task.Run(() => ComputerRename.ReconcileAsync(renameFolder, new WindowsComputerRenameHost(), progress, stop.Token));
                 else
-                    rename = await Task.Run(() => ComputerRename.RunAsync(proposedName, true, renameFolder, new WindowsComputerRenameHost(), progress, stop.Token));
+                    rename = await Task.Run(() => ComputerRename.RunAsync(proposedName, true, renameFolder, new WindowsComputerRenameHost(), progress, token: stop.Token));
                 string output = "COMPUTER NAME / " + rename.Outcome + "\nTarget: " + (string.IsNullOrWhiteSpace(rename.TargetName) ? proposedName : rename.TargetName) +
                     "\n" + rename.Detail + "\nRecord: " + (rename.RecordPath ?? "No operation record created.") +
                     "\n\nKillerBench did not restart Windows or join a domain.";
@@ -996,13 +996,13 @@ public partial class MainWindow
                         selection.Outcome == DefaultPrinterSelectionOutcome.Blocked ? "attention" : "incomplete", selection.Detail);
                     return;
                 }
-                var check = await Task.Run(() => PrinterDiagnostics.CheckOfflineAsync([selectedQueue], stop.Token, progress));
+                var check = await Task.Run(() => PrinterDiagnostics.CheckOfflineAsync([selectedQueue], progress, token: stop.Token));
                 AppendWorkflowOutput(check.Detail);
                 if (autoRepair && check.State == CheckState.Repairable)
                 {
                     AppendWorkflowOutput("Rechecking the selected queue before clearing offline mode. Waiting jobs may be released.");
-                    var repair = await Task.Run(() => Repairs.RunAsync(RepairKind.PrinterOffline, folder, progress, stop.Token,
-                        selectedPrinterQueues: [selectedQueue]));
+                    var repair = await Task.Run(() => Repairs.RunAsync(RepairKind.PrinterOffline, folder, progress, selectedPrinterQueues: [selectedQueue],
+                        cancellationToken: stop.Token));
                     bool verified = Repairs.IsVerified(repair);
                     string output = string.Join("\n", new[] { "SELECTED PRINTER / REPAIR", selectedQueue, check.Detail, repair.Status,
                         "Journal: " + repair.JournalPath, "Physical printer health was not tested. Jobs were not deleted." });
@@ -1023,7 +1023,7 @@ public partial class MainWindow
             if (kind == WorkflowKind.TimeService && timeOptions.Source != TimeSourceMode.Existing)
             {
                 AppendWorkflowOutput("Inspecting domain role and time policy for the selected source...");
-                var preview = await Task.Run(() => TimePlanning.PreviewAsync(timeOptions, stop.Token));
+                var preview = await Task.Run(() => TimePlanning.PreviewAsync(timeOptions, token: stop.Token));
                 var plan = preview.Plan;
                 if (applyTime && plan.ReviewPassed)
                 {
@@ -1031,7 +1031,7 @@ public partial class MainWindow
                     if (TimeConfigurationRecovery.HasPendingRecord(timeFolder))
                     {
                         AppendWorkflowOutput("A pending time-source change exists. Checking it without retrying configuration or synchronization...");
-                        var recovery = await Task.Run(() => TimeConfigurationRecovery.ReconcileAsync(timeFolder, stop.Token));
+                        var recovery = await Task.Run(() => TimeConfigurationRecovery.ReconcileAsync(timeFolder, token: stop.Token));
                         string recoverySummary = "TIME SOURCE RECOVERY / " + recovery.Outcome.ToString().ToUpperInvariant() + "\n" + recovery.Detail +
                             "\nPending record: " + recovery.PendingPath + "\nArchived record: " + (recovery.ArchivedPath ?? "None") +
                             "\nNo clock or source settings changed.";
@@ -1085,12 +1085,12 @@ public partial class MainWindow
                 ThirdPartyUpdateResult? thirdPartyDiscovery = null;
                 if (windowsSelected)
                 {
-                    discovery = await Task.Run(() => UpdateDiscovery.SearchAsync(updateOptions, progress, stop.Token));
+                    discovery = await Task.Run(() => UpdateDiscovery.SearchAsync(updateOptions, progress, token: stop.Token));
                     availableUpdateResult = discovery;
                 }
                 if (thirdPartySelected)
                 {
-                    thirdPartyDiscovery = await Task.Run(() => ThirdPartyUpdateDiscovery.ReadAsync(progress, stop.Token));
+                    thirdPartyDiscovery = await Task.Run(() => ThirdPartyUpdateDiscovery.ReadAsync(progress, token: stop.Token));
                     SetThirdPartyUpdateResult(thirdPartyDiscovery);
                 }
                 ApplyUpdateFilter();
@@ -1124,7 +1124,7 @@ public partial class MainWindow
                     restore = await Task.Run(() => SystemRestoreCreation.ReconcileAsync(restoreFolder, restoreHost, progress, stop.Token));
                 else
                     restore = await Task.Run(() => SystemRestoreCreation.RunAsync(restorePointRequest, autoRepair,
-                        restoreFolder, restoreHost, progress, stop.Token));
+                        restoreFolder, restoreHost, progress, token: stop.Token));
                 string output = "SYSTEM RESTORE POINT / " + restore.Outcome +
                     "\nDescription: " + restore.Request.Description + "\nReason: " + restore.Request.Reason +
                     "\nExisting points observed: " + (restore.Before?.Points.Count.ToString() ?? "Not inspected in preview") +
@@ -1186,7 +1186,7 @@ public partial class MainWindow
                         return;
                     }
                     var repair = await Task.Run(() => FileSystemRepairExecution.RunAsync(draft, true, repairFolder,
-                        new WindowsFileSystemRepairHost(), progress, stop.Token));
+                        new WindowsFileSystemRepairHost(), progress, token: stop.Token));
                     string repairOutput = "FILESYSTEM REPAIR\nVolume: " + draft.Volume + "\nMode: " + draft.Mode +
                         "\nOutcome: " + repair.Outcome + "\n" + repair.Detail +
                         "\nJournal: " + (repair.JournalPath ?? "No repair journal created.");
@@ -1228,7 +1228,7 @@ public partial class MainWindow
                 if (hasPendingOptimization)
                     optimization = await Task.Run(() => VolumeOptimization.ReconcileAsync(optimizationFolder, optimizationHost, progress, stop.Token));
                 else if (autoRepair)
-                    optimization = await Task.Run(() => VolumeOptimization.RunAsync(request, true, optimizationFolder, optimizationHost, progress, stop.Token));
+                    optimization = await Task.Run(() => VolumeOptimization.RunAsync(request, true, optimizationFolder, optimizationHost, progress, token: stop.Token));
                 else
                     optimization = await Task.Run(() => VolumeOptimization.ReviewAsync(request, optimizationHost, progress, stop.Token));
                 string output = "DRIVE OPTIMIZATION / " + optimization.Outcome +
@@ -1295,7 +1295,7 @@ public partial class MainWindow
             }
             if (kind == WorkflowKind.Cleanup && CleanupRemove.IsChecked == true)
             {
-                var removal = await Task.Run(() => CleanupRemoval.RunAsync(cleanupOptions, folder, progress, stop.Token));
+                var removal = await Task.Run(() => CleanupRemoval.RunAsync(cleanupOptions, folder, progress, token: stop.Token));
                 bool verified = removal.Status == "Finished";
                 string detail = verified
                     ? "The selected cleanup candidates were removed and each removal was verified."
@@ -1341,7 +1341,7 @@ public partial class MainWindow
             if (kind == WorkflowKind.InstalledApps) SetApplicationInventory(null);
             if (kind == WorkflowKind.Mace) SetMaceReview(null);
             if (kind == WorkflowKind.BackgroundTransfers) SetBitsInventory(null);
-            var result = await Task.Run(() => Workflows.RunAsync(kind, autoRepair, folder, progress, stop.Token, host, selectedRecipes, diagnosticScopes));
+            var result = await Task.Run(() => Workflows.RunAsync(kind, autoRepair, folder, progress, host, selectedRecipes, diagnosticScopes, token: stop.Token));
             if (kind == WorkflowKind.BackgroundTransfers) SetBitsInventory(bitsAllUsers == (BitsScopeChoice.SelectedIndex == 1) ? host.LastBitsInventory : null);
             if (kind == WorkflowKind.AppPackages) SetAppPackageInventory(
                 packageScope == (AppPackageScopeChoice.SelectedIndex == 1 ? AppPackageScope.AllUsers : AppPackageScope.CurrentAccount)
@@ -1389,7 +1389,7 @@ public partial class MainWindow
                     else
                     {
                         var registration = await Task.Run(() => InstallerRegistrationRepair.RunAsync(true,
-                            registrationFolder, new WindowsInstallerRegistrationRepairHost(), progress, stop.Token));
+                            registrationFolder, new WindowsInstallerRegistrationRepairHost(), progress, token: stop.Token));
                         title = "WINDOWS INSTALLER REGISTRATION / " + registration.Outcome;
                         detail = registration.Detail;
                         record = registration.JournalPath ?? "No registration journal created.";
@@ -1428,7 +1428,7 @@ public partial class MainWindow
                     return;
                 }
                 var msiRepair = await Task.Run(() => MsiRepair.RunAsync(msiProductCode!, true, msiFolder,
-                    new WindowsMsiRepairHost(), progress, stop.Token));
+                    new WindowsMsiRepairHost(), progress, token: stop.Token));
                 string msiOutput = "MSI PRODUCT REPAIR\nProduct: " + msiRepair.ProductCode +
                     "\nOutcome: " + msiRepair.Outcome + "\n" + msiRepair.Detail +
                     "\nJournal: " + (msiRepair.JournalPath ?? "No repair journal created.");

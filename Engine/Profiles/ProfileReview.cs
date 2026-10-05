@@ -18,10 +18,10 @@ public static class ProfileReview
     }
 
     public static async Task<ProfileSelectionPlan> RefreshAsync(IReadOnlyList<string> selectedSids, int minimumDays,
-        CancellationToken token = default,
         Func<CancellationToken, Task<ProfileInventoryResult>>? inventoryProvider = null,
         Func<CancellationToken, Task<ProfileDependencyResult>>? dependencyProvider = null,
-        Func<CancellationToken, Task<ProfileRegistrationResult>>? registrationProvider = null)
+        Func<CancellationToken, Task<ProfileRegistrationResult>>? registrationProvider = null,
+        CancellationToken token = default)
     {
         ProfilePlanning.ValidateSelection(selectedSids);
         if (minimumDays is < 1 or > 3650) throw new ArgumentOutOfRangeException(nameof(minimumDays));

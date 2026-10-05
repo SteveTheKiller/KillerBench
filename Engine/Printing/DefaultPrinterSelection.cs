@@ -297,7 +297,7 @@ public static class DefaultPrinterSelection
     {
         string journal = Path.Combine(root, "default-printer-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
             "-" + Guid.NewGuid().ToString("N") + ".json");
-        await JournalPersistence.WriteAsync(journal, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journal, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         string pending = Path.Combine(root, PendingName);
         if (resolve && File.Exists(pending)) File.Move(pending, journal + ".prepared.json");
         return result with { RecordPath = resolve ? journal : pending };

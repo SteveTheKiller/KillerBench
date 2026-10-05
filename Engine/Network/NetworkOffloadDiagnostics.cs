@@ -14,8 +14,8 @@ public static class NetworkOffloadDiagnostics
         "packetCoalescingFilter=[uint32]$_.PacketCoalescingFilter;networkDirectAcrossIpSubnets=[uint32]$_.NetworkDirectAcrossIPSubnets}});" +
         "[pscustomobject]@{complete=($all.Count-eq 1);settings=$rows}|ConvertTo-Json -Depth 3 -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

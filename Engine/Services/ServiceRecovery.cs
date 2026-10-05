@@ -248,9 +248,9 @@ public static partial class ServiceRecovery
     }
 
     internal static Task<WorkflowCheck> CheckAsync(RepairKind kind, CancellationToken token) =>
-        CheckAsync(kind, token, false);
+        CheckAsync(kind, false, token: token);
 
-    internal static async Task<WorkflowCheck> CheckAsync(RepairKind kind, CancellationToken token, bool demandStartAuthorized)
+    internal static async Task<WorkflowCheck> CheckAsync(RepairKind kind, bool demandStartAuthorized, CancellationToken token)
     {
         if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException();
         string service = ServiceName(kind) ?? throw new ArgumentException("Unsupported service.");
@@ -329,7 +329,7 @@ public static partial class ServiceRecovery
                     ?? throw new ArgumentException("Unsupported service start command.", nameof(step));
                 progress?.Report("Rechecking service state, dependencies and executable registration before start...");
                 bool focusedDemandStart = kind is RepairKind.WindowsTime or RepairKind.WinHttpAutoProxyService or RepairKind.WindowsUpdateMedicService;
-                var check = await CheckAsync(kind, timeout.Token, focusedDemandStart).ConfigureAwait(false);
+                var check = await CheckAsync(kind, focusedDemandStart, token: timeout.Token).ConfigureAwait(false);
                 if (check.State == CheckState.Clear)
                     throw new RepairStepSkippedException("The selected service is already running. No start command was run.", check.Evidence!);
                 if (!CanStart(kind, check))
@@ -345,7 +345,7 @@ public static partial class ServiceRecovery
                 if (step.Arguments.Length != 2 || step.Arguments[0] != "query")
                     throw new ArgumentException("Unsupported service verification command.", nameof(step));
                 return await ObserveRunningAsync(step.Arguments[1],
-                    token => NativeTool.RunAsync(step.Tool, step.Arguments, progress: progress, token: token), timeout.Token).ConfigureAwait(false);
+                    token => NativeTool.RunAsync(step.Tool, step.Arguments, progress: progress, token: token), token: timeout.Token).ConfigureAwait(false);
             }
             var result = await NativeTool.RunAsync(step.Tool, step.Arguments, progress: progress, token: timeout.Token).ConfigureAwait(false);
             // A concurrent start is harmless; still require the separate verification query.
@@ -354,7 +354,7 @@ public static partial class ServiceRecovery
         catch (OperationCanceledException) when (!token.IsCancellationRequested) { return new(-1, "", "Service command timed out. State is unverified.", false) { TimedOut = true }; }
     }
 
-    public static async Task<ToolResult> ObserveRunningAsync(string service, Func<CancellationToken, Task<ToolResult>> query, CancellationToken token = default, TimeSpan? observationTimeout = null)
+    public static async Task<ToolResult> ObserveRunningAsync(string service, Func<CancellationToken, Task<ToolResult>> query, TimeSpan? observationTimeout = null, CancellationToken token = default)
     {
         if (!ValidDependencyName(service)) throw new ArgumentException("Invalid service name.", nameof(service));
         ArgumentNullException.ThrowIfNull(query);

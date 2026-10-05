@@ -45,7 +45,7 @@ internal static class ProfileCommands
             if (recoverBackup)
             {
                 string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Profiles");
-                var resolved = await ProfileBackupRecovery.TryResolveAsync(folder, stop.Token);
+                var resolved = await ProfileBackupRecovery.TryResolveAsync(folder, token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(new
                 {
                     resolved.Verified,
@@ -91,7 +91,7 @@ internal static class ProfileCommands
                 string operationFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Profiles");
                 var progress = new Progress<string>(message => Console.Error.WriteLine(message));
                 backupExecution = await ProfileBackupExecution.RunAsync(plan.Targets[0], days, backupTo, operationFolder,
-                    new WindowsProfileBackupHost(), progress, stop.Token);
+                    new WindowsProfileBackupHost(), progress, token: stop.Token);
                 backupVerification = backupExecution.Verification;
             }
             var backupSummary = backupVerification is null ? null : new

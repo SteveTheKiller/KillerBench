@@ -18,32 +18,32 @@ public static class StorageServiceFailureEvents
             "current provider availability, snapshot creation, backup completion or restore success")
     ];
 
-    public static Task<IReadOnlyList<WorkflowCheck>> CheckStorageAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null) =>
-        CheckAsync(StorageDefinitions, token, execute);
+    public static Task<IReadOnlyList<WorkflowCheck>> CheckStorageAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default) =>
+        CheckAsync(StorageDefinitions, execute, token: token);
 
-    public static Task<IReadOnlyList<WorkflowCheck>> CheckShadowCopyAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null) =>
-        CheckAsync(ShadowCopyDefinitions, token, execute);
+    public static Task<IReadOnlyList<WorkflowCheck>> CheckShadowCopyAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default) =>
+        CheckAsync(ShadowCopyDefinitions, execute, token: token);
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
-        var storage = CheckStorageAsync(token, execute);
-        var shadowCopy = CheckShadowCopyAsync(token, execute);
+        var storage = CheckStorageAsync(execute, token: token);
+        var shadowCopy = CheckShadowCopyAsync(execute, token: token);
         var groups = await Task.WhenAll(storage, shadowCopy).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
         return Array.AsReadOnly(groups.SelectMany(group => group).ToArray());
     }
 
     private static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(
-        IReadOnlyList<ExactServiceFailureEventDefinition> definitions, CancellationToken token,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute)
+        IReadOnlyList<ExactServiceFailureEventDefinition> definitions, Func<RepairStep, CancellationToken, Task<ToolResult>>? execute,
+        CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         var checks = await Task.WhenAll(definitions.Select(definition =>
-            ExactServiceFailureEvents.CheckAsync(definition, token, execute))).ConfigureAwait(false);
+            ExactServiceFailureEvents.CheckAsync(definition, execute, token: token))).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
         return Array.AsReadOnly(checks);
     }

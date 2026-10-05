@@ -31,7 +31,7 @@ public static class DnsDiagnostics
     }
 
     public static async Task<DnsLookupResult> CheckAsync(string host, TimeSpan? timeout = null,
-        CancellationToken token = default, Func<string, CancellationToken, Task<IPAddress[]>>? resolver = null)
+        Func<string, CancellationToken, Task<IPAddress[]>>? resolver = null, CancellationToken token = default)
     {
         host = ValidateHost(host);
         var limit = timeout ?? TimeSpan.FromSeconds(10);

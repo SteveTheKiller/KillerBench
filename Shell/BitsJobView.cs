@@ -177,7 +177,7 @@ public partial class MainWindow
                 SetScanLight(recovery.Outcome == BitsRetryReconciliationOutcome.TransferReported ? "ready" : "incomplete", recovery.Detail);
                 return;
             }
-            var result = await Task.Run(() => BitsRetry.RunAsync(inventory, id, new WindowsBitsRetryHost(), new BitsRetryJournal(folder), stop.Token, progress));
+            var result = await Task.Run(() => BitsRetry.RunAsync(inventory, id, new WindowsBitsRetryHost(), new BitsRetryJournal(folder), progress, token: stop.Token));
             RegisterGuardedActionReport(WorkflowKind.BackgroundTransfers, "Background transfer retry",
                 "Background transfer retry / " + result.Outcome,
                 string.Join("\n", new[] { "BITS RETRY / " + result.Outcome, id.ToString(), result.Detail,

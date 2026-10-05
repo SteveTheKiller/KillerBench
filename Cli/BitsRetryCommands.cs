@@ -31,7 +31,7 @@ internal static class BitsRetryCommands
                 return review.Complete && review.Selected is not null ? 0 : 3;
             }
             Console.Error.WriteLine("Requesting a retry for selected running-account job " + id + ". Journal: " + directory);
-            var result = await BitsRetry.RunAsync(inventory, id, host, new BitsRetryJournal(directory), stop.Token, new ConsoleProgress());
+            var result = await BitsRetry.RunAsync(inventory, id, host, new BitsRetryJournal(directory), new ConsoleProgress(), token: stop.Token);
             Console.WriteLine(JsonSerializer.Serialize(new { Result = result, JournalDirectory = directory }, Capture.JsonOptions));
             return result.Outcome is BitsRetryOutcome.RetryRequested or BitsRetryOutcome.TransferReported ? 0 :
                 result.Outcome == BitsRetryOutcome.Stopped ? 130 : 3;

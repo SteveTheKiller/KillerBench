@@ -6,9 +6,9 @@ public static class FullSystemScan
     public static IReadOnlyList<RepairRecipe> RepairRecipes => RecipeCatalog.ForWorkflow(WorkflowKind.CommonProblems);
 
     public static Task<WorkflowResult> RunAsync(string journalFolder, bool autoRepair = false,
-        IProgress<string>? progress = null, CancellationToken token = default, IWorkflowHost? host = null,
-        IReadOnlyCollection<string>? selectedRecipes = null,
-        IReadOnlyCollection<CommonDiagnosticScope>? selectedDiagnosticAreas = null) =>
-        Workflows.RunAsync(WorkflowKind.CommonProblems, autoRepair, journalFolder, progress, token, host,
-            selectedRecipes, selectedDiagnosticAreas);
+        IProgress<string>? progress = null, IWorkflowHost? host = null, IReadOnlyCollection<string>? selectedRecipes = null,
+        IReadOnlyCollection<CommonDiagnosticScope>? selectedDiagnosticAreas = null,
+        CancellationToken token = default) =>
+        Workflows.RunAsync(WorkflowKind.CommonProblems, autoRepair, journalFolder, progress, host, selectedRecipes,
+            selectedDiagnosticAreas, token: token);
 }

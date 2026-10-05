@@ -7,8 +7,8 @@ public static class ServiceTransitionDiagnostics
         "Start Pending", "Stop Pending", "Continue Pending", "Pause Pending"
     };
 
-    public static async Task<WorkflowCheck> CheckAsync(WorkflowCheck first, CancellationToken token = default,
-        Func<CancellationToken, Task<WorkflowCheck>>? collect = null, TimeSpan? observationInterval = null)
+    public static async Task<WorkflowCheck> CheckAsync(WorkflowCheck first, Func<CancellationToken, Task<WorkflowCheck>>? collect = null,
+        TimeSpan? observationInterval = null, CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(first);
         token.ThrowIfCancellationRequested();

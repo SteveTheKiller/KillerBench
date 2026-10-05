@@ -55,7 +55,7 @@ public static class FileSystemRepairReconciliation
             BootStamp? boot;
             try
             {
-                boot = await Required(host.ReadBootAsync, "Windows startup evidence", token, TimeSpan.FromSeconds(15)).ConfigureAwait(false);
+                boot = await Required(host.ReadBootAsync, "Windows startup evidence", TimeSpan.FromSeconds(15), token: token).ConfigureAwait(false);
             }
             catch (OperationCanceledException) { throw; }
             catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or
@@ -80,13 +80,13 @@ public static class FileSystemRepairReconciliation
         {
             Report(progress, "Rechecking " + pending.Draft.Volume + " without repeating filesystem repair.");
             state = await Required(ct => host.InspectAsync(pending.Draft.Volume, ct), "Volume inspection",
-                token, TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+                TimeSpan.FromSeconds(20), token:                 token).ConfigureAwait(false);
             if (!state.Ready || !state.Fixed || !string.Equals(state.FileSystem, "NTFS", StringComparison.OrdinalIgnoreCase))
                 return new(FileSystemRepairReconciliationOutcome.Inconclusive,
                     "The exact volume is unavailable or changed. The pending record was retained and no repair was requested.",
                     pendingPath, pending, state);
             current = await Required(ct => host.DiagnoseAsync(pending.Draft.Volume, ct), "Filesystem diagnosis",
-                token, TimeSpan.FromMinutes(11)).ConfigureAwait(false);
+                TimeSpan.FromMinutes(11), token:                 token).ConfigureAwait(false);
         }
         catch (OperationCanceledException) { throw; }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or
@@ -115,7 +115,7 @@ public static class FileSystemRepairReconciliation
         string archivePath = Path.Combine(root, "filesystem-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
             "-" + Guid.NewGuid().ToString("N") + ".json");
         var result = new FileSystemRepairReconciliationResult(outcome, detail, pendingPath, pending, state, current, archivePath);
-        await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
         File.Move(pendingPath, archivePath + ".prepared.json");
         Report(progress, detail);
         return result;
@@ -145,7 +145,7 @@ public static class FileSystemRepairReconciliation
     }
 
     private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name,
-        CancellationToken token, TimeSpan limit)
+        TimeSpan limit, CancellationToken token)
     {
         var pending = operation(token) ?? throw new InvalidOperationException(name + " provider returned no task.");
         return await pending.WaitAsync(limit, token).ConfigureAwait(false) ?? throw new InvalidDataException(name + " provider returned no evidence.");

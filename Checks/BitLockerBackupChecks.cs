@@ -75,7 +75,7 @@ internal static class BitLockerBackupChecks
         var cancelled = new Fixture("success");
         try
         {
-            await BitLockerBackupWorkflow.BackupExistingAsync(options, Fixture.Protector, cancelled, stop.Token);
+            await BitLockerBackupWorkflow.BackupExistingAsync(options, Fixture.Protector, cancelled, token: stop.Token);
             throw new Exception("Cancelled backup was accepted.");
         }
         catch (OperationCanceledException) when (stop.IsCancellationRequested) { }

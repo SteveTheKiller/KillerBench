@@ -14,8 +14,8 @@ public static partial class ServiceRecoveryPolicyDiagnostics
     public const int MaximumActionsPerService = 16;
     private static readonly HashSet<string> ActionTypes = new(["None", "Restart", "Reboot", "RunCommand"], StringComparer.Ordinal);
 
-    public static async Task<WorkflowCheck> CheckAsync(WorkflowCheck inventory, CancellationToken token = default,
-        Func<IReadOnlyList<string>, CancellationToken, Task<ServiceRecoveryPolicySnapshot>>? collect = null)
+    public static async Task<WorkflowCheck> CheckAsync(WorkflowCheck inventory, Func<IReadOnlyList<string>, CancellationToken, Task<ServiceRecoveryPolicySnapshot>>? collect = null,
+        CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(inventory);
         token.ThrowIfCancellationRequested();

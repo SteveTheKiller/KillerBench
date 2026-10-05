@@ -40,7 +40,7 @@ public partial class MainWindow
             string folder = ProfileOperationFolder();
             var progress = new Progress<string>(AppendWorkflowOutput);
             var result = await Task.Run(() => ProfileBackupExecution.RunAsync(selected[0], (int)ProfileAge.Value,
-                destination, folder, new WindowsProfileBackupHost(), progress, stop.Token));
+                destination, folder, new WindowsProfileBackupHost(), progress, token: stop.Token));
             if (result.Verification is not null)
             {
                 ShowProfileBackupResult("Profile backup copy", result.Verification,
@@ -84,7 +84,7 @@ public partial class MainWindow
         {
             AppendWorkflowOutput("Checking the pending profile backup without repeating a copy...");
             string folder = ProfileOperationFolder();
-            var result = await Task.Run(() => ProfileBackupRecovery.TryResolveAsync(folder, stop.Token));
+            var result = await Task.Run(() => ProfileBackupRecovery.TryResolveAsync(folder, token: stop.Token));
             ShowProfileBackupResult("Profile backup recovery", result,
                 result.Verified ? "The pending backup was verified and archived. No copy or removal was retried."
                     : "The backup remains unresolved. No copy or removal was retried.");
@@ -120,7 +120,7 @@ public partial class MainWindow
         {
             int days = (int)ProfileAge.Value;
             AppendWorkflowOutput("Refreshing the selected profile and dependency evidence...");
-            var plan = await Task.Run(() => ProfileReview.RefreshAsync(selected, days, stop.Token));
+            var plan = await Task.Run(() => ProfileReview.RefreshAsync(selected, days, token: stop.Token));
             if (!plan.ReviewPassed || plan.Targets.Count != 1)
             {
                 string blockers = plan.Blockers.Count == 0 ? "The selected profile is no longer eligible for backup verification." : string.Join("\n", plan.Blockers);
@@ -247,7 +247,7 @@ public partial class MainWindow
         try
         {
             AppendWorkflowOutput("Refreshing selected-profile evidence and service/task dependencies...");
-            var plan = await Task.Run(() => ProfileReview.RefreshAsync(selected, days, stop.Token));
+            var plan = await Task.Run(() => ProfileReview.RefreshAsync(selected, days, token: stop.Token));
             string folder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Profiles");
             string journal = await ProfileReview.SavePlanAsync(plan, folder, days, stop.Token);
             string summary = "PROFILE PLAN / SNAPSHOT REVIEW\n" + string.Join("\n", plan.Targets.Select(p => p.Path + " | " + p.Sid)) +

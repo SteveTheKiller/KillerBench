@@ -11,17 +11,17 @@ internal static class NativeTool
 {
     internal static async Task<ToolResult> RunAsync(string name, string[] arguments, bool unicode = false,
         IProgress<string>? progress = null, CancellationToken token = default) =>
-        await RunCoreAsync(name, arguments, unicode, progress, token, null).ConfigureAwait(false);
+        await RunCoreAsync(name, arguments, unicode, progress, null, token: token).ConfigureAwait(false);
 
     internal static async Task<ToolResult> RunWithInputAsync(string name, string[] arguments, string standardInput,
         bool unicode = false, IProgress<string>? progress = null, CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(standardInput);
-        return await RunCoreAsync(name, arguments, unicode, progress, token, standardInput).ConfigureAwait(false);
+        return await RunCoreAsync(name, arguments, unicode, progress, standardInput, token: token).ConfigureAwait(false);
     }
 
     private static async Task<ToolResult> RunCoreAsync(string name, string[] arguments, bool unicode,
-        IProgress<string>? progress, CancellationToken token, string? standardInput)
+        IProgress<string>? progress, string? standardInput, CancellationToken token)
     {
         if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("This action requires Windows.");
         var start = new ProcessStartInfo(ResolvePath(name))

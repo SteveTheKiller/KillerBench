@@ -52,7 +52,7 @@ internal static class ServiceTriggerChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await ServiceTriggerDiagnostics.CheckAsync(inventory, stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await ServiceTriggerDiagnostics.CheckAsync(inventory, (_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents trigger collection");
         Console.WriteLine("PASS: installed service trigger types, actions, payload privacy, bounds and read-only collection; fixtures only.");

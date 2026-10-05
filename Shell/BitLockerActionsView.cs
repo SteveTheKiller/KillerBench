@@ -95,7 +95,7 @@ public partial class MainWindow
         var host = new WindowsBitLockerProtectorCreationHost();
         var result = File.Exists(Path.Combine(folder, "bitlocker-protector.pending.json"))
             ? await BitLockerProtectorCreation.ReconcileAsync(folder, host, progress, token)
-            : await BitLockerProtectorCreation.RunAsync(volume, kind, true, folder, host, progress, token);
+            : await BitLockerProtectorCreation.RunAsync(volume, kind, true, folder, host, progress, token: token);
         return new BitLockerOperationOutcome(result.Detail, result.Outcome == BitLockerProtectorCreationOutcome.Verified,
             ["Volume: " + result.Volume, "Protector: " + result.Kind, "Outcome: " + result.Outcome,
                 "New protector: " + (result.Created?.ToString() ?? "none"), "Journal: " + (result.JournalPath ?? "none")],
@@ -110,7 +110,7 @@ public partial class MainWindow
         var host = new WindowsBitLockerDecryptionHost();
         var result = File.Exists(Path.Combine(folder, "bitlocker-decrypt.pending.json"))
             ? await BitLockerDecryption.ReconcileAsync(folder, host, progress, token)
-            : await BitLockerDecryption.RunAsync(volume, true, true, folder, host, progress, token);
+            : await BitLockerDecryption.RunAsync(volume, true, true, folder, host, progress, token: token);
         return new BitLockerOperationOutcome(result.Detail, result.Outcome == BitLockerDecryptionOutcome.Started,
             ["Volume: " + result.Volume, "Outcome: " + result.Outcome, "Journal: " + (result.JournalPath ?? "none")],
             "BitLocker decryption", "BitLocker decryption / " + result.Outcome, result.JournalPath ?? "No operation journal created.",
@@ -121,7 +121,7 @@ public partial class MainWindow
         IProgress<string> progress, CancellationToken token)
     {
         var result = await BitLockerEscrow.RunAsync(volume, target, protector, true, BitLockerFolder("BitLockerEscrow"),
-            new WindowsBitLockerEscrowHost(), progress, token);
+            new WindowsBitLockerEscrowHost(), progress, token: token);
         return new BitLockerOperationOutcome(result.Detail, result.Outcome == BitLockerEscrowOutcome.Accepted,
             ["Volume: " + result.Volume, "Destination: " + BitLockerEscrow.TargetName(target), "Protector: " + protector,
                 "Outcome: " + result.Outcome, "Journal: " + (result.JournalPath ?? "none")],

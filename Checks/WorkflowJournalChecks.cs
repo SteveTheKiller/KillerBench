@@ -30,9 +30,9 @@ internal static class WorkflowJournalChecks
         {
             try
             {
-                await JournalPersistence.WriteAsync(persistencePath, "canceled", stop.Token,
-                    writeTemporary: async (temporary, text, _) =>
-                    { await File.WriteAllTextAsync(temporary, text); stop.Cancel(); });
+                await JournalPersistence.WriteAsync(persistencePath, "canceled", writeTemporary: async (temporary, text, _) =>
+                    { await File.WriteAllTextAsync(temporary, text); stop.Cancel(); },
+                    token: stop.Token);
                 throw new Exception("Canceled write published its temporary file.");
             }
             catch (OperationCanceledException) { }

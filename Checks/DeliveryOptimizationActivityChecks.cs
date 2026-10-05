@@ -63,7 +63,7 @@ internal static class DeliveryOptimizationActivityChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await DeliveryOptimizationActivityDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await DeliveryOptimizationActivityDiagnostics.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents activity collection");
         Console.WriteLine("PASS: privacy-bounded Delivery Optimization activity aggregates and read-only collection; fixtures only.");

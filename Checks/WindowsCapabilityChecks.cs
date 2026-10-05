@@ -55,7 +55,7 @@ internal static class WindowsCapabilityChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await WindowsCapabilityDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("provider should not run")); }
+        try { await WindowsCapabilityDiagnostics.CheckAsync((_, _) => throw new Exception("provider should not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents capability collection");
         Console.WriteLine("PASS: bounded Windows capability states, pending review, malformed evidence and cancellation; fixtures only.");

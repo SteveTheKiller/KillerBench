@@ -60,7 +60,7 @@ public static class SystemRestoreCreation
         ArgumentNullException.ThrowIfNull(host);
         request = CreateRequest(request.Description, request.Reason);
         SystemRestoreInventory before;
-        try { before = await Required(host.InspectAsync, "System Restore inventory", token, TimeSpan.FromSeconds(30)).ConfigureAwait(false); }
+        try { before = await Required(host.InspectAsync, "System Restore inventory", TimeSpan.FromSeconds(30), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(request, SystemRestoreCreationOutcome.Blocked, "System Restore eligibility could not be established: " + error.Message); }
         if (!before.Complete)
@@ -96,7 +96,7 @@ public static class SystemRestoreCreation
 
     public static async Task<SystemRestoreCreationResult> RunAsync(SystemRestoreCreationRequest request, bool execute,
         string journalFolder, ISystemRestoreCreationHost host, IProgress<string>? progress = null,
-        CancellationToken token = default, TimeSpan? operationTimeout = null)
+        TimeSpan? operationTimeout = null, CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(host);
         ArgumentException.ThrowIfNullOrWhiteSpace(journalFolder);
@@ -115,7 +115,7 @@ public static class SystemRestoreCreation
 
         Report(progress, "Reading current System Restore points.");
         SystemRestoreInventory before;
-        try { before = await Required(host.InspectAsync, "System Restore inventory", token, TimeSpan.FromSeconds(30)).ConfigureAwait(false); }
+        try { before = await Required(host.InspectAsync, "System Restore inventory", TimeSpan.FromSeconds(30), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(request, SystemRestoreCreationOutcome.Blocked, "System Restore eligibility could not be established: " + error.Message); }
         if (!before.Complete)
@@ -138,7 +138,7 @@ public static class SystemRestoreCreation
                 "Administrator access is required. No restore point was requested.", before);
 
         var pending = new PendingRecord(1, Environment.MachineName, DateTimeOffset.UtcNow, request, before, null);
-        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
         string journalPath = Path.Combine(root, "system-restore-create-" + Guid.NewGuid().ToString("N") + ".json");
         ToolResult? command = null;
         bool requestDispatched = false;
@@ -146,8 +146,8 @@ public static class SystemRestoreCreation
         try
         {
             Report(progress, "Repeating restore-point eligibility immediately before creation.");
-            var immediate = await Required(host.InspectAsync, "Final System Restore inventory", token,
-                TimeSpan.FromSeconds(30)).ConfigureAwait(false);
+            var immediate = await Required(host.InspectAsync, "Final System Restore inventory", TimeSpan.FromSeconds(30),
+                token: token).ConfigureAwait(false);
             TimeSpan? immediateInterval = host.MinimumCreationInterval;
             bool intervalElapsed = immediateInterval is not null && (immediateInterval <= TimeSpan.Zero ||
                 !immediate.Points.Any(point => point.CreatedUtc > DateTimeOffset.UtcNow.Subtract(immediateInterval.Value)));
@@ -160,16 +160,16 @@ public static class SystemRestoreCreation
                         : "Final client, inventory, frequency or administrator evidence no longer authorizes creation. No restore-point request was sent.",
                     before, After: immediate, JournalPath: journalPath);
                 await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions),
-                    CancellationToken.None).ConfigureAwait(false);
+                    token:                     CancellationToken.None).ConfigureAwait(false);
                 File.Move(pendingPath, journalPath + ".prepared.json");
                 Report(progress, result.Detail);
                 return result;
             }
             Report(progress, "Requesting restore point: " + request.Description);
             requestDispatched = true;
-            command = await Required(ct => host.CreateAsync(request, progress, ct), "Restore-point creation", token, limit).ConfigureAwait(false);
+            command = await Required(ct => host.CreateAsync(request, progress, ct), "Restore-point creation", limit, token: token).ConfigureAwait(false);
             await JournalPersistence.WriteAsync(pendingPath,
-                JsonSerializer.Serialize(pending with { Command = command }, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                JsonSerializer.Serialize(pending with { Command = command }, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
             if (!Complete(command))
                 result = new(request, command.TimedOut || command.Truncated ? SystemRestoreCreationOutcome.Uncertain : SystemRestoreCreationOutcome.Failed,
                     "Windows did not provide a complete successful creation result. Reconcile before requesting another restore point.", before, command, JournalPath: journalPath);
@@ -192,7 +192,7 @@ public static class SystemRestoreCreation
                     : "Final restore-point eligibility was unavailable: " + error.Message + ". No restore-point request was sent.",
                 before, command, JournalPath: journalPath);
         }
-        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (result.Outcome == SystemRestoreCreationOutcome.Verified || !requestDispatched)
             File.Move(pendingPath, journalPath + ".prepared.json");
         Report(progress, result.Detail);
@@ -231,7 +231,7 @@ public static class SystemRestoreCreation
         string journalPath = Path.Combine(root, "system-restore-create-recovered-" + Guid.NewGuid().ToString("N") + ".json");
         var result = await VerifyAsync(pending.Request, pending.StartedUtc, pending.Before, pending.Command,
             journalPath, host, progress, token).ConfigureAwait(false);
-        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (result.Outcome == SystemRestoreCreationOutcome.Verified)
             File.Move(pendingPath, journalPath + ".prepared.json");
         return result;
@@ -281,7 +281,7 @@ public static class SystemRestoreCreation
     {
         Report(progress, "Verifying the new restore point.");
         SystemRestoreInventory after;
-        try { after = await Required(host.InspectAsync, "System Restore verification", token, TimeSpan.FromSeconds(30)).ConfigureAwait(false); }
+        try { after = await Required(host.InspectAsync, "System Restore verification", TimeSpan.FromSeconds(30), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         {
             return new(request, SystemRestoreCreationOutcome.Uncertain,
@@ -305,7 +305,7 @@ public static class SystemRestoreCreation
         InvalidOperationException or NotSupportedException or TimeoutException or System.ComponentModel.Win32Exception or
         System.Security.SecurityException or OperationCanceledException;
     private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name,
-        CancellationToken token, TimeSpan limit)
+        TimeSpan limit, CancellationToken token)
     {
         var pending = operation(token) ?? throw new InvalidOperationException(name + " provider returned no task.");
         return await pending.WaitAsync(limit, token).ConfigureAwait(false) ?? throw new InvalidDataException(name + " provider returned no evidence.");

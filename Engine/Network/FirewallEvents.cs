@@ -7,8 +7,8 @@ public static class FirewallEvents
     public const string Channel = "Microsoft-Windows-Windows Firewall With Advanced Security/Firewall";
     private const string Provider = "Microsoft-Windows-Windows Firewall With Advanced Security";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

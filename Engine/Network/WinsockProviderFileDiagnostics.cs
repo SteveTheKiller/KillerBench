@@ -76,8 +76,8 @@ public static class WinsockProviderFileDiagnostics
         [pscustomobject]@{complete=($complete-and [int]$native.error-eq 0);items=$items}|ConvertTo-Json -Depth 4 -Compress
         """;
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

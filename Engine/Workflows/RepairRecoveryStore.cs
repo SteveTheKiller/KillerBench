@@ -84,7 +84,7 @@ public sealed class RepairRecoveryStore(string folder, Func<CancellationToken, T
     private async Task SaveAsync(RepairRecoveryRecord record, CancellationToken token)
     {
         Directory.CreateDirectory(folder);
-        await JournalPersistence.WriteAsync(path, JsonSerializer.Serialize(record, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(path, JsonSerializer.Serialize(record, Capture.JsonOptions), token: token).ConfigureAwait(false);
     }
 
     private static bool UniqueFields(JsonElement value)

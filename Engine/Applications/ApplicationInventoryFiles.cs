@@ -4,7 +4,7 @@ namespace KillerBench.Engine.Applications;
 
 public static class ApplicationInventoryFiles
 {
-    public static async Task SaveAsync(InstalledApplicationInventory inventory, string path, CancellationToken token = default, bool overwrite = false)
+    public static async Task SaveAsync(InstalledApplicationInventory inventory, string path, bool overwrite = false, CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(inventory);
         token.ThrowIfCancellationRequested();

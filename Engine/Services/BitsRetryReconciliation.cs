@@ -161,7 +161,7 @@ public static class BitsRetryReconciliation
         string archivePath = Path.Combine(root, "bits-retry-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
             "-" + Guid.NewGuid().ToString("N") + ".json");
         var result = new BitsRetryReconciliationResult(pending.JobId, outcome, detail, pendingPath, pending, first, second, archivePath);
-        await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
         string oldResult = Path.Combine(root, pending.JobId.ToString("N") + ".result.json");
         if (File.Exists(oldResult)) File.Move(oldResult, archivePath + ".attempt.json");
         File.Move(pendingPath, archivePath + ".prepared.json");

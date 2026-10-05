@@ -292,7 +292,7 @@ public partial class MainWindow
         bool reported = false;
         try
         {
-            var recovery = await Task.Run(() => UpdateReconciliation.ResolveAsync(folder, new WindowsUpdateExecutionHost(), stop.Token));
+            var recovery = await Task.Run(() => UpdateReconciliation.ResolveAsync(folder, new WindowsUpdateExecutionHost(), token: stop.Token));
             outcome = recovery.Detail;
             AppendWorkflowOutput(recovery.Detail);
             AppendWorkflowOutput("Recovery records: " + folder);

@@ -13,7 +13,7 @@ public static class ProfileRemovalRecovery
     };
 
     public static Task<bool> TryResolveAsync(string folder, CancellationToken token = default) =>
-        ResolveAsync(folder, NativeReadyAsync, ProfileAbsence.CheckAsync, token, TimeSpan.FromSeconds(90));
+        ResolveAsync(folder, NativeReadyAsync, ProfileAbsence.CheckAsync, TimeSpan.FromSeconds(90), token: token);
 
     private static Task<bool> NativeReadyAsync(CancellationToken token)
     {
@@ -24,17 +24,17 @@ public static class ProfileRemovalRecovery
             .IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator));
     }
 
-    public static Task<bool> TryResolveAsync(string folder, IProfileRemovalHost host, CancellationToken token = default,
-        TimeSpan? verificationLimit = null)
+    public static Task<bool> TryResolveAsync(string folder, IProfileRemovalHost host, TimeSpan? verificationLimit = null,
+        CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(host);
         var limit = verificationLimit ?? TimeSpan.FromSeconds(90);
         if (limit <= TimeSpan.Zero || limit > TimeSpan.FromSeconds(90)) throw new ArgumentOutOfRangeException(nameof(verificationLimit));
-        return ResolveAsync(folder, host.ReadyAsync, host.VerifyAbsentAsync, token, limit);
+        return ResolveAsync(folder, host.ReadyAsync, host.VerifyAbsentAsync, limit, token: token);
     }
 
     private static async Task<bool> ResolveAsync(string folder, Func<CancellationToken, Task<bool>> ready,
-        Func<ProfileSnapshot, CancellationToken, Task<bool>> verifyAbsent, CancellationToken token, TimeSpan verificationLimit)
+        Func<ProfileSnapshot, CancellationToken, Task<bool>> verifyAbsent, TimeSpan verificationLimit, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         if (!Directory.Exists(folder)) return true;

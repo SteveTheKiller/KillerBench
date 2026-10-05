@@ -11,8 +11,8 @@ public static class PrinterConditionDiagnostics
         "$rows=@($all|Select-Object -First 256|ForEach-Object{[pscustomobject]@{name=[string]$_.Name;printerStatus=[int]$_.PrinterStatus;detectedErrorState=[int]$_.DetectedErrorState;workOffline=[bool]$_.WorkOffline}});" +
         "[pscustomobject]@{complete=($all.Count-le 256);queues=$rows}|ConvertTo-Json -Depth 4 -Compress";
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Printer condition inspection requires Windows.");

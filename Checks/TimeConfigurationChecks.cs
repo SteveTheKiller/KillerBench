@@ -45,8 +45,8 @@ internal static class TimeConfigurationChecks
         using (var ignoredStop = new CancellationTokenSource())
         {
             var neverCompletes = new TaskCompletionSource<bool>();
-            var pendingCheck = TimeConfigurationRecovery.TryResolveAsync(recoveryFolder, ignoredStop.Token,
-                (_, _) => neverCompletes.Task);
+            var pendingCheck = TimeConfigurationRecovery.TryResolveAsync(recoveryFolder, (_, _) => neverCompletes.Task,
+                token: ignoredStop.Token);
             ignoredStop.Cancel();
             try { await pendingCheck.WaitAsync(TimeSpan.FromSeconds(2)); throw new Exception("Uncooperative recovery ignored cancellation"); }
             catch (OperationCanceledException) { }
@@ -66,8 +66,8 @@ internal static class TimeConfigurationChecks
         {
             try
             {
-                await TimeConfigurationRecovery.TryResolveAsync(recoveryFolder, recoveryStop.Token,
-                    (_, _) => { recoveryStop.Cancel(); return Task.FromResult(true); });
+                await TimeConfigurationRecovery.TryResolveAsync(recoveryFolder, (_, _) => { recoveryStop.Cancel(); return Task.FromResult(true); },
+                    token: recoveryStop.Token);
                 throw new Exception("Canceled recovery archived evidence");
             }
             catch (OperationCanceledException) { }

@@ -77,8 +77,8 @@ internal static class PlatformServiceFailureEventChecks
 
         using var canceled = new CancellationTokenSource();
         canceled.Cancel();
-        await RequireCanceled(() => PlatformServiceFailureEvents.CheckAllAsync(canceled.Token,
-            (_, _) => throw new Exception("Canceled platform service collection must not invoke its provider.")));
+        await RequireCanceled(() => PlatformServiceFailureEvents.CheckAllAsync((_, _) => throw new Exception("Canceled platform service collection must not invoke its provider."),
+            token: canceled.Token));
         try
         {
             await PlatformServiceFailureEvents.CheckAsync((PlatformServiceFailureArea)99, execute: (_, _) =>

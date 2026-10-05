@@ -59,7 +59,7 @@ internal static class BitLockerEncryptionCommands
                     ? "Checking the selected volume, protectors and recovery backup before one encryption request."
                     : "Previewing BitLocker encryption. No machine inspection, backup or encryption is performed.");
                 result = await BitLockerEncryptionExecution.RunAsync(options!, protector, execute, folder, host,
-                    new ConsoleProgress(), stop.Token);
+                    new ConsoleProgress(), token: stop.Token);
             }
             Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
             return result.GetExitCode();

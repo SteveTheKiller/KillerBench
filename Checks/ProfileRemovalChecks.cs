@@ -157,7 +157,7 @@ internal static class ProfileRemovalChecks
             var backupHost = new BackupFixture(mode, backupTarget, sourceFolder, backupStop);
             var updates = new ProgressFixture();
             var result = await ProfileBackupExecution.RunAsync(backupTarget, 90, destination, backupFolder,
-                backupHost, updates, backupStop.Token, TimeSpan.FromSeconds(10));
+                backupHost, updates, TimeSpan.FromSeconds(10), token: backupStop.Token);
             string expected = mode == "success" ? "Backup verified" : mode is "final-loaded" or "destination-exists" ? "Blocked" : "Needs review";
             int expectedCopies = mode is "success" or "incomplete" ? 1 : 0;
             if (result.Status != expected || backupHost.CopyCalls != expectedCopies ||
@@ -218,7 +218,7 @@ internal static class ProfileRemovalChecks
                     var recoveryHost = new Fixture(recoveryStage, recoveryStop) { Folder = host.Folder };
                     try
                     {
-                        await ProfileRemovalRecovery.TryResolveAsync(host.Folder, recoveryHost, recoveryStop.Token).WaitAsync(TimeSpan.FromSeconds(3));
+                        await ProfileRemovalRecovery.TryResolveAsync(host.Folder, recoveryHost, token: recoveryStop.Token).WaitAsync(TimeSpan.FromSeconds(3));
                         throw new Exception("Stalled recovery ignored cancellation");
                     }
                     catch (OperationCanceledException) { }
@@ -303,7 +303,7 @@ internal static class ProfileRemovalChecks
                 if (await ProfileRemovalRecovery.TryResolveAsync(folder, verifiedHost) || File.ReadAllText(pending) != foreign)
                     throw new Exception("Foreign-machine profile recovery evidence was verified, archived or changed");
                 File.WriteAllText(pending, original);
-                try { await ProfileRemovalRecovery.TryResolveAsync(folder, verifiedHost, new CancellationToken(true)); throw new Exception("Canceled recovery succeeded"); }
+                try { await ProfileRemovalRecovery.TryResolveAsync(folder, verifiedHost, token: new CancellationToken(true)); throw new Exception("Canceled recovery succeeded"); }
                 catch (OperationCanceledException) { }
                 if (File.ReadAllText(pending) != original) throw new Exception("Canceled recovery changed evidence");
                 if (!await ProfileRemovalRecovery.TryResolveAsync(folder, verifiedHost) || verifiedHost.RemoveCalls != 0 || File.Exists(Path.Combine(folder, "pending-removal.json")))

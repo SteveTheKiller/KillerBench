@@ -18,8 +18,8 @@ public static class AdapterBindingDiagnostics
         "foreach($x in @($b|Select-Object -First 1024)){if(-not $names.ContainsKey([string]$x.Name)){$complete=$false}};" +
         "[pscustomobject]@{complete=$complete;adapters=$rows}|ConvertTo-Json -Depth 5 -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

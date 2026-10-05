@@ -23,8 +23,8 @@ public static class PrintExtensionFileDiagnostics
         "$driver=[string](Get-ItemProperty -LiteralPath $monitor.PSPath -Name Driver -ErrorAction Stop).Driver;Add-Extension 'Monitor' ([string]$monitor.PSChildName) 'Windows system directory' $driver (Join-Path $env:windir 'System32')};" +
         "[pscustomobject]@{complete=$complete;items=$items}|ConvertTo-Json -Depth 4 -Compress";
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

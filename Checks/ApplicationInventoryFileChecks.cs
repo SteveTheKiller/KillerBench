@@ -15,7 +15,7 @@ internal static class ApplicationInventoryFileChecks
         byte[] original = await File.ReadAllBytesAsync(path);
         try { await ApplicationInventoryFiles.SaveAsync(inventory, path); throw new Exception("Existing inventory overwritten without opt-in."); }
         catch (IOException) { }
-        try { await ApplicationInventoryFiles.SaveAsync(inventory, path, new CancellationToken(true), overwrite: true); throw new Exception("Canceled save completed."); }
+        try { await ApplicationInventoryFiles.SaveAsync(inventory, path, overwrite: true, token: new CancellationToken(true)); throw new Exception("Canceled save completed."); }
         catch (OperationCanceledException) { }
         if (!(await File.ReadAllBytesAsync(path)).SequenceEqual(original)) throw new Exception("Failed save changed destination.");
         var partial = inventory with { Evidence = raw with { Truncated = true } };

@@ -11,15 +11,15 @@ public static class PrinterEndpointReachability
     private static readonly TimeSpan ConnectionLimit = TimeSpan.FromSeconds(3);
     private static readonly TimeSpan OverallLimit = TimeSpan.FromSeconds(12);
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default,
-        Func<string, int, CancellationToken, Task<TcpCheckResult>>? probe = null)
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(Func<string, int, CancellationToken, Task<TcpCheckResult>>? probe = null,
+        CancellationToken token = default)
     {
         var configuration = await PrinterEndpointDiagnostics.CheckAsync(token).ConfigureAwait(false);
-        return await CheckAsync(configuration, token, probe).ConfigureAwait(false);
+        return await CheckAsync(configuration, probe, token: token).ConfigureAwait(false);
     }
 
     public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(IReadOnlyList<WorkflowCheck> configuration,
-        CancellationToken token = default, Func<string, int, CancellationToken, Task<TcpCheckResult>>? probe = null)
+        Func<string, int, CancellationToken, Task<TcpCheckResult>>? probe = null, CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(configuration);
         token.ThrowIfCancellationRequested();
@@ -47,7 +47,7 @@ public static class PrinterEndpointReachability
         try
         {
             var pending = (probe is null
-                ? TcpDiagnostics.CheckAsync(target.Host, target.Port, ConnectionLimit, deadlineToken)
+                ? TcpDiagnostics.CheckAsync(target.Host, target.Port, ConnectionLimit, token: deadlineToken)
                 : probe(target.Host, target.Port, deadlineToken))
                 ?? throw new InvalidOperationException("Printer endpoint probe returned no task.");
             var result = await pending.WaitAsync(deadlineToken).ConfigureAwait(false)

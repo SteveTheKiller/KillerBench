@@ -12,8 +12,8 @@ public static class ShadowStorageDiagnostics
         "[pscustomobject]@{source=$source;storage=$storage;used=[uint64]$_.UsedSpace;allocated=[uint64]$_.AllocatedSpace;maximum=[uint64]$_.MaxSpace}});" +
         "[pscustomobject]@{complete=($all.Count-le 64);items=$items}|ConvertTo-Json -Depth 4 -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Shadow storage collection requires Windows.");

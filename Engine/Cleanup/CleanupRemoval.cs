@@ -28,7 +28,7 @@ public static class CleanupRemoval
     private static readonly SemaphoreSlim Gate = new(1, 1);
 
     public static async Task<CleanupRemovalResult> RunAsync(CleanupOptions options, string journalFolder,
-        IProgress<string>? progress = null, CancellationToken token = default, ICleanupRemovalHost? host = null)
+        IProgress<string>? progress = null, ICleanupRemovalHost? host = null, CancellationToken token = default)
     {
         options.Validate();
         await Gate.WaitAsync(token).ConfigureAwait(false);

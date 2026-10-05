@@ -84,7 +84,7 @@ internal static class TaskRegistrationRecoveryChecks
             try
             {
                 await TaskRegistrationRecovery.RecoverAsync(plan, canceledRoot,
-                    new RecoveryHost(plan.Identity, exactXml, Good), canceled.Token);
+                    new RecoveryHost(plan.Identity, exactXml, Good), token: canceled.Token);
                 throw new Exception("Canceled recovery proceeded.");
             }
             catch (OperationCanceledException) { }

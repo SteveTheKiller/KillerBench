@@ -97,8 +97,8 @@ public partial class MainWindow
             if (File.Exists(Path.Combine(folder, "backup.pending.json")))
             {
                 AppendWorkflowOutput("A previous backup needs recovery. Checking the existing file without writing it again.");
-                var recovery = await BitLockerBackupReconciliation.RunAsync(options, protector, folder, host, token,
-                    new Progress<string>(AppendWorkflowOutput));
+                var recovery = await BitLockerBackupReconciliation.RunAsync(options, protector, folder, host, new Progress<string>(AppendWorkflowOutput),
+                    token: token);
                 protectorVolume = null;
                 BitLockerProtectorChoice.ItemsSource = null;
                 return new BitLockerOperationOutcome(recovery.Detail, recovery.Outcome == BitLockerBackupReconciliationOutcome.Verified,
@@ -107,7 +107,7 @@ public partial class MainWindow
                     recovery.ArchivePath ?? recovery.PendingPath,
                     "Store the verified recovery backup securely before making another BitLocker change.");
             }
-            var result = await BitLockerBackupExecution.RunAsync(options, protector, folder, host, token, new Progress<string>(AppendWorkflowOutput));
+            var result = await BitLockerBackupExecution.RunAsync(options, protector, folder, host, new Progress<string>(AppendWorkflowOutput), token: token);
             protectorVolume = null;
             BitLockerProtectorChoice.ItemsSource = null;
             return new BitLockerOperationOutcome(result.Status, result.Receipt is { Verified: true },
@@ -138,7 +138,7 @@ public partial class MainWindow
             {
                 AppendWorkflowOutput("Checking the exact volume, protectors and restart readiness before resuming protection once.");
                 result = await BitLockerProtectionResume.RunAsync(options.Volume, true, folder, host,
-                    new Progress<string>(AppendWorkflowOutput), token);
+                    new Progress<string>(AppendWorkflowOutput), token: token);
             }
             string before = result.Before is null ? "Before: unavailable" :
                 "Before: " + result.Before.VolumeStatus + ", protection " + result.Before.ProtectionStatus +
@@ -180,7 +180,7 @@ public partial class MainWindow
             {
                 AppendWorkflowOutput("Verifying the exact volume, protectors and recovery backup before one encryption request.");
                 result = await BitLockerEncryptionExecution.RunAsync(options, protector, true, folder, host,
-                    new Progress<string>(AppendWorkflowOutput), token);
+                    new Progress<string>(AppendWorkflowOutput), token: token);
             }
             protectorVolume = null;
             BitLockerProtectorChoice.ItemsSource = null;

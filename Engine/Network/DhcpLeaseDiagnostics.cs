@@ -15,8 +15,8 @@ public static class DhcpLeaseDiagnostics
         "$seen=@{};$settings=@{};$rows=@($all|Select-Object -First 256|ForEach-Object{[int]$index=$_.Index;$setting=[guid]::Empty;if($seen.ContainsKey($index)-or-not [guid]::TryParse([string]$_.SettingID,[ref]$setting)-or $setting-eq [guid]::Empty-or $settings.ContainsKey($setting)){throw 'Ambiguous DHCP adapter identity'};$seen[$index]=$true;$settings[$setting]=$true;$server=$null;if(-not [string]::IsNullOrWhiteSpace([string]$_.DHCPServer)){$server=$null;if(-not [Net.IPAddress]::TryParse([string]$_.DHCPServer,[ref]$server)){throw 'Malformed DHCP server evidence'}};[pscustomobject]@{interfaceIndex=$index;settingId=$setting.ToString();hasUsableIpv4=(Has-UsableIPv4 $_.IPAddress);hasServer=($null-ne $server);leaseObtainedUtc=(To-Utc $_.DHCPLeaseObtained);leaseExpiresUtc=(To-Utc $_.DHCPLeaseExpires)}});" +
         "[pscustomobject]@{complete=($all.Count-le 256);capturedUtc=[DateTimeOffset]::UtcNow.ToString('o');adapters=$rows}|ConvertTo-Json -Depth 4 -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

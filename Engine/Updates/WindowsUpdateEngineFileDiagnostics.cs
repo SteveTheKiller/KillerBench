@@ -20,8 +20,8 @@ public static class WindowsUpdateEngineFileDiagnostics
         "catch{$exists=$false;$signature='Unavailable';$version='Unavailable';$complete=$false};[pscustomobject]@{file=$name;exists=[bool]$exists;signature=$signature;version=$version}});" +
         "[pscustomobject]@{complete=$complete;files=$rows}|ConvertTo-Json -Depth 4 -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

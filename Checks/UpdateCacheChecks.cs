@@ -50,7 +50,7 @@ internal static class UpdateCacheChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await UpdateCacheDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await UpdateCacheDiagnostics.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents cache collection");
         Console.WriteLine("PASS: bounded Windows Update cache aggregates, privacy, incomplete evidence and read-only planning; fixtures only.");

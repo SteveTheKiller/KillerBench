@@ -14,7 +14,7 @@ public sealed record BitLockerBackupPendingRecord(int Schema, DateTimeOffset Sta
 public static class BitLockerBackupExecution
 {
     public static async Task<BitLockerBackupResult> RunAsync(BitLockerOptions options, Guid protector, string folder,
-        IBitLockerBackupHost host, CancellationToken token = default, IProgress<string>? progress = null)
+        IBitLockerBackupHost host, IProgress<string>? progress = null, CancellationToken token = default)
     {
         options.Validate();
         ArgumentNullException.ThrowIfNull(host);
@@ -43,9 +43,9 @@ public static class BitLockerBackupExecution
         }
         try
         {
-            var receipt = await BitLockerBackupWorkflow.BackupExistingAsync(options, protector, host, token, progress: progress,
-                prepare: ct => JournalPersistence.WriteAsync(pending, JsonSerializer.Serialize(marker, Capture.JsonOptions), ct),
-                mutationStarting: () => backupDispatched = true).ConfigureAwait(false);
+            var receipt = await BitLockerBackupWorkflow.BackupExistingAsync(options, protector, host, progress: progress, prepare: ct => JournalPersistence.WriteAsync(pending, JsonSerializer.Serialize(marker, Capture.JsonOptions), token: ct),
+                mutationStarting: () => backupDispatched = true,
+                token: token).ConfigureAwait(false);
             string status = receipt.Verified ? "Backup verified" : backupDispatched ? "Backup not verified" : "Backup blocked before write";
             Record(status, receipt);
             if (receipt.Verified) File.Move(pending, journal + ".prepared.json");

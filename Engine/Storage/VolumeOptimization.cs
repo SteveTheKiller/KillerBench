@@ -73,14 +73,14 @@ public static class VolumeOptimization
         request = CreateRequest(request.Volume, request.Mode);
         Report(progress, "Inspecting the selected volume and media type.");
         VolumeOptimizationState state;
-        try { state = await Required(ct => host.InspectAsync(request.Volume, ct), "Volume inspection", token, TimeSpan.FromSeconds(20)).ConfigureAwait(false); }
+        try { state = await Required(ct => host.InspectAsync(request.Volume, ct), "Volume inspection", TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(request, VolumeOptimizationOutcome.Blocked, "Volume eligibility could not be established: " + error.Message); }
         string? blocker = EligibilityBlocker(request, state);
         if (blocker is not null) return new(request, VolumeOptimizationOutcome.Blocked, blocker, state);
         Report(progress, "Analyzing " + request.Volume + " without changing it.");
         ToolResult analysis;
-        try { analysis = await Required(ct => host.AnalyzeAsync(request.Volume, progress, ct), "Volume analysis", token, TimeSpan.FromMinutes(15)).ConfigureAwait(false); }
+        try { analysis = await Required(ct => host.AnalyzeAsync(request.Volume, progress, ct), "Volume analysis", TimeSpan.FromMinutes(15), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(request, VolumeOptimizationOutcome.Blocked, "Volume analysis was unavailable: " + error.Message, state); }
         return new(request, Complete(analysis) ? VolumeOptimizationOutcome.Preview : VolumeOptimizationOutcome.Blocked,
@@ -92,7 +92,7 @@ public static class VolumeOptimization
 
     public static async Task<VolumeOptimizationResult> RunAsync(VolumeOptimizationRequest request, bool execute,
         string journalFolder, IVolumeOptimizationHost host, IProgress<string>? progress = null,
-        CancellationToken token = default, TimeSpan? operationTimeout = null)
+        TimeSpan? operationTimeout = null, CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentException.ThrowIfNullOrWhiteSpace(journalFolder);
@@ -116,7 +116,7 @@ public static class VolumeOptimization
 
         Report(progress, "Inspecting the selected volume and media type.");
         VolumeOptimizationState before;
-        try { before = await Required(ct => host.InspectAsync(request.Volume, ct), "Volume inspection", token, TimeSpan.FromSeconds(20)).ConfigureAwait(false); }
+        try { before = await Required(ct => host.InspectAsync(request.Volume, ct), "Volume inspection", TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(request, VolumeOptimizationOutcome.Blocked, "Volume eligibility could not be established: " + error.Message); }
         string? blocker = EligibilityBlocker(request, before);
@@ -126,7 +126,7 @@ public static class VolumeOptimization
 
         Report(progress, "Analyzing " + request.Volume + " before optimization.");
         ToolResult analysis;
-        try { analysis = await Required(ct => host.AnalyzeAsync(request.Volume, progress, ct), "Volume analysis", token, TimeSpan.FromMinutes(15)).ConfigureAwait(false); }
+        try { analysis = await Required(ct => host.AnalyzeAsync(request.Volume, progress, ct), "Volume analysis", TimeSpan.FromMinutes(15), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(request, VolumeOptimizationOutcome.Blocked, "Pre-operation analysis was unavailable: " + error.Message, before); }
         if (!Complete(analysis))
@@ -134,7 +134,7 @@ public static class VolumeOptimization
                 "A complete successful pre-operation analysis is required. No optimization was started.", before, analysis);
 
         var pending = new PendingRecord(1, Environment.MachineName, DateTimeOffset.UtcNow, request, before, analysis, null);
-        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
         string journalPath = Path.Combine(root, "volume-optimization-" + Guid.NewGuid().ToString("N") + ".json");
         ToolResult? command = null;
         bool optimizationDispatched = false;
@@ -142,10 +142,10 @@ public static class VolumeOptimization
         try
         {
             Report(progress, "Confirming final selected-volume eligibility.");
-            var current = await Required(ct => host.InspectAsync(request.Volume, ct), "Final volume inspection", token,
-                TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+            var current = await Required(ct => host.InspectAsync(request.Volume, ct), "Final volume inspection", TimeSpan.FromSeconds(20),
+                token: token).ConfigureAwait(false);
             var currentAnalysis = await Required(ct => host.AnalyzeAsync(request.Volume, progress, ct),
-                "Final volume analysis", token, TimeSpan.FromMinutes(15)).ConfigureAwait(false);
+                "Final volume analysis", TimeSpan.FromMinutes(15), token: token).ConfigureAwait(false);
             string? finalBlocker = EligibilityBlocker(request, current);
             if (finalBlocker is not null || !string.Equals(before.Identity, current.Identity, StringComparison.Ordinal) ||
                 !Complete(currentAnalysis) || !host.IsAdministrator)
@@ -159,7 +159,7 @@ public static class VolumeOptimization
                             : "Administrator access changed after preparation. No optimization was started.";
                 result = new(request, VolumeOptimizationOutcome.Blocked, detail, before, analysis,
                     AfterState: current, AfterAnalysis: currentAnalysis, JournalPath: journalPath);
-                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
                 File.Move(pendingPath, journalPath + ".prepared.json");
                 Report(progress, result.Detail);
                 return result;
@@ -167,9 +167,9 @@ public static class VolumeOptimization
             Report(progress, "Running " + OperationName(request.Mode) + " on " + request.Volume + ".");
             optimizationDispatched = true;
             command = await Required(ct => host.OptimizeAsync(request.Volume, request.Mode, progress, ct),
-                "Volume optimization", token, limit).ConfigureAwait(false);
+                "Volume optimization", limit, token: token).ConfigureAwait(false);
             await JournalPersistence.WriteAsync(pendingPath,
-                JsonSerializer.Serialize(pending with { Command = command }, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                JsonSerializer.Serialize(pending with { Command = command }, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
             if (!Complete(command))
                 result = new(request, command.TimedOut || command.Truncated ? VolumeOptimizationOutcome.Uncertain : VolumeOptimizationOutcome.Failed,
                     "Windows did not provide a complete successful optimization result. Reconcile before retrying.", before, analysis, command,
@@ -193,7 +193,7 @@ public static class VolumeOptimization
                     : "Final optimization eligibility was unavailable: " + error.Message + ". No optimization was started.",
                 before, analysis, command, JournalPath: journalPath);
         }
-        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (result.Outcome == VolumeOptimizationOutcome.Verified || !optimizationDispatched)
             File.Move(pendingPath, journalPath + ".prepared.json");
         Report(progress, result.Detail);
@@ -237,7 +237,7 @@ public static class VolumeOptimization
                 pending.BeforeState, pending.BeforeAnalysis, pending.Command, JournalPath: pendingPath);
         var result = await VerifyAsync(pending.Request, pending.BeforeState, pending.BeforeAnalysis, pending.Command,
             Path.Combine(root, "volume-optimization-recovered-" + Guid.NewGuid().ToString("N") + ".json"), host, progress, token).ConfigureAwait(false);
-        await JournalPersistence.WriteAsync(result.JournalPath!, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(result.JournalPath!, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (result.Outcome == VolumeOptimizationOutcome.Verified)
             File.Move(pendingPath, result.JournalPath + ".prepared.json");
         return result;
@@ -267,13 +267,13 @@ public static class VolumeOptimization
         IVolumeOptimizationHost host, IProgress<string>? progress, CancellationToken token)
     {
         Report(progress, "Reinspecting and analyzing the exact volume after optimization.");
-        var after = await Required(ct => host.InspectAsync(request.Volume, ct), "Volume verification inspection", token, TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+        var after = await Required(ct => host.InspectAsync(request.Volume, ct), "Volume verification inspection", TimeSpan.FromSeconds(20), token: token).ConfigureAwait(false);
         if (!string.Equals(before.Identity, after.Identity, StringComparison.Ordinal) || EligibilityBlocker(request, after) is not null)
             return new(request, VolumeOptimizationOutcome.Uncertain,
                 "The exact volume identity or eligibility changed after the command. Completion is not verified.",
                 before, beforeAnalysis, command, after, JournalPath: journalPath);
         var afterAnalysis = await Required(ct => host.AnalyzeAsync(request.Volume, progress, ct),
-            "Volume verification analysis", token, TimeSpan.FromMinutes(15)).ConfigureAwait(false);
+            "Volume verification analysis", TimeSpan.FromMinutes(15), token: token).ConfigureAwait(false);
         bool verified = Complete(afterAnalysis);
         return new(request, verified ? VolumeOptimizationOutcome.Verified : VolumeOptimizationOutcome.Uncertain,
             verified
@@ -329,7 +329,7 @@ public static class VolumeOptimization
         InvalidOperationException or NotSupportedException or TimeoutException or System.ComponentModel.Win32Exception or
         System.Security.SecurityException or OperationCanceledException;
     private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name,
-        CancellationToken token, TimeSpan limit)
+        TimeSpan limit, CancellationToken token)
     {
         var pending = operation(token) ?? throw new InvalidOperationException(name + " provider returned no task.");
         return await pending.WaitAsync(limit, token).ConfigureAwait(false) ?? throw new InvalidDataException(name + " provider returned no evidence.");

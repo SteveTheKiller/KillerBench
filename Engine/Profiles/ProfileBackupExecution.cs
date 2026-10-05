@@ -18,7 +18,7 @@ public static class ProfileBackupExecution
 {
     public static async Task<ProfileBackupExecutionResult> RunAsync(ProfileSnapshot target, int minimumDays,
         string destinationPath, string folder, IProfileBackupHost host, IProgress<string>? progress = null,
-        CancellationToken token = default, TimeSpan? operationLimit = null)
+        TimeSpan? operationLimit = null, CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(target);
         ArgumentNullException.ThrowIfNull(host);
@@ -57,8 +57,8 @@ public static class ProfileBackupExecution
         {
             var readiness = host.ReadyAsync(token) ?? throw new InvalidOperationException("Readiness provider returned no operation.");
             if (!await readiness.WaitAsync(token).ConfigureAwait(false)) return false;
-            var plan = await ProfileReview.RefreshAsync([target.Sid], minimumDays, token, host.InventoryAsync,
-                host.DependenciesAsync, host.RegistrationsAsync).ConfigureAwait(false);
+            var plan = await ProfileReview.RefreshAsync([target.Sid], minimumDays, host.InventoryAsync, host.DependenciesAsync,
+                host.RegistrationsAsync, token: token).ConfigureAwait(false);
             if (!plan.ReviewPassed || plan.Targets.Single() != target) return false;
             if (!requireAbsent) return true;
             var absent = host.DestinationAbsentAsync(destination, token) ??
@@ -169,8 +169,8 @@ public static class ProfileBackupRecovery
         RespectRequiredConstructorParameters = true
     };
 
-    public static async Task<ProfileBackupVerification> TryResolveAsync(string folder, CancellationToken token = default,
-        TimeSpan? verificationLimit = null)
+    public static async Task<ProfileBackupVerification> TryResolveAsync(string folder, TimeSpan? verificationLimit = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         TimeSpan limit = verificationLimit ?? TimeSpan.FromMinutes(30);

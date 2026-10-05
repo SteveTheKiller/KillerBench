@@ -340,7 +340,7 @@ public sealed class WindowsServicingActivityProvider : IServicingActivityProvide
         WindowsUpdateActivityDiagnostics.CheckAsync(token);
     public Task<WorkflowCheck> ReadHistoryAsync(CancellationToken token) => UpdateHistoryDiagnostics.CheckAsync(token);
     public Task<WorkflowCheck> ReadTransfersAsync(CancellationToken token) => BitsDiagnostics.CheckAsync(token: token);
-    public Task<WorkflowCheck> ReadDeliveryOptimizationAsync(CancellationToken token) => DeliveryOptimizationActivityDiagnostics.CheckAsync(token);
+    public Task<WorkflowCheck> ReadDeliveryOptimizationAsync(CancellationToken token) => DeliveryOptimizationActivityDiagnostics.CheckAsync(token: token);
     public Task<WorkflowCheck> ReadInstallerActivityAsync(CancellationToken token) => ServicingInstallerActivityDiagnostics.CheckAsync(token);
     public Task<WorkflowCheck> ReadScheduledTaskAsync(CancellationToken token) => WindowsUpdateScheduledTaskDiagnostics.CheckAsync(token);
     public Task<WorkflowCheck> ReadSetupAsync(CancellationToken token)

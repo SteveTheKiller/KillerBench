@@ -41,7 +41,7 @@ internal static class UpdateCommands
             string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Updates");
             if (recover)
             {
-                var recovery = await UpdateReconciliation.ResolveAsync(folder, new WindowsUpdateExecutionHost(), stop.Token);
+                var recovery = await UpdateReconciliation.ResolveAsync(folder, new WindowsUpdateExecutionHost(), token: stop.Token);
                 Console.WriteLine(recovery.Detail);
                 Console.WriteLine("Recovery records: " + folder);
                 return recovery.Resolved ? 0 : 3;
@@ -53,7 +53,7 @@ internal static class UpdateCommands
                 Console.WriteLine(json ? JsonSerializer.Serialize(result, Capture.JsonOptions) : result.Format());
                 return result.GetExitCode();
             }
-            var discovery = await UpdateDiscovery.SearchAsync(new(software, drivers, source), new Progress<string>(Console.Error.WriteLine), stop.Token);
+            var discovery = await UpdateDiscovery.SearchAsync(new(software, drivers, source), new Progress<string>(Console.Error.WriteLine), token: stop.Token);
             if (discovery.Partial)
             {
                 Console.Error.WriteLine("Update discovery was incomplete. No installation plan prepared.");

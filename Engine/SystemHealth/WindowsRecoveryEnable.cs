@@ -41,12 +41,12 @@ public static class WindowsRecoveryEnable
 
         token.ThrowIfCancellationRequested();
         if (verify)
-            return await Required(host.RunAsync(step, progress, token), CommandLimit, token,
-                "Windows Recovery verification provider").ConfigureAwait(false);
+            return await Required(host.RunAsync(step, progress, token), CommandLimit, "Windows Recovery verification provider",
+                token: token).ConfigureAwait(false);
 
         progress?.Report("Rechecking Windows Recovery Environment eligibility...");
-        WorkflowCheck current = await Required(host.InspectAsync(token), InspectionLimit, token,
-            "Windows Recovery inspection provider").ConfigureAwait(false);
+        WorkflowCheck current = await Required(host.InspectAsync(token), InspectionLimit, "Windows Recovery inspection provider",
+            token: token).ConfigureAwait(false);
         if (IsEnabled(current))
         {
             progress?.Report("Windows Recovery Environment is already enabled. No enable command was run.");
@@ -57,8 +57,8 @@ public static class WindowsRecoveryEnable
                 "Windows Recovery enablement was deferred because fresh exact Disabled evidence was not available. " + current.Detail);
 
         progress?.Report("Fresh Disabled evidence confirmed. Enabling Windows Recovery Environment...");
-        return await Required(host.RunAsync(step, progress, token), CommandLimit, token,
-            "Windows Recovery enable provider").ConfigureAwait(false);
+        return await Required(host.RunAsync(step, progress, token), CommandLimit, "Windows Recovery enable provider",
+            token: token).ConfigureAwait(false);
     }
 
     private static bool IsEnabled(WorkflowCheck check)
@@ -72,7 +72,7 @@ public static class WindowsRecoveryEnable
         actual.Tool == expected.Tool && actual.Verification == expected.Verification &&
         actual.Arguments.SequenceEqual(expected.Arguments);
 
-    private static async Task<T> Required<T>(Task<T>? task, TimeSpan limit, CancellationToken token, string provider) where T : class
+    private static async Task<T> Required<T>(Task<T>? task, TimeSpan limit, string provider, CancellationToken token) where T : class
     {
         if (task is null) throw new InvalidOperationException(provider + " returned no task.");
         return await task.WaitAsync(limit, token).ConfigureAwait(false)

@@ -14,8 +14,8 @@ public static class ShadowCopyDiagnostics
         "[pscustomobject]@{id=[string]$_.ID;createdUtc=$created;state=[uint32]$_.State;status=[string]$_.Status;persistent=[bool]$_.Persistent;clientAccessible=[bool]$_.ClientAccessible;noAutoRelease=[bool]$_.NoAutoRelease;noWriters=[bool]$_.NoWriters;hardwareAssisted=[bool]$_.HardwareAssisted;differential=[bool]$_.Differential;imported=[bool]$_.Imported;exposedLocally=[bool]$_.ExposedLocally;exposedRemotely=[bool]$_.ExposedRemotely}});" +
         "[pscustomobject]@{complete=($all.Count-le 512);items=$items}|ConvertTo-Json -Depth 4 -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Shadow copy collection requires Windows.");

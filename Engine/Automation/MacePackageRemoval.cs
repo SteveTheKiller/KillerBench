@@ -119,7 +119,7 @@ public static class MacePackageRemoval
         var pending = new MacePackageRemovalPendingRecord(1, Environment.MachineName, DateTimeOffset.UtcNow,
             options, repeatedEligibility.Candidate!.Target, repeatedEligibility.Candidate.Identity);
         await JournalPersistence.WriteAsync(pendingPath,
-            JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
+            JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
         bool dispatched = false;
         try
         {
@@ -204,7 +204,7 @@ public static class MacePackageRemoval
             string archive = Path.Combine(root, "mace-package-removal-reconciliation-" +
                 DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") + "-" + Guid.NewGuid().ToString("N") + ".json");
             var result = new MacePackageRemovalReconciliationResult(outcome, detail, pendingPath, archive);
-            await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(result, Capture.JsonOptions), token).ConfigureAwait(false);
+            await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
             File.Move(pendingPath, archive + ".prepared.json");
             return result;
         }
@@ -225,7 +225,7 @@ public static class MacePackageRemoval
         string archive = Path.Combine(root, "mace-package-removal-" +
             DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") + "-" + Guid.NewGuid().ToString("N") + ".json");
         var result = new MacePackageRemovalResult(outcome, detail, archive);
-        await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(result, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
         File.Move(pendingPath, archive + ".prepared.json");
         return result;
     }

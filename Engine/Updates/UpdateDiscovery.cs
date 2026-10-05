@@ -73,8 +73,8 @@ public static class UpdateDiscovery
         "for($i=0; $i -lt $items.Count; $i++) { $products=$null; try { $products=@($result.Updates.Item($i).Categories | Where-Object {$_.Type -eq 'Product'} | ForEach-Object {[pscustomobject]@{id=$_.CategoryID; name=$_.Name}}) } catch {}; $items[$i] | Add-Member -NotePropertyName products -NotePropertyValue $products }; " +
         "[pscustomobject]@{code=[int]$result.ResultCode; total=$result.Updates.Count; updates=$items} | ConvertTo-Json -Depth 8 -Compress"], true);
 
-    public static async Task<UpdateSearchResult> SearchAsync(UpdateSearchOptions options, IProgress<string>? progress = null, CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? query = null)
+    public static async Task<UpdateSearchResult> SearchAsync(UpdateSearchOptions options, IProgress<string>? progress = null, Func<RepairStep, CancellationToken, Task<ToolResult>>? query = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         var step = QueryStep(options);

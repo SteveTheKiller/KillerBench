@@ -58,8 +58,8 @@ internal static class FeatureServiceFailureEventChecks
 
         using var canceled = new CancellationTokenSource();
         canceled.Cancel();
-        await RequireCanceled(() => FeatureServiceFailureEvents.CheckAllAsync(canceled.Token,
-            (_, _) => throw new Exception("Canceled feature service collection must not invoke its provider.")));
+        await RequireCanceled(() => FeatureServiceFailureEvents.CheckAllAsync((_, _) => throw new Exception("Canceled feature service collection must not invoke its provider."),
+            token: canceled.Token));
         try
         {
             await FeatureServiceFailureEvents.CheckAsync((FeatureServiceFailureGroup)99, execute: (_, _) =>

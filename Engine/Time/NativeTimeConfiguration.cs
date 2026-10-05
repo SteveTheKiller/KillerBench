@@ -32,7 +32,7 @@ public static class NativeTimeConfiguration
 
         public async Task ApplyAsync(TimeOptions options, CancellationToken token)
         {
-            var fresh = await TimePlanning.PreviewAsync(options, token, inspect).ConfigureAwait(false);
+            var fresh = await TimePlanning.PreviewAsync(options, inspect, token: token).ConfigureAwait(false);
             if (!fresh.Plan.ReviewPassed || options.Source is not (TimeSourceMode.CustomPeers or TimeSourceMode.DomainHierarchy))
                 throw new InvalidOperationException("Time-source prerequisites no longer pass. Configuration was not started.");
             token.ThrowIfCancellationRequested();
@@ -53,7 +53,7 @@ public static class NativeTimeConfiguration
         public Task<bool> VerifyAsync(TimeOptions options, CancellationToken token)
         {
             progress?.Report("Verifying the selected source and reported synchronization...");
-            return TimeConfiguration.VerifyAsync(options, token, inspect, ct => execute(TimeRecovery.Step(true), ct));
+            return TimeConfiguration.VerifyAsync(options, inspect, ct => execute(TimeRecovery.Step(true), ct), token: token);
         }
 
         private static void RequireSuccess(ToolResult result)

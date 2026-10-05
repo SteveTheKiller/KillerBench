@@ -23,7 +23,7 @@ internal static class PrinterDriverModelChecks
         Require(collected.State == CheckState.Information && bounded && planned is { Verification: true } && planned.Arguments.Last().Contains("Get-PrinterDriver", StringComparison.Ordinal) && !planned.Arguments.Last().Contains("Add-PrinterDriver", StringComparison.Ordinal) && !planned.Arguments.Last().Contains("Remove-PrinterDriver", StringComparison.Ordinal), "Native plan reads bounded registrations without changing drivers");
         Require((await PrinterDriverModelDiagnostics.CheckAsync(execute: (_, _) => throw new IOException("fixture failure"))).State == CheckState.Unknown, "Provider failure remains unknown");
         using var stop = new CancellationTokenSource(); stop.Cancel(); bool canceled = false;
-        try { await PrinterDriverModelDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); } catch (OperationCanceledException) { canceled = true; }
+        try { await PrinterDriverModelDiagnostics.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); } catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents collection");
         Console.WriteLine("PASS: bounded printer driver model and package-awareness evidence remains read only; fixtures only.");
     }

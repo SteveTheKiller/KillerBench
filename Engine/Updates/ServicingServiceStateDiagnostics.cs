@@ -16,13 +16,13 @@ public static class ServicingServiceStateDiagnostics
         new ServicingServiceDefinition("UsoSvc", "Update Orchestrator Service")
     ]);
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default,
-        Func<ServicingServiceDefinition, CancellationToken, Task<(ToolResult Result, int? Startup)>>? inspect = null)
-        => await CheckSelectedAsync(Services.Select(service => service.Name), token, inspect).ConfigureAwait(false);
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(Func<ServicingServiceDefinition, CancellationToken, Task<(ToolResult Result, int? Startup)>>? inspect = null,
+        CancellationToken token = default)
+        => await CheckSelectedAsync(Services.Select(service => service.Name), inspect, token: token).ConfigureAwait(false);
 
     public static async Task<IReadOnlyList<WorkflowCheck>> CheckSelectedAsync(IEnumerable<string> serviceNames,
-        CancellationToken token = default,
-        Func<ServicingServiceDefinition, CancellationToken, Task<(ToolResult Result, int? Startup)>>? inspect = null)
+        Func<ServicingServiceDefinition, CancellationToken, Task<(ToolResult Result, int? Startup)>>? inspect = null,
+        CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(serviceNames);
         inspect ??= InspectAsync;

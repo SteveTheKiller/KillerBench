@@ -47,7 +47,7 @@ internal static class CaptureChecks
         catch (IOException) { }
         Require(before == await File.ReadAllTextAsync(cbsPath), "Save protects original source");
         string savedBefore = await File.ReadAllTextAsync(path);
-        try { await Capture.SaveAsync(session, path, canceled.Token); throw new Exception("Canceled save accepted"); }
+        try { await Capture.SaveAsync(session, path, cancellationToken: canceled.Token); throw new Exception("Canceled save accepted"); }
         catch (OperationCanceledException) { }
         Require(savedBefore == await File.ReadAllTextAsync(path), "Canceled save preserves existing capture");
         Console.WriteLine("PASS: collection coverage, cancellation, file bounds, event rules, safe XML, capture round trip, invalid captures and source protection.");

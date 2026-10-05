@@ -434,7 +434,7 @@ internal static class RecipeChecks
         {
             try
             {
-                await TimePlanning.PreviewAsync(new(), interrupted.Token, _ => new TaskCompletionSource<TimeEnvironment>().Task);
+                await TimePlanning.PreviewAsync(new(), _ => new TaskCompletionSource<TimeEnvironment>().Task, token: interrupted.Token);
                 throw new Exception("Uncooperative time provider ignored cancellation");
             }
             catch (OperationCanceledException) { }
@@ -451,7 +451,7 @@ internal static class RecipeChecks
         {
             try
             {
-                await TimePlanning.PreviewAsync(new(), canceledPreview.Token, _ => { canceledPreview.Cancel(); return Task.FromResult(standalone); });
+                await TimePlanning.PreviewAsync(new(), _ => { canceledPreview.Cancel(); return Task.FromResult(standalone); }, token: canceledPreview.Token);
                 throw new Exception("Canceled time preview returned a plan");
             }
             catch (OperationCanceledException) { }

@@ -48,8 +48,8 @@ public static class FileHistoryStatus
         catch{if($_.Exception.HResult-eq-2147221164){'{"apiAvailable":false,"complete":true,"loadResult":null,"queryResult":null,"state":null}'}else{'{"apiAvailable":true,"complete":false,"loadResult":null,"queryResult":null,"state":null}'}}
         """;
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows())

@@ -39,7 +39,7 @@ public static class ThirdPartyUpdateDiscovery
         ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", Script], true);
 
     public static async Task<ThirdPartyUpdateResult> ReadAsync(IProgress<string>? progress = null,
-        CancellationToken token = default, Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null, CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Third-party update discovery requires Windows.");

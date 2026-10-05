@@ -56,7 +56,7 @@ internal static class DhcpClientEventChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await DhcpClientEvents.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await DhcpClientEvents.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents DHCP Client event collection");
         Console.WriteLine("PASS: DHCP Client IPv4 and IPv6 event grouping, summary privacy, isolation and cancellation; no network changes.");

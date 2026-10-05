@@ -50,7 +50,7 @@ internal static class TaskRegistrationChecks
             using var stop = new CancellationTokenSource();
             var host = new InterruptedHost(plan, stage, stop);
             var journal = new Journal();
-            var result = TaskRegistration.RunAsync(plan, host, true, stop.Token, journal).GetAwaiter().GetResult();
+            var result = TaskRegistration.RunAsync(plan, host, true, journal, token: stop.Token).GetAwaiter().GetResult();
             if (result.Status != "Unverified" || !result.CreateAttempted || !journal.Pending ||
                 host.Reads != (stage == "create-return" ? 0 : 1) || result.Evidence.Count != (stage == "create-return" ? 3 : 4))
                 throw new Exception("Cancellation accompanying a completed result advanced registration or lost evidence.");
@@ -98,7 +98,7 @@ internal static class TaskRegistrationChecks
             using var stop = new CancellationTokenSource();
             var host = new InterruptedHost(plan, stage, stop);
             if (stage == "before") stop.Cancel();
-            var result = TaskRegistration.RunAsync(plan, host, true, stop.Token, new Journal()).GetAwaiter().GetResult();
+            var result = TaskRegistration.RunAsync(plan, host, true, new Journal(), token: stop.Token).GetAwaiter().GetResult();
             bool attempted = stage is "create" or "verify";
             if (result.Status != (attempted ? "Unverified" : "Canceled") || result.CreateAttempted != attempted ||
                 host.Creates != (attempted ? 1 : 0) || host.Reads != (stage == "verify" ? 1 : 0) ||

@@ -56,7 +56,7 @@ internal static class TcpSettingChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await TcpSettingDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await TcpSettingDiagnostics.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents TCP setting collection");
         Console.WriteLine("PASS: bounded TCP setting templates, exact enum evidence, incomplete handling and read-only collection; fixtures only.");

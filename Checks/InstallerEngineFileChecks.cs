@@ -65,7 +65,7 @@ internal static class InstallerEngineFileChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await InstallerEngineFileDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await InstallerEngineFileDiagnostics.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents Installer file collection");
         Console.WriteLine("PASS: Windows Installer engine file presence, signature, architecture, privacy and bounds; fixtures only.");

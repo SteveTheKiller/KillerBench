@@ -37,7 +37,7 @@ internal static class PrinterCommands
                 {
                     if (values.Count != 0 || executeCancellation || customFolder)
                         throw new ArgumentException("print-job-list takes no options.");
-                    var captured = await PrintJobDiagnostics.CaptureAsync(stop.Token);
+                    var captured = await PrintJobDiagnostics.CaptureAsync(token: stop.Token);
                     var inventory = PrintJobDiagnostics.ReadInventory(captured);
                     Console.WriteLine(JsonSerializer.Serialize(new { Available = inventory is not null,
                         Complete = inventory?.Complete, Jobs = inventory?.Jobs,
@@ -95,7 +95,7 @@ internal static class PrinterCommands
             if (args[0] == "printer-list")
             {
                 if (args.Length != 1) throw new ArgumentException("printer-list takes no options.");
-                var snapshot = await PrinterDiagnostics.DiscoverAsync(stop.Token);
+                var snapshot = await PrinterDiagnostics.DiscoverAsync(token: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(new { Available = snapshot is not null, Queues = snapshot?.Queues,
                     Note = "Local queue discovery only. No settings changed." }, Capture.JsonOptions));
                 return snapshot is null ? 3 : 0;
@@ -123,11 +123,11 @@ internal static class PrinterCommands
                 executionStarted = true;
                 var result = await Repairs.RunAsync(RepairKind.PrinterOffline,
                     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Repairs"),
-                    new PrinterProgress(), stop.Token, selectedPrinterQueues: queues);
+                    new PrinterProgress(), selectedPrinterQueues: queues, cancellationToken: stop.Token);
                 Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
                 return stop.IsCancellationRequested ? 130 : Repairs.IsVerified(result) ? 0 : 3;
             }
-            var check = await PrinterDiagnostics.CheckOfflineAsync(queues, stop.Token);
+            var check = await PrinterDiagnostics.CheckOfflineAsync(queues, token: stop.Token);
             Console.WriteLine(JsonSerializer.Serialize(new { Check = check, Note = "Selected local queue offline settings only. Physical printer health is not tested. No settings changed." }, Capture.JsonOptions));
             return check.State == CheckState.Clear ? 0 : 3;
         }

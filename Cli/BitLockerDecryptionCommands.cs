@@ -35,7 +35,7 @@ internal static class BitLockerDecryptionCommands
                 Console.Error.WriteLine(execute
                     ? "Checking the selected volume before one decryption request. The volume will be unprotected afterwards."
                     : "Previewing decryption. No machine inspection or change is performed.");
-                result = await BitLockerDecryption.RunAsync(volume, execute, execute, folder, host, new ConsoleProgress(), stop.Token);
+                result = await BitLockerDecryption.RunAsync(volume, execute, execute, folder, host, new ConsoleProgress(), token: stop.Token);
             }
             Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
             return result.GetExitCode();

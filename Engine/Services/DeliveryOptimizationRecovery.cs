@@ -20,8 +20,8 @@ public static class DeliveryOptimizationRecovery
     } && ServiceRecovery.MatchesService(evidence, ServiceName) && ServiceRecovery.State(evidence) == 7;
 
     public static async Task<ToolResult> ExecuteAsync(RepairStep step, IProgress<string>? progress = null,
-        CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(step);
         execute ??= (command, cancellationToken) => NativeTool.RunAsync(command.Tool, command.Arguments,
@@ -35,7 +35,7 @@ public static class DeliveryOptimizationRecovery
                 if (step.Tool != "sc.exe" || !step.Arguments.SequenceEqual(VerifyStep().Arguments))
                     throw new ArgumentException("Unsupported Delivery Optimization verification command.", nameof(step));
                 return await ServiceRecovery.ObserveRunningAsync(ServiceName,
-                    cancellationToken => execute(VerifyStep(), cancellationToken), deadline.Token).ConfigureAwait(false);
+                    cancellationToken => execute(VerifyStep(), cancellationToken), token: deadline.Token).ConfigureAwait(false);
             }
             if (step.Tool != "sc.exe" || !step.Arguments.SequenceEqual(ContinueStep().Arguments))
                 throw new ArgumentException("Unsupported Delivery Optimization recovery command.", nameof(step));

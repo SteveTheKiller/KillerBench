@@ -12,8 +12,8 @@ public interface IBitLockerBackupHost
 public static class BitLockerBackupWorkflow
 {
     public static async Task<RecoveryBackupReceipt> BackupExistingAsync(BitLockerOptions options, Guid protector,
-        IBitLockerBackupHost host, CancellationToken token = default, TimeSpan? timeout = null, IProgress<string>? progress = null,
-        Func<CancellationToken, Task>? prepare = null, Action? mutationStarting = null)
+        IBitLockerBackupHost host, TimeSpan? timeout = null, IProgress<string>? progress = null, Func<CancellationToken, Task>? prepare = null,
+        Action? mutationStarting = null, CancellationToken token = default)
     {
         options.Validate();
         ArgumentNullException.ThrowIfNull(host);

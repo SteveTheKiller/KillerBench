@@ -26,7 +26,7 @@ internal static class PrinterConditionChecks
         Require(observed is { Verification: true } && observed.Tool == PrintRecovery.Tool && observed.Arguments.Last().Contains("Select-Object -First 257") &&
             collected.Single().State == CheckState.Information, "Native plan is bounded, read only and local-queue scoped");
         using var stop = new CancellationTokenSource(); stop.Cancel(); bool canceled = false;
-        try { await PrinterConditionDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("provider should not run")); }
+        try { await PrinterConditionDiagnostics.CheckAsync((_, _) => throw new Exception("provider should not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents printer-condition collection");
         Console.WriteLine("PASS: local printer condition codes, exact queue identity, bounds, invalid evidence and cancellation; fixtures only.");

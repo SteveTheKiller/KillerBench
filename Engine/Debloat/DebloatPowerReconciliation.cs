@@ -27,7 +27,7 @@ public static class DebloatPowerReconciliation
                 pending.Change != DebloatPowerPlanExecution.CreateHighPerformance())
                 throw new InvalidDataException("Pending power-plan record is invalid.");
             Report(progress, "Rechecking the active power plan without repeating activation.");
-            var current = await Required(host.ReadAsync, "Power-plan reconciliation", ct, TimeSpan.FromSeconds(30)).ConfigureAwait(false);
+            var current = await Required(host.ReadAsync, "Power-plan reconciliation", TimeSpan.FromSeconds(30), token: ct).ConfigureAwait(false);
             if (!current.Complete || current.Evidence is not { ExitCode: 0, TimedOut: false, Truncated: false } evidence ||
                 !string.IsNullOrWhiteSpace(evidence.Error) || current.HighPerformance is null ||
                 current.HighPerformance.Id != WindowsDebloatPowerPlanReader.HighPerformanceId)
@@ -48,7 +48,7 @@ public static class DebloatPowerReconciliation
             if (pending.Schema != 1 || !CurrentMachine(pending.Machine) || pending.StartedUtc == default || string.IsNullOrWhiteSpace(pending.JournalPath) ||
                 !Complete(pending.Before)) throw new InvalidDataException("Pending power-timer record is invalid.");
             Report(progress, "Rechecking power timers without repeating any change.");
-            var current = await Required(host.ReadAsync, "Power-timer reconciliation", ct, TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+            var current = await Required(host.ReadAsync, "Power-timer reconciliation", TimeSpan.FromSeconds(20), token: ct).ConfigureAwait(false);
             if (!Complete(current) || current.ActiveSchemeId != pending.Before.ActiveSchemeId)
                 return (DebloatPowerReconciliationOutcome.Inconclusive,
                     "Current power evidence is incomplete or the active plan changed. The pending record was retained.");
@@ -66,7 +66,7 @@ public static class DebloatPowerReconciliation
                 !Complete(pending.Before) || pending.Before.HibernationEnabled != true || pending.Before.HibernationFilePresent != true)
                 throw new InvalidDataException("Pending hibernation record is invalid.");
             Report(progress, "Rechecking hibernation without repeating the change.");
-            var current = await Required(host.ReadAsync, "Hibernation reconciliation", ct, TimeSpan.FromSeconds(20)).ConfigureAwait(false);
+            var current = await Required(host.ReadAsync, "Hibernation reconciliation", TimeSpan.FromSeconds(20), token: ct).ConfigureAwait(false);
             if (!Complete(current) || !SamePlanAndTimers(pending.Before, current) ||
                 current.HibernationEnabled != current.HibernationFilePresent)
                 return (DebloatPowerReconciliationOutcome.Inconclusive,
@@ -104,7 +104,7 @@ public static class DebloatPowerReconciliation
         string archivePath = Path.Combine(root, "debloat-" + archiveName + "-reconciliation-" +
             DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") + "-" + Guid.NewGuid().ToString("N") + ".json");
         var result = new DebloatPowerReconciliationResult(inspected.Outcome, inspected.Detail, pendingPath, archivePath);
-        await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
         File.Move(pendingPath, archivePath + ".prepared.json");
         Report(progress, inspected.Detail);
         return result;
@@ -146,7 +146,7 @@ public static class DebloatPowerReconciliation
         return value.EnumerateObject().All(property => names.Add(property.Name) && UniqueFields(property.Value));
     }
     private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name,
-        CancellationToken token, TimeSpan limit)
+        TimeSpan limit, CancellationToken token)
     {
         var pending = operation(token) ?? throw new InvalidOperationException(name + " provider returned no task.");
         return await pending.WaitAsync(limit, token).ConfigureAwait(false) ?? throw new InvalidDataException(name + " provider returned no evidence.");

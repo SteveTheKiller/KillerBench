@@ -9,8 +9,8 @@ public static class PrinterPortDiagnostics
         "$ports=@(Get-PrinterPort -ErrorAction Stop | Select-Object -First 513 Name); " +
         "[pscustomobject]@{queues=$queues;ports=$ports} | ConvertTo-Json -Depth 4 -Compress";
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Printer port inventory requires Windows.");

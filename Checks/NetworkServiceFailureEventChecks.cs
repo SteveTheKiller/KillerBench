@@ -55,8 +55,8 @@ internal static class NetworkServiceFailureEventChecks
 
         using var canceled = new CancellationTokenSource();
         canceled.Cancel();
-        await RequireCanceled(() => NetworkServiceFailureEvents.CheckAsync(canceled.Token,
-            (_, _) => throw new Exception("Canceled network service collection must not invoke its provider.")));
+        await RequireCanceled(() => NetworkServiceFailureEvents.CheckAsync((_, _) => throw new Exception("Canceled network service collection must not invoke its provider."),
+            token: canceled.Token));
         Console.WriteLine("PASS: six exact network service failure histories, bounded collection and non-mutating results; fixtures only.");
     }
 

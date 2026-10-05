@@ -61,7 +61,7 @@ public static class BitLockerAutoUnlock
 
         Report(progress, "Inspecting " + volume + " and the operating-system volume.");
         BitLockerAutoUnlockState before;
-        try { before = await Required(ct => host.InspectAsync(volume, ct), "Auto-unlock inspection", token, TimeSpan.FromSeconds(45)).ConfigureAwait(false); }
+        try { before = await Required(ct => host.InspectAsync(volume, ct), "Auto-unlock inspection", TimeSpan.FromSeconds(45), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(volume, BitLockerAutoUnlockOutcome.Blocked, "Auto-unlock eligibility could not be established: " + error.Message); }
         if (EligibilityBlocker(volume, before) is { } blocker) return new(volume, BitLockerAutoUnlockOutcome.Blocked, blocker, before);
@@ -69,7 +69,7 @@ public static class BitLockerAutoUnlock
             return new(volume, BitLockerAutoUnlockOutcome.Blocked, "Administrator access is required. Auto-unlock was not turned on.", before);
 
         var pending = new PendingRecord(1, Environment.MachineName, DateTimeOffset.UtcNow, volume, before, null);
-        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
         string journalPath = Path.Combine(root, "bitlocker-autounlock-" + Guid.NewGuid().ToString("N") + ".json");
         ToolResult? command = null;
         bool dispatched = false;
@@ -77,20 +77,20 @@ public static class BitLockerAutoUnlock
         try
         {
             Report(progress, "Repeating volume checks immediately before the request.");
-            var fresh = await Required(ct => host.InspectAsync(volume, ct), "Final auto-unlock inspection", token, TimeSpan.FromSeconds(45)).ConfigureAwait(false);
+            var fresh = await Required(ct => host.InspectAsync(volume, ct), "Final auto-unlock inspection", TimeSpan.FromSeconds(45), token: token).ConfigureAwait(false);
             if (EligibilityBlocker(volume, fresh) is not null || fresh.Identity != before.Identity || !host.IsAdministrator)
             {
                 result = new(volume, BitLockerAutoUnlockOutcome.Blocked,
                     "Final volume or administrator evidence no longer authorizes auto-unlock. No request was sent.", before, After: fresh, JournalPath: journalPath);
-                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
                 File.Move(pendingPath, journalPath + ".prepared.json");
                 Report(progress, result.Detail);
                 return result;
             }
             Report(progress, "Turning on auto-unlock for " + volume + ".");
             dispatched = true;
-            command = await Required(ct => host.EnableAsync(volume, ct), "Auto-unlock request", token, TimeSpan.FromMinutes(2)).ConfigureAwait(false);
-            await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending with { Command = command }, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+            command = await Required(ct => host.EnableAsync(volume, ct), "Auto-unlock request", TimeSpan.FromMinutes(2), token: token).ConfigureAwait(false);
+            await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending with { Command = command }, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
             result = await VerifyAsync(volume, before, command, journalPath, host, progress, token).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
@@ -105,7 +105,7 @@ public static class BitLockerAutoUnlock
                 dispatched ? "The request was interrupted: " + error.Message + ". Reconcile before trying again."
                     : "Final eligibility was unavailable: " + error.Message + ". No request was sent.", before, command, JournalPath: journalPath);
         }
-        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (!dispatched || result.Outcome is BitLockerAutoUnlockOutcome.Enabled or BitLockerAutoUnlockOutcome.NotApplied or BitLockerAutoUnlockOutcome.Failed)
             File.Move(pendingPath, journalPath + ".prepared.json");
         Report(progress, result.Detail);
@@ -140,7 +140,7 @@ public static class BitLockerAutoUnlock
         }
         string journalPath = Path.Combine(root, "bitlocker-autounlock-recovered-" + Guid.NewGuid().ToString("N") + ".json");
         var result = await VerifyAsync(pending.Volume, pending.Before, pending.Command, journalPath, host, progress, token).ConfigureAwait(false);
-        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         if (result.Outcome is BitLockerAutoUnlockOutcome.Enabled || result.Outcome == BitLockerAutoUnlockOutcome.NotApplied && pending.Command is not null)
             File.Move(pendingPath, journalPath + ".prepared.json");
         return result;
@@ -168,7 +168,7 @@ public static class BitLockerAutoUnlock
     {
         Report(progress, "Confirming auto-unlock on " + volume + ".");
         BitLockerAutoUnlockState after;
-        try { after = await Required(ct => host.InspectAsync(volume, ct), "Auto-unlock verification", token, TimeSpan.FromSeconds(45)).ConfigureAwait(false); }
+        try { after = await Required(ct => host.InspectAsync(volume, ct), "Auto-unlock verification", TimeSpan.FromSeconds(45), token: token).ConfigureAwait(false); }
         catch (Exception error) when (!token.IsCancellationRequested && Unavailable(error))
         { return new(volume, BitLockerAutoUnlockOutcome.Uncertain, "Verification was unavailable: " + error.Message, before, command, JournalPath: journalPath); }
         bool same = after.Complete && after.Identity == before.Identity;
@@ -189,7 +189,7 @@ public static class BitLockerAutoUnlock
     private static bool Unavailable(Exception error) => error is IOException or InvalidDataException or UnauthorizedAccessException or
         InvalidOperationException or NotSupportedException or TimeoutException or System.ComponentModel.Win32Exception or
         System.Security.SecurityException;
-    private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name, CancellationToken token, TimeSpan limit)
+    private static async Task<T> Required<T>(Func<CancellationToken, Task<T>> operation, string name, TimeSpan limit, CancellationToken token)
     {
         var pending = operation(token) ?? throw new InvalidOperationException(name + " provider returned no task.");
         try { return await pending.WaitAsync(limit, token).ConfigureAwait(false) ?? throw new InvalidDataException(name + " provider returned no evidence."); }

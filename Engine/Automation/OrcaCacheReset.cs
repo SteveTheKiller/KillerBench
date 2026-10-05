@@ -130,7 +130,7 @@ public static class OrcaCacheReset
             "-" + operationId + ".json");
         var pending = new OrcaCachePendingRecord(1, operationId, DateTimeOffset.UtcNow, Environment.MachineName,
             options.Mode, journalPath, plans);
-        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
 
         try
         {
@@ -170,7 +170,7 @@ public static class OrcaCacheReset
             var verified = new OrcaCacheResetResult(OrcaCacheResetOutcome.Verified,
                 "Selected Outlook caches were retained under unique recovery names and every move was verified. Profiles, OST files, credentials, add-ins, packages and settings were unchanged.",
                 journalPath, plans);
-            await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(verified, Capture.JsonOptions), token).ConfigureAwait(false);
+            await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(verified, Capture.JsonOptions), token: token).ConfigureAwait(false);
             File.Move(pendingPath, journalPath + ".prepared.json");
             return verified;
         }
@@ -231,7 +231,7 @@ public static class OrcaCacheReset
                 ? "Every selected cache source is absent and every exact retained directory exists. The pending record was archived without repeating a move."
                 : "Every selected cache source remains present and every retained destination is absent. No move occurred, and the pending record was archived without retrying.";
             var result = new OrcaCacheReconciliationResult(outcome, detail, pendingPath, pending, archive);
-            await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(result, Capture.JsonOptions), token).ConfigureAwait(false);
+            await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
             File.Move(pendingPath, archive + ".prepared.json");
             return result;
         }
@@ -296,7 +296,7 @@ public static class OrcaCacheReset
         string archive = Path.Combine(root, "orca-cache-reset-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
             "-" + Guid.NewGuid().ToString("N") + ".blocked.json");
         var result = new OrcaCacheResetResult(outcome, detail, archive, pending.Targets);
-        await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(result, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
         File.Move(pendingPath, archive + ".prepared.json");
         return result;
     }

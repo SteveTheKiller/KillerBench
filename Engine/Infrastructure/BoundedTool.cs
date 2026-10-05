@@ -4,17 +4,17 @@ internal static class BoundedTool
 {
     internal static async Task<ToolResult> RunAsync(RepairStep step, TimeSpan limit,
         IProgress<string>? progress = null, CancellationToken token = default) =>
-        await RunCoreAsync(step, limit, progress, token, null).ConfigureAwait(false);
+        await RunCoreAsync(step, limit, progress, null, token: token).ConfigureAwait(false);
 
     internal static async Task<ToolResult> RunWithInputAsync(RepairStep step, TimeSpan limit, string standardInput,
         IProgress<string>? progress = null, CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(standardInput);
-        return await RunCoreAsync(step, limit, progress, token, standardInput).ConfigureAwait(false);
+        return await RunCoreAsync(step, limit, progress, standardInput, token: token).ConfigureAwait(false);
     }
 
     private static async Task<ToolResult> RunCoreAsync(RepairStep step, TimeSpan limit,
-        IProgress<string>? progress, CancellationToken token, string? standardInput)
+        IProgress<string>? progress, string? standardInput, CancellationToken token)
     {
         if (limit <= TimeSpan.Zero || limit > TimeSpan.FromHours(2)) throw new ArgumentOutOfRangeException(nameof(limit));
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);

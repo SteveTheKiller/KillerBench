@@ -176,8 +176,8 @@ public partial class MainWindow
                 : "TASK REGISTRATION / PREVIEW");
             var progress = new Progress<string>(AppendWorkflowOutput);
             var result = await Task.Run(() => TaskRegistration.RunAsync(plan,
-                new WindowsTaskRegistrationHost(startDate), execute, stop.Token,
-                new FileTaskRegistrationJournal(journalFolder, startDate), progress: progress));
+                new WindowsTaskRegistrationHost(startDate), execute, new FileTaskRegistrationJournal(journalFolder, startDate),
+                progress: progress, token: stop.Token));
             string output = "TASK REGISTRATION / " + result.Status.ToUpperInvariant() +
                 "\nTarget: " + plan.Identity.FullName +
                 "\nCreate attempted: " + (result.CreateAttempted ? "Yes" : "No") +
@@ -218,7 +218,7 @@ public partial class MainWindow
             AppendWorkflowOutput("TASK REGISTRATION / READ-ONLY RECOVERY");
             var progress = new Progress<string>(AppendWorkflowOutput);
             var result = await Task.Run(() => TaskRegistrationRecovery.RecoverAsync(plan, journalFolder,
-                new WindowsTaskRegistrationRecoveryHost(), stop.Token, progress: progress));
+                new WindowsTaskRegistrationRecoveryHost(), progress: progress, token: stop.Token));
             string output = "TASK REGISTRATION RECOVERY / " + result.Outcome.ToString().ToUpperInvariant() +
                 "\nTarget: " + plan.Identity.FullName +
                 "\nRetry attempted: No\nTask changed: No\nTask executed: No\n\n" + result.Detail +

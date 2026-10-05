@@ -48,7 +48,7 @@ internal static class ThirdPartyUpdateCommands
         Console.CancelKeyPress += cancel;
         try
         {
-            var result = await ThirdPartyUpdateDiscovery.ReadAsync(new Progress<string>(Console.Error.WriteLine), stop.Token);
+            var result = await ThirdPartyUpdateDiscovery.ReadAsync(new Progress<string>(Console.Error.WriteLine), token: stop.Token);
             Console.WriteLine(JsonSerializer.Serialize(result, Capture.JsonOptions));
             return result.ProviderAvailable && result.Complete ? 0 : 3;
         }

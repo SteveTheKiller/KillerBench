@@ -12,8 +12,8 @@ public static class VssProviderDiagnostics
         "$items=@($all|ForEach-Object{[pscustomobject]@{id=[string]$_.ID;name=[string]$_.Name;type=[uint32]$_.Type;version=[string]$_.Version;versionId=[string]$_.VersionID}});" +
         "[pscustomobject]@{complete=($all.Count-le 64);items=$items}|ConvertTo-Json -Depth 4 -Compress";
 
-    public static async Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         if (execute is null && !OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("VSS provider collection requires Windows.");

@@ -26,8 +26,8 @@ public interface ITaskRegistrationHost
 public static class TaskRegistration
 {
     public static async Task<TaskRegistrationResult> RunAsync(ScheduledTaskPlan draft, ITaskRegistrationHost host,
-        bool execute = false, CancellationToken token = default, ITaskRegistrationJournal? journal = null,
-        TimeSpan? timeout = null, IProgress<string>? progress = null)
+        bool execute = false, ITaskRegistrationJournal? journal = null, TimeSpan? timeout = null,
+        IProgress<string>? progress = null, CancellationToken token = default)
     {
         var plan = draft.Validate();
         ArgumentNullException.ThrowIfNull(host);

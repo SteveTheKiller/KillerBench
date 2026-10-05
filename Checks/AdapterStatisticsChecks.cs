@@ -37,7 +37,7 @@ internal static class AdapterStatisticsChecks
         Require((await AdapterStatisticsDiagnostics.CheckAsync(execute: (_, _) => throw new IOException("fixture failure"))).State == CheckState.Unknown, "Provider failure remains unknown");
         using var stop = new CancellationTokenSource(); stop.Cancel();
         bool canceled = false;
-        try { await AdapterStatisticsDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); } catch (OperationCanceledException) { canceled = true; }
+        try { await AdapterStatisticsDiagnostics.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); } catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents collection");
         Console.WriteLine("PASS: bounded adapter byte, error and discard counters remain read only; fixtures only.");
     }

@@ -50,8 +50,8 @@ internal static class FirewallServiceFailureEventChecks
 
         using var canceled = new CancellationTokenSource();
         canceled.Cancel();
-        await RequireCanceled(() => FirewallServiceFailureEvents.CheckAsync(canceled.Token,
-            (_, _) => throw new Exception("Canceled firewall service collection must not invoke its provider.")));
+        await RequireCanceled(() => FirewallServiceFailureEvents.CheckAsync((_, _) => throw new Exception("Canceled firewall service collection must not invoke its provider."),
+            token: canceled.Token));
         Console.WriteLine("PASS: exact BFE and Windows Defender Firewall service histories, bounded collection and non-mutating results; fixtures only.");
     }
 

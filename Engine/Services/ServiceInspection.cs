@@ -2,11 +2,11 @@ namespace KillerBench.Engine.Services;
 
 public static class ServiceInspection
 {
-    public static Task<IReadOnlyList<WorkflowCheck>> ReadAsync(IEnumerable<RepairKind> scopes, CancellationToken token = default, IProgress<string>? progress = null) =>
-        ReadAsync(scopes, ServiceRecovery.CheckAsync, token, progress);
+    public static Task<IReadOnlyList<WorkflowCheck>> ReadAsync(IEnumerable<RepairKind> scopes, IProgress<string>? progress = null, CancellationToken token = default) =>
+        ReadAsync(scopes, ServiceRecovery.CheckAsync, progress, token: token);
 
     public static async Task<IReadOnlyList<WorkflowCheck>> ReadAsync(IEnumerable<RepairKind> scopes,
-        Func<RepairKind, CancellationToken, Task<WorkflowCheck>> inspect, CancellationToken token = default, IProgress<string>? progress = null)
+        Func<RepairKind, CancellationToken, Task<WorkflowCheck>> inspect, IProgress<string>? progress = null, CancellationToken token = default)
     {
         ArgumentNullException.ThrowIfNull(scopes);
         ArgumentNullException.ThrowIfNull(inspect);

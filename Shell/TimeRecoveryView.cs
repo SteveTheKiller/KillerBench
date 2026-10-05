@@ -21,7 +21,7 @@ public partial class MainWindow
         {
             AppendWorkflowOutput("Checking an interrupted time change. No source change or synchronization will be retried.");
             string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Time");
-            var recovery = await Task.Run(() => TimeConfigurationRecovery.ReconcileAsync(folder, stop.Token));
+            var recovery = await Task.Run(() => TimeConfigurationRecovery.ReconcileAsync(folder, token: stop.Token));
             string detail = recovery.Detail;
             AppendWorkflowOutput("TIME RECOVERY / " + recovery.Outcome.ToString().ToUpperInvariant() + "\n" + detail +
                 "\nPending record: " + recovery.PendingPath + "\nArchived record: " + (recovery.ArchivedPath ?? "None") +

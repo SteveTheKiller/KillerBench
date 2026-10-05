@@ -190,8 +190,8 @@ internal static class WorkflowCommands
             var progress = new Progress<string>(Console.Error.WriteLine);
             var result = await Workflows.RunAsync(kind, args.Contains("--auto-repair"),
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Workflows"),
-                progress, stop.Token, new WindowsWorkflowHost
-                { BitsAllUsers = bitsAllUsers, ApplicationScope = applicationScope, IncludeProvisionedPackages = includeProvisioned, PackageScope = packageScope, NetworkEndpoint = networkEndpoint, NetworkLookupHost = networkLookupHost, MsiProductCode = msiProductCode, StorageVolume = storageVolume, ProposedComputerName = proposedName, SecurityOptions = new(!args.Contains("--skip-tpm"), !args.Contains("--skip-secure-boot"), !args.Contains("--skip-virtualization")), UpdateOptions = updateOptions, IncludeThirdPartyUpdates = args.Contains("--third-party"), Progress = progress }, selectedRecipes, diagnosticScopes);
+                progress, new WindowsWorkflowHost
+                { BitsAllUsers = bitsAllUsers, ApplicationScope = applicationScope, IncludeProvisionedPackages = includeProvisioned, PackageScope = packageScope, NetworkEndpoint = networkEndpoint, NetworkLookupHost = networkLookupHost, MsiProductCode = msiProductCode, StorageVolume = storageVolume, ProposedComputerName = proposedName, SecurityOptions = new(!args.Contains("--skip-tpm"), !args.Contains("--skip-secure-boot"), !args.Contains("--skip-virtualization")), UpdateOptions = updateOptions, IncludeThirdPartyUpdates = args.Contains("--third-party"), Progress = progress }, selectedRecipes, diagnosticScopes, token: stop.Token);
             if (reportPath is not null) await ExportReportAsync(result, reportPath, args.Contains("--auto-repair")).ConfigureAwait(false);
             Console.WriteLine(args.Contains("--json") ? JsonSerializer.Serialize(result, Capture.JsonOptions) :
                 WorkflowReport.Format(result, commandLine: true));
@@ -276,7 +276,7 @@ internal static class WorkflowCommands
             WindowsWorkflowHost host = WorkflowOptionProjection.CreateHost(validation, progress);
             WorkflowResult result = await Workflows.RunAsync(definition.Kind, false,
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Workflows"),
-                progress, stop.Token, host).ConfigureAwait(false);
+                progress, host, token: stop.Token).ConfigureAwait(false);
             if (reportPath is not null) await ExportReportAsync(result, reportPath, false).ConfigureAwait(false);
             Console.WriteLine(json ? JsonSerializer.Serialize(result, Capture.JsonOptions) :
                 WorkflowReport.Format(result, commandLine: true));

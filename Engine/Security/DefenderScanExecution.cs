@@ -45,7 +45,7 @@ public static class DefenderScanExecution
         var pending = new DefenderScanPending(1, Environment.MachineName, type, DateTimeOffset.UtcNow,
             Completion(firstHistory!, type), false);
         Directory.CreateDirectory(folder);
-        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
 
         (bool Eligible, string Detail, DefenderScanHistoryObservation? History) final;
         try { final = await InspectAsync(type, host, token).ConfigureAwait(false); }
@@ -67,7 +67,7 @@ public static class DefenderScanExecution
                 "Final eligibility changed after preparation. No scan was started.", pendingPath);
         }
         pending = pending with { CommandDispatched = true };
-        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
         ToolResult dispatch;
         try
         {

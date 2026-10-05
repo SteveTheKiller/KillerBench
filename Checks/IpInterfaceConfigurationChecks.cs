@@ -61,7 +61,7 @@ internal static class IpInterfaceConfigurationChecks
         using var stop = new CancellationTokenSource();
         stop.Cancel();
         bool canceled = false;
-        try { await IpInterfaceConfigurationDiagnostics.CheckAsync(stop.Token, (_, _) => throw new Exception("Provider must not run")); }
+        try { await IpInterfaceConfigurationDiagnostics.CheckAsync((_, _) => throw new Exception("Provider must not run"), token: stop.Token); }
         catch (OperationCanceledException) { canceled = true; }
         Require(canceled, "Caller cancellation prevents collection");
         Console.WriteLine("PASS: IP interface configuration, protocol MTU bounds and read-only collection; fixtures only.");

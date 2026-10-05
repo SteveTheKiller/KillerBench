@@ -32,37 +32,37 @@ public static class ServicingServiceFailureEvents
         "Update Orchestrator failure history",
         " Records are historical observations tied to the exact local Update Orchestrator identity. They do not establish a current outage, identify a failed update or authorize a service start, scan, download, installation, restart, policy change or repair.");
 
-    public static Task<WorkflowCheck> CheckBitsAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null) =>
-        ExactServiceFailureEvents.CheckAsync(Bits, token, execute);
+    public static Task<WorkflowCheck> CheckBitsAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default) =>
+        ExactServiceFailureEvents.CheckAsync(Bits, execute, token: token);
 
-    public static Task<WorkflowCheck> CheckMedicAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null) =>
-        ExactServiceFailureEvents.CheckAsync(WindowsUpdateMedic, token, execute);
+    public static Task<WorkflowCheck> CheckMedicAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default) =>
+        ExactServiceFailureEvents.CheckAsync(WindowsUpdateMedic, execute, token: token);
 
-    public static Task<WorkflowCheck> CheckFocusedAsync(WorkflowKind kind, CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null) => kind switch
+    public static Task<WorkflowCheck> CheckFocusedAsync(WorkflowKind kind, Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default) => kind switch
     {
-        WorkflowKind.WindowsUpdateService => WindowsUpdateServiceFailureEvents.CheckAsync(token, execute),
-        WorkflowKind.BitsService => ExactServiceFailureEvents.CheckAsync(Bits, token, execute),
-        WorkflowKind.CryptographicService => ExactServiceFailureEvents.CheckAsync(CryptographicServices, token, execute),
-        WorkflowKind.ModulesInstallerService => ExactServiceFailureEvents.CheckAsync(WindowsModulesInstaller, token, execute),
-        WorkflowKind.WindowsUpdateMedicService => CheckMedicAsync(token, execute),
-        WorkflowKind.UpdateOrchestratorService => ExactServiceFailureEvents.CheckAsync(UpdateOrchestrator, token, execute),
+        WorkflowKind.WindowsUpdateService => WindowsUpdateServiceFailureEvents.CheckAsync(execute, token: token),
+        WorkflowKind.BitsService => ExactServiceFailureEvents.CheckAsync(Bits, execute, token: token),
+        WorkflowKind.CryptographicService => ExactServiceFailureEvents.CheckAsync(CryptographicServices, execute, token: token),
+        WorkflowKind.ModulesInstallerService => ExactServiceFailureEvents.CheckAsync(WindowsModulesInstaller, execute, token: token),
+        WorkflowKind.WindowsUpdateMedicService => CheckMedicAsync(execute, token: token),
+        WorkflowKind.UpdateOrchestratorService => ExactServiceFailureEvents.CheckAsync(UpdateOrchestrator, execute, token: token),
         _ => throw new ArgumentOutOfRangeException(nameof(kind), "The workflow is not a focused servicing service.")
     };
 
-    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null)
+    public static async Task<IReadOnlyList<WorkflowCheck>> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
         var checks = await Task.WhenAll(
-            WindowsUpdateServiceFailureEvents.CheckAsync(token, execute),
-            CheckBitsAsync(token, execute),
-            ExactServiceFailureEvents.CheckAsync(CryptographicServices, token, execute),
-            ExactServiceFailureEvents.CheckAsync(WindowsModulesInstaller, token, execute),
-            CheckMedicAsync(token, execute),
-            ExactServiceFailureEvents.CheckAsync(UpdateOrchestrator, token, execute)).ConfigureAwait(false);
+            WindowsUpdateServiceFailureEvents.CheckAsync(execute, token: token),
+            CheckBitsAsync(execute, token: token),
+            ExactServiceFailureEvents.CheckAsync(CryptographicServices, execute, token: token),
+            ExactServiceFailureEvents.CheckAsync(WindowsModulesInstaller, execute, token: token),
+            CheckMedicAsync(execute, token: token),
+            ExactServiceFailureEvents.CheckAsync(UpdateOrchestrator, execute, token: token)).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
         return Array.AsReadOnly(checks);
     }

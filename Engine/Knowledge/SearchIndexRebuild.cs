@@ -111,7 +111,7 @@ public static class SearchIndexRebuild
         var record = new SearchIndexRebuildPendingRecord(1, operationId, DateTimeOffset.UtcNow, Environment.MachineName,
             IndexPath, retainedPath, service.Running, service.StartMode, "Prepared");
         Directory.CreateDirectory(directory);
-        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(record, Capture.JsonOptions), token).ConfigureAwait(false);
+        await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(record, Capture.JsonOptions), token: token).ConfigureAwait(false);
         bool mutationDispatched = false;
 
         try
@@ -131,7 +131,7 @@ public static class SearchIndexRebuild
                     Initial = new { Activity = activity, Restart = restart, Service = service, Index = index },
                     Current = new { Activity = immediateActivity, Restart = immediateRestart, Service = immediateService, Index = immediateIndex },
                     Detail = "Final servicing, restart, service or index evidence no longer authorizes a rebuild. No Search service or index change was attempted."
-                }, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                }, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
                 File.Move(pendingPath, blockedPath + ".prepared.json");
                 return new(SearchIndexRebuildOutcome.Blocked,
                     "Final servicing, restart, service or index evidence no longer authorizes a rebuild. No Search service or index change was attempted.",
@@ -146,7 +146,7 @@ public static class SearchIndexRebuild
                 return Uncertain("The stopped service state could not be verified exactly. The preparation record was retained.");
 
             record = record with { Stage = "ServiceStopped" };
-            await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(record, Capture.JsonOptions), token).ConfigureAwait(false);
+            await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(record, Capture.JsonOptions), token: token).ConfigureAwait(false);
             progress?.Report("Retaining the existing Search index");
             if (!Complete(await host.RetainIndexAsync(IndexPath, retainedPath, token).ConfigureAwait(false)))
             {
@@ -155,7 +155,7 @@ public static class SearchIndexRebuild
             }
 
             record = record with { Stage = "IndexRetained" };
-            await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(record, Capture.JsonOptions), token).ConfigureAwait(false);
+            await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(record, Capture.JsonOptions), token: token).ConfigureAwait(false);
             progress?.Report("Restarting Windows Search");
             if (!Complete(await host.StartServiceAsync(token).ConfigureAwait(false))) return Uncertain("Windows Search did not restart cleanly. The retained index and preparation record were preserved.");
             var afterService = await host.ReadServiceAsync(token).ConfigureAwait(false);
@@ -166,7 +166,7 @@ public static class SearchIndexRebuild
 
             string verifiedPath = Path.Combine(directory, $"search-index-rebuild.{operationId}.verified.json");
             record = record with { Stage = "Verified" };
-            await JournalPersistence.WriteAsync(verifiedPath, JsonSerializer.Serialize(record, Capture.JsonOptions), token).ConfigureAwait(false);
+            await JournalPersistence.WriteAsync(verifiedPath, JsonSerializer.Serialize(record, Capture.JsonOptions), token: token).ConfigureAwait(false);
             File.Delete(pendingPath);
             return new(SearchIndexRebuildOutcome.Verified,
                 "Windows Search restarted with a new exact index directory. The previous index remains retained for manual review and was not deleted.", verifiedPath, retainedPath);
@@ -180,7 +180,7 @@ public static class SearchIndexRebuild
                 {
                     Stage = "FinalEligibility",
                     Detail = "The final Search index rebuild check was canceled before any service or index change was requested."
-                }, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                }, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
                 File.Move(pendingPath, stoppedPath + ".prepared.json");
                 return new(SearchIndexRebuildOutcome.Stopped,
                     "The final check was canceled before any Search service or index change was requested.", stoppedPath, retainedPath);
@@ -198,7 +198,7 @@ public static class SearchIndexRebuild
                     Stage = "FinalEligibility",
                     Error = error.GetType().Name,
                     Detail = "Final Search index rebuild evidence was unavailable before any service or index change was requested."
-                }, Capture.JsonOptions), CancellationToken.None).ConfigureAwait(false);
+                }, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
                 File.Move(pendingPath, blockedPath + ".prepared.json");
                 return new(SearchIndexRebuildOutcome.Blocked,
                     "Final Search index rebuild evidence was unavailable before any service or index change was requested.", blockedPath, retainedPath);
@@ -252,7 +252,7 @@ public static class SearchIndexRebuildReconciliation
             else return new(SearchIndexReconciliationOutcome.Inconclusive,
                 "Fresh evidence cannot prove either a verified rebuild or an unchanged original state. No repair command was repeated.", pendingPath);
             string archive = Path.Combine(directory, $"search-index-rebuild.{record.OperationId}.reconciled.json");
-            await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(record with { Stage = outcome.ToString() }, Capture.JsonOptions), token).ConfigureAwait(false);
+            await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(record with { Stage = outcome.ToString() }, Capture.JsonOptions), token: token).ConfigureAwait(false);
             File.Delete(pendingPath);
             return new(outcome, detail, archive);
         }

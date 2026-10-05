@@ -64,8 +64,8 @@ internal static class InfrastructureServiceFailureEventChecks
 
         using var canceled = new CancellationTokenSource();
         canceled.Cancel();
-        await RequireCanceled(() => InfrastructureServiceFailureEvents.CheckAllAsync(canceled.Token,
-            (_, _) => throw new Exception("Canceled infrastructure service collection must not invoke its provider.")));
+        await RequireCanceled(() => InfrastructureServiceFailureEvents.CheckAllAsync((_, _) => throw new Exception("Canceled infrastructure service collection must not invoke its provider."),
+            token: canceled.Token));
         try
         {
             await InfrastructureServiceFailureEvents.CheckManyAsync(

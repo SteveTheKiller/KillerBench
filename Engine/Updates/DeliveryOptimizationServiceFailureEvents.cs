@@ -8,9 +8,9 @@ public static class DeliveryOptimizationServiceFailureEvents
         "Delivery Optimization failure history",
         " Records are historical observations tied to the exact local Delivery Optimization service identity. They do not establish a current outage, identify a failed transfer or authorize a service continue, start, transfer change, cache action, source change, policy change or repair.");
 
-    public static Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null) =>
-        ExactServiceFailureEvents.CheckAsync(Definition, token, execute);
+    public static Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default) =>
+        ExactServiceFailureEvents.CheckAsync(Definition, execute, token: token);
 
     public static WorkflowCheck Interpret(ToolResult evidence, DateTimeOffset nowUtc,
         CancellationToken token = default) =>

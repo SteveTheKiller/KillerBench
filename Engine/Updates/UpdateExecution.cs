@@ -31,11 +31,11 @@ public static class UpdateExecution
 {
     public static async Task<UpdateExecutionResult> RunAsync(UpdateSearchOptions search, IReadOnlyList<UpdateSelection> selections,
         UpdateInstallOptions options, string journalFolder, IUpdateExecutionHost host, IProgress<string>? progress = null, CancellationToken token = default)
-        => await RunBoundedAsync(search, selections, options, journalFolder, host, TimeSpan.FromHours(2), progress, token).ConfigureAwait(false);
+        => await RunBoundedAsync(search, selections, options, journalFolder, host, TimeSpan.FromHours(2), progress, token: token).ConfigureAwait(false);
 
     public static async Task<UpdateExecutionResult> RunBoundedAsync(UpdateSearchOptions search, IReadOnlyList<UpdateSelection> selections,
         UpdateInstallOptions options, string journalFolder, IUpdateExecutionHost host, TimeSpan installationLimit,
-        IProgress<string>? progress = null, CancellationToken token = default, TimeSpan? prerequisiteLimit = null)
+        IProgress<string>? progress = null, TimeSpan? prerequisiteLimit = null, CancellationToken token = default)
     {
         if (installationLimit <= TimeSpan.Zero || installationLimit > TimeSpan.FromHours(2))
             throw new ArgumentOutOfRangeException(nameof(installationLimit));

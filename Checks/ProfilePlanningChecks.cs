@@ -122,7 +122,7 @@ internal static class ProfilePlanningChecks
             }
             try
             {
-                await ProfileReview.RefreshAsync([profile.Sid], 90, canceled.Token, Inventory, StalledDependencies).WaitAsync(TimeSpan.FromSeconds(3));
+                await ProfileReview.RefreshAsync([profile.Sid], 90, Inventory, StalledDependencies, token: canceled.Token).WaitAsync(TimeSpan.FromSeconds(3));
                 throw new Exception("Stalled provider ignored Stop");
             }
             catch (OperationCanceledException) { }
@@ -144,7 +144,7 @@ internal static class ProfilePlanningChecks
         int before = dependencyCalls;
         try
         {
-            await ProfileReview.RefreshAsync([profile.Sid], 90, stop.Token, _ => { stop.Cancel(); return Task.FromResult(new ProfileInventoryResult([profile], true)); }, Dependencies);
+            await ProfileReview.RefreshAsync([profile.Sid], 90, _ => { stop.Cancel(); return Task.FromResult(new ProfileInventoryResult([profile], true)); }, Dependencies, token: stop.Token);
             throw new Exception("Refresh cancellation ignored");
         }
         catch (OperationCanceledException) { }

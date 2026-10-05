@@ -43,7 +43,7 @@ internal static class ServiceObservationChecks
         }
         try
         {
-            await ServiceRecovery.ObserveRunningAsync("Spooler", _ => new TaskCompletionSource<ToolResult>().Task, stop.Token);
+            await ServiceRecovery.ObserveRunningAsync("Spooler", _ => new TaskCompletionSource<ToolResult>().Task, token: stop.Token);
             throw new Exception("Uncooperative service query ignored cancellation.");
         }
         catch (OperationCanceledException) { }

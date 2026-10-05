@@ -58,7 +58,7 @@ public sealed class WindowsRepairHost : IRepairHost
                 PlatformProviders.CreateServicingRepairCommandHost(), progress, cancellationToken);
         return step.Tool == PrintSpoolDirectoryRecovery.Tool ? PrintSpoolDirectoryRecovery.ExecuteAsync(step, progress, cancellationToken)
             : Repairs.Plan(RepairKind.ComponentCleanup).Steps.Any(s => s.Tool == step.Tool && s.Verification == step.Verification && s.Arguments.SequenceEqual(step.Arguments)) ? ComponentCleanup.ExecuteAsync(step, progress, cancellationToken)
-            : Repairs.Plan(RepairKind.DeliveryOptimization).Steps.Any(s => s.Tool == step.Tool && s.Verification == step.Verification && s.Arguments.SequenceEqual(step.Arguments)) ? DeliveryOptimizationRecovery.ExecuteAsync(step, progress, cancellationToken)
+            : Repairs.Plan(RepairKind.DeliveryOptimization).Steps.Any(s => s.Tool == step.Tool && s.Verification == step.Verification && s.Arguments.SequenceEqual(step.Arguments)) ? DeliveryOptimizationRecovery.ExecuteAsync(step, progress, token: cancellationToken)
             : Repairs.Plan(RepairKind.DefenderSignatures).Steps.Any(s => s.Tool == step.Tool && s.Arguments.SequenceEqual(step.Arguments)) ? DefenderRecovery.ExecuteAsync(step, progress, cancellationToken)
             : Repairs.Plan(RepairKind.DhcpLease).Steps.Any(s => s.Tool == step.Tool && s.Arguments.SequenceEqual(step.Arguments)) ? DhcpRecovery.ExecuteAsync(step, progress, cancellationToken)
             : step.Tool == PrintRecovery.Tool ? PrintRecovery.ExecuteAsync(step, progress, cancellationToken)

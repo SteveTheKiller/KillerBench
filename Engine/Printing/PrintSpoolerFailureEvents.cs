@@ -8,9 +8,9 @@ public static class PrintSpoolerFailureEvents
         "Print Spooler failure history",
         " Records are historical observations tied to the local Print Spooler service identity. They do not establish a current outage, identify a failing driver or authorize a service restart, queue change, job action, driver replacement or print setting change.");
 
-    public static Task<WorkflowCheck> CheckAsync(CancellationToken token = default,
-        Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null) =>
-        ExactServiceFailureEvents.CheckAsync(Definition, token, execute);
+    public static Task<WorkflowCheck> CheckAsync(Func<RepairStep, CancellationToken, Task<ToolResult>>? execute = null,
+        CancellationToken token = default) =>
+        ExactServiceFailureEvents.CheckAsync(Definition, execute, token: token);
 
     public static WorkflowCheck Interpret(ToolResult evidence, DateTimeOffset nowUtc, CancellationToken token = default) =>
         ExactServiceFailureEvents.Interpret(Definition, evidence, nowUtc, token);
