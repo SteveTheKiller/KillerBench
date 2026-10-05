@@ -47,7 +47,7 @@
     <SolidColorBrush x:Key="ChromeTextBrush" Color="#3a3a3a" po:Freeze="True"/>
     <SolidColorBrush x:Key="FilenameBrush"  Color="#555555" po:Freeze="True"/>
     <SolidColorBrush x:Key="DimTextBrush"   Color="#666666" po:Freeze="True"/>
-    <SolidColorBrush x:Key="TextFooter" Color="#888888" po:Freeze="True" xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
+    <SolidColorBrush x:Key="TextFooter" Color="#5F5F5F" po:Freeze="True" xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="DangerRed"      Color="#dc2626" po:Freeze="True"/>
     <SolidColorBrush x:Key="BgDragHandle"   Color="#707070" po:Freeze="True"/>
     <SolidColorBrush x:Key="DragLine"       Color="#a0a0a0" po:Freeze="True"/>
@@ -95,4 +95,5 @@
 
 <CornerRadius x:Key="PanelCornerRadius" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">6</CornerRadius>
     <SolidColorBrush x:Key="OutlineRestBrush" Color="#777777" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#1A1A1A"/>
 </ResourceDictionary>

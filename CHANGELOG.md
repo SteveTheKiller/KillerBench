@@ -118,7 +118,7 @@
 - Explain that live output can be browsed without interrupting the active scan.
 - Keep focused CLI coverage aligned with the expanded Vitals result set.
 - Make recipe-catalog CLI coverage reliable under Windows PowerShell JSON parsing.
-- Delirium context menus now use subtle gray separators.
+- Improved menu, selection, and footer text contrast, with subtle gray Delirium dividers.
 
 ## [0.1.0] - Unreleased
 
