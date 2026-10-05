@@ -103,7 +103,7 @@ public static class BitsRetry
                 result = new(jobId, BitsRetryOutcome.Blocked,
                     "The exact transfer changed or is no longer eligible after preparation. No retry was requested.",
                     before, After: final);
-                await journal.AbandonAsync(result, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
+                await journal.AbandonAsync(result, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10), CancellationToken.None).ConfigureAwait(false);
                 Report(progress, result.Detail);
                 return result;
             }
@@ -147,14 +147,14 @@ public static class BitsRetry
                     stopped ? "BITS retry stopped after durable preparation and before any retry request was sent." :
                     "Final transfer eligibility could not be established: " + error.Message + ". No retry was requested.",
                     before);
-                await journal.AbandonAsync(result, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
+                await journal.AbandonAsync(result, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10), CancellationToken.None).ConfigureAwait(false);
                 Report(progress, result.Detail);
                 return result;
             }
             result = new(jobId, BitsRetryOutcome.Uncertain, "Request or observation interrupted: " + error.Message + ". A retry may still be active; reconcile before another request.", before, request);
         }
         Report(progress, "Saving the observed outcome. The retry guard remains in place.");
-        await journal.CompleteAsync(result, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
+        await journal.CompleteAsync(result, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10), CancellationToken.None).ConfigureAwait(false);
         Report(progress, result.Detail);
         return result;
     }

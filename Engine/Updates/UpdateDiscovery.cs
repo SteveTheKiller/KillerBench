@@ -88,7 +88,7 @@ public static class UpdateDiscovery
         var search = pending.WaitAsync(deadline.Token);
         while (!search.IsCompleted)
         {
-            await Task.WhenAny(search, Task.Delay(TimeSpan.FromSeconds(20))).ConfigureAwait(false);
+            await Task.WhenAny(search, Task.Delay(TimeSpan.FromSeconds(20), deadline.Token)).ConfigureAwait(false);
             if (!search.IsCompleted) progress?.Report($"Windows Update search is still running ({elapsed.Elapsed.TotalSeconds:F0} seconds). No installation started.");
         }
         try

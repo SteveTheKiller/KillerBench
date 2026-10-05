@@ -501,7 +501,7 @@ public static class Workflows
             {
                 var pending = host.InspectAsync(kind, async snapshot =>
                 {
-                    await checkpointGate.WaitAsync().ConfigureAwait(false);
+                    await checkpointGate.WaitAsync(CancellationToken.None).ConfigureAwait(false);
                     try
                     {
                         if (!accepting || inspectionToken.IsCancellationRequested) return;
@@ -521,7 +521,7 @@ public static class Workflows
             { throw new TimeoutException("Workflow inspection exceeded five minutes. Evidence is incomplete; no further repair selected."); }
             finally
             {
-                await checkpointGate.WaitAsync().ConfigureAwait(false);
+                await checkpointGate.WaitAsync(CancellationToken.None).ConfigureAwait(false);
                 try { accepting = false; if (completed) partialInspection = []; }
                 finally { checkpointGate.Release(); }
             }
@@ -531,7 +531,7 @@ public static class Workflows
         { Recipes = recipeResults, RequestedRecipeIds = requestedRecipes, PlannedRecipeIds = Array.AsReadOnly(plannedRecipes.Select(recipe => recipe.Id).ToArray()), SelectedDiagnosticScopes = diagnosticScopes };
         Task Save() => Write(Current());
         Task Write(WorkflowResult snapshot) => JournalPersistence.WriteAsync(path,
-            JsonSerializer.Serialize(snapshot, Capture.JsonOptions));
+            JsonSerializer.Serialize(snapshot, Capture.JsonOptions), token: CancellationToken.None);
     }
 
     public static WorkflowCheck Interpret(RepairKind kind, ToolResult result)

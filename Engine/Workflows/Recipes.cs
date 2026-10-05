@@ -226,7 +226,7 @@ public static class RecipeEngine
             if (checkpoint is null) return;
             var pending = checkpoint(snapshot)
                 ?? throw new InvalidOperationException("The checkpoint provider returned no task.");
-            await pending.WaitAsync(saveLimit).ConfigureAwait(false);
+            await pending.WaitAsync(saveLimit, CancellationToken.None).ConfigureAwait(false);
         }
         progress = progress is null ? null : new DiagnosticProgress(progress);
         recipes = [.. recipes.Select(recipe => recipe is null || recipe.Dependencies is null

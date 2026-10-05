@@ -87,7 +87,7 @@ public static class DnsCacheRecovery
                 result = new(target, DnsCacheRecoveryOutcome.Blocked,
                     "The final lookup changed, resolved or no longer supplies eligible evidence. No cache flush was requested.",
                     selected, before, After: immediate, JournalPath: journalPath);
-                await journal.CompleteAsync(result, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
+                await journal.CompleteAsync(result, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10), CancellationToken.None).ConfigureAwait(false);
                 Report(progress, result.Detail);
                 return result;
             }
@@ -126,7 +126,7 @@ public static class DnsCacheRecovery
                     : "Final DNS cache eligibility could not be established: " + error.Message + ". No cache flush was requested.",
                 selected, before, flush, JournalPath: journalPath, FlushDispatched: flushDispatched);
         }
-        await journal.CompleteAsync(result, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false);
+        await journal.CompleteAsync(result, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10), CancellationToken.None).ConfigureAwait(false);
         Report(progress, result.Detail);
         return result;
     }

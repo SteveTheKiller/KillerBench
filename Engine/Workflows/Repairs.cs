@@ -333,7 +333,7 @@ public static class Repairs
                 { SelectedPrinterQueues = selected is null ? null : Array.AsReadOnly(selected) };
             async Task Save()
             {
-                await JournalPersistence.WriteAsync(path, JsonSerializer.Serialize(Current(), Capture.JsonOptions)).ConfigureAwait(false);
+                await JournalPersistence.WriteAsync(path, JsonSerializer.Serialize(Current(), Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
             }
             async Task<ToolResult> RunCommand(RepairStep step)
             {

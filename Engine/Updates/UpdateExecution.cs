@@ -142,7 +142,7 @@ public static class UpdateExecution
                     () => host.InstallAndVerifyAsync(search, target, options, installationStop.Token)).WaitAsync(installationLimit, token);
                 while (!installation.IsCompleted)
                 {
-                    await Task.WhenAny(installation, Task.Delay(TimeSpan.FromSeconds(20))).ConfigureAwait(false);
+                    await Task.WhenAny(installation, Task.Delay(TimeSpan.FromSeconds(20), token)).ConfigureAwait(false);
                     if (!installation.IsCompleted)
                         Report(progress, $"Selected update {target.Id} is still running ({elapsed.Elapsed.TotalSeconds:F0} seconds). Waiting for Windows and verification; completion is not yet confirmed.");
                 }
