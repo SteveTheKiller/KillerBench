@@ -16,6 +16,15 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        var titleFrames = System.Windows.Media.Imaging.BitmapDecoder.Create(
+            new Uri("pack://application:,,,/Assets/AppIcon.ico"),
+            System.Windows.Media.Imaging.BitmapCreateOptions.None,
+            System.Windows.Media.Imaging.BitmapCacheOption.OnLoad).Frames;
+        void RefreshTitleIcon() => TitlebarIcon.Source = titleFrames
+            .OrderBy(frame => Math.Abs(frame.PixelWidth - TitlebarIcon.ActualWidth * System.Windows.Media.VisualTreeHelper.GetDpi(TitlebarIcon).DpiScaleX))
+            .First();
+        TitlebarIcon.Loaded += (_, _) => RefreshTitleIcon();
+        TitlebarIcon.SizeChanged += (_, _) => RefreshTitleIcon();
         ApplyWorkflowOptionCatalog();
         InitializeShell();
         InitializeNavigation();

@@ -16,6 +16,7 @@
   <ItemGroup>
     <Resource Include="Fonts\*.ttf" />
     <Resource Include="Assets\AppIcon.png" />
+    <Resource Include="Assets\AppIcon.ico" />
     <Content Include="Samples\*.log" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Never" />
     <Compile Remove="Engine\**\*.cs;Engine.Core\**\*.cs;Engine.Windows\**\*.cs;Checks\**\*.cs;Cli\**\*.cs;Tools\**\*.cs" />
     <ProjectReference Include="Engine\KillerBench.Engine.csproj" />
