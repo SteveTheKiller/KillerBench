@@ -605,7 +605,9 @@
 
     
     <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator"
-           BasedOn="{StaticResource {x:Type Separator}}"/>
+           BasedOn="{StaticResource {x:Type Separator}}">
+        <Setter Property="Background" Value="{DynamicResource MenuSeparatorBrush}"/>
+    </Style>
 
     
     <ContextMenu x:Key="TextInputContextMenu" x:Shared="False">

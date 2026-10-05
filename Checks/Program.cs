@@ -17,6 +17,7 @@ internal static class Program
             if (args.Length == 0) return RunChecks(includeUi: false);
             if (args is ["--isolated-ui"]) return RunChecks(includeUi: true);
             if (args is ["--isolated-ui-smoke"]) return RunUiSmoke();
+            if (args is ["--only", "menu-separators"]) return RunMenuSeparatorChecks();
             if (args is ["--only", "workflow-report-export"])
             {
                 WorkflowReportExportChecks.Run();
@@ -62,6 +63,37 @@ internal static class Program
             throw new ArgumentException("Use no arguments for all non-UI checks, or --only workflow-report-export, workflow-options, servicing-monitor, recipes, native-validation, workflow, ui-smoke or ui-full. UI checks require an isolated desktop.");
         }
         catch (Exception error) { Console.Error.WriteLine(error); return 1; }
+    }
+
+    private static int RunMenuSeparatorChecks()
+    {
+        var application = new Application();
+        application.Resources.MergedDictionaries.Add(new ResourceDictionary
+        { Source = new Uri("/KillerBench;component/Themes/Black.xaml", UriKind.Relative) });
+        application.Resources.MergedDictionaries.Add(new ResourceDictionary
+        { Source = new Uri("/KillerBench;component/Controls/Controls.xaml", UriKind.Relative) });
+        foreach (var theme in Enum.GetValues<KillerBench.Services.Theme>())
+        {
+            KillerBench.Services.ThemeManager.Apply(theme);
+            CheckMenuSeparators(theme);
+        }
+        Console.WriteLine("PASS: Menu separator brushes and unchanged general separators across all 13 themes.");
+        return 0;
+    }
+
+    private static void CheckMenuSeparators(KillerBench.Services.Theme theme)
+    {
+        var application = Application.Current;
+        var menuBrush = (SolidColorBrush)application.FindResource("MenuSeparatorBrush");
+        Require(theme == KillerBench.Services.Theme.Delirium
+                ? menuBrush.Color == Color.FromRgb(0x66, 0x66, 0x66)
+                : ReferenceEquals(menuBrush, application.FindResource("MenuBorderBrush")),
+            "Menu separators use neutral gray only in Delirium");
+        var menuSeparator = new Separator { Style = (Style)application.FindResource(MenuItem.SeparatorStyleKey) };
+        Require(ReferenceEquals(menuSeparator.Background, menuBrush), "Menu separator style uses its dedicated brush");
+        var generalSeparator = new Separator { Style = (Style)application.FindResource(typeof(Separator)) };
+        Require(ReferenceEquals(generalSeparator.Background, application.FindResource("MenuBorderBrush")),
+            "Non-menu separators keep their existing border brush");
     }
 
     private static int RunUiSmoke()
@@ -1339,6 +1371,7 @@ internal static class Program
             {
                 KillerBench.Services.ThemeManager.Apply(theme);
                 window.UpdateLayout();
+                CheckMenuSeparators(theme);
                 double paneOpacity = (double)window.FindResource("PaneShadowOpacity");
                 Require(paneOpacity == 0 ? window.TryFindResource("PaneShadowEffect") is null : window.TryFindResource("PaneShadowEffect") is System.Windows.Media.Effects.DropShadowEffect effect && effect.Opacity == paneOpacity, "Pane shadow follows theme, including flat themes");
                 var caption = (Grid)window.FindName("CaptionBar");

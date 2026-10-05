@@ -98,6 +98,9 @@ namespace KillerBench.Services
 
         private static void ApplyDerivedTokens(ResourceDictionary d)
         {
+            if (!d.Contains("MenuSeparatorBrush") && d.Contains("MenuBorderBrush"))
+                d["MenuSeparatorBrush"] = d["MenuBorderBrush"];
+
             SetIfAbsent(d, "BevelLightThickness", new Thickness(0));
             SetIfAbsent(d, "BevelDarkThickness", new Thickness(0));
             SetIfAbsent(d, "BevelLightBrush", Transparent());
