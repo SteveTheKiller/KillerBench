@@ -173,6 +173,8 @@ namespace KillerBench.Services
             SetIfAbsent(d, "CaptionCloseHoverFgBrush",
                 new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.White));
 
+            if (!d.Contains("FooterBackgroundBrush"))
+                d["FooterBackgroundBrush"] = d["BackgroundBrush"];
             if (!d.Contains("BgFlyout") && d.Contains("MenuBackgroundBrush"))
                 d["BgFlyout"] = d["MenuBackgroundBrush"];
             if (!d.Contains("AboutPanelBrush") && d.Contains("MenuBackgroundBrush"))
