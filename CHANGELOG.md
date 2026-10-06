@@ -5,7 +5,7 @@
 - Add Ukrainian localization.
 - Add Norwegian (Bokmål) localization.
 - Add Brazilian Portuguese localization.
-- Link both shortcut views to the online guide and how-to with an aligned header.
+- Link both shortcut views to the online guide and how-to with an aligned header, with more space beside the close button.
 - Selected states now use subtle gradients outside 98SE, Light buttons have softer gray borders, and yellow wordmarks match their accent.
 - Soften material-theme footers and 98SE footer text, and match the 98SE About bevel to the sidebar.
 - Show the language menu in two columns, with a faint divider that fades at both ends.
