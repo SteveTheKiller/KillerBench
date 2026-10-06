@@ -111,8 +111,28 @@ public partial class MainWindow
         languageMenu = new ContextMenu { Template = ThemeFlyout.Template, ItemContainerStyle = (Style)FindResource("PanelMenuItem") };
         var panel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(12, 10, 14, 10) };
         var left = new StackPanel { Width = 200 };
-        var right = new StackPanel { Width = 200, Margin = new Thickness(14, 0, 0, 0) };
+        var right = new StackPanel { Width = 200 };
+        var divider = new Border
+        {
+            Width = 1,
+            Margin = new Thickness(6, 8, 7, 8),
+            Opacity = 0.18,
+            IsHitTestVisible = false,
+            OpacityMask = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 0), EndPoint = new Point(0, 1),
+                GradientStops =
+                {
+                    new GradientStop(Colors.Transparent, 0),
+                    new GradientStop(Colors.Black, 0.15),
+                    new GradientStop(Colors.Black, 0.85),
+                    new GradientStop(Colors.Transparent, 1),
+                },
+            },
+        };
+        divider.SetResourceReference(Border.BackgroundProperty, "TextBrush");
         panel.Children.Add(left);
+        panel.Children.Add(divider);
         panel.Children.Add(right);
         int split = (Languages.Length + 1) / 2;
         int index = 0;

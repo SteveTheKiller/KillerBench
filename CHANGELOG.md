@@ -8,7 +8,7 @@
 - Link both shortcut views to the online guide and how-to with an aligned header.
 - Selected states now use subtle gradients outside 98SE, Light buttons have softer gray borders, and yellow wordmarks match their accent.
 - Soften material-theme footers and 98SE footer text, and match the 98SE About bevel to the sidebar.
-- Show the language menu in two columns.
+- Show the language menu in two columns, with a faint divider that fades at both ends.
 - Use a sharp size-matched title bar icon.
 - Rebuild the landing site with a current home page, a searchable user guide and static Engine guide pages.
 - Add More BitLocker actions to the BitLocker section for auto-unlock, protectors, directory backup and decryption.
