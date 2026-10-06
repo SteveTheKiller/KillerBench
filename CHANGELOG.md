@@ -5,7 +5,7 @@
 - Add Ukrainian localization.
 - Add Norwegian (Bokmål) localization.
 - Add Brazilian Portuguese localization.
-- Link both shortcut views to the online shortcut guide.
+- Link both shortcut views to the online guide and how-to with an aligned header.
 - Selected states now use subtle gradients outside 98SE, Light buttons have softer gray borders, and yellow wordmarks match their accent.
 - Show the language menu in two columns.
 - Use a sharp size-matched title bar icon.

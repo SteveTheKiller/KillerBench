@@ -549,5 +549,5 @@
   <sys:String x:Key="Str_Installer_ProductCodeTip">Příklad: {00000000-0000-0000-0000-000000000000}</sys:String>
   <sys:String x:Key="Str_About_DescriptionPrefix">Deterministická diagnostická a opravná pracovní plocha pro Windows. A</sys:String>
   <sys:String x:Key="Str_About_DescriptionSuffix">užitečnost.</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Online průvodce klávesovými zkratkami</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Kompletní příručka &amp; návody online</sys:String>
 </ResourceDictionary>

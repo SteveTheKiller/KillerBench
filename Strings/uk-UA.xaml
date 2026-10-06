@@ -548,5 +548,5 @@
   <sys:String x:Key="Str_About_DescriptionPrefix">Детермінований верстак діагностики та виправлення Windows. Утиліта від </sys:String>
   <sys:String x:Key="Str_About_DescriptionSuffix">.</sys:String>
   <sys:String x:Key="Str_About_Aka">ВІДОМИЙ ЯК </sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Онлайн-посібник із клавіатурних скорочень</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Повний посібник &amp; настанови онлайн</sys:String>
 </ResourceDictionary>

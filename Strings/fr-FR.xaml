@@ -549,5 +549,5 @@
   <sys:String x:Key="Str_Task_ExportXml">Exporter le XML de tâche désactivée...</sys:String>
   <sys:String x:Key="Str_Task_ExportXmlTip">Exporter un nouveau fichier d&apos;examen avec le fuseau horaire du calendrier local. Aucune tâche n&apos;est enregistrée ou exécutée; les fichiers existants sont préservés</sys:String>
   <sys:String x:Key="Str_Task_RegisterConsent">Créer cette tâche Local System désactivée après des vérifications fraîches</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Guide des raccourcis clavier en ligne</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Guide complet et tutoriels en ligne</sys:String>
 </ResourceDictionary>

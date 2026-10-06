@@ -549,5 +549,5 @@
   <sys:String x:Key="Str_Installer_ProductCodeTip">Örnek: {00000000-0000-0000-0000-000000000000}</sys:String>
   <sys:String x:Key="Str_About_DescriptionPrefix">Deterministik bir Windows tanılama ve onarım tezgahı. Bir</sys:String>
   <sys:String x:Key="Str_About_DescriptionSuffix">aracı.</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Çevrimiçi klavye kısayolu kılavuzu</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Tam kılavuz ve çevrimiçi rehber</sys:String>
 </ResourceDictionary>

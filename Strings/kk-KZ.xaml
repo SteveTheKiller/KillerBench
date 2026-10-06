@@ -549,5 +549,5 @@
   <sys:String x:Key="Str_About_DescriptionPrefix">Детерминистік Windows диагностикалық және жөндеу жұмыс үстелі. Бір</sys:String>
   <sys:String x:Key="Str_About_DescriptionSuffix">утилита.</sys:String>
   <sys:String x:Key="Str_About_Aka">Басқа аты</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Пернетақта тіркесімдерінің онлайн нұсқаулығы</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Толық нұсқаулық пен онлайн көмек</sys:String>
 </ResourceDictionary>

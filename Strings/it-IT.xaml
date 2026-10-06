@@ -549,5 +549,5 @@
   <sys:String x:Key="Str_Installer_ProductCodeTip">Esempio: {00000000-0000-0000-0000-000000000000}</sys:String>
   <sys:String x:Key="Str_About_DescriptionPrefix">Un banco di lavoro deterministico per diagnostica e riparazione Windows. Uno</sys:String>
   <sys:String x:Key="Str_About_DescriptionSuffix">strumento.</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Guida online alle scorciatoie da tastiera</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Guida online completa e come-fare</sys:String>
 </ResourceDictionary>

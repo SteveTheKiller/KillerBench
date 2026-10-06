@@ -549,5 +549,5 @@
   <sys:String x:Key="Str_Installer_ProductCodeTip">Пример: {00000000-0000-0000-0000-000000000000}</sys:String>
   <sys:String x:Key="Str_About_DescriptionPrefix">Детерминированная диагностическая и ремонтная рабочая панель Windows. A</sys:String>
   <sys:String x:Key="Str_About_DescriptionSuffix">полезность.</sys:String>
-    <sys:String x:Key="Str_KS_OnlineHelp">Онлайн-руководство по сочетаниям клавиш</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Полное руководство &amp; инструкция по работе в Интернете</sys:String>
 </ResourceDictionary>
