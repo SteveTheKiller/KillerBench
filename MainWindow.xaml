@@ -980,6 +980,9 @@
               <Grid Margin="0,0,0,16"><TextBlock Text="{DynamicResource Str_Text_Keyboard_shortcuts}" FontSize="20" VerticalAlignment="Center"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button x:Name="ShortcutListButton" Content="{DynamicResource Str_Shortcuts_List}" Click="OnShortcutList" Margin="0,0,6,0"/><Button x:Name="ShortcutMapButton" Content="{DynamicResource Str_Shortcuts_Keyboard}" Click="OnShortcutMap"/></StackPanel>
               </Grid>
+              <TextBlock FontSize="11" Margin="0,0,0,12">
+                <Hyperlink NavigateUri="https://killerbench.net/help/workspace.html#themes-languages-and-shortcuts" RequestNavigate="OnAboutLink" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None"><Run Text="{DynamicResource Str_KS_OnlineHelp}"/></Hyperlink>
+              </TextBlock>
               <ScrollViewer x:Name="ShortcutListScroll" MaxHeight="520" VerticalScrollBarVisibility="Auto"><StackPanel x:Name="ShortcutListHost"/></ScrollViewer>
               <StackPanel x:Name="ShortcutMapHost" Visibility="Collapsed">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10"><Button x:Name="ShortcutBaseButton" Content="{DynamicResource Str_Shortcuts_Base}" Click="OnShortcutBase" Margin="0,0,6,0"/><Button x:Name="ShortcutCtrlButton" Content="{DynamicResource Str_Shortcuts_Ctrl}" Click="OnShortcutCtrl"/></StackPanel>

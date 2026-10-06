@@ -548,4 +548,5 @@
   <sys:String x:Key="Str_About_DescriptionPrefix">Một bàn làm việc chẩn đoán và sửa chữa Windows có tính xác định. Một</sys:String>
   <sys:String x:Key="Str_About_DescriptionSuffix">tiện ích.</sys:String>
   <sys:String x:Key="Str_About_Aka">Còn được gọi là</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Hướng dẫn phím tắt trực tuyến</sys:String>
 </ResourceDictionary>

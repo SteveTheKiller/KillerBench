@@ -549,4 +549,5 @@
   <sys:String x:Key="Str_About_DescriptionPrefix">Determinista Windows diagnosztikai és javítási munkaasztal. Egy</sys:String>
   <sys:String x:Key="Str_About_DescriptionSuffix">segédprogram.</sys:String>
   <sys:String x:Key="Str_About_Aka">Más néven</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Online billentyűparancs-útmutató</sys:String>
 </ResourceDictionary>

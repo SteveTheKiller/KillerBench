@@ -549,4 +549,5 @@
   <sys:String x:Key="Str_Installer_ProductCodeTip">示例: {00000000-0000-0000-0000-000000000000}</sys:String>
   <sys:String x:Key="Str_About_DescriptionPrefix">一个确定性的 Windows 诊断和修复工作台。A</sys:String>
   <sys:String x:Key="Str_About_DescriptionSuffix">效用。</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">在线键盘快捷键指南</sys:String>
 </ResourceDictionary>

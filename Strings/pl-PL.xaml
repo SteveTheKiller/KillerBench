@@ -549,4 +549,5 @@
   <sys:String x:Key="Str_About_DescriptionPrefix">Deterministyczny pulpit diagnostyki i naprawy Windows. Narzędzie</sys:String>
   <sys:String x:Key="Str_About_DescriptionSuffix">.</sys:String>
   <sys:String x:Key="Str_About_Aka">Znany także jako</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Internetowy przewodnik po skrótach klawiaturowych</sys:String>
 </ResourceDictionary>

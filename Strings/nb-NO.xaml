@@ -548,4 +548,5 @@
   <sys:String x:Key="Str_About_DescriptionPrefix">En deterministisk arbeidsbenk for diagnose og reparasjon av Windows. Et</sys:String>
   <sys:String x:Key="Str_About_DescriptionSuffix">verktøy.</sys:String>
   <sys:String x:Key="Str_About_Aka">AKA</sys:String>
+    <sys:String x:Key="Str_KS_OnlineHelp">Nettveiledning for hurtigtaster</sys:String>
 </ResourceDictionary>
