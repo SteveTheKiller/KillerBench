@@ -17,7 +17,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         var titleFrames = System.Windows.Media.Imaging.BitmapDecoder.Create(
-            new Uri("pack://application:,,,/Assets/AppIcon.ico"),
+            new Uri("pack://application:,,,/KillerBench;component/Assets/AppIcon.ico"),
             System.Windows.Media.Imaging.BitmapCreateOptions.None,
             System.Windows.Media.Imaging.BitmapCacheOption.OnLoad).Frames;
         void RefreshTitleIcon() => TitlebarIcon.Source = titleFrames
