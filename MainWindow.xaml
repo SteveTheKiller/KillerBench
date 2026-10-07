@@ -36,8 +36,8 @@
         <StackPanel Style="{StaticResource RailButtonHost}" VerticalAlignment="Bottom">
           <Button x:Name="ActivityButton" Style="{StaticResource RailButton}" Content="&#xE756;" Click="OnToggleActivity" ToolTip="{DynamicResource Str_ToolTip_Toggle_activity_log_F3}" Margin="0,0,0,6"/>
           <Button x:Name="ShortcutButton" Style="{StaticResource RailButton}" Content="?" FontFamily="Consolas" FontSize="18" Click="OnShortcuts" ToolTip="{DynamicResource Str_ToolTip_Keyboard_shortcuts_F1}" Margin="0,0,0,6"><Button.Template><ControlTemplate TargetType="Button"><Border Background="Transparent"><TextBlock Text="?" FontFamily="Segoe UI" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource TextBrush}" TextOptions.TextFormattingMode="Display" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Button.Template></Button>
-          <Button x:Name="LangButton" Style="{StaticResource RailButton}" Content="&#xF2B7;" Click="OnLanguages" ToolTip="{DynamicResource Str_ToolTip_Language}" Margin="0,0,0,6"/>
-<Button x:Name="ThemeButton" Style="{StaticResource RailButton}" Content="&#xE790;" Click="OnThemes" ToolTip="{DynamicResource Str_ToolTip_Choose_app_theme}" Margin="0,0,0,6"><Button.ContextMenu><ContextMenu x:Name="ThemeFlyout">
+          <Button x:Name="LangButton" Style="{StaticResource RailButton}" Content="&#xF2B7;" Click="OnLanguages" ContextMenuOpening="RailMenu_Opening" ToolTip="{DynamicResource Str_ToolTip_Language}" Margin="0,0,0,6"><Button.ContextMenu><ContextMenu/></Button.ContextMenu></Button>
+<Button x:Name="ThemeButton" Style="{StaticResource RailButton}" Content="&#xE790;" Click="OnThemes" ContextMenuOpening="RailMenu_Opening" ToolTip="{DynamicResource Str_ToolTip_Choose_app_theme}" Margin="0,0,0,6"><Button.ContextMenu><ContextMenu x:Name="ThemeFlyout">
                                 
                                 <ContextMenu.Template>
                                     <ControlTemplate TargetType="ContextMenu">

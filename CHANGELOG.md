@@ -9,6 +9,7 @@
 - 98SE Red is a true maroon again, so it no longer looks like Magenta.
 - Delirium, Ectoplasm and Sepulchre footers match the window background again.
 - Shared theme colors, control states, title styling and shadows match the family palette, including cream Blood, Greed and Cyanotic wordmarks.
+- Rail right-click menus align 8 pixels from the side and bottom content edges.
 - New installs and the website start on Dark with the yellow accent.
 - Fix low-contrast text on selected sections, expander headers, option labels and 98SE dropdown hover.
 - Add Ukrainian localization.

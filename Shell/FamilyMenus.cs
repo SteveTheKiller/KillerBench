@@ -10,6 +10,13 @@ namespace KillerBench;
 
 public partial class MainWindow
 {
+    private void RailMenu_Opening(object sender, ContextMenuEventArgs e)
+    {
+        e.Handled = true;
+        if (sender == LangButton) OnLanguages(sender, e);
+        else OnThemes(sender, e);
+    }
+
     private bool syncingTheme;
     private ContextMenu? languageMenu;
     private static readonly (Locale Loc, string Name, string Code)[] Languages =
