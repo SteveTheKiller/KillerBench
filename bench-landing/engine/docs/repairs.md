@@ -32,6 +32,8 @@ A process can stop after Windows receives a request but before verification comp
 
 `autoRepair` means the host allows eligible recipes to proceed. It does not bypass evidence requirements, choose missing options, ignore policy, retry an uncertain action, restart Windows, or turn an `Attention` finding into a repair.
 
+The full system scan remains diagnostic-only even when a focused workflow allows automatic repair. Saved captures, imported evidence, and historical events do not authorize native dispatch.
+
 ## Host responsibility
 
 Before enabling a repair, a host should show:

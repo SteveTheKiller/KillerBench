@@ -44,7 +44,7 @@
       var href = '../' + r.page.u + (r.anchor ? '#' + r.anchor : '');
       return '<a href="' + escapeHtml(href) + '"><small>' + escapeHtml(r.page.g) + '</small><strong>' + escapeHtml(r.page.t) +
         (r.heading ? ' / ' + escapeHtml(r.heading) : '') + '</strong><span>' + escapeHtml(r.text) + '</span></a>';
-    }).join('') : '<p class="docs-search-empty">No matching pages.</p>';
+    }).join('') : '<p class="docs-search-empty">' + escapeHtml(document.body.getAttribute('data-ui-no-results') || 'No matching pages.') + '</p>';
   }
 
   input.addEventListener('input', show);

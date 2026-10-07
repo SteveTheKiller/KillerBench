@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ja-JP" data-theme="dark">
+<head><link rel="alternate" hreflang="en-US" href="https://killerbench.net/"><link rel="alternate" hreflang="bn" href="https://killerbench.net/bn/"><link rel="alternate" hreflang="cs-CZ" href="https://killerbench.net/cs-CZ/"><link rel="alternate" hreflang="de-DE" href="https://killerbench.net/de-DE/"><link rel="alternate" hreflang="es" href="https://killerbench.net/es/"><link rel="alternate" hreflang="fr-FR" href="https://killerbench.net/fr-FR/"><link rel="alternate" hreflang="hu-HU" href="https://killerbench.net/hu-HU/"><link rel="alternate" hreflang="it-IT" href="https://killerbench.net/it-IT/"><link rel="alternate" hreflang="ja-JP" href="https://killerbench.net/ja-JP/"><link rel="alternate" hreflang="kk-KZ" href="https://killerbench.net/kk-KZ/"><link rel="alternate" hreflang="nb-NO" href="https://killerbench.net/nb-NO/"><link rel="alternate" hreflang="pl-PL" href="https://killerbench.net/pl-PL/"><link rel="alternate" hreflang="pt-BR" href="https://killerbench.net/pt-BR/"><link rel="alternate" hreflang="ru-RU" href="https://killerbench.net/ru-RU/"><link rel="alternate" hreflang="tr-TR" href="https://killerbench.net/tr-TR/"><link rel="alternate" hreflang="uk-UA" href="https://killerbench.net/uk-UA/"><link rel="alternate" hreflang="vi-VN" href="https://killerbench.net/vi-VN/"><link rel="alternate" hreflang="zh-CN" href="https://killerbench.net/zh-CN/"><link rel="alternate" hreflang="zh-TW" href="https://killerbench.net/zh-TW/"><link rel="alternate" hreflang="x-default" href="https://killerbench.net/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="KillerBenchは開発中のWindows診断・修復作業環境です。まず診断し、証拠を確認して、証拠で確認できた問題だけをローカルコンピューターで修復します。">
+<meta property="og:title" content="KillerBench | 診断作業環境">
+<meta property="og:description" content="まず診断し、証拠で確認できた問題だけを修復します。開発中のWindows診断作業環境です。">
+<meta property="og:image" content="https://killerbench.net/og-image.png">
+<meta property="og:url" content="https://killerbench.net/ja-JP/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://killerbench.net/ja-JP/">
+<title>KillerBench | 診断作業環境</title>
+<link rel="stylesheet" href="/family.css?v=4">
+<link rel="stylesheet" href="/bench.css?v=5">
+<link rel="stylesheet" href="/feature-carousel.css?v=2">
+<script defer src="/bench.js?v=5"></script>
+<script defer src="/feature-carousel.js?v=2"></script>
+</head>
+<body data-brand-base="/brand" data-ui-theme="テーマ" data-ui-choose-theme="テーマを選択" data-ui-accent="アクセントカラー" data-ui-accent-label="アクセント:" data-ui-close="閉じる" data-ui-no-results="一致するページはありません。">
+<header class="topbar">
+  <a class="tb-home" href="/ja-JP/"><img class="wm-logo tb-wm" src="/brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>
+  <a class="tb-mcp-link" href="/mcp.html" aria-label="KillerMCP"><img src="/mcp.png" alt="" aria-hidden="true"><span class="tb-mcp-wordmark"><span>Killer</span><span class="tb-mcp-accent">MCP</span></span></a>
+  <span class="tb-spacer"></span>
+<nav class="tb-nav"><a href="#workbench">作業環境</a><a href="#features">機能</a><a href="/ja-JP/help/">ヘルプ</a><a href="/ja-JP/engine/">Engine</a><a href="#about">このアプリについて</a></nav>
+<div class="tgrp" role="group" aria-label="テーマ">
+<button class="swatch sw-dark" data-theme="dark" title="ダーク"></button>
+<button class="swatch sw-light" data-theme="light" title="ライト"></button>
+<button class="swatch sw-hc" data-theme="hc" title="ブラック"></button>
+<button class="swatch sw-blood" data-theme="blood" title="ブラッド"></button>
+<button class="swatch sw-greed" data-theme="greed" title="グリード"></button>
+<button class="swatch sw-cyanotic" data-theme="cyanotic" title="シアノティック"></button>
+<button class="swatch sw-ectoplasm" data-theme="ectoplasm" title="エクトプラズム"></button>
+<button class="swatch sw-decay" data-theme="decay" title="腐敗"></button>
+<button class="swatch sw-malaise" data-theme="malaise" title="不快感"></button>
+<button class="swatch sw-sepulchre" data-theme="sepulchre" title="墳墓"></button>
+<button class="swatch sw-delirium" data-theme="delirium" title="せん妄"></button>
+<button class="swatch sw-mourning" data-theme="mourning" title="喪"></button>
+</div>
+<div class="acc-fly accent-switch" id="accentSwitch">
+<button class="acc-toggle" id="accentToggle" aria-haspopup="true" aria-expanded="false" title="アクセントカラー"></button>
+<div class="acc-pop" id="accentPop" hidden role="group" aria-label="アクセントカラー">
+<span class="acc-pop-label">アクセント:</span>
+<button class="acc" data-accent="red" style="background:#DD504B;color:#DD504B" title="赤"></button>
+<button class="acc" data-accent="orange" style="background:#E8962C;color:#E8962C" title="オレンジ"></button><button class="acc" data-accent="yellow" style="background:#EAD900;color:#EAD900" title="黄"></button>
+<button class="acc" data-accent="green" style="background:#1EA54C;color:#1EA54C" title="緑"></button>
+<button class="acc" data-accent="teal" style="background:#1FB8A8;color:#1FB8A8" title="青緑"></button>
+<button class="acc" data-accent="blue" style="background:#50AEE8;color:#50AEE8" title="青"></button>
+<button class="acc" data-accent="purple" style="background:#B982E3;color:#B982E3" title="紫"></button><button class="acc" data-accent="magenta" style="background:#FF52C9;color:#FF52C9" title="マゼンタ"></button>
+</div>
+</div>
+<div class="lang-switch"><button class="lang-toggle" id="languageToggle" aria-haspopup="true" aria-expanded="false" aria-label="言語を選択">JA</button><div class="lang-menu" id="languageMenu" hidden><a class="lang-item" hreflang="en-US" lang="en-US" href="/" aria-pressed="false">English</a><a class="lang-item" hreflang="bn" lang="bn" href="/bn/" aria-pressed="false">বাংলা</a><a class="lang-item" hreflang="cs-CZ" lang="cs-CZ" href="/cs-CZ/" aria-pressed="false">Čeština</a><a class="lang-item" hreflang="de-DE" lang="de-DE" href="/de-DE/" aria-pressed="false">Deutsch</a><a class="lang-item" hreflang="es" lang="es" href="/es/" aria-pressed="false">Español</a><a class="lang-item" hreflang="fr-FR" lang="fr-FR" href="/fr-FR/" aria-pressed="false">Français</a><a class="lang-item" hreflang="hu-HU" lang="hu-HU" href="/hu-HU/" aria-pressed="false">Magyar</a><a class="lang-item" hreflang="it-IT" lang="it-IT" href="/it-IT/" aria-pressed="false">Italiano</a><a class="lang-item" hreflang="ja-JP" lang="ja-JP" href="/ja-JP/" aria-pressed="true">日本語</a><a class="lang-item" hreflang="kk-KZ" lang="kk-KZ" href="/kk-KZ/" aria-pressed="false">Қазақша</a><a class="lang-item" hreflang="nb-NO" lang="nb-NO" href="/nb-NO/" aria-pressed="false">Norsk bokmål</a><a class="lang-item" hreflang="pl-PL" lang="pl-PL" href="/pl-PL/" aria-pressed="false">Polski</a><a class="lang-item" hreflang="pt-BR" lang="pt-BR" href="/pt-BR/" aria-pressed="false">Português (Brasil)</a><a class="lang-item" hreflang="ru-RU" lang="ru-RU" href="/ru-RU/" aria-pressed="false">Русский</a><a class="lang-item" hreflang="tr-TR" lang="tr-TR" href="/tr-TR/" aria-pressed="false">Türkçe</a><a class="lang-item" hreflang="uk-UA" lang="uk-UA" href="/uk-UA/" aria-pressed="false">Українська</a><a class="lang-item" hreflang="vi-VN" lang="vi-VN" href="/vi-VN/" aria-pressed="false">Tiếng Việt</a><a class="lang-item" hreflang="zh-CN" lang="zh-CN" href="/zh-CN/" aria-pressed="false">简体中文</a><a class="lang-item" hreflang="zh-TW" lang="zh-TW" href="/zh-TW/" aria-pressed="false">繁體中文</a></div></div></header>
+<div class="shell"><main class="content"><div class="content-scroll"><div class="content-inner">
+  <section class="hero">
+    <p class="eyebrow">開発中 / WINDOWSの診断と修復の作業環境</p>
+    <img class="wm-logo hero-mark" src="/brand/killerbench-logo-dark-yellow.svg" alt="KillerBench">
+    <h1>証拠をたどる。</h1>
+    <p class="intro">ツールを選び、オプションを確認してGOを押します。生の出力や読みやすいレポートで証拠を確認できます。対応する修復は現在の前提条件を確認し、要求を記録して結果を検証します。</p>
+    <p class="release-note">KillerBenchは開発中です。一般向けダウンロードはまだ提供していません。</p>
+    <a class="btn" href="#workbench">作業環境を見る</a> <a class="btn" href="/ja-JP/help/">ガイドを読む</a>
+  </section>
+  <section id="workbench" class="bench-pane">
+    <p class="eyebrow">01 / 証拠の表示</p>
+    <h2>好みのテーマで。検出結果を追跡。</h2>
+    <div class="console" role="region" aria-label="架空の保守結果を示す証拠コンソールの例">
+      <p>KILLERBENCH / 架空の例</p>
+      <p>01  システム全体のスキャンが完了しました。読み取り専用です。</p>
+      <p>02  過去の保守エラー: 0x800F081F。現在の状態を確認してください。</p>
+      <p>03  証拠を保持しました。元のCBS行を参照できます。</p>
+      <p>04  修復は選択されていません。適用可否を示す最新の証拠が必要です。</p>
+      <p class="console-note">システム全体のスキャンは診断のみです</p>
+    </div>
+    <p class="caption">説明用の出力であり、お使いのコンピューターのスキャン結果ではありません。</p>
+  </section>
+  <section class="features" id="features"><h2>作業環境の機能</h2><div class="feature-grid">
+    <article class="feature-card"><p class="eyebrow">02 / まず診断</p><h3>11のセクション、共通の手順</h3><p>診断、修復、更新、デバイス、ネットワーク、アプリ、保守、初期設定、セキュリティ、BitLocker、プライバシー。各ツールは提案前に状態を読み取り、システム全体のスキャンは対応が必要な項目を順に示します。</p></article>
+    <article class="feature-card"><p class="eyebrow">03 / 安全対策付きの修復</p><h3>確認できた問題だけを修復</h3><p>修復は最新の証拠が対象の問題と正確に一致した場合にのみ提示されます。確認を求め、実行直前に条件を再確認し、結果を読み取ってから検証済みと報告します。</p></article>
+    <article class="feature-card"><p class="eyebrow">04 / たどれる証拠</p><h3>中身の見える診断</h3><p>検出結果から、根拠となるイベント、ログの行、設定を参照できます。不完全な証拠を正常と報告せず、過去の情報は過去の情報として扱います。レポートをチケットに直接エクスポートできます。</p></article>
+    <article class="feature-card"><p class="eyebrow">05 / BITLOCKERとTPM</p><h3>推測に頼らない暗号化</h3><p>保護機能を調べ、回復パスワードをファイル、Active Directory、Entra IDにバックアップし、Windowsドライブとデータドライブを暗号化できます。自動ロック解除を有効にし、TPMをクリアせずに準備できます。</p></article>
+    <article class="feature-card"><p class="eyebrow">06 / プライバシーと整理</p><h3>ノートPCを自分仕様に</h3><p>プライバシー設定、アプリの権限、クラウド検索を確認・変更し、Windowsを整理できます。ポリシーやデバイス管理が所有する設定は変更しません。</p></article>
+    <article class="feature-card"><p class="eyebrow">07 / 中断後の復旧</p><h3>再試行の前に確認</h3><p>ジャーナルを使用する修復は、送信前に保留中の要求を記録します。要求が中断された場合、復旧処理は変更を自動で繰り返さず、何が起きたかを確認します。</p></article>
+    <article class="feature-card"><p class="eyebrow">08 / ローカル診断</p><h3>AIは不要</h3><p>診断とレポート分析はAIサービスやKillerBenchアカウントなしでローカルに実行されます。ダウンロードやEntra IDへの回復キーのバックアップなど、選択した操作は宛先に接続することがあります。同じEngineがデスクトップアプリとコマンドラインを動かします。</p></article>
+  </div><p class="caption"><a href="/ja-JP/help/">ガイド全体を読む</a> で、すべてのセクションとツールを確認できます。</p></section>
+  <section class="bench-pane" id="about"><h2>Killer Toolsファミリーの一員</h2><p>質感のある画面、タイプライター風のロゴ、13種類のアプリテーマ。スモークガラス風のコンソール、読みやすいレポート、確認画面、開く・保存・フォルダーのダイアログは、現在のアプリテーマに合わせて表示されます。</p><p><a href="/help/workspace.html">使い方を確認</a> · <a href="/help/safety.html">安全対策の仕組みを確認</a> · <a href="/ja-JP/engine/">Engine開発者ガイド</a> · <a href="/mcp.html">KillerMCP</a> · <a href="https://killertools.net">Killer Toolsを見る</a></p></section>
+</div></div></main><aside class="sidebar"><div class="sb-empty">KillerBench<br>開発中</div><a class="sb-art" href="#workbench"><img src="/og-image.png" alt="KillerBench診断作業環境のイラスト"></a><div class="sb-empty">まず診断。<br>確認できた問題を修復。<br>AIは不要。</div></aside></div>
+<footer class="statusbar"><span class="left">開発中 · 所属: <a href="https://killertools.net">killertools.net</a></span><span class="right">© 2026 <b><a href="https://thekiller.net">Steve the Killer</a></b></span></footer>
+</body>
+</html>

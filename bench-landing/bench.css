@@ -3,6 +3,8 @@ html[data-theme="dark"]{--accent:#EAD900;--btn:#F2E500;--sel:#2A2908;--btn-text:
 html[data-theme="light"]{--accent:#C7710F;--btn:#C7710F}
 html[data-theme="hc"]{--accent:#FF910A;--btn:#FF910A}
 .content-inner { max-width: 1100px; margin: 0 auto; padding: 0 28px 50px; }
+.lang-toggle{width:32px;height:32px;line-height:normal;color:var(--text);font:12px Consolas,monospace}
+.lang-menu{max-height:min(70vh,540px);overflow-y:auto}
 .tb-mcp-link{display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:4px 11px;border:1px solid var(--accent);border-radius:6px;color:var(--text);font:normal 17px KillerScan,'Courier New',monospace;text-decoration:none;transition:transform .12s,background .12s,box-shadow .12s}
 .tb-mcp-link img{width:25px;height:25px;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}
 .tb-mcp-link:hover,.tb-mcp-link:focus-visible{color:var(--text);background:color-mix(in srgb,var(--accent) 12%,transparent);transform:translateY(-1px);box-shadow:0 6px 14px rgba(0,0,0,.32);filter:none}
@@ -79,7 +81,7 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 .btn{display:inline-flex;background:var(--btn);color:var(--btn-text);padding:12px 24px;border-radius:6px;margin-top:12px;font-weight:700}
 .bench-pane{margin:20px 0;padding:18px 20px;background:var(--modal) url('grain.png') repeat;border:1px solid var(--pane-border);border-top:2px solid var(--tab-edge);border-radius:6px}
 .bench-pane p{line-height:1.55}
-.console{background:#100d09;color:#ffca80;border:1px solid #514331;border-radius:6px;padding:20px;overflow:auto;font:14px/1.8 Consolas,monospace;box-shadow:inset 0 0 25px #0006;text-shadow:0 0 3px #ffca8030}
-.console p{white-space:nowrap}.console-note{margin-top:18px}
+.console{background:var(--modal) url('grain.png') repeat;color:var(--text);border:1px solid var(--pane-border);border-radius:6px;padding:20px;overflow:auto;font:14px/1.8 Consolas,monospace;box-shadow:inset 0 0 25px var(--fade)}
+.console p{white-space:nowrap}.console-note{margin-top:18px;color:var(--accent)}
 .sb-art{display:block;margin:0 12px;border:2px solid var(--pane-border);border-radius:5px;overflow:hidden}.sb-art img{display:block;width:100%;height:auto}
 @media(max-width:900px){.sidebar{display:none}.shell{grid-template-columns:minmax(0,1fr)}}

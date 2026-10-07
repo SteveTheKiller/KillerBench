@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru-RU" data-theme="dark">
+<head><link rel="alternate" hreflang="en-US" href="https://killerbench.net/"><link rel="alternate" hreflang="bn" href="https://killerbench.net/bn/"><link rel="alternate" hreflang="cs-CZ" href="https://killerbench.net/cs-CZ/"><link rel="alternate" hreflang="de-DE" href="https://killerbench.net/de-DE/"><link rel="alternate" hreflang="es" href="https://killerbench.net/es/"><link rel="alternate" hreflang="fr-FR" href="https://killerbench.net/fr-FR/"><link rel="alternate" hreflang="hu-HU" href="https://killerbench.net/hu-HU/"><link rel="alternate" hreflang="it-IT" href="https://killerbench.net/it-IT/"><link rel="alternate" hreflang="ja-JP" href="https://killerbench.net/ja-JP/"><link rel="alternate" hreflang="kk-KZ" href="https://killerbench.net/kk-KZ/"><link rel="alternate" hreflang="nb-NO" href="https://killerbench.net/nb-NO/"><link rel="alternate" hreflang="pl-PL" href="https://killerbench.net/pl-PL/"><link rel="alternate" hreflang="pt-BR" href="https://killerbench.net/pt-BR/"><link rel="alternate" hreflang="ru-RU" href="https://killerbench.net/ru-RU/"><link rel="alternate" hreflang="tr-TR" href="https://killerbench.net/tr-TR/"><link rel="alternate" hreflang="uk-UA" href="https://killerbench.net/uk-UA/"><link rel="alternate" hreflang="vi-VN" href="https://killerbench.net/vi-VN/"><link rel="alternate" hreflang="zh-CN" href="https://killerbench.net/zh-CN/"><link rel="alternate" hreflang="zh-TW" href="https://killerbench.net/zh-TW/"><link rel="alternate" hreflang="x-default" href="https://killerbench.net/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="KillerBench представляет собой разрабатываемый набор инструментов диагностики и исправления проблем Windows. Сначала проводите диагностику, следуйте данным и исправляйте только подтвержденные проблемы. Все выполняется на локальном компьютере.">
+<meta property="og:title" content="KillerBench | Диагностический набор инструментов">
+<meta property="og:description" content="Сначала диагностика. Исправляйте только то, что подтверждено данными. Набор инструментов для Windows в разработке.">
+<meta property="og:image" content="https://killerbench.net/og-image.png">
+<meta property="og:url" content="https://killerbench.net/ru-RU/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://killerbench.net/ru-RU/">
+<title>KillerBench | Диагностический набор инструментов</title>
+<link rel="stylesheet" href="/family.css?v=4">
+<link rel="stylesheet" href="/bench.css?v=5">
+<link rel="stylesheet" href="/feature-carousel.css?v=2">
+<script defer src="/bench.js?v=5"></script>
+<script defer src="/feature-carousel.js?v=2"></script>
+</head>
+<body data-brand-base="/brand" data-ui-theme="Тема" data-ui-choose-theme="Выберите тему" data-ui-accent="Цвет акцента" data-ui-accent-label="акцент:" data-ui-close="Закрыть" data-ui-no-results="Нет подходящих страниц.">
+<header class="topbar">
+  <a class="tb-home" href="/ru-RU/"><img class="wm-logo tb-wm" src="/brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>
+  <a class="tb-mcp-link" href="/mcp.html" aria-label="KillerMCP"><img src="/mcp.png" alt="" aria-hidden="true"><span class="tb-mcp-wordmark"><span>Killer</span><span class="tb-mcp-accent">MCP</span></span></a>
+  <span class="tb-spacer"></span>
+<nav class="tb-nav"><a href="#workbench">Набор инструментов</a><a href="#features">Возможности</a><a href="/ru-RU/help/">Справка</a><a href="/ru-RU/engine/">Engine</a><a href="#about">О программе</a></nav>
+<div class="tgrp" role="group" aria-label="Тема">
+<button class="swatch sw-dark" data-theme="dark" title="Тёмная"></button>
+<button class="swatch sw-light" data-theme="light" title="Светлая"></button>
+<button class="swatch sw-hc" data-theme="hc" title="Чёрная"></button>
+<button class="swatch sw-blood" data-theme="blood" title="Кровь"></button>
+<button class="swatch sw-greed" data-theme="greed" title="Жадность"></button>
+<button class="swatch sw-cyanotic" data-theme="cyanotic" title="Цианоз"></button>
+<button class="swatch sw-ectoplasm" data-theme="ectoplasm" title="Эктоплазма"></button>
+<button class="swatch sw-decay" data-theme="decay" title="Распад"></button>
+<button class="swatch sw-malaise" data-theme="malaise" title="Недомогание"></button>
+<button class="swatch sw-sepulchre" data-theme="sepulchre" title="Гробница"></button>
+<button class="swatch sw-delirium" data-theme="delirium" title="Бред"></button>
+<button class="swatch sw-mourning" data-theme="mourning" title="Траур"></button>
+</div>
+<div class="acc-fly accent-switch" id="accentSwitch">
+<button class="acc-toggle" id="accentToggle" aria-haspopup="true" aria-expanded="false" title="Цвет акцента"></button>
+<div class="acc-pop" id="accentPop" hidden role="group" aria-label="Цвет акцента">
+<span class="acc-pop-label">акцент:</span>
+<button class="acc" data-accent="red" style="background:#DD504B;color:#DD504B" title="Красный"></button>
+<button class="acc" data-accent="orange" style="background:#E8962C;color:#E8962C" title="Оранжевый"></button><button class="acc" data-accent="yellow" style="background:#EAD900;color:#EAD900" title="Желтый"></button>
+<button class="acc" data-accent="green" style="background:#1EA54C;color:#1EA54C" title="Зеленый"></button>
+<button class="acc" data-accent="teal" style="background:#1FB8A8;color:#1FB8A8" title="Бирюзовый"></button>
+<button class="acc" data-accent="blue" style="background:#50AEE8;color:#50AEE8" title="Синий"></button>
+<button class="acc" data-accent="purple" style="background:#B982E3;color:#B982E3" title="Фиолетовый"></button><button class="acc" data-accent="magenta" style="background:#FF52C9;color:#FF52C9" title="Пурпурный"></button>
+</div>
+</div>
+<div class="lang-switch"><button class="lang-toggle" id="languageToggle" aria-haspopup="true" aria-expanded="false" aria-label="Выберите язык">RU</button><div class="lang-menu" id="languageMenu" hidden><a class="lang-item" hreflang="en-US" lang="en-US" href="/" aria-pressed="false">English</a><a class="lang-item" hreflang="bn" lang="bn" href="/bn/" aria-pressed="false">বাংলা</a><a class="lang-item" hreflang="cs-CZ" lang="cs-CZ" href="/cs-CZ/" aria-pressed="false">Čeština</a><a class="lang-item" hreflang="de-DE" lang="de-DE" href="/de-DE/" aria-pressed="false">Deutsch</a><a class="lang-item" hreflang="es" lang="es" href="/es/" aria-pressed="false">Español</a><a class="lang-item" hreflang="fr-FR" lang="fr-FR" href="/fr-FR/" aria-pressed="false">Français</a><a class="lang-item" hreflang="hu-HU" lang="hu-HU" href="/hu-HU/" aria-pressed="false">Magyar</a><a class="lang-item" hreflang="it-IT" lang="it-IT" href="/it-IT/" aria-pressed="false">Italiano</a><a class="lang-item" hreflang="ja-JP" lang="ja-JP" href="/ja-JP/" aria-pressed="false">日本語</a><a class="lang-item" hreflang="kk-KZ" lang="kk-KZ" href="/kk-KZ/" aria-pressed="false">Қазақша</a><a class="lang-item" hreflang="nb-NO" lang="nb-NO" href="/nb-NO/" aria-pressed="false">Norsk bokmål</a><a class="lang-item" hreflang="pl-PL" lang="pl-PL" href="/pl-PL/" aria-pressed="false">Polski</a><a class="lang-item" hreflang="pt-BR" lang="pt-BR" href="/pt-BR/" aria-pressed="false">Português (Brasil)</a><a class="lang-item" hreflang="ru-RU" lang="ru-RU" href="/ru-RU/" aria-pressed="true">Русский</a><a class="lang-item" hreflang="tr-TR" lang="tr-TR" href="/tr-TR/" aria-pressed="false">Türkçe</a><a class="lang-item" hreflang="uk-UA" lang="uk-UA" href="/uk-UA/" aria-pressed="false">Українська</a><a class="lang-item" hreflang="vi-VN" lang="vi-VN" href="/vi-VN/" aria-pressed="false">Tiếng Việt</a><a class="lang-item" hreflang="zh-CN" lang="zh-CN" href="/zh-CN/" aria-pressed="false">简体中文</a><a class="lang-item" hreflang="zh-TW" lang="zh-TW" href="/zh-TW/" aria-pressed="false">繁體中文</a></div></div></header>
+<div class="shell"><main class="content"><div class="content-scroll"><div class="content-inner">
+  <section class="hero">
+    <p class="eyebrow">В РАЗРАБОТКЕ / ДИАГНОСТИКА И ИСПРАВЛЕНИЕ ПРОБЛЕМ WINDOWS</p>
+    <img class="wm-logo hero-mark" src="/brand/killerbench-logo-dark-yellow.svg" alt="KillerBench">
+    <h1>Следуйте данным.</h1>
+    <p class="intro">Выберите инструмент, проверьте параметры и нажмите GO. Изучите данные в представлениях «Необработанный вывод» или «Читаемый отчёт». Поддерживаемые исправления проверяют текущие условия, регистрируют запрос и проверяют результат.</p>
+    <p class="release-note">KillerBench находится в разработке. Публичная загрузка пока недоступна.</p>
+    <a class="btn" href="#workbench">Знакомство с набором инструментов</a> <a class="btn" href="/ru-RU/help/">Прочитать руководство</a>
+  </section>
+  <section id="workbench" class="bench-pane">
+    <p class="eyebrow">01 / ОТОБРАЖЕНИЕ ДАННЫХ</p>
+    <h2>Ваша тема. Прослеживаемые результаты.</h2>
+    <div class="console" role="region" aria-label="Пример консоли данных с искусственно созданной проблемой обслуживания">
+      <p>KILLERBENCH / ИСКУССТВЕННЫЙ ПРИМЕР</p>
+      <p>01  Полное сканирование системы завершено. Только чтение.</p>
+      <p>02  Ошибка обслуживания в прошлом: 0x800F081F. Проверьте текущее состояние.</p>
+      <p>03  Данные сохранены. Есть ссылка на исходную строку CBS.</p>
+      <p>04  Исправление не выбрано. Нужны свежие данные о допустимости.</p>
+      <p class="console-note">ПОЛНОЕ СКАНИРОВАНИЕ СИСТЕМЫ ВЫПОЛНЯЕТ ТОЛЬКО ДИАГНОСТИКУ</p>
+    </div>
+    <p class="caption">Демонстрационный вывод, а не сканирование вашего компьютера.</p>
+  </section>
+  <section class="features" id="features"><h2>Внутри набора инструментов</h2><div class="feature-grid">
+    <article class="feature-card"><p class="eyebrow">02 / СНАЧАЛА ДИАГНОСТИКА</p><h3>Одиннадцать разделов, один подход</h3><p>Диагностика, исправления, обновления, устройства, сеть, приложения, обслуживание, подготовка компьютера, безопасность, BitLocker и конфиденциальность. Каждый инструмент сначала считывает данные и лишь затем что-либо предлагает. Полное сканирование системы определяет приоритеты проблем.</p></article>
+    <article class="feature-card"><p class="eyebrow">03 / КОНТРОЛИРУЕМЫЕ ИСПРАВЛЕНИЯ</p><h3>Исправляйте только подтвержденные проблемы</h3><p>Исправление предлагается только тогда, когда свежие данные подтверждают конкретную проблему. Оно требует вашего подтверждения, повторно проверяет условия непосредственно перед запуском и считывает результат, прежде чем сообщить, что проверка пройдена.</p></article>
+    <article class="feature-card"><p class="eyebrow">04 / ПРОСЛЕЖИВАЕМЫЕ ДАННЫЕ</p><h3>Никаких черных ящиков</h3><p>Обнаруженные состояния связаны с соответствующим событием, строкой журнала или настройкой. Неполные данные никогда не означают, что система исправна, а история остается историей. Экспортируйте отчет прямо в заявку.</p></article>
+    <article class="feature-card"><p class="eyebrow">05 / BITLOCKER И TPM</p><h3>Шифрование без догадок</h3><p>Проверяйте средства защиты, сохраняйте пароли восстановления в файл, Active Directory или Entra ID, шифруйте Windows и диски с данными, включайте автоматическую разблокировку и подготавливайте TPM без его очистки.</p></article>
+    <article class="feature-card"><p class="eyebrow">06 / КОНФИДЕНЦИАЛЬНОСТЬ И ОЧИСТКА</p><h3>Настройте ноутбук под себя</h3><p>Проверяйте и меняйте параметры конфиденциальности, разрешения приложений и облачный поиск, затем удаляйте лишнее из Windows. Параметры, управляемые политиками или системой управления устройствами, не изменяются.</p></article>
+    <article class="feature-card"><p class="eyebrow">07 / ВОССТАНОВЛЕНИЕ ПОСЛЕ ПРЕРЫВАНИЯ</p><h3>Проверка перед повторной попыткой</h3><p>Перед запуском исправления запрос регистрируется в журнале как ожидающий выполнения. Если операция прервана, восстановление проверяет, что произошло, не повторяя изменение автоматически.</p></article>
+    <article class="feature-card"><p class="eyebrow">08 / ЛОКАЛЬНАЯ ДИАГНОСТИКА</p><h3>ИИ не требуется</h3><p>Диагностика и анализ отчетов выполняются локально, без сервиса ИИ и учетной записи KillerBench. Выбранные действия, например загрузка файлов или резервное копирование ключей восстановления в Entra ID, могут обращаться к соответствующим сервисам. Один и тот же Engine используется в настольном приложении и командной строке.</p></article>
+  </div><p class="caption"><a href="/ru-RU/help/">Полное руководство</a> для каждого раздела и инструмента.</p></section>
+  <section class="bench-pane" id="about"><h2>Часть семейства Killer Tools</h2><p>Текстурированные поверхности, логотип в стиле печатной машинки и 13 тем приложения. Консоль в стиле дымчатого стекла, понятные отчеты, подтверждения и диалоги открытия, сохранения и выбора папки используют активную тему приложения.</p><p><a href="/help/workspace.html">Как ориентироваться</a> · <a href="/help/safety.html">Изучите модель безопасности</a> · <a href="/ru-RU/engine/">Руководство разработчика Engine</a> · <a href="/mcp.html">KillerMCP</a> · <a href="https://killertools.net">Знакомство с Killer Tools</a></p></section>
+</div></div></main><aside class="sidebar"><div class="sb-empty">KillerBench<br>В разработке</div><a class="sb-art" href="#workbench"><img src="/og-image.png" alt="Иллюстрация диагностического набора инструментов KillerBench"></a><div class="sb-empty">Сначала диагностика.<br>Исправляйте то, что подтверждено.<br>ИИ не требуется.</div></aside></div>
+<footer class="statusbar"><span class="left">В разработке · Входит в <a href="https://killertools.net">killertools.net</a></span><span class="right">© 2026 <b><a href="https://thekiller.net">Steve the Killer</a></b></span></footer>
+</body>
+</html>

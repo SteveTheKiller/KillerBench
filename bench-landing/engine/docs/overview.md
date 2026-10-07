@@ -20,6 +20,12 @@ A finding is tied to the evidence that produced it. Historical events stay histo
 
 Most Engine operations are read-only. Repair support is deliberately narrower than diagnostic coverage. A repair must have a supported recipe, fresh eligibility evidence, explicit host authorization, a durable preparation record, a bounded native action, and post-action verification.
 
+The full system scan is diagnostic-only, including when a focused workflow has automatic repair enabled. Saved captures and historical events never authorize a repair. Native repair validation remains scoped to the retained disposable-Windows-machine evidence recorded in the repository's `VM-VALIDATION.md`.
+
+## Desktop host
+
+The desktop shell presents Engine output through Raw output and Readable report views. Its confirmations and Open, Save, and Folder dialogs follow the active app theme. Those controls belong to the desktop host; an embedded host must provide its own review and authorization UI while preserving the Engine's evidence, prerequisite, journaling, and verification gates.
+
 ## Current status
 
 The Engine targets .NET 10 and Windows. It is in active development and is currently consumed through a project reference inside the KillerBench repository. A public package has not been released.

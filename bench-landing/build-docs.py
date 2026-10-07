@@ -12,7 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 VERSION = "v0.1.0"
-ASSET = "5"
+ASSET = "7"
 
 SITES = [
     {
@@ -171,6 +171,7 @@ def header(site):
     themes = "".join('<button class="swatch sw-%s" data-theme="%s" title="%s"></button>' % (t, t, "Black" if t == "hc" else t.capitalize()) for t in THEMES)
     accents = "".join('<button class="acc" data-accent="%s" style="background:%s;color:%s" title="%s"></button>' % (n, c, c, n.capitalize()) for n, c in ACCENTS)
     return ('<header class="topbar"><a class="tb-home" href="../index.html"><img class="wm-logo tb-wm" src="../brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>'
+            '<a class="tb-mcp-link" href="../mcp.html" aria-label="KillerMCP"><img src="../mcp.png" alt="" aria-hidden="true"><span class="tb-mcp-wordmark"><span>Killer</span><span class="tb-mcp-accent">MCP</span></span></a>'
             '<span class="tb-spacer"></span><nav class="tb-nav">' + nav + '</nav>'
             '<div class="tgrp" role="group" aria-label="Theme">' + themes + '</div>'
             '<div class="acc-fly accent-switch" id="accentSwitch"><button class="acc-toggle" id="accentToggle" aria-haspopup="true" aria-expanded="false" title="Accent color"></button>'
@@ -228,15 +229,15 @@ def build():
             title = title or nav_title
             file = page_file(page_id)
             first = next((line.strip() for line in markdown.splitlines() if line.strip() and not line.startswith("#")), "")
-            summary = re.sub(r"[`*\[\]]|\([^)]*\.html[^)]*\)", "", first)[:240]
+            summary = re.sub(r"[`*\[\]]|\([^)]*\.html[^)]*\)", "", first)
             canonical = "https://killerbench.net/%s/%s" % (site["folder"], "" if file == "index.html" else file)
             page = ('<!doctype html>\n<html lang="en" data-theme="dark"><head><meta charset="utf-8">'
                     '<meta name="viewport" content="width=device-width,initial-scale=1">'
                     '<meta name="description" content="%s"><link rel="canonical" href="%s">'
                     '<title>%s | KillerBench %s</title>'
-                    '<link rel="stylesheet" href="../family.css?v=4"><link rel="stylesheet" href="../bench.css?v=3">'
+                    '<link rel="stylesheet" href="../family.css?v=4"><link rel="stylesheet" href="../bench.css?v=5">'
                     '<link rel="stylesheet" href="../engine/engine-docs.css?v=%s">'
-                    '<script defer src="../bench.js?v=4"></script><script defer src="../docs-search-index.js?v=%s"></script>'
+                    '<script defer src="../bench.js?v=5"></script><script defer src="../docs-search-index.js?v=%s"></script>'
                     '<script defer src="../docs-search.js?v=%s"></script></head>'
                     '<body data-brand-base="../brand">%s<div class="shell engine-shell">%s'
                     '<main class="content"><div class="content-scroll"><div class="engine-doc-wrap">'
@@ -246,13 +247,21 @@ def build():
                     '</body></html>\n') % (
                 esc(summary or site["description"]), canonical, esc(title), esc(site["label"].lower()), ASSET, ASSET, ASSET,
                 header(site), sidebar(site, page_id, headings), body, pager(site, page_id), esc(site["label"]), VERSION)
-            (folder / file).write_text(page, encoding="utf-8", newline="\n")
+            output = folder / file
+            if output.exists():
+                output.read_text(encoding="utf-8")
+            output.write_text(page, encoding="utf-8", newline="\n")
             index.append({"u": "%s/%s" % (site["folder"], file), "g": site["label"], "t": title,
                           "h": [[a, re.sub(r"[`*]", "", t)] for a, t in headings], "x": plain(markdown)[:6000]})
-    (ROOT / "docs-search-index.js").write_text(
+    search_index = ROOT / "docs-search-index.js"
+    if search_index.exists():
+        search_index.read_text(encoding="utf-8")
+    search_index.write_text(
         "window.KillerBenchSearch=" + json.dumps(index, ensure_ascii=False, separators=(",", ":")) + ";\n", encoding="utf-8", newline="\n")
     print("Built %d pages." % len(index))
 
 
 if __name__ == "__main__":
     build()
+    import runpy
+    runpy.run_path(str(ROOT / 'build-locales.py'))['build']()

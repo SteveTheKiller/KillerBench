@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="KillerBench is a Windows diagnostic and repair workbench in development. Diagnose first, follow the evidence, and fix only what the evidence proves, all on the local computer.">
+<meta property="og:title" content="KillerBench | Diagnostic Workbench">
+<meta property="og:description" content="Diagnose first. Fix only what the evidence proves. A Windows workbench in development.">
+<meta property="og:image" content="https://killerbench.net/og-image.png">
+<meta property="og:url" content="https://killerbench.net/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://killerbench.net/">
+<title>KillerBench | Diagnostic Workbench</title>
+<link rel="stylesheet" href="family.css?v=4">
+<link rel="stylesheet" href="bench.css?v=5">
+<link rel="stylesheet" href="feature-carousel.css?v=2">
+<script defer src="bench.js?v=5"></script>
+<script defer src="feature-carousel.js?v=2"></script>
+</head>
+<body>
+<header class="topbar">
+  <a class="tb-home" href="index.html"><img class="wm-logo tb-wm" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>
+  <a class="tb-mcp-link" href="mcp.html" aria-label="KillerMCP"><img src="mcp.png" alt="" aria-hidden="true"><span class="tb-mcp-wordmark"><span>Killer</span><span class="tb-mcp-accent">MCP</span></span></a>
+  <span class="tb-spacer"></span>
+<nav class="tb-nav"><a href="#workbench">Workbench</a><a href="#features">Features</a><a href="help/index.html">Help</a><a href="engine/index.html">Engine</a><a href="#about">About</a></nav>
+<div class="tgrp" role="group" aria-label="Theme">
+<button class="swatch sw-dark"     data-theme="dark"     title="Dark"></button>
+<button class="swatch sw-light"    data-theme="light"    title="Light"></button>
+<button class="swatch sw-hc"       data-theme="hc"       title="Black"></button>
+<button class="swatch sw-blood"    data-theme="blood"    title="Blood"></button>
+<button class="swatch sw-greed"    data-theme="greed"    title="Greed"></button>
+<button class="swatch sw-cyanotic" data-theme="cyanotic" title="Cyanotic"></button>
+<button class="swatch sw-ectoplasm" data-theme="ectoplasm" title="Ectoplasm"></button>
+<button class="swatch sw-decay" data-theme="decay" title="Decay"></button>
+<button class="swatch sw-malaise" data-theme="malaise" title="Malaise"></button>
+<button class="swatch sw-sepulchre" data-theme="sepulchre" title="Sepulchre"></button>
+<button class="swatch sw-delirium" data-theme="delirium" title="Delirium"></button>
+<button class="swatch sw-mourning" data-theme="mourning" title="Mourning"></button>
+</div>
+<div class="acc-fly accent-switch" id="accentSwitch">
+<button class="acc-toggle" id="accentToggle" aria-haspopup="true" aria-expanded="false" title="Accent color"></button>
+<div class="acc-pop" id="accentPop" hidden role="group" aria-label="Accent color">
+<span class="acc-pop-label" >accent:</span>
+<button class="acc" data-accent="red"    style="background:#DD504B;color:#DD504B" title="Red"></button>
+<button class="acc" data-accent="orange" style="background:#E8962C;color:#E8962C" title="Orange"></button><button class="acc" data-accent="yellow" style="background:#EAD900;color:#EAD900" title="Yellow"></button>
+<button class="acc" data-accent="green"  style="background:#1EA54C;color:#1EA54C" title="Green"></button>
+<button class="acc" data-accent="teal"   style="background:#1FB8A8;color:#1FB8A8" title="Teal"></button>
+<button class="acc" data-accent="blue"   style="background:#50AEE8;color:#50AEE8" title="Blue"></button>
+<button class="acc" data-accent="purple" style="background:#B982E3;color:#B982E3" title="Purple"></button><button class="acc" data-accent="magenta" style="background:#FF52C9;color:#FF52C9" title="Magenta"></button>
+</div>
+</div>
+</header>
+<div class="shell"><main class="content"><div class="content-scroll"><div class="content-inner">
+  <section class="hero">
+    <p class="eyebrow">IN DEVELOPMENT / WINDOWS DIAGNOSTIC AND REPAIR WORKBENCH</p>
+    <img class="wm-logo hero-mark" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench">
+    <h1>Follow the evidence.</h1>
+    <p class="intro">Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.</p>
+    <p class="release-note">KillerBench is in development. Public downloads are not available yet.</p>
+    <a class="btn" href="#workbench">Explore the workbench</a> <a class="btn" href="help/index.html">Read the guide</a>
+  </section>
+  <section id="workbench" class="bench-pane">
+    <p class="eyebrow">01 / EVIDENCE DISPLAY</p>
+    <h2>Your theme. Traceable findings.</h2>
+    <div class="console" role="region" aria-label="Illustrative evidence console showing a synthetic servicing finding">
+      <p>KILLERBENCH / SYNTHETIC EXAMPLE</p>
+      <p>01&nbsp; Full system scan finished. Read-only.</p>
+      <p>02&nbsp; Historical servicing error: 0x800F081F. Review current state.</p>
+      <p>03&nbsp; Evidence retained. Original CBS line linked.</p>
+      <p>04&nbsp; No repair selected. Fresh eligibility evidence required.</p>
+      <p class="console-note">FULL SYSTEM SCAN IS DIAGNOSTIC ONLY</p>
+    </div>
+    <p class="caption">Illustrative output, not a scan of your computer.</p>
+  </section>
+  <section class="features" id="features"><h2>Inside the workbench</h2><div class="feature-grid">
+    <article class="feature-card"><p class="eyebrow">02 / DIAGNOSE FIRST</p><h3>Eleven sections, one habit</h3><p>Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker and Privacy. Every tool reads before it offers anything, and a full system scan ranks what needs attention.</p></article>
+    <article class="feature-card"><p class="eyebrow">03 / GUARDED REPAIRS</p><h3>Fix only what is proven</h3><p>A repair is offered only when fresh evidence matches the exact problem. It needs your confirmation, rechecks everything right before it runs, and reads the result back before it says Verified.</p></article>
+    <article class="feature-card"><p class="eyebrow">04 / EVIDENCE YOU CAN FOLLOW</p><h3>No black boxes</h3><p>Findings link to the event, log line or setting behind them. Incomplete evidence is never reported as healthy, and history stays history. Export the report straight into a ticket.</p></article>
+    <article class="feature-card"><p class="eyebrow">05 / BITLOCKER AND TPM</p><h3>Encryption without guesswork</h3><p>Inspect protectors, back up recovery passwords to a file, Active Directory or Entra ID, encrypt Windows and data drives, turn on auto-unlock and prepare a TPM without ever clearing it.</p></article>
+    <article class="feature-card"><p class="eyebrow">06 / PRIVACY AND DECLUTTER</p><h3>Make a laptop yours</h3><p>Review and change privacy settings, app permissions and cloud search, then declutter Windows. Settings owned by policy or device management are left alone.</p></article>
+    <article class="feature-card"><p class="eyebrow">07 / INTERRUPTION RECOVERY</p><h3>Check before retrying</h3><p>Journaled repairs record a pending request before dispatch. If a request is interrupted, recovery checks what happened without automatically repeating the change.</p></article>
+    <article class="feature-card"><p class="eyebrow">08 / LOCAL DIAGNOSTICS</p><h3>No AI required</h3><p>Diagnostics and report analysis run locally without an AI service or KillerBench account. Actions you select, such as downloads or recovery-key backup to Entra ID, can contact their destination. The same Engine powers the desktop app and command line.</p></article>
+  </div><p class="caption"><a href="help/index.html">Read the full guide</a> for every section and tool.</p></section>
+  <section class="bench-pane" id="about"><h2>Part of the Killer Tools family</h2><p>Textured surfaces, the typewriter wordmark, and 13 app themes. The smoked-glass console, readable reports, confirmations, and Open, Save, and Folder dialogs follow the active app theme.</p><p><a href="help/workspace.html">Find your way around</a> &middot; <a href="help/safety.html">Review the safety model</a> &middot; <a href="engine/index.html">Engine developer guide</a> &middot; <a href="mcp.html">KillerMCP</a> &middot; <a href="https://killertools.net">Explore Killer Tools</a></p></section>
+</div></div></main><aside class="sidebar"><div class="sb-empty">KillerBench<br>In development</div><a class="sb-art" href="#workbench"><img src="og-image.png" alt="KillerBench diagnostic workbench artwork"></a><div class="sb-empty">Diagnose first.<br>Fix what is proven.<br>No AI required.</div></aside></div>
+<footer class="statusbar"><span class="left">In development &middot; Part of <a href="https://killertools.net">killertools.net</a></span><span class="right">&copy; 2026 <b><a href="https://thekiller.net">Steve the Killer</a></b></span></footer>
+</body>
+</html>

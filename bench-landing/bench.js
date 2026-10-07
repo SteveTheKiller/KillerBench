@@ -2,6 +2,14 @@
    Page-specific behavior (screenshot strip, outline scroll-spy) stays inline per page. */
 (function () {
   var root = document.documentElement;
+  var languageToggle = document.getElementById('languageToggle');
+  var languageMenu = document.getElementById('languageMenu');
+  if (languageToggle && languageMenu) {
+    function closeLanguages() { languageMenu.hidden = true; languageToggle.setAttribute('aria-expanded', 'false'); }
+    languageToggle.addEventListener('click', function (e) { e.stopPropagation(); languageMenu.hidden = !languageMenu.hidden; languageToggle.setAttribute('aria-expanded', String(!languageMenu.hidden)); });
+    document.addEventListener('click', function (e) { if (!languageMenu.contains(e.target)) closeLanguages(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !languageMenu.hidden) { closeLanguages(); languageToggle.focus(); } });
+  }
   var THEMES = ['dark','light','hc','blood','greed','cyanotic','ectoplasm','decay','malaise','sepulchre','delirium','mourning'];
   var NEUTRAL = ['dark','light','hc'];
   var THEMED = ['blood','greed','cyanotic','ectoplasm','decay','malaise','sepulchre','delirium','mourning'];  // fixed-color wordmark art
@@ -31,6 +39,7 @@
   var accToggle = document.getElementById('accentToggle');
   var accPop = document.getElementById('accentPop');
   var curAccent = 'yellow';
+  var syncThemePreview = function () {};
 
   function buildThemeFlyout() {
     var group = document.querySelector('.topbar .tgrp');
@@ -38,8 +47,8 @@
     var toggle = document.createElement('button');
     toggle.type = 'button';
     toggle.className = 'theme-toggle';
-    toggle.title = 'Theme';
-    toggle.setAttribute('aria-label', 'Choose theme');
+    toggle.title = document.body.getAttribute('data-ui-theme') || 'Theme';
+    toggle.setAttribute('aria-label', document.body.getAttribute('data-ui-choose-theme') || 'Choose theme');
     toggle.setAttribute('aria-haspopup', 'true');
     toggle.setAttribute('aria-expanded', 'false');
     var preview = document.createElement('span');
@@ -56,6 +65,7 @@
       if (active) preview.className = active.className;
       preview.removeAttribute('aria-pressed');
     }
+    syncThemePreview = syncPreview;
     toggle.addEventListener('click', function (e) {
       e.stopPropagation();
       var opening = !group.classList.contains('open');
@@ -136,6 +146,7 @@
     root.setAttribute('data-theme', name);
     try { localStorage.setItem('kbench-theme', name); } catch (e) {}
     swatches.forEach(function (s) { s.setAttribute('aria-pressed', s.dataset.theme === name ? 'true' : 'false'); });
+    syncThemePreview(name);
     if (accentSwitch) accentSwitch.hidden = NEUTRAL.indexOf(name) < 0;
     applyAccent(curAccent);
   }
@@ -150,10 +161,10 @@
     var pill = document.createElement('div'); pill.className = 'pill';
     var grip = document.createElement('span'); grip.className = 'grip'; grip.setAttribute('aria-hidden', 'true');
     pill.appendChild(grip);
-    var blbl = document.createElement('span'); blbl.className = 'lbl'; blbl.setAttribute('data-i18n', 'accent_label'); blbl.textContent = 'accent:';
+    var blbl = document.createElement('span'); blbl.className = 'lbl'; blbl.setAttribute('data-i18n', 'accent_label'); blbl.textContent = document.body.getAttribute('data-ui-accent-label') || 'accent:';
     pill.appendChild(blbl);
     accDots.forEach(function (d) { pill.appendChild(d); });
-    var bx = document.createElement('button'); bx.className = 'x'; bx.setAttribute('aria-label', 'Close'); bx.innerHTML = '&times;';
+    var bx = document.createElement('button'); bx.className = 'x'; bx.setAttribute('aria-label', document.body.getAttribute('data-ui-close') || 'Close'); bx.innerHTML = '&times;';
     bx.addEventListener('click', hideAccentBar);
     pill.appendChild(bx);
     accentBar.appendChild(pill);
@@ -199,7 +210,7 @@
   }
   document.addEventListener('click', function (e) { if (accentBar && accentBar.classList.contains('show') && !e.target.closest('.accent-bar') && !e.target.closest('#accentToggle')) hideAccentBar(); });
 
-  function uiText(key) { return key === 'ui_accent' ? 'Accent color' : key; }
+  function uiText(key) { return key === 'ui_accent' ? (document.body.getAttribute('data-ui-accent') || 'Accent color') : key; }
   swatches.concat(accDots).forEach(function(button){button.setAttribute('aria-label',button.title);});
   var savedTheme = 'dark', savedAccent = 'yellow';
   try { savedTheme = localStorage.getItem('kbench-theme') || savedTheme; savedAccent = localStorage.getItem('kbench-accent') || savedAccent; } catch(e) {}

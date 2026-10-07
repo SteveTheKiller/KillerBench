@@ -9,7 +9,8 @@ KillerBench is in development. There is no public download yet. These pages desc
 - Runs read-only diagnostics across Windows Update, devices, storage, networking, printing, security, apps and profiles, then writes a readable report.
 - Offers guarded repairs that run only when fresh evidence proves the exact problem, and verifies the result afterwards.
 - Covers setup and hardening work such as BitLocker, privacy settings, decluttering Windows and onboarding a new computer.
-- Keeps everything on the computer. No account, cloud service or AI is needed.
+- Runs diagnostics and report analysis locally without AI or a KillerBench account. Selected actions, such as downloads and recovery-key backup to Entra ID, can contact external services.
+- Uses the active app theme for the console, reports, confirmations, and Open, Save, and Folder dialogs.
 
 ## Where to start
 
