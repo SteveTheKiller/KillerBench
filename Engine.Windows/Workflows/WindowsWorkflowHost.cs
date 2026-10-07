@@ -111,14 +111,14 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
     public Func<string, CancellationToken, Task<WorkflowCheck>> FileSystemDiagnosis { get; init; } =
         (volume, token) => new WindowsFileSystemRepairHost().DiagnoseAsync(volume, token);
 
-    public Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token) => InspectAsync(kind, token, _ => Task.CompletedTask);
+    public Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token) => InspectAsync(kind, _ => Task.CompletedTask, token);
 
-    public Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token,
-        Func<IReadOnlyList<WorkflowCheck>, Task> checkpoint)
-        => InspectAsync(kind, token, checkpoint, null);
+    public Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, Func<IReadOnlyList<WorkflowCheck>, Task> checkpoint,
+        CancellationToken token)
+        => InspectAsync(kind, checkpoint, null, token);
 
-    public async Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token,
-        Func<IReadOnlyList<WorkflowCheck>, Task> checkpoint, IReadOnlyList<CommonDiagnosticScope>? selectedScopes)
+    public async Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, Func<IReadOnlyList<WorkflowCheck>, Task> checkpoint,
+        IReadOnlyList<CommonDiagnosticScope>? selectedScopes, CancellationToken token)
     {
         IReadOnlyList<WorkflowCheck> checks = await InspectCoreAsync(kind, token, checkpoint, selectedScopes).ConfigureAwait(false);
         return OptionPlanCheck is null ? checks : [OptionPlanCheck, .. checks];

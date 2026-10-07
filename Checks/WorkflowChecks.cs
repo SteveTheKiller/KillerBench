@@ -1011,8 +1011,8 @@ internal static class WorkflowChecks
         public bool TimedInspection;
         public Action? AfterScan;
         public List<RepairKind> Scanned = [], Repaired = [];
-        public Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token,
-            Func<IReadOnlyList<WorkflowCheck>, Task> checkpoint, IReadOnlyList<CommonDiagnosticScope>? selectedScopes) =>
+        public Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, Func<IReadOnlyList<WorkflowCheck>, Task> checkpoint,
+            IReadOnlyList<CommonDiagnosticScope>? selectedScopes, CancellationToken token) =>
             selectedScopes is null ? InspectAsync(kind, token) : Task.FromResult<IReadOnlyList<WorkflowCheck>>(
                 [.. selectedScopes.Select(scope => new WorkflowCheck(scope.ToString(), CheckState.Information, "Fixture selected scope"))]);
         public Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token)
@@ -1047,8 +1047,8 @@ internal static class WorkflowChecks
     {
         public Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token) =>
             throw new Exception("Focused selection was lost");
-        public async Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token,
-            Func<IReadOnlyList<WorkflowCheck>, Task> checkpoint, IReadOnlyList<CommonDiagnosticScope>? selectedScopes)
+        public async Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, Func<IReadOnlyList<WorkflowCheck>, Task> checkpoint,
+            IReadOnlyList<CommonDiagnosticScope>? selectedScopes, CancellationToken token)
         {
             Require(selectedScopes?.Count == 2, "Focused host receives requested selection");
             await checkpoint([new("Retained focused finding", CheckState.Information, "Completed before Stop")]);

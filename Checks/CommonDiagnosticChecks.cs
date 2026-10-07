@@ -258,7 +258,7 @@ internal static class CommonDiagnosticChecks
         internal Func<IReadOnlyList<WorkflowCheck>, Task>? LateCheckpoint;
         internal Exception? Failure { get; init; }
         public Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token) => throw new Exception("Checkpoint overload expected");
-        public async Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token, Func<IReadOnlyList<WorkflowCheck>, Task> checkpoint)
+        public async Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, Func<IReadOnlyList<WorkflowCheck>, Task> checkpoint, CancellationToken token)
         {
             LateCheckpoint = checkpoint;
             await checkpoint([new("Retained fixture", CheckState.Attention, "Observed before Stop", Evidence: new(0, "raw fixture", "", false))]);

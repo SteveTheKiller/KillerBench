@@ -56,8 +56,8 @@ internal static class FullSystemScanChecks
         internal int Inspections;
         public Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token) =>
             throw new Exception("Scope-aware inspection expected");
-        public Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token,
-            Func<IReadOnlyList<WorkflowCheck>, Task> checkpoint, IReadOnlyList<CommonDiagnosticScope>? selectedScopes)
+        public Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, Func<IReadOnlyList<WorkflowCheck>, Task> checkpoint,
+            IReadOnlyList<CommonDiagnosticScope>? selectedScopes, CancellationToken token)
         {
             Inspections++;
             Require(kind == WorkflowKind.CommonProblems && selectedScopes?.SequenceEqual(
