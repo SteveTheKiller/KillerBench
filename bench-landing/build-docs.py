@@ -235,7 +235,7 @@ def build():
                     '<meta name="viewport" content="width=device-width,initial-scale=1">'
                     '<meta name="description" content="%s"><link rel="canonical" href="%s">'
                     '<title>%s | KillerBench %s</title>'
-                    '<link rel="stylesheet" href="../family.css?v=4"><link rel="stylesheet" href="../bench.css?v=5">'
+                    '<link rel="stylesheet" href="../family.css?v=5"><link rel="stylesheet" href="../bench.css?v=5">'
                     '<link rel="stylesheet" href="../engine/engine-docs.css?v=%s">'
                     '<script defer src="../bench.js?v=5"></script><script defer src="../docs-search-index.js?v=%s"></script>'
                     '<script defer src="../docs-search.js?v=%s"></script></head>'

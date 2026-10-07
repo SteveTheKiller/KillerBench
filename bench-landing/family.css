@@ -55,7 +55,7 @@ a:hover { filter: brightness(1.15); }
 /* ---- Wordmark (rendered as text in the app's typewriter font: Killer in --text, Scan in --accent) ---- */
 @font-face {
   font-family: 'KillerScan';
-  src: url('brand/KillerScan.ttf') format('truetype');
+  src: url('brand/typewriter.ttf') format('truetype');
   font-weight: normal; font-style: normal; font-display: block;
 }
 .wm-logo { display: inline-block; width: auto; white-space: nowrap; line-height: 1; font-family: 'KillerScan', 'Courier New', monospace; font-weight: normal; letter-spacing: 1px;
