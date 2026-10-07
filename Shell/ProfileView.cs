@@ -1,5 +1,4 @@
 using KillerBench.Engine;
-using Microsoft.Win32;
 using System.Windows;
 
 namespace KillerBench;
@@ -11,12 +10,12 @@ public partial class MainWindow
 
     private void OnBrowseProfileBackup(object sender, RoutedEventArgs e)
     {
-        var picker = new OpenFolderDialog
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Folder)
         {
             Title = "Choose the existing copied profile backup",
             Multiselect = false
         };
-        if (picker.ShowDialog(this) == true) ProfileBackupPath.Text = picker.FolderName;
+        if (picker.ShowDialog(this) == true) ProfileBackupPath.Text = picker.FileName;
     }
 
     private async void OnCreateProfileBackupArtifact(object sender, RoutedEventArgs e) =>

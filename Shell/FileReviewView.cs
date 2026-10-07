@@ -2,7 +2,6 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using KillerBench.Engine;
-using Microsoft.Win32;
 
 namespace KillerBench;
 
@@ -10,8 +9,8 @@ public partial class MainWindow
 {
     private void OnBrowseFileReviewFolder(object sender, RoutedEventArgs e)
     {
-        var picker = new OpenFolderDialog { Title = "Choose one local folder to review", Multiselect = false };
-        if (picker.ShowDialog(this) == true) FileReviewFolder.Text = picker.FolderName;
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Folder) { Title = "Choose one local folder to review", Multiselect = false };
+        if (picker.ShowDialog(this) == true) FileReviewFolder.Text = picker.FileName;
     }
 
     private async void OnReviewDuplicates(object sender, RoutedEventArgs e) =>

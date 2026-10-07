@@ -72,7 +72,7 @@ public partial class MainWindow
     private async void OnSaveApplicationInventory(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null || applicationInventory is not { } inventory) return;
-        var picker = new Microsoft.Win32.SaveFileDialog { Filter = "Application inventory JSON|*.json", DefaultExt = ".json", FileName = "applications-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".json", OverwritePrompt = true };
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Save) { Filter = "Application inventory JSON|*.json", DefaultExt = ".json", FileName = "applications-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".json", OverwritePrompt = true };
         if (picker.ShowDialog(this) != true) return;
         using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         readCancellation = cancellation;
@@ -97,13 +97,17 @@ public partial class MainWindow
     private async void OnCompareApplicationInventories(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
-        var picker = new Microsoft.Win32.OpenFileDialog { Filter = "Application inventory JSON|*.json", Title = "Choose BEFORE inventory" };
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Filter = "Application inventory JSON|*.json", Title = "Choose BEFORE inventory" };
         if (picker.ShowDialog(this) != true) return;
         string before = picker.FileName;
-        picker.Title = "Choose AFTER inventory";
-        picker.FileName = "";
-        if (picker.ShowDialog(this) != true) return;
-        await CompareApplicationFilesAsync(before, picker.FileName);
+        var afterPicker = new Controls.FileDialog(Controls.FileDialogMode.Open)
+        {
+            Filter = "Application inventory JSON|*.json",
+            Title = "Choose AFTER inventory",
+            InitialDirectory = Path.GetDirectoryName(before) ?? ""
+        };
+        if (afterPicker.ShowDialog(this) != true) return;
+        await CompareApplicationFilesAsync(before, afterPicker.FileName);
     }
 
     private async Task CompareApplicationFilesAsync(string before, string after)

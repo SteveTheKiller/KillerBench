@@ -102,7 +102,7 @@ public partial class MainWindow : Window
         { await OpenCaptureAsync(path); return; }
         if (path.Length == 0)
         {
-            var picker = new Microsoft.Win32.OpenFileDialog { Filter = "Logs and event files|*.log;*.txt;*.evtx;*.xml|All files|*.*", Title = "Open evidence", Multiselect = true };
+            var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Filter = "Logs and event files|*.log;*.txt;*.evtx;*.xml|All files|*.*", Title = "Open evidence", Multiselect = true };
             if (picker.ShowDialog(this) != true) return;
             if (picker.FileNames.Length > 1) { await OpenEvidenceBatchAsync(picker.FileNames); return; }
             path = picker.FileName;

@@ -1,4 +1,5 @@
 using KillerBench.Engine;
+using KillerBench.Controls;
 using System.Windows;
 
 namespace KillerBench;
@@ -96,11 +97,12 @@ public partial class MainWindow
             RefreshMacePackageRemoval();
             return;
         }
-        MessageBoxResult confirmation = MessageBox.Show(this,
-            "Remove this exact current-account package?\n\n" + selected.Identity +
-            "\n\nKillerBench will repeat the safeguard review, record the request, send one removal request, and verify the package inventory. It will not retry automatically.",
-            "Confirm app package removal", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
-        if (confirmation != MessageBoxResult.Yes) return;
+        var confirmation = new ConfirmDialog(
+            "Remove this exact current-account package?",
+            selected.Identity + "\n\nKillerBench will repeat the safeguard review, record the request, send one removal request, and verify the package inventory. It will not retry automatically.",
+            "Remove package") { Owner = this };
+        confirmation.ShowDialog();
+        if (!confirmation.Confirmed) return;
         macePackageRemovalRequested = true;
         try { await RunWorkflowAsync(); }
         finally { macePackageRemovalRequested = false; }

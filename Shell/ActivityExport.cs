@@ -2,7 +2,6 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using KillerBench.Engine;
-using Microsoft.Win32;
 
 namespace KillerBench;
 
@@ -11,7 +10,7 @@ public partial class MainWindow
     private async void OnExportActivity(object sender, RoutedEventArgs e)
     {
         var snapshot = activity.ToArray();
-        var picker = new SaveFileDialog
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Save)
         {
             Title = "Export retained session activity (up to 150 entries)",
             Filter = "Text file (*.txt)|*.txt|CSV file (*.csv)|*.csv|HTML page (*.html)|*.html",

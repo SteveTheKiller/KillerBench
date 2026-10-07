@@ -2,7 +2,6 @@ using System.IO;
 using System.Text.Json;
 using System.Windows;
 using KillerBench.Engine;
-using Microsoft.Win32;
 
 namespace KillerBench;
 
@@ -11,9 +10,9 @@ public partial class MainWindow
     private async void OnKnowledgeCompare(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
-        var beforePicker = new OpenFileDialog { Title = "Choose the current knowledge pack", Filter = "Knowledge JSON (*.json)|*.json", CheckFileExists = true };
+        var beforePicker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Title = "Choose the current knowledge pack", Filter = "Knowledge JSON (*.json)|*.json", CheckFileExists = true };
         if (beforePicker.ShowDialog(this) != true) return;
-        var afterPicker = new OpenFileDialog { Title = "Choose the candidate knowledge pack", Filter = "Knowledge JSON (*.json)|*.json", CheckFileExists = true };
+        var afterPicker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Title = "Choose the candidate knowledge pack", Filter = "Knowledge JSON (*.json)|*.json", CheckFileExists = true };
         if (afterPicker.ShowDialog(this) != true) return;
         using var stop = new CancellationTokenSource(TimeSpan.FromSeconds(45));
         readCancellation = stop;
@@ -126,7 +125,7 @@ public partial class MainWindow
         bool search = sender is System.Windows.Controls.Button { Tag: "search" };
         if (context.Length == 0 || code.Length == 0)
         { Report("Enter a product context and code or search text before opening a reference pack."); return; }
-        var picker = new OpenFileDialog { Title = "Open local knowledge pack", Filter = "Knowledge JSON (*.json)|*.json", CheckFileExists = true };
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Title = "Open local knowledge pack", Filter = "Knowledge JSON (*.json)|*.json", CheckFileExists = true };
         if (picker.ShowDialog(this) != true) return;
         using var stop = new CancellationTokenSource();
         readCancellation = stop;

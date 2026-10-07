@@ -11,7 +11,7 @@ public partial class MainWindow
     private void OnChooseRecoveryBackup(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
-        var picker = new Microsoft.Win32.SaveFileDialog
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Save)
         {
             Title = "Choose a new recovery backup file outside the protected volume",
             Filter = "Text files (*.txt)|*.txt", DefaultExt = ".txt", AddExtension = true,

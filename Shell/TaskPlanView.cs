@@ -2,7 +2,6 @@ using System.IO;
 using System.Text.Json;
 using System.Windows;
 using KillerBench.Engine;
-using Microsoft.Win32;
 
 namespace KillerBench;
 
@@ -111,7 +110,7 @@ public partial class MainWindow
         try
         {
             byte[] data = ScheduledTaskPlanJson.Serialize(ReadTaskDraftForm());
-            var picker = new SaveFileDialog { Title = "Save new task draft", Filter = "Task plan (*.json)|*.json", DefaultExt = ".json", FileName = "task-plan.json" };
+            var picker = new Controls.FileDialog(Controls.FileDialogMode.Save) { Title = "Save new task draft", Filter = "Task plan (*.json)|*.json", DefaultExt = ".json", FileName = "task-plan.json" };
             if (picker.ShowDialog(this) != true) return;
             using var stop = new CancellationTokenSource(TimeSpan.FromSeconds(15));
             readCancellation = stop;
@@ -137,7 +136,7 @@ public partial class MainWindow
         {
             var startDate = DateOnly.ParseExact(TaskDraftStartDate.Text, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             byte[] data = System.Text.Encoding.UTF8.GetBytes(ScheduledTaskXml.Serialize(ReadTaskDraftForm(), startDate));
-            var picker = new SaveFileDialog { Title = "Export disabled task definition", Filter = "Task XML (*.xml)|*.xml", DefaultExt = ".xml", FileName = "task-review.xml" };
+            var picker = new Controls.FileDialog(Controls.FileDialogMode.Save) { Title = "Export disabled task definition", Filter = "Task XML (*.xml)|*.xml", DefaultExt = ".xml", FileName = "task-review.xml" };
             if (picker.ShowDialog(this) != true) return;
             using var stop = new CancellationTokenSource(TimeSpan.FromSeconds(15));
             readCancellation = stop;
@@ -317,7 +316,7 @@ public partial class MainWindow
     private async void OnReviewTaskJournal(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
-        var picker = new OpenFileDialog { Title = "Select one recovery record or an intent/outcome pair", Filter = "Task journal (*.json)|*.json", CheckFileExists = true, Multiselect = true };
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Title = "Select one recovery record or an intent/outcome pair", Filter = "Task journal (*.json)|*.json", CheckFileExists = true, Multiselect = true };
         if (picker.ShowDialog(this) != true) return;
         if (picker.FileNames.Length is < 1 or > 2) { Report("Select one recovery record or two linked records."); return; }
         using var stop = new CancellationTokenSource();
@@ -357,7 +356,7 @@ public partial class MainWindow
     private async void OnReviewTaskPlan(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
-        var picker = new OpenFileDialog { Title = "Review saved task plan", Filter = "Task plan (*.json)|*.json", CheckFileExists = true };
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Title = "Review saved task plan", Filter = "Task plan (*.json)|*.json", CheckFileExists = true };
         if (picker.ShowDialog(this) != true) return;
         using var stop = new CancellationTokenSource();
         readCancellation = stop;

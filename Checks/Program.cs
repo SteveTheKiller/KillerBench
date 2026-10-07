@@ -17,6 +17,7 @@ internal static class Program
             if (args.Length == 0) return RunChecks(includeUi: false);
             if (args is ["--isolated-ui"]) return RunChecks(includeUi: true);
             if (args is ["--isolated-ui-smoke"]) return RunUiSmoke();
+            if (args is ["--isolated-dialog-smoke"]) return RunDialogSmoke();
             if (args is ["--only", "menu-separators"]) return RunMenuSeparatorChecks();
             if (args is ["--only", "workflow-report-export"])
             {
@@ -50,6 +51,8 @@ internal static class Program
             }
             if (args is ["--only", "ui-smoke"])
                 return IsolatedDesktop.Run("--isolated-ui-smoke");
+            if (args is ["--only", "dialog-smoke"])
+                return IsolatedDesktop.Run("--isolated-dialog-smoke");
             if (args is ["--only", "ui-full"])
                 return IsolatedDesktop.Run();
             if (args is ["--only", "workflow"])
@@ -60,7 +63,7 @@ internal static class Program
                 finally { Directory.Delete(scratch, true); }
                 return 0;
             }
-            throw new ArgumentException("Use no arguments for all non-UI checks, or --only workflow-report-export, workflow-options, servicing-monitor, recipes, native-validation, workflow, ui-smoke or ui-full. UI checks require an isolated desktop.");
+            throw new ArgumentException("Use no arguments for all non-UI checks, or --only workflow-report-export, workflow-options, servicing-monitor, recipes, native-validation, workflow, dialog-smoke, ui-smoke or ui-full. UI checks require an isolated desktop.");
         }
         catch (Exception error) { Console.Error.WriteLine(error); return 1; }
     }
@@ -94,6 +97,69 @@ internal static class Program
         var generalSeparator = new Separator { Style = (Style)application.FindResource(typeof(Separator)) };
         Require(ReferenceEquals(generalSeparator.Background, application.FindResource("MenuBorderBrush")),
             "Non-menu separators keep their existing border brush");
+    }
+
+    private static int RunDialogSmoke()
+    {
+        IsolatedDesktop.Verify();
+        var application = new Application();
+        SynchronizationContext.SetSynchronizationContext(
+            new System.Windows.Threading.DispatcherSynchronizationContext(application.Dispatcher));
+        application.Resources.MergedDictionaries.Add(new ResourceDictionary
+        { Source = new Uri("/KillerBench;component/Themes/Black.xaml", UriKind.Relative) });
+        application.Resources.MergedDictionaries.Add(new ResourceDictionary
+        { Source = new Uri("/KillerBench;component/Controls/Controls.xaml", UriKind.Relative) });
+        application.Resources.MergedDictionaries.Add(new ResourceDictionary
+        { Source = new Uri("/KillerBench;component/Themes/Instrument.xaml", UriKind.Relative) });
+        application.Resources.MergedDictionaries.Add(new ResourceDictionary
+        { Source = new Uri("/KillerBench;component/Strings/en-US.xaml", UriKind.Relative) });
+        KillerBench.Services.ThemeManager.Initialize();
+        var owner = new KillerBench.MainWindow
+        {
+            WindowStartupLocation = WindowStartupLocation.Manual,
+            ShowActivated = false,
+            ShowInTaskbar = false,
+            Left = SystemParameters.VirtualScreenLeft - 2000,
+            Top = SystemParameters.VirtualScreenTop
+        };
+        string captures = Path.Combine(Path.GetTempPath(), "KillerBench-dialogs-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(captures);
+        try
+        {
+            owner.Show();
+            PickerDialogChecks.Run();
+            foreach (var theme in Enum.GetValues<KillerBench.Services.Theme>())
+            {
+                KillerBench.Services.ThemeManager.Apply(theme);
+                var dialog = new KillerBench.Controls.ConfirmDialog(
+                    "Remove this exact current-account package?", "Fixture.Package_1\n\nSafeguards run again before removal.",
+                    "Remove package") { Owner = owner };
+                dialog.Show();
+                Pump();
+                Require(dialog.FindName("RootBorder") is KillerBench.Controls.PickerBorder { Child.Clip: not null },
+                    "Dialog content is clipped to the card corners");
+                Require(dialog.FindName("CancelButton") is Button { IsDefault: true, IsCancel: true },
+                    "Cancel is the default keyboard action");
+                Capture(dialog, Path.Combine(captures, theme + ".png"));
+                ((Button)dialog.FindName("CloseButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Require(!dialog.Confirmed && !dialog.IsVisible, "Close never confirms removal");
+            }
+            var cancel = new KillerBench.Controls.ConfirmDialog("Confirm", "Fixture", "Remove") { Owner = owner };
+            cancel.Show();
+            ((Button)cancel.FindName("CancelButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(!cancel.Confirmed && !cancel.IsVisible, "Cancel never confirms removal");
+            var remove = new KillerBench.Controls.ConfirmDialog("Confirm", "Fixture", "Remove") { Owner = owner };
+            remove.Show();
+            ((Button)remove.FindName("OkButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(remove.Confirmed && !remove.IsVisible, "Explicit Remove is the only confirmation path");
+            Console.WriteLine("PASS: KillerUI confirmation card and safe actions across all 13 themes. Captures: " + captures);
+            return 0;
+        }
+        finally
+        {
+            owner.Close();
+            application.Shutdown();
+        }
     }
 
     private static int RunUiSmoke()

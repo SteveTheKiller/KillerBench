@@ -2,7 +2,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using KillerBench.Engine;
-using Microsoft.Win32;
 
 namespace KillerBench;
 
@@ -80,7 +79,7 @@ public partial class MainWindow
     private async void OnOpenCapture(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
-        var picker = new OpenFileDialog { Filter = "KillerBench capture|*.kbench|JSON capture|*.json", Title = "Open saved capture" };
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Filter = "KillerBench capture|*.kbench|JSON capture|*.json", Title = "Open saved capture" };
         if (picker.ShowDialog(this) != true) return;
         await OpenCaptureAsync(picker.FileName);
     }
@@ -145,7 +144,7 @@ public partial class MainWindow
     {
         if (capture is null || readCancellation is not null) return;
         var saved = capture;
-        var picker = new SaveFileDialog { Filter = "KillerBench capture|*.kbench", FileName = "KillerBench-capture.kbench", Title = "Save capture including machine identity, source paths and raw evidence" };
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Save) { Filter = "KillerBench capture|*.kbench", FileName = "KillerBench-capture.kbench", Title = "Save capture including machine identity, source paths and raw evidence" };
         if (picker.ShowDialog(this) != true) return;
         try
         {

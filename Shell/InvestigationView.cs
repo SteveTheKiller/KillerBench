@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using KillerBench.Engine;
-using Microsoft.Win32;
 
 namespace KillerBench;
 
@@ -106,8 +105,8 @@ public partial class MainWindow
         if (shownReport is null && taskInspection is null && historical is null && workflow is null) return;
         var report = shownReport;
         var picker = workflow is null
-            ? new SaveFileDialog { Filter = "JSON report|*.json", FileName = "KillerBench-report.json", Title = "Export evidence report" }
-            : new SaveFileDialog
+            ? new Controls.FileDialog(Controls.FileDialogMode.Save) { Filter = "JSON report|*.json", FileName = "KillerBench-report.json", Title = "Export evidence report" }
+            : new Controls.FileDialog(Controls.FileDialogMode.Save)
             {
                 Filter = "Diagnostic HTML report|*.html|Diagnostic and repair HTML report|*.html|Diagnostic text report|*.txt|Diagnostic and repair text report|*.txt",
                 FileName = "KillerBench-report",

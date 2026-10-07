@@ -2,7 +2,6 @@ using System.IO;
 using System.Text.Json;
 using System.Windows;
 using KillerBench.Engine;
-using Microsoft.Win32;
 
 namespace KillerBench;
 
@@ -28,7 +27,7 @@ public partial class MainWindow
     private async void OnOpenWorkflowJournal(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
-        var picker = new OpenFileDialog { Title = "Open saved workflow", Filter = "Workflow journal (*.json)|*.json", CheckFileExists = true };
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Title = "Open saved workflow", Filter = "Workflow journal (*.json)|*.json", CheckFileExists = true };
         if (picker.ShowDialog(this) != true) return;
         using var stop = new CancellationTokenSource(TimeSpan.FromSeconds(15));
         readCancellation = stop;
