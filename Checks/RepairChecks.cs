@@ -8,7 +8,7 @@ internal static class RepairChecks
     {
         string folder = Path.Combine(scratch, "repair-journals");
         Require(typeof(Repairs).GetMethod(nameof(Repairs.RunAsync), [typeof(RepairKind), typeof(string), typeof(IProgress<string>),
-            typeof(CancellationToken), typeof(IRepairHost), typeof(RepairRecoveryStore), typeof(IReadOnlyList<string>)]) is not null,
+            typeof(IRepairHost), typeof(RepairRecoveryStore), typeof(IReadOnlyList<string>), typeof(CancellationToken)]) is not null,
             "Original compiled repair entry point remains available");
         var brokenDisplay = new ThrowingProgress();
         var displayedHost = new FakeHost();
