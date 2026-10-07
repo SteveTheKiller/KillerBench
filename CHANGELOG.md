@@ -3,6 +3,7 @@
 - Menu rows show accent text and icons on the theme's hover color.
 - Add yellow and magenta accents to the neutral and 98SE themes.
 - 98SE Red is a true maroon again, so it no longer looks like Magenta.
+- Delirium, Ectoplasm and Sepulchre footers match the window background again.
 - New installs and the website start on Dark with the yellow accent.
 - Fix low-contrast text on selected sections, expander headers, option labels and 98SE dropdown hover.
 - Add Ukrainian localization.
