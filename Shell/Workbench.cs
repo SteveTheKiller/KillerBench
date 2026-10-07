@@ -95,6 +95,8 @@ public partial class MainWindow
             Path.GetExtension(selected.Source).ToLowerInvariant() is ".evtx" or ".xml" ? "IMPORTED EVENTS / RULES EVALUATED" : "IMPORTED TEXT / RULES EVALUATED";
         if (capture is not null && (selected.Source == "Windows Update capture" || capture.Sources.Any(s => ReferenceEquals(s.Evidence, selected))))
             ModeLabel.Text = "CAPTURED EVIDENCE / RULES EVALUATED";
+        if (workflowSummaries.TryGetValue(selected, out var demoWorkflow) && demoWorkflow.Machine == DemoWorkflow.MachineName)
+            ModeLabel.Text = App.ScreenshotMode ? "DEMO SCREENSHOT / SYNTHETIC MACHINE" : "DEMO GO / OTHER TOOLS LIVE";
         SearchBox.Clear();
         ShowEvidence();
         if (workflowSummaries.TryGetValue(selected, out var workflow))
@@ -109,7 +111,7 @@ public partial class MainWindow
     private void Report(string message)
     {
         StatusLabel.Text = message;
-        activity.Enqueue(new(DateTimeOffset.Now, message));
+        activity.Enqueue(new(App.ScreenshotMode ? DemoWorkflow.ScreenshotStartedUtc : DateTimeOffset.Now, message));
         while (activity.Count > 150) activity.Dequeue();
         ActivityLog.Text = string.Join("\n", activity.Select(entry => $"{entry.Time:HH:mm:ss}  {entry.Message}"));
         ActivityLog.ScrollToEnd();

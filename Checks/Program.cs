@@ -18,6 +18,7 @@ internal static class Program
             if (args is ["--isolated-ui"]) return RunChecks(includeUi: true);
             if (args is ["--isolated-ui-smoke"]) return RunUiSmoke();
             if (args is ["--isolated-dialog-smoke"]) return RunDialogSmoke();
+            if (args is ["--isolated-demo-screenshots"]) return DemoScreenshotChecks.Run();
             if (args is ["--only", "menu-separators"]) return RunMenuSeparatorChecks();
             if (args is ["--only", "workflow-report-export"])
             {
@@ -53,6 +54,8 @@ internal static class Program
                 return IsolatedDesktop.Run("--isolated-ui-smoke");
             if (args is ["--only", "dialog-smoke"])
                 return IsolatedDesktop.Run("--isolated-dialog-smoke");
+            if (args is ["--only", "demo-screenshots"])
+                return IsolatedDesktop.Run("--isolated-demo-screenshots");
             if (args is ["--only", "ui-full"])
                 return IsolatedDesktop.Run();
             if (args is ["--only", "workflow"])
@@ -63,7 +66,7 @@ internal static class Program
                 finally { Directory.Delete(scratch, true); }
                 return 0;
             }
-            throw new ArgumentException("Use no arguments for all non-UI checks, or --only workflow-report-export, workflow-options, servicing-monitor, recipes, native-validation, workflow, dialog-smoke, ui-smoke or ui-full. UI checks require an isolated desktop.");
+            throw new ArgumentException("Use no arguments for all non-UI checks, or --only workflow-report-export, workflow-options, servicing-monitor, recipes, native-validation, workflow, dialog-smoke, demo-screenshots, ui-smoke or ui-full. UI checks require an isolated desktop.");
         }
         catch (Exception error) { Console.Error.WriteLine(error); return 1; }
     }

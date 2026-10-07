@@ -31,8 +31,10 @@ public partial class MainWindow : Window
         ShowWelcome();
         if (App.DemoMode)
         {
-            ModeLabel.Text = "DEMO MODE / SYNTHETIC MACHINE";
-            Report("Demo mode is active. GO uses fabricated evidence and never runs a Windows provider or repair command.");
+            ModeLabel.Text = App.ScreenshotMode ? "DEMO SCREENSHOT / SYNTHETIC MACHINE" : "DEMO GO / OTHER TOOLS LIVE";
+            Report(App.ScreenshotMode
+                ? "Screenshot preset is active. This view contains fabricated evidence and is read only."
+                : "Demo GO uses fabricated evidence. Dedicated tools outside GO remain live.");
         }
         ApplyDisplay();
         SetDetailsOpen(false);
@@ -46,6 +48,12 @@ public partial class MainWindow : Window
             OnCancel(this, new RoutedEventArgs());
             Report("Closing after the active operation stops. An actual repair must finish its current command.");
         };
+        if (App.ScreenshotMode)
+            Loaded += async (_, _) =>
+            {
+                await RunDemoWorkflowAsync(WorkflowKind.CommonProblems, simulateRepair: false, screenshotPreset: true);
+                LockScreenshotPresentation();
+            };
     }
 
     private void ShowWelcome()
@@ -202,11 +210,13 @@ public partial class MainWindow : Window
     private void OnDisplayChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => ApplyDisplay();
     private void OnDragOver(object sender, DragEventArgs e)
     {
+        if (App.ScreenshotMode) { e.Effects = DragDropEffects.None; e.Handled = true; return; }
         e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
         e.Handled = true;
     }
     private async void OnDrop(object sender, DragEventArgs e)
     {
+        if (App.ScreenshotMode) { e.Handled = true; return; }
         if (readCancellation is not null) return;
         if (e.Data.GetData(DataFormats.FileDrop) is string[] paths && paths.Length > 0)
         {
@@ -216,6 +226,7 @@ public partial class MainWindow : Window
     }
     private async void OnKeyDown(object sender, KeyEventArgs e)
     {
+        if (App.ScreenshotMode) { e.Handled = true; return; }
         if (HandleShellKey(e)) return;
         if (e.Key == Key.Escape) { readCancellation?.Cancel(); e.Handled = true; }
         if (e.Key == Key.O && Keyboard.Modifiers == ModifierKeys.Control)

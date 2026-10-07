@@ -65,6 +65,7 @@ public partial class MainWindow
         if (readCancellation is not null || RepairConsent.IsChecked != true) return;
         var kind = RepairChoice.SelectedIndex == 1 ? RepairKind.SystemFiles : RepairKind.ComponentStore;
         var workflowKind = kind == RepairKind.SystemFiles ? WorkflowKind.SystemFiles : WorkflowKind.ComponentCleanup;
+        if (App.DemoMode) { await RunDemoWorkflowAsync(workflowKind, simulateRepair: true, screenshotPreset: App.ScreenshotMode); return; }
         using var stop = new CancellationTokenSource();
         readCancellation = stop;
         repairRunning = true;

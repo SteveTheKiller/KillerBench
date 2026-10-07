@@ -10,12 +10,17 @@ public partial class MainWindow
     private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, WorkflowResult> workflowSummaries = [];
     private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, string> workflowReportTitles = [];
 
-    private void RegisterWorkflowResult(WorkflowResult result, string? reportTitle = null)
+    private void RegisterWorkflowResult(WorkflowResult result, string? reportTitle = null, bool demo = false)
     {
         string summary = WorkflowReport.Format(result);
         AppendWorkflowOutput("Workflow completed: " + result.Status + ". Read the Report view for findings and next actions.");
-        var text = new TextEvidence("Workflow " + DateTime.Now.ToString("HHmmss"), EvidenceBox.Text.Replace("\r\n", "\n").Split('\n'), false);
-        reports.Add(text, Investigation.Analyze(text) with { Limitation = "Live workflow results. See the workflow journal for decisions and repair verification." });
+        string source = demo
+            ? "Demo " + WorkflowCatalog.All.Single(item => item.Kind == result.Kind).Title
+            : "Workflow " + DateTime.Now.ToString("HHmmss");
+        var text = new TextEvidence(source, EvidenceBox.Text.Replace("\r\n", "\n").Split('\n'), false);
+        reports.Add(text, Investigation.Analyze(text) with { Limitation = demo
+            ? "Synthetic demonstration. No machine evidence was collected and no repair was run."
+            : "Live workflow results. See the workflow journal for decisions and repair verification." });
         workflowSummaries.Add(text, result);
         if (!string.IsNullOrWhiteSpace(reportTitle)) workflowReportTitles.Add(text, reportTitle);
         workflowOutputActive = false;
@@ -304,15 +309,20 @@ public partial class MainWindow
         CleanupRemove?.IsChecked = false;
     }
 
-    private void BeginWorkflowOutput(WorkflowKind kind)
+    private void BeginWorkflowOutput(WorkflowKind kind, bool demo = false)
     {
         workflowOutputActive = true;
         SourcesList.SelectedIndex = -1;
         SourcesList.IsEnabled = false;
         SearchBox.IsEnabled = false;
-        EvidenceTitle.Text = kind + " / Live";
-        EvidenceBox.Text = $"{kind} / RUNNING\nTHIS PC: {Environment.MachineName}\n\nStarting live checks...\n";
-        CoverageLabel.Text = "Live output. You can browse tools and export earlier reports. Stop waits for the current servicing command.";
+        string demoTitle = demo ? WorkflowCatalog.All.Single(item => item.Kind == kind).Title : kind.ToString();
+        EvidenceTitle.Text = demoTitle + (demo ? " / Demo" : " / Live");
+        EvidenceBox.Text = demo
+            ? $"{demoTitle} / SYNTHETIC DEMO\nMACHINE: {DemoWorkflow.MachineName}\n\nPreparing fabricated evidence...\n"
+            : $"{kind} / RUNNING\nTHIS PC: {Environment.MachineName}\n\nStarting live checks...\n";
+        CoverageLabel.Text = demo
+            ? "Synthetic output. No current machine evidence or repair result is shown."
+            : "Live output. You can browse tools and export earlier reports. Stop waits for the current servicing command.";
     }
 
     private void AppendWorkflowOutput(string message)
@@ -332,7 +342,7 @@ public partial class MainWindow
         var kind = (WorkflowKind)Math.Max(0, RepairChoice.SelectedIndex);
         if (App.DemoMode)
         {
-            await RunDemoWorkflowAsync(kind, RepairConsent.IsChecked == true);
+            await RunDemoWorkflowAsync(kind, RepairConsent.IsChecked == true, App.ScreenshotMode);
             return;
         }
         bool bitsAllUsers = BitsScopeChoice.SelectedIndex == 1;

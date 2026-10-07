@@ -36,9 +36,10 @@ public partial class MainWindow
 
     private void RenderNamedWorkflowReport(WorkflowResult result, string? title)
     {
+        bool demo = result.Machine == DemoWorkflow.MachineName;
         reportAvailable = true;
         ReportContent.Children.Clear();
-        ReportContent.Children.Add(Heading((title ?? WorkflowCatalog.All.Single(workflow => workflow.Kind == result.Kind).Title) + " report", 22));
+        ReportContent.Children.Add(Heading((title ?? WorkflowCatalog.All.Single(workflow => workflow.Kind == result.Kind).Title) + (demo ? " demo report" : " report"), 22));
         ReportContent.Children.Add(Body(result.Status + " | " + result.StartedUtc.ToString("g"), 12, new Thickness(0, 0, 0, 14)));
 
         var summary = result.Summary;
@@ -50,12 +51,16 @@ public partial class MainWindow
         ReportContent.Children.Add(metrics);
 
         ReportContent.Children.Add(Heading("Start here", 18));
-        ReportContent.Children.Add(Card("Recommended next step", "", NextAction(result),
-            "No action starts from this report. Review the selected workflow controls before confirming a repair."));
-        if (HasRepairAvailable(result)) ReportContent.Children.Add(RepairNavigationButton(result));
-        if (HasMaintenanceOptions(result)) ReportContent.Children.Add(MaintenanceNavigationButton(result.Kind));
-        if (HasSecurityOptions(result)) ReportContent.Children.Add(SecurityNavigationButton(result.Kind));
-        if (HasNetworkOptions(result)) ReportContent.Children.Add(NetworkNavigationButton());
+        ReportContent.Children.Add(Card("Recommended next step", "",
+            demo ? "Synthetic example only. Review the fabricated findings to explore the report layout." : NextAction(result),
+            demo ? "No machine evidence was collected and no repair was run." : "No action starts from this report. Review the selected workflow controls before confirming a repair."));
+        if (!demo)
+        {
+            if (HasRepairAvailable(result)) ReportContent.Children.Add(RepairNavigationButton(result));
+            if (HasMaintenanceOptions(result)) ReportContent.Children.Add(MaintenanceNavigationButton(result.Kind));
+            if (HasSecurityOptions(result)) ReportContent.Children.Add(SecurityNavigationButton(result.Kind));
+            if (HasNetworkOptions(result)) ReportContent.Children.Add(NetworkNavigationButton());
+        }
 
         ReportContent.Children.Add(Heading("What needs attention", 18));
         var problems = result.Checks.Where(check => check.EffectiveState is CheckState.Attention or CheckState.Repairable or CheckState.Unknown)

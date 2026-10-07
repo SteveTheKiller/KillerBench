@@ -3,18 +3,20 @@ namespace KillerBench.Engine.Workflows;
 public static class DemoWorkflow
 {
     public const string MachineName = "KILLERBENCH-DEMO";
+    public static readonly DateTimeOffset ScreenshotStartedUtc = new(2026, 1, 15, 18, 42, 0, TimeSpan.Zero);
 
     public static WorkflowResult Create(WorkflowKind kind, bool simulateRepair = false,
-        DateTimeOffset? startedUtc = null)
+        DateTimeOffset? startedUtc = null, bool screenshotPreset = false)
     {
         if (!Enum.IsDefined(kind)) throw new ArgumentOutOfRangeException(nameof(kind));
         var definition = WorkflowCatalog.All.Single(item => item.Kind == kind);
         var checks = new List<WorkflowCheck>
         {
             new("Demo environment", CheckState.Information,
-                "Fabricated Windows workstation. No local provider, log, registry key, service, device or file was read."),
-            new(definition.Title, CheckState.Attention, Scenario(kind), Evidence: SyntheticEvidence(kind))
+                "Fabricated Windows workstation. No local provider, log, registry key, service, device or file was read.")
         };
+        if (screenshotPreset) checks.AddRange(ScreenshotChecks(kind));
+        else checks.Add(new(definition.Title, CheckState.Attention, Scenario(kind), Evidence: SyntheticEvidence(kind)));
 
         string status = "Needs attention";
         if (simulateRepair)
@@ -24,7 +26,7 @@ public static class DemoWorkflow
             status = "Demo repair simulated";
         }
 
-        return new WorkflowResult(kind, MachineName, startedUtc ?? DateTimeOffset.UtcNow, status,
+        return new WorkflowResult(kind, MachineName, startedUtc ?? (screenshotPreset ? ScreenshotStartedUtc : DateTimeOffset.UtcNow), status,
             checks.AsReadOnly(), [], "Demo mode: no journal was written.")
         {
             PlannedRecipeIds = []
@@ -40,7 +42,7 @@ public static class DemoWorkflow
             "Demo mode: preparing the fabricated workstation...",
             "Demo mode: collecting synthetic " + title + " evidence...",
             "Demo mode: evaluating deterministic rules...",
-            "Demo mode: one review item found."
+            "Demo mode: synthetic review items found."
         };
         if (simulateRepair)
         {
@@ -52,6 +54,41 @@ public static class DemoWorkflow
 
     private static ToolResult SyntheticEvidence(WorkflowKind kind) =>
         new(0, "KILLERBENCH DEMO EVIDENCE\nWorkflow: " + kind + "\nSource: fabricated fixture", "", false);
+
+    private static IReadOnlyList<WorkflowCheck> ScreenshotChecks(WorkflowKind kind) => kind switch
+    {
+        WorkflowKind.CommonProblems =>
+        [
+            new("Windows Update readiness", CheckState.Attention, "Synthetic update service is stopped; review its current state before considering recovery."),
+            new("System stability", CheckState.Attention, "Two fabricated application failures need correlation with current behavior."),
+            new("Restart status", CheckState.Information, "The fabricated workstation has a pending restart."),
+            new("Network readiness", CheckState.Clear, "Synthetic adapter and name-resolution checks completed without a finding."),
+            new("Storage coverage", CheckState.Unknown, "Synthetic volume health data is unavailable; no healthy verdict is inferred.")
+        ],
+        WorkflowKind.WindowsUpdate =>
+        [
+            new("Update service", CheckState.Attention, "The fabricated update service is stopped; this is a demonstration, not a repair recommendation."),
+            new("Servicing activity", CheckState.Information, "A synthetic servicing session is waiting for a restart."),
+            new("Recent update history", CheckState.Unknown, "The fabricated history source is incomplete, so the outcome remains unknown."),
+            new("Update policy", CheckState.Clear, "Synthetic policy inspection found no restriction in the checked scope.")
+        ],
+        WorkflowKind.Network =>
+        [
+            new("Adapter configuration", CheckState.Clear, "The fabricated adapter has a usable address and default gateway."),
+            new("DNS response", CheckState.Attention, "The synthetic name-resolution check did not receive a usable response."),
+            new("Gateway reachability", CheckState.Information, "Synthetic gateway evidence is available but does not prove Internet access."),
+            new("Network history", CheckState.Unknown, "The fabricated event source is unavailable; historical coverage is incomplete.")
+        ],
+        WorkflowKind.Printing =>
+        [
+            new("Print queue", CheckState.Attention, "The fabricated office queue is offline with two waiting jobs."),
+            new("Print Spooler", CheckState.Clear, "The synthetic Print Spooler service is running."),
+            new("Default printer", CheckState.Information, "One fabricated default queue is configured; no printer setting changed."),
+            new("Physical output", CheckState.Unknown, "A demonstration cannot verify paper output or device hardware.")
+        ],
+        _ => [new(WorkflowCatalog.All.Single(item => item.Kind == kind).Title, CheckState.Attention,
+            Scenario(kind), Evidence: SyntheticEvidence(kind))]
+    };
 
     private static string Scenario(WorkflowKind kind) => kind switch
     {

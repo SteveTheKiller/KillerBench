@@ -247,7 +247,7 @@
 - Add focused shared-recipe discovery for the desktop, Engine and CLI Windows Update data-store reset, with final eligibility checks, retained prior store, preserved service configuration, replacement-search verification and no-repeat reconciliation.
 - Add IP address diagnostics, bounded default-gateway checks and per-interface connectivity correlation to Full system scan, the Network workflow and CLI.
 - Add registered MSI cache visibility and privacy-bounded source metadata diagnostics to installation readiness, the Installer workflow and CLI.
-- Add a safe full-app demo mode with synthetic diagnostics, repair presentation and progress for every workflow.
+- Add synthetic GO and servicing repair demonstrations, plus a view-only screenshot preset with fixed sample reports.
 - Make Full system scan the clear desktop, Engine and CLI entry point with numbered progress, selectable diagnostic areas and clear aggregate readiness verdicts.
 - Expand Windows Update error references, direct lookup and automatic follow-up, and harden installed Windows message lookup.
 - Add bounded Event Log size and saturation diagnostics across Engine, desktop and CLI.

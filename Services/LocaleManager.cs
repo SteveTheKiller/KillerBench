@@ -65,6 +65,12 @@ namespace KillerBench.Services
             ApplyInternal(locale);
         }
 
+        internal static void ApplyTemporary(Locale locale)
+        {
+            _current = locale;
+            ApplyInternal(locale);
+        }
+
         private static void ApplyInternal(Locale locale)
         {
             var merged = Application.Current.Resources.MergedDictionaries;

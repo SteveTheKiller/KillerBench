@@ -246,7 +246,7 @@ The left sidebar keeps up to 12 evidence sources for the current session. F2 tog
 
 ## Current scope
 
-Implemented: WPF workbench, app-owned family controls and 13 palettes, custom window chrome, typewriter wordmark, source sidebar, contextual inspector, activity log, synthetic and full demo modes, bounded text, EVTX and event-XML import, search, cancellation, input bounds, theme-aware smoked-glass console output, themed diagnostic and repair reports, PEEK live servicing observation, guarded workflow recipes, CLI access, and local knowledge-pack generation and updates. The diagnostic Engine has no WPF dependency. There are no third-party package references.
+Implemented: WPF workbench, app-owned family controls and 13 palettes, custom window chrome, typewriter wordmark, source sidebar, contextual inspector, activity log, synthetic sample evidence, a GO demo mode and a read-only screenshot preset, bounded text, EVTX and event-XML import, search, cancellation, input bounds, theme-aware smoked-glass console output, themed diagnostic and repair reports, PEEK live servicing observation, guarded workflow recipes, CLI access, and local knowledge-pack generation and updates. The diagnostic Engine has no WPF dependency. There are no third-party package references.
 
 Still unfinished: comprehensive CBS or Panther parsing and translated UI text. EVTX files can be imported through the evidence picker, and the About card can inspect and update configured knowledge databases. This prototype does not assess overall machine health.
 
@@ -265,9 +265,13 @@ See [DESIGN.md](DESIGN.md) for the proposed diagnostic architecture and subseque
 
 ## Demo mode
 
-Launch `KillerBench.exe --demo` or `KillerBench.exe /demo` to use the complete interface with a fabricated workstation. GO produces synthetic evidence and timed progress for every workflow. Enabling automatic repair demonstrates the repair and verification presentation, but creates no repair result or journal. Demo mode does not call Windows diagnostic providers, execute commands, or read machine evidence.
+Launch `KillerBench.exe --demo` or `KillerBench.exe /demo` to try GO with a fabricated workstation. GO produces synthetic evidence and timed progress for every workflow. The servicing Repair button also simulates its result. These demo paths do not call Windows diagnostic providers, execute repair commands, or write a journal. Dedicated tool buttons outside GO remain live, so do not use them as demo actions.
 
-The inspector's **Load demo** button remains the focused CBS-log example. It can also be used during a regular session and does not enable full demo mode.
+Launch `KillerBench.exe --demo-screenshot` for a view-only Full system scan report with a fixed fictional machine and time. The sample report is in English and uses the selected theme. Workspace clicks, keyboard shortcuts and file drops are blocked; the title bar remains available to close the window.
+
+To generate five English Dark/Yellow screenshots automatically, build the solution, then run `dotnet .\Checks\bin\Debug\net10.0-windows\KillerBench.Checks.dll --only demo-screenshots`. The command renders Full system scan, Windows Update, Network, Printing and Raw output on an isolated desktop, then prints the temporary output folder. These images contain fabricated evidence only.
+
+The inspector's **Load demo** button remains the focused CBS-log example. It can also be used during a regular session and does not enable GO demo mode.
 
 ## Engine API and CLI
 
