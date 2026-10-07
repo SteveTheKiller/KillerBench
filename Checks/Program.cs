@@ -975,10 +975,10 @@ internal static class Program
                 "Shortcut rail button closes the overlay without changing the workspace");
             var categoryTools = (ComboBox)window.FindName("CategoryWorkflow");
             var allTools = (ComboBox)window.FindName("MainWorkflow");
-            Require(categories.Items.Cast<object>().Select(category => category.ToString()).SequenceEqual(["Diagnostics", "Repair", "Updates", "Devices", "Network", "Apps", "Maintenance", "Onboarding", "Security", "BitLocker", "Privacy"]) &&
+            Require(categories.Items.Cast<object>().Select(category => category.ToString()).SequenceEqual(["Diagnostics", "Repair", "Updates", "Devices", "Network", "Apps", "Maintenance", "Onboarding", "Security", "BitLocker", "Privacy", "Storage"]) &&
                 categories.ItemContainerGenerator.ContainerFromIndex(0) is ListBoxItem { FontFamily.Source: "Segoe UI", FontWeight: var categoryWeight } &&
                 categoryWeight == FontWeights.SemiBold,
-                "Primary sections place Diagnostics beside Repair in a clear UI face and give Onboarding, BitLocker and Privacy their own sections");
+                "Twelve primary sections fill both rows while preserving the existing category order");
             var mainAction = (Button)window.FindName("MainGo");
             var automaticRepair = (CheckBox)window.FindName("MainAutoRepair");
             Require(categories.SelectedItem?.ToString() == "Diagnostics" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.CommonProblems } &&
@@ -988,6 +988,14 @@ internal static class Program
             Pump();
             Require(allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.CoreWindowsServices } && automaticRepair.IsEnabled,
                 "Repair stays directly beside Diagnostics and requires a separate explicit approval");
+            categories.SelectedItem = categories.Items.Cast<object>().Single(category => category.ToString() == "Storage");
+            Pump();
+            Require(allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Storage } &&
+                categoryTools.Items.Cast<WorkflowDefinition>().Select(tool => tool.Kind).SequenceEqual(
+                    [WorkflowKind.Storage, WorkflowKind.StorageSpaces, WorkflowKind.StorageService, WorkflowKind.OptimizeDrivesService]),
+                "Storage opens its four existing workflows without adding or duplicating a tool");
+            categories.SelectedItem = categories.Items.Cast<object>().Single(category => category.ToString() == "Repair");
+            Pump();
             automaticRepair.IsChecked = true;
             Require(mainAction.Content is "Run repair", "Primary action changes only after explicit repair approval");
             automaticRepair.IsChecked = false;
@@ -1667,7 +1675,7 @@ internal static class Program
             Capture(window, Path.Combine(scratch, "workflows.png"));
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
             TaskDraftUiChecks.Run(window);
-            typeof(KillerBench.MainWindow).GetMethod("BeginWorkflowOutput", flags)!.Invoke(window, [WorkflowKind.SystemFiles]);
+            typeof(KillerBench.MainWindow).GetMethod("BeginWorkflowOutput", flags)!.Invoke(window, [WorkflowKind.SystemFiles, false]);
             typeof(KillerBench.MainWindow).GetMethod("AppendWorkflowOutput", flags)!.Invoke(window, ["Verification 42% complete"]);
             Require(text.Text.Contains("Verification 42% complete") && !text.Text.Contains("SYNTHETIC SAMPLE") &&
                 ((TextBlock)window.FindName("CoverageLabel")).Text.Contains("browse tools and export earlier reports", StringComparison.Ordinal),
@@ -1676,7 +1684,7 @@ internal static class Program
             Capture(window, Path.Combine(scratch, "live-workflow.png"));
             var completedWorkflow = new WorkflowResult(WorkflowKind.Services, "fixture", DateTimeOffset.UtcNow, "Needs attention",
                 [new("Example service", CheckState.Attention, "Service needs review")], [], "fixture-journal.json");
-            typeof(KillerBench.MainWindow).GetMethod("RegisterWorkflowResult", flags)!.Invoke(window, [completedWorkflow, "Focused service review"]);
+            typeof(KillerBench.MainWindow).GetMethod("RegisterWorkflowResult", flags)!.Invoke(window, [completedWorkflow, "Focused service review", false]);
             var outcomeLabel = (TextBlock)window.FindName("CoverageLabel");
             Require(outcomeLabel.Text.Contains("Needs attention | 1 checks | 0 repairs run") && !outcomeLabel.Text.Contains("0 findings"),
                 "Workflow result summary uses recorded checks instead of log-rule findings");
