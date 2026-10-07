@@ -100,6 +100,8 @@ namespace KillerBench.Services
                     };
                     foreach (object key in accentDict.Keys)
                         newDict[key] = accentDict[key];
+                    if (!accentDict.Contains("AccentLogo") && accentDict.Contains("HeaderLineBrush"))
+                        newDict["AccentLogo"] = accentDict["HeaderLineBrush"];
                 }
                 catch { /* overlay file not present - base theme stands */ }
             }
@@ -196,7 +198,7 @@ namespace KillerBench.Services
                 d["BgFlyout"] = d["MenuBackgroundBrush"];
             if (!d.Contains("AboutPanelBrush") && d.Contains("MenuBackgroundBrush"))
                 d["AboutPanelBrush"] = d["MenuBackgroundBrush"];
-            if (d.Contains("HeaderLineBrush"))
+            if (!d.Contains("AccentLogo") && d.Contains("HeaderLineBrush"))
                 d["AccentLogo"] = d["HeaderLineBrush"];
             if (!d.Contains("SortButtonBrush") && d.Contains("PaneBrush"))
                 d["SortButtonBrush"] = d["PaneBrush"];
