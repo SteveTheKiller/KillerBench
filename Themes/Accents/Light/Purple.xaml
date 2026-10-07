@@ -21,5 +21,5 @@
     <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"     Color="#EADBF5" po:Freeze="True"/>
     <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#5A1690" po:Freeze="True"/>
 
-    <StaticResource x:Key="ComboHighlightTextBrush" ResourceKey="PrimaryBrush"/>
+    <SolidColorBrush x:Key="ComboHighlightTextBrush" Color="#5A1690" po:Freeze="True"/>
 </ResourceDictionary>

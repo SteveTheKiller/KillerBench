@@ -2,6 +2,8 @@
 
 - Menu rows show accent text and icons on the theme's hover color.
 - Add yellow and magenta accents to the neutral and 98SE themes.
+- Light/Yellow uses true yellow for the wordmark, accent lines and radio buttons, with neutral dark text instead of olive brown.
+- Dropdown highlight text uses the right color in Dark/Yellow, Light/Purple and Light/Yellow.
 - 98SE Red is a true maroon again, so it no longer looks like Magenta.
 - Delirium, Ectoplasm and Sepulchre footers match the window background again.
 - New installs and the website start on Dark with the yellow accent.

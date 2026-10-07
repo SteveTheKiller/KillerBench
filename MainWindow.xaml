@@ -948,7 +948,7 @@
                   <Image.Effect><DropShadowEffect Color="Black" BlurRadius="12" ShadowDepth="3" Direction="270" Opacity="{DynamicResource IconShadowOpacity}"/></Image.Effect>
                 </Image>
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                  <TextBlock FontFamily="{DynamicResource WordmarkFont}" Cursor="Hand" MouseLeftButtonUp="OnAboutWebsite" ToolTip="killerbench.net"><Run Text="Killer" FontSize="22" Foreground="{DynamicResource TextBrush}"/><Run Text="Bench" FontSize="28.6" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/></TextBlock>
+                  <TextBlock FontFamily="{DynamicResource WordmarkFont}" Cursor="Hand" MouseLeftButtonUp="OnAboutWebsite" ToolTip="killerbench.net"><Run Text="Killer" FontSize="22" Foreground="{DynamicResource TextBrush}"/><Run Text="Bench" FontSize="28.6" FontWeight="Bold" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
                   <TextBlock FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap"><Run Text="{DynamicResource Str_About_DescriptionPrefix}"/><Run Text=" "/><Hyperlink NavigateUri="https://killertools.net" RequestNavigate="OnAboutLink" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None">GPLv3 Killer Tools</Hyperlink><Run Text=" "/><Run Text="{DynamicResource Str_About_DescriptionSuffix}"/></TextBlock>
                 </StackPanel>
               </Grid>
