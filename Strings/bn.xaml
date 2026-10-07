@@ -575,7 +575,7 @@
   <sys:String x:Key="Str_QA_Pictures">ছবি</sys:String>
   <sys:String x:Key="Str_Sum_Counts">{0}টি ফোল্ডার, {1}টি ফাইল</sys:String>
   <sys:String x:Key="Str_TT_RecentLocations">সাম্প্রতিক জায়গা</sys:String>
-  <sys:String x:Key="Str_TT_ShowHidden">লুকানো ও সিস্টেম আইটেম দেখান</sys:String>
+  <sys:String x:Key="Str_TT_ShowHidden">লুকানো ও সিস্টেম আইটেম দেখান (Ctrl+H)</sys:String>
   <sys:String x:Key="Str_TT_Up">এক ফোল্ডার উপরে</sys:String>
   <sys:String x:Key="Str_TT_ViewDetails">বিস্তারিত ভিউ</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">আইকন ভিউ</sys:String>

@@ -88,10 +88,24 @@ internal static class Program
     {
         var application = Application.Current;
         var menuBrush = (SolidColorBrush)application.FindResource("MenuSeparatorBrush");
-        Require(theme == KillerBench.Services.Theme.Delirium
-                ? menuBrush.Color == Color.FromRgb(0x66, 0x66, 0x66)
-                : ReferenceEquals(menuBrush, application.FindResource("MenuBorderBrush")),
-            "Menu separators use neutral gray only in Delirium");
+        var expected = theme switch
+        {
+            KillerBench.Services.Theme.Dark => Color.FromRgb(0x2E, 0x2E, 0x2E),
+            KillerBench.Services.Theme.Light => Color.FromRgb(0xC0, 0xC0, 0xC0),
+            KillerBench.Services.Theme.Black => Color.FromRgb(0x2A, 0x2A, 0x2A),
+            KillerBench.Services.Theme.Retro98 => Color.FromRgb(0x80, 0x80, 0x80),
+            KillerBench.Services.Theme.Blood => Color.FromRgb(0x40, 0x1D, 0x1D),
+            KillerBench.Services.Theme.Greed => Color.FromRgb(0x0F, 0x4A, 0x30),
+            KillerBench.Services.Theme.Cyanotic => Color.FromRgb(0x18, 0x34, 0x50),
+            KillerBench.Services.Theme.Ectoplasm => Color.FromRgb(0x10, 0x9F, 0xA3),
+            KillerBench.Services.Theme.Decay => Color.FromRgb(0x6B, 0x70, 0x5C),
+            KillerBench.Services.Theme.Malaise => Color.FromRgb(0x4A, 0x51, 0x54),
+            KillerBench.Services.Theme.Sepulchre => Color.FromRgb(0x83, 0x5A, 0x30),
+            KillerBench.Services.Theme.Delirium => Color.FromRgb(0x66, 0x66, 0x66),
+            KillerBench.Services.Theme.Mourning => Color.FromRgb(0x75, 0x6B, 0x79),
+            _ => throw new ArgumentOutOfRangeException(nameof(theme))
+        };
+        Require(menuBrush.Color == expected, "Menu separator color matches the KillerUI theme");
         var menuSeparator = new Separator { Style = (Style)application.FindResource(MenuItem.SeparatorStyleKey) };
         Require(ReferenceEquals(menuSeparator.Background, menuBrush), "Menu separator style uses its dedicated brush");
         var generalSeparator = new Separator { Style = (Style)application.FindResource(typeof(Separator)) };
