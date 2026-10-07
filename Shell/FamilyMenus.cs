@@ -68,16 +68,49 @@ public partial class MainWindow
             var colors = accent == Accent.Green ? palette : new ResourceDictionary { Source = new Uri($"pack://application:,,,/KillerBench;component/Themes/Accents/{family}/{accent}.xaml") };
             dots[i].Tag = accent;
             dots[i].ToolTip = accent.ToString();
-            dots[i].Background = accent == Accent.Yellow && (ThemeManager.Current is Theme.Light or Theme.Retro98)
-                ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EAD900"))
-                : (Brush)colors["PrimaryBrush"];
-            dots[i].Effect = accent == Accent.Yellow && (ThemeManager.Current is Theme.Light or Theme.Retro98)
-                ? new System.Windows.Media.Effects.DropShadowEffect { Color = Colors.Black, BlurRadius = 4, ShadowDepth = 1, Opacity = 0.45 }
-                : null;
-            dots[i].BorderBrush = accent == ThemeManager.AccentChoiceFor(ThemeManager.Current) ? (Brush)FindResource("TextBrush") : Brushes.Transparent;
+            // Each pill shows its accent the way a selection does (KillerNotes): the palette's own
+            // SelectionBg gradient. 98SE keeps its flat Win98 swatches.
+            dots[i].Background = ThemeManager.Current == Theme.Retro98
+                ? (accent == Accent.Yellow
+                    ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EAD900"))
+                    : (Brush)colors["PrimaryBrush"])
+                : (Brush)colors["SelectionBg"];
+            if (dots[i].RenderTransform is not ScaleTransform)
+            {
+                dots[i].RenderTransformOrigin = new Point(0.5, 0.5);
+                dots[i].RenderTransform = new ScaleTransform();
+                dots[i].MouseEnter += (_, _) => RingAccentStrip();
+                dots[i].MouseLeave += (_, _) => RingAccentStrip();
+            }
             dots[i].Focusable = true;
             dots[i].KeyDown -= OnAccentKey;
             dots[i].KeyDown += OnAccentKey;
+        }
+        RingAccentStrip();
+    }
+
+    // The ring marks the chosen accent and follows the mouse, and the pill under the mouse lifts
+    // a little (KillerNotes). 98SE swatches stay flat.
+    private void RingAccentStrip()
+    {
+        var ring = (Brush)FindResource("TextBrush");
+        var chosen = ThemeManager.AccentChoiceFor(ThemeManager.Current);
+        Border[] dots = [AccentStripDot0, AccentStripDot1, AccentStripDot2, AccentStripDot3, AccentStripDot4, AccentStripDot5, AccentStripDot6, AccentStripDot7];
+        foreach (var dot in dots)
+        {
+            dot.BorderBrush = dot.IsMouseOver || (dot.Tag is Accent accent && accent == chosen) ? ring : Brushes.Transparent;
+            bool pop = dot.IsMouseOver && ThemeManager.Current != Theme.Retro98;
+            if (dot.RenderTransform is ScaleTransform scale)
+            {
+                scale.BeginAnimation(ScaleTransform.ScaleXProperty,
+                    new DoubleAnimation(pop ? 1.06 : 1, TimeSpan.FromMilliseconds(100)));
+                scale.BeginAnimation(ScaleTransform.ScaleYProperty,
+                    new DoubleAnimation(pop ? 1.03 : 1, TimeSpan.FromMilliseconds(100)));
+            }
+            dot.Effect = pop
+                ? new System.Windows.Media.Effects.DropShadowEffect
+                { Color = Colors.Black, BlurRadius = 4, ShadowDepth = 1, Opacity = 0.25 }
+                : null;
         }
     }
     private void OnAccentKey(object sender, KeyEventArgs e)

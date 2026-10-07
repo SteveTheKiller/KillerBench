@@ -836,7 +836,7 @@
             </Border>
             <ControlTemplate.Triggers>
               <Trigger Property="IsSelected" Value="True">
-                <Setter TargetName="CategoryFace" Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                <Setter TargetName="CategoryFace" Property="Background" Value="{DynamicResource PrimaryFillBrush}"/>
                 <Setter Property="Foreground" Value="{DynamicResource OnPrimaryBrush}"/>
               </Trigger>
             </ControlTemplate.Triggers>

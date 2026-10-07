@@ -1,5 +1,6 @@
 # Changelog
 
+- Filled buttons, hovered outline buttons, the selected section tile and accent picker pills use gradients outside 98SE, and accent swatches lift on hover.
 - Menu rows show accent text and icons on the theme's hover color.
 - Add yellow and magenta accents to the neutral and 98SE themes.
 - Light/Yellow uses true yellow for the wordmark, accent lines and radio buttons, with neutral dark text instead of olive brown.
