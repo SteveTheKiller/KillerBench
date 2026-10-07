@@ -1385,7 +1385,7 @@
                 <ControlTemplate.Triggers>
                     <Trigger Property="IsHighlighted" Value="True">
                         <Setter TargetName="bg" Property="Background" Value="{DynamicResource MenuHoverBrush}"/>
-                        <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
+                        <Setter Property="Foreground" Value="{DynamicResource ComboHighlightTextBrush}"/>
                     </Trigger>
                     <Trigger Property="IsSelected" Value="True">
                         <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>

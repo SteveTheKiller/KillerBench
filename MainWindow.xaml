@@ -232,18 +232,18 @@
               <ComboBox x:Name="MaceScopeChoice" SelectedIndex="0" Margin="0,6,0,6" AutomationProperties.Name="Microsoft app removal account scope" SelectionChanged="OnMaceOptionChanged">
                 <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/><ComboBoxItem Content="{DynamicResource Str_Scope_AllUsersAndNew}"/>
               </ComboBox>
-              <TextBlock Text="{DynamicResource Str_Common_Applications}" Foreground="{DynamicResource DimTextBrush}"/>
+              <TextBlock Text="{DynamicResource Str_Common_Applications}" Foreground="{DynamicResource MutedTextBrush}"/>
               <CheckBox x:Name="MaceOneDrive" Content="OneDrive" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
               <CheckBox x:Name="MaceOutlook" Content="Outlook" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
               <CheckBox x:Name="MaceOffice" Content="Office / Microsoft 365" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
               <CheckBox x:Name="MaceProject" Content="Microsoft Project" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
               <CheckBox x:Name="MaceTeams" Content="Microsoft Teams" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
-              <TextBlock Text="{DynamicResource Str_Mace_FutureChoices}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Mace_FutureChoices}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
               <CheckBox x:Name="MaceRemoveData" Content="{DynamicResource Str_Mace_RemoveData}" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
               <CheckBox x:Name="MaceRemoveCredentials" Content="{DynamicResource Str_Mace_RemoveCredentials}" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
               <CheckBox x:Name="MaceRestoreFolders" Content="{DynamicResource Str_Mace_RestoreFolders}" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
               <TextBlock Text="{DynamicResource Str_Mace_ReviewBoundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
-              <TextBlock Text="{DynamicResource Str_Mace_PackagePlan}" Foreground="{DynamicResource DimTextBrush}" Margin="0,8,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Mace_PackagePlan}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,8,0,0"/>
               <ComboBox x:Name="MacePackageSelection" DisplayMemberPath="Label" Margin="0,4,0,4" AutomationProperties.Name="Supported app removal package candidate" SelectionChanged="OnMacePackageSelectionChanged"/>
               <Button x:Name="MaceReviewPackage" Content="{DynamicResource Str_Mace_CheckPackage}" Click="OnReviewMacePackage" IsEnabled="False" HorizontalAlignment="Left"/>
               <TextBlock x:Name="MacePackageHint" Text="{DynamicResource Str_Mace_PackageHint}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
@@ -261,7 +261,7 @@
               <ComboBox x:Name="OrcaScopeChoice" SelectedIndex="0" Margin="0,0,0,6" AutomationProperties.Name="Outlook reset account scope" SelectionChanged="OnOrcaOptionChanged">
                 <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/><ComboBoxItem Content="{DynamicResource Str_Scope_AllUsers}"/>
               </ComboBox>
-              <TextBlock Text="{DynamicResource Str_Orca_ResetAreas}" Foreground="{DynamicResource DimTextBrush}"/>
+              <TextBlock Text="{DynamicResource Str_Orca_ResetAreas}" Foreground="{DynamicResource MutedTextBrush}"/>
               <CheckBox x:Name="OrcaClearCaches" Content="{DynamicResource Str_Orca_Caches}" IsChecked="True" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
               <CheckBox x:Name="OrcaResetProfiles" Content="{DynamicResource Str_Orca_Profiles}" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
               <CheckBox x:Name="OrcaResetAuthentication" Content="{DynamicResource Str_Orca_Authentication}" Checked="OnOrcaOptionChanged" Unchecked="OnOrcaOptionChanged"/>
@@ -272,14 +272,14 @@
             </StackPanel>
             <StackPanel x:Name="DepotSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="{DynamicResource Str_Depot_Description}" TextWrapping="Wrap"/>
-              <TextBlock Text="{DynamicResource Str_Common_Applications}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Common_Applications}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
               <WrapPanel>
                 <CheckBox x:Name="DepotMicrosoft365" Content="Microsoft 365"/><CheckBox x:Name="DepotOneDrive" Content="OneDrive"/>
                 <CheckBox x:Name="DepotTeams" Content="Teams"/><CheckBox x:Name="DepotChrome" Content="Chrome"/>
                 <CheckBox x:Name="DepotAcrobat" Content="Acrobat Reader"/><CheckBox x:Name="DepotZoom" Content="Zoom"/>
                 <CheckBox x:Name="DepotSevenZip" Content="7-Zip"/>
               </WrapPanel>
-              <TextBlock Text="{DynamicResource Str_Common_Configuration}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Common_Configuration}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
               <WrapPanel>
                 <CheckBox x:Name="DepotUpdates" Content="{DynamicResource Str_Depot_WindowsUpdates}"/><CheckBox x:Name="DepotComputerName" Content="{DynamicResource Str_Depot_ComputerName}"/>
                 <CheckBox x:Name="DepotLocalAdmin" Content="{DynamicResource Str_Depot_LocalAdministrator}"/><CheckBox x:Name="DepotAdminReview" Content="{DynamicResource Str_Depot_AdministratorReview}"/>
@@ -323,7 +323,7 @@
                 <ComboBox x:Name="DebloatDisplayAc" Grid.Row="2" Grid.Column="0" SelectedIndex="3" Margin="0,4,3,0" AutomationProperties.Name="Display timeout on AC"><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayAcNever}" Tag="0"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayAc15}" Tag="15"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayAc30}" Tag="30"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayAc60}" Tag="60"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayAc120}" Tag="120"/></ComboBox>
                 <ComboBox x:Name="DebloatDisplayDc" Grid.Row="2" Grid.Column="1" SelectedIndex="1" Margin="3,4,0,0" AutomationProperties.Name="Display timeout on battery"><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBatteryNever}" Tag="0"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery15}" Tag="15"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery30}" Tag="30"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery60}" Tag="60"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery120}" Tag="120"/></ComboBox>
               </Grid>
-              <TextBlock Text="{DynamicResource Str_Debloat_GoAction}" Foreground="{DynamicResource DimTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Debloat_GoAction}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
               <ComboBox x:Name="DebloatActionChoice" SelectedIndex="0" AutomationProperties.Name="Declutter GO action">
                 <ComboBoxItem Content="{DynamicResource Str_Debloat_ActionReview}"/>
                 <ComboBoxItem Content="{DynamicResource Str_Debloat_ActionHighPerformance}"/>
@@ -432,7 +432,7 @@
               <TextBlock Text="{DynamicResource Str_Cleanup_MaximumFiles}" Margin="0,6,0,0"/>
               <WrapPanel><Slider x:Name="CleanupLimit" Minimum="100" Maximum="10000" Value="100" TickFrequency="100" IsSnapToTickEnabled="True" Width="180" AutomationProperties.Name="Maximum cleanup files per target"/>
                 <TextBlock Text="{Binding Value, ElementName=CleanupLimit, StringFormat={}{0:N0}}" VerticalAlignment="Center" Margin="8,0,0,0"/></WrapPanel>
-              <TextBlock Text="{DynamicResource Str_Cleanup_PreviousWindows}" Foreground="{DynamicResource DimTextBrush}" Margin="0,8,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Cleanup_PreviousWindows}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,8,0,0"/>
               <CheckBox x:Name="CleanupPreviousWindows" Content="{DynamicResource Str_Cleanup_RemovePreviousWindows}" Checked="OnPreviousWindowsChanged" Unchecked="OnPreviousWindowsChanged" ToolTip="{DynamicResource Str_Cleanup_RemovePreviousWindowsTip}"/>
               <CheckBox x:Name="CleanupPreviousWindowsBackup" Content="{DynamicResource Str_Cleanup_PreviousWindowsBackup}" Margin="14,0,0,0" IsEnabled="{Binding IsChecked, ElementName=CleanupPreviousWindows}"/>
               <CheckBox x:Name="CleanupRemove" Content="{DynamicResource Str_Cleanup_Remove}" Margin="0,6,0,0"/>
@@ -506,7 +506,7 @@
                 <CheckBox x:Name="SecurityBoot" Content="{DynamicResource Str_Security_SecureBoot}" IsChecked="True" Margin="0,0,14,0"/>
                 <CheckBox x:Name="SecurityVirtualization" Content="{DynamicResource Str_Security_Virtualization}" IsChecked="True"/>
               </WrapPanel>
-              <TextBlock Text="{DynamicResource Str_Security_GoAction}" Foreground="{DynamicResource DimTextBrush}" Margin="0,8,0,3"/>
+              <TextBlock Text="{DynamicResource Str_Security_GoAction}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,8,0,3"/>
               <ComboBox x:Name="DefenderScanChoice" SelectedIndex="0" SelectionChanged="OnDefenderScanOptionChanged" AutomationProperties.Name="Microsoft Defender scan action">
                 <ComboBoxItem Content="{DynamicResource Str_Security_DiagnosisOnly}" Tag="None"/>
                 <ComboBoxItem Content="{DynamicResource Str_Security_QuickScan}" Tag="Quick"/>
@@ -584,7 +584,7 @@
               <CheckBox x:Name="BitLockerBackupConsent" Content="{DynamicResource Str_BitLocker_BackupConsent}" Margin="0,4,0,4"/>
               <CheckBox x:Name="BitLockerEncryptConsent" Content="{DynamicResource Str_BitLocker_EncryptConsent}" Click="OnBitLockerEncryptConsentChanged" Margin="0,0,0,4"/>
               <CheckBox x:Name="BitLockerResumeConsent" Content="{DynamicResource Str_BitLocker_ResumeConsent}" Click="OnBitLockerResumeConsentChanged" Margin="0,0,0,4"/>
-              <Expander x:Name="BitLockerActionsExpander" Header="{DynamicResource Str_BitLocker_MoreActions}" Margin="0,4,0,6">
+              <Expander x:Name="BitLockerActionsExpander" Header="{DynamicResource Str_BitLocker_MoreActions}" Foreground="{DynamicResource TextBrush}" Margin="0,4,0,6">
                 <StackPanel Margin="0,6,0,0">
                   <TextBlock Text="{DynamicResource Str_BitLocker_Action}"/>
                   <ComboBox x:Name="BitLockerActionChoice" SelectedIndex="0" SelectionChanged="OnBitLockerActionChanged" AutomationProperties.Name="BitLocker action">
@@ -608,7 +608,7 @@
             </StackPanel>
             <TextBlock x:Name="ComponentCleanupSettings" Visibility="Collapsed" Margin="0,0,0,6" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Text="{DynamicResource Str_ComponentCleanup_Boundary}"/>
             <StackPanel x:Name="TaskSettings" Visibility="Collapsed" Margin="0,0,0,6">
-              <Expander x:Name="TaskDraftExpander" Header="{DynamicResource Str_Task_NewDraft}" Loaded="OnTaskDraftLoaded">
+              <Expander x:Name="TaskDraftExpander" Header="{DynamicResource Str_Task_NewDraft}" Foreground="{DynamicResource TextBrush}" Loaded="OnTaskDraftLoaded">
                 <StackPanel Margin="0,6,0,6">
                   <TextBlock Text="{DynamicResource Str_Task_Folder}"/><TextBox x:Name="TaskDraftFolder" Text="\KillerBench\"/>
                   <TextBlock Text="{DynamicResource Str_Task_Name}"/><TextBox x:Name="TaskDraftName"/>
@@ -837,7 +837,7 @@
             <ControlTemplate.Triggers>
               <Trigger Property="IsSelected" Value="True">
                 <Setter TargetName="CategoryFace" Property="Background" Value="{DynamicResource PrimaryBrush}"/>
-                <Setter Property="Foreground" Value="#151515"/>
+                <Setter Property="Foreground" Value="{DynamicResource OnPrimaryBrush}"/>
               </Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate></Setter.Value></Setter>
@@ -913,7 +913,7 @@
 <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
 <Border Padding="6">
           <DockPanel>
-            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6"><Button DockPanel.Dock="Right" Content="{DynamicResource Str_Content_Hide}" Click="OnToggleActivity" Padding="6,2" ToolTip="{DynamicResource Str_ToolTip_Toggle_activity_log_F3}"/><Button x:Name="ExportActivityButton" DockPanel.Dock="Right" Content="{DynamicResource Str_ExportActivity}" Click="OnExportActivity" Padding="6,2" Margin="0,0,6,0" ToolTip="{DynamicResource Str_ExportActivityHint}" AutomationProperties.Name="{DynamicResource Str_ExportActivityHint}"/><TextBlock Text="{DynamicResource Str_Text_SESSION_ACTIVITY}" FontFamily="Consolas" FontSize="11" Foreground="{DynamicResource DimTextBrush}"/></DockPanel>
+            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6"><Button DockPanel.Dock="Right" Content="{DynamicResource Str_Content_Hide}" Click="OnToggleActivity" Padding="6,2" ToolTip="{DynamicResource Str_ToolTip_Toggle_activity_log_F3}"/><Button x:Name="ExportActivityButton" DockPanel.Dock="Right" Content="{DynamicResource Str_ExportActivity}" Click="OnExportActivity" Padding="6,2" Margin="0,0,6,0" ToolTip="{DynamicResource Str_ExportActivityHint}" AutomationProperties.Name="{DynamicResource Str_ExportActivityHint}"/><TextBlock Text="{DynamicResource Str_Text_SESSION_ACTIVITY}" FontFamily="Consolas" FontSize="11" Foreground="{DynamicResource MutedTextBrush}"/></DockPanel>
             <TextBox x:Name="ActivityLog" IsReadOnly="True" FontFamily="Consolas" FontSize="11" Background="Transparent" BorderThickness="0" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Session_activity_log}"/>
           </DockPanel>
         </Border></Grid>
