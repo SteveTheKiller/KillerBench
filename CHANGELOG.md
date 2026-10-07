@@ -2,6 +2,7 @@
 
 - Menu rows show accent text and icons on the theme's hover color.
 - Add yellow and magenta accents to the neutral and 98SE themes.
+- New installs and the website start on Dark with the yellow accent.
 - Add Ukrainian localization.
 - Add Norwegian (Bokmål) localization.
 - Add Brazilian Portuguese localization.

@@ -15,7 +15,7 @@ namespace KillerBench.Services
         public static Action<string, string> SetSetting { get; set; } = (_, _) => { };
 
         private static Theme _current = Theme.Dark;
-        private static Accent _darkAccent  = Accent.Orange;
+        private static Accent _darkAccent  = Accent.Yellow;
         private static Accent _lightAccent = Accent.Green;
         private static Accent _blackAccent = Accent.Green;
         private static Accent _retroAccent = Accent.Green;

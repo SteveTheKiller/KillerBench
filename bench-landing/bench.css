@@ -1,5 +1,5 @@
 @font-face{font-family:KillerScan;src:url('brand/typewriter.ttf') format('truetype');font-display:swap}
-html[data-theme="dark"]{--accent:#E8962C;--btn:#F29A28;--sel:#5E3B16}
+html[data-theme="dark"]{--accent:#EAD900;--btn:#F2E500;--sel:#2A2908;--btn-text:#1e1f22;--accent-text:#1e1f22}
 html[data-theme="light"]{--accent:#C7710F;--btn:#C7710F}
 html[data-theme="hc"]{--accent:#FF910A;--btn:#FF910A}
 .content-inner { max-width: 1100px; margin: 0 auto; padding: 0 28px 50px; }

@@ -787,7 +787,7 @@ internal static class Program
             application.Resources.MergedDictionaries.Add(new ResourceDictionary
             { Source = new Uri("/KillerBench;component/Strings/en-US.xaml", UriKind.Relative) });
             KillerBench.Services.ThemeManager.Initialize();
-            Require(KillerBench.Services.ThemeManager.Current == KillerBench.Services.Theme.Dark && KillerBench.Services.ThemeManager.AccentChoiceFor(KillerBench.Services.Theme.Dark) == KillerBench.Services.Accent.Orange, "Fresh default must be Dark/Amber using Orange");
+            Require(KillerBench.Services.ThemeManager.Current == KillerBench.Services.Theme.Dark && KillerBench.Services.ThemeManager.AccentChoiceFor(KillerBench.Services.Theme.Dark) == KillerBench.Services.Accent.Yellow, "Fresh default must be Dark using Yellow");
             var window = new KillerBench.MainWindow();
             var updateSnapshotField = typeof(KillerBench.MainWindow).GetField("availableUpdateResult", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
             var filteredUpdate = new AvailableUpdate("74ba239e-08d2-45bd-b285-b0d35610ca60", 1, "Fixture driver", "Driver", true, true);

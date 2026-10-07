@@ -170,7 +170,7 @@ def header(site):
     nav = "".join('<a%s href="%s">%s</a>' % (' class="on"' if on else "", href, text) for href, text, on in links)
     themes = "".join('<button class="swatch sw-%s" data-theme="%s" title="%s"></button>' % (t, t, "Black" if t == "hc" else t.capitalize()) for t in THEMES)
     accents = "".join('<button class="acc" data-accent="%s" style="background:%s;color:%s" title="%s"></button>' % (n, c, c, n.capitalize()) for n, c in ACCENTS)
-    return ('<header class="topbar"><a class="tb-home" href="../index.html"><img class="wm-logo tb-wm" src="../brand/killerbench-logo-dark-orange.svg" alt="KillerBench"></a>'
+    return ('<header class="topbar"><a class="tb-home" href="../index.html"><img class="wm-logo tb-wm" src="../brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>'
             '<span class="tb-spacer"></span><nav class="tb-nav">' + nav + '</nav>'
             '<div class="tgrp" role="group" aria-label="Theme">' + themes + '</div>'
             '<div class="acc-fly accent-switch" id="accentSwitch"><button class="acc-toggle" id="accentToggle" aria-haspopup="true" aria-expanded="false" title="Accent color"></button>'
@@ -234,9 +234,9 @@ def build():
                     '<meta name="viewport" content="width=device-width,initial-scale=1">'
                     '<meta name="description" content="%s"><link rel="canonical" href="%s">'
                     '<title>%s | KillerBench %s</title>'
-                    '<link rel="stylesheet" href="../family.css?v=4"><link rel="stylesheet" href="../bench.css?v=2">'
+                    '<link rel="stylesheet" href="../family.css?v=4"><link rel="stylesheet" href="../bench.css?v=3">'
                     '<link rel="stylesheet" href="../engine/engine-docs.css?v=%s">'
-                    '<script defer src="../bench.js?v=3"></script><script defer src="../docs-search-index.js?v=%s"></script>'
+                    '<script defer src="../bench.js?v=4"></script><script defer src="../docs-search-index.js?v=%s"></script>'
                     '<script defer src="../docs-search.js?v=%s"></script></head>'
                     '<body data-brand-base="../brand">%s<div class="shell engine-shell">%s'
                     '<main class="content"><div class="content-scroll"><div class="engine-doc-wrap">'
