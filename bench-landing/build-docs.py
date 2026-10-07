@@ -57,7 +57,7 @@ SITES = [
 ]
 
 THEMES = ["dark", "light", "hc", "blood", "greed", "cyanotic", "ectoplasm", "decay", "malaise", "sepulchre", "delirium", "mourning"]
-ACCENTS = [("red", "#DD504B"), ("orange", "#E8962C"), ("green", "#1EA54C"), ("teal", "#1FB8A8"), ("blue", "#50AEE8"), ("purple", "#B982E3")]
+ACCENTS = [("red", "#DD504B"), ("orange", "#E8962C"), ("yellow", "#EAD900"), ("green", "#1EA54C"), ("teal", "#1FB8A8"), ("blue", "#50AEE8"), ("purple", "#B982E3"), ("magenta", "#FF52C9")]
 
 
 def esc(value):
