@@ -17,7 +17,7 @@
       <Border Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>
       <StackPanel x:Name="LogoBar" Orientation="Horizontal" Margin="{DynamicResource TitleBarPadding}" VerticalAlignment="Center" PreviewMouseWheel="OnAppScale" ToolTip="{DynamicResource Str_ToolTip_Scroll_here_to_resize_the_interface}">
         <Image x:Name="TitlebarIcon" Width="24" Height="24" Margin="0,0,8,0" RenderOptions.BitmapScalingMode="HighQuality" AutomationProperties.Name="KillerBench icon. Scroll to zoom the interface."/>
-        <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="22" Visibility="{DynamicResource WordmarkVisibility}"><Run Text="Killer" Foreground="{DynamicResource ChromeTextBrush}"/><Run Text="Bench" Foreground="{DynamicResource AccentLogo}" FontWeight="Bold"/></TextBlock>
+        <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}" TextOptions.TextFormattingMode="Display" TextOptions.TextRenderingMode="ClearType" Visibility="{DynamicResource WordmarkVisibility}"><Run Text="Killer" Foreground="{DynamicResource ChromeTextBrush}"/><Run Text="Bench" FontSize="{DynamicResource TitleWordmarkBoldSize}" Foreground="{DynamicResource AccentLogo}" FontWeight="Bold"/></TextBlock>
         <TextBlock Text="KillerBench" FontFamily="{DynamicResource ChromeFontFamily}" Foreground="{DynamicResource ChromeTextBrush}" FontWeight="Bold" Visibility="{DynamicResource PlainTitleVisibility}"/>
         <TextBlock Text="{DynamicResource Str_Text_DIAGNOSTIC_WORKBENCH}" FontFamily="Consolas" FontSize="10" Foreground="{DynamicResource ChromeTextBrush}" VerticalAlignment="Center" Margin="18,0,0,0"/>
       </StackPanel>

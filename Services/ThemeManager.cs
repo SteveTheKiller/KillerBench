@@ -155,9 +155,10 @@ namespace KillerBench.Services
                 d["WindowEdgeBrush"] = d["AppBorderBrush"];
             SetIfAbsent(d, "WindowEdgeThickness", new Thickness(1));
 
-            d["DialogTitleBarBrush"] = d.Contains("UseDialogCaption") && d.Contains("TitleBarBrush")
-                ? d["TitleBarBrush"]
-                : Transparent();
+            if (!d.Contains("DialogTitleBarBrush"))
+                d["DialogTitleBarBrush"] = d.Contains("UseDialogCaption") && d.Contains("TitleBarBrush")
+                    ? d["TitleBarBrush"]
+                    : Transparent();
             SetIfAbsent(d, "DialogTitleBarHeight", 28.0);
             SetIfAbsent(d, "DialogHaloMargin", new Thickness(10));
 
