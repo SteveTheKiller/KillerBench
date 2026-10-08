@@ -23,7 +23,7 @@
   <a class="tb-home" href="/tr-TR/"><img class="wm-logo tb-wm" src="/brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>
   <a class="tb-mcp-link" href="/mcp.html" aria-label="KillerMCP"><img src="/mcp.png" alt="" aria-hidden="true"><span class="tb-mcp-wordmark"><span>Killer</span><span class="tb-mcp-accent">MCP</span></span></a>
   <span class="tb-spacer"></span>
-<nav class="tb-nav"><a href="#workbench">Araç seti</a><a href="#features">Özellikler</a><a href="/tr-TR/help/">Yardım</a><a href="/tr-TR/engine/">Engine</a><a href="#about">Hakkında</a></nav>
+<nav class="tb-nav"><a href="#workbench">Araç seti</a><a href="#features">Özellikler</a><a href="/tr-TR/help/">Yardım</a><a href="/help/setup.html">Kurulum</a><a href="/tr-TR/engine/">Engine</a><a href="#about">Hakkında</a></nav>
 <div class="tgrp" role="group" aria-label="Tema">
 <button class="swatch sw-dark" data-theme="dark" title="Koyu"></button>
 <button class="swatch sw-light" data-theme="light" title="Açık"></button>
@@ -57,7 +57,8 @@
     <img class="wm-logo hero-mark" src="/brand/killerbench-logo-dark-yellow.svg" alt="KillerBench">
     <h1>Kanıtı izleyin.</h1>
     <p class="intro">Bir araç seçin, seçeneklerini inceleyin ve GO düğmesine basın. Ham çıktı veya Okunabilir rapor görünümündeki kanıtları izleyin. Desteklenen onarımlar güncel ön koşulları denetler, isteği kaydeder ve sonucu doğrular.</p>
-    <p class="release-note">KillerBench geliştirme aşamasındadır. Henüz herkese açık indirme yoktur.</p>
+    <p class="release-note"><a href="/help/setup.html">KillerBench geliştirme aşamasındadır. Henüz herkese açık indirme yoktur.</a></p>
+    <p class="release-note">Yerel onarımların doğrulanması hâlâ sürüyor.</p>
     <a class="btn" href="#workbench">Araç setini keşfedin</a> <a class="btn" href="/tr-TR/help/">Kılavuzu okuyun</a>
   </section>
   <section id="workbench" class="bench-pane">
@@ -74,7 +75,7 @@
     <p class="caption">Örnek çıktı; bilgisayarınızın tarama sonucu değildir.</p>
   </section>
   <section class="features" id="features"><h2>Araç setinin içinde</h2><div class="feature-grid">
-    <article class="feature-card"><p class="eyebrow">02 / ÖNCE TANI</p><h3>On bir bölüm, tek alışkanlık</h3><p>Tanılama, Onarım, Güncellemeler, Aygıtlar, Ağ, Uygulamalar, Bakım, İlk kurulum, Güvenlik, BitLocker ve Gizlilik. Her araç bir şey önermeden önce verileri okur; tam sistem taraması ise ilgilenilmesi gerekenleri önceliklendirir.</p></article>
+    <article class="feature-card"><p class="eyebrow">02 / ÖNCE TANI</p><h3>On iki bölüm, tek alışkanlık</h3><p>Tanılama, Onarım, Güncellemeler, Aygıtlar, Ağ, Uygulamalar, Bakım, İlk kurulum, Güvenlik, BitLocker, Gizlilik ve Depolama. Her araç bir şey önermeden önce verileri okur; tam sistem taraması ise ilgilenilmesi gerekenleri önceliklendirir.</p></article>
     <article class="feature-card"><p class="eyebrow">03 / KORUMALI ONARIMLAR</p><h3>Yalnızca doğrulanmış sorunları düzeltin</h3><p>Bir onarım ancak güncel kanıt tam olarak ilgili sorunu doğruladığında sunulur. Onayınızı gerektirir, çalışmadan hemen önce her şeyi yeniden kontrol eder ve Doğrulandı demeden önce sonucu tekrar okur.</p></article>
     <article class="feature-card"><p class="eyebrow">04 / İZLENEBİLİR KANIT</p><h3>Kapalı kutular yok</h3><p>Bulgular, dayandıkları olaya, günlük satırına veya ayara bağlanır. Eksik kanıt hiçbir zaman sağlıklı sonuç olarak sunulmaz; geçmiş de geçmiş olarak kalır. Raporu doğrudan bir destek kaydına aktarın.</p></article>
     <article class="feature-card"><p class="eyebrow">05 / BITLOCKER VE TPM</p><h3>Tahmine yer bırakmayan şifreleme</h3><p>Koruyucuları inceleyin, kurtarma parolalarını bir dosyaya, Active Directory&#x27;ye veya Entra ID&#x27;ye yedekleyin, Windows ve veri sürücülerini şifreleyin, otomatik kilit açmayı etkinleştirin ve TPM&#x27;yi hiçbir zaman temizlemeden hazırlayın.</p></article>
@@ -82,7 +83,7 @@
     <article class="feature-card"><p class="eyebrow">07 / KESİNTİDEN SONRA KURTARMA</p><h3>Yeniden denemeden önce kontrol</h3><p>Günlüğe alınan onarımlar, başlatılmadan önce bekleyen isteği kaydeder. İstek kesintiye uğrarsa kurtarma, değişikliği otomatik olarak tekrarlamadan ne olduğunu kontrol eder.</p></article>
     <article class="feature-card"><p class="eyebrow">08 / YEREL TANILAMA</p><h3>Yapay zeka gerekmez</h3><p>Tanılama ve rapor analizi, bir yapay zeka hizmeti veya KillerBench hesabı olmadan yerel olarak çalışır. İndirme veya kurtarma anahtarını Entra ID&#x27;ye yedekleme gibi seçtiğiniz işlemler ilgili hedefle iletişim kurabilir. Aynı Engine, masaüstü uygulamasını ve komut satırını çalıştırır.</p></article>
   </div><p class="caption"><a href="/tr-TR/help/">Tam kılavuz</a> her bölüm ve araç hakkında bilgi içerir.</p></section>
-  <section class="bench-pane" id="about"><h2>Killer Tools ailesinin bir parçası</h2><p>Dokulu yüzeyler, daktilo tarzı sözcük logosu ve 13 uygulama teması. Füme cam görünümlü konsol, okunabilir raporlar, onaylar ve Aç, Kaydet ve Klasör iletişim kutuları etkin uygulama temasını izler.</p><p><a href="/help/workspace.html">Yolunuzu bulun</a> · <a href="/help/safety.html">Güvenlik modelini inceleyin</a> · <a href="/tr-TR/engine/">Engine geliştirici kılavuzu</a> · <a href="/mcp.html">KillerMCP</a> · <a href="https://killertools.net">Killer Tools&#x27;u keşfedin</a></p></section>
+  <section class="bench-pane" id="about"><h2>Killer Tools ailesinin bir parçası</h2><p>Dokulu yüzeyler, daktilo tarzı sözcük logosu ve 13 uygulama teması. Füme cam görünümlü konsol, okunabilir raporlar, onaylar ve Aç, Kaydet ve Klasör iletişim kutuları etkin uygulama temasını izler.</p><p><a href="/help/setup.html">İndirme ve kurulum</a> · <a href="/help/about.html">KillerBench hakkında</a> · <a href="/help/workspace.html">Yolunuzu bulun</a> · <a href="/help/safety.html">Güvenlik modelini inceleyin</a> · <a href="/tr-TR/engine/">Engine geliştirici kılavuzu</a> · <a href="/mcp.html">KillerMCP</a> · <a href="https://killertools.net">Killer Tools&#x27;u keşfedin</a></p></section>
 </div></div></main><aside class="sidebar"><div class="sb-empty">KillerBench<br>Geliştirme aşamasında</div><a class="sb-art" href="#workbench"><img src="/og-image.png" alt="KillerBench tanılama araç seti görseli"></a><div class="sb-empty">Önce tanı.<br>Doğrulanmış sorunları düzeltin.<br>Yapay zeka gerekmez.</div></aside></div>
 <footer class="statusbar"><span class="left">Geliştirme aşamasında · Şunun bir parçası: <a href="https://killertools.net">killertools.net</a></span><span class="right">© 2026 <b><a href="https://thekiller.net">Steve the Killer</a></b></span></footer>
 </body>

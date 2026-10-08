@@ -19,7 +19,7 @@ KillerBench treats diagnosis and change as different jobs. Diagnosis only reads.
 
 ## If something is interrupted
 
-If KillerBench is closed or loses contact while a request may have reached Windows, the pending record stays. The next run of that action checks what actually happened instead of sending the request again. The command line has matching `-recover` commands for the same purpose.
+Supported journaled actions retain a pending record when a request may have reached Windows and verification has not completed. Use the action's documented reconciliation path, or its matching `-recover` command, to inspect that record. Reconciliation is not an automatic rollback. Keep the journal when an outcome is uncertain, and do not manually repeat the change. Crash, cancellation and later-boot behavior still need action-specific native validation.
 
 ## What KillerBench will not do
 

@@ -20,6 +20,7 @@ SITES = [
         "description": "How to use the KillerBench Windows diagnostic and repair workbench.",
         "pages": [
             ("index", "Welcome", "Start here"),
+            ("setup", "Download and setup", "Start here"),
             ("first-run", "Your first diagnosis", "Start here"),
             ("workspace", "The workspace", "Start here"),
             ("safety", "How changes stay safe", "Start here"),
@@ -34,9 +35,11 @@ SITES = [
             ("security", "Security", "Sections"),
             ("bitlocker", "BitLocker", "Sections"),
             ("privacy", "Privacy", "Sections"),
+            ("storage", "Storage", "Sections"),
             ("reports", "Reports and evidence", "Reference"),
             ("cli", "Command line", "Reference"),
             ("troubleshooting", "Troubleshooting", "Reference"),
+            ("about", "About KillerBench", "Reference"),
         ],
     },
     {
@@ -90,6 +93,7 @@ def render(markdown):
     lines = markdown.replace("\r\n", "\n").replace("\r", "\n").split("\n")
     out, paragraph, headings, i = [], [], [], 0
     title = None
+    anchors = set()
 
     def flush():
         if paragraph:
@@ -113,7 +117,12 @@ def render(markdown):
         if heading:
             flush()
             level, text = len(heading.group(1)), heading.group(2)
-            anchor = slug(text)
+            base = slug(text) or "section"
+            anchor, suffix = base, 2
+            while anchor in anchors:
+                anchor = "%s-%d" % (base, suffix)
+                suffix += 1
+            anchors.add(anchor)
             if level == 1 and title is None:
                 title = text
             if level == 2:
@@ -165,7 +174,7 @@ def plain(markdown):
 
 def header(site):
     links = [("../index.html#workbench", "Workbench", False), ("../index.html#features", "Features", False),
-             ("../help/index.html", "Help", site["key"] == "help"), ("../engine/index.html", "Engine", site["key"] == "engine"),
+             ("../help/index.html", "Help", site["key"] == "help"), ("../help/setup.html", "Setup", False), ("../engine/index.html", "Engine", site["key"] == "engine"),
              ("../index.html#about", "About", False)]
     nav = "".join('<a%s href="%s">%s</a>' % (' class="on"' if on else "", href, text) for href, text, on in links)
     themes = "".join('<button class="swatch sw-%s" data-theme="%s" title="%s"></button>' % (t, t, "Black" if t == "hc" else t.capitalize()) for t in THEMES)

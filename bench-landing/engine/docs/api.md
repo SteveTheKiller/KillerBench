@@ -1,6 +1,6 @@
 # API guide
 
-The Engine uses one public namespace, `KillerBench.Engine`, while source folders organize the implementation by capability.
+Public types use capability namespaces such as `KillerBench.Engine.Workflows`, `KillerBench.Engine.Infrastructure` and `KillerBench.Engine.Validation`. Windows providers use `KillerBench.Engine.Windows` and its subnamespaces. Reference the provider project and call `WindowsEngine.Register()` before running native workflows; see [Getting started](getting-started.html).
 
 ## High-level entry points
 

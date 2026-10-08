@@ -14,6 +14,9 @@ KillerBench is in development. There is no public download yet. These pages desc
 
 ## Where to start
 
+- [Download and setup](setup.html)
+- [About KillerBench](about.html)
+
 - [Your first diagnosis](first-run.html) walks through a full system scan.
 - [The workspace](workspace.html) explains the sections, panels and shortcuts.
 - [How changes stay safe](safety.html) explains what KillerBench checks before and after any change.

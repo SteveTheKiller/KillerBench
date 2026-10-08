@@ -22,4 +22,4 @@ KillerBench can also read saved Windows logs, such as CBS and Setup logs, withou
 
 ## Exporting
 
-**Export report** saves the report with its source paths, parsed entries and evidence excerpts, ready to attach to a ticket. Recovery passwords, credentials and other secrets are never included.
+**Export report** saves the report with its source paths, parsed entries and evidence excerpts, for review before attaching it to a ticket. Raw logs and evidence excerpts can contain computer names, accounts, paths or sensitive source text. Guarded collectors restrict what they retain, but imported evidence is not guaranteed to be redacted. Inspect and remove sensitive information before sharing.

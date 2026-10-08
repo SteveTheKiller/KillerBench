@@ -2,7 +2,7 @@
 
 ## An action says it is blocked
 
-A blocked result means a safety check failed, and nothing was changed. The message names the reason. The most common reasons are below.
+A blocked result means the requested action could not proceed. Read the message and journal to see whether it stopped before dispatch or after an earlier step. Do not assume a partially completed operation was rolled back. The most common prerequisite reasons are below.
 
 - **Administrator access is required.** Close KillerBench and start it again with **Run as administrator**.
 - **Restart readiness must be clear.** Windows has a restart pending. Restart the computer, then run the action again.

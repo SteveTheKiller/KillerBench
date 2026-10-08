@@ -1,6 +1,6 @@
 # Architecture
 
-The KillerBench.Engine is a UI-free project inside the KillerBench repository. The desktop, CLI, and tests reference it as separate hosts.
+The Engine is split into UI-free Engine.Core, Engine and Engine.Windows projects. Desktop, CLI and tests are separate hosts. Engine.Core supplies primitives and declarative recipes, Engine owns shared workflows and evidence, and Engine.Windows registers the native providers.
 
 ## Boundary
 
@@ -25,13 +25,18 @@ The host owns:
 ## Project relationships
 
 ```text
-KillerBench desktop
+Desktop / CLI / authorized embedded host
+        |  WindowsEngine.Register()
+        v
+Engine.Windows (Windows providers)
         |
         v
-KillerBench.Engine <---- killerbench-cli
-        ^
+Engine (shared workflows, evidence, coordination)
         |
-KillerBench.Checks
+        v
+Engine.Core (primitives, packs and recipes)
+
+Checks substitute providers across these boundaries
 ```
 
 The Engine does not reference WPF or desktop controls. Tests can substitute provider and repair hosts so parsers, eligibility, safety gates, interruption behavior, and recovery can be verified without changing the development computer.

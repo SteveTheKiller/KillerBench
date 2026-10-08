@@ -1,6 +1,6 @@
 # Your first diagnosis
 
-A full system scan is the fastest way to learn what is wrong with a computer. It only reads, so it is safe to run on any machine.
+Start with [Download and setup](setup.html), then run a Full system scan. It collects diagnostic evidence and saves a local journal; it does not run repairs. A finding describes the inspected scope, not every possible fault on the computer.
 
 ## Run the scan
 
@@ -9,7 +9,7 @@ A full system scan is the fastest way to learn what is wrong with a computer. It
 3. Press **Run diagnosis**. Progress appears in the console while each check runs.
 4. When it finishes, KillerBench switches to the **Readable report**.
 
-Run KillerBench as administrator when you can. Some Windows evidence, such as BitLocker protectors and protected services, is only readable with administrator rights. Without them those checks report that the evidence was unavailable instead of guessing.
+Start without elevation. Some Windows evidence, such as BitLocker protectors and protected services, needs administrator rights. Those checks report unavailable evidence under a standard account. If you need that evidence, finish the current run, keep the report, then deliberately reopen KillerBench with **Run as administrator**. Elevation does not select or approve a repair.
 
 ## Read the report
 
@@ -27,4 +27,4 @@ Open **Choose checks (advanced)** to pick individual checks instead of the full 
 
 ## Fix what you found
 
-When the report recommends a fix, it names the section and tool to open. Read [How changes stay safe](safety.html) before your first repair.
+When the report recommends a fix, it names the section and tool to open. Read [How changes stay safe](safety.html) before your first repair. Native validation is still in progress; a successful diagnosis does not establish that every offered repair has been tested on your Windows build. Keep backups and review the exact target and consequences before any change.

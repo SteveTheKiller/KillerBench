@@ -586,7 +586,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Add the symptom coverage matrix with consistency checks.
 - Add deterministic VM validation plans, strict current-version evidence and themed coverage reports through the Engine and CLI.
 - UI tests use a separate, non-visible desktop so test resizing and menus cannot interrupt the working desktop.
-- Rebuild the landing site with a current home page, a searchable user guide and static Engine guide pages.
+- Rebuild the landing site with a current home page, a searchable user guide and static Engine guide pages. Add current setup, Storage and About guidance, corrected Engine examples and checked publication output.
 - Repair and focus the isolated rendered UI-test launcher.
 - Add a repeatable framework-dependent Windows x64 single-file publish profile.
 - Keep focused CLI coverage aligned with the expanded Vitals result set.

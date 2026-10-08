@@ -4,7 +4,7 @@ The KillerBench window has four areas: the section buttons, the tool sidebar, th
 
 ## Sections
 
-The buttons across the top group every tool into eleven sections: Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker and Privacy. Pick a section, then pick a tool from the list in the sidebar.
+The buttons across the top group every tool into twelve sections: Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker, Privacy and Storage. Pick a section, then pick a tool from the list in the sidebar.
 
 ## Tool sidebar
 
