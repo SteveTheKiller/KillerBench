@@ -527,8 +527,9 @@
                                        VerticalAlignment="Center" Margin="12,0,0,0"
                                        Visibility="Collapsed"/>
 
-                            <Popup x:Name="SubPopup" AllowsTransparency="True" Placement="Right"
-                                   HorizontalOffset="-20" VerticalOffset="-12" Focusable="False" PopupAnimation="Fade"
+                            <Popup x:Name="PART_Popup" AllowsTransparency="True" Placement="Right"
+                                   PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                   HorizontalOffset="-2" VerticalOffset="-3" Focusable="False" PopupAnimation="Fade"
                                    IsOpen="{TemplateBinding IsSubmenuOpen}">
                                 
                                 <Grid Margin="22,18,22,26">

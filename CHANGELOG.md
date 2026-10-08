@@ -596,3 +596,6 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Add synthetic GO and servicing repair demonstrations, plus a view-only screenshot preset with fixed sample reports.
 - Added a pre-release landing shell with family artwork.
 - Native validation records identify Windows from current OS metadata instead of the legacy registry label.
+
+### Fixed
+- Submenus attach consistently to their opening rows, with native direction and screen-edge placement.
