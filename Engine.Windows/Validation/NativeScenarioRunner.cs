@@ -161,7 +161,7 @@ public sealed class NativeScenarioRunner
                 artifacts[required] = await WriteAsync(folder, required.Replace(' ', '-') + ".txt", "Not produced: " + notes, token).ConfigureAwait(false);
 
         var record = new NativeValidationRecord(NativeValidationEvidence.SchemaVersion, scenario.Id, plan.RecipeId, plan.RecipeVersion, outcome,
-            Read(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName") ?? "Windows",
+            await NativeWindowsProductMetadata.ReadAsync(token).ConfigureAwait(false),
             Read(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "DisplayVersion") ?? Environment.OSVersion.Version.ToString(),
             (Read(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentBuild") ?? Environment.OSVersion.Version.Build.ToString()) + "." + (Read(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "UBR") ?? "0"),
             RuntimeInformation.OSArchitecture.ToString(),

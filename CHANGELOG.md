@@ -1,5 +1,6 @@
 # Changelog
 
+- Native validation records identify Windows from current OS metadata instead of the legacy registry label.
 - Use KillerUI-style confirmation and file and folder pickers throughout the app.
 - Filled buttons, hovered outline buttons, the selected section tile and accent picker pills use gradients outside 98SE, and accent swatches lift on hover.
 - Menu rows show accent text and icons on the theme's hover color.

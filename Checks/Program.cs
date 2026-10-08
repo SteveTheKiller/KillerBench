@@ -45,6 +45,7 @@ internal static class Program
             }
             if (args is ["--only", "native-validation"])
             {
+                NativeWindowsProductMetadataChecks.Run();
                 NativeValidationCatalogChecks.Run();
                 NativeValidationEvidenceChecks.Run();
                 NativeValidationReportChecks.Run();
@@ -773,6 +774,7 @@ internal static class Program
             RecipeChecks.RunAsync(scratch).GetAwaiter().GetResult();
             WorkflowOptionCatalogChecks.Run();
             NativeValidationCatalogChecks.Run();
+            NativeWindowsProductMetadataChecks.Run();
             NativeValidationEvidenceChecks.Run();
             NativeValidationReportChecks.Run();
             ComponentCleanupChecks.RunAsync(scratch).GetAwaiter().GetResult();
