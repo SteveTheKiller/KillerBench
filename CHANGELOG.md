@@ -582,6 +582,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Documentation, packaging and validation
 
+- Document GPLv3, include its license in desktop and CLI publish output, and clarify source-delivery and third-party notice requirements.
 - Add a gated native fault-injection runner and VM script that write validation records for service recipes.
 - Add the symptom coverage matrix with consistency checks.
 - Add deterministic VM validation plans, strict current-version evidence and themed coverage reports through the Engine and CLI.

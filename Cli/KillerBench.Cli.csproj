@@ -8,6 +8,7 @@
     <Version>0.1.0</Version>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="../LICENSE.txt" Link="LICENSE.txt" CopyToPublishDirectory="PreserveNewest" />
     <ProjectReference Include="../Engine/KillerBench.Engine.csproj" />
     <ProjectReference Include="../Engine.Windows/KillerBench.Engine.Windows.csproj" />
   </ItemGroup>

@@ -8,9 +8,11 @@ No public KillerBench download or Engine package is available yet. [Download and
 
 ## Source and distribution notices
 
-The public [KillerBench repository](https://github.com/SteveTheKiller/KillerBench) currently provides project information. The complete implementation is not publicly available there. These developer guides describe an authorized source checkout and do not grant source access or a redistribution license.
+KillerBench is licensed under **GPLv3**. Its distribution license is the [GNU General Public License version 3](../license.txt). The license describes the permissions and conditions for copying, modifying and distributing covered work.
 
-The first public package still needs its confirmed distribution license, source-availability information and bundled third-party notices. No license grant or public source download is implied by this page. Review the notices included with the published package before redistributing it.
+The public [KillerBench repository](https://github.com/SteveTheKiller/KillerBench) currently provides project information. The complete implementation is not publicly available there. These developer guides describe an authorized source checkout; they do not provide a public source download.
+
+Before distributing a binary, its publisher must provide Corresponding Source through a method allowed by [GPLv3 section 6](https://www.gnu.org/licenses/gpl-3.0.en.html#section6), including the source and build material required by the license. The first public package's source-delivery instructions and bundled third-party notices remain pending. GPLv3 does not grant permission to redistribute third-party fonts; the current font permissions still need verification. Review the published package's license, source instructions and notices before redistributing it.
 
 ## Privacy and external services
 

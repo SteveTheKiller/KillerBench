@@ -3,6 +3,7 @@
 Run: python test-site.py [path-to-clean-export]
 No external requests, host diagnosis or third-party dependencies.
 """
+import hashlib
 import json
 import re
 import sys
@@ -57,9 +58,16 @@ def target(root, source, ref):
     return destination, unquote(url.fragment)
 
 
+def validate_license(path):
+    expected = '3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986'
+    if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+        raise ValueError('Missing or modified canonical GNU GPLv3 license: '+str(path))
+
+
 def validate(root, clean=False):
     root = root.resolve()
-    required = ['index.html', 'mcp.html', '404.html', '_headers']
+    required = ['index.html', 'mcp.html', '404.html', '_headers', 'license.txt']
+    validate_license(root/'license.txt')
     required += ['help/'+p+'.html' for p in HELP] + ['engine/'+p+'.html' for p in ENGINE]
     for locale in LOCALES[1:]:
         required += [locale+'/'+p for p in ('index.html', 'help/index.html', 'engine/index.html', 'docs-search-index.js')]
@@ -109,7 +117,7 @@ def validate(root, clean=False):
     setup = (root/'help/setup.html').read_text(encoding='utf-8')
     about = (root/'help/about.html').read_text(encoding='utf-8')
     mcp = (root/'mcp.html').read_text(encoding='utf-8')
-    for text, needed in [(home, ['Twelve sections, one habit', 'Privacy and Storage', 'Public downloads are not available yet.', 'Illustrative output, not a scan of your computer.']), (setup, ['Unreleased', '.NET Desktop Runtime 10 for Windows x64', 'framework-dependent', 'Native repair validation is still in progress.']), (about, ['complete implementation is not publicly available', 'distribution license', 'third-party notices']), (mcp, ['Installing KillerMCP does not supply KillerBench.'])]:
+    for text, needed in [(home, ['Twelve sections, one habit', 'Privacy and Storage', 'Public downloads are not available yet.', 'Illustrative output, not a scan of your computer.']), (setup, ['Unreleased', 'GPLv3', 'href="../license.txt"', 'Corresponding Source', '.NET Desktop Runtime 10 for Windows x64', 'framework-dependent', 'Native repair validation is still in progress.']), (about, ['GPLv3', 'href="../license.txt"', 'complete implementation is not publicly available', 'distribution license', 'third-party notices', 'font permissions still need verification']), (mcp, ['Installing KillerMCP does not supply KillerBench.'])]:
         for phrase in needed:
             if phrase not in text:
                 raise ValueError('Required pre-release statement absent: '+phrase)
@@ -124,6 +132,15 @@ def validate(root, clean=False):
 
 
 class BrokenReferenceTests(unittest.TestCase):
+    def test_missing_or_modified_license(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder)/'license.txt'
+            with self.assertRaises(ValueError):
+                validate_license(path)
+            path.write_text('GNU GENERAL PUBLIC LICENSE\nIncomplete copy', encoding='utf-8')
+            with self.assertRaises(ValueError):
+                validate_license(path)
+
     def test_missing_asset_and_route(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)

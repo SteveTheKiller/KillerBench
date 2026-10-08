@@ -1,0 +1,3 @@
+# Keep the canonical GNU license copies byte-for-byte unchanged.
+/LICENSE.txt -text
+/bench-landing/license.txt -text

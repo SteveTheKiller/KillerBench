@@ -28,7 +28,7 @@ def export(destination):
             continue
         if path.is_symlink():
             raise ValueError('Source contains a symbolic link: '+str(relative))
-        if path.is_file() and (path.suffix.lower() in ALLOWED or relative.as_posix() == '_headers'):
+        if path.is_file() and (path.suffix.lower() in ALLOWED or relative.as_posix() in {'_headers', 'license.txt'}):
             files.append((path, relative))
     spec = importlib.util.spec_from_file_location('site_checks', ROOT/'test-site.py')
     checks = importlib.util.module_from_spec(spec)

@@ -14,7 +14,7 @@ If `dotnet` is available, `dotnet --list-runtimes` should list `Microsoft.Window
 ## When a package is published
 
 1. Use the official download linked from this website. No KillerBench download link is active yet.
-2. Read that package's requirements, license, included notices, signature and checksum information. A filename alone does not establish authenticity.
+2. Read that package's requirements, [GPLv3 license](../license.txt), Corresponding Source instructions, included third-party notices, signature and checksum information. A filename alone does not establish authenticity.
 3. Follow the published package instructions. Keep any accompanying files together; do not assume an installer, updater or shortcut integration is included.
 4. Start KillerBench as your normal account and follow [Your first diagnosis](first-run.html). Diagnostic access failures stay visible; elevation is a separate deliberate choice.
 
@@ -28,4 +28,4 @@ The illustrative console on the landing page is synthetic output. Final applicat
 
 ## Source, license and support
 
-Read [About KillerBench](about.html) for source availability, distribution notices, evidence privacy and support information. The [Engine guide](../engine/) is for developers with an authorized source checkout; it does not imply that a public Engine package is available.
+KillerBench is licensed under GPLv3. Source-delivery instructions and third-party font permissions remain pending for the first public package. Read [About KillerBench](about.html) for source availability, distribution notices, evidence privacy and support information. The [Engine guide](../engine/) is for developers with an authorized source checkout; it does not imply that a public Engine package is available.

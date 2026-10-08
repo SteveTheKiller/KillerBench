@@ -42,4 +42,4 @@ The Engine is not yet published as a package. Pin a repository revision when emb
 
 ## License
 
-KillerBench is licensed under GPLv3.
+KillerBench is licensed under GPLv3. See [LICENSE.txt](../LICENSE.txt) and the [licensing and release requirements](../LICENSING.md). A public Engine package and the complete public implementation remain pending.
