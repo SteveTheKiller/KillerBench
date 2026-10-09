@@ -93,6 +93,8 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Desktop, accessibility and localization
 
+- Kept app icons sharp at fractional display DPI and app zoom by caching exact pixel sizes from a covering source and aligning the final draw to device pixels.
+
 - Added the workbench layout with section buttons, a collapsible tool sidebar and icon rail, a theme-aware smoked-glass output pane, report export in the main workspace and an activity log.
 - Added 13 family themes with yellow and magenta accents on the neutral and 98SE themes. New installs and the website started on Dark with the yellow accent.
 - Added localization in 19 languages, including Vietnamese, Ukrainian, Norwegian (Bokmål) and Brazilian Portuguese, with a two-column language menu.

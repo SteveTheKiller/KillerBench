@@ -20,11 +20,7 @@ public partial class MainWindow : Window
             new Uri("pack://application:,,,/KillerBench;component/Assets/AppIcon.ico"),
             System.Windows.Media.Imaging.BitmapCreateOptions.None,
             System.Windows.Media.Imaging.BitmapCacheOption.OnLoad).Frames;
-        void RefreshTitleIcon() => TitlebarIcon.Source = titleFrames
-            .OrderBy(frame => Math.Abs(frame.PixelWidth - TitlebarIcon.ActualWidth * System.Windows.Media.VisualTreeHelper.GetDpi(TitlebarIcon).DpiScaleX))
-            .First();
-        TitlebarIcon.Loaded += (_, _) => RefreshTitleIcon();
-        TitlebarIcon.SizeChanged += (_, _) => RefreshTitleIcon();
+        TitlebarIcon.Source = titleFrames[0];
         ApplyWorkflowOptionCatalog();
         InitializeShell();
         InitializeNavigation();

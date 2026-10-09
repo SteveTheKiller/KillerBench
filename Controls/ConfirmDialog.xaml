@@ -1,6 +1,7 @@
 <Window x:Class="KillerBench.Controls.ConfirmDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:icons="clr-namespace:KillerBench.Controls"
         xmlns:local="clr-namespace:KillerBench.Controls"
         Title="KillerBench" Width="360" SizeToContent="Height"
         WindowStartupLocation="CenterOwner" WindowStyle="None"
@@ -34,10 +35,10 @@
                                 Opacity="{DynamicResource GrainOpacity}"/>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left"
                                     VerticalAlignment="Center" Margin="{DynamicResource TitleBarPadding}">
-                            <Image x:Name="TitleIcon" Width="{DynamicResource TitleIconSize}"
+                            <icons:AppIcon x:Name="TitleIcon" Width="{DynamicResource TitleIconSize}"
                                    Height="{DynamicResource TitleIconSize}"
                                    Margin="{DynamicResource TitleIconMargin}"
-                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                                   RenderOptions.BitmapScalingMode="NearestNeighbor"/>
                             <Grid VerticalAlignment="Center" Visibility="{DynamicResource WordmarkVisibility}">
                                 <TextBlock Margin="1,2,0,0" IsHitTestVisible="False"
                                            Opacity="{DynamicResource WordmarkAccentShadowOpacity}"

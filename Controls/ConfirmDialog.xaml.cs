@@ -22,11 +22,7 @@ public partial class ConfirmDialog : Window
         var titleFrames = BitmapDecoder.Create(
             new Uri("pack://application:,,,/KillerBench;component/Assets/AppIcon.ico"),
             BitmapCreateOptions.None, BitmapCacheOption.OnLoad).Frames;
-        void RefreshTitleIcon() => TitleIcon.Source = titleFrames
-            .OrderBy(frame => Math.Abs(frame.PixelWidth - TitleIcon.ActualWidth * VisualTreeHelper.GetDpi(TitleIcon).DpiScaleX))
-            .First();
-        TitleIcon.Loaded += (_, _) => RefreshTitleIcon();
-        TitleIcon.SizeChanged += (_, _) => RefreshTitleIcon();
+        TitleIcon.Source = titleFrames[0];
         Loaded += (_, _) =>
         {
             CancelButton.Focus();
