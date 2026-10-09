@@ -9,10 +9,22 @@
     <Version>0.1.0</Version>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <FileVersion>0.1.0.0</FileVersion>
+    <!-- Shown on the About card beside the version. Keep this as Unreleased during development.
+         A final release must use the date on its CHANGELOG section; release.ps1 enforces that. -->
+    <ReleaseDate>Unreleased</ReleaseDate>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
     <DefaultItemExcludes>$(DefaultItemExcludes);**\bin\**;**\obj\**</DefaultItemExcludes>
   </PropertyGroup>
+  <!-- Bake ReleaseDate into the assembly so About can show it. A file timestamp would not
+       survive being copied, and the PE linker stamp is a build date, not a release date. -->
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>ReleaseDate</_Parameter1>
+      <_Parameter2>$(ReleaseDate)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
   <ItemGroup>
     <None Update="LICENSE.txt" CopyToPublishDirectory="PreserveNewest" />
     <Resource Include="Fonts\*.ttf" />
