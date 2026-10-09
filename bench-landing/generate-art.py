@@ -44,16 +44,21 @@ Image.open(io.BytesIO(grain)).verify()
 write(HERE / "grain.png", grain)
 
 og = load("bench_og", "make-og-images.py")
-og.mw.APPS["KillerBench"] = ("Killer", "Bench", (232, 150, 44), "Diagnostic Workbench")
-original_line = og.punk_line
-og.punk_line = lambda text, size, fill: original_line("IN DEVELOPMENT" if text == "KillerBench.net" else text, size, fill)
+# Dark/Yellow is the default theme: Themes/Accents/Dark/Yellow.xaml PrimaryBrush.
+og.mw.APPS["KillerBench"] = ("Killer", "Bench", (0xEA, 0xD9, 0x00), "Free Diagnostic Workbench")
+og.mw.LOGO_LEFT["KillerBench"] = str(HERE / "app-icon.png")
 art = og.build("KillerBench")
 buffer = io.BytesIO()
 art.save(buffer, format="PNG")
 write(HERE / "og-image.png", buffer.getvalue())
 Image.open(HERE / "og-image.png").verify()
 assert art.size == (1200, 630)
-print("Generated family SVG wordmarks, validated font and grain, and 1200x630 social artwork.")
+readme = og.mw.build("KillerBench", 1600, style="banner")
+buffer = io.BytesIO()
+readme.save(buffer, format="PNG")
+write(HERE.parent / "docs" / "wordmark.png", buffer.getvalue())
+write(HERE.parent / "docs" / "banner.png", (HERE / "og-image.png").read_bytes())
+print("Generated family SVG wordmarks, validated font and grain, 1200x630 social artwork and README art.")
 
 if "--scan" in __import__("sys").argv:
     for accent, color in svg.ACCENTS["black"].items():
