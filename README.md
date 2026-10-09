@@ -1,20 +1,40 @@
-# KillerBench
+<p align="center">
+  <a href="https://killerbench.net"><img src="docs/wordmark.png" height="180" alt="KillerBench - Free Diagnostic Workbench"></a>
+</p>
 
-A Windows diagnostic, repair, and maintenance workbench.
+Free and open-source Windows diagnosis, repair and maintenance workbench for technicians. KillerBench checks the computer first, explains what it found with the evidence behind each finding, and changes Windows only when you pick a specific fix and confirm it.
 
-- **Status:** Version 0.1.0, in development. No public release yet.
-- **Platform:** Windows, C#, .NET 10, WPF.
-- **Tools:** Windows Update, system files, networking, printing, storage, services, cleanup, browser-extension review, and security checks.
-- **Workflow:** Choose a tool, configure its options, press GO, then use the readable report for the next safe step or Raw output for detailed evidence.
-- **Diagnostics:** Deterministic checks, live console output, saved captures, and execution journals. No AI required.
-- **Repairs:** Supported actions use prerequisite checks and verification. Coverage is still expanding.
-- **Engine:** The KillerBench.Engine, usable separately from the desktop app, with CLI support.
-- **Interface:** Modern smoked-glass console and readable reports that follow the active theme across 13 themes.
+Full how-tos live in the [user guide](https://killerbench.net/help/); the Engine, CLI and architecture are covered in the [developer guide](https://killerbench.net/engine/).
+
+## Features
+
+- Full system scan reads 49 diagnostic areas, ranks what needs attention and saves a local journal without changing anything
+- Twelve sections group every tool: Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker, Privacy and Storage
+- Guarded repairs recheck fresh evidence immediately before they act, write a pending record, verify the result and reconcile an interrupted request without repeating it
+- Missing, failed or timed-out evidence stays Incomplete and never counts as healthy
+- Windows Update, servicing, DISM and SFC, services, networking, DHCP and DNS, printing, storage, Storage Spaces, BitLocker, Defender, firewall, certificates, crashes and hardware errors
+- BitLocker encryption, protectors, recovery backup to a file, Active Directory or Microsoft Entra ID, and decryption, with the recovery password never shown or logged
+- Cleanup with previews, age and file limits, and per-file rechecks; profile review; scheduled-task review; declutter review
+- Privacy controls for app permissions, advertising, clipboard, cloud search and suggestions, with policy checks and exact undo
+- Readable reports beside the raw evidence, with HTML and text export and the next safe step first
+- `killerbench-cli` runs the same Engine from PowerShell, RMM and KillerMCP, with JSON output, previews by default and distinct exit codes
+- Thirteen themes and nineteen languages, with the family About card, shortcut list and keyboard map
+- Diagnostics and report analysis run locally, with no account and no AI service
+
+## Requirements
+
+- Windows x64
+- [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) for Windows x64
+- Administrator rights for repairs and for the protected evidence some checks need; diagnostics also run as a standard user
+
+KillerBench ships as `KillerBench.exe` and `killerbench-cli.exe`, each a single portable EXE. Each release lists their SHA-256 values in `SHA256SUMS.txt`, and both are signed.
+
+## Safety
+
+Native repair validation is still in progress. Read [How changes stay safe](https://killerbench.net/help/safety.html) before your first repair and keep a current backup before any change.
 
 ## License and source
 
-KillerBench is licensed under GPLv3. See the complete [GNU General Public License version 3](LICENSE.txt).
+KillerBench is licensed under GPLv3. See the complete [GNU General Public License version 3](LICENSE.txt). Every release attaches the complete source for that exact version, and the current release's source is [KillerBench-0.1.0-src.zip](https://github.com/SteveTheKiller/KillerBench/releases/download/v0.1.0/KillerBench-0.1.0-src.zip). See [licensing and release requirements](LICENSING.md).
 
-Version 0.1.0 is Unreleased. The public repository currently provides project information; the complete implementation is not publicly available there. Before distributing a binary, provide its Corresponding Source through a method allowed by GPLv3 section 6, preserve applicable notices and resolve third-party redistribution permissions. See [licensing and release requirements](LICENSING.md).
-
-[Website](https://killerbench.net)
+Part of [killertools.net](https://killertools.net).
