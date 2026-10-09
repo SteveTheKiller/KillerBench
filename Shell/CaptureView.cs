@@ -51,6 +51,10 @@ public partial class MainWindow
         OpenButton.IsEnabled = !busy;
         CancelButton.IsEnabled = busy;
         ExportReportButton.IsEnabled = true;
+        // Raw output slides out on its own while work runs and slides back when it ends.
+        // Raw output streams in the right sidebar while work runs; the report takes over when it lands.
+        if (busy) ShowRawOutput();
+        else if (reportAvailable) { rawView = false; SetOutputView(); }
     }
 
     private async void OnScan(object sender, RoutedEventArgs e)
@@ -134,7 +138,7 @@ public partial class MainWindow
         workflowReportTitles.Add(overview, "Windows Update capture");
         RegisterSource(overview);
         RenderNamedWorkflowReport(workflowReport, "Windows Update capture");
-        SetOutputView(report: true);
+        SetOutputView();
         SaveCaptureButton.IsEnabled = true;
         CaptureInfo.Text = $"{session.Machine} | {session.Elevation} | {session.StartedUtc.ToLocalTime():g} | {session.Sources.Count(s => s.Evidence is not null)}/{session.Sources.Count} sources | {findings.Length} findings";
         OnFindingsTab(this, new RoutedEventArgs());

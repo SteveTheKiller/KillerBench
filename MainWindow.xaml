@@ -4,9 +4,9 @@
         xmlns:workflows="clr-namespace:KillerBench.Engine.Workflows;assembly=KillerBench.Engine"
         xmlns:security="clr-namespace:KillerBench.Engine.Security;assembly=KillerBench.Engine"
         xmlns:bitlocker="clr-namespace:KillerBench.Engine.BitLocker;assembly=KillerBench.Engine"
-        Title="KillerBench" Icon="Assets/AppIcon.ico" Width="1480" Height="800" MinWidth="1400" MinHeight="650"
+        Title="KillerBench" Icon="Assets/AppIcon.ico" Width="1025" Height="700" MinWidth="800" MinHeight="500"
         WindowStyle="None" ResizeMode="CanResize" SizeToContent="Manual" Background="{DynamicResource BackgroundBrush}"
-        Foreground="{DynamicResource TextBrush}" FontFamily="Segoe UI" FontSize="13"
+        Foreground="{DynamicResource TextBrush}" FontFamily="Segoe UI" FontSize="12"
         AllowDrop="True" Drop="OnDrop" PreviewDragOver="OnDragOver" PreviewKeyDown="OnKeyDown">
   <shell:WindowChrome.WindowChrome><shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0"/></shell:WindowChrome.WindowChrome>
   <Border x:Name="WindowEdgeBorder" BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="{DynamicResource WindowEdgeThickness}">
@@ -162,24 +162,62 @@
                             </ContextMenu></Button.ContextMenu></Button>
         </StackPanel>
       </Grid>
-      <Grid Grid.ColumnSpan="3" x:Name="ContentPane">
-        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+      <Thumb x:Name="SidebarGrip" Grid.Column="1" Style="{StaticResource SidebarResizeGrip}" HorizontalAlignment="Left" Margin="0,34,0,0" DragStarted="OnSidebarGripStarted" DragDelta="OnSidebarGripDelta" DragCompleted="OnSidebarGripCompleted"/>
+      <Grid Grid.ColumnSpan="3" x:Name="ContentPane" UseLayoutRounding="True">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="24"/><ColumnDefinition Width="2*" MinWidth="300"/><ColumnDefinition Width="3*"/></Grid.ColumnDefinitions>
         <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-        <Border x:Name="LeftPanel" Width="370" Grid.RowSpan="2" Style="{StaticResource Panel}" Margin="0" ClipToBounds="True">
+        <Border x:Name="LeftPanel" Width="180" Grid.RowSpan="2" Background="{DynamicResource SidebarPaneBrush}" Margin="0" ClipToBounds="True">
+<Grid>
+<Border Padding="4,6,4,4"><DockPanel>
+      <StackPanel x:Name="SidebarHeader" DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,2,0,8">
+        <TextBlock Text="&#xE90F;" FontFamily="Segoe MDL2 Assets" FontSize="16" Margin="0,0,6,0" Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
+        <TextBlock x:Name="SidebarHeading" Text="{DynamicResource Str_Shell_Tools}" Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource WordmarkFont}" FontSize="20" TextTrimming="CharacterEllipsis"/>
+      </StackPanel>
+      <ListBox x:Name="CategoryList" Margin="0" Background="Transparent" BorderThickness="0" SelectionChanged="OnCategorySelected" AutomationProperties.Name="Tool categories" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/></DataTemplate></ListBox.ItemTemplate>
+        <ListBox.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
+        <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}">
+          <!-- Family view-button semantics (KillerScan ViewToolbarButton / KillerPDF ToolbarButton): transparent at rest,
+               RowHoverBrush on hover, and the theme's SelectionBg/SelectionFg pair marks the current section. -->
+          <Setter Property="Margin" Value="0,0,0,2"/><Setter Property="Padding" Value="9,3"/><Setter Property="FontSize" Value="13"/>
+          <Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="VerticalContentAlignment" Value="Center"/>
+          <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
+          <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
+            <Border x:Name="CategoryFace" Background="Transparent" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="{TemplateBinding Padding}">
+              <ContentPresenter VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="CategoryFace" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+              </Trigger>
+              <Trigger Property="IsSelected" Value="True">
+                <Setter TargetName="CategoryFace" Property="Background" Value="{DynamicResource SelectionBg}"/>
+                <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate></Setter.Value></Setter>
+        </Style></ListBox.ItemContainerStyle>
+      </ListBox>
+        </DockPanel></Border></Grid>
+</Border>
+        <Grid x:Name="ConsoleBank" Grid.Column="2">
+          <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+          <Grid.RowDefinitions><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <Border x:Name="ToolCard" Grid.Row="0" Style="{StaticResource Panel}" Margin="0">
 <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
-<Border Padding="10">
-          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+<Border Padding="14">
+          <ScrollViewer x:Name="ToolScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <ScrollViewer.Resources>
               <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
-                <Setter Property="ContentTemplate"><Setter.Value><DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap" MaxWidth="280"/></DataTemplate></Setter.Value></Setter>
+                <Setter Property="ContentTemplate"><Setter.Value><DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap"/></DataTemplate></Setter.Value></Setter>
               </Style>
             </ScrollViewer.Resources>
           <StackPanel>
-            <TextBlock x:Name="CategoryTitle" Text="{DynamicResource Str_Shell_Diagnostics}" FontFamily="{DynamicResource WordmarkFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="22" Margin="0,0,0,4"/>
+            <TextBlock x:Name="CategoryTitle" Text="{DynamicResource Str_Shell_Diagnostics}" FontFamily="{DynamicResource WordmarkFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" Margin="0,0,0,4"/>
             <TextBlock x:Name="CategoryDescription" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,8"/>
             <WrapPanel Margin="0,0,0,6">
               <ComboBox x:Name="MainWorkflow" ItemsSource="{x:Static workflows:WorkflowCatalog.All}" DisplayMemberPath="Title" SelectedIndex="0" Visibility="Collapsed" SelectionChanged="OnWorkflowOptionsChanged"/>
-              <ComboBox x:Name="CategoryWorkflow" DisplayMemberPath="Title" Width="260" AutomationProperties.Name="Tool in selected category" Margin="0,0,8,0" SelectionChanged="OnCategoryWorkflowSelected"/>
+              <ComboBox x:Name="CategoryWorkflow" DisplayMemberPath="Title" Width="250" AutomationProperties.Name="Tool in selected category" Margin="0,0,8,0" SelectionChanged="OnCategoryWorkflowSelected"/>
             </WrapPanel>
             <StackPanel x:Name="ServicingMonitorSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="{DynamicResource Str_Peek_Description}" TextWrapping="Wrap"/>
@@ -532,15 +570,16 @@
             </StackPanel>
             <StackPanel x:Name="PrivacySettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="{DynamicResource Str_Privacy_Description}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,0,0,4"/>
-              <ListBox x:Name="PrivacyAreas" ItemsSource="{x:Static security:PrivacyCatalog.All}" SelectionMode="Multiple" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" MaxHeight="140" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Privacy areas to inspect">
+              <ListBox x:Name="PrivacyAreas" ItemsSource="{x:Static security:PrivacyCatalog.All}" SelectionMode="Multiple" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" MaxHeight="140" Margin="0,4,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Privacy areas to inspect">
+                <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="Margin" Value="0,0,8,6"/><Setter Property="Focusable" Value="False"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><ContentPresenter/></ControlTemplate></Setter.Value></Setter></Style></ListBox.ItemContainerStyle>
                 <ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
                 <ListBox.ItemTemplate><DataTemplate>
-                  <CheckBox Content="{Binding Title}" ToolTip="{Binding Impact}" Width="190" IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Mode=TwoWay}"/>
+                  <CheckBox Content="{Binding Title}" ToolTip="{Binding Impact}" Width="170" IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Mode=TwoWay}"/>
                 </DataTemplate></ListBox.ItemTemplate>
               </ListBox>
               <WrapPanel Margin="0,4,0,0">
                 <StackPanel Margin="0,0,8,0">
-                  <TextBlock Text="{DynamicResource Str_Privacy_ClipboardHistory}"/>
+                  <TextBlock Text="{DynamicResource Str_Privacy_ClipboardHistory}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,2"/>
                   <ComboBox x:Name="PrivacyClipboardHistoryChoice" SelectedIndex="0" Width="170" SelectionChanged="OnPrivacyClipboardHistoryChanged" AutomationProperties.Name="Clipboard history action">
                     <ComboBoxItem Content="{DynamicResource Str_Privacy_InspectOnly}" Tag="Inspect"/>
                     <ComboBoxItem Content="{DynamicResource Str_Privacy_TurnOn}" Tag="On"/>
@@ -551,11 +590,13 @@
               </WrapPanel>
               <WrapPanel Margin="0,6,0,0">
                 <StackPanel Margin="0,0,8,0">
-                  <TextBlock Text="{DynamicResource Str_Privacy_Setting}"/>
-                  <ComboBox x:Name="PrivacyBooleanSettingChoice" ItemsSource="{x:Static security:PrivacyBooleanSettingCatalog.All}" DisplayMemberPath="Title" SelectedIndex="0" Width="170" SelectionChanged="OnPrivacyBooleanSettingChanged" AutomationProperties.Name="Privacy setting"/>
+                  <TextBlock Text="{DynamicResource Str_Privacy_Setting}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,2"/>
+                  <ComboBox x:Name="PrivacyBooleanSettingChoice" ItemsSource="{x:Static security:PrivacyBooleanSettingCatalog.All}" SelectedIndex="0" Width="170" SelectionChanged="OnPrivacyBooleanSettingChanged" AutomationProperties.Name="Privacy setting">
+                    <ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis"/></DataTemplate></ComboBox.ItemTemplate>
+                  </ComboBox>
                 </StackPanel>
                 <StackPanel Margin="0,0,8,0">
-                  <TextBlock Text="{DynamicResource Str_Privacy_Action}"/>
+                  <TextBlock Text="{DynamicResource Str_Privacy_Action}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,2"/>
                   <ComboBox x:Name="PrivacyBooleanActionChoice" SelectedIndex="0" Width="120" SelectionChanged="OnPrivacyBooleanSettingChanged" AutomationProperties.Name="Privacy setting action">
                     <ComboBoxItem Content="{DynamicResource Str_Privacy_InspectOnly}" Tag="Inspect"/>
                     <ComboBoxItem Content="{DynamicResource Str_Privacy_TurnOn}" Tag="On"/>
@@ -564,7 +605,7 @@
                 </StackPanel>
                 <CheckBox x:Name="PrivacyBooleanApply" Content="{DynamicResource Str_Privacy_Apply}" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
               </WrapPanel>
-              <TextBlock Text="{DynamicResource Str_Privacy_Boundary}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,3,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Privacy_Boundary}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,8,0,0"/>
             </StackPanel>
             <StackPanel x:Name="BitLockerSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="{DynamicResource Str_BitLocker_Description}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,0,0,4"/>
@@ -818,70 +859,6 @@
           </Grid></Expander></StackPanel></ScrollViewer>
         </Border></Grid>
 </Border>
-        <Grid x:Name="ConsoleBank" Grid.Column="2">
-          <Grid.ColumnDefinitions><ColumnDefinition Width="*" MinWidth="680"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-          <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-      <ListBox x:Name="CategoryList" Grid.Row="0" Margin="0,0,0,8" Background="Transparent" BorderThickness="0" SelectionChanged="OnCategorySelected" AutomationProperties.Name="Tool categories" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-        <ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Title}" TextWrapping="NoWrap" TextAlignment="Center"/></DataTemplate></ListBox.ItemTemplate>
-        <ListBox.ItemsPanel><ItemsPanelTemplate><UniformGrid Rows="2"/></ItemsPanelTemplate></ListBox.ItemsPanel>
-        <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}">
-          <Setter Property="Margin" Value="3,0"/><Setter Property="MinHeight" Value="42"/><Setter Property="FontSize" Value="16"/>
-          <Setter Property="FontFamily" Value="Segoe UI"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="TextOptions.TextFormattingMode" Value="Display"/><Setter Property="HorizontalContentAlignment" Value="Center"/><Setter Property="VerticalContentAlignment" Value="Center"/>
-          <Setter Property="Background" Value="{DynamicResource PaneBrush}"/>
-          <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
-            <Border x:Name="CategoryFace" Background="{DynamicResource PaneBrush}" CornerRadius="3">
-              <Grid>
-                <Border CornerRadius="2" IsHitTestVisible="False"><Border.Background><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#55FFFFFF" Offset="0"/><GradientStop Color="#08FFFFFF" Offset="0.45"/><GradientStop Color="#55000000" Offset="1"/></LinearGradientBrush></Border.Background></Border>
-                <ContentPresenter Margin="6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-              </Grid>
-            </Border>
-            <ControlTemplate.Triggers>
-              <Trigger Property="IsSelected" Value="True">
-                <Setter TargetName="CategoryFace" Property="Background" Value="{DynamicResource PrimaryFillBrush}"/>
-                <Setter Property="Foreground" Value="{DynamicResource OnPrimaryBrush}"/>
-              </Trigger>
-            </ControlTemplate.Triggers>
-          </ControlTemplate></Setter.Value></Setter>
-        </Style></ListBox.ItemContainerStyle>
-      </ListBox>
-          <Border Grid.Row="1" Style="{StaticResource Panel}">
-<Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
-<Border Padding="6">
-            <Grid>
-              <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-              <Expander Grid.Row="4" Header="{DynamicResource Str_Session_Sources}" Foreground="{DynamicResource TextBrush}" Margin="0,8,0,0">
-                <Grid Height="140">
-                  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-                  <DockPanel><Button DockPanel.Dock="Right" Content="{DynamicResource Str_Session_LoadSample}" Click="OnSample"/><TextBlock x:Name="SessionLabel" VerticalAlignment="Center"/></DockPanel>
-                  <ListBox x:Name="SourcesList" Grid.Row="1" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" SelectionChanged="OnSourceSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Evidence_sources}"/>
-                  <Border x:Name="SourceFadeTop" Style="{StaticResource SidebarFadeTop}" IsHitTestVisible="False"/>
-                  <Border x:Name="SourceFadeBottom" Style="{StaticResource SidebarFadeBottom}" IsHitTestVisible="False"/>
-                </Grid>
-              </Expander>
-              <DockPanel Margin="0,0,0,6">
-                <Button x:Name="ExportReportButton" DockPanel.Dock="Right" Content="{DynamicResource Str_ExportReport}" Click="OnExportReport" ToolTip="{DynamicResource Str_ExportContents}" Padding="10,4"/>
-                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-                  <Button x:Name="ConsoleViewButton" Content="{DynamicResource Str_Session_RawOutput}" Click="OnConsoleView" Padding="10,4" ToolTip="{DynamicResource Str_Session_RawOutputTip}" AutomationProperties.Name="Show raw technical output"/>
-                  <Button x:Name="ReportViewButton" Content="{DynamicResource Str_Session_ReadableReport}" Click="OnReportView" IsEnabled="False" Padding="10,4" Margin="6,0,0,0" ToolTip="{DynamicResource Str_Session_ReadableReportTip}" AutomationProperties.Name="Show readable report"/>
-                </StackPanel>
-                <TextBlock x:Name="EvidenceTitle" Text="{DynamicResource Str_Text_Evidence}" FontFamily="{DynamicResource WordmarkFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="12,0,12,0"/>
-              </DockPanel>
-              <DockPanel x:Name="ConsoleSearchPanel" Grid.Row="1" Margin="0,0,0,6">
-                <Button DockPanel.Dock="Right" Content="{DynamicResource Str_Content_FIND}" Click="OnFind" ToolTip="{DynamicResource Str_ToolTip_Filter_evidence_lines_Enter_in_search}" Margin="4,0,0,0"/>
-                <TextBox x:Name="SearchBox" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Filter_evidence}" ToolTip="{DynamicResource Str_ToolTip_Filter_loaded_lines_Clear_to_show_all_lines}" VerticalContentAlignment="Center" KeyDown="OnSearchKey"/>
-              </DockPanel>
-              <Border x:Name="ConsolePane" Grid.Row="2" Background="{DynamicResource ConsoleSurfaceBrush}" BorderBrush="{DynamicResource ConsoleBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="5" ClipToBounds="True" Effect="{DynamicResource ConsoleShadowEffect}">
-                <TextBox x:Name="EvidenceBox" IsReadOnly="True" AcceptsReturn="True" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource ConsoleTextBrush}" FontFamily="Consolas" FontSize="14" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Evidence_with_original_line_numbers}"/>
-              </Border>
-              <Border x:Name="ReportPane" Grid.Row="2" Style="{StaticResource Panel}" Visibility="Collapsed" Padding="0">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                  <StackPanel x:Name="ReportContent" Margin="16"/>
-                </ScrollViewer>
-              </Border>
-              <TextBlock x:Name="CoverageLabel" Grid.Row="3" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,10,0,0"/>
-            </Grid>
-          </Border></Grid>
-</Border>
           <Border x:Name="DetailsPanel" Grid.Column="1" Grid.RowSpan="2" Width="270" Style="{StaticResource Panel}" Margin="4,0,0,0" ClipToBounds="True" Visibility="Collapsed">
 <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
 <Border Padding="0">
@@ -910,9 +887,51 @@
           </Border></Grid>
 </Border>
         </Grid>
+        <Border x:Name="TerminalPanel" Grid.Column="3" Grid.RowSpan="2" Style="{StaticResource Panel}" Margin="8,0,0,0" ClipToBounds="True">
+<Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+<Border Padding="14">
+          <Grid>
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+            <DockPanel Margin="0,0,0,8">
+              <TextBlock x:Name="EvidenceTitle" Text="{DynamicResource Str_Text_Evidence}" FontFamily="{DynamicResource WordmarkFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,8,0"/>
+            </DockPanel>
+            <DockPanel Grid.Row="1" Margin="0,0,0,8">
+              <Button x:Name="ExportReportButton" DockPanel.Dock="Right" VerticalAlignment="Center" Content="{DynamicResource Str_ExportReport}" Click="OnExportReport" ToolTip="{DynamicResource Str_ExportContents}"/>
+              <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Button x:Name="ReportViewButton" Style="{StaticResource ViewToolbarButton}" Content="{DynamicResource Str_Session_ReadableReport}" Click="OnReportView" Padding="9,4" ToolTip="{DynamicResource Str_Session_ReadableReportTip}" AutomationProperties.Name="Show readable report"/>
+                <Button x:Name="ConsoleViewButton" Style="{StaticResource ViewToolbarButton}" Content="{DynamicResource Str_Session_RawOutput}" Click="OnConsoleView" Padding="9,4" Margin="6,0,0,0" ToolTip="{DynamicResource Str_Session_RawOutputTip}" AutomationProperties.Name="Show raw technical output"/>
+              </StackPanel>
+            </DockPanel>
+            <DockPanel x:Name="ConsoleSearchPanel" Grid.Row="2" Margin="0,0,0,6" Visibility="Collapsed">
+              <Button DockPanel.Dock="Right" Content="{DynamicResource Str_Content_FIND}" Click="OnFind" ToolTip="{DynamicResource Str_ToolTip_Filter_evidence_lines_Enter_in_search}" Margin="4,0,0,0"/>
+              <TextBox x:Name="SearchBox" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Filter_evidence}" ToolTip="{DynamicResource Str_ToolTip_Filter_loaded_lines_Clear_to_show_all_lines}" VerticalContentAlignment="Center" KeyDown="OnSearchKey"/>
+            </DockPanel>
+            <Border x:Name="ConsolePane" Grid.Row="3" Visibility="Collapsed" Background="{DynamicResource ConsoleSurfaceBrush}" BorderBrush="{DynamicResource ConsoleBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="5" ClipToBounds="True" Effect="{DynamicResource ConsoleShadowEffect}">
+              <TextBox x:Name="EvidenceBox" IsReadOnly="True" AcceptsReturn="True" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource ConsoleTextBrush}" FontFamily="Consolas" FontSize="14" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Evidence_with_original_line_numbers}"/>
+            </Border>
+            <TextBlock x:Name="StartGuide" Grid.Row="3" Visibility="Collapsed" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" LineHeight="18" Margin="0,4,0,0"/>
+            <Border x:Name="ReportPane" Grid.Row="3" Visibility="Collapsed">
+              <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel x:Name="ReportContent" Margin="0,4,6,0"/>
+              </ScrollViewer>
+            </Border>
+            <TextBlock x:Name="CoverageLabel" Grid.Row="4" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,10,0,0"/>
+            <Expander Grid.Row="5" Header="{DynamicResource Str_Session_Sources}" Foreground="{DynamicResource TextBrush}" Margin="0,8,0,0">
+                <Grid Height="140">
+                  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                  <DockPanel><Button DockPanel.Dock="Right" Content="{DynamicResource Str_Session_LoadSample}" Click="OnSample"/><TextBlock x:Name="SessionLabel" VerticalAlignment="Center"/></DockPanel>
+                  <ListBox x:Name="SourcesList" Grid.Row="1" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" SelectionChanged="OnSourceSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Evidence_sources}"/>
+                  <Border x:Name="SourceFadeTop" Style="{StaticResource SidebarFadeTop}" IsHitTestVisible="False"/>
+                  <Border x:Name="SourceFadeBottom" Style="{StaticResource SidebarFadeBottom}" IsHitTestVisible="False"/>
+                </Grid>
+              </Expander>
+          </Grid>
+        </Border>
+        </Grid>
+</Border>
         <Border x:Name="ActivityPanel" Grid.Column="2" Grid.Row="1" Style="{StaticResource Panel}" Height="124" Margin="0,4,0,0">
 <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
-<Border Padding="6">
+<Border Padding="14,10">
           <DockPanel>
             <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6"><Button DockPanel.Dock="Right" Content="{DynamicResource Str_Content_Hide}" Click="OnToggleActivity" Padding="6,2" ToolTip="{DynamicResource Str_ToolTip_Toggle_activity_log_F3}"/><Button x:Name="ExportActivityButton" DockPanel.Dock="Right" Content="{DynamicResource Str_ExportActivity}" Click="OnExportActivity" Padding="6,2" Margin="0,0,6,0" ToolTip="{DynamicResource Str_ExportActivityHint}" AutomationProperties.Name="{DynamicResource Str_ExportActivityHint}"/><TextBlock Text="{DynamicResource Str_Text_SESSION_ACTIVITY}" FontFamily="Consolas" FontSize="11" Foreground="{DynamicResource MutedTextBrush}"/></DockPanel>
             <TextBox x:Name="ActivityLog" IsReadOnly="True" FontFamily="Consolas" FontSize="11" Background="Transparent" BorderThickness="0" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Session_activity_log}"/>
@@ -927,7 +946,7 @@
       <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
       <Border Grid.ColumnSpan="2" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>
       <Border x:Name="ScanLight" Width="9" Height="9" CornerRadius="5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,0,0,0" Background="#3FA95F" BorderThickness="1" BorderBrush="#40000000" ToolTip="{DynamicResource Str_Shell_ReadyNoScan}"/>
-      <TextBlock x:Name="StatusLabel" Text="{DynamicResource Str_Text_Ready}" FontFamily="Segoe UI, Microsoft JhengHei UI, Nirmala UI" FontSize="11.5" Foreground="{DynamicResource TextFooter}" VerticalAlignment="Center" Margin="22,0,12,0" TextTrimming="CharacterEllipsis"/>
+      <TextBlock x:Name="StatusLabel" Text="{DynamicResource Str_Text_Ready}" FontFamily="Consolas" FontSize="11.5" Foreground="{DynamicResource TextFooter}" VerticalAlignment="Center" Margin="22,0,12,0" TextTrimming="CharacterEllipsis"/>
       <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,28,0" VerticalAlignment="Center"><TextBlock x:Name="ThemeStatus" FontFamily="Consolas" FontSize="10.5" Foreground="{DynamicResource TextFooter}" Text="v0.1.0" Margin="0,0,12,0" Cursor="Hand" MouseLeftButtonUp="OnAbout" ToolTip="{DynamicResource Str_Shortcuts_About}"/><TextBlock Text="&#x00A9; 2026 Steve the Killer" FontFamily="Consolas" FontSize="10.5" Foreground="{DynamicResource TextFooter}"/></StackPanel>
       <Canvas Grid.ColumnSpan="2" Width="13" Height="13" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,4,4" IsHitTestVisible="False">
         <Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="9" Canvas.Top="1"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="5" Canvas.Top="5"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="9" Canvas.Top="5"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="1" Canvas.Top="9"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="5" Canvas.Top="9"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="9" Canvas.Top="9"/>
@@ -941,7 +960,7 @@
         <Border Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}">
           <Grid>
             <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
-            <Button Content="&#xE8BB;" Style="{StaticResource ChromeCloseButton}" Click="OnAboutClose" HorizontalAlignment="Right" VerticalAlignment="Top" Panel.ZIndex="2" Width="{DynamicResource AboutCloseWidth}" Height="{DynamicResource AboutCloseHeight}" Margin="{DynamicResource AboutCloseMargin}"/>
+            <Button Content="&#xE8BB;" Style="{StaticResource OverlayCloseButton}" Click="OnAboutClose" HorizontalAlignment="Right" VerticalAlignment="Top" Panel.ZIndex="2" Width="{DynamicResource AboutCloseWidth}" Height="{DynamicResource AboutCloseHeight}" Margin="{DynamicResource AboutCloseMargin}"/>
             <StackPanel Margin="18,10,18,18">
               <Grid Margin="0,4,0,14" Width="{Binding ActualWidth, ElementName=AboutInfoGrid}">
                 <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
@@ -949,7 +968,10 @@
                   <icons:AppIcon.Effect><DropShadowEffect Color="Black" BlurRadius="12" ShadowDepth="3" Direction="270" Opacity="{DynamicResource IconShadowOpacity}"/></icons:AppIcon.Effect>
                 </icons:AppIcon>
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                  <TextBlock FontFamily="{DynamicResource WordmarkFont}" Cursor="Hand" MouseLeftButtonUp="OnAboutWebsite" ToolTip="killerbench.net"><Run Text="Killer" FontSize="22" Foreground="{DynamicResource TextBrush}"/><Run Text="Bench" FontSize="28.6" FontWeight="Bold" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
+                  <Grid>
+                    <TextBlock Margin="1,2,0,0" IsHitTestVisible="False" Opacity="{DynamicResource WordmarkAccentShadowOpacity}" FontFamily="{DynamicResource WordmarkFont}"><TextBlock.Effect><BlurEffect Radius="3"/></TextBlock.Effect><Run Text="Killer" FontSize="22" Foreground="Transparent"/><Run Text="Bench" FontSize="28.6" FontWeight="Bold" Foreground="#D8000000"/></TextBlock>
+                    <TextBlock FontFamily="{DynamicResource WordmarkFont}" Cursor="Hand" MouseLeftButtonUp="OnAboutWebsite" ToolTip="killerbench.net"><Run Text="Killer" FontSize="22" Foreground="{DynamicResource TextBrush}"/><Run Text="Bench" FontSize="28.6" FontWeight="Bold" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
+                  </Grid>
                   <TextBlock FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap"><Run Text="{DynamicResource Str_About_DescriptionPrefix}"/><Run Text=" "/><Hyperlink NavigateUri="https://killertools.net" RequestNavigate="OnAboutLink" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None">GPLv3 Killer Tools</Hyperlink><Run Text=" "/><Run Text="{DynamicResource Str_About_DescriptionSuffix}"/></TextBlock>
                 </StackPanel>
               </Grid>
@@ -968,10 +990,16 @@
                     <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_Publisher}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><TextBlock x:Name="AboutPublisherBlock" FontSize="12" TextWrapping="Wrap"/><TextBlock x:Name="AboutAkaBlock" Visibility="Collapsed" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,3,0,0"><Run Text="{DynamicResource Str_About_Aka}"/><Run Text=" "/><Hyperlink NavigateUri="https://thekiller.net" RequestNavigate="OnAboutLink" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None"><Run x:Name="AboutAkaRun"/></Hyperlink></TextBlock></StackPanel>
                     <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_Thumbprint}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><TextBlock x:Name="AboutThumbprintBlock" FontFamily="Consolas" FontSize="11" TextWrapping="Wrap"/></StackPanel>
                     <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_ExeHash}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><TextBlock x:Name="AboutSha256Block" FontFamily="Consolas" FontSize="11" TextWrapping="NoWrap"/></StackPanel>
-                    <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_KnowledgeDatabases}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><TextBlock x:Name="AboutDatabaseInfo" FontFamily="Consolas" FontSize="11" TextWrapping="Wrap"/><Button x:Name="AboutDatabaseUpdate" Content="{DynamicResource Str_About_UpdateDatabases}" Click="OnAboutDatabaseUpdate" HorizontalAlignment="Left" Margin="0,7,0,0"/><TextBlock x:Name="AboutDatabaseStatus" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,5,0,0"/></StackPanel>
                   </StackPanel>
                 </Border>
               </Grid>
+              <StackPanel Margin="0,14,0,0" Width="{Binding ActualWidth, ElementName=AboutInfoGrid}">
+                <TextBlock Text="{DynamicResource Str_About_KillerMcp}" Foreground="{DynamicResource TextBrush}" FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"/>
+                <TextBlock Text="{DynamicResource Str_About_KillerMcpNote}" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,2,0,7"/>
+                <CheckBox x:Name="AgentSafeRepairsCheck" FontSize="11" Click="OnAgentRepairsChanged"><TextBlock Text="{DynamicResource Str_About_KillerMcpSafe}" TextWrapping="Wrap"/></CheckBox>
+                <CheckBox x:Name="AgentDisruptiveRepairsCheck" FontSize="11" Margin="0,6,0,0" Click="OnAgentRepairsChanged"><TextBlock Text="{DynamicResource Str_About_KillerMcpDisruptive}" TextWrapping="Wrap"/></CheckBox>
+                <TextBlock x:Name="AgentRepairLockBlock" Visibility="Collapsed" FontSize="11" TextWrapping="Wrap" Margin="0,8,0,0" Foreground="{DynamicResource MutedTextBrush}"><Run x:Name="AgentRepairLockRun"/><Run Text=" "/><Hyperlink Click="OnAgentRepairClearLock" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None"><Run Text="{DynamicResource Str_About_KillerMcpClearLock}"/></Hyperlink></TextBlock>
+              </StackPanel>
             </StackPanel>
           </Grid>
         </Border>

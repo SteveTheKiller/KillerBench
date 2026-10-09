@@ -242,6 +242,7 @@
   <sys:String x:Key="Str_Privacy_TurnOn">Włącz</sys:String>
   <sys:String x:Key="Str_Privacy_TurnOff">Wyłącz</sys:String>
   <sys:String x:Key="Str_Privacy_Apply">Zastosuj po naciśnięciu GO</sys:String>
+  <sys:String x:Key="Str_Shell_Tools">Narzędzia</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">Ustawienie prywatności</sys:String>
   <sys:String x:Key="Str_Privacy_Action">Akcja</sys:String>
   <sys:String x:Key="Str_Privacy_Boundary">Zastosowanie zmienia tylko to konto. Pasujące zasady, dostęp urządzenia dla całego komputera, wyjątki poszczególnych aplikacji, zbieranie diagnostyki i zapisana zawartość schowka są zachowane. Zweryfikowane dzienniki obsługują chronione cofnięcie.</sys:String>
@@ -507,6 +508,12 @@
   <sys:String x:Key="Str_About_ExeHash">EXE SHA-256</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">BAZY WIEDZY</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">Bazy danych aktualizacji</sys:String>
+  <sys:String x:Key="Str_About_KillerMcp">Opcje KillerMCP</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpNote">Te ustawienia mają znaczenie tylko wtedy, gdy łączysz agenta AI z tym komputerem przez KillerMCP. KillerBench nie zawiera agenta AI.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpSafe">Zezwalaj KillerMCP na bezpieczne naprawy</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpDisruptive">Zezwalaj też na naprawy zakłócające pracę (wymaga zatwierdzenia)</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpLocked">Naprawy KillerMCP są zablokowane po {0}.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpClearLock">Odblokuj</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Wybierz język Office do zachowania</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Angielski (Stany Zjednoczone)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Angielski (Wielka Brytania)</sys:String>

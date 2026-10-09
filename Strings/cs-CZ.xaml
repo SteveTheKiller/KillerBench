@@ -257,6 +257,7 @@
   <sys:String x:Key="Str_Privacy_TurnOn">Zapnout</sys:String>
   <sys:String x:Key="Str_Privacy_TurnOff">Vypnout</sys:String>
   <sys:String x:Key="Str_Privacy_Apply">Použít při stisknutí GO</sys:String>
+  <sys:String x:Key="Str_Shell_Tools">Nástroje</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">Nastavení soukromí</sys:String>
   <sys:String x:Key="Str_Privacy_Action">Akce</sys:String>
   <sys:String x:Key="Str_Privacy_Boundary">Použití změn pouze na tento účet. Zachována je shodná politika, přístup k zařízením pro celý počítač, výjimky pro jednotlivé aplikace, shromažďování diagnostiky a uložený obsah schránky. Ověřené deníky podporují chráněné vrácení změn.</sys:String>
@@ -509,6 +510,12 @@
   <sys:String x:Key="Str_About_ExeHash">EXE SHA-256</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">ZDROJE ZNALOSTÍ</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">Aktualizovat databáze</sys:String>
+  <sys:String x:Key="Str_About_KillerMcp">Možnosti KillerMCP</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpNote">Tato nastavení platí jen tehdy, když k tomuto počítači připojíte agenta AI přes KillerMCP. KillerBench žádného agenta AI neobsahuje.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpSafe">Povolit KillerMCP spouštět bezpečné opravy</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpDisruptive">Povolit i rušivé opravy (vyžaduje schválení)</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpLocked">Opravy KillerMCP jsou zamčeny po {0}.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpClearLock">Odemknout</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Vyberte jazyk Office, který chcete zachovat</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Angličtina (Spojené státy)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Angličtina (Spojené království)</sys:String>

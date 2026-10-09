@@ -54,7 +54,7 @@ public partial class MainWindow
                 workflowReportTitles.Add(overview, "Imported evidence");
                 RegisterSource(overview);
                 RenderNamedWorkflowReport(summary, "Imported evidence");
-                SetOutputView(report: true);
+                SetOutputView();
                 OnFindingsTab(this, new RoutedEventArgs());
             }
             Report($"Batch import finished: {loaded} loaded, {failed} failed. Source files unchanged.");

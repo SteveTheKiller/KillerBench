@@ -258,6 +258,7 @@
   <sys:String x:Key="Str_Privacy_TurnOn">開啟</sys:String>
   <sys:String x:Key="Str_Privacy_TurnOff">關閉</sys:String>
   <sys:String x:Key="Str_Privacy_Apply">按下 GO 時套用</sys:String>
+  <sys:String x:Key="Str_Shell_Tools">工具</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">隱私設定</sys:String>
   <sys:String x:Key="Str_Privacy_Action">操作</sys:String>
   <sys:String x:Key="Str_Privacy_Boundary">僅對此帳戶套用變更。相符政策、整台機器的裝置存取、每個應用程式的例外、診斷收集和已儲存的剪貼簿內容將被保留。已驗證的日誌支援受控復原。</sys:String>
@@ -509,6 +510,12 @@
   <sys:String x:Key="Str_About_Thumbprint">指紋</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">知識資料庫</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">更新資料庫</sys:String>
+  <sys:String x:Key="Str_About_KillerMcp">KillerMCP 選項</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpNote">只有當您透過 KillerMCP 將 AI 代理程式連線到這台電腦時，這些設定才會生效。KillerBench 不包含 AI 代理程式。</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpSafe">允許 KillerMCP 執行安全修復</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpDisruptive">也允許具干擾性的修復（需要核准）</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpLocked">{0} 之後，KillerMCP 修復已鎖定。</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpClearLock">解除鎖定</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">選擇保留的 Office 語言</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">英文 (美國)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">英文 (英國)</sys:String>

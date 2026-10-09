@@ -51,7 +51,7 @@ public partial class MainWindow
             ShowEvidence();
             ModeLabel.Text = "SAVED WORKFLOW / HISTORICAL";
             RenderNamedWorkflowReport(report, "Saved workflow");
-            SetOutputView(report: true);
+            SetOutputView();
             Report("Saved workflow loaded. Recorded outcomes have not been reverified.");
         }
         catch (Exception error) when (error is OperationCanceledException or IOException or InvalidDataException or

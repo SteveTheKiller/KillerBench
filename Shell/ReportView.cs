@@ -8,28 +8,28 @@ public partial class MainWindow
 {
     private bool reportAvailable;
 
-    private void OnConsoleView(object sender, RoutedEventArgs e) => SetOutputView(report: false);
+    // The right sidebar holds all output: the readable report and the raw technical log.
+    private void OnConsoleView(object sender, RoutedEventArgs e) => ShowRawOutput();
 
     private void OnReportView(object sender, RoutedEventArgs e)
     {
-        if (reportAvailable) SetOutputView(report: true);
+        rawView = false;
+        SetOutputView();
     }
 
-    private void SetOutputView(bool report)
+    private void SetOutputView()
     {
-        bool showReport = report && reportAvailable;
-        ConsolePane.Visibility = showReport ? Visibility.Collapsed : Visibility.Visible;
-        ConsoleSearchPanel.Visibility = showReport ? Visibility.Collapsed : Visibility.Visible;
-        ReportPane.Visibility = showReport ? Visibility.Visible : Visibility.Collapsed;
-        ConsoleViewButton.IsEnabled = showReport;
-        ReportViewButton.IsEnabled = reportAvailable && !showReport;
+        ReportPane.Visibility = !rawView && reportAvailable ? Visibility.Visible : Visibility.Collapsed;
+        ConsolePane.Visibility = rawView ? Visibility.Visible : Visibility.Collapsed;
+        ConsoleSearchPanel.Visibility = ConsolePane.Visibility;
+        RefreshOutputButtons();
     }
 
     private void ClearWorkflowReport()
     {
         reportAvailable = false;
         ReportContent.Children.Clear();
-        SetOutputView(report: false);
+        SetOutputView();
     }
 
     private void RenderWorkflowReport(WorkflowResult result) => RenderNamedWorkflowReport(result, null);
@@ -38,8 +38,9 @@ public partial class MainWindow
     {
         bool demo = result.Machine == DemoWorkflow.MachineName;
         reportAvailable = true;
+        rawView = false;
         ReportContent.Children.Clear();
-        ReportContent.Children.Add(Heading((title ?? WorkflowCatalog.All.Single(workflow => workflow.Kind == result.Kind).Title) + (demo ? " demo report" : " report"), 22));
+        ReportContent.Children.Add(Heading((title ?? WorkflowCatalog.All.Single(workflow => workflow.Kind == result.Kind).Title) + (demo ? " demo report" : " report"), 15));
         ReportContent.Children.Add(Body(result.Status + " | " + result.StartedUtc.ToString("g"), 12, new Thickness(0, 0, 0, 14)));
 
         var summary = result.Summary;
@@ -50,7 +51,7 @@ public partial class MainWindow
         AddMetric(metrics, "Checked", result.Checks.Count);
         ReportContent.Children.Add(metrics);
 
-        ReportContent.Children.Add(Heading("Start here", 18));
+        ReportContent.Children.Add(Heading("Next step", 13));
         ReportContent.Children.Add(Card("Recommended next step", "",
             demo ? "Synthetic example only. Review the fabricated findings to explore the report layout." : NextAction(result),
             demo ? "No machine evidence was collected and no repair was run." : "No action starts from this report. Review the selected workflow controls before confirming a repair."));
@@ -62,7 +63,7 @@ public partial class MainWindow
             if (HasNetworkOptions(result)) ReportContent.Children.Add(NetworkNavigationButton());
         }
 
-        ReportContent.Children.Add(Heading("What needs attention", 18));
+        ReportContent.Children.Add(Heading("What needs attention", 13));
         var problems = result.Checks.Where(check => check.EffectiveState is CheckState.Attention or CheckState.Repairable or CheckState.Unknown)
             .OrderBy(check => ReviewPriority(check.EffectiveState)).ThenBy(check => check.Name, StringComparer.Ordinal).ToArray();
         var reviewRecipes = result.Recipes.Where(recipe => recipe.EffectiveOutcome is not RecipeOutcome.Clear)
@@ -70,7 +71,7 @@ public partial class MainWindow
         const int maximumVisibleReviewItems = 12;
         int visibleProblems = Math.Min(problems.Length, maximumVisibleReviewItems);
         if (problems.Length == 0 && reviewRecipes.Length == 0)
-            ReportContent.Children.Add(Body("No problem was established in the completed checks. Review incomplete coverage before treating the computer as healthy.", 13, new Thickness(0, 0, 0, 12)));
+            ReportContent.Children.Add(Body("No problem was established in the completed checks. Review incomplete coverage before treating the computer as healthy.", 12, new Thickness(0, 0, 0, 12)));
         foreach (var check in problems.Take(visibleProblems))
             ReportContent.Children.Add(Card(check.Name, check.EffectiveState.ToString(), check.Detail,
                 check.Repair is null ? "Review the retained evidence and stated limits." : Repairs.Plan(check.Repair.Value).Effects));
@@ -90,7 +91,7 @@ public partial class MainWindow
             .OrderBy(check => check.Name, StringComparer.Ordinal).ToArray();
         if (information.Length > 0)
         {
-            ReportContent.Children.Add(Heading("Collected information", 18));
+            ReportContent.Children.Add(Heading("Collected information", 13));
             const int maximumVisibleInformationItems = 12;
             foreach (var check in information.Take(maximumVisibleInformationItems))
                 ReportContent.Children.Add(Card(check.Name, "Information", check.Detail,
@@ -99,9 +100,9 @@ public partial class MainWindow
                 ReportContent.Children.Add(Body($"{information.Length - maximumVisibleInformationItems} additional informational items are retained in Console and the exported report.", 12, new Thickness(0, 0, 0, 12), "MutedTextBrush"));
         }
 
-        ReportContent.Children.Add(Heading("Actions taken", 18));
+        ReportContent.Children.Add(Heading("Actions taken", 13));
         if (result.Actions.Count == 0 && result.Repairs.Count == 0)
-            ReportContent.Children.Add(Body("No repair was executed in this workflow.", 13, new Thickness(0, 0, 0, 12)));
+            ReportContent.Children.Add(Body("No repair was executed in this workflow.", 12, new Thickness(0, 0, 0, 12)));
         foreach (var action in result.Actions)
             ReportContent.Children.Add(Card(action.Name, action.Status, action.Detail, action.NextAction));
         foreach (var repair in result.Repairs)
@@ -109,7 +110,7 @@ public partial class MainWindow
                 Repairs.IsVerified(repair) ? "The recorded follow-up step verified this repair." : "This action is not verified. Review its recorded outcome before taking another action.",
                 repair.RequiresRestart ? "Restart Windows, then rerun the affected workflow to verify." : "Test the affected feature and review the report before any further change."));
 
-        ReportContent.Children.Add(Heading("Scope and limits", 18));
+        ReportContent.Children.Add(Heading("Scope and limits", 13));
         ReportContent.Children.Add(Body(title is null
             ? "This report covers only the checks selected for this workflow. Historical evidence does not by itself prove a current fault or authorize a repair."
             : "This focused report summarizes retained evidence from the selected review. It does not by itself establish a current fault, ownership, or authority to make a change.", 12, new Thickness(0, 0, 0, 4)));
@@ -118,9 +119,9 @@ public partial class MainWindow
     private static Border Card(string title, string state, string detail, string action)
     {
         var content = new StackPanel();
-        content.Children.Add(Heading(title, 15));
+        content.Children.Add(Heading(title, 13));
         if (!string.IsNullOrWhiteSpace(state)) content.Children.Add(Body(state, 11, new Thickness(0, 0, 0, 7), "PrimaryBrush"));
-        content.Children.Add(Body(detail, 13, new Thickness(0, 0, 0, 9)));
+        content.Children.Add(Body(detail, 12, new Thickness(0, 0, 0, 9)));
         content.Children.Add(Body("Next: " + action, 12, new Thickness(0), "MutedTextBrush"));
         var card = new Border { Child = content, Padding = new Thickness(12), Margin = new Thickness(0, 0, 0, 10), CornerRadius = new CornerRadius(4), BorderThickness = new Thickness(1) };
         card.SetResourceReference(Border.BackgroundProperty, "SurfaceBrush");
@@ -258,7 +259,7 @@ public partial class MainWindow
 
     private static TextBlock Heading(string text, double size)
     {
-        var block = new TextBlock { Text = text, FontSize = size, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 7) };
+        var block = new TextBlock { Text = text, FontSize = size, FontWeight = FontWeights.SemiBold, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 5) };
         block.SetResourceReference(TextBlock.ForegroundProperty, "PrimaryBrush");
         return block;
     }
@@ -273,7 +274,7 @@ public partial class MainWindow
     private static void AddMetric(WrapPanel host, string label, int value)
     {
         var metric = new StackPanel { Width = 132, Margin = new Thickness(0, 0, 8, 8) };
-        metric.Children.Add(Heading(value.ToString(), 22));
+        metric.Children.Add(Heading(value.ToString(), 15));
         metric.Children.Add(Body(label, 11, new Thickness(0), "MutedTextBrush"));
         var card = new Border { Child = metric, Padding = new Thickness(10), CornerRadius = new CornerRadius(4), BorderThickness = new Thickness(1) };
         card.SetResourceReference(Border.BackgroundProperty, "PaneBrush");

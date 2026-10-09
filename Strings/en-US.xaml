@@ -241,9 +241,10 @@
   <sys:String x:Key="Str_Privacy_TurnOn">Turn on</sys:String>
   <sys:String x:Key="Str_Privacy_TurnOff">Turn off</sys:String>
   <sys:String x:Key="Str_Privacy_Apply">Apply when I press GO</sys:String>
+  <sys:String x:Key="Str_Shell_Tools">Tools</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">Privacy setting</sys:String>
   <sys:String x:Key="Str_Privacy_Action">Action</sys:String>
-  <sys:String x:Key="Str_Privacy_Boundary">Applying changes only this account. Matching policy, machine-wide device access, per-application exceptions, diagnostic collection and stored clipboard contents are preserved. Verified journals support guarded undo.</sys:String>
+  <sys:String x:Key="Str_Privacy_Boundary">Changes apply only to this account. Matching policy, machine-wide device access, per-application exceptions, diagnostic collection and stored clipboard contents are preserved. Verified journals support guarded undo.</sys:String>
   <sys:String x:Key="Str_BitLocker_Description">GO inspects by default. Backup, encryption and protection resume each require the matching confirmation below.</sys:String>
   <sys:String x:Key="Str_BitLocker_Volume">Volume</sys:String>
   <sys:String x:Key="Str_BitLocker_Operation">Operation</sys:String>
@@ -506,6 +507,12 @@
   <sys:String x:Key="Str_About_ExeHash">EXE SHA-256</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">KNOWLEDGE DATABASES</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">Update databases</sys:String>
+  <sys:String x:Key="Str_About_KillerMcp">KillerMCP Options</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpNote">These settings only apply if you connect an AI agent to this PC through KillerMCP. KillerBench does not include an AI agent.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpSafe">Allow KillerMCP to run safe repairs</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpDisruptive">Also allow disruptive repairs (approval required)</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpLocked">KillerMCP repairs are locked after {0}.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpClearLock">Clear lock</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Choose Office language to retain</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">English (United States)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">English (United Kingdom)</sys:String>

@@ -241,6 +241,7 @@
   <sys:String x:Key="Str_Privacy_TurnOn">Bật</sys:String>
   <sys:String x:Key="Str_Privacy_TurnOff">Tắt</sys:String>
   <sys:String x:Key="Str_Privacy_Apply">Áp dụng khi tôi nhấn BẮT ĐẦU</sys:String>
+  <sys:String x:Key="Str_Shell_Tools">Công cụ</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">Cài đặt quyền riêng tư</sys:String>
   <sys:String x:Key="Str_Privacy_Action">Hành động</sys:String>
   <sys:String x:Key="Str_Privacy_Boundary">Áp dụng thay đổi chỉ cho tài khoản này. Chính sách khớp, quyền truy cập thiết bị trên toàn máy, các ngoại lệ theo ứng dụng, thu thập chẩn đoán và nội dung bảng tạm lưu được giữ nguyên. Nhật ký đã xác minh hỗ trợ hoàn tác được bảo vệ.</sys:String>
@@ -506,6 +507,12 @@
   <sys:String x:Key="Str_About_ExeHash">EXE SHA-256</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">CƠ SỞ DỮ LIỆU TRI THỨC</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">Cập nhật cơ sở dữ liệu</sys:String>
+  <sys:String x:Key="Str_About_KillerMcp">Tùy chọn KillerMCP</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpNote">Các cài đặt này chỉ áp dụng nếu bạn kết nối một tác nhân AI với máy tính này qua KillerMCP. KillerBench không bao gồm tác nhân AI.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpSafe">Cho phép KillerMCP chạy các sửa chữa an toàn</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpDisruptive">Cho phép cả các sửa chữa gây gián đoạn (cần phê duyệt)</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpLocked">Các sửa chữa của KillerMCP bị khóa sau {0}.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpClearLock">Gỡ khóa</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Chọn ngôn ngữ Office để giữ lại</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Tiếng Anh (Hoa Kỳ)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Tiếng Anh (Vương Quốc Anh)</sys:String>

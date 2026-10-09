@@ -257,6 +257,7 @@
   <sys:String x:Key="Str_Privacy_TurnOn">Einschalten</sys:String>
   <sys:String x:Key="Str_Privacy_TurnOff">Ausschalten</sys:String>
   <sys:String x:Key="Str_Privacy_Apply">Anwenden, wenn ich GO drücke</sys:String>
+  <sys:String x:Key="Str_Shell_Tools">Werkzeuge</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">Datenschutzeinstellung</sys:String>
   <sys:String x:Key="Str_Privacy_Action">Aktion</sys:String>
   <sys:String x:Key="Str_Privacy_Boundary">Änderungen betreffen nur dieses Konto. Passende Richtlinie, maschinenweiter Gerätezugriff, Ausnahmen pro Anwendung, Diagnosesammlung und gespeicherte Zwischenablageinhalte bleiben erhalten. Verifizierte Journale unterstützen geschütztes Rückgängigmachen.</sys:String>
@@ -509,6 +510,12 @@
   <sys:String x:Key="Str_About_ExeHash">EXE SHA-256</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">WISSENSDATENBANKEN</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">Datenbanken aktualisieren</sys:String>
+  <sys:String x:Key="Str_About_KillerMcp">KillerMCP-Optionen</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpNote">Diese Einstellungen gelten nur, wenn Sie über KillerMCP einen KI-Agenten mit diesem PC verbinden. KillerBench enthält keinen KI-Agenten.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpSafe">KillerMCP sichere Reparaturen erlauben</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpDisruptive">Auch störende Reparaturen erlauben (Bestätigung erforderlich)</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpLocked">KillerMCP-Reparaturen sind nach {0} gesperrt.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpClearLock">Sperre aufheben</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Beizubehaltende Office-Sprache auswählen</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Englisch (Vereinigte Staaten)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Englisch (Vereinigtes Königreich)</sys:String>

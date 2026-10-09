@@ -206,8 +206,8 @@ internal static class Program
         {
             window.Show();
             window.UpdateLayout();
-            Require(window.Width == 1480 && window.Height == 800 && window.MinWidth == 1400 && window.MinHeight == 650 &&
-                window.SizeToContent == SizeToContent.Manual, "Workbench window keeps its fixed wide geometry");
+            Require(window.Width == 1025 && window.Height == 700 && window.MinWidth == 800 && window.MinHeight == 500 &&
+                window.SizeToContent == SizeToContent.Manual, "Workbench window keeps its family window geometry");
             Require(window.FindName("ZoomViewport") is FrameworkElement { ClipToBounds: true },
                 "Zoom content remains clipped to the workbench window");
             Require(window.FindName("ServicingMonitorSamples") is Slider { Minimum: 1, Maximum: 120, Value: 3 },
@@ -280,7 +280,7 @@ internal static class Program
                 "Advanced selection, knowledge, session and repair controls resolve their localizable English resources");
             Require(window.FindName("CategoryTitle") is TextBlock { Text: "Diagnostics" } &&
                 window.FindName("ScanLight") is Border { ToolTip: "Ready. No scan performed." } &&
-                window.FindName("AboutDatabaseUpdate") is Button { Content: "Update databases" },
+                window.FindName("AgentSafeRepairsCheck") is CheckBox && window.FindName("AgentDisruptiveRepairsCheck") is CheckBox,
                 "Shell status and About controls resolve their localizable English resources");
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
                 "Desktop subtitle identifies the full maintenance scope");
@@ -296,7 +296,7 @@ internal static class Program
                 [new("Service repair", CheckState.Repairable, "Fixture repair option", RepairKind.SystemFiles),
                  new("Collected system detail", CheckState.Information, "Fixture informational evidence")], [], "smoke-journal.json");
             typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [actionable]);
-            typeof(KillerBench.MainWindow).GetMethod("SetOutputView", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [true]);
+            typeof(KillerBench.MainWindow).GetMethod("SetOutputView", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, []);
             window.UpdateLayout();
             Require(FindTextBlocks(window).Any(block => block.Text == "Collected information") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("Fixture informational evidence", StringComparison.Ordinal)),
@@ -916,7 +916,7 @@ internal static class Program
             setThirdPartyResult.Invoke(window, [null]);
             updateSnapshotField.SetValue(window, null);
             ((CheckBox)window.FindName("UpdateDownloadedOnly")).IsChecked = false;
-            Require(window.Width / window.Height > 1.8, "Workbench opens in a wide layout");
+            Require(window.Width / window.Height > 1.4, "Workbench opens in a landscape layout");
             window.WindowStartupLocation = WindowStartupLocation.Manual;
             window.ShowActivated = false;
             window.ShowInTaskbar = false;
@@ -944,8 +944,8 @@ internal static class Program
                 "Control bank sits beside the console, not above it");
             var categories = (ListBox)window.FindName("CategoryList");
             var categoryOrigin = categories.TranslatePoint(new Point(), window);
-            Require(categoryOrigin.X >= controlOrigin.X + controlBank.ActualWidth && categories.ActualHeight < 100,
-                "Two compact rows of section buttons occupy only the middle pane beside the tool sidebar");
+            Require(categoryOrigin.X >= controlOrigin.X - 1 && categoryOrigin.X + categories.ActualWidth <= controlOrigin.X + controlBank.ActualWidth + 1,
+                "Section navigation lives in the left sidebar");
             Require(Grid.GetColumnSpan(categories) == 1 && ((FrameworkElement)window.FindName("DetailsPanel")).Visibility == Visibility.Collapsed &&
                 ((Button)window.FindName("ExportReportButton")).Visibility == Visibility.Visible,
                 "Category bank leads to the report workspace with a visible export action and no inspector sidebar");
@@ -978,9 +978,8 @@ internal static class Program
             var categoryTools = (ComboBox)window.FindName("CategoryWorkflow");
             var allTools = (ComboBox)window.FindName("MainWorkflow");
             Require(categories.Items.Cast<object>().Select(category => category.ToString()).SequenceEqual(["Diagnostics", "Repair", "Updates", "Devices", "Network", "Apps", "Maintenance", "Onboarding", "Security", "BitLocker", "Privacy", "Storage"]) &&
-                categories.ItemContainerGenerator.ContainerFromIndex(0) is ListBoxItem { FontFamily.Source: "Segoe UI", FontWeight: var categoryWeight } &&
-                categoryWeight == FontWeights.SemiBold,
-                "Twelve primary sections fill both rows while preserving the existing category order");
+                categories.ItemContainerGenerator.ContainerFromIndex(0) is ListBoxItem { FontFamily.Source: "Segoe UI" },
+                "Twelve primary sections list in the left sidebar while preserving the existing category order");
             var mainAction = (Button)window.FindName("MainGo");
             var automaticRepair = (CheckBox)window.FindName("MainAutoRepair");
             Require(categories.SelectedItem?.ToString() == "Diagnostics" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.CommonProblems } &&
@@ -1234,7 +1233,7 @@ internal static class Program
                 zoomMethod.Invoke(window, [scale]);
                 Pump();
                 Require(zoomHost.LayoutTransform.Value.IsIdentity && Math.Abs(((TextBox)window.FindName("EvidenceBox")).FontSize - ((Slider)window.FindName("SizeSlider")).Value * scale) < 0.001 &&
-                    Math.Abs(titleIcon.ActualWidth - 24) < 0.1 && Math.Abs(controlBank.ActualWidth - 370) < 0.1,
+                    Math.Abs(titleIcon.ActualWidth - 24) < 0.1 && Math.Abs(controlBank.ActualWidth - 180) < 0.1,
                     "Zoom scales content without squeezing the sidebar or moving titlebar controls");
                 Require(new Size(window.ActualWidth, window.ActualHeight) == stableWindowSize &&
                     zoomHost.ActualWidth <= zoomViewport.ActualWidth && zoomHost.ActualHeight <= zoomViewport.ActualHeight,
@@ -1529,7 +1528,8 @@ internal static class Program
                 }
             }
             KillerBench.Services.LocaleManager.Apply(KillerBench.Services.Locale.EnUS);
-            Require(((Border)window.FindName("LeftPanel")).Style == window.FindResource("Panel"), "Tool sidebar uses the family pane style");
+            Require(((Border)window.FindName("LeftPanel")).Style != window.FindResource("Panel") && ((Border)window.FindName("LeftPanel")).Background == window.FindResource("SidebarPaneBrush"),
+                "Tool sidebar sits on the window through SidebarPaneBrush like KillerScan");
             Require(((TextBox)window.FindName("PathBox")).Padding.Top <= 3, "Compact text input padding");
             window.UpdateLayout();
             var retainedSampleSources = ((ListBox)window.FindName("SourcesList")).Items.Cast<ListBoxItem>()
@@ -1691,14 +1691,15 @@ internal static class Program
             Require(outcomeLabel.Text.Contains("Needs attention | 1 checks | 0 repairs run") && !outcomeLabel.Text.Contains("0 findings"),
                 "Workflow result summary uses recorded checks instead of log-rule findings");
             Require(window.FindName("ReportPane") is Border { Visibility: Visibility.Visible } &&
-                window.FindName("ConsolePane") is Border { Visibility: Visibility.Collapsed } &&
+                window.FindName("StartGuide") is TextBlock { Visibility: Visibility.Collapsed } &&
                 ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>().Any(card => card.Child is StackPanel),
-                "Completed workflows open a separate formatted report instead of replacing the console");
+                "Completed workflows open a formatted report in the center pane, separate from the raw-output terminal");
             typeof(KillerBench.MainWindow).GetMethod("OnSourceSelected", flags)!.Invoke(window, [window, null]);
             Require(((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Focused service review report"),
                 "Reopening a workflow source retains its focused readable report title");
             ((Button)window.FindName("ConsoleViewButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            Require(window.FindName("ConsolePane") is Border { Visibility: Visibility.Visible } && text.Text.Contains("Verification 42% complete"),
+            Require(window.FindName("ConsolePane") is Border { Visibility: Visibility.Visible } &&
+                window.FindName("TerminalPanel") is Border { Visibility: Visibility.Visible } && text.Text.Contains("Verification 42% complete"),
                 "Console retains the raw live output after a report is created");
             ((TextBox)window.FindName("SearchBox")).Text = "no matching report text";
             typeof(KillerBench.MainWindow).GetMethod("ShowEvidence", flags)!.Invoke(window, null);
@@ -1708,7 +1709,7 @@ internal static class Program
             typeof(KillerBench.MainWindow).GetMethod("ShowEvidence", flags)!.Invoke(window, null);
             ((Button)window.FindName("ReportViewButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(window.FindName("ReportPane") is Border { Visibility: Visibility.Visible } &&
-                ((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Start here"),
+                ((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Next step"),
                 "Report view leads with a distinct next-action section");
             using var historicalRecord = JsonDocument.Parse(JsonSerializer.Serialize(completedWorkflow, KillerBench.Engine.Evidence.Capture.JsonOptions));
             var historicalSnapshot = new WorkflowJournalSnapshot("fixture-history.json", "fixture", "Services", "Needs attention",

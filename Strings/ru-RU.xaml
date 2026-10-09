@@ -255,6 +255,7 @@
   <sys:String x:Key="Str_Privacy_TurnOn">Включить</sys:String>
   <sys:String x:Key="Str_Privacy_TurnOff">Выключить</sys:String>
   <sys:String x:Key="Str_Privacy_Apply">Применять при нажатии кнопки GO</sys:String>
+  <sys:String x:Key="Str_Shell_Tools">Инструменты</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">Настройка конфиденциальности</sys:String>
   <sys:String x:Key="Str_Privacy_Action">Действие</sys:String>
   <sys:String x:Key="Str_Privacy_Boundary">Применение изменений только к этой учетной записи. Политика соответствия, доступ к устройствам на уровне всей системы, исключения для отдельных приложений, сбор диагностических данных и содержимое буфера обмена сохраняются. Проверенные журналы поддерживают защищенное отменение.</sys:String>
@@ -509,6 +510,12 @@
   <sys:String x:Key="Str_About_ExeHash">EXE SHA-256</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">БАЗЫ ЗНАНИЙ</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">Обновить базы данных</sys:String>
+  <sys:String x:Key="Str_About_KillerMcp">Параметры KillerMCP</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpNote">Эти параметры действуют, только если вы подключаете к этому компьютеру ИИ-агента через KillerMCP. KillerBench не содержит ИИ-агента.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpSafe">Разрешить KillerMCP выполнять безопасные исправления</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpDisruptive">Разрешить и исправления, прерывающие работу (нужно подтверждение)</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpLocked">Исправления KillerMCP заблокированы после {0}.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpClearLock">Снять блокировку</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Выберите язык Office для сохранения</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Английский (США)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Английский (Великобритания)</sys:String>

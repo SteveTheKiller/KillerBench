@@ -258,6 +258,7 @@
   <sys:String x:Key="Str_Privacy_TurnOn">オンにする</sys:String>
   <sys:String x:Key="Str_Privacy_TurnOff">オフにする</sys:String>
   <sys:String x:Key="Str_Privacy_Apply">GOを押したときに適用</sys:String>
+  <sys:String x:Key="Str_Shell_Tools">ツール</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">プライバシー設定</sys:String>
   <sys:String x:Key="Str_Privacy_Action">アクション</sys:String>
   <sys:String x:Key="Str_Privacy_Boundary">変更をこのアカウントのみに適用します。ポリシーの一致、マシン全体のデバイスアクセス、アプリケーションごとの例外、診断収集および保存されたクリップボードの内容は保持されます。確認済みジャーナルは保護された元に戻す操作をサポートします。</sys:String>
@@ -509,6 +510,12 @@
   <sys:String x:Key="Str_About_ExeHash">EXE SHA-256</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">ナレッジデータベース</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">データベースを更新</sys:String>
+  <sys:String x:Key="Str_About_KillerMcp">KillerMCP のオプション</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpNote">これらの設定は、KillerMCP を通じてこの PC に AI エージェントを接続する場合にのみ適用されます。KillerBench に AI エージェントは含まれていません。</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpSafe">KillerMCP に安全な修復の実行を許可する</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpDisruptive">影響の大きい修復も許可する (承認が必要)</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpLocked">{0} の後、KillerMCP の修復はロックされています。</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpClearLock">ロックを解除</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">保持するOffice言語を選択</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">英語（米国）</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">英語（英国）</sys:String>

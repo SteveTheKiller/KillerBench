@@ -241,6 +241,7 @@
   <sys:String x:Key="Str_Privacy_TurnOn">Slå på</sys:String>
   <sys:String x:Key="Str_Privacy_TurnOff">Slå av</sys:String>
   <sys:String x:Key="Str_Privacy_Apply">Bruk når jeg trykker GO</sys:String>
+  <sys:String x:Key="Str_Shell_Tools">Verktøy</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">Personverninnstilling</sys:String>
   <sys:String x:Key="Str_Privacy_Action">Handling</sys:String>
   <sys:String x:Key="Str_Privacy_Boundary">Bruk endrer bare denne kontoen. Samsvarende policy, enhetstilgang for hele maskinen, unntak per program, diagnoseinnsamling og lagret utklippstavleinnhold beholdes. Verifiserte journaler støtter beskyttet angring.</sys:String>
@@ -506,6 +507,12 @@
   <sys:String x:Key="Str_About_ExeHash">EXE SHA-256</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">KUNNSKAPSDATABASER</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">Oppdater databaser</sys:String>
+  <sys:String x:Key="Str_About_KillerMcp">KillerMCP-alternativer</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpNote">Disse innstillingene gjelder bare hvis du kobler en KI-agent til denne PC-en via KillerMCP. KillerBench inneholder ingen KI-agent.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpSafe">La KillerMCP kjøre trygge reparasjoner</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpDisruptive">Tillat også forstyrrende reparasjoner (krever godkjenning)</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpLocked">KillerMCP-reparasjoner er låst etter {0}.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpClearLock">Opphev lås</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Velg Office-språk som skal beholdes</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Engelsk (USA)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Engelsk (Storbritannia)</sys:String>

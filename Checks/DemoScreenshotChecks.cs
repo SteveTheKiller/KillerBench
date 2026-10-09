@@ -46,8 +46,8 @@ internal static class DemoScreenshotChecks
             window.Show();
             var run = typeof(KillerBench.MainWindow).GetMethod("RunDemoWorkflowAsync", BindingFlags.Instance | BindingFlags.NonPublic)
                 ?? throw new InvalidOperationException("Missing demo workflow entry point.");
-            var setOutputView = typeof(KillerBench.MainWindow).GetMethod("SetOutputView", BindingFlags.Instance | BindingFlags.NonPublic)
-                ?? throw new InvalidOperationException("Missing report view control.");
+            var showRawOutput = typeof(KillerBench.MainWindow).GetMethod("ShowRawOutput", BindingFlags.Instance | BindingFlags.NonPublic)
+                ?? throw new InvalidOperationException("Missing raw output view.");
             var workflowPicker = (ComboBox)window.FindName("MainWorkflow");
             var raw = (TextBox)window.FindName("EvidenceBox");
             var report = (StackPanel)window.FindName("ReportContent");
@@ -78,9 +78,10 @@ internal static class DemoScreenshotChecks
                     "Readable report identifies the synthetic demonstration");
                 Capture(window, Path.Combine(output, fileName));
                 if (kind != WorkflowKind.CommonProblems) continue;
-                setOutputView.Invoke(window, [false]);
+                showRawOutput.Invoke(window, []);
+                window.UpdateLayout();
                 Capture(window, Path.Combine(output, "raw-output.png"));
-                setOutputView.Invoke(window, [true]);
+                ((Button)window.FindName("ReportViewButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             }
 
             Console.WriteLine("PASS: five synthetic screenshots rendered on an isolated desktop: " + output);

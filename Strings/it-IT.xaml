@@ -254,6 +254,7 @@
   <sys:String x:Key="Str_Privacy_TurnOn">Attiva</sys:String>
   <sys:String x:Key="Str_Privacy_TurnOff">Disattiva</sys:String>
   <sys:String x:Key="Str_Privacy_Apply">Applica quando premo GO</sys:String>
+  <sys:String x:Key="Str_Shell_Tools">Strumenti</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">Impostazione privacy</sys:String>
   <sys:String x:Key="Str_Privacy_Action">Azione</sys:String>
   <sys:String x:Key="Str_Privacy_Boundary">L&apos;applicazione modifica solo questo account. Criteri corrispondenti, accesso dispositivo a livello macchina, eccezioni per applicazione, raccolta diagnostica e contenuto Appunti archiviato vengono preservati. I journal verificati supportano annullamento protetto.</sys:String>
@@ -509,6 +510,12 @@
   <sys:String x:Key="Str_About_Thumbprint">IMPRONTA DIGITALE</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">DATABASE DI CONOSCENZE</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">Database aggiornamenti</sys:String>
+  <sys:String x:Key="Str_About_KillerMcp">Opzioni di KillerMCP</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpNote">Queste impostazioni si applicano solo se colleghi un agente IA a questo PC tramite KillerMCP. KillerBench non include alcun agente IA.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpSafe">Consenti a KillerMCP di eseguire riparazioni sicure</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpDisruptive">Consenti anche riparazioni invasive (approvazione richiesta)</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpLocked">Le riparazioni di KillerMCP sono bloccate dopo {0}.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpClearLock">Rimuovi blocco</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Scegli lingua Office da mantenere</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Inglese (Stati Uniti)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Inglese (Regno Unito)</sys:String>

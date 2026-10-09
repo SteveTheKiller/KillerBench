@@ -242,6 +242,7 @@
   <sys:String x:Key="Str_Privacy_TurnOn">Bekapcsolás</sys:String>
   <sys:String x:Key="Str_Privacy_TurnOff">Kikapcsolás</sys:String>
   <sys:String x:Key="Str_Privacy_Apply">Alkalmazás, amikor megnyomom a GO-t</sys:String>
+  <sys:String x:Key="Str_Shell_Tools">Eszközök</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">Adatvédelmi beállítás</sys:String>
   <sys:String x:Key="Str_Privacy_Action">Művelet</sys:String>
   <sys:String x:Key="Str_Privacy_Boundary">Az alkalmazás csak ezt a fiókot módosítja. Az egyező házirend, gépszintű eszközhozzáférés, alkalmazásonkénti kivételek, diagnosztikai gyűjtés és tárolt vágólaptartalom megmarad. Az ellenőrzött naplók őrzött visszavonást támogatnak.</sys:String>
@@ -507,6 +508,12 @@
   <sys:String x:Key="Str_About_ExeHash">EXE SHA-256</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">TUDÁSADATBÁZISOK</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">Frissítési adatbázisok</sys:String>
+  <sys:String x:Key="Str_About_KillerMcp">KillerMCP beállítások</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpNote">Ezek a beállítások csak akkor érvényesek, ha a KillerMCP-n keresztül AI-ügynököt csatlakoztat ehhez a géphez. A KillerBench nem tartalmaz AI-ügynököt.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpSafe">A KillerMCP futtathat biztonságos javításokat</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpDisruptive">Zavaró javítások engedélyezése is (jóváhagyás szükséges)</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpLocked">A KillerMCP-javítások zárolva vannak ez után: {0}.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpClearLock">Zárolás feloldása</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Megőrzendő Office nyelv kiválasztása</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Angol (Egyesült Államok)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Angol (Egyesült Királyság)</sys:String>

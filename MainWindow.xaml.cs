@@ -58,7 +58,7 @@ public partial class MainWindow : Window
         sources.Clear();
         SourcesList.Items.Clear();
         SearchBox.Clear();
-        EvidenceTitle.Text = "Start here";
+        EvidenceTitle.Text = "Output";
         EvidenceBox.Text = "KILLERBENCH / START HERE\n\n" +
             "1. Full system scan is selected by default and starts with read-only checks.\n" +
             "2. Select Run diagnosis.\n" +

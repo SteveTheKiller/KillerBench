@@ -258,6 +258,7 @@
   <sys:String x:Key="Str_Privacy_TurnOn">Aç</sys:String>
   <sys:String x:Key="Str_Privacy_TurnOff">Kapat</sys:String>
   <sys:String x:Key="Str_Privacy_Apply">GO düğmesine bastığımda uygula</sys:String>
+  <sys:String x:Key="Str_Shell_Tools">Araçlar</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">Gizlilik ayarı</sys:String>
   <sys:String x:Key="Str_Privacy_Action">Eylem</sys:String>
   <sys:String x:Key="Str_Privacy_Boundary">Değişiklikler yalnızca bu hesaba uygulanır. Eşleşen ilke, makine genelinde cihaz erişimi, uygulama başına istisnalar, tanılama toplama ve saklanan pano içerikleri korunur. Doğrulanmış günlükler korumalı geri almayı destekler.</sys:String>
@@ -509,6 +510,12 @@
   <sys:String x:Key="Str_About_Publisher">YAYIMCI</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">BİLGİ VERİTABANLARI</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">Veritabanlarını güncelle</sys:String>
+  <sys:String x:Key="Str_About_KillerMcp">KillerMCP Seçenekleri</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpNote">Bu ayarlar yalnızca KillerMCP üzerinden bu bilgisayara bir yapay zeka aracısı bağlarsanız geçerlidir. KillerBench bir yapay zeka aracısı içermez.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpSafe">KillerMCP'nin güvenli onarımlar yapmasına izin ver</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpDisruptive">Kesintiye yol açan onarımlara da izin ver (onay gerekir)</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpLocked">KillerMCP onarımları {0} sonrasında kilitlendi.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpClearLock">Kilidi kaldır</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Saklanacak Office dilini seç</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">İngilizce (Amerika Birleşik Devletleri)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">İngilizce (Birleşik Krallık)</sys:String>

@@ -65,6 +65,9 @@ public partial class MainWindow
     private void ShowReference(int lineNumber)
     {
         if (evidence is null || lineNumber < 1 || lineNumber > evidence.Lines.Length) return;
+        // The raw evidence lives in the slide-out terminal; open it so the referenced lines are visible.
+        ShowRawOutput();
+        EvidenceBox.UpdateLayout();
         SearchBox.Clear();
         int start = Math.Max(0, lineNumber - 16), end = Math.Min(evidence.Lines.Length, lineNumber + 15);
         var displayedLines = Enumerable.Range(start, end - start).Select(i => $"{i + 1}  {evidence.Lines[i]}").ToArray();
@@ -72,7 +75,8 @@ public partial class MainWindow
         int localLine = lineNumber - 1 - start;
         int offset = displayedLines.Take(localLine).Sum(line => line.Length + Environment.NewLine.Length);
         EvidenceBox.Select(offset, displayedLines[localLine].Length);
-        EvidenceBox.ScrollToLine(EvidenceBox.GetLineIndexFromCharacterIndex(offset));
+        int lineIndex = EvidenceBox.GetLineIndexFromCharacterIndex(offset);
+        if (lineIndex >= 0) EvidenceBox.ScrollToLine(lineIndex);
         EvidenceBox.Focus();
         CoverageLabel.Text = $"Evidence context: lines {start + 1} through {end}. FIND returns to the full loaded evidence.";
     }

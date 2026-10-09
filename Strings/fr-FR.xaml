@@ -175,6 +175,12 @@
   <sys:String x:Key="Str_Shell_ReadyNoScan">Prêt. Aucune analyse effectuée.</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">BASES DE CONNAISSANCES</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">Bases de données de mises à jour</sys:String>
+  <sys:String x:Key="Str_About_KillerMcp">Options de KillerMCP</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpNote">Ces paramètres s'appliquent uniquement si vous connectez un agent d'IA à ce PC via KillerMCP. KillerBench n'inclut aucun agent d'IA.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpSafe">Autoriser KillerMCP à effectuer des réparations sûres</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpDisruptive">Autoriser aussi les réparations perturbatrices (approbation requise)</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpLocked">Les réparations KillerMCP sont verrouillées après {0}.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpClearLock">Déverrouiller</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Choisir la langue Office à conserver</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Anglais (États-Unis)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Anglais (Royaume-Uni)</sys:String>
@@ -431,6 +437,7 @@
   <sys:String x:Key="Str_Privacy_TurnOn">Activer</sys:String>
   <sys:String x:Key="Str_Privacy_TurnOff">Désactiver</sys:String>
   <sys:String x:Key="Str_Privacy_Apply">Appliquer quand j&apos;appuie sur GO</sys:String>
+  <sys:String x:Key="Str_Shell_Tools">Outils</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">Paramètre de confidentialité</sys:String>
   <sys:String x:Key="Str_Privacy_Action">Action</sys:String>
   <sys:String x:Key="Str_Privacy_Boundary">Les changements s&apos;appliquent uniquement à ce compte. La stratégie correspondante, l&apos;accès appareil à l&apos;échelle de la machine, les exceptions par application, la collecte de diagnostic et le contenu stocké du Presse-papiers sont préservés. Les journaux vérifiés prennent en charge une annulation protégée.</sys:String>

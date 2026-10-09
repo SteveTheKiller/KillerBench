@@ -242,6 +242,7 @@
   <sys:String x:Key="Str_Privacy_TurnOn">Қосу</sys:String>
   <sys:String x:Key="Str_Privacy_TurnOff">Өшіру</sys:String>
   <sys:String x:Key="Str_Privacy_Apply">GO басқанда қолдану</sys:String>
+  <sys:String x:Key="Str_Shell_Tools">Құралдар</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">Құпиялық параметрі</sys:String>
   <sys:String x:Key="Str_Privacy_Action">Әрекет</sys:String>
   <sys:String x:Key="Str_Privacy_Boundary">Өзгерістерді қолдану тек осы тіркелгіні өзгертеді. Сәйкес саясат, бүкіл компьютердегі құрылғы қатынасы, әр қолданба ерекшеліктері, диагностикалық жинау және сақталған Clipboard мазмұны сақталады. Тексерілген журналдар қорғалған қайтаруды қолдайды.</sys:String>
@@ -507,6 +508,12 @@
   <sys:String x:Key="Str_About_ExeHash">EXE SHA-256</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">БІЛІМ ДЕРЕКҚОРЛАРЫ</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">Жаңарту дерекқорлары</sys:String>
+  <sys:String x:Key="Str_About_KillerMcp">KillerMCP параметрлері</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpNote">Бұл параметрлер тек осы компьютерге KillerMCP арқылы ЖИ агентін қоссаңыз ғана қолданылады. KillerBench құрамында ЖИ агенті жоқ.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpSafe">KillerMCP-ге қауіпсіз жөндеулерді орындауға рұқсат ету</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpDisruptive">Жұмысты бөлетін жөндеулерге де рұқсат ету (мақұлдау қажет)</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpLocked">KillerMCP жөндеулері {0} кейін құлыпталды.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpClearLock">Құлыпты алу</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Сақталатын Office тілін таңдау</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Ағылшын (Америка Құрама Штаттары)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Ағылшын (Ұлыбритания)</sys:String>

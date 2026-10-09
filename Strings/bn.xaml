@@ -257,6 +257,7 @@
   <sys:String x:Key="Str_Privacy_TurnOn">চালু করুন</sys:String>
   <sys:String x:Key="Str_Privacy_TurnOff">বন্ধ করুন</sys:String>
   <sys:String x:Key="Str_Privacy_Apply">যখন আমি GO চাপব তখন প্রয়োগ করুন</sys:String>
+  <sys:String x:Key="Str_Shell_Tools">সরঞ্জাম</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">গোপনীয়তা সেটিং</sys:String>
   <sys:String x:Key="Str_Privacy_Action">কর্ম</sys:String>
   <sys:String x:Key="Str_Privacy_Boundary">শুধুমাত্র এই অ্যাকাউন্টে পরিবর্তন প্রয়োগ করা হচ্ছে। মিলিত নীতি, মেশিন-সার্বজনীন ডিভাইস অ্যাক্সেস, প্রতি-অ্যাপ্লিকেশন ব্যতিক্রম, নির্ণায়ক সংগ্রহ এবং সংরক্ষিত ক্লিপবোর্ড সামগ্রীগুলি সংরক্ষিত থাকবে। যাচাই করা জার্নালগুলি রক্ষিত আনে সহায়ক।</sys:String>
@@ -509,6 +510,12 @@
   <sys:String x:Key="Str_Shell_ReadyNoScan">প্রস্তুত। কোনো স্ক্যান করা হয়নি।</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">জ্ঞানভিত্তিক ডেটাবেস</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">ডেটাবেস আপডেট করুন</sys:String>
+  <sys:String x:Key="Str_About_KillerMcp">KillerMCP বিকল্প</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpNote">এই সেটিংস তখনই প্রযোজ্য যখন আপনি KillerMCP-এর মাধ্যমে এই পিসিতে একটি এআই এজেন্ট সংযুক্ত করেন। KillerBench-এ কোনো এআই এজেন্ট নেই।</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpSafe">KillerMCP-কে নিরাপদ মেরামত চালাতে দিন</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpDisruptive">বিঘ্ন সৃষ্টিকারী মেরামতও অনুমতি দিন (অনুমোদন প্রয়োজন)</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpLocked">{0}-এর পরে KillerMCP মেরামত লক করা হয়েছে।</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpClearLock">লক সরান</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">অফিস ভাষা নির্বাচন করুন যা রাখতে হবে</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">ইংরেজি (যুক্তরাষ্ট্র)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">ইংরেজি (যুক্তরাজ্য)</sys:String>

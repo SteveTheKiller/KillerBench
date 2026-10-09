@@ -32,10 +32,11 @@ public partial class MainWindow
             MaximizeButton.Content = ((char)(WindowState == WindowState.Maximized ? 0xE923 : 0xE922)).ToString();
         };
         ThemeManager.ThemeChanged += RefreshTheme;
-        Closed += (_, _) => { ThemeManager.ThemeChanged -= RefreshTheme; knowledgeUpdateCancellation?.Cancel(); };
+        Closed += (_, _) => ThemeManager.ThemeChanged -= RefreshTheme;
         SizeSlider.Value = ReadNumber("ConsoleSize", 14, 12, 24);
         appScale = ReadNumber("AppScale", 1, 0.7, 2.5);
         ApplyAppScale(appScale);
+        InitializePanels();
         shellReady = true;
         RefreshTheme();
     }
@@ -130,7 +131,7 @@ public partial class MainWindow
     {
         sourcesOpen = !sourcesOpen;
         LeftPanel.IsEnabled = sourcesOpen;
-        AnimateWidth(LeftPanel, sourcesOpen ? 370 : 0);
+        AnimateWidth(LeftPanel, sourcesOpen ? sidebarWidth : 0);
         SidebarButton.Content = ((char)(sourcesOpen ? 0xE76B : 0xE76C)).ToString();
     }
     private void SetDetailsOpen(bool _) => DetailsPanel.Visibility = Visibility.Collapsed;

@@ -290,7 +290,7 @@ public partial class MainWindow
         RegisterSource(inspectionSource);
         ShowEvidence();
         RenderNamedWorkflowReport(report, "Scheduled task inspection");
-        SetOutputView(report: true);
+        SetOutputView();
         Report(completed ? "Task draft inspected. No task was created or run." : "Partial task inspection retained. No task was created or run.");
         SetScanLight("incomplete", "Draft inspection only; task execution is not verified.");
         }

@@ -241,6 +241,7 @@
   <sys:String x:Key="Str_Privacy_TurnOn">Увімкнути</sys:String>
   <sys:String x:Key="Str_Privacy_TurnOff">Вимкнути</sys:String>
   <sys:String x:Key="Str_Privacy_Apply">Застосувати, коли натисну GO</sys:String>
+  <sys:String x:Key="Str_Shell_Tools">Інструменти</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">Налаштування конфіденційності</sys:String>
   <sys:String x:Key="Str_Privacy_Action">Дія</sys:String>
   <sys:String x:Key="Str_Privacy_Boundary">Застосування змінює лише цей обліковий запис. Відповідна політика, доступ до пристроїв для всієї машини, винятки для окремих застосунків, збір діагностики та збережений вміст буфера обміну залишаються без змін. Перевірені журнали підтримують захищене скасування.</sys:String>
@@ -506,6 +507,12 @@
   <sys:String x:Key="Str_About_ExeHash">SHA-256 ФАЙЛУ EXE</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">БАЗИ ЗНАНЬ</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">Оновити бази даних</sys:String>
+  <sys:String x:Key="Str_About_KillerMcp">Параметри KillerMCP</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpNote">Ці параметри діють, лише якщо ви підключаєте до цього ПК ШІ-агента через KillerMCP. KillerBench не містить ШІ-агента.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpSafe">Дозволити KillerMCP виконувати безпечні виправлення</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpDisruptive">Дозволити також виправлення, що переривають роботу (потрібне схвалення)</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpLocked">Виправлення KillerMCP заблоковано після {0}.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpClearLock">Зняти блокування</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Виберіть мову Office, яку залишити</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">англійська (США)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">англійська (Велика Британія)</sys:String>

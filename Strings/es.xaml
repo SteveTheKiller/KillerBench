@@ -258,6 +258,7 @@
   <sys:String x:Key="Str_Privacy_TurnOn">Activar</sys:String>
   <sys:String x:Key="Str_Privacy_TurnOff">Desactivar</sys:String>
   <sys:String x:Key="Str_Privacy_Apply">Aplicar cuando presione GO</sys:String>
+  <sys:String x:Key="Str_Shell_Tools">Herramientas</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">Configuración de privacidad</sys:String>
   <sys:String x:Key="Str_Privacy_Action">Acción</sys:String>
   <sys:String x:Key="Str_Privacy_Boundary">Aplicar cambia solo esta cuenta. Se conservan directivas coincidentes, acceso a dispositivos de todo el equipo, excepciones por aplicación, recopilación de diagnósticos y contenido almacenado del portapapeles. Los diarios verificados admiten deshacer protegido.</sys:String>
@@ -509,6 +510,12 @@
   <sys:String x:Key="Str_Shell_ReadyNoScan">Listo. No se realizó ningún análisis.</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">BASES DE DATOS DE CONOCIMIENTO</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">Bases de datos de actualizaciones</sys:String>
+  <sys:String x:Key="Str_About_KillerMcp">Opciones de KillerMCP</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpNote">Esta configuración solo se aplica si conecta un agente de IA a este equipo mediante KillerMCP. KillerBench no incluye ningún agente de IA.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpSafe">Permitir que KillerMCP ejecute reparaciones seguras</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpDisruptive">Permitir también reparaciones disruptivas (requiere aprobación)</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpLocked">Las reparaciones de KillerMCP están bloqueadas después de {0}.</sys:String>
+  <sys:String x:Key="Str_About_KillerMcpClearLock">Quitar bloqueo</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Elegir idioma de Office para conservar</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Inglés (Estados Unidos)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Inglés (Reino Unido)</sys:String>

@@ -27,7 +27,7 @@ public partial class MainWindow
         RegisterSource(text);
         RepairPreview.Text = summary;
         RenderNamedWorkflowReport(result, reportTitle);
-        SetOutputView(report: true);
+        SetOutputView();
     }
 
     private void RegisterGuardedActionReport(WorkflowKind kind, string reportTitle, string actionName, string output,
