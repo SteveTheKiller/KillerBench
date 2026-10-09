@@ -23,7 +23,7 @@ namespace KillerBench.Services
     /// HICON is destroyed after conversion: they are a limited USER handle and leaking them
     /// eventually takes the whole desktop down, not just this app.
     /// </summary>
-    internal static class ShellIcons
+    internal static partial class ShellIcons
     {
         private const uint SHGFI_ICON              = 0x000000100;
         private const uint SHGFI_SMALLICON         = 0x000000001;
@@ -34,21 +34,22 @@ namespace KillerBench.Services
         private const uint FILE_ATTRIBUTE_DIRECTORY = 0x00000010;
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        private struct SHFILEINFO
+        private unsafe struct SHFILEINFO
         {
             public IntPtr hIcon;
             public int    iIcon;
             public uint   dwAttributes;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string szDisplayName;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]  public string szTypeName;
+            public fixed char szDisplayName[260];
+            public fixed char szTypeName[80];
         }
 
-        [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-        private static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes,
+        [LibraryImport("shell32.dll", EntryPoint = "SHGetFileInfoW", StringMarshalling = StringMarshalling.Utf16)]
+        private static partial IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes,
                                                    ref SHFILEINFO psfi, uint cbFileInfo, uint uFlags);
 
-        [DllImport("user32.dll")]
-        private static extern bool DestroyIcon(IntPtr hIcon);
+        [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool DestroyIcon(IntPtr hIcon);
 
         // key: extension (lowercase) or the two folder sentinels, per size
         private static readonly Dictionary<string, ImageSource?> _small = new(StringComparer.OrdinalIgnoreCase);
@@ -148,7 +149,7 @@ namespace KillerBench.Services
             if (cache.TryGetValue(key, out var hit)) return hit;
 
             var img = Load(isFolder ? "dir" : "x" + key, isFolder, small);
-            if (img != null) img.Freeze();          // shared across threads and rows
+            img?.Freeze();                        // shared across threads and rows
             cache[key] = img;
             return img;
         }

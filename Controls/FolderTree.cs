@@ -41,7 +41,7 @@ namespace KillerBench.Controls
         // their label is "Local Disk (C:)" rather than a bare folder name.
         public bool IsDrive { get; }
 
-        public ObservableCollection<FolderNode> Children { get; } = new();
+        public ObservableCollection<FolderNode> Children { get; } = [];
 
         public FolderNode(string path, string name, bool mayHaveChildren)
         {
@@ -164,7 +164,7 @@ namespace KillerBench.Controls
                     {
                         var a = d.Attributes;
                         if ((a & FileAttributes.Hidden) != 0 || (a & FileAttributes.System) != 0) continue;
-                        if (d.Name.StartsWith(".", StringComparison.Ordinal)) continue;
+                        if (d.Name.StartsWith('.')) continue;
                     }
 
                     list.Add(new FolderNode(d.FullName, d.Name, mayHaveChildren: true));

@@ -33,6 +33,7 @@ namespace KillerBench.Controls
     /// </summary>
     public partial class FileDialog : Window
     {
+        private static readonly string[] AllFilesPatterns = ["*.*"];
         // ── Win32-compatible surface ─────────────────────────────────────────────
 
         /// <summary>Win32 filter syntax: "Desc|*.a;*.b|Other|*.c". Empty means every file.</summary>
@@ -227,7 +228,7 @@ namespace KillerBench.Controls
             string seedName = "";
             if (!string.IsNullOrWhiteSpace(FileName))
             {
-                if (FileName.IndexOfAny(new[] { '\\', '/' }) >= 0)
+                if (FileName.AsSpan().ContainsAny('\\', '/'))
                 {
                     var d = Path.GetDirectoryName(FileName);
                     if (!string.IsNullOrEmpty(d) && Directory.Exists(d)) startDir = d!;
@@ -290,7 +291,7 @@ namespace KillerBench.Controls
             if (FilterCombo.Items.Count == 0)
             {
                 FilterCombo.Items.Add(Loc("Str_Dlg_AllFiles"));
-                _filterPatterns.Add(new[] { "*.*" });
+                _filterPatterns.Add(AllFilesPatterns);
             }
 
             int idx = FilterIndex - 1;
@@ -323,8 +324,8 @@ namespace KillerBench.Controls
             int i = FilterCombo.SelectedIndex;
             if (i < 0 || i >= _filterPatterns.Count) return null;
             string p = _filterPatterns[i][0];
-            if (p.Length > 2 && p.StartsWith("*.") && p.IndexOfAny(new[] { '*', '?' }, 2) < 0)
-                return p.Substring(1);
+            if (p.Length > 2 && p.StartsWith("*.") && !p.AsSpan(2).ContainsAny('*', '?'))
+                return p[1..];
             return null;
         }
 
@@ -332,8 +333,8 @@ namespace KillerBench.Controls
         {
             foreach (var pats in _filterPatterns)
                 foreach (var p in pats)
-                    if (p.Length > 2 && p.StartsWith("*.") && p.IndexOfAny(new[] { '*', '?' }, 2) < 0)
-                        yield return p.Substring(1);
+                    if (p.Length > 2 && p.StartsWith("*.") && !p.AsSpan(2).ContainsAny('*', '?'))
+                        yield return p[1..];
         }
 
         /// <summary>True when the name passes the active filter. Folders are never filtered out.</summary>
@@ -427,16 +428,17 @@ namespace KillerBench.Controls
         {
             string? saved = Services.ThemeManager.GetSetting(PinnedKey);
             if (saved != null)
-                return saved.Split('|').Where(s => s.Length > 0).ToList();
+                return [.. saved.Split('|').Where(s => s.Length > 0)];
 
-            return new List<string>
-            {
+            string[] defaults =
+            [
                 Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads"),
                 Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
-            }.Where(p => !string.IsNullOrEmpty(p)).ToList();
+            ];
+            return [.. defaults.Where(p => !string.IsNullOrEmpty(p))];
         }
 
         /// <summary>Localized label for the five standard folders, plain folder name otherwise.</summary>
@@ -556,7 +558,7 @@ namespace KillerBench.Controls
                     if (!_showHidden)
                     {
                         if ((info.Attributes & (FileAttributes.Hidden | FileAttributes.System)) != 0) continue;
-                        if (info.Name.StartsWith(".", StringComparison.Ordinal)) continue;
+                        if (info.Name.StartsWith('.')) continue;
                     }
                     _raw.Add(new PickerEntry(info.Name, sub, true, 0, SafeTime(() => info.LastWriteTime)));
                 }
@@ -568,7 +570,7 @@ namespace KillerBench.Controls
                     if (!_showHidden)
                     {
                         if ((fi.Attributes & (FileAttributes.Hidden | FileAttributes.System)) != 0) continue;
-                        if (fi.Name.StartsWith(".", StringComparison.Ordinal)) continue;
+                        if (fi.Name.StartsWith('.')) continue;
                     }
                     _raw.Add(new PickerEntry(fi.Name, file, false, SafeLen(fi), SafeTime(() => fi.LastWriteTime)));
                 }
@@ -841,18 +843,18 @@ namespace KillerBench.Controls
             _treeSyncing = false;
         }
 
-        private static IEnumerable<string> RelativeSegments(string rootPath, string fullPath)
+        private static string[] RelativeSegments(string rootPath, string fullPath)
         {
-            string rest = fullPath.Substring(rootPath.Length);
-            return rest.Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar },
+            string rest = fullPath[rootPath.Length..];
+            return rest.Split([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar],
                               StringSplitOptions.RemoveEmptyEntries);
         }
 
         // ── Recent locations ─────────────────────────────────────────────────────
 
         private static List<string> LoadRecents()
-            => (Services.ThemeManager.GetSetting(RecentsKey) ?? "")
-               .Split('|').Where(s => s.Length > 0).ToList();
+            => [.. (Services.ThemeManager.GetSetting(RecentsKey) ?? "")
+               .Split('|').Where(s => s.Length > 0)];
 
         private static void RecordRecent(string dir)
         {
@@ -969,9 +971,9 @@ namespace KillerBench.Controls
             }
 
             // A wildcard retargets the listing rather than naming a file.
-            if (typed.IndexOfAny(new[] { '*', '?' }) >= 0)
+            if (typed.AsSpan().ContainsAny('*', '?'))
             {
-                _filterPatterns.Insert(0, new[] { typed });
+                _filterPatterns.Insert(0, [typed]);
                 FilterCombo.Items.Insert(0, typed);
                 FilterCombo.SelectedIndex = 0;
                 FileNameBox.Clear();
@@ -1046,7 +1048,7 @@ namespace KillerBench.Controls
 
         private int _pickerIconSize = 32;
         private int _pickerWheelDelta;
-        private static readonly int[] PickerIconSizes = { 16, 32, 48, 96 };
+        private static readonly int[] PickerIconSizes = [16, 32, 48, 96];
 
         private void ChangePickerView(int delta)
         {
@@ -1175,7 +1177,7 @@ namespace KillerBench.Controls
                 {
                     string? ext = ActiveFilterExt();
                     if (ext == null && !string.IsNullOrEmpty(DefaultExt))
-                        ext = DefaultExt.StartsWith(".") ? DefaultExt : "." + DefaultExt;
+                        ext = DefaultExt.StartsWith('.') ? DefaultExt : "." + DefaultExt;
                     if (ext != null) full += ext;
                 }
 
@@ -1212,7 +1214,7 @@ namespace KillerBench.Controls
             }
 
             FileName = full;
-            FileNames = new[] { full };
+            FileNames = [full];
             RememberAcceptedDirectory();
             DialogResult = true;
             Close();
@@ -1303,7 +1305,7 @@ namespace KillerBench.Controls
                         WM_NCLBUTTONDOWN, new IntPtr(ht), IntPtr.Zero);
         }
 
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+        [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
+        private static partial IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
     }
 }
