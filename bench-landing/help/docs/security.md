@@ -2,6 +2,8 @@
 
 Security inspects Microsoft Defender, the firewall, certificates and the sign-in services. It also exposes the TPM and platform security state that BitLocker and Windows Hello depend on.
 
+Step-by-step guides: [Encrypt a drive with BitLocker](encrypt-with-bitlocker.html) and [Make Windows more private](make-windows-private.html).
+
 ## Tools in this section
 
 Inspect protection, firewall, certificates and sign-in services.

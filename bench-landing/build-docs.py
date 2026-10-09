@@ -12,7 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 VERSION = "v0.1.0"
-ASSET = "7"
+ASSET = "8"
 
 SITES = [
     {
@@ -24,6 +24,17 @@ SITES = [
             ("first-run", "Your first diagnosis", "Start here"),
             ("workspace", "The workspace", "Start here"),
             ("safety", "How changes stay safe", "Start here"),
+            ("fix-windows-update", "Fix Windows Update", "How-to guides"),
+            ("repair-system-files", "Repair system files", "How-to guides"),
+            ("free-disk-space", "Free up disk space", "How-to guides"),
+            ("check-a-drive", "Check and repair a drive", "How-to guides"),
+            ("fix-network", "Fix network and internet problems", "How-to guides"),
+            ("fix-printing", "Fix printing problems", "How-to guides"),
+            ("encrypt-with-bitlocker", "Encrypt a drive with BitLocker", "How-to guides"),
+            ("investigate-crashes", "Investigate crashes and blue screens", "How-to guides"),
+            ("make-windows-private", "Make Windows more private", "How-to guides"),
+            ("set-up-new-pc", "Set up a new computer", "How-to guides"),
+            ("use-the-cli", "Run KillerBench from scripts", "How-to guides"),
             ("diagnostics", "Diagnostics", "Sections"),
             ("repair", "Repair", "Sections"),
             ("updates", "Updates", "Sections"),
@@ -125,8 +136,8 @@ def render(markdown):
             anchors.add(anchor)
             if level == 1 and title is None:
                 title = text
-            if level == 2:
-                headings.append((anchor, text))
+            if level in (2, 3):
+                headings.append((anchor, text, level))
             out.append('<h%d id="%s">%s</h%d>' % (level, anchor, inline(text), level))
             i += 1
             continue
@@ -152,7 +163,17 @@ def render(markdown):
                 match = re.match(pattern, lines[i])
                 if not match:
                     break
-                items.append("<li>%s</li>" % inline(match.group(1)))
+                command = re.match(r"^`([a-z0-9][a-z0-9-]*)", match.group(1)) if bullet else None
+                item_id = ""
+                if command:
+                    base = "cmd-" + command.group(1)
+                    anchor, suffix = base, 2
+                    while anchor in anchors:
+                        anchor = "%s-%d" % (base, suffix)
+                        suffix += 1
+                    anchors.add(anchor)
+                    item_id = ' id="%s"' % anchor
+                items.append("<li%s>%s</li>" % (item_id, inline(match.group(1))))
                 i += 1
             out.append("<%s>%s</%s>" % (tag, "".join(items), tag))
             continue
@@ -199,7 +220,7 @@ def sidebar(site, current, headings):
         for page_id, title in pages:
             file = page_file(page_id)
             if page_id == current:
-                outline = "".join('<a href="#%s">%s</a>' % (a, inline(t)) for a, t in headings)
+                outline = "".join('<a href="#%s"%s>%s</a>' % (a, ' class="sub"' if lvl == 3 else "", inline(t)) for a, t, lvl in headings)
                 items.append('<a href="%s" class="on" aria-current="page">%s</a><div class="page-outline">%s</div>' % (file, esc(title), outline))
             else:
                 items.append('<a href="%s">%s</a>' % (file, esc(title)))
@@ -240,11 +261,11 @@ def build():
             first = next((line.strip() for line in markdown.splitlines() if line.strip() and not line.startswith("#")), "")
             summary = re.sub(r"[`*\[\]]|\([^)]*\.html[^)]*\)", "", first)
             canonical = "https://killerbench.net/%s/%s" % (site["folder"], "" if file == "index.html" else file)
-            page = ('<!doctype html>\n<html lang="en" data-theme="dark"><head><meta charset="utf-8">'
+            page = ('<!doctype html>\n<html lang="en-US" data-theme="dark"><head><meta charset="utf-8">'
                     '<meta name="viewport" content="width=device-width,initial-scale=1">'
                     '<meta name="description" content="%s"><link rel="canonical" href="%s">'
                     '<title>%s | KillerBench %s</title>'
-                    '<link rel="stylesheet" href="../family.css?v=5"><link rel="stylesheet" href="../bench.css?v=5">'
+                    '<link rel="stylesheet" href="../family.css?v=5"><link rel="stylesheet" href="../bench.css?v=6">'
                     '<link rel="stylesheet" href="../engine/engine-docs.css?v=%s">'
                     '<script defer src="../bench.js?v=5"></script><script defer src="../docs-search-index.js?v=%s"></script>'
                     '<script defer src="../docs-search.js?v=%s"></script></head>'
@@ -261,7 +282,7 @@ def build():
                 output.read_text(encoding="utf-8")
             output.write_text(page, encoding="utf-8", newline="\n")
             index.append({"u": "%s/%s" % (site["folder"], file), "g": site["label"], "t": title,
-                          "h": [[a, re.sub(r"[`*]", "", t)] for a, t in headings], "x": plain(markdown)[:6000]})
+                          "h": [[a, re.sub(r"[`*]", "", t)] for a, t, _ in headings], "x": plain(markdown)[:6000]})
     search_index = ROOT / "docs-search-index.js"
     if search_index.exists():
         search_index.read_text(encoding="utf-8")

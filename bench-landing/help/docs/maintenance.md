@@ -2,6 +2,8 @@
 
 Maintenance keeps a machine tidy: file cleanup, old user profiles, scheduled tasks and decluttering Windows. Every tool previews what it would remove before anything is deleted.
 
+Step-by-step guides: [Free up disk space](free-disk-space.html) and [Make Windows more private](make-windows-private.html).
+
 ## Tools in this section
 
 Clean up files, profiles and scheduled tasks, and declutter Windows.

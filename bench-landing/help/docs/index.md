@@ -20,6 +20,7 @@ KillerBench is in development. There is no public download yet. These pages desc
 - [Your first diagnosis](first-run.html) walks through a full system scan.
 - [The workspace](workspace.html) explains the sections, panels and shortcuts.
 - [How changes stay safe](safety.html) explains what KillerBench checks before and after any change.
+- [How-to guides](fix-windows-update.html) walk through common jobs step by step.
 - The **Sections** pages describe every tool, grouped the same way as the app.
 - [Command line](cli.html) lists every `killerbench-cli` command.
 - [Troubleshooting](troubleshooting.html) covers blocked actions, restarts and interrupted requests.

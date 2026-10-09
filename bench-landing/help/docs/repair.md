@@ -2,6 +2,8 @@
 
 Repair collects the tools that can fix something. Each one diagnoses first. A repair is offered only when fresh evidence shows the exact problem it fixes, and it runs only after you turn on **Auto-repair confirmed issues** or confirm the repair in the inspector. Every repair is journaled and verified afterwards.
 
+Step-by-step guides: [Repair system files](repair-system-files.html) and [Fix Windows Update](fix-windows-update.html).
+
 ## Automatic and manual repair
 
 **Auto-repair confirmed issues** lets a diagnostic tool run the repairs it proves are needed after the scan. It is off by default.

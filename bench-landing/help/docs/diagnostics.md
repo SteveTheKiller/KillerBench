@@ -2,6 +2,8 @@
 
 Diagnostics is where every visit should start. Each tool reads the machine and writes a report. Nothing here changes Windows. The default tool, the full system scan, runs a broad set of read-only checks and ranks what needs attention.
 
+Step-by-step guides: [Investigate crashes and blue screens](investigate-crashes.html) and [Repair system files](repair-system-files.html).
+
 ## Tools in this section
 
 Check the machine first, then read the report for what needs attention and the next safe step.

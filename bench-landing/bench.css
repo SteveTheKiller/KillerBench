@@ -73,6 +73,7 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
   .hero { padding: 28px 0 22px; }
   .hero .tagline { font-size: 15px; }
   .features h2 { font-size: 20px; margin-bottom: 20px; }
+  .tb-home .tb-wm { display: block; } /* no app icon in this header, so the wordmark is the home link on phones */
 }
 
 .hero h1,.bench-pane h2{font:normal 24px KillerScan,'Courier New',monospace;color:var(--accent);margin:18px 0 12px}

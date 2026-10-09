@@ -2,6 +2,8 @@
 
 BitLocker inspects drive encryption, protectors and recovery information, then helps you back up, protect or change a drive. It works on this computer only.
 
+Step-by-step guides: [Encrypt a drive with BitLocker](encrypt-with-bitlocker.html).
+
 ## Using the BitLocker tool
 
 Choose the drive letter and an **Operation**, then press **GO**.

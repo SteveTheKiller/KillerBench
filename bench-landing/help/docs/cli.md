@@ -2,6 +2,8 @@
 
 `killerbench-cli` runs the same Engine as the desktop app from PowerShell or a remote console. Every command that could change the machine previews by default and needs an explicit flag such as `--execute` before it acts. Commands print JSON evidence to standard output and progress to standard error.
 
+Step-by-step guides: [Run KillerBench from scripts](use-the-cli.html).
+
 Exit code 0 means the preview or verified result succeeded, 3 means blocked, failed or unverified, 2 means the arguments were not recognized, and 130 means you stopped it.
 
 Run `killerbench-cli` with no arguments to print this list on your own machine.

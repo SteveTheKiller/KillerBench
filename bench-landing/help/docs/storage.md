@@ -2,6 +2,8 @@
 
 Inspect disks, volumes, Storage Spaces and drive maintenance services. Diagnosis does not select a disk operation; any supported machine-changing action needs its own exact target, prerequisites and confirmation.
 
+Step-by-step guides: [Check and repair a drive](check-a-drive.html) and [Free up disk space](free-disk-space.html).
+
 ## Tools in this section
 
 ### Storage

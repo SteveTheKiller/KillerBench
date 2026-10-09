@@ -2,6 +2,8 @@
 
 Onboarding prepares a new computer. It reviews the applications and configuration you select and names the computer. It does not download or install anything by itself.
 
+Step-by-step guides: [Set up a new computer](set-up-new-pc.html).
+
 ## Checking an installer before you run it
 
 The command line can verify a vendor installer before you run it:

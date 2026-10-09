@@ -2,6 +2,8 @@
 
 Apps reviews installed programs, Store packages, Office and Outlook, browser extensions, startup apps and search. Removal and reset tools always show a review first and change only what you select.
 
+Step-by-step guides: [Set up a new computer](set-up-new-pc.html).
+
 ## Tools in this section
 
 Review installed applications, Store packages, Office and Outlook, browser extensions and search.

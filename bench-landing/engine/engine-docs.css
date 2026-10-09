@@ -9,6 +9,7 @@
 .docs-nav a.on{border-left-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
 .page-outline{padding:3px 0 3px 8px}
 .page-outline a{padding:4px 6px;border-left:1px solid var(--pane-border);border-radius:0;color:var(--muted);font-size:11px}
+.page-outline a.sub{padding-left:16px;font-size:10.5px}
 .engine-doc-wrap{max-width:980px;margin:0 auto;padding:24px 34px 48px}
 .engine-doc-hero{display:flex;align-items:center;gap:18px;margin:0 0 18px;padding:18px 20px;background:var(--modal) url('../grain.png') repeat;border:1px solid var(--pane-border);border-top:2px solid var(--tab-edge);border-radius:6px;box-shadow:0 10px 26px rgba(0,0,0,.24)}
 .engine-doc-hero .wm-logo{width:min(360px,80vw);height:auto}

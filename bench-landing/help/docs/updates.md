@@ -2,6 +2,8 @@
 
 Updates covers Windows Update, the services behind it and the component store. You can see what is installed, what is pending and why an update fails, and you can review available updates before choosing any to install.
 
+Step-by-step guides: [Fix Windows Update](fix-windows-update.html) and [Repair system files](repair-system-files.html).
+
 ## Tools in this section
 
 Watch servicing activity, review available updates and repair the Windows Update chain.

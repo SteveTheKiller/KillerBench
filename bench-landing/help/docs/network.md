@@ -2,6 +2,8 @@
 
 Network inspects connections, DNS, routes, wireless and wired sign-in, file sharing and remote access. Tools that reach another host use the target and timeout you set, and nothing is changed unless you confirm a repair.
 
+Step-by-step guides: [Fix network and internet problems](fix-network.html).
+
 ## Tools in this section
 
 Inspect connections, DNS, routes, wireless, sharing and remote access.

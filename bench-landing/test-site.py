@@ -14,7 +14,7 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parent
-HELP = 'index setup first-run workspace safety diagnostics repair updates devices network apps maintenance onboarding security bitlocker privacy storage reports cli troubleshooting about'.split()
+HELP = 'index setup first-run workspace safety fix-windows-update repair-system-files free-disk-space check-a-drive fix-network fix-printing encrypt-with-bitlocker investigate-crashes make-windows-private set-up-new-pc use-the-cli diagnostics repair updates devices network apps maintenance onboarding security bitlocker privacy storage reports cli troubleshooting about'.split()
 ENGINE = 'index getting-started workflows evidence repairs cli api architecture knowledge-packs'.split()
 LOCALES = 'en-US bn cs-CZ de-DE es fr-FR hu-HU it-IT ja-JP kk-KZ nb-NO pl-PL pt-BR ru-RU tr-TR uk-UA vi-VN zh-CN zh-TW'.split()
 EXCLUDED = {'templates', 'locales', 'docs', '__pycache__'}
@@ -154,7 +154,7 @@ class BrokenReferenceTests(unittest.TestCase):
         render = runpy.run_path(str(source))['render']
         body, headings, _ = render('# Storage\n\n## Storage\n\n### Storage\n\n## Storage\n')
         self.assertEqual(Page(body).ids, ['storage', 'storage-2', 'storage-3', 'storage-4'])
-        self.assertEqual([h[0] for h in headings], ['storage-2', 'storage-4'])
+        self.assertEqual([(h[0], h[2]) for h in headings], [('storage-2', 2), ('storage-3', 3), ('storage-4', 2)])
 
     def test_nested_and_extensionless_routes(self):
         with tempfile.TemporaryDirectory() as folder:

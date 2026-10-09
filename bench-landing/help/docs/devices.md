@@ -2,6 +2,8 @@
 
 Devices covers printers, audio, cameras, Bluetooth, input and the Windows services that attached hardware relies on.
 
+Step-by-step guides: [Fix printing problems](fix-printing.html) and [Investigate crashes and blue screens](investigate-crashes.html).
+
 ## Tools in this section
 
 Printing, audio, cameras, Bluetooth, input and the services behind attached hardware.

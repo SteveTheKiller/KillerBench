@@ -2,6 +2,8 @@
 
 Privacy reads the privacy settings for this machine and the account running KillerBench, then lets you change the ones you choose. It goes beyond the Windows Settings app, covering app permissions, cloud search and search highlights.
 
+Step-by-step guides: [Make Windows more private](make-windows-private.html).
+
 ## Reviewing and changing settings
 
 Select the privacy areas to inspect and press **GO**. Every area starts unchecked and the review is read-only.
