@@ -1,6 +1,7 @@
 """Generate the three localized entry pages and validate their local links."""
 import html
 import json
+import posixpath
 import re
 import sys
 from html.parser import HTMLParser
@@ -14,6 +15,14 @@ VOID = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'met
 
 def route(locale, page):
     return '/' + (locale + '/' if locale != 'en-US' else '') + (page[:-10] if page.endswith('index.html') else page)
+
+def out_path(locale, page):
+    return (locale + '/' if locale != 'en-US' else '') + page
+
+# Local references stay relative, like the other family landing pages, so the site works from
+# disk as well as from killerbench.net. Only canonical, og:url and hreflang links are absolute.
+def rel(locale, page, dest):
+    return posixpath.relpath(dest, posixpath.dirname(out_path(locale, page)) or '.')
 
 class Localized(HTMLParser):
     def __init__(self, source, page, locale, catalog, available, collect=False):
@@ -40,9 +49,9 @@ class Localized(HTMLParser):
             target = target / 'index.html'
         relative = target.relative_to(ROOT).as_posix()
         if relative in PAGES:
-            result = route(self.locale, relative)
+            result = rel(self.locale, self.page, out_path(self.locale, relative))
         else:
-            result = '/' + relative
+            result = rel(self.locale, self.page, relative)
         return result + ('?' + u.query if u.query else '') + ('#' + u.fragment if u.fragment else '')
 
     def handle_decl(self, decl):
@@ -53,7 +62,7 @@ class Localized(HTMLParser):
         if tag == 'html':
             d['lang'] = self.locale
         if tag == 'body':
-            d['data-brand-base'] = '/brand'
+            d['data-brand-base'] = rel(self.locale, self.page, 'brand')
             for key, value in {'theme': 'Theme', 'choose-theme': 'Choose theme', 'accent': 'Accent color', 'accent-label': 'accent:', 'close': 'Close', 'no-results': 'No matching pages.'}.items():
                 d['data-ui-' + key] = self.text(value)
         if tag == 'meta' and (d.get('name') == 'description' or d.get('property') in ('og:title', 'og:description')):
@@ -66,8 +75,9 @@ class Localized(HTMLParser):
         for key in ('href', 'src'):
             if key in d:
                 d[key] = self.href(d[key])
-        if tag == 'script' and d.get('src', '').startswith('/docs-search-index.js') and self.locale != 'en-US':
-            d['src'] = '/' + self.locale + d['src']
+        if tag == 'script' and posixpath.basename(urlsplit(d.get('src', '')).path) == 'docs-search-index.js' and self.locale != 'en-US':
+            query = urlsplit(d['src']).query
+            d['src'] = rel(self.locale, self.page, self.locale + '/docs-search-index.js') + ('?' + query if query else '')
         if tag == 'link' and d.get('rel') == 'canonical':
             d['href'] = 'https://killerbench.net' + route(self.locale, self.page)
         self.out.append('<' + tag + ''.join(' ' + k + ('="' + html.escape(v, quote=True) + '"' if v is not None else '') for k, v in d.items()) + '>')
@@ -85,7 +95,7 @@ class Localized(HTMLParser):
             label = self.text('Choose language')
             self.out.append('<div class="lang-switch"><button class="lang-toggle" id="languageToggle" aria-haspopup="true" aria-expanded="false" aria-label="' + html.escape(label, quote=True) + '">' + html.escape(self.locale.split('-')[0].upper()) + '</button><div class="lang-menu" id="languageMenu" hidden>')
             for locale, data in self.available.items():
-                self.out.append('<a class="lang-item" hreflang="' + locale + '" lang="' + locale + '" href="' + route(locale, self.page) + '" aria-pressed="' + str(locale == self.locale).lower() + '">' + html.escape(data['language']) + '</a>')
+                self.out.append('<a class="lang-item" hreflang="' + locale + '" lang="' + locale + '" href="' + rel(self.locale, self.page, out_path(locale, self.page)) + '" aria-pressed="' + str(locale == self.locale).lower() + '">' + html.escape(data['language']) + '</a>')
             self.out.append('</div></div>')
         self.out.append('</' + tag + '>')
         if tag == 'h1' and self.page in ('help/index.html', 'engine/index.html'):
@@ -163,12 +173,13 @@ def check():
                 assert '<link rel="alternate" hreflang="' + target + '" href="https://killerbench.net' + route(target, page) + '"' in source, (path, target)
             assert source.count('id="languageToggle"') == 1, path
             for entry in PAGES:
-                assert 'href="' + route(locale, entry) + '"' in source, (path, entry)
+                assert 'href="' + rel(locale, page, out_path(locale, entry)) + '"' in source, (path, entry)
             for ref in re.findall(r'(?:href|src)="([^"]+)"', source):
                 u = urlsplit(html.unescape(ref))
                 if u.scheme or u.netloc:
                     continue
-                target = ROOT / unquote(u.path).lstrip('/') if u.path.startswith('/') else path.parent / unquote(u.path)
+                assert not u.path.startswith('/'), ('root-absolute reference breaks local viewing', path, ref)
+                target = path.parent / unquote(u.path)
                 if not u.path:
                     target = path
                 if target.is_dir():
