@@ -1683,6 +1683,10 @@ internal static class Program
                 ((TextBlock)window.FindName("CoverageLabel")).Text.Contains("browse tools and export earlier reports", StringComparison.Ordinal),
                 "Live output replaces sample evidence while retaining navigation and earlier report export guidance");
             Require(!((TextBox)window.FindName("SearchBox")).IsEnabled, "Search cannot replace live output");
+            Require(window.FindName("ConsolePane") is Border { Visibility: Visibility.Visible } &&
+                window.FindName("ReportPane") is Border { Visibility: Visibility.Collapsed } &&
+                Equals(((Button)window.FindName("ConsoleViewButton")).Tag, "selected"),
+                "A running workflow shows Raw output in the output pane even when an earlier report exists");
             Capture(window, Path.Combine(scratch, "live-workflow.png"));
             var completedWorkflow = new WorkflowResult(WorkflowKind.Services, "fixture", DateTimeOffset.UtcNow, "Needs attention",
                 [new("Example service", CheckState.Attention, "Service needs review")], [], "fixture-journal.json");

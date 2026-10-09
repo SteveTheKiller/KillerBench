@@ -323,6 +323,8 @@ public partial class MainWindow
         CoverageLabel.Text = demo
             ? "Synthetic output. No current machine evidence or repair result is shown."
             : "Live output. You can browse tools and export earlier reports. Stop waits for the current servicing command.";
+        // Live work streams in Raw output; the readable report takes over when the result is registered.
+        ShowRawOutput();
     }
 
     private void AppendWorkflowOutput(string message)
