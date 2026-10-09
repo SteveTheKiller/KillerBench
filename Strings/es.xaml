@@ -99,6 +99,7 @@
   <sys:String x:Key="Str_Theme_Sepulchre">Sepulcro</sys:String>
   <sys:String x:Key="Str_Theme_Delirium">Delirio</sys:String>
   <sys:String x:Key="Str_Theme_Mourning">Luto</sys:String>
+  <sys:String x:Key="Str_Theme_FilmGrain">Grano de película</sys:String>
   <sys:String x:Key="Str_Findings">Hallazgos</sys:String>
   <sys:String x:Key="Str_LoadDemo">Cargar demo</sys:String>
   <sys:String x:Key="Str_ExportReport">Exportar informe</sys:String>

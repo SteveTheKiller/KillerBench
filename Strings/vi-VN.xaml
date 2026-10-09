@@ -81,6 +81,7 @@
   <sys:String x:Key="Str_Theme_Sepulchre">Mộ</sys:String>
   <sys:String x:Key="Str_Theme_Delirium">Sự mê sảng</sys:String>
   <sys:String x:Key="Str_Theme_Mourning">Đang thương tiếc</sys:String>
+  <sys:String x:Key="Str_Theme_FilmGrain">Hạt phim</sys:String>
   <sys:String x:Key="Str_Findings">Phát hiện</sys:String>
   <sys:String x:Key="Str_LoadDemo">Tải bản demo</sys:String>
   <sys:String x:Key="Str_ExportReport">Xuất báo cáo</sys:String>

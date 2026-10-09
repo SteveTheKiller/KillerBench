@@ -49,9 +49,12 @@ public partial class MainWindow
         foreach (RadioButton radio in ThemeSubmenu.Children.OfType<RadioButton>())
             radio.IsChecked = Enum.TryParse<Theme>((string)radio.Tag, out var theme) && theme == ThemeManager.Current;
         syncingTheme = false;
+        FilmGrainCheck.IsChecked = FilmGrain.Enabled;
         UpdateAccentStrip(false);
         OpenFamilyMenu(ThemeFlyout, ThemeButton);
     }
+    // Film Grain on or off for every surface (Services/FilmGrain.cs).
+    private void OnFilmGrain(object sender, RoutedEventArgs e) => FilmGrain.Set(FilmGrainCheck.IsChecked == true);
     private void OnThemeSelected(object sender, RoutedEventArgs e)
     {
         if (syncingTheme || sender is not RadioButton { Tag: string name } || !Enum.TryParse<Theme>(name, out var theme)) return;

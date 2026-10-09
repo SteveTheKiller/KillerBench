@@ -24,6 +24,7 @@ public partial class App : Application
         Services.ThemeManager.GetSetting = Services.Preferences.Get;
         Services.ThemeManager.SetSetting = Services.Preferences.Set;
         Services.ThemeManager.Initialize();
+        Services.FilmGrain.Initialize();
         Services.LocaleManager.GetSetting = Services.Preferences.Get;
         Services.LocaleManager.SetSetting = Services.Preferences.Set;
         Services.LocaleManager.Initialize();

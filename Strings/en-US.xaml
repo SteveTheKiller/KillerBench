@@ -81,6 +81,7 @@
   <sys:String x:Key="Str_Theme_Sepulchre">Sepulchre</sys:String>
   <sys:String x:Key="Str_Theme_Delirium">Delirium</sys:String>
   <sys:String x:Key="Str_Theme_Mourning">Mourning</sys:String>
+  <sys:String x:Key="Str_Theme_FilmGrain">Film Grain</sys:String>
   <sys:String x:Key="Str_Findings">Findings</sys:String>
   <sys:String x:Key="Str_LoadDemo">Load demo</sys:String>
   <sys:String x:Key="Str_ExportReport">Export report</sys:String>

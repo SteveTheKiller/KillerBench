@@ -82,6 +82,7 @@
   <sys:String x:Key="Str_Theme_Sepulchre">Sírbolt</sys:String>
   <sys:String x:Key="Str_Theme_Delirium">Delírium</sys:String>
   <sys:String x:Key="Str_Theme_Mourning">Gyász</sys:String>
+  <sys:String x:Key="Str_Theme_FilmGrain">Filmszemcse</sys:String>
   <sys:String x:Key="Str_Findings">Találatok</sys:String>
   <sys:String x:Key="Str_LoadDemo">Demó betöltése</sys:String>
   <sys:String x:Key="Str_ExportReport">Jelentés exportálása</sys:String>

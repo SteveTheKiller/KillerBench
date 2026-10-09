@@ -98,6 +98,7 @@
   <sys:String x:Key="Str_Theme_Malaise">Nevolnost</sys:String>
   <sys:String x:Key="Str_Theme_Sepulchre">Hrobka</sys:String>
   <sys:String x:Key="Str_Theme_Mourning">Smutek</sys:String>
+  <sys:String x:Key="Str_Theme_FilmGrain">Filmové zrno</sys:String>
   <sys:String x:Key="Str_Findings">Nálezy</sys:String>
   <sys:String x:Key="Str_LoadDemo">Načíst demo</sys:String>
   <sys:String x:Key="Str_ExportReport">Exportovat zprávu</sys:String>

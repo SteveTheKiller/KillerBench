@@ -82,6 +82,7 @@
   <sys:String x:Key="Str_Theme_Sepulchre">Grobowiec</sys:String>
   <sys:String x:Key="Str_Theme_Delirium">Delirium</sys:String>
   <sys:String x:Key="Str_Theme_Mourning">Żałoba</sys:String>
+  <sys:String x:Key="Str_Theme_FilmGrain">Ziarno filmowe</sys:String>
   <sys:String x:Key="Str_Findings">Ustalenia</sys:String>
   <sys:String x:Key="Str_LoadDemo">Wczytaj demo</sys:String>
   <sys:String x:Key="Str_ExportReport">Eksportuj raport</sys:String>

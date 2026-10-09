@@ -99,6 +99,7 @@
   <sys:String x:Key="Str_Theme_Sepulchre">墳墓</sys:String>
   <sys:String x:Key="Str_Theme_Delirium">せん妄</sys:String>
   <sys:String x:Key="Str_Theme_Mourning">喪</sys:String>
+  <sys:String x:Key="Str_Theme_FilmGrain">フィルムグレイン</sys:String>
   <sys:String x:Key="Str_Findings">調査結果</sys:String>
   <sys:String x:Key="Str_LoadDemo">デモを読み込む</sys:String>
   <sys:String x:Key="Str_ExportReport">レポートをエクスポート</sys:String>
