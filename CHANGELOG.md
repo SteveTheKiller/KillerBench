@@ -86,7 +86,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Knowledge and reference tools
 
-- Added signed knowledge databases with HTTPS retrieval, activation, retained-version recovery and About-card update status.
+- Added signed knowledge databases with HTTPS retrieval, activation and retained-version recovery.
 - Added offline lookups for Windows error codes, HRESULTs, NTSTATUS, bug checks, Device Manager codes, PCI and USB IDs, MAC vendors, UEFI vendors and Bluetooth company identifiers.
 - Added driver-reference filtering by exact hardware ID and declared OS scope.
 - Added deterministic knowledge-pack generators, schema validation, revision comparison and context-specific search in the app, Engine and CLI.
@@ -95,7 +95,8 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 - Kept app icons sharp at fractional display DPI and app zoom by caching exact pixel sizes from a covering source and aligning the final draw to device pixels.
 
-- Added the workbench layout with section buttons, a collapsible tool sidebar and icon rail, a theme-aware smoked-glass output pane, report export in the main workspace and an activity log.
+- Added the three-pane workbench: a resizable section sidebar with the icon rail, the selected tool's options in the center, and a wider output pane on the right whose Raw output opens during a run and gives way to the Readable report, plus an activity log.
+- Added KillerMCP Options to the About card. Agent repairs through KillerMCP stayed off until turned on there, disruptive repairs needed a separate setting and desktop approval, and a locked state after an uncertain result could be cleared from the same place.
 - Added 13 family themes with yellow and magenta accents on the neutral and 98SE themes. New installs and the website started on Dark with the yellow accent.
 - Added localization in 19 languages, including Vietnamese, Ukrainian, Norwegian (Bokmål) and Brazilian Portuguese, with a two-column language menu.
 - Added the family List and Keyboard shortcut views from one binding table, linked to the online guide, with F12 for About.

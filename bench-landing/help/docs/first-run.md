@@ -6,8 +6,8 @@ Start with [Download and setup](setup.html), then run a Full system scan. It col
 
 1. Open KillerBench. The **Diagnostics** section opens with **Full system scan** selected.
 2. Leave **Auto-repair confirmed issues** turned off for your first run.
-3. Press **Run diagnosis**. Progress appears in the console while each check runs.
-4. When it finishes, KillerBench switches to the **Readable report**.
+3. Press **Run diagnosis**. Progress appears in **Raw output** on the right while each check runs.
+4. When it finishes, the output pane switches to the **Readable report**.
 
 Start without elevation. Some Windows evidence, such as BitLocker protectors and protected services, needs administrator rights. Those checks report unavailable evidence under a standard account. If you need that evidence, finish the current run, keep the report, then deliberately reopen KillerBench with **Run as administrator**. Elevation does not select or approve a repair.
 

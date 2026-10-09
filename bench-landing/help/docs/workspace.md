@@ -1,37 +1,37 @@
 # The workspace
 
-The KillerBench window has four areas: the section buttons, the tool sidebar, the evidence console and the activity log.
+The KillerBench window has three panes that follow the way you work: pick a section on the left, set the tool's options in the center, and read the output on the right. An activity log can open under the options.
 
 ## Sections
 
-The buttons across the top group every tool into twelve sections: Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker, Privacy and Storage. Pick a section, then pick a tool from the list in the sidebar.
+The sidebar on the left lists every tool in twelve sections: Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker, Privacy and Storage. Drag its edge to resize it, or drag it past its minimum width to snap it closed.
 
-## Tool sidebar
+## Tool options
 
-The sidebar on the left shows the selected section, its tool list and the options for the chosen tool. Options that could change the machine are always off by default. Press the run button to start the tool. **Stop** cancels the current run.
+The center pane shows the selected section, its tool list and the options for the chosen tool. Options that could change the machine are always off by default. Press the run button to start the tool. **Stop** cancels the current run.
 
-## Evidence console
+## Output
 
-The main pane has two views.
+The output pane on the right has two views.
 
-- **Raw output** shows the technical evidence as it is collected, with original line numbers.
-- **Readable report** shows the finished report for the last run.
+- **Raw output** shows the technical evidence as it is collected, with original line numbers. It opens on its own while a tool runs.
+- **Readable report** shows the finished report for the last run. It replaces the raw output when the run finishes.
 
-Use the filter box to show only matching lines. **Export report** saves the report with its source paths and evidence excerpts. **Session sources** lists every piece of evidence gathered in this session.
+Use the filter box in Raw output to show only matching lines. **Export report** saves the report with its source paths and evidence excerpts. **Session sources** lists every piece of evidence gathered in this session.
 
-## Inspector and activity log
+## Activity log
 
-The inspector on the right opens for repairs and evidence details. The activity log at the bottom records what KillerBench did in this session.
+The activity log under the tool options records what KillerBench did in this session.
 
 ## Themes, languages and shortcuts
 
-The rail between the sidebar and the console holds the theme picker, the language picker, the shortcut list and the activity log toggle. KillerBench has 13 themes and 19 languages.
+The rail between the sidebar and the tool options holds the theme picker, the language picker, the shortcut list and the activity log toggle. KillerBench has 13 themes and 19 languages.
 
 The smoked-glass console and readable reports follow the active theme. Confirmations and Open, Save, and Folder dialogs use the same family styling, including the 98SE theme. Choose the theme before opening a dialog to use that appearance throughout the workflow.
 
 | Key | Action |
 | --- | --- |
 | F1 | Keyboard shortcuts |
-| F2 | Show or hide the tool sidebar |
+| F2 | Show or hide the sidebar |
 | F3 | Show or hide the activity log |
 | F12 | About KillerBench |
