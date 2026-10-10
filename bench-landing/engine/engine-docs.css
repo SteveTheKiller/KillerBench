@@ -14,7 +14,7 @@
 .engine-doc-hero{display:flex;align-items:center;gap:18px;margin:0 0 18px;padding:18px 20px;background:var(--modal) url('../grain.png') repeat;border:1px solid var(--pane-border);border-top:2px solid var(--tab-edge);border-radius:6px;box-shadow:0 10px 26px rgba(0,0,0,.24)}
 .engine-doc-hero .wm-logo{width:min(360px,80vw);height:auto}
 .engine-doc{background:var(--modal) url('../grain.png') repeat;border:1px solid var(--pane-border);border-top:2px solid var(--tab-edge);border-radius:6px;padding:28px 34px;box-shadow:0 12px 30px rgba(0,0,0,.28);line-height:1.65;color:var(--text2)}
-.engine-doc h1,.engine-doc h2,.engine-doc h3{font-family:KillerScan,'Courier New',monospace;font-weight:normal;color:var(--accent);line-height:1.25}
+.engine-doc h1,.engine-doc h2,.engine-doc h3{font-family:var(--kt-font-card-title);font-weight:normal;color:var(--accent);line-height:1.25}
 .engine-doc h1{margin:0 0 14px;font-size:29px}
 .engine-doc h2{margin:32px 0 10px;padding-top:5px;font-size:20px;border-top:1px solid var(--pane-border)}
 .engine-doc h3{margin:24px 0 8px;font-size:16px}

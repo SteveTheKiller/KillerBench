@@ -246,7 +246,7 @@ The left sidebar keeps up to 12 evidence sources for the current session. F2 tog
 
 ## Current scope
 
-Implemented: WPF workbench, app-owned family controls and 13 palettes, custom window chrome, typewriter wordmark, source sidebar, contextual inspector, activity log, synthetic sample evidence, a GO demo mode and a read-only screenshot preset, bounded text, EVTX and event-XML import, search, cancellation, input bounds, theme-aware smoked-glass console output, themed diagnostic and repair reports, PEEK live servicing observation, guarded workflow recipes, CLI access, and local knowledge-pack generation and updates. The diagnostic Engine has no WPF dependency. There are no third-party package references.
+Implemented: WPF workbench, app-owned family controls and 13 palettes, custom window chrome, Iceland and Freckle Face wordmark, source sidebar, contextual inspector, activity log, synthetic sample evidence, a GO demo mode and a read-only screenshot preset, bounded text, EVTX and event-XML import, search, cancellation, input bounds, theme-aware smoked-glass console output, themed diagnostic and repair reports, PEEK live servicing observation, guarded workflow recipes, CLI access, and local knowledge-pack generation and updates. The diagnostic Engine has no WPF dependency. There are no third-party package references.
 
 Still unfinished: comprehensive CBS or Panther parsing and translated UI text. EVTX files can be imported through the evidence picker, and the About card can inspect and update configured knowledge databases. This prototype does not assess overall machine health.
 

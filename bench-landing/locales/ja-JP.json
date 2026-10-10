@@ -155,7 +155,7 @@
     "Storage": "ストレージ",
     "Teal": "青緑",
     "Text, JSON, HTML, and structured .NET results for reports and integrations": "レポートや連携に使えるテキスト、JSON、HTML、構造化された.NETの結果",
-    "Textured surfaces, the typewriter wordmark, and 13 app themes. The smoked-glass console, readable reports, confirmations, and Open, Save, and Folder dialogs follow the active app theme.": "質感のある画面、タイプライター風のロゴ、13種類のアプリテーマ。スモークガラス風のコンソール、読みやすいレポート、確認画面、開く・保存・フォルダーのダイアログは、現在のアプリテーマに合わせて表示されます。",
+    "Textured surfaces, the Killer Tools wordmark, and 13 app themes. The smoked-glass console, readable reports, confirmations, and Open, Save, and Folder dialogs follow the active app theme.": "質感のある画面、Killer Tools のロゴ、13種類のアプリテーマ。スモークガラス風のコンソール、読みやすいレポート、確認画面、開く・保存・フォルダーのダイアログは、現在のアプリテーマに合わせて表示されます。",
     "The": "次の",
     "The Engine targets .NET 10 and Windows. It is in active development and is currently consumed through a project reference inside the KillerBench repository. A public package has not been released.": "Engineは.NET 10とWindowsを対象としています。現在も開発中で、KillerBenchリポジトリ内のプロジェクト参照を通じて利用されています。公開パッケージはまだリリースされていません。",
     "The KillerBench.Engine": "KillerBench.Engine",

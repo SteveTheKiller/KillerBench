@@ -25,7 +25,7 @@ def write(path, data):
     assert path.read_bytes() == data
 
 svg = load("bench_svg", "make-logo-svgs.py")
-face = svg.Face(svg.F_TYPE)
+face = (svg.Face(svg.F_KILLER), svg.Face(svg.F_ACCENT))
 for variant, accents in svg.ACCENTS.items():
     for accent, color in accents.items():
         data = svg.build_svg("Killer", "Bench", color, variant, face).encode("utf-8")
@@ -36,9 +36,12 @@ for theme, color in svg.THEME_ACCENTS.items():
     ET.fromstring(data)
     write(HERE / "brand" / f"killerbench-logo-{theme}.svg", data)
 
-font = Path(svg.F_TYPE).read_bytes()
-TTFont(io.BytesIO(font))
-write(HERE / "brand" / "typewriter.ttf", font)
+# The family header faces and their OFL texts, copied beside the site that loads them.
+for name in ("Iceland-Regular.ttf", "FreckleFace-Regular.ttf", "Iceland-OFL.txt", "FreckleFace-OFL.txt"):
+    data = (Path(svg.FONT_DIR) / name).read_bytes()
+    if name.endswith(".ttf"):
+        TTFont(io.BytesIO(data))
+    write(HERE / "brand" / name, data)
 grain = (HERE.parents[1] / "KillerScan" / "scan-landing" / "grain.png").read_bytes()
 Image.open(io.BytesIO(grain)).verify()
 write(HERE / "grain.png", grain)
