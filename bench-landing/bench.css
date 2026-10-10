@@ -8,7 +8,7 @@ html[data-theme="hc"]{--accent:#FF910A;--btn:#FF910A}
 .tb-mcp-link img{width:25px;height:25px;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}
 .tb-mcp-link:hover,.tb-mcp-link:focus-visible{color:var(--text);background:color-mix(in srgb,var(--accent) 12%,transparent);transform:translateY(-1px);box-shadow:0 6px 14px rgba(0,0,0,.32);filter:none}
 .tb-mcp-link:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-.tb-mcp-wordmark{display:inline-flex;align-items:baseline;white-space:nowrap}.tb-mcp-wordmark>span:first-child{font-family:var(--kt-font-killer)}.tb-mcp-accent{position:relative;top:-.01em;color:var(--accent);font-family:var(--kt-font-accent);font-size:1.55em;line-height:1}
+.tb-mcp-wordmark{display:inline-flex;align-items:baseline;white-space:nowrap}.tb-mcp-wordmark>span:first-child{font-family:var(--kt-font-killer)}.tb-mcp-accent{position:relative;top:-.01em;color:var(--accent);font-family:var(--kt-font-accent);font-size:1.201em;line-height:1}
 
 /* Hero */
 .hero { padding: 12px 0 28px; text-align: center; }
