@@ -37,7 +37,7 @@ for theme, color in svg.THEME_ACCENTS.items():
     write(HERE / "brand" / f"killerbench-logo-{theme}.svg", data)
 
 # The family header faces and their OFL texts, copied beside the site that loads them.
-for name in ("Iceland-Regular.ttf", "FreckleFace-Regular.ttf", "Iceland-OFL.txt", "FreckleFace-OFL.txt"):
+for name in ("KillerSans-Regular.ttf", "FreckleFace-Regular.ttf", "KillerSans-OFL.txt", "FreckleFace-OFL.txt"):
     data = (Path(svg.FONT_DIR) / name).read_bytes()
     if name.endswith(".ttf"):
         TTFont(io.BytesIO(data))
