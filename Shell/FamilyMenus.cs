@@ -137,11 +137,17 @@ public partial class MainWindow
     {
         menu.PlacementTarget = anchor;
         menu.Placement = PlacementMode.Custom;
+        menu.HorizontalOffset = 0;
+        menu.VerticalOffset = 0;
         menu.CustomPopupPlacementCallback = (size, _, _) =>
         {
             var point = anchor.TranslatePoint(new Point(), this);
-            double x = Math.Max(4 - point.X, Math.Min(anchor.ActualWidth - 22, ActualWidth - point.X - size.Width));
-            double y = Math.Max(4 - point.Y, ActualHeight - 24 - point.Y - size.Height + 26);
+            var railEdge = SidebarRail.TranslatePoint(new Point(SidebarRail.ActualWidth, 0), this);
+            var contentBottom = ZoomViewport.TranslatePoint(new Point(0, ZoomViewport.ActualHeight), this);
+            var halo = new Border { Style = (Style)FindResource("FlyoutCard") }.Margin;
+            const double inset = 8;
+            double x = railEdge.X + inset - point.X - halo.Left;
+            double y = Math.Max(4 - point.Y, contentBottom.Y - point.Y - size.Height + halo.Bottom - inset);
             return [new CustomPopupPlacement(new Point(x, y), PopupPrimaryAxis.None)];
         };
         menu.IsOpen = true;

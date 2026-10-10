@@ -176,6 +176,7 @@ namespace KillerBench.Services
             SetIfAbsent(d, "TitleWordmarkSize", 17.0);
             SetIfAbsent(d, "TitleWordmarkBoldSize", 22.0);
             SetIfAbsent(d, "WordmarkEmbossOpacity", 0.0);
+            SetIfAbsent(d, "WordmarkAccentShadowOpacity", 0.0);
             SetIfAbsent(d, "ChromeFontFamily", new System.Windows.Media.FontFamily("Segoe UI"));
 
             bool flatCaption = d.Contains("UseDialogCaption");
