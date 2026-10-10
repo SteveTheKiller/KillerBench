@@ -173,8 +173,8 @@ namespace KillerBench.Services
             SetIfAbsent(d, "TitleBarPadding", new Thickness(14, 0, 0, 0));
             SetIfAbsent(d, "TitleIconSize", 25.0);
             SetIfAbsent(d, "TitleIconMargin", new Thickness(0, 0, 7, 0));
-            SetIfAbsent(d, "TitleWordmarkSize", 17.0);
-            SetIfAbsent(d, "TitleWordmarkBoldSize", 22.0);
+            SetIfAbsent(d, "TitleWordmarkSize", 12.09);
+            SetIfAbsent(d, "TitleWordmarkBoldSize", 21.52);
             SetIfAbsent(d, "WordmarkEmbossOpacity", 0.0);
             SetIfAbsent(d, "WordmarkAccentShadowOpacity", 0.0);
             SetIfAbsent(d, "ChromeFontFamily", new System.Windows.Media.FontFamily("Segoe UI"));

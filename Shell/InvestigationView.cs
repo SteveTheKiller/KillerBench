@@ -32,7 +32,7 @@ public partial class MainWindow
         {
             var card = new StackPanel { Margin = new Thickness(0, 12, 0, 6) };
             var title = new TextBlock { Text = finding.Title, TextWrapping = TextWrapping.Wrap, FontSize = 16 };
-            title.SetResourceReference(TextBlock.FontFamilyProperty, "WordmarkFont");
+            title.SetResourceReference(TextBlock.FontFamilyProperty, "BrandSansFont");
             title.SetResourceReference(TextBlock.ForegroundProperty, "PrimaryBrush");
             card.Children.Add(title);
             AddText($"{finding.RuleId} v{finding.RuleVersion} | {finding.Severity}\n{finding.Certainty} | {finding.Occurrences} occurrences");

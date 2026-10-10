@@ -197,7 +197,7 @@
 <Border Padding="4,6,4,4"><DockPanel>
       <StackPanel x:Name="SidebarHeader" DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,2,0,8">
         <TextBlock Text="&#xE90F;" FontFamily="Segoe MDL2 Assets" FontSize="16" Margin="0,0,6,0" Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
-        <TextBlock x:Name="SidebarHeading" Text="{DynamicResource Str_Shell_Tools}" Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource WordmarkFont}" FontSize="20" TextTrimming="CharacterEllipsis"/>
+        <TextBlock x:Name="SidebarHeading" Text="{DynamicResource Str_Shell_Tools}" Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource BrandSansFont}" FontSize="20" TextTrimming="CharacterEllipsis"/>
       </StackPanel>
       <ListBox x:Name="CategoryList" Margin="0" Background="Transparent" BorderThickness="0" SelectionChanged="OnCategorySelected" AutomationProperties.Name="Tool categories" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
         <ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/></DataTemplate></ListBox.ItemTemplate>
@@ -239,7 +239,7 @@
               </Style>
             </ScrollViewer.Resources>
           <StackPanel>
-            <TextBlock x:Name="CategoryTitle" Text="{DynamicResource Str_Shell_Diagnostics}" FontFamily="{DynamicResource WordmarkFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" Margin="0,0,0,4"/>
+            <TextBlock x:Name="CategoryTitle" Text="{DynamicResource Str_Shell_Diagnostics}" FontFamily="{DynamicResource BrandSansFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" Margin="0,0,0,4"/>
             <TextBlock x:Name="CategoryDescription" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,8"/>
             <WrapPanel Margin="0,0,0,6">
               <ComboBox x:Name="MainWorkflow" ItemsSource="{x:Static workflows:WorkflowCatalog.All}" DisplayMemberPath="Title" SelectedIndex="0" Visibility="Collapsed" SelectionChanged="OnWorkflowOptionsChanged"/>
@@ -919,7 +919,7 @@
           <Grid>
             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <DockPanel Margin="0,0,0,8">
-              <TextBlock x:Name="EvidenceTitle" Text="{DynamicResource Str_Text_Evidence}" FontFamily="{DynamicResource WordmarkFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,8,0"/>
+              <TextBlock x:Name="EvidenceTitle" Text="{DynamicResource Str_Text_Evidence}" FontFamily="{DynamicResource BrandSansFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,8,0"/>
             </DockPanel>
             <DockPanel Grid.Row="1" Margin="0,0,0,8">
               <Button x:Name="ExportReportButton" DockPanel.Dock="Right" VerticalAlignment="Center" Content="{DynamicResource Str_ExportReport}" Click="OnExportReport" ToolTip="{DynamicResource Str_ExportContents}"/>
@@ -973,7 +973,7 @@
       <Border Grid.ColumnSpan="2" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>
       <Border x:Name="ScanLight" Width="9" Height="9" CornerRadius="5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,0,0,0" Background="#3FA95F" BorderThickness="1" BorderBrush="#40000000" ToolTip="{DynamicResource Str_Shell_ReadyNoScan}"/>
       <TextBlock x:Name="StatusLabel" Text="{DynamicResource Str_Text_Ready}" FontFamily="Consolas" FontSize="11.5" Foreground="{DynamicResource TextFooter}" VerticalAlignment="Center" Margin="22,0,12,0" TextTrimming="CharacterEllipsis"/>
-      <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,28,0" VerticalAlignment="Center"><TextBlock x:Name="ThemeStatus" FontFamily="{DynamicResource WordmarkFont}" FontSize="15" Foreground="{DynamicResource TextFooter}" Text="v0.1.0" Margin="0,0,12,0" Cursor="Hand" MouseLeftButtonUp="OnAbout" ToolTip="{DynamicResource Str_Shortcuts_About}"/><TextBlock Text="&#x00A9; 2026 Steve the Killer" FontFamily="{DynamicResource WordmarkFont}" FontSize="15" Foreground="{DynamicResource TextFooter}"/></StackPanel>
+      <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,28,0" VerticalAlignment="Center"><TextBlock x:Name="ThemeStatus" FontFamily="{DynamicResource BrandSansFont}" FontSize="16" TextOptions.TextFormattingMode="Ideal" Foreground="{DynamicResource TextFooter}" Text="v0.1.0" Margin="0,0,12,0" Cursor="Hand" MouseLeftButtonUp="OnAbout" ToolTip="{DynamicResource Str_Shortcuts_About}"/><TextBlock Text="&#x00A9; 2026 Steve the Killer" FontFamily="{DynamicResource BrandSansFont}" FontSize="16" TextOptions.TextFormattingMode="Ideal" Foreground="{DynamicResource TextFooter}"/></StackPanel>
       <Canvas Grid.ColumnSpan="2" Width="13" Height="13" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,4,4" IsHitTestVisible="False">
         <Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="9" Canvas.Top="1"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="5" Canvas.Top="5"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="9" Canvas.Top="5"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="1" Canvas.Top="9"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="5" Canvas.Top="9"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="9" Canvas.Top="9"/>
       </Canvas>
@@ -995,8 +995,8 @@
                 </icons:AppIcon>
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                   <Grid>
-                    <TextBlock Margin="1,2,0,0" IsHitTestVisible="False" Opacity="{DynamicResource WordmarkAccentShadowOpacity}" FontFamily="{DynamicResource WordmarkFont}"><TextBlock.Effect><BlurEffect Radius="3"/></TextBlock.Effect><Run Text="Killer" FontSize="24.2" Foreground="Transparent"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Bench" FontSize="26.43" Foreground="#D8000000"/></TextBlock>
-                    <TextBlock FontFamily="{DynamicResource WordmarkFont}" Cursor="Hand" MouseLeftButtonUp="OnAboutWebsite" ToolTip="killerbench.net"><Run Text="Killer" FontSize="24.2" Foreground="{DynamicResource TextBrush}"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Bench" FontSize="26.43" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
+                    <TextBlock Margin="1,2,0,0" IsHitTestVisible="False" Opacity="{DynamicResource WordmarkAccentShadowOpacity}" FontFamily="{DynamicResource WordmarkFont}"><TextBlock.Effect><BlurEffect Radius="3"/></TextBlock.Effect><Run Text="Killer" FontSize="17.21" Foreground="Transparent"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Bench" FontSize="25.85" Foreground="#D8000000"/></TextBlock>
+                    <TextBlock FontFamily="{DynamicResource WordmarkFont}" Cursor="Hand" MouseLeftButtonUp="OnAboutWebsite" ToolTip="killerbench.net"><Run Text="Killer" FontSize="17.21" Foreground="{DynamicResource TextBrush}"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Bench" FontSize="25.85" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
                   </Grid>
                   <TextBlock FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap"><Run Text="{DynamicResource Str_About_DescriptionPrefix}"/><Run Text=" "/><Hyperlink NavigateUri="https://killertools.net" RequestNavigate="OnAboutLink" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None">GPLv3 Killer Tools</Hyperlink><Run Text=" "/><Run Text="{DynamicResource Str_About_DescriptionSuffix}"/></TextBlock>
                 </StackPanel>

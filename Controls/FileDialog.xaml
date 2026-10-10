@@ -88,14 +88,14 @@
                         <Grid VerticalAlignment="Center" Visibility="{DynamicResource WordmarkVisibility}">
                             <TextBlock Margin="1,2,0,0" IsHitTestVisible="False"
                                        Opacity="{DynamicResource WordmarkAccentShadowOpacity}"
-                                       FontFamily="{DynamicResource WordmarkFont}" FontSize="16.5">
+                                       FontFamily="{DynamicResource WordmarkFont}" FontSize="11.73">
                                 <TextBlock.Effect><BlurEffect Radius="3"/></TextBlock.Effect>
                                 <Run Text="Killer" Foreground="Transparent"/>
-                                <Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Bench" FontSize="18.02" Foreground="#D8000000"/>
+                                <Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Bench" FontSize="17.62" Foreground="#D8000000"/>
                             </TextBlock>
-                            <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="16.5">
+                            <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="11.73">
                                 <Run Text="Killer" Foreground="{DynamicResource ChromeTextBrush}"/>
-                                <Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Bench" FontSize="18.02"
+                                <Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Bench" FontSize="17.62"
                                      Foreground="{DynamicResource AccentLogo}"/>
                             </TextBlock>
                         </Grid>
