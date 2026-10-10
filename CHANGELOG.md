@@ -99,6 +99,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Added KillerMCP Options to the About card. Agent repairs through KillerMCP stayed off until turned on there, disruptive repairs needed a separate setting and desktop approval, and a locked state after an uncertain result could be cleared from the same place.
 - Added 13 family themes with yellow and magenta accents on the neutral and 98SE themes. New installs and the website started on Dark with the yellow accent.
 - Added a Film Grain switch to the theme menu. It was on by default, and turning it off removed the grain texture from every surface.
+- Set the wordmarks and headings in the app and on the website in Iceland and Freckle Face in place of the typewriter font.
 - Added localization in 19 languages, including Vietnamese, Ukrainian, Norwegian (Bokmål) and Brazilian Portuguese, with a two-column language menu.
 - Added the family List and Keyboard shortcut views from one binding table, linked to the online guide, with F12 for About.
 - Used KillerUI-style confirmations and Open, Save and Folder dialogs throughout the app.

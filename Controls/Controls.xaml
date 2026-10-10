@@ -11,7 +11,8 @@
     <kui:ThumbViewportFloorConverter x:Key="ThumbFloor"/>
 
     
-    <FontFamily x:Key="WordmarkFont">/KillerBench;component/Fonts/#Typewriter - a602 (dead postman 2004)</FontFamily>
+    <FontFamily x:Key="WordmarkFont">/KillerBench;component/Fonts/#Iceland</FontFamily>
+    <FontFamily x:Key="WordmarkAccentFont">/KillerBench;component/Fonts/#Freckle Face</FontFamily>
 
     
     <Style TargetType="ToolTip">
