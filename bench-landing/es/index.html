@@ -20,10 +20,10 @@
 </head>
 <body data-brand-base="../brand" data-ui-theme="Tema" data-ui-choose-theme="Elegir tema" data-ui-accent="Color de acento" data-ui-accent-label="acento:" data-ui-close="Cerrar" data-ui-no-results="No hay páginas coincidentes.">
 <header class="topbar">
-  <a class="tb-home" href="index.html"><img class="wm-logo tb-wm" src="../brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>
+  <a class="tb-home" href="index.html" title="KillerBench"><img class="tb-icon" src="../app-icon.png" alt="KillerBench" width="44" height="44"><img class="wm-logo tb-wm" src="../brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>
   <a class="tb-mcp-link" href="../mcp.html" aria-label="KillerMCP"><img src="../mcp.png" alt="" aria-hidden="true"><span class="tb-mcp-wordmark"><span>Killer</span><span class="tb-mcp-accent">MCP</span></span></a>
   <span class="tb-spacer"></span>
-<nav class="tb-nav"><a href="#workbench">Banco de trabajo</a><a href="#features">Funciones</a><a href="help/index.html">Ayuda</a><a href="../help/setup.html">Configuración</a><a href="engine/index.html">Engine</a><a href="#about">Acerca de</a></nav>
+<nav class="tb-nav"><a href="help/index.html">Ayuda</a><a href="engine/index.html">Engine</a><a href="../help/about.html">Acerca de</a></nav>
 <div class="tgrp" role="group" aria-label="Tema">
 <button class="swatch sw-dark" data-theme="dark" title="Oscuro"></button>
 <button class="swatch sw-light" data-theme="light" title="Claro"></button>
@@ -53,16 +53,25 @@
 <div class="lang-switch"><button class="lang-toggle" id="languageToggle" aria-haspopup="true" aria-expanded="false" aria-label="Elegir idioma">ES</button><div class="lang-menu" id="languageMenu" hidden><a class="lang-item" hreflang="en-US" lang="en-US" href="../index.html" aria-pressed="false">English</a><a class="lang-item" hreflang="bn" lang="bn" href="../bn/index.html" aria-pressed="false">বাংলা</a><a class="lang-item" hreflang="cs-CZ" lang="cs-CZ" href="../cs-CZ/index.html" aria-pressed="false">Čeština</a><a class="lang-item" hreflang="de-DE" lang="de-DE" href="../de-DE/index.html" aria-pressed="false">Deutsch</a><a class="lang-item" hreflang="es" lang="es" href="index.html" aria-pressed="true">Español</a><a class="lang-item" hreflang="fr-FR" lang="fr-FR" href="../fr-FR/index.html" aria-pressed="false">Français</a><a class="lang-item" hreflang="hu-HU" lang="hu-HU" href="../hu-HU/index.html" aria-pressed="false">Magyar</a><a class="lang-item" hreflang="it-IT" lang="it-IT" href="../it-IT/index.html" aria-pressed="false">Italiano</a><a class="lang-item" hreflang="ja-JP" lang="ja-JP" href="../ja-JP/index.html" aria-pressed="false">日本語</a><a class="lang-item" hreflang="kk-KZ" lang="kk-KZ" href="../kk-KZ/index.html" aria-pressed="false">Қазақша</a><a class="lang-item" hreflang="nb-NO" lang="nb-NO" href="../nb-NO/index.html" aria-pressed="false">Norsk bokmål</a><a class="lang-item" hreflang="pl-PL" lang="pl-PL" href="../pl-PL/index.html" aria-pressed="false">Polski</a><a class="lang-item" hreflang="pt-BR" lang="pt-BR" href="../pt-BR/index.html" aria-pressed="false">Português (Brasil)</a><a class="lang-item" hreflang="ru-RU" lang="ru-RU" href="../ru-RU/index.html" aria-pressed="false">Русский</a><a class="lang-item" hreflang="tr-TR" lang="tr-TR" href="../tr-TR/index.html" aria-pressed="false">Türkçe</a><a class="lang-item" hreflang="uk-UA" lang="uk-UA" href="../uk-UA/index.html" aria-pressed="false">Українська</a><a class="lang-item" hreflang="vi-VN" lang="vi-VN" href="../vi-VN/index.html" aria-pressed="false">Tiếng Việt</a><a class="lang-item" hreflang="zh-CN" lang="zh-CN" href="../zh-CN/index.html" aria-pressed="false">简体中文</a><a class="lang-item" hreflang="zh-TW" lang="zh-TW" href="../zh-TW/index.html" aria-pressed="false">繁體中文</a></div></div></header>
 <div class="shell"><main class="content"><div class="content-scroll"><div class="content-inner">
   <section class="hero">
-    <p class="eyebrow">EN DESARROLLO / BANCO DE DIAGNÓSTICO Y REPARACIÓN DE WINDOWS</p>
-    <img class="wm-logo hero-mark" src="../brand/killerbench-logo-dark-yellow.svg" alt="KillerBench">
-    <h1>Sigue las evidencias.</h1>
-    <p class="intro">Elige una herramienta, revisa sus opciones y pulsa GO. Sigue las evidencias en la salida sin procesar o en el informe legible. Las reparaciones compatibles comprueban los requisitos actuales, registran la solicitud y verifican el resultado.</p>
-    <p class="release-note"><a href="../help/setup.html">KillerBench está en desarrollo. Las descargas públicas todavía no están disponibles.</a></p>
-    <p class="release-note">La validación de las reparaciones nativas sigue en curso.</p>
-    <a class="btn" href="#workbench">Explorar el banco de trabajo</a> <a class="btn" href="help/index.html">Leer la guía</a>
+    <div class="hero-lockup">
+      <img class="hero-icon" src="../app-icon.png" alt="" aria-hidden="true" width="230" height="230">
+      <img class="wm-logo" src="../brand/killerbench-logo-dark-yellow.svg" alt="KillerBench">
+    </div>
+    <p class="tagline">Elige una herramienta, revisa sus opciones y pulsa GO. Sigue las evidencias en la salida sin procesar o en el informe legible. Las reparaciones compatibles comprueban los requisitos actuales, registran la solicitud y verifican el resultado.</p>
+    <div class="hero-grid">
+      <div class="hero-cta">
+        <div class="cta-row"><a class="download-btn" href="help/index.html"><svg viewbox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v16H6.5a.5.5 0 0 0 0 1H20v3H6.5A2.5 2.5 0 0 1 4 19.5v-15z"></path></svg><span>Leer la guía</span></a></div>
+        <a class="gh-btn" href="engine/index.html"><svg viewbox="0 0 24 24"><path d="M8.6 16.6 4 12l4.6-4.6L7.2 6 1.2 12l6 6 1.4-1.4zm6.8 0L20 12l-4.6-4.6L16.8 6l6 6-6 6-1.4-1.4z"></path></svg><span>Guía de Engine para desarrolladores</span></a>
+      </div>
+      <div class="hero-info">
+        <div class="row"><span class="k">versión</span> <span class="v">KillerBench v0.1.0</span></div>
+        <div class="row"><span class="k">estado</span> <span class="v">En desarrollo</span></div>
+        <div class="row"><span class="k">plataforma</span> <span class="v">Windows 10/11 x64</span></div>
+        <p class="note">KillerBench está en desarrollo. Las descargas públicas todavía no están disponibles. La validación de las reparaciones nativas sigue en curso.</p>
+      </div>
+    </div>
   </section>
   <section id="workbench" class="bench-pane">
-    <p class="eyebrow">01 / VISUALIZACIÓN DE EVIDENCIAS</p>
     <h2>Tu tema. Hallazgos trazables.</h2>
     <div class="console" role="region" aria-label="Consola ilustrativa de evidencias con un hallazgo de mantenimiento simulado">
       <p>KILLERBENCH / EJEMPLO SIMULADO</p>
@@ -75,16 +84,16 @@
     <p class="caption">Salida ilustrativa, no es un análisis de tu ordenador.</p>
   </section>
   <section class="features" id="features"><h2>Dentro del banco de trabajo</h2><div class="feature-grid">
-    <article class="feature-card"><p class="eyebrow">02 / DIAGNOSTICAR PRIMERO</p><h3>Doce secciones, un hábito</h3><p>Diagnóstico, reparación, actualizaciones, dispositivos, red, aplicaciones, mantenimiento, puesta en marcha, seguridad, BitLocker, privacidad y almacenamiento. Cada herramienta lee antes de ofrecer nada, y el análisis completo del sistema ordena lo que necesita atención.</p></article>
-    <article class="feature-card"><p class="eyebrow">03 / REPARACIONES PROTEGIDAS</p><h3>Corrige solo lo demostrado</h3><p>Solo se ofrece una reparación cuando las evidencias recientes coinciden con el problema exacto. Requiere tu confirmación, vuelve a comprobar todo justo antes de ejecutarse y lee de nuevo el resultado antes de declararlo verificado.</p></article>
-    <article class="feature-card"><p class="eyebrow">04 / EVIDENCIAS QUE PUEDES SEGUIR</p><h3>Sin cajas negras</h3><p>Los hallazgos enlazan al evento, la línea de registro o el ajuste que los explica. Las evidencias incompletas nunca se presentan como buen estado, y el historial sigue siendo historial. Exporta el informe directamente a un ticket.</p></article>
-    <article class="feature-card"><p class="eyebrow">05 / BITLOCKER Y TPM</p><h3>Cifrado sin conjeturas</h3><p>Inspecciona los protectores, guarda copias de las contraseñas de recuperación en un archivo, Active Directory o Entra ID, cifra unidades de Windows y de datos, activa el desbloqueo automático y prepara un TPM sin borrarlo nunca.</p></article>
-    <article class="feature-card"><p class="eyebrow">06 / PRIVACIDAD Y LIMPIEZA</p><h3>Haz tuyo un portátil</h3><p>Revisa y cambia los ajustes de privacidad, los permisos de aplicaciones y la búsqueda en la nube, y después limpia Windows. Los ajustes controlados por directivas o administración de dispositivos se dejan intactos.</p></article>
-    <article class="feature-card"><p class="eyebrow">07 / RECUPERACIÓN TRAS INTERRUPCIONES</p><h3>Comprobar antes de reintentar</h3><p>Las reparaciones con diario registran una solicitud pendiente antes de enviarla. Si una solicitud se interrumpe, la recuperación comprueba qué ocurrió sin repetir automáticamente el cambio.</p></article>
-    <article class="feature-card"><p class="eyebrow">08 / DIAGNÓSTICOS LOCALES</p><h3>No requiere IA</h3><p>Los diagnósticos y el análisis de informes se ejecutan localmente sin un servicio de IA ni una cuenta de KillerBench. Las acciones que selecciones, como las descargas o la copia de seguridad de claves de recuperación en Entra ID, pueden contactar con su destino. El mismo Engine impulsa la aplicación de escritorio y la línea de comandos.</p></article>
+    <article class="feature-card"><h3>Doce secciones, un hábito</h3><p>Diagnóstico, reparación, actualizaciones, dispositivos, red, aplicaciones, mantenimiento, puesta en marcha, seguridad, BitLocker, privacidad y almacenamiento. Cada herramienta lee antes de ofrecer nada, y el análisis completo del sistema ordena lo que necesita atención.</p></article>
+    <article class="feature-card"><h3>Corrige solo lo demostrado</h3><p>Solo se ofrece una reparación cuando las evidencias recientes coinciden con el problema exacto. Requiere tu confirmación, vuelve a comprobar todo justo antes de ejecutarse y lee de nuevo el resultado antes de declararlo verificado.</p></article>
+    <article class="feature-card"><h3>Sin cajas negras</h3><p>Los hallazgos enlazan al evento, la línea de registro o el ajuste que los explica. Las evidencias incompletas nunca se presentan como buen estado, y el historial sigue siendo historial. Exporta el informe directamente a un ticket.</p></article>
+    <article class="feature-card"><h3>Cifrado sin conjeturas</h3><p>Inspecciona los protectores, guarda copias de las contraseñas de recuperación en un archivo, Active Directory o Entra ID, cifra unidades de Windows y de datos, activa el desbloqueo automático y prepara un TPM sin borrarlo nunca.</p></article>
+    <article class="feature-card"><h3>Haz tuyo un portátil</h3><p>Revisa y cambia los ajustes de privacidad, los permisos de aplicaciones y la búsqueda en la nube, y después limpia Windows. Los ajustes controlados por directivas o administración de dispositivos se dejan intactos.</p></article>
+    <article class="feature-card"><h3>Comprobar antes de reintentar</h3><p>Las reparaciones con diario registran una solicitud pendiente antes de enviarla. Si una solicitud se interrumpe, la recuperación comprueba qué ocurrió sin repetir automáticamente el cambio.</p></article>
+    <article class="feature-card"><h3>No requiere IA</h3><p>Los diagnósticos y el análisis de informes se ejecutan localmente sin un servicio de IA ni una cuenta de KillerBench. Las acciones que selecciones, como las descargas o la copia de seguridad de claves de recuperación en Entra ID, pueden contactar con su destino. El mismo Engine impulsa la aplicación de escritorio y la línea de comandos.</p></article>
   </div><p class="caption"><a href="help/index.html">Leer la guía completa</a> para cada sección y herramienta.</p></section>
   <section class="bench-pane" id="about"><h2>Parte de la familia Killer Tools</h2><p>Superficies texturizadas, el logotipo de Killer Tools y 13 temas de aplicación. La consola de cristal ahumado, los informes legibles, las confirmaciones y los diálogos Abrir, Guardar y Carpeta siguen el tema activo.</p><p><a href="../help/setup.html">Descarga y configuración</a> · <a href="../help/about.html">Acerca de KillerBench</a> · <a href="../help/workspace.html">Orientarse</a> · <a href="../help/safety.html">Consultar el modelo de seguridad</a> · <a href="engine/index.html">Guía de Engine para desarrolladores</a> · <a href="../mcp.html">KillerMCP</a> · <a href="https://killertools.net">Explorar Killer Tools</a></p></section>
-</div></div></main><aside class="sidebar"><div class="sb-empty">KillerBench<br>En desarrollo</div><a class="sb-art" href="#workbench"><img src="../og-image.png" alt="Ilustración del banco de diagnóstico KillerBench"></a><div class="sb-empty">Diagnostica primero.<br>Corrige lo demostrado.<br>No requiere IA.</div></aside></div>
+</div></div></main><aside class="sidebar"><div class="sb-thumbs" id="sbThumbs"><div class="sb-empty">Capturas de pantalla<br>próximamente</div></div></aside></div>
 <footer class="statusbar"><span class="left">En desarrollo · Parte de <a href="https://killertools.net">killertools.net</a></span><span class="right">© 2026 <b><a href="https://thekiller.net">Steve the Killer</a></b></span></footer>
 </body>
 </html>

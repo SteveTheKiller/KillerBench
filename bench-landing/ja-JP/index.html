@@ -20,10 +20,10 @@
 </head>
 <body data-brand-base="../brand" data-ui-theme="テーマ" data-ui-choose-theme="テーマを選択" data-ui-accent="アクセントカラー" data-ui-accent-label="アクセント:" data-ui-close="閉じる" data-ui-no-results="一致するページはありません。">
 <header class="topbar">
-  <a class="tb-home" href="index.html"><img class="wm-logo tb-wm" src="../brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>
+  <a class="tb-home" href="index.html" title="KillerBench"><img class="tb-icon" src="../app-icon.png" alt="KillerBench" width="44" height="44"><img class="wm-logo tb-wm" src="../brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>
   <a class="tb-mcp-link" href="../mcp.html" aria-label="KillerMCP"><img src="../mcp.png" alt="" aria-hidden="true"><span class="tb-mcp-wordmark"><span>Killer</span><span class="tb-mcp-accent">MCP</span></span></a>
   <span class="tb-spacer"></span>
-<nav class="tb-nav"><a href="#workbench">作業環境</a><a href="#features">機能</a><a href="help/index.html">ヘルプ</a><a href="../help/setup.html">設定</a><a href="engine/index.html">Engine</a><a href="#about">このアプリについて</a></nav>
+<nav class="tb-nav"><a href="help/index.html">ヘルプ</a><a href="engine/index.html">Engine</a><a href="../help/about.html">このアプリについて</a></nav>
 <div class="tgrp" role="group" aria-label="テーマ">
 <button class="swatch sw-dark" data-theme="dark" title="ダーク"></button>
 <button class="swatch sw-light" data-theme="light" title="ライト"></button>
@@ -53,16 +53,25 @@
 <div class="lang-switch"><button class="lang-toggle" id="languageToggle" aria-haspopup="true" aria-expanded="false" aria-label="言語を選択">JA</button><div class="lang-menu" id="languageMenu" hidden><a class="lang-item" hreflang="en-US" lang="en-US" href="../index.html" aria-pressed="false">English</a><a class="lang-item" hreflang="bn" lang="bn" href="../bn/index.html" aria-pressed="false">বাংলা</a><a class="lang-item" hreflang="cs-CZ" lang="cs-CZ" href="../cs-CZ/index.html" aria-pressed="false">Čeština</a><a class="lang-item" hreflang="de-DE" lang="de-DE" href="../de-DE/index.html" aria-pressed="false">Deutsch</a><a class="lang-item" hreflang="es" lang="es" href="../es/index.html" aria-pressed="false">Español</a><a class="lang-item" hreflang="fr-FR" lang="fr-FR" href="../fr-FR/index.html" aria-pressed="false">Français</a><a class="lang-item" hreflang="hu-HU" lang="hu-HU" href="../hu-HU/index.html" aria-pressed="false">Magyar</a><a class="lang-item" hreflang="it-IT" lang="it-IT" href="../it-IT/index.html" aria-pressed="false">Italiano</a><a class="lang-item" hreflang="ja-JP" lang="ja-JP" href="index.html" aria-pressed="true">日本語</a><a class="lang-item" hreflang="kk-KZ" lang="kk-KZ" href="../kk-KZ/index.html" aria-pressed="false">Қазақша</a><a class="lang-item" hreflang="nb-NO" lang="nb-NO" href="../nb-NO/index.html" aria-pressed="false">Norsk bokmål</a><a class="lang-item" hreflang="pl-PL" lang="pl-PL" href="../pl-PL/index.html" aria-pressed="false">Polski</a><a class="lang-item" hreflang="pt-BR" lang="pt-BR" href="../pt-BR/index.html" aria-pressed="false">Português (Brasil)</a><a class="lang-item" hreflang="ru-RU" lang="ru-RU" href="../ru-RU/index.html" aria-pressed="false">Русский</a><a class="lang-item" hreflang="tr-TR" lang="tr-TR" href="../tr-TR/index.html" aria-pressed="false">Türkçe</a><a class="lang-item" hreflang="uk-UA" lang="uk-UA" href="../uk-UA/index.html" aria-pressed="false">Українська</a><a class="lang-item" hreflang="vi-VN" lang="vi-VN" href="../vi-VN/index.html" aria-pressed="false">Tiếng Việt</a><a class="lang-item" hreflang="zh-CN" lang="zh-CN" href="../zh-CN/index.html" aria-pressed="false">简体中文</a><a class="lang-item" hreflang="zh-TW" lang="zh-TW" href="../zh-TW/index.html" aria-pressed="false">繁體中文</a></div></div></header>
 <div class="shell"><main class="content"><div class="content-scroll"><div class="content-inner">
   <section class="hero">
-    <p class="eyebrow">開発中 / WINDOWSの診断と修復の作業環境</p>
-    <img class="wm-logo hero-mark" src="../brand/killerbench-logo-dark-yellow.svg" alt="KillerBench">
-    <h1>証拠をたどる。</h1>
-    <p class="intro">ツールを選び、オプションを確認してGOを押します。生の出力や読みやすいレポートで証拠を確認できます。対応する修復は現在の前提条件を確認し、要求を記録して結果を検証します。</p>
-    <p class="release-note"><a href="../help/setup.html">KillerBenchは開発中です。一般向けダウンロードはまだ提供していません。</a></p>
-    <p class="release-note">ネイティブ修復の検証は現在も進行中です。</p>
-    <a class="btn" href="#workbench">作業環境を見る</a> <a class="btn" href="help/index.html">ガイドを読む</a>
+    <div class="hero-lockup">
+      <img class="hero-icon" src="../app-icon.png" alt="" aria-hidden="true" width="230" height="230">
+      <img class="wm-logo" src="../brand/killerbench-logo-dark-yellow.svg" alt="KillerBench">
+    </div>
+    <p class="tagline">ツールを選び、オプションを確認してGOを押します。生の出力や読みやすいレポートで証拠を確認できます。対応する修復は現在の前提条件を確認し、要求を記録して結果を検証します。</p>
+    <div class="hero-grid">
+      <div class="hero-cta">
+        <div class="cta-row"><a class="download-btn" href="help/index.html"><svg viewbox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v16H6.5a.5.5 0 0 0 0 1H20v3H6.5A2.5 2.5 0 0 1 4 19.5v-15z"></path></svg><span>ガイドを読む</span></a></div>
+        <a class="gh-btn" href="engine/index.html"><svg viewbox="0 0 24 24"><path d="M8.6 16.6 4 12l4.6-4.6L7.2 6 1.2 12l6 6 1.4-1.4zm6.8 0L20 12l-4.6-4.6L16.8 6l6 6-6 6-1.4-1.4z"></path></svg><span>Engine開発者ガイド</span></a>
+      </div>
+      <div class="hero-info">
+        <div class="row"><span class="k">バージョン</span> <span class="v">KillerBench v0.1.0</span></div>
+        <div class="row"><span class="k">状態</span> <span class="v">開発中</span></div>
+        <div class="row"><span class="k">プラットフォーム</span> <span class="v">Windows 10/11 x64</span></div>
+        <p class="note">KillerBenchは開発中です。一般向けダウンロードはまだ提供していません。 ネイティブ修復の検証は現在も進行中です。</p>
+      </div>
+    </div>
   </section>
   <section id="workbench" class="bench-pane">
-    <p class="eyebrow">01 / 証拠の表示</p>
     <h2>好みのテーマで。検出結果を追跡。</h2>
     <div class="console" role="region" aria-label="架空の保守結果を示す証拠コンソールの例">
       <p>KILLERBENCH / 架空の例</p>
@@ -75,16 +84,16 @@
     <p class="caption">説明用の出力であり、お使いのコンピューターのスキャン結果ではありません。</p>
   </section>
   <section class="features" id="features"><h2>作業環境の機能</h2><div class="feature-grid">
-    <article class="feature-card"><p class="eyebrow">02 / まず診断</p><h3>12のセクション、1つの習慣</h3><p>診断、修復、更新、デバイス、ネットワーク、アプリ、メンテナンス、初期設定、セキュリティ、BitLocker、プライバシー、ストレージ。各ツールは提案前に状態を読み取り、システム全体のスキャンは対応が必要な項目を順に示します。</p></article>
-    <article class="feature-card"><p class="eyebrow">03 / 安全対策付きの修復</p><h3>確認できた問題だけを修復</h3><p>修復は最新の証拠が対象の問題と正確に一致した場合にのみ提示されます。確認を求め、実行直前に条件を再確認し、結果を読み取ってから検証済みと報告します。</p></article>
-    <article class="feature-card"><p class="eyebrow">04 / たどれる証拠</p><h3>中身の見える診断</h3><p>検出結果から、根拠となるイベント、ログの行、設定を参照できます。不完全な証拠を正常と報告せず、過去の情報は過去の情報として扱います。レポートをチケットに直接エクスポートできます。</p></article>
-    <article class="feature-card"><p class="eyebrow">05 / BITLOCKERとTPM</p><h3>推測に頼らない暗号化</h3><p>保護機能を調べ、回復パスワードをファイル、Active Directory、Entra IDにバックアップし、Windowsドライブとデータドライブを暗号化できます。自動ロック解除を有効にし、TPMをクリアせずに準備できます。</p></article>
-    <article class="feature-card"><p class="eyebrow">06 / プライバシーと整理</p><h3>ノートPCを自分仕様に</h3><p>プライバシー設定、アプリの権限、クラウド検索を確認・変更し、Windowsを整理できます。ポリシーやデバイス管理が所有する設定は変更しません。</p></article>
-    <article class="feature-card"><p class="eyebrow">07 / 中断後の復旧</p><h3>再試行の前に確認</h3><p>ジャーナルを使用する修復は、送信前に保留中の要求を記録します。要求が中断された場合、復旧処理は変更を自動で繰り返さず、何が起きたかを確認します。</p></article>
-    <article class="feature-card"><p class="eyebrow">08 / ローカル診断</p><h3>AIは不要</h3><p>診断とレポート分析はAIサービスやKillerBenchアカウントなしでローカルに実行されます。ダウンロードやEntra IDへの回復キーのバックアップなど、選択した操作は宛先に接続することがあります。同じEngineがデスクトップアプリとコマンドラインを動かします。</p></article>
+    <article class="feature-card"><h3>12のセクション、1つの習慣</h3><p>診断、修復、更新、デバイス、ネットワーク、アプリ、メンテナンス、初期設定、セキュリティ、BitLocker、プライバシー、ストレージ。各ツールは提案前に状態を読み取り、システム全体のスキャンは対応が必要な項目を順に示します。</p></article>
+    <article class="feature-card"><h3>確認できた問題だけを修復</h3><p>修復は最新の証拠が対象の問題と正確に一致した場合にのみ提示されます。確認を求め、実行直前に条件を再確認し、結果を読み取ってから検証済みと報告します。</p></article>
+    <article class="feature-card"><h3>中身の見える診断</h3><p>検出結果から、根拠となるイベント、ログの行、設定を参照できます。不完全な証拠を正常と報告せず、過去の情報は過去の情報として扱います。レポートをチケットに直接エクスポートできます。</p></article>
+    <article class="feature-card"><h3>推測に頼らない暗号化</h3><p>保護機能を調べ、回復パスワードをファイル、Active Directory、Entra IDにバックアップし、Windowsドライブとデータドライブを暗号化できます。自動ロック解除を有効にし、TPMをクリアせずに準備できます。</p></article>
+    <article class="feature-card"><h3>ノートPCを自分仕様に</h3><p>プライバシー設定、アプリの権限、クラウド検索を確認・変更し、Windowsを整理できます。ポリシーやデバイス管理が所有する設定は変更しません。</p></article>
+    <article class="feature-card"><h3>再試行の前に確認</h3><p>ジャーナルを使用する修復は、送信前に保留中の要求を記録します。要求が中断された場合、復旧処理は変更を自動で繰り返さず、何が起きたかを確認します。</p></article>
+    <article class="feature-card"><h3>AIは不要</h3><p>診断とレポート分析はAIサービスやKillerBenchアカウントなしでローカルに実行されます。ダウンロードやEntra IDへの回復キーのバックアップなど、選択した操作は宛先に接続することがあります。同じEngineがデスクトップアプリとコマンドラインを動かします。</p></article>
   </div><p class="caption"><a href="help/index.html">ガイド全体を読む</a> で、すべてのセクションとツールを確認できます。</p></section>
   <section class="bench-pane" id="about"><h2>Killer Toolsファミリーの一員</h2><p>質感のある画面、Killer Tools のロゴ、13種類のアプリテーマ。スモークガラス風のコンソール、読みやすいレポート、確認画面、開く・保存・フォルダーのダイアログは、現在のアプリテーマに合わせて表示されます。</p><p><a href="../help/setup.html">ダウンロードと設定</a> · <a href="../help/about.html">KillerBenchについて</a> · <a href="../help/workspace.html">使い方を確認</a> · <a href="../help/safety.html">安全対策の仕組みを確認</a> · <a href="engine/index.html">Engine開発者ガイド</a> · <a href="../mcp.html">KillerMCP</a> · <a href="https://killertools.net">Killer Toolsを見る</a></p></section>
-</div></div></main><aside class="sidebar"><div class="sb-empty">KillerBench<br>開発中</div><a class="sb-art" href="#workbench"><img src="../og-image.png" alt="KillerBench診断作業環境のイラスト"></a><div class="sb-empty">まず診断。<br>確認できた問題を修復。<br>AIは不要。</div></aside></div>
+</div></div></main><aside class="sidebar"><div class="sb-thumbs" id="sbThumbs"><div class="sb-empty">スクリーンショットは<br>近日公開</div></div></aside></div>
 <footer class="statusbar"><span class="left">開発中 · 所属: <a href="https://killertools.net">killertools.net</a></span><span class="right">© 2026 <b><a href="https://thekiller.net">Steve the Killer</a></b></span></footer>
 </body>
 </html>

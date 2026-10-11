@@ -20,10 +20,10 @@
 </head>
 <body data-brand-base="../brand" data-ui-theme="Тема" data-ui-choose-theme="Виберіть тему" data-ui-accent="Колір акценту" data-ui-accent-label="акцент:" data-ui-close="Закрити" data-ui-no-results="Немає відповідних сторінок.">
 <header class="topbar">
-  <a class="tb-home" href="index.html"><img class="wm-logo tb-wm" src="../brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>
+  <a class="tb-home" href="index.html" title="KillerBench"><img class="tb-icon" src="../app-icon.png" alt="KillerBench" width="44" height="44"><img class="wm-logo tb-wm" src="../brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>
   <a class="tb-mcp-link" href="../mcp.html" aria-label="KillerMCP"><img src="../mcp.png" alt="" aria-hidden="true"><span class="tb-mcp-wordmark"><span>Killer</span><span class="tb-mcp-accent">MCP</span></span></a>
   <span class="tb-spacer"></span>
-<nav class="tb-nav"><a href="#workbench">Набір інструментів</a><a href="#features">Можливості</a><a href="help/index.html">Довідка</a><a href="../help/setup.html">Налаштування</a><a href="engine/index.html">Engine</a><a href="#about">Про програму</a></nav>
+<nav class="tb-nav"><a href="help/index.html">Довідка</a><a href="engine/index.html">Engine</a><a href="../help/about.html">Про програму</a></nav>
 <div class="tgrp" role="group" aria-label="Тема">
 <button class="swatch sw-dark" data-theme="dark" title="Темна"></button>
 <button class="swatch sw-light" data-theme="light" title="Світла"></button>
@@ -53,16 +53,25 @@
 <div class="lang-switch"><button class="lang-toggle" id="languageToggle" aria-haspopup="true" aria-expanded="false" aria-label="Виберіть мову">UK</button><div class="lang-menu" id="languageMenu" hidden><a class="lang-item" hreflang="en-US" lang="en-US" href="../index.html" aria-pressed="false">English</a><a class="lang-item" hreflang="bn" lang="bn" href="../bn/index.html" aria-pressed="false">বাংলা</a><a class="lang-item" hreflang="cs-CZ" lang="cs-CZ" href="../cs-CZ/index.html" aria-pressed="false">Čeština</a><a class="lang-item" hreflang="de-DE" lang="de-DE" href="../de-DE/index.html" aria-pressed="false">Deutsch</a><a class="lang-item" hreflang="es" lang="es" href="../es/index.html" aria-pressed="false">Español</a><a class="lang-item" hreflang="fr-FR" lang="fr-FR" href="../fr-FR/index.html" aria-pressed="false">Français</a><a class="lang-item" hreflang="hu-HU" lang="hu-HU" href="../hu-HU/index.html" aria-pressed="false">Magyar</a><a class="lang-item" hreflang="it-IT" lang="it-IT" href="../it-IT/index.html" aria-pressed="false">Italiano</a><a class="lang-item" hreflang="ja-JP" lang="ja-JP" href="../ja-JP/index.html" aria-pressed="false">日本語</a><a class="lang-item" hreflang="kk-KZ" lang="kk-KZ" href="../kk-KZ/index.html" aria-pressed="false">Қазақша</a><a class="lang-item" hreflang="nb-NO" lang="nb-NO" href="../nb-NO/index.html" aria-pressed="false">Norsk bokmål</a><a class="lang-item" hreflang="pl-PL" lang="pl-PL" href="../pl-PL/index.html" aria-pressed="false">Polski</a><a class="lang-item" hreflang="pt-BR" lang="pt-BR" href="../pt-BR/index.html" aria-pressed="false">Português (Brasil)</a><a class="lang-item" hreflang="ru-RU" lang="ru-RU" href="../ru-RU/index.html" aria-pressed="false">Русский</a><a class="lang-item" hreflang="tr-TR" lang="tr-TR" href="../tr-TR/index.html" aria-pressed="false">Türkçe</a><a class="lang-item" hreflang="uk-UA" lang="uk-UA" href="index.html" aria-pressed="true">Українська</a><a class="lang-item" hreflang="vi-VN" lang="vi-VN" href="../vi-VN/index.html" aria-pressed="false">Tiếng Việt</a><a class="lang-item" hreflang="zh-CN" lang="zh-CN" href="../zh-CN/index.html" aria-pressed="false">简体中文</a><a class="lang-item" hreflang="zh-TW" lang="zh-TW" href="../zh-TW/index.html" aria-pressed="false">繁體中文</a></div></div></header>
 <div class="shell"><main class="content"><div class="content-scroll"><div class="content-inner">
   <section class="hero">
-    <p class="eyebrow">У РОЗРОБЦІ / ДІАГНОСТИКА Й ВИПРАВЛЕННЯ ПРОБЛЕМ WINDOWS</p>
-    <img class="wm-logo hero-mark" src="../brand/killerbench-logo-dark-yellow.svg" alt="KillerBench">
-    <h1>Дотримуйтеся даних.</h1>
-    <p class="intro">Виберіть інструмент, перегляньте його параметри й натисніть GO. Вивчайте дані в поданнях «Вихідні дані» або «Зрозумілий звіт». Підтримувані виправлення перевіряють поточні передумови, реєструють запит і перевіряють результат.</p>
-    <p class="release-note"><a href="../help/setup.html">KillerBench перебуває в розробці. Публічне завантаження поки недоступне.</a></p>
-    <p class="release-note">Перевірка нативних виправлень ще триває.</p>
-    <a class="btn" href="#workbench">Знайомство з набором інструментів</a> <a class="btn" href="help/index.html">Прочитати посібник</a>
+    <div class="hero-lockup">
+      <img class="hero-icon" src="../app-icon.png" alt="" aria-hidden="true" width="230" height="230">
+      <img class="wm-logo" src="../brand/killerbench-logo-dark-yellow.svg" alt="KillerBench">
+    </div>
+    <p class="tagline">Виберіть інструмент, перегляньте його параметри й натисніть GO. Вивчайте дані в поданнях «Вихідні дані» або «Зрозумілий звіт». Підтримувані виправлення перевіряють поточні передумови, реєструють запит і перевіряють результат.</p>
+    <div class="hero-grid">
+      <div class="hero-cta">
+        <div class="cta-row"><a class="download-btn" href="help/index.html"><svg viewbox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v16H6.5a.5.5 0 0 0 0 1H20v3H6.5A2.5 2.5 0 0 1 4 19.5v-15z"></path></svg><span>Прочитати посібник</span></a></div>
+        <a class="gh-btn" href="engine/index.html"><svg viewbox="0 0 24 24"><path d="M8.6 16.6 4 12l4.6-4.6L7.2 6 1.2 12l6 6 1.4-1.4zm6.8 0L20 12l-4.6-4.6L16.8 6l6 6-6 6-1.4-1.4z"></path></svg><span>Посібник розробника Engine</span></a>
+      </div>
+      <div class="hero-info">
+        <div class="row"><span class="k">версія</span> <span class="v">KillerBench v0.1.0</span></div>
+        <div class="row"><span class="k">статус</span> <span class="v">У розробці</span></div>
+        <div class="row"><span class="k">платформа</span> <span class="v">Windows 10/11 x64</span></div>
+        <p class="note">KillerBench перебуває в розробці. Публічне завантаження поки недоступне. Перевірка нативних виправлень ще триває.</p>
+      </div>
+    </div>
   </section>
   <section id="workbench" class="bench-pane">
-    <p class="eyebrow">01 / ВІДОБРАЖЕННЯ ДАНИХ</p>
     <h2>Ваша тема. Простежувані результати.</h2>
     <div class="console" role="region" aria-label="Приклад консолі даних зі штучно створеною проблемою обслуговування">
       <p>KILLERBENCH / ШТУЧНИЙ ПРИКЛАД</p>
@@ -75,16 +84,16 @@
     <p class="caption">Демонстраційні результати, а не сканування вашого комп&#x27;ютера.</p>
   </section>
   <section class="features" id="features"><h2>Усередині набору інструментів</h2><div class="feature-grid">
-    <article class="feature-card"><p class="eyebrow">02 / СПОЧАТКУ ДІАГНОСТИКА</p><h3>Дванадцять розділів, одна звичка</h3><p>Діагностика, виправлення, оновлення, пристрої, мережа, застосунки, обслуговування, підготовка комп&#x27;ютера, безпека, BitLocker, конфіденційність і сховище. Кожен інструмент спочатку зчитує дані, а вже потім щось пропонує. Повне сканування системи визначає пріоритети проблем.</p></article>
-    <article class="feature-card"><p class="eyebrow">03 / КОНТРОЛЬОВАНІ ВИПРАВЛЕННЯ</p><h3>Виправляйте лише підтверджені проблеми</h3><p>Виправлення пропонується лише тоді, коли свіжі дані підтверджують конкретну проблему. Воно потребує вашого підтвердження, повторно перевіряє все безпосередньо перед запуском і зчитує результат, перш ніж повідомити, що перевірку пройдено.</p></article>
-    <article class="feature-card"><p class="eyebrow">04 / ДАНІ, ЯКІ МОЖНА ПРОСТЕЖИТИ</p><h3>Жодних чорних скриньок</h3><p>Виявлені стани пов&#x27;язані з відповідною подією, рядком журналу чи налаштуванням. Неповні дані ніколи не означають, що система справна, а історія залишається історією. Експортуйте звіт просто до заявки.</p></article>
-    <article class="feature-card"><p class="eyebrow">05 / BITLOCKER І TPM</p><h3>Шифрування без здогадок</h3><p>Перевіряйте засоби захисту, зберігайте паролі відновлення у файл, Active Directory чи Entra ID, шифруйте Windows і диски з даними, вмикайте автоматичне розблокування та готуйте TPM без його очищення.</p></article>
-    <article class="feature-card"><p class="eyebrow">06 / КОНФІДЕНЦІЙНІСТЬ І ОЧИЩЕННЯ</p><h3>Налаштуйте ноутбук під себе</h3><p>Перевіряйте та змінюйте параметри конфіденційності, дозволи застосунків і хмарний пошук, а потім видаляйте зайве з Windows. Параметри, якими керують політики чи система керування пристроями, не змінюються.</p></article>
-    <article class="feature-card"><p class="eyebrow">07 / ВІДНОВЛЕННЯ ПІСЛЯ ПЕРЕРИВАННЯ</p><h3>Перевірка перед повторною спробою</h3><p>Перед запуском виправлення запит реєструється в журналі як такий, що очікує виконання. Якщо операцію перервано, відновлення перевіряє, що сталося, не повторюючи зміну автоматично.</p></article>
-    <article class="feature-card"><p class="eyebrow">08 / ЛОКАЛЬНА ДІАГНОСТИКА</p><h3>ШІ не потрібен</h3><p>Діагностика й аналіз звітів виконуються локально, без служби ШІ чи облікового запису KillerBench. Вибрані дії, наприклад завантаження файлів або резервне копіювання ключів відновлення до Entra ID, можуть звертатися до відповідних служб. Один і той самий Engine використовується в настільному застосунку й командному рядку.</p></article>
+    <article class="feature-card"><h3>Дванадцять розділів, одна звичка</h3><p>Діагностика, виправлення, оновлення, пристрої, мережа, застосунки, обслуговування, підготовка комп&#x27;ютера, безпека, BitLocker, конфіденційність і сховище. Кожен інструмент спочатку зчитує дані, а вже потім щось пропонує. Повне сканування системи визначає пріоритети проблем.</p></article>
+    <article class="feature-card"><h3>Виправляйте лише підтверджені проблеми</h3><p>Виправлення пропонується лише тоді, коли свіжі дані підтверджують конкретну проблему. Воно потребує вашого підтвердження, повторно перевіряє все безпосередньо перед запуском і зчитує результат, перш ніж повідомити, що перевірку пройдено.</p></article>
+    <article class="feature-card"><h3>Жодних чорних скриньок</h3><p>Виявлені стани пов&#x27;язані з відповідною подією, рядком журналу чи налаштуванням. Неповні дані ніколи не означають, що система справна, а історія залишається історією. Експортуйте звіт просто до заявки.</p></article>
+    <article class="feature-card"><h3>Шифрування без здогадок</h3><p>Перевіряйте засоби захисту, зберігайте паролі відновлення у файл, Active Directory чи Entra ID, шифруйте Windows і диски з даними, вмикайте автоматичне розблокування та готуйте TPM без його очищення.</p></article>
+    <article class="feature-card"><h3>Налаштуйте ноутбук під себе</h3><p>Перевіряйте та змінюйте параметри конфіденційності, дозволи застосунків і хмарний пошук, а потім видаляйте зайве з Windows. Параметри, якими керують політики чи система керування пристроями, не змінюються.</p></article>
+    <article class="feature-card"><h3>Перевірка перед повторною спробою</h3><p>Перед запуском виправлення запит реєструється в журналі як такий, що очікує виконання. Якщо операцію перервано, відновлення перевіряє, що сталося, не повторюючи зміну автоматично.</p></article>
+    <article class="feature-card"><h3>ШІ не потрібен</h3><p>Діагностика й аналіз звітів виконуються локально, без служби ШІ чи облікового запису KillerBench. Вибрані дії, наприклад завантаження файлів або резервне копіювання ключів відновлення до Entra ID, можуть звертатися до відповідних служб. Один і той самий Engine використовується в настільному застосунку й командному рядку.</p></article>
   </div><p class="caption"><a href="help/index.html">Повний посібник</a> містить інформацію про кожен розділ та інструмент.</p></section>
   <section class="bench-pane" id="about"><h2>Частина сімейства Killer Tools</h2><p>Текстуровані поверхні, логотип Killer Tools та 13 тем застосунку. Консоль у стилі димчастого скла, зрозумілі звіти, підтвердження й діалоги відкриття, збереження та вибору папки використовують активну тему застосунку.</p><p><a href="../help/setup.html">Завантаження й налаштування</a> · <a href="../help/about.html">Про KillerBench</a> · <a href="../help/workspace.html">Як зорієнтуватися</a> · <a href="../help/safety.html">Перегляньте модель безпеки</a> · <a href="engine/index.html">Посібник розробника Engine</a> · <a href="../mcp.html">KillerMCP</a> · <a href="https://killertools.net">Знайомство з Killer Tools</a></p></section>
-</div></div></main><aside class="sidebar"><div class="sb-empty">KillerBench<br>У розробці</div><a class="sb-art" href="#workbench"><img src="../og-image.png" alt="Ілюстрація діагностичного набору інструментів KillerBench"></a><div class="sb-empty">Спочатку діагностика.<br>Виправляйте те, що підтверджено.<br>ШІ не потрібен.</div></aside></div>
+</div></div></main><aside class="sidebar"><div class="sb-thumbs" id="sbThumbs"><div class="sb-empty">Знімки екрана<br>незабаром з&#x27;являться</div></div></aside></div>
 <footer class="statusbar"><span class="left">У розробці · Входить до <a href="https://killertools.net">killertools.net</a></span><span class="right">© 2026 <b><a href="https://thekiller.net">Steve the Killer</a></b></span></footer>
 </body>
 </html>

@@ -194,13 +194,12 @@ def plain(markdown):
 
 
 def header(site):
-    links = [("../index.html#workbench", "Workbench", False), ("../index.html#features", "Features", False),
-             ("../help/index.html", "Help", site["key"] == "help"), ("../help/setup.html", "Setup", False), ("../engine/index.html", "Engine", site["key"] == "engine"),
-             ("../index.html#about", "About", False)]
+    links = [("../help/index.html", "Help", site["key"] == "help"), ("../engine/index.html", "Engine", site["key"] == "engine"),
+             ("../help/about.html", "About", False)]
     nav = "".join('<a%s href="%s">%s</a>' % (' class="on"' if on else "", href, text) for href, text, on in links)
     themes = "".join('<button class="swatch sw-%s" data-theme="%s" title="%s"></button>' % (t, t, "Black" if t == "hc" else t.capitalize()) for t in THEMES)
     accents = "".join('<button class="acc" data-accent="%s" style="background:%s;color:%s" title="%s"></button>' % (n, c, c, n.capitalize()) for n, c in ACCENTS)
-    return ('<header class="topbar"><a class="tb-home" href="../index.html"><img class="wm-logo tb-wm" src="../brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>'
+    return ('<header class="topbar"><a class="tb-home" href="../index.html" title="KillerBench"><img class="tb-icon" src="../app-icon.png" alt="KillerBench" width="44" height="44"><img class="wm-logo tb-wm" src="../brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>'
             '<a class="tb-mcp-link" href="../mcp.html" aria-label="KillerMCP"><img src="../mcp.png" alt="" aria-hidden="true"><span class="tb-mcp-wordmark"><span>Killer</span><span class="tb-mcp-accent">MCP</span></span></a>'
             '<span class="tb-spacer"></span><nav class="tb-nav">' + nav + '</nav>'
             '<div class="tgrp" role="group" aria-label="Theme">' + themes + '</div>'

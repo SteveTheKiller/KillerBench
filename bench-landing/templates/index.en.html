@@ -20,10 +20,10 @@
 </head>
 <body>
 <header class="topbar">
-  <a class="tb-home" href="index.html"><img class="wm-logo tb-wm" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>
+  <a class="tb-home" href="index.html" title="KillerBench"><img class="tb-icon" src="app-icon.png" alt="KillerBench" width="44" height="44"><img class="wm-logo tb-wm" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>
   <a class="tb-mcp-link" href="mcp.html" aria-label="KillerMCP"><img src="mcp.png" alt="" aria-hidden="true"><span class="tb-mcp-wordmark"><span>Killer</span><span class="tb-mcp-accent">MCP</span></span></a>
   <span class="tb-spacer"></span>
-<nav class="tb-nav"><a href="#workbench">Workbench</a><a href="#features">Features</a><a href="help/index.html">Help</a><a href="help/setup.html">Setup</a><a href="engine/index.html">Engine</a><a href="#about">About</a></nav>
+<nav class="tb-nav"><a href="help/index.html">Help</a><a href="engine/index.html">Engine</a><a href="help/about.html">About</a></nav>
 <div class="tgrp" role="group" aria-label="Theme">
 <button class="swatch sw-dark"     data-theme="dark"     title="Dark"></button>
 <button class="swatch sw-light"    data-theme="light"    title="Light"></button>
@@ -53,16 +53,25 @@
 </header>
 <div class="shell"><main class="content"><div class="content-scroll"><div class="content-inner">
   <section class="hero">
-    <p class="eyebrow">IN DEVELOPMENT / WINDOWS DIAGNOSTIC AND REPAIR WORKBENCH</p>
-    <img class="wm-logo hero-mark" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench">
-    <h1>Follow the evidence.</h1>
-    <p class="intro">Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.</p>
-    <p class="release-note"><a href="help/setup.html">KillerBench is in development. Public downloads are not available yet.</a></p>
-    <p class="release-note">Native repair validation is still in progress.</p>
-    <a class="btn" href="#workbench">Explore the workbench</a> <a class="btn" href="help/index.html">Read the guide</a>
+    <div class="hero-lockup">
+      <img class="hero-icon" src="app-icon.png" alt="" aria-hidden="true" width="230" height="230">
+      <img class="wm-logo" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench">
+    </div>
+    <p class="tagline">Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.</p>
+    <div class="hero-grid">
+      <div class="hero-cta">
+        <div class="cta-row"><a class="download-btn" href="help/index.html"><svg viewBox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v16H6.5a.5.5 0 0 0 0 1H20v3H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/></svg><span>Read the guide</span></a></div>
+        <a class="gh-btn" href="engine/index.html"><svg viewBox="0 0 24 24"><path d="M8.6 16.6 4 12l4.6-4.6L7.2 6 1.2 12l6 6 1.4-1.4zm6.8 0L20 12l-4.6-4.6L16.8 6l6 6-6 6-1.4-1.4z"/></svg><span>Engine developer guide</span></a>
+      </div>
+      <div class="hero-info">
+        <div class="row"><span class="k">version</span>&nbsp;<span class="v">KillerBench v0.1.0</span></div>
+        <div class="row"><span class="k">status</span>&nbsp;<span class="v">In development</span></div>
+        <div class="row"><span class="k">platform</span>&nbsp;<span class="v">Windows 10/11 x64</span></div>
+        <p class="note">KillerBench is in development. Public downloads are not available yet. Native repair validation is still in progress.</p>
+      </div>
+    </div>
   </section>
   <section id="workbench" class="bench-pane">
-    <p class="eyebrow">01 / EVIDENCE DISPLAY</p>
     <h2>Your theme. Traceable findings.</h2>
     <div class="console" role="region" aria-label="Illustrative evidence console showing a synthetic servicing finding">
       <p>KILLERBENCH / SYNTHETIC EXAMPLE</p>
@@ -75,16 +84,16 @@
     <p class="caption">Illustrative output, not a scan of your computer.</p>
   </section>
   <section class="features" id="features"><h2>Inside the workbench</h2><div class="feature-grid">
-    <article class="feature-card"><p class="eyebrow">02 / DIAGNOSE FIRST</p><h3>Twelve sections, one habit</h3><p>Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker, Privacy and Storage. Every tool reads before it offers anything, and a full system scan ranks what needs attention.</p></article>
-    <article class="feature-card"><p class="eyebrow">03 / GUARDED REPAIRS</p><h3>Fix only what is proven</h3><p>A repair is offered only when fresh evidence matches the exact problem. It needs your confirmation, rechecks everything right before it runs, and reads the result back before it says Verified.</p></article>
-    <article class="feature-card"><p class="eyebrow">04 / EVIDENCE YOU CAN FOLLOW</p><h3>No black boxes</h3><p>Findings link to the event, log line or setting behind them. Incomplete evidence is never reported as healthy, and history stays history. Export the report straight into a ticket.</p></article>
-    <article class="feature-card"><p class="eyebrow">05 / BITLOCKER AND TPM</p><h3>Encryption without guesswork</h3><p>Inspect protectors, back up recovery passwords to a file, Active Directory or Entra ID, encrypt Windows and data drives, turn on auto-unlock and prepare a TPM without ever clearing it.</p></article>
-    <article class="feature-card"><p class="eyebrow">06 / PRIVACY AND DECLUTTER</p><h3>Make a laptop yours</h3><p>Review and change privacy settings, app permissions and cloud search, then declutter Windows. Settings owned by policy or device management are left alone.</p></article>
-    <article class="feature-card"><p class="eyebrow">07 / INTERRUPTION RECOVERY</p><h3>Check before retrying</h3><p>Journaled repairs record a pending request before dispatch. If a request is interrupted, recovery checks what happened without automatically repeating the change.</p></article>
-    <article class="feature-card"><p class="eyebrow">08 / LOCAL DIAGNOSTICS</p><h3>No AI required</h3><p>Diagnostics and report analysis run locally without an AI service or KillerBench account. Actions you select, such as downloads or recovery-key backup to Entra ID, can contact their destination. The same Engine powers the desktop app and command line.</p></article>
+    <article class="feature-card"><h3>Twelve sections, one habit</h3><p>Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker, Privacy and Storage. Every tool reads before it offers anything, and a full system scan ranks what needs attention.</p></article>
+    <article class="feature-card"><h3>Fix only what is proven</h3><p>A repair is offered only when fresh evidence matches the exact problem. It needs your confirmation, rechecks everything right before it runs, and reads the result back before it says Verified.</p></article>
+    <article class="feature-card"><h3>No black boxes</h3><p>Findings link to the event, log line or setting behind them. Incomplete evidence is never reported as healthy, and history stays history. Export the report straight into a ticket.</p></article>
+    <article class="feature-card"><h3>Encryption without guesswork</h3><p>Inspect protectors, back up recovery passwords to a file, Active Directory or Entra ID, encrypt Windows and data drives, turn on auto-unlock and prepare a TPM without ever clearing it.</p></article>
+    <article class="feature-card"><h3>Make a laptop yours</h3><p>Review and change privacy settings, app permissions and cloud search, then declutter Windows. Settings owned by policy or device management are left alone.</p></article>
+    <article class="feature-card"><h3>Check before retrying</h3><p>Journaled repairs record a pending request before dispatch. If a request is interrupted, recovery checks what happened without automatically repeating the change.</p></article>
+    <article class="feature-card"><h3>No AI required</h3><p>Diagnostics and report analysis run locally without an AI service or KillerBench account. Actions you select, such as downloads or recovery-key backup to Entra ID, can contact their destination. The same Engine powers the desktop app and command line.</p></article>
   </div><p class="caption"><a href="help/index.html">Read the full guide</a> for every section and tool.</p></section>
   <section class="bench-pane" id="about"><h2>Part of the Killer Tools family</h2><p>Textured surfaces, the Killer Tools wordmark, and 13 app themes. The smoked-glass console, readable reports, confirmations, and Open, Save, and Folder dialogs follow the active app theme.</p><p><a href="help/setup.html">Download and setup</a> &middot; <a href="help/about.html">About KillerBench</a> &middot; <a href="help/workspace.html">Find your way around</a> &middot; <a href="help/safety.html">Review the safety model</a> &middot; <a href="engine/index.html">Engine developer guide</a> &middot; <a href="mcp.html">KillerMCP</a> &middot; <a href="https://killertools.net">Explore Killer Tools</a></p></section>
-</div></div></main><aside class="sidebar"><div class="sb-empty">KillerBench<br>In development</div><a class="sb-art" href="#workbench"><img src="og-image.png" alt="KillerBench diagnostic workbench artwork"></a><div class="sb-empty">Diagnose first.<br>Fix what is proven.<br>No AI required.</div></aside></div>
+</div></div></main><aside class="sidebar"><div class="sb-thumbs" id="sbThumbs"><div class="sb-empty">Screenshots<br>coming soon</div></div></aside></div>
 <footer class="statusbar"><span class="left">In development &middot; Part of <a href="https://killertools.net">killertools.net</a></span><span class="right">&copy; 2026 <b><a href="https://thekiller.net">Steve the Killer</a></b></span></footer>
 </body>
 </html>
