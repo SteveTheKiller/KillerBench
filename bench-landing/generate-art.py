@@ -25,7 +25,7 @@ def write(path, data):
     assert path.read_bytes() == data
 
 svg = load("bench_svg", "make-logo-svgs.py")
-face = (svg.Face(svg.F_KILLER), svg.Face(svg.F_ACCENT))
+face = svg.load_faces()
 for variant, accents in svg.ACCENTS.items():
     for accent, color in accents.items():
         data = svg.build_svg("Killer", "Bench", color, variant, face).encode("utf-8")
@@ -36,9 +36,11 @@ for theme, color in svg.THEME_ACCENTS.items():
     ET.fromstring(data)
     write(HERE / "brand" / f"killerbench-logo-{theme}.svg", data)
 
-# The family header faces and their OFL texts, copied beside the site that loads them.
-for name in ("KillerSans-Regular.ttf", "FreckleFace-Regular.ttf", "KillerSans-OFL.txt", "FreckleFace-OFL.txt"):
-    data = (Path(svg.FONT_DIR) / name).read_bytes()
+# The family faces and their license texts, copied beside the site that loads them. They come
+# from the app's own Fonts folder: its Punktype license text is the public one.
+for name in ("KillerSans-Regular.ttf", "Punktype.ttf", "Lacquer-Regular.ttf",
+             "KillerSans-OFL.txt", "Punktype-LICENSE.txt", "Lacquer-OFL.txt"):
+    data = (HERE.parent / "Fonts" / name).read_bytes()
     if name.endswith(".ttf"):
         TTFont(io.BytesIO(data))
     write(HERE / "brand" / name, data)
