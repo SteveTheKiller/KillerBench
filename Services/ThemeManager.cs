@@ -174,7 +174,7 @@ namespace KillerBench.Services
             SetIfAbsent(d, "CaptionButtonWidth", 44.0);
             SetIfAbsent(d, "CaptionButtonHeight", 32.0);
             SetIfAbsent(d, "TitleBarPadding", new Thickness(14, 0, 0, 0));
-            SetIfAbsent(d, "TitleIconSize", 25.0);
+            SetIfAbsent(d, "TitleIconSize", 27.0);
             SetIfAbsent(d, "TitleIconMargin", new Thickness(0, 0, 7, 0));
             SetIfAbsent(d, "TitleWordmarkSize", 15.0);
             SetIfAbsent(d, "TitleWordmarkBoldSize", 22.52);
