@@ -1,7 +1,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
   <!-- Reused approved family translations. -->
   <sys:String x:Key="Str_ToolTip_Scroll_here_to_resize_the_interface">Görgessen itt a felület átméretezéséhez</sys:String>
-  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">WINDOWS KARBANTARTÁSI MUNKAASZTAL</sys:String>
+  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">Windows karbantartási munkaasztal</sys:String>
   <sys:String x:Key="Str_ToolTip_Minimize">Kis méret</sys:String>
   <sys:String x:Key="Str_ToolTip_Maximize_or_restore">Maximalizálás vagy visszaállítás</sys:String>
   <sys:String x:Key="Str_ToolTip_Close">Bezárás</sys:String>

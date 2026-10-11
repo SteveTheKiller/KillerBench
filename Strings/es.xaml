@@ -43,7 +43,7 @@
   <sys:String x:Key="Str_Depot_Privacy">PRIVACIDAD</sys:String>
   <sys:String x:Key="Str_About_Aka">También conocido como</sys:String>
   <sys:String x:Key="Str_ToolTip_Scroll_here_to_resize_the_interface">Desplázate aquí para cambiar el tamaño de la interfaz</sys:String>
-  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">BANCO DE MANTENIMIENTO DE WINDOWS</sys:String>
+  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">Banco de mantenimiento de Windows</sys:String>
   <sys:String x:Key="Str_ToolTip_Maximize_or_restore">Maximizar o restaurar</sys:String>
   <sys:String x:Key="Str_Text_EVIDENCE_SOURCES">FUENTES DE EVIDENCIA</sys:String>
   <sys:String x:Key="Str_Text_Local_session">Sesión local</sys:String>

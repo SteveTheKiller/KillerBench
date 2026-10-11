@@ -41,7 +41,7 @@
   <sys:String x:Key="Str_EventLog_System">Systém</sys:String>
   <sys:String x:Key="Str_Advanced_All">Vše</sys:String>
   <sys:String x:Key="Str_ToolTip_Scroll_here_to_resize_the_interface">Přetáhněte zde pro změnu velikosti rozhraní</sys:String>
-  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">WORKBENCH PRO ÚDRŽBU WINDOWS</sys:String>
+  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">Workbench pro údržbu Windows</sys:String>
   <sys:String x:Key="Str_ToolTip_Maximize_or_restore">Maximalizovat nebo obnovit</sys:String>
   <sys:String x:Key="Str_Text_EVIDENCE_SOURCES">ZDROJE DŮKAZŮ</sys:String>
   <sys:String x:Key="Str_Text_Local_session">Lokální sezení</sys:String>

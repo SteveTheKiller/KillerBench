@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
   <sys:String x:Key="Str_ToolTip_Scroll_here_to_resize_the_interface">Прокрутіть тут, щоб змінити розмір інтерфейсу</sys:String>
-  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">ВЕРСТАК ОБСЛУГОВУВАННЯ WINDOWS</sys:String>
+  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">Верстак обслуговування Windows</sys:String>
   <sys:String x:Key="Str_ToolTip_Minimize">Згорнути</sys:String>
   <sys:String x:Key="Str_ToolTip_Maximize_or_restore">Розгорнути або відновити</sys:String>
   <sys:String x:Key="Str_ToolTip_Close">Закрити</sys:String>

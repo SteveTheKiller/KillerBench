@@ -1,7 +1,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
   <!-- Reused approved family translations. -->
   <sys:String x:Key="Str_ToolTip_Scroll_here_to_resize_the_interface">Интерфейс өлшемін өзгерту үшін осы жерде айналдырыңыз</sys:String>
-  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">WINDOWS ҚЫЗМЕТ КӨРСЕТУ ЖҰМЫС ҮСТЕЛІ</sys:String>
+  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">Windows қызмет көрсету жұмыс үстелі</sys:String>
   <sys:String x:Key="Str_ToolTip_Minimize">Кішірейту</sys:String>
   <sys:String x:Key="Str_ToolTip_Maximize_or_restore">Үлкейту немесе қалпына келтіру</sys:String>
   <sys:String x:Key="Str_ToolTip_Close">Жабу</sys:String>

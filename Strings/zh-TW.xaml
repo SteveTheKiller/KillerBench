@@ -39,7 +39,7 @@
   <sys:String x:Key="Str_About_Aka">別名</sys:String>
   <sys:String x:Key="Str_Restore_Description">描述</sys:String>
   <sys:String x:Key="Str_ToolTip_Scroll_here_to_resize_the_interface">在此捲動以調整介面大小</sys:String>
-  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">WINDOWS 維護工作台</sys:String>
+  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">Windows 維護工作台</sys:String>
   <sys:String x:Key="Str_ToolTip_Maximize_or_restore">最大化或還原</sys:String>
   <sys:String x:Key="Str_Text_EVIDENCE_SOURCES">證據來源</sys:String>
   <sys:String x:Key="Str_Text_Local_session">本地會話</sys:String>

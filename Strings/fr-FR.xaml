@@ -222,7 +222,7 @@
   <sys:String x:Key="Str_About_DescriptionPrefix">Un atelier déterministe de diagnostic et de réparation Windows. Un</sys:String>
   <sys:String x:Key="Str_About_DescriptionSuffix">utilitaire.</sys:String>
   <sys:String x:Key="Str_ToolTip_Scroll_here_to_resize_the_interface">Faites défiler ici pour redimensionner l&apos;interface</sys:String>
-  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">ATELIER DE MAINTENANCE WINDOWS</sys:String>
+  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">Atelier de maintenance Windows</sys:String>
   <sys:String x:Key="Str_ToolTip_Maximize_or_restore">Agrandir ou restaurer</sys:String>
   <sys:String x:Key="Str_Text_EVIDENCE_SOURCES">SOURCES DE PREUVES</sys:String>
   <sys:String x:Key="Str_Text_Local_session">Session locale</sys:String>

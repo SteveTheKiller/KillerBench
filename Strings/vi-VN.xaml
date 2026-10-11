@@ -1,6 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
   <sys:String x:Key="Str_ToolTip_Scroll_here_to_resize_the_interface">Cuộn ở đây để thay đổi kích thước giao diện</sys:String>
-  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">BÀN LÀM VIỆC BẢO TRÌ WINDOWS</sys:String>
+  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">Bàn làm việc bảo trì Windows</sys:String>
   <sys:String x:Key="Str_ToolTip_Minimize">Thu nhỏ</sys:String>
   <sys:String x:Key="Str_ToolTip_Maximize_or_restore">Tối đa hóa hoặc khôi phục</sys:String>
   <sys:String x:Key="Str_ToolTip_Close">Đóng</sys:String>

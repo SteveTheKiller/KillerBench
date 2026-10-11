@@ -42,7 +42,7 @@
   <sys:String x:Key="Str_About_Aka">Auch bekannt als</sys:String>
   <sys:String x:Key="Str_About_Version">VERSION</sys:String>
   <sys:String x:Key="Str_ToolTip_Scroll_here_to_resize_the_interface">Hier scrollen, um die Oberfläche zu skalieren</sys:String>
-  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">WINDOWS-WARTUNGSWERKBANK</sys:String>
+  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">Windows-Wartungswerkbank</sys:String>
   <sys:String x:Key="Str_ToolTip_Maximize_or_restore">Maximieren oder wiederherstellen</sys:String>
   <sys:String x:Key="Str_Text_EVIDENCE_SOURCES">NACHWEISQUELLEN</sys:String>
   <sys:String x:Key="Str_Text_Local_session">Lokale Sitzung</sys:String>

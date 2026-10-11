@@ -41,7 +41,7 @@
   <sys:String x:Key="Str_Shortcuts_GroupHelp">YARDIM</sys:String>
   <sys:String x:Key="Str_Restore_Description">Açıklama</sys:String>
   <sys:String x:Key="Str_ToolTip_Scroll_here_to_resize_the_interface">Arayüzü yeniden boyutlandırmak için burada kaydırın</sys:String>
-  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">WINDOWS BAKIM TEZGAHI</sys:String>
+  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">Windows bakım tezgahı</sys:String>
   <sys:String x:Key="Str_ToolTip_Maximize_or_restore">Büyüt veya geri yükle</sys:String>
   <sys:String x:Key="Str_Text_EVIDENCE_SOURCES">KANIT KAYNAKLARI</sys:String>
   <sys:String x:Key="Str_Text_Local_session">Yerel oturum</sys:String>

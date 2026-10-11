@@ -282,7 +282,7 @@ internal static class Program
                 window.FindName("ScanLight") is Border { ToolTip: "Ready. No scan performed." } &&
                 window.FindName("AgentSafeRepairsCheck") is CheckBox && window.FindName("AgentDisruptiveRepairsCheck") is CheckBox,
                 "Shell status and About controls resolve their localizable English resources");
-            Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "WINDOWS MAINTENANCE WORKBENCH",
+            Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "Windows Maintenance Workbench",
                 "Desktop subtitle identifies the full maintenance scope");
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
             typeof(KillerBench.MainWindow).GetMethod("SetCaptureBusy", flags)!.Invoke(window, [true]);

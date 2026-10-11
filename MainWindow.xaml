@@ -24,7 +24,7 @@
           <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}" Visibility="{DynamicResource WordmarkVisibility}"><Run Text="Killer" Foreground="{DynamicResource TextBrush}"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Bench" FontSize="{DynamicResource TitleWordmarkBoldSize}" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
         </Grid>
         <TextBlock Text="KillerBench" FontFamily="{DynamicResource ChromeFontFamily}" Foreground="{DynamicResource ChromeTextBrush}" FontWeight="Bold" Visibility="{DynamicResource PlainTitleVisibility}"/>
-        <TextBlock Text="{DynamicResource Str_Text_DIAGNOSTIC_WORKBENCH}" FontFamily="{DynamicResource FileNameFont}" FontSize="{DynamicResource FileNameFontSize}" RenderTransform="{DynamicResource FileNameTransform}" TextOptions.TextFormattingMode="Ideal" Foreground="{DynamicResource ChromeTextBrush}" VerticalAlignment="Center" Margin="16,0,0,0"/>
+        <TextBlock Text="{DynamicResource Str_Text_DIAGNOSTIC_WORKBENCH}" FontFamily="{DynamicResource FileNameFont}" FontSize="{DynamicResource FileNameFontSize}" RenderTransform="{DynamicResource FileNameTransform}" TextOptions.TextFormattingMode="Ideal" Foreground="{DynamicResource MutedTextBrush}" VerticalAlignment="Center" Margin="16,0,0,0"/>
       </StackPanel>
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
         <Button Style="{StaticResource ChromeButton}" Content="&#xE921;" Click="OnMinimize" ToolTip="{DynamicResource Str_ToolTip_Minimize}"/>

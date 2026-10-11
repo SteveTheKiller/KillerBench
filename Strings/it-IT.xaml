@@ -36,7 +36,7 @@
   <sys:String x:Key="Str_Shortcuts_Show">Scorciatoie da tastiera</sys:String>
   <sys:String x:Key="Str_Advanced_None">Nessuno</sys:String>
   <sys:String x:Key="Str_ToolTip_Scroll_here_to_resize_the_interface">Scorri qui per ridimensionare l&apos;interfaccia</sys:String>
-  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">BANCO DI LAVORO PER MANUTENZIONE WINDOWS</sys:String>
+  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">Banco di lavoro per manutenzione Windows</sys:String>
   <sys:String x:Key="Str_ToolTip_Minimize">Riduci a icona</sys:String>
   <sys:String x:Key="Str_ToolTip_Maximize_or_restore">Ingrandisci o ripristina</sys:String>
   <sys:String x:Key="Str_Text_EVIDENCE_SOURCES">FONTI DI PROVA</sys:String>

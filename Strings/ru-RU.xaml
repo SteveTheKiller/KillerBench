@@ -33,7 +33,7 @@
   <sys:String x:Key="Str_About_Aka">Также известен как</sys:String>
   <sys:String x:Key="Str_EventLog_System">Система</sys:String>
   <sys:String x:Key="Str_ToolTip_Scroll_here_to_resize_the_interface">Прокрутите здесь, чтобы изменить размер интерфейса</sys:String>
-  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">ИНСТРУМЕНТ РЕМОНТА WINDOWS</sys:String>
+  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">Инструмент ремонта Windows</sys:String>
   <sys:String x:Key="Str_ToolTip_Minimize">Свернуть</sys:String>
   <sys:String x:Key="Str_ToolTip_Maximize_or_restore">Развернуть или восстановить</sys:String>
   <sys:String x:Key="Str_ToolTip_Close">Закрыть</sys:String>
