@@ -41,9 +41,10 @@
     if (!input.value.trim()) { box.hidden = true; box.innerHTML = ''; return; }
     box.hidden = false;
     box.innerHTML = results.length ? results.map(function (r) {
-      var href = '../' + r.page.u + (r.anchor ? '#' + r.anchor : '');
+      var anchor = r.anchor || r.page.a || '';
+      var href = '../' + r.page.u + (anchor ? '#' + anchor : '');
       return '<a href="' + escapeHtml(href) + '"><small>' + escapeHtml(r.page.g) + '</small><strong>' + escapeHtml(r.page.t) +
-        (r.heading ? ' / ' + escapeHtml(r.heading) : '') + '</strong><span>' + escapeHtml(r.text) + '</span></a>';
+        (r.heading && r.heading !== r.page.t ? ' / ' + escapeHtml(r.heading) : '') + '</strong><span>' + escapeHtml(r.text) + '</span></a>';
     }).join('') : '<p class="docs-search-empty">' + escapeHtml(document.body.getAttribute('data-ui-no-results') || 'No matching pages.') + '</p>';
   }
 

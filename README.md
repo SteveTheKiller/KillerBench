@@ -4,7 +4,7 @@
 
 Free and open-source Windows diagnosis, repair and maintenance workbench for technicians. KillerBench checks the computer first, explains what it found with the evidence behind each finding, and changes Windows only when you pick a specific fix and confirm it.
 
-Full how-tos live in the [user guide](https://killerbench.net/help/); the Engine, CLI and architecture are covered in the [developer guide](https://killerbench.net/engine/).
+Full how-tos live in the [Help guide](https://killerbench.net/help.html), and the [Technical](https://killerbench.net/technical.html) page explains how KillerBench works. The Engine, CLI and architecture are covered in the [developer guide](https://killerbench.net/engine/).
 
 ## Features
 
@@ -31,7 +31,7 @@ KillerBench ships as `KillerBench.exe` and `killerbench-cli.exe`, each a single 
 
 ## Safety
 
-Native repair validation is still in progress. Read [How changes stay safe](https://killerbench.net/help/safety.html) before your first repair and keep a current backup before any change.
+Native repair validation is still in progress. Read [How changes stay safe](https://killerbench.net/help.html#safety) before your first repair and keep a current backup before any change.
 
 ## License and source
 

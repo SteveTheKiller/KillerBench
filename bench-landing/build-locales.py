@@ -10,7 +10,7 @@ from urllib.parse import urlsplit, unquote
 
 ROOT = Path(__file__).resolve().parent
 LOCALES = ['en-US', 'bn', 'cs-CZ', 'de-DE', 'es', 'fr-FR', 'hu-HU', 'it-IT', 'ja-JP', 'kk-KZ', 'nb-NO', 'pl-PL', 'pt-BR', 'ru-RU', 'tr-TR', 'uk-UA', 'vi-VN', 'zh-CN', 'zh-TW']
-PAGES = ['index.html', 'help/index.html', 'engine/index.html']
+PAGES = ['index.html', 'engine/index.html']
 VOID = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'}
 
 def route(locale, page):
@@ -98,7 +98,7 @@ class Localized(HTMLParser):
                 self.out.append('<a class="lang-item" hreflang="' + locale + '" lang="' + locale + '" href="' + rel(self.locale, self.page, out_path(locale, self.page)) + '" aria-pressed="' + str(locale == self.locale).lower() + '">' + html.escape(data['language']) + '</a>')
             self.out.append('</div></div>')
         self.out.append('</' + tag + '>')
-        if tag == 'h1' and self.page in ('help/index.html', 'engine/index.html'):
+        if tag == 'h1' and self.page == 'engine/index.html':
             note = self.text('Detailed guides linked from this page are in English.')
             if self.locale != 'en-US':
                 self.out.append('<p class="caption">' + html.escape(note) + '</p>')
@@ -193,7 +193,7 @@ def check():
             for result in json.loads(index.removeprefix('window.KillerBenchSearch=').strip().removesuffix(';')):
                 target = (ROOT / locale / 'help' / ('../' + result['u'])).resolve()
                 assert target.exists(), (locale, result['u'])
-    print('Locale coverage passed: ' + str(len(locales)) + ' locales, ' + str(len(locales) * 3) + ' entry pages, ' + str(checked) + ' local references.')
+    print('Locale coverage passed: ' + str(len(locales)) + ' locales, ' + str(len(locales) * len(PAGES)) + ' entry pages, ' + str(checked) + ' local references.')
 
 if __name__ == '__main__':
     if '--check' in sys.argv:

@@ -14,7 +14,7 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parent
-HELP = 'index setup first-run workspace safety fix-windows-update repair-system-files free-disk-space check-a-drive fix-network fix-printing encrypt-with-bitlocker investigate-crashes make-windows-private set-up-new-pc use-the-cli diagnostics repair updates devices network apps maintenance onboarding security bitlocker privacy storage reports cli troubleshooting about'.split()
+HELP = 'welcome setup first-run workspace safety fix-windows-update repair-system-files free-disk-space check-a-drive fix-network fix-printing encrypt-with-bitlocker investigate-crashes make-windows-private set-up-new-pc use-the-cli diagnostics repair updates devices network apps maintenance onboarding security bitlocker privacy storage reports cli troubleshooting'.split()
 ENGINE = 'index getting-started workflows evidence repairs cli api architecture knowledge-packs'.split()
 LOCALES = 'en-US bn cs-CZ de-DE es fr-FR hu-HU it-IT ja-JP kk-KZ nb-NO pl-PL pt-BR ru-RU tr-TR uk-UA vi-VN zh-CN zh-TW'.split()
 EXCLUDED = {'templates', 'locales', 'docs', '__pycache__'}
@@ -68,9 +68,9 @@ def validate(root, clean=False):
     root = root.resolve()
     required = ['index.html', 'mcp.html', '404.html', '_headers', 'license.txt']
     validate_license(root/'license.txt')
-    required += ['help/'+p+'.html' for p in HELP] + ['engine/'+p+'.html' for p in ENGINE]
+    required += ['help.html', 'technical.html', 'about.html'] + ['engine/'+p+'.html' for p in ENGINE]
     for locale in LOCALES[1:]:
-        required += [locale+'/'+p for p in ('index.html', 'help/index.html', 'engine/index.html', 'docs-search-index.js')]
+        required += [locale+'/'+p for p in ('index.html', 'engine/index.html', 'docs-search-index.js')]
     for route in required:
         if not (root/route).is_file():
             raise ValueError('Missing public route or asset: '+route)
@@ -107,23 +107,24 @@ def validate(root, clean=False):
     for index in root.rglob('docs-search-index.js'):
         entries = json.loads(index.read_text(encoding='utf-8').removeprefix('window.KillerBenchSearch=').strip().removesuffix(';'))
         for entry in entries:
-            destination, _ = target(root, index.parent/'help/index.html', '../'+entry['u'])
-            for fragment, _ in entry['h']:
+            destination, _ = target(root, index.parent/'engine/index.html', '../'+entry['u'])
+            for fragment in [h[0] for h in entry['h']] + ([entry['a']] if entry.get('a') else []):
                 if fragment not in pages[destination].ids:
                     raise ValueError(f'{index}: missing search heading: {entry["u"]}#{fragment}')
-        if not any(p['u'].endswith('help/setup.html') for p in entries):
+        if not any(p['u'].endswith('help.html') and p.get('a') == 'setup' for p in entries):
             raise ValueError('Setup missing from search: '+str(index))
     home = (root/'index.html').read_text(encoding='utf-8')
-    setup = (root/'help/setup.html').read_text(encoding='utf-8')
-    about = (root/'help/about.html').read_text(encoding='utf-8')
+    setup = (root/'help.html').read_text(encoding='utf-8')
+    about = (root/'about.html').read_text(encoding='utf-8')
     mcp = (root/'mcp.html').read_text(encoding='utf-8')
-    for text, needed in [(home, ['Twelve sections, one habit', 'Privacy and Storage', 'Public downloads are not available yet.', 'Illustrative output, not a scan of your computer.']), (setup, ['Unreleased', 'GPLv3', 'href="../license.txt"', 'Corresponding Source', '.NET Desktop Runtime 10 for Windows x64', 'framework-dependent', 'Native repair validation is still in progress.']), (about, ['GPLv3', 'href="../license.txt"', 'complete implementation is not publicly available', 'distribution license', 'third-party notices', 'font permissions still need verification']), (mcp, ['Installing KillerMCP does not supply KillerBench.'])]:
+    for text, needed in [(home, ['Twelve sections, one habit', 'Privacy and Storage', 'Public downloads are not available yet.', 'Illustrative output, not a scan of your computer.']), (setup, ['Unreleased', 'GPLv3', 'href="license.txt"', 'Corresponding Source', '.NET Desktop Runtime 10 for Windows x64', 'framework-dependent', 'Native repair validation is still in progress.']), (about, ['GPLv3', 'href="license.txt"', 'complete implementation is not publicly available', 'distribution license', 'third-party notices', 'font permissions still need verification']), (mcp, ['Installing KillerMCP does not supply KillerBench.'])]:
         for phrase in needed:
             if phrase not in text:
                 raise ValueError('Required pre-release statement absent: '+phrase)
-    for path in (root/'help').glob('*.html'):
-        if 'href="storage.html"' not in path.read_text(encoding='utf-8') and path.name != 'index.html':
-            raise ValueError('Storage missing from Help navigation: '+str(path))
+    help_page = (root/'help.html').read_text(encoding='utf-8')
+    for anchor in HELP:
+        if 'href="#'+anchor+'"' not in help_page or 'id="'+anchor+'"' not in help_page:
+            raise ValueError('Help section missing from the page or its outline: '+anchor)
     guide = (root/'engine/getting-started.html').read_text(encoding='utf-8')
     for phrase in ['Engine.Windows', 'WindowsEngine.Register();', 'KillerBench.Engine.Workflows', 'token: CancellationToken.None']:
         if phrase not in guide:
