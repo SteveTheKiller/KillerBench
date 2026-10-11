@@ -6,24 +6,24 @@
         xmlns:bitlocker="clr-namespace:KillerBench.Engine.BitLocker;assembly=KillerBench.Engine"
         Title="KillerBench" Icon="Assets/AppIcon.ico" Width="1025" Height="700" MinWidth="800" MinHeight="500"
         WindowStyle="None" ResizeMode="CanResize" SizeToContent="Manual" Background="{DynamicResource BackgroundBrush}"
-        Foreground="{DynamicResource TextBrush}" FontFamily="Segoe UI" FontSize="12"
+        Foreground="{DynamicResource TextBrush}" FontFamily="{DynamicResource UiFont}" FontSize="12"
         AllowDrop="True" Drop="OnDrop" PreviewDragOver="OnDragOver" PreviewKeyDown="OnKeyDown">
   <shell:WindowChrome.WindowChrome><shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0"/></shell:WindowChrome.WindowChrome>
   <Border x:Name="WindowEdgeBorder" BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="{DynamicResource WindowEdgeThickness}">
   <Grid x:Name="RootGrid">
     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="24"/></Grid.RowDefinitions>
     <Border x:Name="WorkspaceGrain" Grid.Row="1" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>
-    <Grid x:Name="CaptionBar" Background="Transparent" Height="{DynamicResource TitleBarHeight}" MouseLeftButtonDown="OnCaptionDrag">
+    <Grid x:Name="CaptionBar" Background="Transparent" Height="{DynamicResource TitleBarHeight}" MouseLeftButtonDown="OnCaptionDrag" Panel.ZIndex="1">
       <Border Background="{DynamicResource TitleBarBrush}" IsHitTestVisible="False"/>
       <Border Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>
-      <StackPanel x:Name="LogoBar" Orientation="Horizontal" Margin="{DynamicResource TitleBarPadding}" VerticalAlignment="Center" PreviewMouseWheel="OnAppScale" ToolTip="{DynamicResource Str_ToolTip_Scroll_here_to_resize_the_interface}">
-        <icons:AppIcon x:Name="TitlebarIcon" Width="24" Height="24" Margin="0,0,8,0" RenderOptions.BitmapScalingMode="NearestNeighbor" AutomationProperties.Name="KillerBench icon. Scroll to zoom the interface."/>
-        <Grid>
+      <StackPanel x:Name="LogoBar" Orientation="Horizontal" Margin="{DynamicResource TitleLogoMargin}" VerticalAlignment="Center" PreviewMouseWheel="OnAppScale" ToolTip="{DynamicResource Str_ToolTip_Scroll_here_to_resize_the_interface}">
+        <icons:AppIcon x:Name="TitlebarIcon" Width="{DynamicResource TitleIconSize}" Height="{DynamicResource TitleIconSize}" Margin="{DynamicResource TitleIconMargin}" RenderOptions.BitmapScalingMode="NearestNeighbor" AutomationProperties.Name="KillerBench icon. Scroll to zoom the interface."/>
+        <Grid Margin="0,-18,0,-22" VerticalAlignment="Center"><Grid.RenderTransform><TranslateTransform Y="-5"/></Grid.RenderTransform>
           <TextBlock Margin="1,2,0,0" IsHitTestVisible="False" Opacity="{DynamicResource WordmarkAccentShadowOpacity}" FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}" TextOptions.TextFormattingMode="Display" TextOptions.TextRenderingMode="ClearType" Visibility="{DynamicResource WordmarkVisibility}"><TextBlock.Effect><BlurEffect Radius="3"/></TextBlock.Effect><Run Text="Killer" Foreground="Transparent"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Bench" FontSize="{DynamicResource TitleWordmarkBoldSize}" Foreground="#D8000000"/></TextBlock>
           <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}" TextOptions.TextFormattingMode="Display" TextOptions.TextRenderingMode="ClearType" Visibility="{DynamicResource WordmarkVisibility}"><Run Text="Killer" Foreground="{DynamicResource ChromeTextBrush}"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Bench" FontSize="{DynamicResource TitleWordmarkBoldSize}" Foreground="{DynamicResource AccentLogo}"/></TextBlock>
         </Grid>
         <TextBlock Text="KillerBench" FontFamily="{DynamicResource ChromeFontFamily}" Foreground="{DynamicResource ChromeTextBrush}" FontWeight="Bold" Visibility="{DynamicResource PlainTitleVisibility}"/>
-        <TextBlock Text="{DynamicResource Str_Text_DIAGNOSTIC_WORKBENCH}" FontFamily="Consolas" FontSize="10" Foreground="{DynamicResource ChromeTextBrush}" VerticalAlignment="Center" Margin="18,0,0,0"/>
+        <TextBlock Text="{DynamicResource Str_Text_DIAGNOSTIC_WORKBENCH}" FontFamily="{DynamicResource FileNameFont}" FontSize="{DynamicResource FileNameFontSize}" RenderTransform="{DynamicResource FileNameTransform}" TextOptions.TextFormattingMode="Ideal" Foreground="{DynamicResource ChromeTextBrush}" VerticalAlignment="Center" Margin="16,0,0,0"/>
       </StackPanel>
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
         <Button Style="{StaticResource ChromeButton}" Content="&#xE921;" Click="OnMinimize" ToolTip="{DynamicResource Str_ToolTip_Minimize}"/>
@@ -518,7 +518,7 @@
               <TextBlock Text="{DynamicResource Str_Update_Boundary}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
               <Border x:Name="UpdateStoreRecoveryPanel" Visibility="Collapsed" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="7" Margin="0,7,0,2">
                 <StackPanel>
-                  <TextBlock Text="{DynamicResource Str_Update_DatabaseRecovery}" Foreground="{DynamicResource AccentBrush}" FontFamily="Consolas" FontSize="10"/>
+                  <TextBlock Text="{DynamicResource Str_Update_DatabaseRecovery}" Foreground="{DynamicResource AccentBrush}" FontFamily="{DynamicResource UiFont}" FontSize="10"/>
                   <TextBlock x:Name="UpdateStoreRecoveryStatus" TextWrapping="Wrap" Margin="0,3,0,4"/>
                   <CheckBox x:Name="UpdateStoreRecoveryConsent" Content="{DynamicResource Str_Update_DatabaseRecoveryConsent}" Checked="OnUpdateStoreRecoveryConsentChanged" Unchecked="OnUpdateStoreRecoveryConsentChanged"/>
                   <WrapPanel Margin="0,4,0,0">
@@ -835,7 +835,7 @@
                     <GroupStyle>
                       <GroupStyle.HeaderTemplate>
                         <DataTemplate>
-                          <TextBlock Text="{Binding Name}" FontFamily="Consolas" FontSize="11" Foreground="{DynamicResource PrimaryBrush}" Margin="2,7,2,3"/>
+                          <TextBlock Text="{Binding Name}" FontFamily="{DynamicResource UiFont}" FontSize="11" Foreground="{DynamicResource PrimaryBrush}" Margin="2,7,2,3"/>
                         </DataTemplate>
                       </GroupStyle.HeaderTemplate>
                     </GroupStyle>
@@ -856,8 +856,8 @@
             <Expander x:Name="AdvancedTools" Header="{DynamicResource Str_Advanced_Tools}" Foreground="{DynamicResource MutedTextBrush}">
           <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <DockPanel Margin="0,0,0,6">
-              <TextBlock Text="{DynamicResource Str_Text_TEXT_LOG_INSPECTOR}" FontFamily="Consolas" FontSize="11" VerticalAlignment="Center"/>
-              <TextBlock x:Name="ModeLabel" Text="{DynamicResource Str_Text_SAMPLE_MODE}" Foreground="{DynamicResource PrimaryBrush}" FontFamily="Consolas" FontSize="11" HorizontalAlignment="Right"/>
+              <TextBlock Text="{DynamicResource Str_Text_TEXT_LOG_INSPECTOR}" FontFamily="{DynamicResource UiFont}" FontSize="11" VerticalAlignment="Center"/>
+              <TextBlock x:Name="ModeLabel" Text="{DynamicResource Str_Text_SAMPLE_MODE}" Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource UiFont}" FontSize="11" HorizontalAlignment="Right"/>
             </DockPanel>
             <DockPanel Grid.Row="1">
               <Button x:Name="OpenButton" DockPanel.Dock="Right" Content="{DynamicResource Str_Content_Open_log}" Style="{StaticResource PrimaryButton}" Padding="10,3" Click="OnOpen" ToolTip="{DynamicResource Str_ToolTip_Open_text_log_Ctrl_O}" Margin="4,0,0,0"/>
@@ -959,7 +959,7 @@
 <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
 <Border Padding="14,10">
           <DockPanel>
-            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6"><Button DockPanel.Dock="Right" Content="{DynamicResource Str_Content_Hide}" Click="OnToggleActivity" Padding="6,2" ToolTip="{DynamicResource Str_ToolTip_Toggle_activity_log_F3}"/><Button x:Name="ExportActivityButton" DockPanel.Dock="Right" Content="{DynamicResource Str_ExportActivity}" Click="OnExportActivity" Padding="6,2" Margin="0,0,6,0" ToolTip="{DynamicResource Str_ExportActivityHint}" AutomationProperties.Name="{DynamicResource Str_ExportActivityHint}"/><TextBlock Text="{DynamicResource Str_Text_SESSION_ACTIVITY}" FontFamily="Consolas" FontSize="11" Foreground="{DynamicResource MutedTextBrush}"/></DockPanel>
+            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6"><Button DockPanel.Dock="Right" Content="{DynamicResource Str_Content_Hide}" Click="OnToggleActivity" Padding="6,2" ToolTip="{DynamicResource Str_ToolTip_Toggle_activity_log_F3}"/><Button x:Name="ExportActivityButton" DockPanel.Dock="Right" Content="{DynamicResource Str_ExportActivity}" Click="OnExportActivity" Padding="6,2" Margin="0,0,6,0" ToolTip="{DynamicResource Str_ExportActivityHint}" AutomationProperties.Name="{DynamicResource Str_ExportActivityHint}"/><TextBlock Text="{DynamicResource Str_Text_SESSION_ACTIVITY}" FontFamily="{DynamicResource UiFont}" FontSize="11" Foreground="{DynamicResource MutedTextBrush}"/></DockPanel>
             <TextBox x:Name="ActivityLog" IsReadOnly="True" FontFamily="Consolas" FontSize="11" Background="Transparent" BorderThickness="0" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Session_activity_log}"/>
           </DockPanel>
         </Border></Grid>
@@ -972,7 +972,7 @@
       <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
       <Border Grid.ColumnSpan="2" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>
       <Border x:Name="ScanLight" Width="9" Height="9" CornerRadius="5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,0,0,0" Background="#3FA95F" BorderThickness="1" BorderBrush="#40000000" ToolTip="{DynamicResource Str_Shell_ReadyNoScan}"/>
-      <TextBlock x:Name="StatusLabel" Text="{DynamicResource Str_Text_Ready}" FontFamily="Consolas" FontSize="11.5" Foreground="{DynamicResource TextFooter}" VerticalAlignment="Center" Margin="22,0,12,0" TextTrimming="CharacterEllipsis"/>
+      <TextBlock x:Name="StatusLabel" Text="{DynamicResource Str_Text_Ready}" FontFamily="{DynamicResource BrandSansFont}" FontSize="16" TextOptions.TextFormattingMode="Ideal" Foreground="{DynamicResource TextFooter}" VerticalAlignment="Center" Margin="22,0,12,0" TextTrimming="CharacterEllipsis"/>
       <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,28,0" VerticalAlignment="Center"><TextBlock x:Name="ThemeStatus" FontFamily="{DynamicResource BrandSansFont}" FontSize="16" TextOptions.TextFormattingMode="Ideal" Foreground="{DynamicResource TextFooter}" Text="v0.1.0" Margin="0,0,12,0" Cursor="Hand" MouseLeftButtonUp="OnAbout" ToolTip="{DynamicResource Str_Shortcuts_About}"/><TextBlock Text="&#x00A9; 2026 Steve the Killer" FontFamily="{DynamicResource BrandSansFont}" FontSize="16" TextOptions.TextFormattingMode="Ideal" Foreground="{DynamicResource TextFooter}"/></StackPanel>
       <Canvas Grid.ColumnSpan="2" Width="13" Height="13" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,4,4" IsHitTestVisible="False">
         <Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="9" Canvas.Top="1"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="5" Canvas.Top="5"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="9" Canvas.Top="5"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="1" Canvas.Top="9"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="5" Canvas.Top="9"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="9" Canvas.Top="9"/>
@@ -1012,15 +1012,15 @@
                 <Border IsHitTestVisible="False" CornerRadius="{DynamicResource ControlCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
                 <Border Background="Transparent" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="14,12,14,4">
                   <StackPanel>
-                    <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_Version}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><Grid Margin="0,1,0,0"><TextBlock x:Name="AboutVersionBlock" Foreground="{DynamicResource PrimaryBrush}" FontFamily="Consolas" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Bottom" Cursor="Hand" MouseLeftButtonUp="OnAboutRelease"/><TextBlock x:Name="AboutReleaseDateBlock" Foreground="{DynamicResource MutedTextBrush}" FontFamily="Consolas" FontSize="11" FontStyle="Italic" HorizontalAlignment="Right" VerticalAlignment="Bottom"/></Grid></StackPanel>
-                    <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_Publisher}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><TextBlock x:Name="AboutPublisherBlock" FontSize="12" TextWrapping="Wrap"/><TextBlock x:Name="AboutAkaBlock" Visibility="Collapsed" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,3,0,0"><Run Text="{DynamicResource Str_About_Aka}"/><Run Text=" "/><Hyperlink NavigateUri="https://thekiller.net" RequestNavigate="OnAboutLink" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None"><Run x:Name="AboutAkaRun"/></Hyperlink></TextBlock></StackPanel>
-                    <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_Thumbprint}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><TextBlock x:Name="AboutThumbprintBlock" FontFamily="Consolas" FontSize="11" TextWrapping="Wrap"/></StackPanel>
-                    <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_ExeHash}" Foreground="{DynamicResource DimTextBrush}" FontFamily="Consolas" FontSize="10"/><TextBlock x:Name="AboutSha256Block" FontFamily="Consolas" FontSize="11" TextWrapping="NoWrap"/></StackPanel>
+                    <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_Version}" Foreground="{DynamicResource DimTextBrush}" FontFamily="{DynamicResource UiFont}" FontSize="10"/><Grid Margin="0,1,0,0"><TextBlock x:Name="AboutVersionBlock" Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource UiFont}" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Bottom" Cursor="Hand" MouseLeftButtonUp="OnAboutRelease"/><TextBlock x:Name="AboutReleaseDateBlock" Foreground="{DynamicResource MutedTextBrush}" FontFamily="{DynamicResource UiFont}" FontSize="11" FontStyle="Italic" HorizontalAlignment="Right" VerticalAlignment="Bottom"/></Grid></StackPanel>
+                    <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_Publisher}" Foreground="{DynamicResource DimTextBrush}" FontFamily="{DynamicResource UiFont}" FontSize="10"/><TextBlock x:Name="AboutPublisherBlock" FontSize="12" TextWrapping="Wrap"/><TextBlock x:Name="AboutAkaBlock" Visibility="Collapsed" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,3,0,0"><Run Text="{DynamicResource Str_About_Aka}"/><Run Text=" "/><Hyperlink NavigateUri="https://thekiller.net" RequestNavigate="OnAboutLink" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None"><Run x:Name="AboutAkaRun"/></Hyperlink></TextBlock></StackPanel>
+                    <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_Thumbprint}" Foreground="{DynamicResource DimTextBrush}" FontFamily="{DynamicResource UiFont}" FontSize="10"/><TextBlock x:Name="AboutThumbprintBlock" FontFamily="{DynamicResource UiFont}" FontSize="11" TextWrapping="Wrap"/></StackPanel>
+                    <StackPanel Margin="0,0,0,10"><TextBlock Text="{DynamicResource Str_About_ExeHash}" Foreground="{DynamicResource DimTextBrush}" FontFamily="{DynamicResource UiFont}" FontSize="10"/><TextBlock x:Name="AboutSha256Block" FontFamily="{DynamicResource UiFont}" FontSize="11" TextWrapping="NoWrap"/></StackPanel>
                   </StackPanel>
                 </Border>
               </Grid>
               <StackPanel Margin="0,14,0,0" Width="{Binding ActualWidth, ElementName=AboutInfoGrid}">
-                <TextBlock Text="{DynamicResource Str_About_KillerMcp}" Foreground="{DynamicResource TextBrush}" FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"/>
+                <TextBlock Text="{DynamicResource Str_About_KillerMcp}" Foreground="{DynamicResource TextBrush}" FontFamily="{DynamicResource UiFont}" FontSize="13" FontWeight="SemiBold"/>
                 <TextBlock Text="{DynamicResource Str_About_KillerMcpNote}" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,2,0,7"/>
                 <CheckBox x:Name="AgentSafeRepairsCheck" FontSize="11" Click="OnAgentRepairsChanged"><TextBlock Text="{DynamicResource Str_About_KillerMcpSafe}" TextWrapping="Wrap"/></CheckBox>
                 <CheckBox x:Name="AgentDisruptiveRepairsCheck" FontSize="11" Margin="0,6,0,0" Click="OnAgentRepairsChanged"><TextBlock Text="{DynamicResource Str_About_KillerMcpDisruptive}" TextWrapping="Wrap"/></CheckBox>

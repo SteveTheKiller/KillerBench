@@ -29,7 +29,7 @@
                 </Grid.RowDefinitions>
                 <Border Grid.Row="0" Height="{DynamicResource DialogTitleBarHeight}"
                         Background="{DynamicResource DialogTitleBarBrush}"
-                        MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                        MouseLeftButtonDown="TitleBar_MouseLeftButtonDown" Panel.ZIndex="1">
                     <Grid>
                         <Border IsHitTestVisible="False" Background="{DynamicResource GrainTileBrush}"
                                 Opacity="{DynamicResource GrainOpacity}"/>
@@ -39,17 +39,18 @@
                                    Height="{DynamicResource TitleIconSize}"
                                    Margin="{DynamicResource TitleIconMargin}"
                                    RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-                            <Grid VerticalAlignment="Center" Visibility="{DynamicResource WordmarkVisibility}">
+                            <Grid VerticalAlignment="Center" Visibility="{DynamicResource WordmarkVisibility}" Margin="0,-18,0,-22">
+                                <Grid.RenderTransform><TranslateTransform Y="-5"/></Grid.RenderTransform>
                                 <TextBlock Margin="1,2,0,0" IsHitTestVisible="False"
                                            Opacity="{DynamicResource WordmarkAccentShadowOpacity}"
-                                           FontFamily="{DynamicResource WordmarkFont}" FontSize="11.73">
+                                           FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}">
                                     <TextBlock.Effect><BlurEffect Radius="3"/></TextBlock.Effect>
                                     <Run Text="Killer" Foreground="Transparent"/>
-                                    <Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Bench" FontSize="17.62" Foreground="#D8000000"/>
+                                    <Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Bench" FontSize="{DynamicResource TitleWordmarkBoldSize}" Foreground="#D8000000"/>
                                 </TextBlock>
-                                <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="11.73">
+                                <TextBlock FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}">
                                     <Run Text="Killer" Foreground="{DynamicResource ChromeTextBrush}"/>
-                                    <Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Bench" FontSize="17.62"
+                                    <Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Bench" FontSize="{DynamicResource TitleWordmarkBoldSize}"
                                          Foreground="{DynamicResource AccentLogo}"/>
                                 </TextBlock>
                             </Grid>
@@ -59,7 +60,7 @@
                                        FontWeight="Bold" VerticalAlignment="Center"/>
                         </StackPanel>
                         <Button x:Name="CloseButton" Content="&#xE8BB;" Click="Cancel_Click"
-                                Style="{StaticResource ChromeCloseButton}"
+                                Style="{StaticResource OverlayCloseButton}"
                                 Width="{DynamicResource AboutCloseWidth}"
                                 Height="{DynamicResource AboutCloseHeight}"
                                 Margin="0,0,4,0"

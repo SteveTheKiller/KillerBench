@@ -11,6 +11,9 @@ namespace KillerBench.Services
 
     public static class ThemeManager
     {
+        /// <summary>Killer Sans UI (Killer Sans scaled to Segoe UI proportions) with the Segoe fallback stack.</summary>
+        internal static readonly System.Windows.Media.FontFamily KillerSansUiStack = new(new Uri("pack://application:,,,/"), "./Fonts/#Killer Sans UI, Segoe UI, Microsoft JhengHei UI, Nirmala UI");
+        internal static readonly System.Windows.Media.FontFamily KillerSansFont = new(new Uri("pack://application:,,,/"), "./Fonts/#Killer Sans");
         public static Func<string, string?> GetSetting { get; set; } = _ => null;
         public static Action<string, string> SetSetting { get; set; } = (_, _) => { };
 
@@ -159,7 +162,7 @@ namespace KillerBench.Services
                 d["DialogTitleBarBrush"] = d.Contains("UseDialogCaption") && d.Contains("TitleBarBrush")
                     ? d["TitleBarBrush"]
                     : Transparent();
-            SetIfAbsent(d, "DialogTitleBarHeight", 28.0);
+            SetIfAbsent(d, "DialogTitleBarHeight", 32.0);
             SetIfAbsent(d, "DialogHaloMargin", new Thickness(10));
 
             SetIfAbsent(d, "CaptionButtonBrush", Transparent());
@@ -167,19 +170,31 @@ namespace KillerBench.Services
             SetIfAbsent(d, "CaptionButtonsMargin", new Thickness(0));
             SetIfAbsent(d, "CaptionCloseGap", new Thickness(0));
 
-            SetIfAbsent(d, "TitleBarHeight", 36.0);
+            SetIfAbsent(d, "TitleBarHeight", 32.0);
             SetIfAbsent(d, "CaptionButtonWidth", 44.0);
-            SetIfAbsent(d, "CaptionButtonHeight", 36.0);
+            SetIfAbsent(d, "CaptionButtonHeight", 32.0);
             SetIfAbsent(d, "TitleBarPadding", new Thickness(14, 0, 0, 0));
             SetIfAbsent(d, "TitleIconSize", 25.0);
             SetIfAbsent(d, "TitleIconMargin", new Thickness(0, 0, 7, 0));
-            SetIfAbsent(d, "TitleWordmarkSize", 12.09);
-            SetIfAbsent(d, "TitleWordmarkBoldSize", 21.52);
+            SetIfAbsent(d, "TitleWordmarkSize", 15.0);
+            SetIfAbsent(d, "TitleWordmarkBoldSize", 22.52);
             SetIfAbsent(d, "WordmarkEmbossOpacity", 0.0);
             SetIfAbsent(d, "WordmarkAccentShadowOpacity", 0.0);
-            SetIfAbsent(d, "ChromeFontFamily", new System.Windows.Media.FontFamily("Segoe UI"));
+            SetIfAbsent(d, "ChromeFontFamily", KillerSansUiStack);
 
             bool flatCaption = d.Contains("UseDialogCaption");
+            // The UI face (98SE declares its own), the main window logo 5px off the top-left corner as in
+            // KillerPDF, and the titlebar subtitle on the wordmark baseline in Killer Sans.
+            SetIfAbsent(d, "UiFont", KillerSansUiStack);
+            SetIfAbsent(d, "TitleLogoMargin", flatCaption ? d["TitleBarPadding"] : new Thickness(4, 3, 0, 0));
+            SetIfAbsent(d, "FileNameFont", flatCaption ? d["UiFont"] : KillerSansFont);
+            SetIfAbsent(d, "FileNameFontSize", flatCaption ? 11.0 : 18.0);
+            if (!d.Contains("FileNameTransform"))
+            {
+                var fileNameShift = new System.Windows.Media.TranslateTransform(0, flatCaption ? 0 : 1);
+                fileNameShift.Freeze();
+                d["FileNameTransform"] = fileNameShift;
+            }
             d["WordmarkVisibility"] = flatCaption ? Visibility.Collapsed : Visibility.Visible;
             d["PlainTitleVisibility"] = flatCaption ? Visibility.Visible : Visibility.Collapsed;
             d["CaptionGlyphWeight"] = flatCaption
