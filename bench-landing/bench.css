@@ -4,8 +4,8 @@ html[data-theme="hc"]{--accent:#FF910A;--btn:#FF910A}
 .content-inner { max-width: 1100px; margin: 0 auto; padding: 0 28px 50px; }
 .lang-toggle{width:32px;height:32px;line-height:normal;color:var(--text);font:12px Consolas,monospace}
 .lang-menu{max-height:min(70vh,540px);overflow-y:auto}
-.tb-mcp-link{display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:4px 11px;border:1px solid var(--accent);border-radius:6px;color:var(--text);font:normal 17px var(--kt-font-ui);text-decoration:none;transition:transform .12s,background .12s,box-shadow .12s}
-.tb-mcp-link img{width:25px;height:25px;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}
+.tb-mcp-link{display:inline-flex;align-items:center;gap:7px;min-height:35px;padding:0 12px 0 8px;border:1px solid var(--accent);border-radius:6px;color:var(--text);font:normal 19px var(--kt-font-ui);text-decoration:none;transition:transform .12s,background .12s,box-shadow .12s}
+.tb-mcp-link img{width:30px;height:30px;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}
 .tb-mcp-link:hover,.tb-mcp-link:focus-visible{color:var(--text);background:color-mix(in srgb,var(--accent) 12%,transparent);transform:translateY(-1px);box-shadow:0 6px 14px rgba(0,0,0,.32);filter:none}
 .tb-mcp-link:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .tb-mcp-wordmark{display:inline-flex;align-items:baseline;white-space:nowrap}.tb-mcp-wordmark>span:first-child{font-family:var(--kt-font-wordmark)}.tb-mcp-accent{position:relative;top:0;color:var(--accent);font-family:var(--kt-font-accent);font-size:1.28em;line-height:1}
