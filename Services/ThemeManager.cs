@@ -189,6 +189,7 @@ namespace KillerBench.Services
             // KillerPDF, and the titlebar subtitle on the wordmark baseline in Killer Sans.
             SetIfAbsent(d, "UiFont", KillerSansUiStack);
             SetIfAbsent(d, "TitleLogoMargin", flatCaption ? d["TitleBarPadding"] : new Thickness(4, 3, 0, 0));
+            SetIfAbsent(d, "DialogTitleMargin", flatCaption ? d["TitleBarPadding"] : new Thickness(6, 0, 0, 0));
             SetIfAbsent(d, "FileNameFont", flatCaption ? d["UiFont"] : KillerSansFont);
             SetIfAbsent(d, "FileNameFontSize", flatCaption ? 11.0 : 18.0);
             if (!d.Contains("FileNameTransform"))

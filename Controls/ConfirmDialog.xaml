@@ -34,7 +34,7 @@
                         <Border IsHitTestVisible="False" Background="{DynamicResource GrainTileBrush}"
                                 Opacity="{DynamicResource GrainOpacity}"/>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left"
-                                    VerticalAlignment="Center" Margin="{DynamicResource TitleBarPadding}">
+                                    VerticalAlignment="Center" Margin="{DynamicResource DialogTitleMargin}">
                             <icons:AppIcon x:Name="TitleIcon" Width="{DynamicResource TitleIconSize}"
                                    Height="{DynamicResource TitleIconSize}"
                                    Margin="{DynamicResource TitleIconMargin}"
