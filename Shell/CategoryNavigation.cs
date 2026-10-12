@@ -7,6 +7,23 @@ public partial class MainWindow
 {
     private sealed record ToolCategory(string Title, string Description, params WorkflowKind[] Tools)
     {
+        public string Icon => ((char)(Title switch
+        {
+            "Diagnostics" => 0xE9D9, // Diagnostic
+            "Repair" => 0xE90F, // Repair
+            "Updates" => 0xE895, // Sync
+            "Devices" => 0xE772, // Devices
+            "Network" => 0xE968, // Network
+            "Apps" => 0xE71D, // AllApps
+            "Maintenance" => 0xE74D, // Clear
+            "Onboarding" => 0xE8FA, // AddFriend
+            "Security" => 0xEA18, // Shield
+            "BitLocker" => 0xE72E, // Lock
+            "Privacy" => 0xE890, // Hide
+            "Storage" => 0xEDA2, // HardDrive
+            _ => 0xE90F
+        })).ToString();
+
         public override string ToString() => Title;
     }
 

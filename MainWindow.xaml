@@ -200,17 +200,33 @@
         <TextBlock Text="&#xE90F;" FontFamily="Segoe MDL2 Assets" FontSize="16" Margin="0,0,6,0" Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
         <TextBlock x:Name="SidebarHeading" Text="{DynamicResource Str_Shell_Tools}" Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource BrandSansFont}" FontSize="20" TextTrimming="CharacterEllipsis"/>
       </StackPanel>
-      <ListBox x:Name="CategoryList" Margin="0" Background="Transparent" BorderThickness="0" SelectionChanged="OnCategorySelected" AutomationProperties.Name="Tool categories" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-        <ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/></DataTemplate></ListBox.ItemTemplate>
-        <ListBox.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
+      <ListBox x:Name="CategoryList" Margin="0" Background="Transparent" BorderThickness="0" SelectionChanged="OnCategorySelected" AutomationProperties.Name="Tool categories" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
+        <ListBox.Resources><icons:TallCategoryConverter x:Key="TallCategory"/></ListBox.Resources>
+        <ListBox.ItemTemplate><DataTemplate>
+          <DockPanel x:Name="CategoryLabel" VerticalAlignment="Center">
+            <TextBlock x:Name="CategoryIcon" DockPanel.Dock="Left" Text="{Binding Icon}" FontFamily="Segoe MDL2 Assets" FontSize="16" Width="16" Margin="0,0,6,0" VerticalAlignment="Center" TextAlignment="Center" IsHitTestVisible="False"/>
+            <TextBlock x:Name="CategoryText" Text="{Binding Title}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+          </DockPanel>
+          <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Converter={StaticResource TallCategory}}" Value="True">
+              <Setter TargetName="CategoryLabel" Property="HorizontalAlignment" Value="Center"/>
+              <Setter TargetName="CategoryIcon" Property="DockPanel.Dock" Value="Top"/>
+              <Setter TargetName="CategoryIcon" Property="Margin" Value="0,0,0,6"/>
+              <Setter TargetName="CategoryIcon" Property="HorizontalAlignment" Value="Center"/>
+              <Setter TargetName="CategoryText" Property="HorizontalAlignment" Value="Center"/>
+            </DataTrigger>
+          </DataTemplate.Triggers>
+        </DataTemplate></ListBox.ItemTemplate>
+        <ListBox.ItemsPanel><ItemsPanelTemplate><icons:CategoryPanel ViewportHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}"/></ItemsPanelTemplate></ListBox.ItemsPanel>
         <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}">
           <!-- Family view-button semantics (KillerScan ViewToolbarButton / KillerPDF ToolbarButton): transparent at rest,
                RowHoverBrush on hover, and the theme's SelectionBg/SelectionFg pair marks the current section. -->
-          <Setter Property="Margin" Value="0,0,0,2"/><Setter Property="Padding" Value="9,3"/><Setter Property="FontSize" Value="13"/>
+          <Setter Property="MinHeight" Value="40"/><Setter Property="Margin" Value="0,0,0,2"/><Setter Property="Padding" Value="6,3"/><Setter Property="FontSize" Value="13"/>
+          <Setter Property="AutomationProperties.Name" Value="{Binding Title}"/><Setter Property="ToolTip" Value="{Binding Title}"/>
           <Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="VerticalContentAlignment" Value="Center"/>
           <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
           <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
-            <Border x:Name="CategoryFace" Background="Transparent" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="{TemplateBinding Padding}">
+            <Border x:Name="CategoryFace" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="{TemplateBinding Padding}">
               <ContentPresenter VerticalAlignment="Center"/>
             </Border>
             <ControlTemplate.Triggers>
@@ -220,6 +236,9 @@
               <Trigger Property="IsSelected" Value="True">
                 <Setter TargetName="CategoryFace" Property="Background" Value="{DynamicResource SelectionBg}"/>
                 <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+              </Trigger>
+              <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                <Setter TargetName="CategoryFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
               </Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate></Setter.Value></Setter>
