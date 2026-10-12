@@ -980,9 +980,9 @@ internal static class Program
                 "Shortcut rail button closes the overlay without changing the workspace");
             var categoryTools = (ComboBox)window.FindName("CategoryWorkflow");
             var allTools = (ComboBox)window.FindName("MainWorkflow");
-            Require(categories.Items.Cast<object>().Select(category => category.ToString()).SequenceEqual(["Diagnostics", "Repair", "Updates", "Devices", "Network", "Apps", "Maintenance", "Onboarding", "Security", "BitLocker", "Privacy", "Storage"]) &&
-                categories.ItemContainerGenerator.ContainerFromIndex(0) is ListBoxItem { FontFamily.Source: "Segoe UI" },
+            Require(categories.Items.Cast<object>().Select(category => category.ToString()).SequenceEqual(["Diagnostics", "Repair", "Updates", "Devices", "Network", "Apps", "Maintenance", "Onboarding", "Security", "BitLocker", "Privacy", "Storage"]),
                 "Twelve primary sections list in the left sidebar while preserving the existing category order");
+            CategoryTypographyChecks.Run(window);
             var mainAction = (Button)window.FindName("MainGo");
             var automaticRepair = (CheckBox)window.FindName("MainAutoRepair");
             Require(categories.SelectedItem?.ToString() == "Diagnostics" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.CommonProblems } &&
@@ -1228,6 +1228,9 @@ internal static class Program
             Capture(window, Path.Combine(scratch, "simple-start.png"));
             var titleIcon = (Image)window.FindName("TitlebarIcon");
             Require(window.Icon is not null && titleIcon.Source is not null, "Window and titlebar use packaged icon resources");
+            Require(Math.Abs(titleIcon.ActualWidth - 27) < .1 && Math.Abs(titleIcon.ActualHeight - 27) < .1 &&
+                Equals(window.FindResource("TitleIconSize"), 27d), "Titlebar retains its approved 27-pixel family icon size");
+            var stableTitleIconSize = new Size(titleIcon.ActualWidth, titleIcon.ActualHeight);
             var zoomHost = (FrameworkElement)window.FindName("ScaleHost");
             var zoomViewport = (Grid)window.FindName("ZoomViewport");
             var zoomMethod = typeof(KillerBench.MainWindow).GetMethod("ApplyAppScale", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
@@ -1236,7 +1239,7 @@ internal static class Program
                 zoomMethod.Invoke(window, [scale]);
                 Pump();
                 Require(zoomHost.LayoutTransform.Value.IsIdentity && Math.Abs(((TextBox)window.FindName("EvidenceBox")).FontSize - ((Slider)window.FindName("SizeSlider")).Value * scale) < 0.001 &&
-                    Math.Abs(titleIcon.ActualWidth - 24) < 0.1 && Math.Abs(controlBank.ActualWidth - 160) < 0.1,
+                    new Size(titleIcon.ActualWidth, titleIcon.ActualHeight) == stableTitleIconSize && Math.Abs(controlBank.ActualWidth - 160) < 0.1,
                     "Zoom scales content without squeezing the sidebar or moving titlebar controls");
                 Require(new Size(window.ActualWidth, window.ActualHeight) == stableWindowSize &&
                     zoomHost.ActualWidth <= zoomViewport.ActualWidth && zoomHost.ActualHeight <= zoomViewport.ActualHeight,

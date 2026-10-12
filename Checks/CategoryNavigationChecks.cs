@@ -36,6 +36,7 @@ internal static class CategoryNavigationChecks
             Require(sidebar.Width == 160, "Fresh sidebar uses the narrower 160-pixel default");
             Settle(window);
             Console.WriteLine("Category font: " + Item(list, 0).FontFamily.Source);
+            CategoryTypographyChecks.Run(window);
             foreach (var theme in new[] { Theme.Dark, Theme.Light, Theme.Black, Theme.Retro98 })
             {
                 ThemeManager.Apply(theme);
