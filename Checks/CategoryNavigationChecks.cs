@@ -33,6 +33,9 @@ internal static class CategoryNavigationChecks
             window.Show();
             var list = (ListBox)window.FindName("CategoryList");
             var sidebar = (FrameworkElement)window.FindName("LeftPanel");
+            Require(sidebar.Width == 160, "Fresh sidebar uses the narrower 160-pixel default");
+            Settle(window);
+            Console.WriteLine("Category font: " + Item(list, 0).FontFamily.Source);
             foreach (var theme in new[] { Theme.Dark, Theme.Light, Theme.Black, Theme.Retro98 })
             {
                 ThemeManager.Apply(theme);
@@ -87,7 +90,7 @@ internal static class CategoryNavigationChecks
             Settle(window);
             VerifyLayout(list);
             Capture(sidebar, Path.Combine(output, "short-minimum-sidebar-width.png"));
-            sidebar.Width = 180;
+            sidebar.Width = 160;
 
             // Cross the real allocation threshold repeatedly. Desired content cannot drive row height.
             window.Height = 900;
@@ -103,6 +106,14 @@ internal static class CategoryNavigationChecks
                 Require(Math.Abs(stableHeight - Item(list, 0).ActualHeight) < .01, "Orientation threshold has stable layout");
                 if (offset == -1 || offset == 1) Capture(sidebar, Path.Combine(output, $"threshold-{offset}.png"));
             }
+            var zoom = typeof(KillerBench.MainWindow).GetMethod("ApplyAppScale", BindingFlags.Instance | BindingFlags.NonPublic)!;
+            foreach (double scale in new[] { .7, 1d, 1.5, 2.5 })
+            {
+                zoom.Invoke(window, [scale]);
+                Settle(window);
+                Require(Math.Abs(sidebar.ActualWidth - 160) < .1, "App zoom preserves the narrower sidebar width");
+            }
+            zoom.Invoke(window, [1d]);
             // Enlarged interface uses fewer logical pixels and retains readable scrolling controls.
             var scaleHost = (FrameworkElement)window.FindName("ScaleHost");
             scaleHost.LayoutTransform = new ScaleTransform(1.5, 1.5);
@@ -111,7 +122,23 @@ internal static class CategoryNavigationChecks
             VerifyLayout(list);
             Require(scroll.ScrollableHeight > 0, "Enlarged interface retains overflow access");
             Capture(sidebar, Path.Combine(output, "short-150-percent.png"));
-            Console.WriteLine("PASS: category layout at 800x500, 1025x700 and 1025x1200 across Dark, Light, Black and 98SE; both icon orientations, threshold stability, minimum heights, keyboard and mouse-wheel overflow, 140-pixel sidebar, accessible names, selection, simulated hover, focus and 150% layout scale.");
+            // Use only process-local preferences, with no load or save of the user's settings file.
+            var preferences = typeof(KillerBench.MainWindow).Assembly.GetType("KillerBench.Services.Preferences")!;
+            var setPreference = preferences.GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic)!;
+            var initializePanels = typeof(KillerBench.MainWindow).GetMethod("InitializePanels", BindingFlags.Instance | BindingFlags.NonPublic)!;
+            foreach (double savedWidth in new[] { 180d, 230d })
+            {
+                setPreference.Invoke(null, ["SidebarWidth", savedWidth.ToString(System.Globalization.CultureInfo.InvariantCulture)]);
+                initializePanels.Invoke(window, []);
+                Require(sidebar.Width == savedWidth, "Saved sidebar width takes precedence over the new default");
+            }
+            sidebar.Width = 210;
+            typeof(KillerBench.MainWindow).GetMethod("OnSidebarGripCompleted", BindingFlags.Instance | BindingFlags.NonPublic)!
+                .Invoke(window, [window.FindName("SidebarGrip"), new System.Windows.Controls.Primitives.DragCompletedEventArgs(0, 0, false)]);
+            initializePanels.Invoke(window, []);
+            Require(sidebar.Width == 210, "Splitter-completed width remains the restored sidebar width");
+            setPreference.Invoke(null, ["SidebarWidth", "160"]);
+            Console.WriteLine("PASS: category layout at 800x500, 1025x700 and 1025x1200 across Dark, Light, Black and 98SE; 160-pixel default, both icon orientations, full labels, saved and splitter widths, threshold stability, minimum heights, keyboard and mouse-wheel overflow, 140-pixel sidebar, accessible names, selection, simulated hover, focus and 150% layout scale.");
             Console.WriteLine("Category render evidence: " + output);
             return 0;
         }

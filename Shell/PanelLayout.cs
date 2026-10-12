@@ -11,7 +11,7 @@ namespace KillerBench;
 // family grip (KillerPDF's sidebar behavior): drag past the minimum and release to snap it closed.
 public partial class MainWindow
 {
-    private const double SidebarDefaultWidth = 180;
+    private const double SidebarDefaultWidth = 160;
     private const double SidebarMinOpen = 140;
     private const double SidebarMaxWidth = 360;
     private const double PanelCloseBuffer = 36;

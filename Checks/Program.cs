@@ -1236,7 +1236,7 @@ internal static class Program
                 zoomMethod.Invoke(window, [scale]);
                 Pump();
                 Require(zoomHost.LayoutTransform.Value.IsIdentity && Math.Abs(((TextBox)window.FindName("EvidenceBox")).FontSize - ((Slider)window.FindName("SizeSlider")).Value * scale) < 0.001 &&
-                    Math.Abs(titleIcon.ActualWidth - 24) < 0.1 && Math.Abs(controlBank.ActualWidth - 180) < 0.1,
+                    Math.Abs(titleIcon.ActualWidth - 24) < 0.1 && Math.Abs(controlBank.ActualWidth - 160) < 0.1,
                     "Zoom scales content without squeezing the sidebar or moving titlebar controls");
                 Require(new Size(window.ActualWidth, window.ActualHeight) == stableWindowSize &&
                     zoomHost.ActualWidth <= zoomViewport.ActualWidth && zoomHost.ActualHeight <= zoomViewport.ActualHeight,
