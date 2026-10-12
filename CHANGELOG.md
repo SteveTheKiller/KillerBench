@@ -109,7 +109,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Documentation, packaging and validation
 
-- Added a framework-dependent Windows x64 single-file publish profile and included the GPLv3 license in desktop and CLI publish output.
+- Added the KillerBench installer, which checks for the .NET 10 Desktop Runtime and adds Start menu, desktop and Installed Apps entries, and a portable build that carries its own runtime. Both packages and the single-file CLI include the GPLv3 license.
 - Added the killerbench.net landing site with a searchable user guide, the Engine developer guide and KillerMCP setup.
 - Added deterministic VM validation plans, a gated native fault-injection runner and themed coverage reports.
 - Added the symptom coverage matrix with consistency checks.

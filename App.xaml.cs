@@ -17,6 +17,7 @@ public partial class App : Application
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        if (TryRunInstallerCommand(e)) return;
         ScreenshotMode = e.Args.Any(IsScreenshotArgument);
         DemoMode = ScreenshotMode || e.Args.Any(IsDemoArgument);
         WindowsEngine.Register();
@@ -42,6 +43,10 @@ public partial class App : Application
             if (s is Window w && DependencyPropertyHelper.GetValueSource(w, System.Windows.Controls.Control.FontFamilyProperty).BaseValueSource == BaseValueSource.Default)
                 w.SetResourceReference(System.Windows.Controls.Control.FontFamilyProperty, "UiFont");
         }));
+        if (TryRunUninstall(e)) return;
+        // The main window is created here instead of through StartupUri, so the installer and
+        // uninstall hand-offs can exit without one.
+        new MainWindow().Show();
     }
     protected override void OnExit(ExitEventArgs e)
     {

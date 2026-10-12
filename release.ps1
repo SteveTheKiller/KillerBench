@@ -6,10 +6,13 @@
     1. Preflight: version sources, CHANGELOG date, ReleaseDate, translations, license copies,
        package vulnerabilities, and a clean default branch that matches origin.
     2. Builds the solution in Release and runs the non-UI checks.
-    3. Publishes the desktop app (PortableSingleFile profile) and the CLI as framework-dependent
-       win-x64 single-file executables. Both need the .NET 10 Desktop Runtime.
-    4. Signs both executables, retrying the timestamp across three TSA endpoints, then runs
-       "signtool verify /pa /v" as a post-sign gate.
+    3. Builds the installer (KillerBench.exe) and portable (KillerBench-Portable.exe) packages with
+       Packaging\build-packages.ps1, and publishes the CLI as a framework-dependent win-x64
+       single-file executable. The installer checks for the .NET 10 Desktop Runtime; the portable
+       package carries its own runtime.
+    4. Signs the first-party payload files, repacks both packages so they verify the signed bytes,
+       then signs the installer, portable and CLI executables, retrying the timestamp across three
+       TSA endpoints, and runs "signtool verify /pa /v" as a post-sign gate.
     5. Builds the GPLv3 source archive from the exact tagged commit. Source always ships
        with the app.
     6. Writes SHA256SUMS.txt, extracts release notes from the CHANGELOG, tags, and creates
@@ -62,10 +65,17 @@ $proj        = Join-Path $PSScriptRoot "KillerBench.csproj"
 $solution    = Join-Path $PSScriptRoot "KillerBench.slnx"
 $cliProj     = Join-Path $PSScriptRoot "Cli\KillerBench.Cli.csproj"
 $checksProj  = Join-Path $PSScriptRoot "Checks\KillerBench.Checks.csproj"
-$desktopDir  = Join-Path $PSScriptRoot "bin\Release\net10.0-windows\publish\single-file-win-x64"
+$packageBuild = Join-Path $PSScriptRoot "Packaging\build-packages.ps1"
+$packageDir  = Join-Path $PSScriptRoot "bin\Release\net10.0-windows\publish"
+$payloadDirs = @(
+    (Join-Path $PSScriptRoot "bin\Release\net10.0-windows\installer-package\payload"),
+    (Join-Path $PSScriptRoot "bin\Release\net10.0-windows\portable-package\payload")
+)
+$firstPartyNames = @('KillerBench.exe', 'KillerBench.dll', 'KillerBench.Engine.dll', 'KillerBench.Engine.Core.dll', 'KillerBench.Engine.Windows.dll')
 $cliDir      = Join-Path $PSScriptRoot "Cli\bin\Release\net10.0\publish\single-file-win-x64"
 $releaseDir  = Join-Path $PSScriptRoot "bin\Release\release"
 $desktopExe  = Join-Path $releaseDir "KillerBench.exe"
+$portableExe = Join-Path $releaseDir "KillerBench-Portable.exe"
 $cliExe      = Join-Path $releaseDir "killerbench-cli.exe"
 $licenseOut  = Join-Path $releaseDir "LICENSE.txt"
 
@@ -277,21 +287,24 @@ dotnet run --project $checksProj -c Release --no-build
 if ($LASTEXITCODE -ne 0) { throw "Non-UI checks failed. Fix them before releasing." }
 Write-Host "    Non-UI checks passed" -ForegroundColor Green
 
-# --- 8. Publish the desktop app and CLI ---
-Write-Host "`n==> Publishing desktop and CLI executables..." -ForegroundColor Cyan
-dotnet publish $proj -p:PublishProfile=PortableSingleFile --nologo -v quiet
-if ($LASTEXITCODE -ne 0) { throw "Desktop publish failed." }
+# --- 8. Build the installer and portable packages, and publish the CLI ---
+Write-Host "`n==> Building the installer and portable packages..." -ForegroundColor Cyan
+& powershell -NoProfile -ExecutionPolicy Bypass -File $packageBuild
+if ($LASTEXITCODE -ne 0) { throw "Package build failed." }
+Write-Host "`n==> Publishing the CLI executable..." -ForegroundColor Cyan
 dotnet publish $cliProj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true `
     -p:DebugType=none -p:DebugSymbols=false -o $cliDir --nologo -v quiet
 if ($LASTEXITCODE -ne 0) { throw "CLI publish failed." }
 
 if (-not [IO.Directory]::Exists($releaseDir)) { [void][IO.Directory]::CreateDirectory($releaseDir) }
-Copy-Item -LiteralPath (Join-Path $desktopDir 'KillerBench.exe') -Destination $desktopExe -Force
+Copy-Item -LiteralPath (Join-Path $packageDir 'KillerBench.exe') -Destination $desktopExe -Force
+Copy-Item -LiteralPath (Join-Path $packageDir 'KillerBench-Portable.exe') -Destination $portableExe -Force
 Copy-Item -LiteralPath (Join-Path $cliDir 'killerbench-cli.exe') -Destination $cliExe -Force
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'LICENSE.txt') -Destination $licenseOut -Force
-foreach ($artifact in @($desktopExe, $cliExe)) { Assert-ReleaseArtifactVersion $artifact $expectedFileVersion }
-Write-Host "    Desktop: $desktopExe" -ForegroundColor Green
-Write-Host "    CLI    : $cliExe" -ForegroundColor Green
+foreach ($artifact in @($desktopExe, $portableExe, $cliExe)) { Assert-ReleaseArtifactVersion $artifact $expectedFileVersion }
+Write-Host "    Installer: $desktopExe" -ForegroundColor Green
+Write-Host "    Portable : $portableExe" -ForegroundColor Green
+Write-Host "    CLI      : $cliExe" -ForegroundColor Green
 
 # --- 9. Sign ---
 if (-not $SkipSign) {
@@ -313,9 +326,36 @@ if (-not $SkipSign) {
         @("/n", $CertName)
     }
 
+    # Sign the first-party payload files before they are compressed into the public packages.
+    # Third-party runtime and library files keep their publishers' signatures.
+    Write-Host "`n==> Signing first-party payload files..." -ForegroundColor Cyan
+    foreach ($payloadDir in $payloadDirs) {
+        foreach ($name in $firstPartyNames) {
+            $innerFile = Join-Path $payloadDir $name
+            if (-not (Test-Path -LiteralPath $innerFile)) { throw "First-party payload file is missing: $innerFile" }
+            $innerSigned = $false
+            foreach ($tsa in $tsaList) {
+                & $signtool sign /fd sha256 /tr $tsa /td sha256 @certArgs `
+                    /d "KillerBench Application" /du "https://killerbench.net" /v $innerFile
+                if ($LASTEXITCODE -eq 0) { $innerSigned = $true; break }
+                Start-Sleep -Seconds 3
+            }
+            if (-not $innerSigned) { throw "Signing failed on all TSA endpoints: $innerFile" }
+        }
+    }
+
+    # Signing changes the payload hashes. Repack so each package carries and verifies the signed
+    # bytes, and so the installer only accepts a signed download.
+    Write-Host "`n==> Repacking the signed payloads..." -ForegroundColor Cyan
+    & powershell -NoProfile -ExecutionPolicy Bypass -File $packageBuild -RepackOnly -RequireSignature
+    if ($LASTEXITCODE -ne 0) { throw "Signed payload repack failed." }
+    Copy-Item -LiteralPath (Join-Path $packageDir 'KillerBench.exe') -Destination $desktopExe -Force
+    Copy-Item -LiteralPath (Join-Path $packageDir 'KillerBench-Portable.exe') -Destination $portableExe -Force
+
     $signTargets = @(
-        @{ Path = $desktopExe; Description = 'KillerBench' },
-        @{ Path = $cliExe;     Description = 'KillerBench CLI' }
+        @{ Path = $desktopExe;  Description = 'KillerBench' },
+        @{ Path = $portableExe; Description = 'KillerBench Portable' },
+        @{ Path = $cliExe;      Description = 'KillerBench CLI' }
     )
     foreach ($target in $signTargets) {
         $signed = $false
@@ -388,7 +428,7 @@ if ([IO.File]::Exists($srcZipPath)) {
 
 } else {
     Write-Host "`n==> PublishOnly: skipping build and sign, using existing artifacts." -ForegroundColor Yellow
-    foreach ($artifact in @($desktopExe, $cliExe)) {
+    foreach ($artifact in @($desktopExe, $portableExe, $cliExe)) {
         Assert-ReleaseArtifactVersion $artifact $expectedFileVersion
         $signature = Get-AuthenticodeSignature -LiteralPath $artifact
         if ($signature.Status -ne [System.Management.Automation.SignatureStatus]::Valid) {
@@ -408,11 +448,13 @@ $srcZip = Get-Item -LiteralPath $srcZipPath
 # --- 12. SHA256SUMS.txt ---
 Write-Host "`n==> Computing SHA256 values..." -ForegroundColor Cyan
 $desktopHash = (Get-FileHash $desktopExe -Algorithm SHA256).Hash
+$portableHash = (Get-FileHash $portableExe -Algorithm SHA256).Hash
 $cliHash     = (Get-FileHash $cliExe -Algorithm SHA256).Hash
 $srcHash     = (Get-FileHash $srcZip.FullName -Algorithm SHA256).Hash
 $sumsPath    = Join-Path $releaseDir "SHA256SUMS.txt"
 $lines = [System.Collections.Generic.List[string]]::new()
 $lines.Add("KillerBench.exe          $desktopHash")
+$lines.Add("KillerBench-Portable.exe $portableHash")
 $lines.Add("killerbench-cli.exe      $cliHash")
 $lines.Add("$($srcZip.Name.PadRight(24)) $srcHash")
 if ($PublishOnly -and (Test-Path $sumsPath)) {
@@ -431,10 +473,12 @@ if ($PublishOnly -and (Test-Path $sumsPath)) {
 Write-Host "`n==============================================================" -ForegroundColor Cyan
 Write-Host   "  KillerBench $Tag release artifacts" -ForegroundColor White
 Write-Host   "  APP    : $desktopExe"
+Write-Host   "  PORTABLE: $portableExe"
 Write-Host   "  CLI    : $cliExe"
 Write-Host   "  SOURCE : $($srcZip.FullName)"
 Write-Host   ""
 Write-Host   "  SHA256 (App)   : $desktopHash" -ForegroundColor Green
+Write-Host   "  SHA256 (Portable): $portableHash" -ForegroundColor Green
 Write-Host   "  SHA256 (CLI)   : $cliHash" -ForegroundColor Green
 Write-Host   "  SHA256 (Source): $srcHash" -ForegroundColor Green
 Write-Host   ""
@@ -495,14 +539,14 @@ try {
     }
     if ($notes.Count -eq 0) { throw "Could not extract [$Version] notes from CHANGELOG.md" }
     $notes.Add('')
-    $notes.Add('Requires the .NET 10 Desktop Runtime (x64). The complete GPLv3 source for this release is attached as ' + $srcZip.Name + '.')
+    $notes.Add('KillerBench.exe installs the app and checks for the .NET 10 Desktop Runtime (x64). KillerBench-Portable.exe runs without installing and carries its own runtime. killerbench-cli.exe requires the .NET 10 Runtime (x64). The complete GPLv3 source for this release is attached as ' + $srcZip.Name + '.')
     $notesFile = Join-Path $env:TEMP "KillerBench-$Version-notes.md"
     [System.IO.File]::WriteAllLines($notesFile, $notes, [System.Text.UTF8Encoding]::new($false))
     Write-Host "    Notes written to $notesFile ($($notes.Count) lines)"
 
     if ($DryRun) {
         Write-Host "`n==> DryRun: stopping before tag and release." -ForegroundColor Yellow
-        Write-Host "    Would tag $Tag and publish KillerBench.exe, killerbench-cli.exe, LICENSE.txt, $($srcZip.Name) and SHA256SUMS.txt."
+        Write-Host "    Would tag $Tag and publish KillerBench.exe, KillerBench-Portable.exe, killerbench-cli.exe, LICENSE.txt, $($srcZip.Name) and SHA256SUMS.txt."
         exit 0
     }
 
@@ -512,7 +556,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Tag push failed" }
 
     Write-Host "`n==> Creating GitHub release..." -ForegroundColor Cyan
-    $assets = @($desktopExe, $cliExe, $licenseOut, $srcZip.FullName, $sumsPath)
+    $assets = @($desktopExe, $portableExe, $cliExe, $licenseOut, $srcZip.FullName, $sumsPath)
     gh release create $Tag @assets --title "KillerBench $Tag" --notes-file $notesFile --verify-tag
     if ($LASTEXITCODE -ne 0) { throw "gh release create failed" }
 

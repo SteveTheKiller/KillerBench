@@ -15,7 +15,7 @@
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
-    <DefaultItemExcludes>$(DefaultItemExcludes);**\bin\**;**\obj\**</DefaultItemExcludes>
+    <DefaultItemExcludes>$(DefaultItemExcludes);**\bin\**;**\obj\**;Packaging\**</DefaultItemExcludes>
   </PropertyGroup>
   <!-- Bake ReleaseDate into the assembly so About can show it. A file timestamp would not
        survive being copied, and the PE linker stamp is a build date, not a release date. -->
