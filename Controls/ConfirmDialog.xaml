@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:icons="clr-namespace:KillerBench.Controls"
         xmlns:local="clr-namespace:KillerBench.Controls"
-        Title="KillerBench" Width="360" SizeToContent="Height"
+        Title="KillerBench" Width="390" SizeToContent="Height"
         WindowStartupLocation="CenterOwner" WindowStyle="None"
         AllowsTransparency="True" ResizeMode="NoResize"
         Background="Transparent" ShowInTaskbar="False"
@@ -67,20 +67,28 @@
                                 HorizontalAlignment="Right" VerticalAlignment="Center"/>
                     </Grid>
                 </Border>
-                <StackPanel Grid.Row="1" Margin="24,20,24,16">
+                <Grid Grid.Row="1" Margin="24,18,24,18">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="38"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <!-- Notice ring, as in the family setup dialog: amber "!" on a confirmation, accent "i" on a notice. -->
+                    <Border x:Name="NoticeRing" Width="28" Height="28" CornerRadius="14" BorderThickness="2" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <TextBlock x:Name="NoticeGlyph" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="17" FontWeight="SemiBold"/>
+                    </Border>
+                    <StackPanel Grid.Column="1">
                     <TextBlock x:Name="HeadingText" Foreground="{DynamicResource TextBrush}"
-                               FontSize="13" TextWrapping="Wrap" Margin="0,0,0,12"/>
+                               FontFamily="{DynamicResource BrandSansFont}" FontSize="18"
+                                               TextOptions.TextFormattingMode="Ideal" TextWrapping="Wrap"/>
                     <TextBlock x:Name="DetailText" Foreground="{DynamicResource MutedTextBrush}"
-                               FontSize="12" LineHeight="20" TextWrapping="Wrap"/>
+                               FontSize="12" LineHeight="19" TextWrapping="Wrap" Margin="0,10,0,0"/>
                 </StackPanel>
+                </Grid>
                 <StackPanel Grid.Row="2" Orientation="Horizontal"
                             HorizontalAlignment="Right" Margin="24,0,24,20">
                     <Button x:Name="CancelButton" Content="Cancel" Click="Cancel_Click"
                             IsCancel="True" IsDefault="True"
-                            Style="{StaticResource SurfaceButton}" MinWidth="80"
-                            Padding="16,4" Margin="0,0,8,0"/>
+                            Style="{StaticResource SurfaceButton}" Height="28" MinWidth="80"
+                            Padding="12,2" Margin="0,0,8,0"/>
                     <Button x:Name="OkButton" Content="Remove" Click="OK_Click"
-                            Style="{StaticResource OutlineButton}" MinWidth="80" Padding="16,4"/>
+                            Style="{StaticResource OutlineButton}" Height="28" MinWidth="80" Padding="12,2"/>
                 </StackPanel>
             </Grid>
         </Grid>
