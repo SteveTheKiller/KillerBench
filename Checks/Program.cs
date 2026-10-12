@@ -209,6 +209,7 @@ internal static class Program
         {
             window.Show();
             window.UpdateLayout();
+            RenderedTypographyChecks.VerifySubtitle(window);
             Require(window.Width == 1025 && window.Height == 700 && window.MinWidth == 800 && window.MinHeight == 500 &&
                 window.SizeToContent == SizeToContent.Manual, "Workbench window keeps its family window geometry");
             Require(window.FindName("ZoomViewport") is FrameworkElement { ClipToBounds: true },

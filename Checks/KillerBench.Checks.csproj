@@ -8,5 +8,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup><ProjectReference Include="../KillerBench.csproj" /></ItemGroup>
+  <!-- Application-relative font URIs resolve against this executable during hosted captures.
+       Link the production font bytes at their production paths without changing app resources. -->
+  <ItemGroup><Resource Include="../Fonts/*.ttf" Link="Fonts/%(Filename)%(Extension)" /></ItemGroup>
   <ItemGroup><Compile Include="../Cli/TaskPlanCommands.cs" Link="TaskPlanCommands.cs" /></ItemGroup>
 </Project>

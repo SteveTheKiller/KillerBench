@@ -46,8 +46,9 @@ internal static class CategoryNavigationChecks
                     window.Height = height;
                     Settle(window);
                     VerifyLayout(list);
+                    RenderedTypographyChecks.VerifySubtitle(window);
                     Capture(sidebar, Path.Combine(output, $"{theme}-{height}.png"));
-                    if (theme == Theme.Dark && height == 700) Capture(window, Path.Combine(output, "workbench-700.png"));
+                    if (theme == Theme.Dark && (height == 700 || height == 1200)) Capture(window, Path.Combine(output, $"workbench-{height}.png"));
                 }
             }
             ThemeManager.Apply(Theme.Dark);

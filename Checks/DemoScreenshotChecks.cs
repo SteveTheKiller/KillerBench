@@ -70,6 +70,7 @@ internal static class DemoScreenshotChecks
                 Require(task.IsCompleted, "Screenshot fixture completes without live progress or providers");
                 task.GetAwaiter().GetResult();
                 window.UpdateLayout();
+                RenderedTypographyChecks.VerifySubtitle(window);
                 Require(raw.Text.Contains(DemoWorkflow.MachineName, StringComparison.Ordinal) &&
                     !raw.Text.Contains(Environment.MachineName, StringComparison.OrdinalIgnoreCase) &&
                     !raw.Text.Contains("Starting live checks", StringComparison.Ordinal),

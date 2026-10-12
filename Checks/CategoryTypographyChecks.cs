@@ -10,6 +10,7 @@ internal static class CategoryTypographyChecks
 
     internal static void Run(KillerBench.MainWindow window)
     {
+        RenderedTypographyChecks.VerifyFallbackRejected();
         var categories = (ListBox)window.FindName("CategoryList");
         var primary = new FontFamily(new Uri("pack://application:,,,/KillerBench;component/"), "./Fonts/#Killer Sans UI");
         Require(new Typeface(primary, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal).TryGetGlyphTypeface(out var glyphs)
@@ -30,6 +31,7 @@ internal static class CategoryTypographyChecks
                 var expected = theme == Theme.Retro98 ? new FontFamily("Microsoft Sans Serif") :
                     new FontFamily(new Uri("pack://application:,,,/"), UiStack);
                 Require(uiFont.Equals(expected), $"{theme} retains the approved UI face and fallback stack");
+                RenderedTypographyChecks.VerifySubtitle(window);
                 for (int index = 0; index < categories.Items.Count; index++)
                 {
                     var item = (ListBoxItem)categories.ItemContainerGenerator.ContainerFromIndex(index);
@@ -37,12 +39,14 @@ internal static class CategoryTypographyChecks
                     var icon = FindTextBlocks(item).Single(block => block.Name == "CategoryIcon");
                     Require(item.FontFamily.Equals(expected) && label.FontFamily.Equals(expected),
                         $"{theme} category {index} inherits the approved UI face through its container and label");
+                    RenderedTypographyChecks.VerifyFont(label, theme == Theme.Retro98 ? "Microsoft Sans Serif" : "Killer Sans UI",
+                        theme == Theme.Retro98 ? null : "KillerSansUI-Regular.ttf");
                     Require(icon.FontFamily.Source == "Segoe MDL2 Assets", "Category glyphs retain their separate icon face");
                 }
             }
         }
         finally { ThemeManager.Apply(originalTheme); window.UpdateLayout(); }
-        Console.WriteLine("PASS: all 13 themes retain the approved category font stack, the 98SE face, the embedded Killer Sans UI font and separate MDL2 icons.");
+        Console.WriteLine("PASS: actual subtitle and category glyphs match production font bytes across all 13 themes; 98SE retains its native face, and the previous Segoe UI fallback is rejected.");
     }
 
     private static IEnumerable<TextBlock> FindTextBlocks(DependencyObject parent)
