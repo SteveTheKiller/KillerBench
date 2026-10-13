@@ -44,10 +44,10 @@ namespace KillerLauncher
             var wizard = new InstallerWizard();
             bool? result = wizard.ShowDialog();
             application.Shutdown();
-            return result == true ? 0 : 1;
+            return result == true ? KillerFamily.Deployment.InstallerExitCodes.Success : KillerFamily.Deployment.InstallerExitCodes.Cancelled;
         }
 
-        internal static int ShowFailure(string message)
+        internal static int ShowFailure(string message, int exitCode = KillerFamily.Deployment.InstallerExitCodes.Failure)
         {
             var application = new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
             var wizard = new InstallerWizard { _closeAfterNotice = true };
@@ -55,7 +55,7 @@ namespace KillerLauncher
                 LauncherStrings.Get("CannotContinue"), message, NoticeKind.Error);
             wizard.ShowDialog();
             application.Shutdown();
-            return 1;
+            return exitCode;
         }
 
         private void RenderPage()

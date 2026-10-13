@@ -45,7 +45,7 @@ public partial class App
             catch (Exception ex)
             {
                 Console.Error.WriteLine("Install registration failed: " + ex.Message);
-                Shutdown(1);
+                Shutdown(KillerFamily.Deployment.InstallerExitCodes.FromException(ex));
             }
             return true;
         }

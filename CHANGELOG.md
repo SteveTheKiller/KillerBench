@@ -93,6 +93,8 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Desktop, accessibility and localization
 
+- Icon-only buttons give screen readers the name from their tooltip, and controls reached with the keyboard show a dotted focus outline.
+
 - Kept app icons sharp at fractional display DPI and app zoom by caching exact pixel sizes from a covering source and aligning the final draw to device pixels.
 
 - Added the three-pane workbench: a resizable section sidebar with the icon rail, the selected tool's options in the center, and a wider output pane on the right whose Raw output opens during a run and gives way to the Readable report, plus an activity log.
@@ -110,6 +112,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Documentation, packaging and validation
 
+- Silent installs return specific Windows error codes and reject a second concurrent install instead of reporting a general failure.
 - Added the KillerBench installer, which checks for the .NET 10 Desktop Runtime and adds Start menu, desktop and Installed Apps entries, and a portable build that carries its own runtime. Both packages and the single-file CLI include the GPLv3 license.
 - Added the killerbench.net landing site with a searchable user guide, the Engine developer guide and KillerMCP setup.
 - Added deterministic VM validation plans, a gated native fault-injection runner and themed coverage reports.

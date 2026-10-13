@@ -33,6 +33,7 @@ namespace KillerLauncher
         [STAThread]
         private static int Main(string[] args)
         {
+            KillerFamily.Accessibility.AccessibleControls.Initialize();
             try
             {
 #if INSTALLER_PACKAGE
@@ -81,11 +82,11 @@ namespace KillerLauncher
                 if (args.Any(a => string.Equals(a, "/silent", StringComparison.OrdinalIgnoreCase)))
                 {
                     Console.Error.WriteLine(ProductName + " setup failed: " + ex.Message);
-                    return 1;
+                    return KillerFamily.Deployment.InstallerExitCodes.FromException(ex);
                 }
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                return InstallerWizard.ShowFailure(ex.Message);
+                return InstallerWizard.ShowFailure(ex.Message, KillerFamily.Deployment.InstallerExitCodes.FromException(ex));
 #else
                 if (args.Any(a => string.Equals(a, "--startup-smoke", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -142,8 +143,9 @@ namespace KillerLauncher
 
         internal static int Install(bool machine, bool desktop, string? destinationOverride = null)
         {
+            using var installLease = KillerFamily.Deployment.InstallerExitCodes.Acquire(ProductName);
             if (!IsTrustedForInstall(CurrentExecutablePath()))
-                throw new InvalidOperationException(
+                throw new System.Security.SecurityException(
                     LauncherStrings.Get("SignatureInvalid"));
 
             string? testRoot = Environment.GetEnvironmentVariable(TestInstallRootEnvironmentVariable);
@@ -181,7 +183,8 @@ namespace KillerLauncher
                     ? 0
                     : RunRegistration(destination, machine, desktop);
                 if (registrationExit != 0)
-                    throw new InvalidOperationException(LauncherStrings.Format("RegistrationFailed", registrationExit));
+                    throw new System.ComponentModel.Win32Exception(registrationExit,
+                        LauncherStrings.Format("RegistrationFailed", registrationExit));
 
                 // A machine-wide install supersedes the current account's per-user copy. This
                 // also covers unattended /silent installs that do not return through the portable

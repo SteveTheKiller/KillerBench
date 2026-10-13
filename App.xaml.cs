@@ -17,6 +17,7 @@ public partial class App : Application
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        KillerFamily.Accessibility.AccessibleControls.Initialize();
         if (TryRunInstallerCommand(e)) return;
         ScreenshotMode = e.Args.Any(IsScreenshotArgument);
         DemoMode = ScreenshotMode || e.Args.Any(IsDemoArgument);
