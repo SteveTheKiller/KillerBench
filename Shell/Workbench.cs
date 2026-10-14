@@ -9,6 +9,7 @@ using System.Windows.Media.Animation;
 using KillerBench.Controls;
 using KillerBench.Engine;
 using KillerBench.Services;
+using KillerFamily.Windowing;
 
 namespace KillerBench;
 
@@ -26,6 +27,9 @@ public partial class MainWindow
         Shell.SidebarChrome.WireEdgeFades(SourcesList, SourceFadeTop, SourceFadeBottom);
         InitializeShortcuts();
         SourceInitialized += (_, _) => { RefreshWindowEdge(); DwmChrome.SetThemeBorder(this); };
+        // Windows 11 snap layouts flyout on the maximize button. Attached after WindowChrome's
+        // hook, so it answers WM_NCHITTEST first.
+        SourceInitialized += (_, _) => SnapLayouts.Attach(this, MaximizeButton);
         StateChanged += (_, _) =>
         {
             RefreshWindowEdge();
