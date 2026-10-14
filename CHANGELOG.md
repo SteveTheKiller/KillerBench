@@ -109,6 +109,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Zoom enlarged inputs and output inside fixed panes, and the workspace stayed within the window when changing tools or zoom.
 - Matched the family palette, control states, gradients, menus, rail flyout spacing, footers and About card. Submenus attached to their opening rows with native direction and screen-edge placement.
 - Improved text contrast on selected sections, expanders, option labels, menus and footers.
+- Restored website wordmark sizes and standardized Lacquer headers and documentation text.
 
 ### Documentation, packaging and validation
 
