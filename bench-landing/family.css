@@ -481,18 +481,6 @@ html[data-theme="cyanotic"] .spec-table th { background: var(--chrome); color: v
     flex-direction: column;
   }
 
-  .hero .hero-icon {
-    width: auto !important;
-    height: min(30vw, 116px) !important;
-    max-width: 100% !important;
-  }
-
-  .hero .hero-lockup .wm-logo {
-    width: min(82vw, 320px) !important;
-    height: auto !important;
-    max-width: calc(100vw - 32px) !important;
-  }
-
   body .mcp-brand {
     gap: 6px !important;
   }
