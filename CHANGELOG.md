@@ -93,7 +93,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Desktop, accessibility and localization
 
-- Icon-only buttons give screen readers the name from their tooltip, and controls reached with the keyboard show a dotted focus outline.
+- Icon-only buttons give screen readers the name from their tooltip, icon glyphs stay out of what screen readers read, the tool list is named after its category, and controls reached with the keyboard show a dotted focus outline.
 
 - Kept app icons sharp at fractional display DPI and app zoom by caching exact pixel sizes from a covering source and aligning the final draw to device pixels.
 
@@ -125,3 +125,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Added deterministic VM validation plans, a gated native fault-injection runner and themed coverage reports.
 - Added the symptom coverage matrix with consistency checks.
 - Added isolated UI tests on a separate desktop, synthetic repair demonstrations and a screenshot preset with fixed sample reports.
+
+### Fixed
+- The website top bar no longer leaves extra space under the wordmark and buttons.
+

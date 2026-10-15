@@ -575,11 +575,11 @@ body img.help-wm {
   max-width: 100%;
   object-fit: contain;
 }
-body img.tb-wm { height: 47.2266px; }
+body img.tb-wm { height: 47.2266px; margin: -3.0082px 0 -9.8693px; }  /* the canvas above and below the lettering takes no room in the bar */
 body img.also-wm { height: 65.3906px; }
 body .engine-lockup img.wm-logo { height: 81.7383px; }
 @media (max-width: 600px) {
-  body img.tb-wm { height: 38.1445px; }
+  body img.tb-wm { height: 38.1445px; margin: -2.4297px 0 -7.9713px; }
   body .engine-lockup img.wm-logo { height: 65.3906px; }
 }
 
