@@ -1,0 +1,92 @@
+﻿Field,Type,English
+ProductName,Text,KillerBench
+Description,Text,"Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.
+
+Twelve sections, one habit
+Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker, Privacy and Storage. Every tool reads before it offers anything, and a full system scan ranks what needs attention.
+
+Fix only what is proven
+A repair is offered only when fresh evidence matches the exact problem. It needs your confirmation, rechecks everything right before it runs, and reads the result back before it says Verified.
+
+No black boxes
+Findings link to the event, log line or setting behind them. Incomplete evidence is never reported as healthy, and history stays history. Export the report straight into a ticket.
+
+Encryption without guesswork
+Inspect protectors, back up recovery passwords to a file, Active Directory or Entra ID, encrypt Windows and data drives, turn on auto-unlock and prepare a TPM without ever clearing it.
+
+Make a laptop yours
+Review and change privacy settings, app permissions and cloud search, then declutter Windows. Settings owned by policy or device management are left alone.
+
+Check before retrying
+Journaled repairs record a pending request before dispatch. If a request is interrupted, recovery checks what happened without automatically repeating the change.
+
+No AI required
+Diagnostics and report analysis run locally without an AI service or KillerBench account. Actions you select, such as downloads or recovery-key backup to Entra ID, can contact their destination. The same Engine powers the desktop app and command line."
+WhatsNew,Text,
+ProductFeatures1,Text,"Twelve sections, one habit"
+ProductFeatures2,Text,Fix only what is proven
+ProductFeatures3,Text,No black boxes
+ProductFeatures4,Text,Encryption without guesswork
+ProductFeatures5,Text,Make a laptop yours
+ProductFeatures6,Text,Check before retrying
+ProductFeatures7,Text,No AI required
+ProductFeatures8,Text,
+ProductFeatures9,Text,
+ProductFeatures10,Text,
+ProductFeatures11,Text,
+ProductFeatures12,Text,
+ProductFeatures13,Text,
+ProductFeatures14,Text,
+ProductFeatures15,Text,
+ProductFeatures16,Text,
+ProductFeatures17,Text,
+ProductFeatures18,Text,
+ProductFeatures19,Text,
+ProductFeatures20,Text,
+ShortDescription,Text,"Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result."
+SearchTerms1,Text,Windows diagnostics
+SearchTerms2,Text,Windows repair
+SearchTerms3,Text,BitLocker
+SearchTerms4,Text,privacy settings
+SearchTerms5,Text,system maintenance
+SearchTerms6,Text,IT tools
+SearchTerms7,Text,troubleshooting
+Applicable license terms,Text,GNU General Public License v3.0 (GPLv3). Source code: https://github.com/SteveTheKiller/KillerBench
+Copyright,Text,© 2026 Steve the Killer
+DevelopedBy,Text,Steve the Killer
+RequirementsMinimum1,Text,Microsoft .NET 10 Desktop Runtime (x64)
+RequirementsMinimum2,Text,
+RequirementsMinimum3,Text,
+RequirementsMinimum4,Text,
+RequirementsMinimum5,Text,
+RequirementsMinimum6,Text,
+RequirementsMinimum7,Text,
+RequirementsMinimum8,Text,
+RequirementsMinimum9,Text,
+RequirementsMinimum10,Text,
+RequirementsMinimum11,Text,
+RequirementsRecommended1,Text,
+RequirementsRecommended2,Text,
+RequirementsRecommended3,Text,
+RequirementsRecommended4,Text,
+RequirementsRecommended5,Text,
+RequirementsRecommended6,Text,
+RequirementsRecommended7,Text,
+RequirementsRecommended8,Text,
+RequirementsRecommended9,Text,
+RequirementsRecommended10,Text,
+RequirementsRecommended11,Text,
+StoreLogos1,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,StoreLogo-1080.png
+StoreLogos2,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots1,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots2,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots3,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots4,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots5,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots6,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots7,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots8,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots9,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+Screenshots10,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
+HeroArts,Text,
+Trailers,Text,
