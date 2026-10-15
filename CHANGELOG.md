@@ -112,7 +112,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Improved text contrast on selected sections, expanders, option labels, menus and footers.
 - Centered website logos with space above and below at every screen size and standardized Lacquer headers and documentation text.
 - Menu separators draw their divider line instead of leaving an empty gap.
-- Used the family outline button, as in KillerPDF, for the run diagnosis, open log and update scan buttons instead of a solid dark block.
+- Used the family outline button for the run diagnosis, open log and update scan buttons instead of a solid dark block.
 
 ### Documentation, packaging and validation
 
