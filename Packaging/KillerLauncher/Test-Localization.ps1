@@ -51,6 +51,8 @@ foreach ($file in Get-ChildItem -LiteralPath $PSScriptRoot -Filter '*.cs') {
         if ($line.TrimStart().StartsWith('//')) { continue }
         # CLI diagnostics retain their existing text. OS exception details are not authored here.
         if ($line.Contains('Console.Error.WriteLine')) { continue }
+        # Argument guards name the parameter for developers. Their text never reaches the window.
+        if ($line -match 'new Argument[A-Za-z]*Exception\(.*nameof\(') { continue }
         if ($line -match '(?:\.Text|\.Content|Description)\s*=\s*"[A-Za-z]' -or
             $line -match '(?:ShowNotice|MessageBox\.Show|new [A-Za-z]+Exception)\(\s*"[A-Za-z]') {
             throw "Unlocalized UI assignment in $($file.Name): $($line.Trim())"
@@ -76,7 +78,7 @@ if ($AssemblyPath) {
                 if ($get.Invoke($null, @($key)) -cne $tables[$locale][$key]) { throw "Embedded value mismatch: $locale/$key" }
             }
         }
-        $variants = @{ 'en-GB'='en-US'; 'de-AT'='de-DE'; 'fr-CA'='fr-FR'; 'es-MX'='es'; 'bn-BD'='bn'; 'zh-HK'='zh-TW'; 'zh-Hant'='zh-TW'; 'zh-SG'='zh-CN'; 'zh-Hans'='zh-CN'; 'pt-BR'='en-US' }
+        $variants = @{ 'en-GB'='en-US'; 'de-AT'='de-DE'; 'fr-CA'='fr-FR'; 'es-MX'='es'; 'bn-BD'='bn'; 'zh-HK'='zh-TW'; 'zh-Hant'='zh-TW'; 'zh-SG'='zh-CN'; 'zh-Hans'='zh-CN'; 'pt-PT'='pt-BR' }
         foreach ($culture in $variants.Keys) {
             if ($resolve.Invoke($null, @([Globalization.CultureInfo]::GetCultureInfo($culture))) -cne $variants[$culture]) { throw "Culture fallback mismatch: $culture" }
         }
