@@ -13,6 +13,7 @@ namespace KillerBench.Services
     {
         /// <summary>Killer Sans UI (Killer Sans scaled to Segoe UI proportions) with the Segoe fallback stack.</summary>
         internal static readonly System.Windows.Media.FontFamily KillerSansUiStack = new(new Uri("pack://application:,,,/"), "./Fonts/#Killer Sans UI, Segoe UI, Microsoft JhengHei UI, Nirmala UI");
+        internal static readonly System.Windows.Media.FontFamily LacquerHeadingStack = new(new Uri("pack://application:,,,/"), "./Fonts/#Lacquer, ./Fonts/#Killer Sans UI, Segoe UI, Microsoft JhengHei UI, Nirmala UI");
         internal static readonly System.Windows.Media.FontFamily KillerSansFont = new(new Uri("pack://application:,,,/"), "./Fonts/#Killer Sans");
         public static Func<string, string?> GetSetting { get; set; } = _ => null;
         public static Action<string, string> SetSetting { get; set; } = (_, _) => { };
@@ -142,6 +143,7 @@ namespace KillerBench.Services
             SetIfAbsent(d, "FooterPadding", new Thickness(16, 0, 16, 0));
 
             SetIfAbsent(d, "SidebarPaneBrush", Transparent());
+            if (!d.Contains("ContentPaneBrush")) d["ContentPaneBrush"] = d["PaneBrush"];
 
             if (!d.Contains("OutlineRestBrush") && d.Contains("OutlineBtnBrush"))
                 d["OutlineRestBrush"] = d["OutlineBtnBrush"];
@@ -188,9 +190,16 @@ namespace KillerBench.Services
             // The UI face (98SE declares its own), the main window logo 5px off the top-left corner as in
             // KillerPDF, and the titlebar subtitle on the wordmark baseline in Killer Sans.
             SetIfAbsent(d, "UiFont", KillerSansUiStack);
+            // Context menus, as in every family app: Killer Sans UI at 12. 98SE states its own face and size.
+            SetIfAbsent(d, "MenuFontFamily", KillerSansUiStack);
+            SetIfAbsent(d, "MenuFontSize", 12.0);
             SetIfAbsent(d, "TitleLogoMargin", flatCaption ? d["TitleBarPadding"] : new Thickness(4, 3, 0, 0));
             SetIfAbsent(d, "DialogTitleMargin", flatCaption ? d["TitleBarPadding"] : new Thickness(6, 0, 0, 0));
             SetIfAbsent(d, "FileNameFont", flatCaption ? d["UiFont"] : KillerSansFont);
+            // Primary headings (dialog headings, page and period titles): Lacquer, the app-name face of
+            // the wordmark, falling back to Killer Sans UI for scripts Lacquer does not cover. 98SE keeps
+            // Killer Sans. Secondary headings, the footer and the interface stay Killer Sans.
+            SetIfAbsent(d, "HeadingFont", flatCaption ? KillerSansFont : LacquerHeadingStack);
             SetIfAbsent(d, "FileNameFontSize", flatCaption ? 11.0 : 18.0);
             if (!d.Contains("FileNameTransform"))
             {

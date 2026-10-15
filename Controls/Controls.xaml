@@ -13,8 +13,8 @@
 
     
     <!-- Family brand faces, bundled in Fonts/ with their licenses beside them: Punktype
-         (commercial license) for "Killer", Lacquer (OFL) for the app name, and Killer Sans
-         (OFL) for headings and the footer. -->
+         (commercial license) for "Killer", Lacquer (OFL) for the app name and primary headings, and
+         Killer Sans (OFL) for secondary headings and the footer. -->
     <FontFamily x:Key="WordmarkFont">/KillerBench;component/Fonts/#Punktype</FontFamily>
     <FontFamily x:Key="WordmarkAccentFont">/KillerBench;component/Fonts/#Lacquer</FontFamily>
     <FontFamily x:Key="BrandSansFont">/KillerBench;component/Fonts/#Killer Sans</FontFamily>
@@ -545,6 +545,8 @@
         <Setter Property="BorderBrush" Value="{DynamicResource MenuBorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource MenuFontFamily}"/>
+        <Setter Property="FontSize" Value="{DynamicResource MenuFontSize}"/>
         <Setter Property="Padding" Value="0,4"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -580,7 +582,8 @@
         <Setter Property="Background" Value="Transparent"/>
         
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
-        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontFamily" Value="{DynamicResource MenuFontFamily}"/>
+        <Setter Property="FontSize" Value="{DynamicResource MenuFontSize}"/>
         
         <Setter Property="Padding" Value="8,6,10,6"/>
         <Setter Property="Template">
