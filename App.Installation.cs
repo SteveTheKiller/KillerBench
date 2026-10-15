@@ -270,6 +270,27 @@ public partial class App
         catch { }
     }
 
+    /// <summary>The registered installed copy this process is running from, or null for a portable or
+    /// development copy. The self-update hands only a registered copy to the installer, into the folder
+    /// it is already installed in.</summary>
+    internal static (bool Machine, string Directory)? InstalledCopy()
+    {
+        try
+        {
+            string exe = Path.GetFullPath(Environment.ProcessPath ?? "");
+            foreach (var (root, machine) in new[] { (Registry.LocalMachine, true), (Registry.CurrentUser, false) })
+            {
+                using var key = root.OpenSubKey(RegistryKeyPath);
+                if (key?.GetValue("InstallPath") is string registered
+                    && string.Equals(Path.GetFullPath(registered), exe, StringComparison.OrdinalIgnoreCase))
+                    return (machine, Path.GetDirectoryName(exe)!);
+            }
+        }
+        catch (Exception ex) when (ex is ArgumentException or IOException or UnauthorizedAccessException
+            or System.Security.SecurityException or NotSupportedException) { }
+        return null;
+    }
+
     private static string AppVersion() =>
         typeof(App).Assembly.GetName().Version?.ToString(3) ?? "0.0.0";
 

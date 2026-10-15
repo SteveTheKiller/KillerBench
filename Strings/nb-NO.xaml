@@ -514,6 +514,14 @@
   <sys:String x:Key="Str_About_KillerMcpDisruptive">Tillat også forstyrrende reparasjoner (krever godkjenning)</sys:String>
   <sys:String x:Key="Str_About_KillerMcpLocked">KillerMCP-reparasjoner er låst etter {0}.</sys:String>
   <sys:String x:Key="Str_About_KillerMcpClearLock">Opphev lås</sys:String>
+  <sys:String x:Key="Str_About_StartupUpdateCheck">Se etter oppdateringer ved oppstart</sys:String>
+  <sys:String x:Key="Str_About_StartupUpdateHeading">{0} {1} er tilgjengelig</sys:String>
+  <sys:String x:Key="Str_About_StartupUpdateDetail">Vil du laste den ned og installere den nå? Appen lukkes og åpnes på nytt automatisk.</sys:String>
+  <sys:String x:Key="Str_About_UpdateNow">Oppdater</sys:String>
+  <sys:String x:Key="Str_About_NotNow">Ikke nå</sys:String>
+  <sys:String x:Key="Str_About_AlwaysCheckOnStartup">Se alltid etter ved oppstart</sys:String>
+  <sys:String x:Key="Str_About_UpdateAvailable">Oppdatering tilgjengelig: {0}</sys:String>
+  <sys:String x:Key="Str_About_Downloading">Laster ned...</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Velg Office-språk som skal beholdes</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Engelsk (USA)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Engelsk (Storbritannia)</sys:String>

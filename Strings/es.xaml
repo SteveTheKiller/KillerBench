@@ -517,6 +517,14 @@
   <sys:String x:Key="Str_About_KillerMcpDisruptive">Permitir también reparaciones disruptivas (requiere aprobación)</sys:String>
   <sys:String x:Key="Str_About_KillerMcpLocked">Las reparaciones de KillerMCP están bloqueadas después de {0}.</sys:String>
   <sys:String x:Key="Str_About_KillerMcpClearLock">Quitar bloqueo</sys:String>
+  <sys:String x:Key="Str_About_StartupUpdateCheck">Buscar actualizaciones al iniciar</sys:String>
+  <sys:String x:Key="Str_About_StartupUpdateHeading">{0} {1} está disponible</sys:String>
+  <sys:String x:Key="Str_About_StartupUpdateDetail">¿Quieres descargarlo e instalarlo ahora? La aplicación se cerrará y volverá a abrirse automáticamente.</sys:String>
+  <sys:String x:Key="Str_About_UpdateNow">Actualizar</sys:String>
+  <sys:String x:Key="Str_About_NotNow">Ahora no</sys:String>
+  <sys:String x:Key="Str_About_AlwaysCheckOnStartup">Buscar siempre actualizaciones al iniciar</sys:String>
+  <sys:String x:Key="Str_About_UpdateAvailable">Actualización disponible: {0}</sys:String>
+  <sys:String x:Key="Str_About_Downloading">Descargando...</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Elegir idioma de Office para conservar</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Inglés (Estados Unidos)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Inglés (Reino Unido)</sys:String>

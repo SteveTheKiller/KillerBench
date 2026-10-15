@@ -44,6 +44,9 @@ public partial class MainWindow : Window
             OnCancel(this, new RoutedEventArgs());
             Report("Closing after the active operation stops. An actual repair must finish its current command.");
         };
+        // After the first paint, so an update offer never lands before the window (Shell\Updates.cs).
+        Loaded += (_, _) => Dispatcher.BeginInvoke(new Action(CheckForUpdatesOnStartup),
+            System.Windows.Threading.DispatcherPriority.Background);
         if (App.ScreenshotMode)
             Loaded += async (_, _) =>
             {

@@ -10,6 +10,9 @@ public partial class ConfirmDialog : Window
 {
     public bool Confirmed { get; private set; }
 
+    /// <summary>The optional checkbox, read back after ShowDialog returns.</summary>
+    public bool Check1Checked => Check1.IsChecked == true;
+
     public ConfirmDialog(string heading, string detail, string confirmText, string? cancelText = null)
     {
         InitializeComponent();
@@ -31,6 +34,16 @@ public partial class ConfirmDialog : Window
             RootBorder.BeginAnimation(OpacityProperty,
                 new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(150)));
         };
+    }
+
+    // With one checkbox under the detail, such as the update prompt's "Always check on startup".
+    public ConfirmDialog(string heading, string detail, string confirmText, string? cancelText,
+                         string check1Label, bool check1Initial)
+        : this(heading, detail, confirmText, cancelText)
+    {
+        Check1.Content = new System.Windows.Controls.TextBlock { Text = check1Label, TextWrapping = TextWrapping.Wrap };
+        Check1.IsChecked = check1Initial;
+        Check1.Visibility = Visibility.Visible;
     }
 
     // The family setup dialog's notice ring: an amber "!" on a confirmation and the accent "i" on a

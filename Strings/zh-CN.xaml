@@ -517,6 +517,14 @@
   <sys:String x:Key="Str_About_KillerMcpDisruptive">同时允许破坏性修复（需要批准）</sys:String>
   <sys:String x:Key="Str_About_KillerMcpLocked">{0} 之后，KillerMCP 修复已被锁定。</sys:String>
   <sys:String x:Key="Str_About_KillerMcpClearLock">解除锁定</sys:String>
+  <sys:String x:Key="Str_About_StartupUpdateCheck">启动时检查更新</sys:String>
+  <sys:String x:Key="Str_About_StartupUpdateHeading">{0} {1} 已发布</sys:String>
+  <sys:String x:Key="Str_About_StartupUpdateDetail">是否立即下载并安装？应用将关闭并自动重新打开。</sys:String>
+  <sys:String x:Key="Str_About_UpdateNow">更新</sys:String>
+  <sys:String x:Key="Str_About_NotNow">以后再说</sys:String>
+  <sys:String x:Key="Str_About_AlwaysCheckOnStartup">启动时始终检查更新</sys:String>
+  <sys:String x:Key="Str_About_UpdateAvailable">有可用更新：{0}</sys:String>
+  <sys:String x:Key="Str_About_Downloading">正在下载...</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">选择要保留的 Office 语言</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">英语（美国）</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">英语（英国）</sys:String>

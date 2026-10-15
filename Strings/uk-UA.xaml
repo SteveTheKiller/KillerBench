@@ -514,6 +514,14 @@
   <sys:String x:Key="Str_About_KillerMcpDisruptive">Дозволити також виправлення, що переривають роботу (потрібне схвалення)</sys:String>
   <sys:String x:Key="Str_About_KillerMcpLocked">Виправлення KillerMCP заблоковано після {0}.</sys:String>
   <sys:String x:Key="Str_About_KillerMcpClearLock">Зняти блокування</sys:String>
+  <sys:String x:Key="Str_About_StartupUpdateCheck">Перевіряти оновлення під час запуску</sys:String>
+  <sys:String x:Key="Str_About_StartupUpdateHeading">Доступний {0} {1}</sys:String>
+  <sys:String x:Key="Str_About_StartupUpdateDetail">Завантажити та встановити зараз? Програма закриється та відкриється знову автоматично.</sys:String>
+  <sys:String x:Key="Str_About_UpdateNow">Оновити</sys:String>
+  <sys:String x:Key="Str_About_NotNow">Не зараз</sys:String>
+  <sys:String x:Key="Str_About_AlwaysCheckOnStartup">Завжди перевіряти під час запуску</sys:String>
+  <sys:String x:Key="Str_About_UpdateAvailable">Доступне оновлення: {0}</sys:String>
+  <sys:String x:Key="Str_About_Downloading">Завантаження...</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Виберіть мову Office, яку залишити</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">англійська (США)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">англійська (Велика Британія)</sys:String>

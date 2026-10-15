@@ -1039,6 +1039,13 @@
                   </StackPanel>
                 </Border>
               </Grid>
+              <!-- The startup update check is the first of the card's options; the update button appears only when a newer release exists. -->
+              <StackPanel Margin="0,12,0,0" Width="{Binding ActualWidth, ElementName=AboutInfoGrid}">
+                <CheckBox x:Name="AboutStartupUpdateCheck" FontSize="11" Click="OnAboutStartupUpdateCheck"><TextBlock Text="{DynamicResource Str_About_StartupUpdateCheck}" TextWrapping="Wrap"/></CheckBox>
+                <Button x:Name="AboutUpdateButton" Visibility="Collapsed" Margin="0,12,0,0" HorizontalAlignment="Left" Style="{StaticResource OutlineButton}" Padding="14,7" Click="OnAboutUpdate">
+                  <TextBlock x:Name="AboutUpdateText" FontSize="12" FontWeight="SemiBold" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                </Button>
+              </StackPanel>
               <StackPanel Margin="0,14,0,0" Width="{Binding ActualWidth, ElementName=AboutInfoGrid}">
                 <TextBlock Text="{DynamicResource Str_About_KillerMcp}" Foreground="{DynamicResource TextBrush}" FontFamily="{DynamicResource UiFont}" FontSize="13" FontWeight="SemiBold"/>
                 <TextBlock Text="{DynamicResource Str_About_KillerMcpNote}" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,2,0,7"/>

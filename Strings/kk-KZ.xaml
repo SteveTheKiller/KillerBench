@@ -515,6 +515,14 @@
   <sys:String x:Key="Str_About_KillerMcpDisruptive">Жұмысты бөлетін жөндеулерге де рұқсат ету (мақұлдау қажет)</sys:String>
   <sys:String x:Key="Str_About_KillerMcpLocked">KillerMCP жөндеулері {0} кейін құлыпталды.</sys:String>
   <sys:String x:Key="Str_About_KillerMcpClearLock">Құлыпты алу</sys:String>
+  <sys:String x:Key="Str_About_StartupUpdateCheck">Іске қосылғанда жаңартуларды тексеру</sys:String>
+  <sys:String x:Key="Str_About_StartupUpdateHeading">{0} {1} қолжетімді</sys:String>
+  <sys:String x:Key="Str_About_StartupUpdateDetail">Оны қазір жүктеп, орнатқыңыз келе ме? Қолданба автоматты түрде жабылып, қайта ашылады.</sys:String>
+  <sys:String x:Key="Str_About_UpdateNow">Жаңарту</sys:String>
+  <sys:String x:Key="Str_About_NotNow">Қазір емес</sys:String>
+  <sys:String x:Key="Str_About_AlwaysCheckOnStartup">Іске қосылғанда жаңартуларды әрдайым тексеру</sys:String>
+  <sys:String x:Key="Str_About_UpdateAvailable">Жаңарту қолжетімді: {0}</sys:String>
+  <sys:String x:Key="Str_About_Downloading">Жүктелуде...</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Сақталатын Office тілін таңдау</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Ағылшын (Америка Құрама Штаттары)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Ағылшын (Ұлыбритания)</sys:String>

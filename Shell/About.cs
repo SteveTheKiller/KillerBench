@@ -37,6 +37,7 @@ public partial class MainWindow
             ? Visibility.Visible : Visibility.Collapsed;
         AboutSha256Block.Text = "computing...";
         RefreshAgentRepairSettings();
+        RefreshUpdateNotice();   // Shell\Updates.cs
         AboutOverlay.Opacity = 1;
         AboutOverlay.Visibility = Visibility.Visible;
         _ = Task.Run(ExecutableSha256).ContinueWith(task => Dispatcher.BeginInvoke(() =>
@@ -70,9 +71,10 @@ public partial class MainWindow
         catch { return "(unavailable)"; }
     }
 
-    private static (bool Valid, string Subject, string Thumbprint) GetSignerInfo()
+    // The running exe by default; Shell\Updates.cs also checks a downloaded update with it.
+    private static (bool Valid, string Subject, string Thumbprint) GetSignerInfo(string? file = null)
     {
-        string path = Environment.ProcessPath ?? "";
+        string path = file ?? Environment.ProcessPath ?? "";
         if (path.Length == 0) return (false, "(unavailable)", "(none)");
         string subject;
         string thumbprint;

@@ -173,6 +173,19 @@ internal static class Program
             remove.Show();
             ((Button)remove.FindName("OkButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(remove.Confirmed && !remove.IsVisible, "Explicit Remove is the only confirmation path");
+            Require(remove.FindName("Check1") is CheckBox { Visibility: Visibility.Collapsed },
+                "A confirmation without a choice shows no checkbox");
+            var choice = new KillerBench.Controls.ConfirmDialog("KillerBench v9.9.9 is available", "Fixture", "Update",
+                "Not now", "Always check on startup", true) { Owner = owner };
+            choice.Show();
+            Pump();
+            Require(choice.FindName("Check1") is CheckBox { Visibility: Visibility.Visible, IsChecked: true,
+                    Content: TextBlock { Text: "Always check on startup" } } && choice.Check1Checked,
+                "The update prompt's checkbox shows its label and the saved choice");
+            ((CheckBox)choice.FindName("Check1")).IsChecked = false;
+            ((Button)choice.FindName("CancelButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(!choice.Confirmed && !choice.Check1Checked && !choice.IsVisible,
+                "Not now keeps a cleared checkbox and never starts the update");
             Console.WriteLine("PASS: KillerUI confirmation card and safe actions across all 13 themes. Captures: " + captures);
             return 0;
         }
@@ -284,7 +297,9 @@ internal static class Program
                 "Advanced selection, knowledge, session and repair controls resolve their localizable English resources");
             Require(window.FindName("CategoryTitle") is TextBlock { Text: "Diagnostics" } &&
                 window.FindName("ScanLight") is Border { ToolTip: "Ready. No scan performed." } &&
-                window.FindName("AgentSafeRepairsCheck") is CheckBox && window.FindName("AgentDisruptiveRepairsCheck") is CheckBox,
+                window.FindName("AgentSafeRepairsCheck") is CheckBox && window.FindName("AgentDisruptiveRepairsCheck") is CheckBox &&
+                window.FindName("AboutStartupUpdateCheck") is CheckBox { Content: TextBlock { Text: "Check for updates on startup" } } &&
+                window.FindName("AboutUpdateButton") is Button { Visibility: Visibility.Collapsed },
                 "Shell status and About controls resolve their localizable English resources");
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "Windows Maintenance Workbench",
                 "Desktop subtitle identifies the full maintenance scope");
@@ -465,6 +480,7 @@ internal static class Program
             SymptomMatrixChecks.Run();
             NativeScenarioRunnerChecks.RunAsync().GetAwaiter().GetResult();
             DemoWorkflowChecks.Run();
+            ReleaseUpdateChecks.Run();
             InvestigationChecks.Run();
             ServicingLogChecks.RunAsync(scratch).GetAwaiter().GetResult();
             ServicingActivityMonitorChecks.RunAsync().GetAwaiter().GetResult();
