@@ -824,7 +824,7 @@
             </StackPanel>
             <CheckBox x:Name="MainAutoRepair" Content="{DynamicResource Str_Main_AutoRepair}" Margin="0,8,0,8" Checked="OnMainAutoRepairChanged" Unchecked="OnMainAutoRepairChanged"/>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-              <Button x:Name="MainGo" Content="{DynamicResource Str_Main_RunDiagnosis}" Style="{StaticResource PrimaryButton}" Click="OnMainGo" Width="128" Margin="0,0,8,0" ToolTip="{DynamicResource Str_Main_RunDiagnosisTip}"/>
+              <Button x:Name="MainGo" Content="{DynamicResource Str_Main_RunDiagnosis}" Style="{StaticResource OutlineButton}" Click="OnMainGo" Width="128" Margin="0,0,8,0" ToolTip="{DynamicResource Str_Main_RunDiagnosisTip}"/>
               <Button x:Name="CancelButton" Content="{DynamicResource Str_Main_Stop}" Click="OnCancel" IsEnabled="False" ToolTip="{DynamicResource Str_Main_StopTip}" Width="72"/>
             </StackPanel>
             <Expander x:Name="RecipeSelectionPanel" Header="{DynamicResource Str_Advanced_ChooseChecks}" Foreground="{DynamicResource TextBrush}" Visibility="Collapsed" Margin="0,0,0,6">
@@ -880,12 +880,12 @@
               <TextBlock x:Name="ModeLabel" Text="{DynamicResource Str_Text_SAMPLE_MODE}" Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource UiFont}" FontSize="11" HorizontalAlignment="Right"/>
             </DockPanel>
             <DockPanel Grid.Row="1">
-              <Button x:Name="OpenButton" DockPanel.Dock="Right" Content="{DynamicResource Str_Content_Open_log}" Style="{StaticResource PrimaryButton}" Padding="10,3" Click="OnOpen" ToolTip="{DynamicResource Str_ToolTip_Open_text_log_Ctrl_O}" Margin="4,0,0,0"/>
+              <Button x:Name="OpenButton" DockPanel.Dock="Right" Content="{DynamicResource Str_Content_Open_log}" Style="{StaticResource OutlineButton}" Padding="10,3" Click="OnOpen" ToolTip="{DynamicResource Str_ToolTip_Open_text_log_Ctrl_O}" Margin="4,0,0,0"/>
               <TextBox x:Name="PathBox" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Text_log_path}" ToolTip="{DynamicResource Str_ToolTip_Paste_a_text_log_path_or_drop_a_file_into_the_window}" VerticalContentAlignment="Center"/>
             </DockPanel>
             <StackPanel Grid.Row="2" Margin="0,6,0,0">
               <WrapPanel>
-                <Button x:Name="ScanButton" Content="{DynamicResource Str_ScanUpdate}" Style="{StaticResource PrimaryButton}" Click="OnScan" ToolTip="{DynamicResource Str_ScanUpdateTip}" Margin="0,0,6,0"/>
+                <Button x:Name="ScanButton" Content="{DynamicResource Str_ScanUpdate}" Style="{StaticResource OutlineButton}" Click="OnScan" ToolTip="{DynamicResource Str_ScanUpdateTip}" Margin="0,0,6,0"/>
                 <Button x:Name="OpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture" Margin="0,0,6,0"/>
                 <Button Content="{DynamicResource Str_Advanced_OpenWorkflow}" Click="OnOpenWorkflowJournal" Margin="0,0,6,0" ToolTip="{DynamicResource Str_Advanced_OpenWorkflowTip}"/>
                 <Button x:Name="SaveCaptureButton" Content="{DynamicResource Str_SaveCapture}" Click="OnSaveCapture" IsEnabled="False"/>
