@@ -111,6 +111,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Matched the family palette, control states, gradients, menus, rail flyout spacing, footers and About card. Submenus attached to their opening rows with native direction and screen-edge placement.
 - Improved text contrast on selected sections, expanders, option labels, menus and footers.
 - Centered website logos with space above and below at every screen size and standardized Lacquer headers and documentation text.
+- Menu separators draw their divider line instead of leaving an empty gap.
 
 ### Documentation, packaging and validation
 
