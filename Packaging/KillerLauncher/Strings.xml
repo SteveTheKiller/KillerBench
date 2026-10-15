@@ -2,7 +2,6 @@
 <translations>
   <locale name="en-US">
     <string key="SetupTitle">KillerBench Setup</string>
-    <string key="SetupVersion">SETUP  •  {0}</string>
     <string key="Tagline">A free Windows diagnosis and repair workbench, built from scratch for clear answers and safe fixes.</string>
     <string key="CurrentAccount">Install for my account</string>
     <string key="Everyone">Install for everyone on this computer</string>
@@ -71,7 +70,6 @@ Let's get you set up.</string>
   </locale>
   <locale name="bn">
     <string key="SetupTitle">KillerBench সেটআপ</string>
-    <string key="SetupVersion">সেটআপ  •  {0}</string>
     <string key="Tagline">স্পষ্ট উত্তর ও নিরাপদ মেরামতের জন্য শুরু থেকে তৈরি একটি বিনামূল্যের Windows সমস্যা নির্ণয় ও মেরামত ওয়ার্কবেঞ্চ।</string>
     <string key="CurrentAccount">আমার অ্যাকাউন্টের জন্য ইনস্টল করুন</string>
     <string key="Everyone">এই কম্পিউটারের সব ব্যবহারকারীর জন্য ইনস্টল করুন</string>
@@ -140,7 +138,6 @@ Let's get you set up.</string>
   </locale>
   <locale name="cs-CZ">
     <string key="SetupTitle">Instalace KillerBench</string>
-    <string key="SetupVersion">INSTALACE  •  {0}</string>
     <string key="Tagline">Bezplatná dílna pro diagnostiku a opravy Windows, vytvořená od základu pro jasné odpovědi a bezpečné opravy.</string>
     <string key="CurrentAccount">Nainstalovat pro můj účet</string>
     <string key="Everyone">Nainstalovat pro všechny uživatele počítače</string>
@@ -209,7 +206,6 @@ Pojďme vše nastavit.</string>
   </locale>
   <locale name="de-DE">
     <string key="SetupTitle">KillerBench-Setup</string>
-    <string key="SetupVersion">SETUP  •  {0}</string>
     <string key="Tagline">Eine kostenlose Werkbank für Windows-Diagnose und -Reparatur, von Grund auf für klare Antworten und sichere Reparaturen entwickelt.</string>
     <string key="CurrentAccount">Für mein Konto installieren</string>
     <string key="Everyone">Für alle Benutzer dieses Computers installieren</string>
@@ -278,7 +274,6 @@ Richten wir alles ein.</string>
   </locale>
   <locale name="es">
     <string key="SetupTitle">Instalación de KillerBench</string>
-    <string key="SetupVersion">INSTALACIÓN  •  {0}</string>
     <string key="Tagline">Un banco de trabajo gratuito para diagnosticar y reparar Windows, creado desde cero para dar respuestas claras y reparaciones seguras.</string>
     <string key="CurrentAccount">Instalar para mi cuenta</string>
     <string key="Everyone">Instalar para todos los usuarios de este equipo</string>
@@ -347,7 +342,6 @@ Vamos a configurarlo.</string>
   </locale>
   <locale name="fr-FR">
     <string key="SetupTitle">Installation de KillerBench</string>
-    <string key="SetupVersion">INSTALLATION  •  {0}</string>
     <string key="Tagline">Un atelier gratuit de diagnostic et de réparation de Windows, conçu dès le départ pour des réponses claires et des réparations sûres.</string>
     <string key="CurrentAccount">Installer pour mon compte</string>
     <string key="Everyone">Installer pour tous les utilisateurs de cet ordinateur</string>
@@ -416,7 +410,6 @@ Commençons l'installation.</string>
   </locale>
   <locale name="hu-HU">
     <string key="SetupTitle">KillerBench telepítő</string>
-    <string key="SetupVersion">TELEPÍTŐ  •  {0}</string>
     <string key="Tagline">Ingyenes Windows-diagnosztikai és -javító műhely, az alapoktól a világos válaszok és a biztonságos javítások szem előtt tartásával.</string>
     <string key="CurrentAccount">Telepítés a saját fiókomhoz</string>
     <string key="Everyone">Telepítés a számítógép minden felhasználójának</string>
@@ -485,7 +478,6 @@ Kezdjük a beállítást.</string>
   </locale>
   <locale name="it-IT">
     <string key="SetupTitle">Installazione di KillerBench</string>
-    <string key="SetupVersion">INSTALLAZIONE  •  {0}</string>
     <string key="Tagline">Un banco di lavoro gratuito per diagnosticare e riparare Windows, creato da zero per risposte chiare e riparazioni sicure.</string>
     <string key="CurrentAccount">Installa per l'utente attuale</string>
     <string key="Everyone">Installa per tutti gli utenti</string>
@@ -554,7 +546,6 @@ Procediamo con la configurazione.</string>
   </locale>
   <locale name="ja-JP">
     <string key="SetupTitle">KillerBench セットアップ</string>
-    <string key="SetupVersion">セットアップ  •  {0}</string>
     <string key="Tagline">明確な答えと安全な修復のためにゼロから開発された、無料のWindows診断・修復ワークベンチ。</string>
     <string key="CurrentAccount">自分のアカウントにインストール</string>
     <string key="Everyone">このコンピューターの全ユーザーにインストール</string>
@@ -623,7 +614,6 @@ Procediamo con la configurazione.</string>
   </locale>
   <locale name="kk-KZ">
     <string key="SetupTitle">KillerBench орнату</string>
-    <string key="SetupVersion">ОРНАТУ  •  {0}</string>
     <string key="Tagline">Анық жауаптар мен қауіпсіз жөндеу үшін нөлден жасалған тегін Windows диагностикасы мен жөндеу шеберханасы.</string>
     <string key="CurrentAccount">Менің тіркелгім үшін орнату</string>
     <string key="Everyone">Осы компьютердің барлық пайдаланушылары үшін орнату</string>
@@ -692,7 +682,6 @@ Procediamo con la configurazione.</string>
   </locale>
   <locale name="nb-NO">
     <string key="SetupTitle">KillerBench-installasjon</string>
-    <string key="SetupVersion">INSTALLASJON  •  {0}</string>
     <string key="Tagline">En gratis arbeidsbenk for feilsøking og reparasjon av Windows, bygget fra bunnen av for klare svar og trygge reparasjoner.</string>
     <string key="CurrentAccount">Installer for kontoen min</string>
     <string key="Everyone">Installer for alle på denne datamaskinen</string>
@@ -761,7 +750,6 @@ La oss få deg i gang.</string>
   </locale>
   <locale name="pl-PL">
     <string key="SetupTitle">Instalator KillerBench</string>
-    <string key="SetupVersion">INSTALACJA  •  {0}</string>
     <string key="Tagline">Darmowy warsztat do diagnozowania i naprawy systemu Windows, stworzony od podstaw z myślą o jasnych odpowiedziach i bezpiecznych naprawach.</string>
     <string key="CurrentAccount">Zainstaluj dla mojego konta</string>
     <string key="Everyone">Zainstaluj dla wszystkich użytkowników komputera</string>
@@ -830,7 +818,6 @@ Rozpocznijmy konfigurację.</string>
   </locale>
   <locale name="pt-BR">
     <string key="SetupTitle">Instalação do KillerBench</string>
-    <string key="SetupVersion">INSTALAÇÃO  •  {0}</string>
     <string key="Tagline">Uma bancada gratuita de diagnóstico e reparo do Windows, criada do zero para respostas claras e reparos seguros.</string>
     <string key="CurrentAccount">Instalar para a minha conta</string>
     <string key="Everyone">Instalar para todos neste computador</string>
@@ -899,7 +886,6 @@ Vamos configurar tudo.</string>
   </locale>
   <locale name="ru-RU">
     <string key="SetupTitle">Установка KillerBench</string>
-    <string key="SetupVersion">УСТАНОВКА  •  {0}</string>
     <string key="Tagline">Бесплатный верстак для диагностики и ремонта Windows, созданный с нуля ради понятных ответов и безопасных исправлений.</string>
     <string key="CurrentAccount">Установить для моей учетной записи</string>
     <string key="Everyone">Установить для всех пользователей компьютера</string>
@@ -968,7 +954,6 @@ Vamos configurar tudo.</string>
   </locale>
   <locale name="tr-TR">
     <string key="SetupTitle">KillerBench Kurulumu</string>
-    <string key="SetupVersion">KURULUM  •  {0}</string>
     <string key="Tagline">Net yanıtlar ve güvenli onarımlar için sıfırdan geliştirilen ücretsiz bir Windows tanılama ve onarım tezgâhı.</string>
     <string key="CurrentAccount">Hesabım için yükle</string>
     <string key="Everyone">Bu bilgisayardaki tüm kullanıcılar için yükle</string>
@@ -1037,7 +1022,6 @@ Kuruluma başlayalım.</string>
   </locale>
   <locale name="vi-VN">
     <string key="SetupTitle">Thiết lập KillerBench</string>
-    <string key="SetupVersion">THIẾT LẬP  •  {0}</string>
     <string key="Tagline">Bàn làm việc chẩn đoán và sửa chữa Windows miễn phí, được xây dựng từ đầu để đưa ra câu trả lời rõ ràng và sửa chữa an toàn.</string>
     <string key="CurrentAccount">Cài đặt cho tài khoản của tôi</string>
     <string key="Everyone">Cài đặt cho mọi người trên máy tính này</string>
@@ -1106,7 +1090,6 @@ Hãy bắt đầu thiết lập.</string>
   </locale>
   <locale name="uk-UA">
     <string key="SetupTitle">Встановлення KillerBench</string>
-    <string key="SetupVersion">ВСТАНОВЛЕННЯ  •  {0}</string>
     <string key="Tagline">Безкоштовний верстат для діагностики й ремонту Windows, створений з нуля для зрозумілих відповідей і безпечних виправлень.</string>
     <string key="CurrentAccount">Встановити для мого облікового запису</string>
     <string key="Everyone">Встановити для всіх користувачів цього комп'ютера</string>
@@ -1175,7 +1158,6 @@ Hãy bắt đầu thiết lập.</string>
   </locale>
   <locale name="zh-CN">
     <string key="SetupTitle">KillerBench 安装程序</string>
-    <string key="SetupVersion">安装程序  •  {0}</string>
     <string key="Tagline">免费的 Windows 诊断与修复工作台，从零打造，提供清晰的答案和安全的修复。</string>
     <string key="CurrentAccount">仅为我的账户安装</string>
     <string key="Everyone">为此计算机的所有用户安装</string>
@@ -1244,7 +1226,6 @@ Hãy bắt đầu thiết lập.</string>
   </locale>
   <locale name="zh-TW">
     <string key="SetupTitle">KillerBench 安裝程式</string>
-    <string key="SetupVersion">安裝程式  •  {0}</string>
     <string key="Tagline">免費的 Windows 診斷與修復工作台，從零打造，提供清楚的答案與安全的修復。</string>
     <string key="CurrentAccount">僅為我的帳戶安裝</string>
     <string key="Everyone">為此電腦的所有使用者安裝</string>
