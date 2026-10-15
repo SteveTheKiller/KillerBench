@@ -10,14 +10,20 @@ namespace KillerBench;
 public partial class MainWindow
 {
     private enum ShortcutCategory { View, Nav, File, Help }
+    private enum ShortcutLayer { Base, Ctrl, AltShift }
 
     private readonly record struct ShortcutBinding(
-        string Keys, string LabelKey, ShortcutCategory Category, bool Ctrl, params string[] Caps);
+        string Keys, string LabelKey, ShortcutCategory Category, bool Ctrl, params string[] Caps)
+    {
+        public ShortcutLayer Layer => Keys.StartsWith("Alt+Shift+", StringComparison.Ordinal) ? ShortcutLayer.AltShift
+            : Ctrl ? ShortcutLayer.Ctrl : ShortcutLayer.Base;
+    }
 
     private static readonly ShortcutBinding[] ShortcutBindings =
     [
         new("F2", "Str_Shortcuts_ToggleSources", ShortcutCategory.View, false, "F2"),
         new("F3", "Str_Shortcuts_ToggleActivity", ShortcutCategory.View, false, "F3"),
+        new("Alt+Shift+G", "Str_Theme_FilmGrain", ShortcutCategory.View, false, "G"),
         new("Ctrl+O", "Str_Shortcuts_OpenEvidence", ShortcutCategory.File, true, "O"),
         new("F1", "Str_Shortcuts_Show", ShortcutCategory.Help, false, "F1"),
         new("F12", "Str_Shortcuts_About", ShortcutCategory.Help, false, "F12"),
@@ -34,7 +40,7 @@ public partial class MainWindow
     ];
 
     private const double KeyboardUnit = 42;
-    private bool shortcutCtrlLayer;
+    private ShortcutLayer shortcutLayer;
 
     private void InitializeShortcuts()
     {
@@ -58,8 +64,9 @@ public partial class MainWindow
     private void OnShortcutsCard(object sender, MouseButtonEventArgs e) => e.Handled = true;
     private void OnShortcutList(object sender, RoutedEventArgs e) => ApplyShortcutView(false, true);
     private void OnShortcutMap(object sender, RoutedEventArgs e) => ApplyShortcutView(true, true);
-    private void OnShortcutBase(object sender, RoutedEventArgs e) { shortcutCtrlLayer = false; BuildKeyboard(); }
-    private void OnShortcutCtrl(object sender, RoutedEventArgs e) { shortcutCtrlLayer = true; BuildKeyboard(); }
+    private void OnShortcutBase(object sender, RoutedEventArgs e) { shortcutLayer = ShortcutLayer.Base; BuildKeyboard(); }
+    private void OnShortcutCtrl(object sender, RoutedEventArgs e) { shortcutLayer = ShortcutLayer.Ctrl; BuildKeyboard(); }
+    private void OnShortcutAltShift(object sender, RoutedEventArgs e) { shortcutLayer = ShortcutLayer.AltShift; BuildKeyboard(); }
 
     private void ApplyShortcutView(bool keyboard, bool persist = false)
     {
@@ -106,7 +113,7 @@ public partial class MainWindow
     private void BuildKeyboard()
     {
         ShortcutKeyboardRows.Children.Clear();
-        var lit = ShortcutBindings.Where(binding => binding.Ctrl == shortcutCtrlLayer)
+        var lit = ShortcutBindings.Where(binding => binding.Layer == shortcutLayer)
             .SelectMany(binding => binding.Caps.Select(cap => (cap, binding)))
             .ToDictionary(item => item.cap, item => item.binding, StringComparer.Ordinal);
         foreach (var row in KeyboardRows)
@@ -133,8 +140,9 @@ public partial class MainWindow
             }
             ShortcutKeyboardRows.Children.Add(host);
         }
-        ShortcutBaseButton.Tag = shortcutCtrlLayer ? null : "on";
-        ShortcutCtrlButton.Tag = shortcutCtrlLayer ? "on" : null;
+        ShortcutBaseButton.Tag = shortcutLayer == ShortcutLayer.Base ? "on" : null;
+        ShortcutCtrlButton.Tag = shortcutLayer == ShortcutLayer.Ctrl ? "on" : null;
+        ShortcutAltShiftButton.Tag = shortcutLayer == ShortcutLayer.AltShift ? "on" : null;
     }
 
     private static string Resource(string key) => Application.Current.TryFindResource(key)?.ToString() ?? key;

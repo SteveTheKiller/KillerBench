@@ -227,6 +227,13 @@ public partial class MainWindow : Window
     {
         if (App.ScreenshotMode) { e.Handled = true; return; }
         if (HandleShellKey(e)) return;
+        // Alt+Shift+G, the family Film Grain chord. Alt chords arrive as Key.System.
+        if (e.Key == Key.System && e.SystemKey == Key.G && Keyboard.Modifiers == (ModifierKeys.Alt | ModifierKeys.Shift))
+        {
+            if (!e.IsRepeat) ToggleFilmGrain();   // Shell/FamilyMenus.cs
+            e.Handled = true;
+            return;
+        }
         if (e.Key == Key.Escape) { readCancellation?.Cancel(); e.Handled = true; }
         if (e.Key == Key.O && Keyboard.Modifiers == ModifierKeys.Control)
         { e.Handled = true; await OpenEvidenceAsync(); }
