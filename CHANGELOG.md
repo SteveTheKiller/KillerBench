@@ -128,4 +128,5 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Fixed
 - The website top bar no longer leaves extra space under the wordmark and buttons.
+- Theme and language radio buttons and the Film Grain checkbox line up with their labels again.
 
