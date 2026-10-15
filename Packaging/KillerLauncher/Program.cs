@@ -62,12 +62,10 @@ namespace KillerLauncher
                     // left completely untouched when the .NET 10 Desktop Runtime is absent.
                     int? rejection = InstallerPrerequisitePolicy.SilentInstallRejection(HasDesktopRuntime10());
                     if (rejection.HasValue) return rejection.Value;
-                    // Without admin rights, as the Microsoft Store installs, the install relaunches
-                    // itself elevated through UAC and returns that copy's exit code.
-                    int? elevated = KillerFamily.Deployment.InstallerExitCodes.ElevateIfNeeded(
-                        QuoteArguments(args), () => IsTrustedForInstall(CurrentExecutablePath()));
-                    if (elevated.HasValue) return elevated.Value;
-                    return Install(machine: true, desktop: args.Any(a =>
+                    // With admin rights (winget, choco, RMM) the install is machine-wide. Without
+                    // them, as the Microsoft Store runs installers, it is the normal per-user
+                    // install with no prompt. The app never needs admin rights.
+                    return Install(machine: KillerFamily.Deployment.InstallerExitCodes.IsElevated(), desktop: args.Any(a =>
                         string.Equals(a, "/desktop", StringComparison.OrdinalIgnoreCase)), destinationOverride: ReadInstallDirectory(args));
                 }
                 Application.EnableVisualStyles();
