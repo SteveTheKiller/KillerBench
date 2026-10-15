@@ -62,6 +62,11 @@ namespace KillerLauncher
                     // left completely untouched when the .NET 10 Desktop Runtime is absent.
                     int? rejection = InstallerPrerequisitePolicy.SilentInstallRejection(HasDesktopRuntime10());
                     if (rejection.HasValue) return rejection.Value;
+                    // Without admin rights, as the Microsoft Store installs, the install relaunches
+                    // itself elevated through UAC and returns that copy's exit code.
+                    int? elevated = KillerFamily.Deployment.InstallerExitCodes.ElevateIfNeeded(
+                        QuoteArguments(args), () => IsTrustedForInstall(CurrentExecutablePath()));
+                    if (elevated.HasValue) return elevated.Value;
                     return Install(machine: true, desktop: args.Any(a =>
                         string.Equals(a, "/desktop", StringComparison.OrdinalIgnoreCase)), destinationOverride: ReadInstallDirectory(args));
                 }
