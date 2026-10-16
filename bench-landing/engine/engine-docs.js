@@ -142,7 +142,7 @@
 
   function loadBehavior() {
     var script = document.createElement('script');
-    script.src = '../bench.js?v=4';
+    script.src = '../bench.js?v=6';
     document.body.appendChild(script);
   }
 
