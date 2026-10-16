@@ -255,6 +255,14 @@ namespace KillerBench.Services
                 ? new Thickness(0, System.Math.Max(0, (capH - btnH) / 2.0), 4, 0)
                 : new Thickness(0, 6, 6, 0);
 
+            // The family close for every overlay and dialog (OverlayCloseButton, KillerUI): a plain
+            // glyph that only reddens on hover, never a filled red block. A flat-caption theme
+            // (98SE) gets its Win98 caption X on the beveled CaptionButtonBrush face instead.
+            d["AboutCloseGlyph"] = flatCaption ? "\uE8BB" : "\u2715";
+            d["AboutCloseFont"] = new System.Windows.Media.FontFamily(flatCaption ? "Segoe MDL2 Assets" : "Segoe UI");
+            d["AboutCloseFg"] = flatCaption ? d["CaptionCloseBrush"] : d["MutedTextBrush"];
+            d["AboutCloseHoverFg"] = flatCaption ? d["CaptionCloseBrush"] : Hex("#e04444");
+
             SetIfAbsent(d, "PaneShadowOpacity", 0.60);
             if (d["PaneShadowOpacity"] is double shadowOpacity && shadowOpacity > 0)
             {

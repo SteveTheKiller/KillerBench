@@ -59,7 +59,7 @@
                                        Foreground="{DynamicResource ChromeTextBrush}" FontSize="11"
                                        FontWeight="Bold" VerticalAlignment="Center"/>
                         </StackPanel>
-                        <Button x:Name="CloseButton" Content="&#xE8BB;" Click="Cancel_Click"
+                        <Button x:Name="CloseButton" Content="{DynamicResource AboutCloseGlyph}" Click="Cancel_Click"
                                 Style="{StaticResource OverlayCloseButton}"
                                 Width="{DynamicResource AboutCloseWidth}"
                                 Height="{DynamicResource AboutCloseHeight}"

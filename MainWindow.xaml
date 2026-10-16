@@ -1006,7 +1006,7 @@
         <Border Background="{DynamicResource BackgroundBrush}" BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}">
           <Grid>
             <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
-            <Button Content="&#xE8BB;" Style="{StaticResource OverlayCloseButton}" Click="OnAboutClose" HorizontalAlignment="Right" VerticalAlignment="Top" Panel.ZIndex="2" Width="{DynamicResource AboutCloseWidth}" Height="{DynamicResource AboutCloseHeight}" Margin="{DynamicResource AboutCloseMargin}"/>
+            <Button Content="{DynamicResource AboutCloseGlyph}" Style="{StaticResource OverlayCloseButton}" Click="OnAboutClose" HorizontalAlignment="Right" VerticalAlignment="Top" Panel.ZIndex="2" Width="{DynamicResource AboutCloseWidth}" Height="{DynamicResource AboutCloseHeight}" Margin="{DynamicResource AboutCloseMargin}"/>
             <StackPanel Margin="18,10,18,18">
               <Grid Margin="0,4,0,14" Width="{Binding ActualWidth, ElementName=AboutInfoGrid}">
                 <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>

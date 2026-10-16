@@ -937,14 +937,17 @@
         </Setter>
     </Style>
 
-    <!-- About card close button, matching the family OverlayCloseButton: quiet glyph that brightens
-         on hover and presses in on the bevel. No red hover; that is reserved for the window chrome. -->
+    <!-- The family close for every overlay and dialog (KillerUI's OverlayCloseButton): a quiet glyph
+         that turns red on hover and presses in on the bevel. Only the glyph reddens; a filled red
+         block is the main window's caption treatment (ChromeCloseButton). On 98SE the AboutClose*
+         tokens make it the Win98 caption X on the beveled face. -->
     <Style x:Key="OverlayCloseButton" TargetType="Button">
         <Setter Property="AutomationProperties.Name" Value="Close"/>
         <Setter Property="Cursor" Value="Hand"/>
-        <Setter Property="Foreground" Value="{DynamicResource MutedTextBrush}"/>
-        <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
-        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="Foreground" Value="{DynamicResource AboutCloseFg}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource AboutCloseFont}"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="{DynamicResource CaptionGlyphWeight}"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -959,7 +962,7 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource AboutCloseHoverFg}"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="bevelLight" Property="BorderBrush" Value="{DynamicResource BevelDarkBrush}"/>
