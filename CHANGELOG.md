@@ -106,6 +106,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Gave the About card, the confirmation dialog and the file picker the family close button: an X that turns red on hover without filling, and the classic caption X on 98SE.
 - Set the wordmarks in Punktype and Lacquer, page, sidebar and dialog headings in Lacquer, and the interface text and footers in Killer Sans, in place of the typewriter font in the app and on the website.
 - Added localization in 19 languages, including Vietnamese, Ukrainian, Norwegian (Bokmål) and Brazilian Portuguese, with a two-column language menu.
+- Section names, tool titles and descriptions, option choices, status lines and the Readable report followed the selected language.
 - Added the family List and Keyboard shortcut views from one binding table, linked to the online guide, with F12 for About.
 - Used KillerUI-style confirmations and Open, Save and Folder dialogs throughout the app.
 - Zoom enlarged inputs and output inside fixed panes, and the workspace stayed within the window when changing tools or zoom.
@@ -123,6 +124,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Added the KillerBench installer, which checks for the .NET 10 Desktop Runtime and adds Start menu, desktop and Installed Apps entries, and a portable build that carries its own runtime. Both packages and the single-file CLI include the GPLv3 license.
 - Added update checks on startup and from the About card. A newer release was offered with an Always check on startup box, a Check for updates on startup checkbox at the top of the About card turned the check back on, and an accepted update was checked against the release checksum and signature before it replaced the installed or portable copy.
 - Added the killerbench.net landing site with a searchable user guide, the Engine developer guide and KillerMCP setup.
+- Expanded the website Help and Technical pages with a page for every section, step-by-step guides, a command reference and a glossary, translated into all 19 languages.
 - Added deterministic VM validation plans, a gated native fault-injection runner and themed coverage reports.
 - Added the symptom coverage matrix with consistency checks.
 - Added isolated UI tests on a separate desktop, synthetic repair demonstrations and a screenshot preset with fixed sample reports.
@@ -135,4 +137,5 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Theme and language radio buttons and the Film Grain checkbox line up with their labels again.
 - On the website, text on accent-colored buttons, tabs and highlights switches to white or near-black for contrast, so it is never white on yellow.
 - Theme names and the repair GO button are translated in every language.
+- Instructions, reports and consent checkboxes name the Run diagnosis and Run repair buttons instead of GO.
 
