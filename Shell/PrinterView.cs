@@ -60,7 +60,7 @@ public partial class MainWindow
             {
                 if (selectedQueue is not null && !snapshot.Queues.ContainsKey(selectedQueue))
                 {
-                    Report("The selected printer is no longer available. Selection retained to prevent switching scope; GO will recheck it.");
+                    Report("The selected printer is no longer available. Selection retained to prevent switching scope; the Run button will recheck it.");
                     return;
                 }
                 PrinterQueues.ItemsSource = snapshot.Queues.Keys.Order(StringComparer.OrdinalIgnoreCase).ToArray();
@@ -113,7 +113,7 @@ public partial class MainWindow
             PrintJobCancelConsent.IsEnabled = false;
             string status = items.Length == 0
                 ? "No visible print job is currently reported as Error or Blocked. No job changed."
-                : items.Length + " cancellation candidate(s) found. Select one, confirm the exact cancellation, then press GO.";
+                : items.Length + " cancellation candidate(s) found. Select one, confirm the exact cancellation, then select Run diagnosis.";
             AppendWorkflowOutput("PRINT JOB REVIEW\n" + status + "\nCandidates: " +
                 (items.Length == 0 ? "None" : string.Join("; ", items.Select(item => item.Content?.ToString()))));
             RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Printing, Environment.MachineName, DateTimeOffset.UtcNow,

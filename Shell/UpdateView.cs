@@ -25,10 +25,10 @@ public partial class MainWindow
         ThirdPartyUpdateList.ItemsSource = result?.Candidates;
         ThirdPartyUpdateVersion.ItemsSource = null;
         ThirdPartyUpdateAgreements.IsChecked = false;
-        ThirdPartyUpdateCount.Text = result is null ? "Select Third-party apps, then press GO." :
+        ThirdPartyUpdateCount.Text = result is null ? Controls.LocalizedText.Get("Str_Update_ThirdPartyPrompt") :
             result.ProviderAvailable && result.Complete
                 ? $"{result.Candidates.Count} exact update candidates from {result.Scanned} installed packages."
-                : "Third-party discovery is incomplete. Review its evidence and run GO again before installation.";
+                : "Third-party discovery is incomplete. Review its evidence and select Run diagnosis again before installation.";
         RefreshThirdPartyUpdateActions();
     }
 

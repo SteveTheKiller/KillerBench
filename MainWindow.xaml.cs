@@ -28,10 +28,8 @@ public partial class MainWindow : Window
         ShowWelcome();
         if (App.DemoMode)
         {
-            ModeLabel.Text = App.ScreenshotMode ? "DEMO SCREENSHOT / SYNTHETIC MACHINE" : "DEMO GO / OTHER TOOLS LIVE";
-            Report(App.ScreenshotMode
-                ? "Screenshot preset is active. This view contains fabricated evidence and is read only."
-                : "Demo GO uses fabricated evidence. Dedicated tools outside GO remain live.");
+            ModeLabel.Text = Controls.LocalizedText.Get(App.ScreenshotMode ? "Str_Mode_DemoScreenshot" : "Str_Mode_DemoLive");
+            Report(Controls.LocalizedText.Get(App.ScreenshotMode ? "Str_Demo_ScreenshotActive" : "Str_Demo_Active"));
         }
         ApplyDisplay();
         SetDetailsOpen(false);
@@ -62,21 +60,66 @@ public partial class MainWindow : Window
         sources.Clear();
         SourcesList.Items.Clear();
         SearchBox.Clear();
-        EvidenceTitle.Text = "Output";
-        EvidenceBox.Text = "KILLERBENCH / START HERE\n\n" +
-            "1. Full system scan is selected by default and starts with read-only checks.\n" +
-            "2. Select Run diagnosis.\n" +
-            "3. Read the readable report for problems and the next safe step.\n" +
-            "4. Open Repair only when you are ready to review a focused recovery option.\n\n" +
-            "Raw output appears here while work is running. Repair remains off until you explicitly approve it.";
-        CoverageLabel.Text = "No scan has run. A clean report starts with the selected diagnostic workflow.";
-        ModeLabel.Text = "READY / DIAGNOSTICS";
-        SessionLabel.Text = "No sources yet";
-        CaptureInfo.Text = "Run diagnosis to collect current evidence, or load a saved capture or sample.";
-        SourceInfo.Text = "No evidence loaded. Run diagnosis, open a saved capture, or load sample evidence.";
-        FindingsSummary.Text = "No findings yet. A report appears after the selected diagnostic workflow finishes.";
         FindingCards.Children.Clear();
-        Report("Ready. Run diagnosis to collect current evidence.");
+        ApplyWelcomeText();
+        Report(welcomeStatus);
+    }
+
+    // The start screen text, kept so a language change can replace it while it is still showing.
+    private string welcomeText = "", welcomeStatus = "";
+
+    private void ApplyWelcomeText()
+    {
+        static string L(string key) => Controls.LocalizedText.Get(key);
+        welcomeText = L("Str_Welcome_Heading") + "\n\n" +
+            L("Str_Welcome_Step1") + "\n" + L("Str_Welcome_Step2") + "\n" +
+            L("Str_Welcome_Step3") + "\n" + L("Str_Welcome_Step4") + "\n\n" + L("Str_Welcome_Footer");
+        welcomeStatus = L("Str_Welcome_Status");
+        EvidenceTitle.Text = L("Str_Welcome_OutputTitle");
+        EvidenceBox.Text = welcomeText;
+        CoverageLabel.Text = L("Str_Welcome_Coverage");
+        ModeLabel.Text = L("Str_Mode_ReadyDiagnostics");
+        SessionLabel.Text = L("Str_Session_NoSources");
+        CaptureInfo.Text = L("Str_Welcome_CaptureInfo");
+        SourceInfo.Text = L("Str_Welcome_SourceInfo");
+        FindingsSummary.Text = L("Str_Welcome_Findings");
+    }
+
+    // Text that code sets does not follow DynamicResource, so a language change sets it again.
+    private bool refreshingLanguage;
+
+    private void RefreshLanguage()
+    {
+        if (evidence is null && !workflowOutputActive && EvidenceBox.Text == welcomeText)
+        {
+            bool statusWasWelcome = StatusLabel.Text == welcomeStatus;
+            ApplyWelcomeText();
+            if (statusWasWelcome) StatusLabel.Text = welcomeStatus;
+        }
+        CategoryList.Items.Refresh();
+        CategoryWorkflow.Items.Refresh();
+        BitLockerOperationChoice.Items.Refresh();
+        BitLockerEncryptionChoice.Items.Refresh();
+        BitLockerDestination.Items.Refresh();
+        // A closed combo box keeps the old text for its selection until the selection changes.
+        refreshingLanguage = true;
+        try
+        {
+            foreach (var box in new ComboBox[] { CategoryWorkflow, BitLockerOperationChoice, BitLockerEncryptionChoice, BitLockerDestination })
+            {
+                int index = box.SelectedIndex;
+                if (index < 0) continue;
+                box.SelectedIndex = -1;
+                box.SelectedIndex = index;
+            }
+        }
+        finally
+        {
+            refreshingLanguage = false;
+        }
+        SynchronizeNavigation();
+        UpdateMainActionLabel();
+        RefreshWorkflowReportLanguage();
     }
 
     private void LoadSample()
@@ -185,7 +228,7 @@ public partial class MainWindow : Window
             (investigation.Partial ? "PARTIAL ANALYSIS. " : "") + $"{investigation.Findings.Count} findings. No current-health verdict.";
         if (workflowSummaries.TryGetValue(evidence, out var workflow))
         {
-            CoverageLabel.Text = $"{workflow.Status} | {workflow.Checks.Count} checks | {workflow.Repairs.Count} repairs run | {matches:N0} matching report lines. Applies only to checked scopes.";
+            CoverageLabel.Text = Controls.LocalizedText.Format("Str_Output_WorkflowCoverage", LocalizedStatus(workflow.Status), workflow.Checks.Count, workflow.Repairs.Count, matches.ToString("N0"));
             SourceInfo.Text = $"{evidence.Source}\n\nWorkflow: {workflow.Kind}\nOutcome: {workflow.Status}\nJournal: {workflow.JournalPath}\n\n" +
                 "Recorded workflow results. Filtering report lines does not change the outcome or rerun diagnostics.";
         }

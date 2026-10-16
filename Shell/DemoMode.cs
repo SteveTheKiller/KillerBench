@@ -17,7 +17,7 @@ public partial class MainWindow
         repairRunning = true;
         SetCaptureBusy(true);
         RepairPanel.IsEnabled = false;
-        ModeLabel.Text = simulateRepair ? "DEMO / SIMULATED REPAIR" : "DEMO / SYNTHETIC DIAGNOSIS";
+        ModeLabel.Text = Controls.LocalizedText.Get(simulateRepair ? "Str_Mode_DemoRepair" : "Str_Mode_DemoDiagnosis");
         BeginWorkflowOutput(kind, demo: true);
         try
         {
@@ -30,7 +30,7 @@ public partial class MainWindow
             var result = DemoWorkflow.Create(kind, simulateRepair, screenshotPreset: screenshotPreset);
             RegisterWorkflowResult(result, demo: true);
             CaptureInfo.Text = result.Status + " | " + result.Checks.Count + " synthetic checks | 0 real repairs";
-            Report(result.Status + ". No machine data was read and no journal was written.");
+            Report(Controls.LocalizedText.Format("Str_Demo_Finished", LocalizedStatus(result.Status)));
             SetScanLight(simulateRepair ? "ready" : "attention", result.Status + ". Synthetic demonstration only.");
         }
         catch (OperationCanceledException)
@@ -48,7 +48,7 @@ public partial class MainWindow
             SetCaptureBusy(false);
             RepairPanel.IsEnabled = true;
             RepairConsent.IsChecked = false;
-            ModeLabel.Text = screenshotPreset ? "DEMO SCREENSHOT / SYNTHETIC MACHINE" : "DEMO GO / OTHER TOOLS LIVE";
+            ModeLabel.Text = Controls.LocalizedText.Get(screenshotPreset ? "Str_Mode_DemoScreenshot" : "Str_Mode_DemoLive");
             if (closeAfterOperation) Close();
         }
     }

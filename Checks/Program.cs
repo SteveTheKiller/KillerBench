@@ -258,8 +258,8 @@ internal static class Program
             Require(window.FindName("TimeRecoverButton") is Button { Content: "Check interrupted time change" } &&
                 window.FindName("CopyProfileBackupButton") is Button { Content: "Copy and verify" },
                 "Time and Profiles controls resolve their localizable English resources");
-            Require(window.FindName("PrivacyBooleanApply") is CheckBox { Content: "Apply when I press GO" } &&
-                window.FindName("BitLockerEncryptConsent") is CheckBox { Content: "Back up the selected recovery key, then start encryption when I press GO" },
+            Require(window.FindName("PrivacyBooleanApply") is CheckBox { Content: "Apply when I select Run diagnosis" } &&
+                window.FindName("BitLockerEncryptConsent") is CheckBox { Content: "Back up the selected recovery key, then start encryption when I select Run diagnosis" },
                 "Privacy and BitLocker safety controls resolve their localizable English resources");
             Require(window.FindName("EventChannelEnableConsent") is CheckBox { Content: "Enable this channel after fresh checks" } &&
                 window.FindName("AudioDirectionChoice") is ComboBox { Items.Count: 3 } audioDirections &&
@@ -267,7 +267,7 @@ internal static class Program
                 window.FindName("SystemRestoreCreate") is CheckBox { Content: "Prepare one restore point" } &&
                 window.FindName("StorageRepairReview") is CheckBox { Content: "Review filesystem repair" },
                 "Event log, audio, System Restore and Storage controls resolve their localizable English resources");
-            Require(window.FindName("ComponentCleanupSettings") is TextBlock { Text: "GO checks whether Windows recommends cleanup. Optional cleanup removes superseded components immediately; no automatic undo or restart. Reclaimed space is not measured." } &&
+            Require(window.FindName("ComponentCleanupSettings") is TextBlock { Text: "The Run button checks whether Windows recommends cleanup. Optional cleanup removes superseded components immediately; no automatic undo or restart. Reclaimed space is not measured." } &&
                 window.FindName("ReviewDuplicatesButton") is Button { Content: "Find duplicates" } &&
                 window.FindName("ComputerRenameConsent") is CheckBox { Content: "Rename this workgroup PC after fresh checks" } &&
                 window.FindName("MainGo") is Button { Content: "Run diagnosis" },
@@ -286,7 +286,7 @@ internal static class Program
                 window.FindName("ThirdPartyUpdateAgreements") is CheckBox { Content: "Accept the selected package and source agreements" },
                 "Windows and third-party update controls resolve their localizable English resources");
             Require(window.FindName("SecurityVirtualization") is CheckBox { Content: "VBS, memory integrity and Credential Guard" } &&
-                window.FindName("DefenderScanConsent") is CheckBox { Content: "Start the selected scan when I press GO" } &&
+                window.FindName("DefenderScanConsent") is CheckBox { Content: "Start the selected scan when I select Run diagnosis" } &&
                 window.FindName("FirewallProfileApply") is CheckBox { Content: "Apply selected local profiles after fresh policy checks" },
                 "Security scan and Firewall profile controls resolve their localizable English resources");
             Require(window.FindName("RecipeSelectionPanel") is Expander { Header: "Choose checks (advanced)" } &&
@@ -363,7 +363,7 @@ internal static class Program
             window.UpdateLayout();
             Require(window.FindName("MainWorkflow") is ComboBox { SelectedItem: WorkflowDefinition { Kind: WorkflowKind.BrowserExtensions } } &&
                 window.FindName("MainAutoRepair") is CheckBox { IsChecked: not true, IsEnabled: false },
-                "Installed-applications handoff routes browser review through GO without repair consent");
+                "Installed-applications handoff routes browser review through Run diagnosis without repair consent");
             var browserReport = new WorkflowResult(WorkflowKind.BrowserExtensions, "smoke", DateTimeOffset.UtcNow,
                 "Browser extension identities reviewed; no browser or extension changed",
                 [new("Browser extension inventory", CheckState.Information, "1 extension identity collected."),
@@ -421,7 +421,7 @@ internal static class Program
                 FindTextBlocks(window).Any(block => block.Text.Contains("No transfer was resumed", StringComparison.Ordinal)),
                 "Background transfer reviews have a readable report that preserves the no-change boundary");
             var printJobReport = new WorkflowResult(WorkflowKind.Printing, "smoke", DateTimeOffset.UtcNow,
-                "1 cancellation candidate found. Select one, confirm the exact cancellation, then press GO.",
+                "1 cancellation candidate found. Select one, confirm the exact cancellation, then select Run diagnosis.",
                 [new("Print-job evidence", CheckState.Clear, "A complete bounded snapshot of current print jobs was collected."),
                  new("Cancellation candidates", CheckState.Attention, "1 exact Error or Blocked print job candidate was retained for review."),
                  new("Change boundary", CheckState.Information, "No print job was canceled, restarted, paused, resumed, or otherwise changed.")], [], "read-only");
@@ -978,7 +978,7 @@ internal static class Program
             ((Button)window.FindName("ShortcutListButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
             Require(shortcuts.Visibility == Visibility.Visible &&
-                ((StackPanel)window.FindName("ShortcutListHost")).Children.OfType<Grid>().Count() == 6 &&
+                ((StackPanel)window.FindName("ShortcutListHost")).Children.OfType<Grid>().Count() == 7 &&
                 ((Button)window.FindName("ShortcutButton")).ToolTip?.ToString() == "Keyboard shortcuts (F1)",
                 "Shortcut list and rail tooltip come from the shared binding table");
             ((Button)window.FindName("ShortcutMapButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -1129,7 +1129,7 @@ internal static class Program
                             "One supported exact package is presented as one selected plan choice with separate removal recovery");
                         ((Button)window.FindName("MaceReviewPackage")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                         Require(text.Text.Contains("APP REMOVAL PACKAGE PLAN / ELIGIBLE") &&
-                            text.Text.Contains("GO stays review-only"),
+                            text.Text.Contains("Run diagnosis stays review-only"),
                             "App removal package plan remains separate from the destructive action");
                         removalConsent.IsChecked = true;
                         Require(removePackage.IsEnabled, "The red app removal package action needs explicit consent after an eligible review");
@@ -1229,7 +1229,7 @@ internal static class Program
             Require(!((Button)window.FindName("MainGo")).IsEnabled && ((Button)window.FindName("CancelButton")).IsEnabled &&
                 ((ListBox)window.FindName("CategoryList")).IsEnabled && ((ComboBox)window.FindName("CategoryWorkflow")).IsEnabled &&
                 ((Button)window.FindName("ExportReportButton")).IsEnabled,
-                "A running scan keeps Stop, navigation and report export available while preventing another GO action");
+                "A running scan keeps Stop, navigation and report export available while preventing another run");
             categories.SelectedItem = categories.Items.Cast<object>().Single(category => category.ToString() == "Maintenance");
             Pump();
             Require(((ComboBox)window.FindName("MainWorkflow")).SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Cleanup },
@@ -1238,7 +1238,7 @@ internal static class Program
             busyTools.SelectedItem = busyTools.Items.Cast<WorkflowDefinition>().Single(tool => tool.Kind == WorkflowKind.Profiles);
             Pump();
             Require(((ComboBox)window.FindName("MainWorkflow")).SelectedItem is WorkflowDefinition { Kind: WorkflowKind.Profiles },
-                "A running scan can browse another tool without enabling another GO action");
+                "A running scan can browse another tool without enabling another run");
             setCaptureBusy.Invoke(window, [false]);
             categories.SelectedIndex = 0;
             Require(!((Expander)window.FindName("AdvancedTools")).IsExpanded, "Advanced tools start tucked away");
@@ -1439,9 +1439,9 @@ internal static class Program
                 while (!((Button)window.FindName("MainGo")).IsEnabled && DateTime.UtcNow < deadline) Pump();
                 string nameOutput = ((TextBox)window.FindName("EvidenceBox")).Text;
                 Require(((Button)window.FindName("MainGo")).IsEnabled && nameOutput.Contains("Name review completed; no rename performed") &&
-                    nameOutput.Contains("Current name: " + Environment.MachineName), "Live desktop name review completes and restores GO");
+                    nameOutput.Contains("Current name: " + Environment.MachineName), "Live desktop name review completes and restores Run diagnosis");
                 Capture(window, Path.Combine(scratch, "computer-name-result.png"));
-                Console.WriteLine("PASS: opt-in native read-only computer name review through desktop GO.");
+                Console.WriteLine("PASS: opt-in native read-only computer name review through desktop Run diagnosis.");
                 typeof(KillerBench.MainWindow).GetMethod("OnSample", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [window, new RoutedEventArgs()]);
             }
             var mainWorkflowForTime = (ComboBox)window.FindName("MainWorkflow");

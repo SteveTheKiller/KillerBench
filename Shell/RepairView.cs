@@ -16,24 +16,28 @@ public partial class MainWindow
         workflowMode = true;
         RepairChoice.Items.Clear();
         foreach (var workflow in WorkflowCatalog.All)
-            RepairChoice.Items.Add(new ComboBoxItem { Content = workflow.Title });
+            RepairChoice.Items.Add(new ComboBoxItem { Content = Controls.LocalizedText.Workflow(workflow.Kind) });
         RepairChoice.SelectedIndex = 0;
-        RepairConsent.Content = "Auto-repair confirmed issues";
+        RepairConsent.SetResourceReference(ContentProperty, "Str_Main_AutoRepair");
         System.Windows.Data.BindingOperations.ClearBinding(RepairRun, IsEnabledProperty);
         RepairRun.IsEnabled = true;
-        RepairRun.ToolTip = "Run live checks on this PC; optional automatic repair of confirmed issues";
+        RepairRun.SetResourceReference(ToolTipProperty, "Str_Repair_WorkflowTip");
     }
     private void OnRepairs(object sender, RoutedEventArgs e)
     {
         if (repairRunning) return;
         workflowMode = false;
         RepairChoice.Items.Clear();
-        RepairChoice.Items.Add(new ComboBoxItem { Content = "Component store (DISM)" });
-        RepairChoice.Items.Add(new ComboBoxItem { Content = "System files (SFC)" });
+        var componentStore = new ComboBoxItem();
+        componentStore.SetResourceReference(ContentProperty, "Str_Repair_ComponentStore");
+        var systemFiles = new ComboBoxItem();
+        systemFiles.SetResourceReference(ContentProperty, "Str_Repair_SystemFiles");
+        RepairChoice.Items.Add(componentStore);
+        RepairChoice.Items.Add(systemFiles);
         RepairChoice.SelectedIndex = 0;
-        RepairConsent.Content = "Run this repair on this PC";
+        RepairConsent.SetResourceReference(ContentProperty, "Str_Repair_Consent");
         RepairConsent.IsEnabled = true;
-        RepairRun.ToolTip = "Run the previewed repair on this PC; administrator rights required";
+        RepairRun.SetResourceReference(ToolTipProperty, "Str_Repair_GoTip");
         RepairConsent.IsChecked = false;
         RepairRun.SetBinding(IsEnabledProperty, new System.Windows.Data.Binding("IsChecked") { Source = RepairConsent });
         SourceDetails.Visibility = Visibility.Collapsed;

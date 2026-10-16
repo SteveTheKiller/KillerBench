@@ -35,6 +35,7 @@ public partial class MainWindow
 
     private void OnBitLockerBackupChanged(object sender, RoutedEventArgs e)
     {
+        if (refreshingLanguage) return;
         BitLockerBackupConsent?.IsChecked = false;
         BitLockerEncryptConsent?.IsChecked = false;
         BitLockerResumeConsent?.IsChecked = false;

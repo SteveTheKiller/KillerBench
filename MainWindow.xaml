@@ -263,14 +263,22 @@
             <TextBlock x:Name="CategoryDescription" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,8"/>
             <WrapPanel Margin="0,0,0,6">
               <ComboBox x:Name="MainWorkflow" ItemsSource="{x:Static workflows:WorkflowCatalog.All}" DisplayMemberPath="Title" SelectedIndex="0" Visibility="Collapsed" SelectionChanged="OnWorkflowOptionsChanged"/>
-              <ComboBox x:Name="CategoryWorkflow" DisplayMemberPath="Title" Width="250" AutomationProperties.Name="Tool in selected category" Margin="0,0,8,0" SelectionChanged="OnCategoryWorkflowSelected"/>
+              <ComboBox x:Name="CategoryWorkflow" Width="250" AutomationProperties.Name="Tool in selected category" Margin="0,0,8,0" SelectionChanged="OnCategoryWorkflowSelected">
+                <ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Converter={x:Static icons:WorkflowTitleConverter.Instance}}"/></DataTemplate></ComboBox.ItemTemplate>
+              </ComboBox>
             </WrapPanel>
             <StackPanel x:Name="ServicingMonitorSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="{DynamicResource Str_Peek_Description}" TextWrapping="Wrap"/>
-              <TextBlock Margin="0,6,0,0"><Run Text="{DynamicResource Str_Peek_RefreshPrefix}"/><Run Text="{Binding ElementName=ServicingMonitorRefresh, Path=Value, StringFormat={}{0:0}}"/><Run Text="{DynamicResource Str_Peek_SecondsSuffix}"/></TextBlock>
-              <Slider x:Name="ServicingMonitorRefresh" Minimum="1" Maximum="60" Value="3" TickFrequency="1" IsSnapToTickEnabled="True"/>
-              <TextBlock Margin="0,6,0,0"><Run Text="{DynamicResource Str_Peek_SnapshotsPrefix}"/><Run Text="{Binding ElementName=ServicingMonitorSamples, Path=Value, StringFormat={}{0:0}}"/></TextBlock>
-              <Slider x:Name="ServicingMonitorSamples" Minimum="1" Maximum="120" Value="3" TickFrequency="1" IsSnapToTickEnabled="True"/>
+              <TextBlock Text="{DynamicResource Str_Peek_RefreshInterval}" Margin="0,6,0,4"/>
+              <DockPanel>
+                <TextBlock DockPanel.Dock="Right" Text="{Binding Value, ElementName=ServicingMonitorRefresh, StringFormat={}{0:0}}" Margin="8,0,0,0"/>
+                <Slider x:Name="ServicingMonitorRefresh" Minimum="1" Maximum="60" Value="3" TickFrequency="1" IsSnapToTickEnabled="True" AutomationProperties.Name="{DynamicResource Str_Peek_RefreshInterval}"/>
+              </DockPanel>
+              <TextBlock Text="{DynamicResource Str_Peek_Snapshots}" Margin="0,6,0,4"/>
+              <DockPanel>
+                <TextBlock DockPanel.Dock="Right" Text="{Binding Value, ElementName=ServicingMonitorSamples, StringFormat={}{0:0}}" Margin="8,0,0,0"/>
+                <Slider x:Name="ServicingMonitorSamples" Minimum="1" Maximum="120" Value="3" TickFrequency="1" IsSnapToTickEnabled="True" AutomationProperties.Name="{DynamicResource Str_Peek_Snapshots}"/>
+              </DockPanel>
               <CheckBox x:Name="ServicingMonitorEvents" Content="{DynamicResource Str_Peek_Events}" IsChecked="True"/>
               <CheckBox x:Name="ServicingMonitorHistory" Content="{DynamicResource Str_Peek_History}" IsChecked="True"/>
               <CheckBox x:Name="ServicingMonitorServices" Content="{DynamicResource Str_Peek_Services}" IsChecked="True"/>
@@ -358,21 +366,21 @@
             <StackPanel x:Name="DepotSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="{DynamicResource Str_Depot_Description}" TextWrapping="Wrap"/>
               <TextBlock Text="{DynamicResource Str_Common_Applications}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
-              <WrapPanel>
+              <UniformGrid Columns="2">
                 <CheckBox x:Name="DepotMicrosoft365" Content="Microsoft 365"/><CheckBox x:Name="DepotOneDrive" Content="OneDrive"/>
                 <CheckBox x:Name="DepotTeams" Content="Teams"/><CheckBox x:Name="DepotChrome" Content="Chrome"/>
                 <CheckBox x:Name="DepotAcrobat" Content="Acrobat Reader"/><CheckBox x:Name="DepotZoom" Content="Zoom"/>
                 <CheckBox x:Name="DepotSevenZip" Content="7-Zip"/>
-              </WrapPanel>
+              </UniformGrid>
               <TextBlock Text="{DynamicResource Str_Common_Configuration}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
-              <WrapPanel>
+              <StackPanel>
                 <CheckBox x:Name="DepotUpdates" Content="{DynamicResource Str_Depot_WindowsUpdates}"/><CheckBox x:Name="DepotComputerName" Content="{DynamicResource Str_Depot_ComputerName}"/>
                 <CheckBox x:Name="DepotLocalAdmin" Content="{DynamicResource Str_Depot_LocalAdministrator}"/><CheckBox x:Name="DepotAdminReview" Content="{DynamicResource Str_Depot_AdministratorReview}"/>
                 <CheckBox x:Name="DepotExtensions" Content="{DynamicResource Str_Apps_ReviewExtensions}"/><CheckBox x:Name="DepotCleanup" Content="{DynamicResource Str_Depot_Cleanup}"/>
                 <CheckBox x:Name="DepotEdge" Content="Edge"/><CheckBox x:Name="DepotPrivacy" Content="{DynamicResource Str_Depot_Privacy}"/>
                 <CheckBox x:Name="DepotTaskbar" Content="{DynamicResource Str_Depot_Taskbar}"/><CheckBox x:Name="DepotStartMenu" Content="{DynamicResource Str_Depot_StartMenu}"/>
                 <CheckBox x:Name="DepotNotifications" Content="{DynamicResource Str_Depot_Notifications}"/>
-              </WrapPanel>
+              </StackPanel>
               <TextBlock Text="{DynamicResource Str_Depot_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
             </StackPanel>
             <StackPanel x:Name="DebloatSettings" Visibility="Collapsed" Margin="0,0,0,8">
@@ -380,7 +388,7 @@
               <ComboBox x:Name="DebloatScopeChoice" SelectedIndex="0" Margin="0,6,0,4" AutomationProperties.Name="Declutter user scope">
                 <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/><ComboBoxItem Content="{DynamicResource Str_Scope_AllProfiles}"/>
               </ComboBox>
-              <WrapPanel>
+              <StackPanel>
                 <CheckBox x:Name="DebloatRecallAi" Content="{DynamicResource Str_Debloat_RecallAi}"/><CheckBox x:Name="DebloatTelemetry" Content="{DynamicResource Str_Debloat_Telemetry}"/>
                 <CheckBox x:Name="DebloatSearch" Content="{DynamicResource Str_Debloat_Search}"/><CheckBox x:Name="DebloatConsumer" Content="{DynamicResource Str_Debloat_Consumer}"/>
                 <CheckBox x:Name="DebloatStart" Content="{DynamicResource Str_Debloat_Start}"/><CheckBox x:Name="DebloatNotifications" Content="{DynamicResource Str_Depot_Notifications}"/>
@@ -390,7 +398,7 @@
                 <CheckBox x:Name="DebloatDell" Content="{DynamicResource Str_Debloat_DellSoftware}"/><CheckBox x:Name="DebloatAsusAcer" Content="{DynamicResource Str_Debloat_AsusAcerSoftware}"/>
                 <CheckBox x:Name="DebloatLenovo" Content="{DynamicResource Str_Debloat_LenovoSoftware}"/><CheckBox x:Name="DebloatThirdParty" Content="{DynamicResource Str_Debloat_ThirdPartyApps}"/>
                 <CheckBox x:Name="DebloatVendorData" Content="{DynamicResource Str_Debloat_VendorData}"/>
-              </WrapPanel>
+              </StackPanel>
               <ComboBox x:Name="DebloatOfficeCulture" SelectedIndex="0" Margin="0,6,0,0" IsEnabled="{Binding IsChecked, ElementName=DebloatOfficeLanguages}" AutomationProperties.Name="Office language to retain">
                 <ComboBoxItem Content="{DynamicResource Str_Debloat_ChooseOfficeLanguage}" Tag=""/>
                 <ComboBoxItem Content="{DynamicResource Str_Language_EnglishUnitedStates}" Tag="en-us"/><ComboBoxItem Content="{DynamicResource Str_Language_EnglishUnitedKingdom}" Tag="en-gb"/>
@@ -409,7 +417,7 @@
                 <ComboBox x:Name="DebloatDisplayDc" Grid.Row="2" Grid.Column="1" SelectedIndex="1" Margin="3,4,0,0" AutomationProperties.Name="Display timeout on battery"><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBatteryNever}" Tag="0"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery15}" Tag="15"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery30}" Tag="30"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery60}" Tag="60"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery120}" Tag="120"/></ComboBox>
               </Grid>
               <TextBlock Text="{DynamicResource Str_Debloat_GoAction}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
-              <ComboBox x:Name="DebloatActionChoice" SelectedIndex="0" AutomationProperties.Name="Declutter GO action">
+              <ComboBox x:Name="DebloatActionChoice" SelectedIndex="0" AutomationProperties.Name="Declutter action">
                 <ComboBoxItem Content="{DynamicResource Str_Debloat_ActionReview}"/>
                 <ComboBoxItem Content="{DynamicResource Str_Debloat_ActionHighPerformance}"/>
                 <ComboBoxItem Content="{DynamicResource Str_Debloat_ActionTimers}"/>
@@ -657,9 +665,9 @@
               <TextBlock Text="{DynamicResource Str_BitLocker_Description}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,0,0,4"/>
               <WrapPanel>
                 <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_Volume}"/><TextBox x:Name="BitLockerVolume" Text="C:" TextChanged="OnBitLockerBackupChanged" Width="60" AutomationProperties.Name="BitLocker volume"/></StackPanel>
-                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_Operation}"/><ComboBox x:Name="BitLockerOperationChoice" ItemsSource="{x:Static bitlocker:BitLockerChoices.Operations}" SelectedIndex="0" SelectionChanged="OnBitLockerBackupChanged" Width="160" AutomationProperties.Name="BitLocker operation"/></StackPanel>
-                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_Encryption}"/><ComboBox x:Name="BitLockerEncryptionChoice" ItemsSource="{x:Static bitlocker:BitLockerChoices.EncryptionMethods}" SelectedIndex="2" Width="140" AutomationProperties.Name="BitLocker encryption method"/></StackPanel>
-                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_RecoveryBackup}"/><ComboBox x:Name="BitLockerDestination" ItemsSource="{x:Static bitlocker:BitLockerChoices.Destinations}" SelectedIndex="0" SelectionChanged="OnBitLockerBackupChanged" Width="160" AutomationProperties.Name="Recovery backup destination"/></StackPanel>
+                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_Operation}"/><ComboBox x:Name="BitLockerOperationChoice" ItemsSource="{x:Static bitlocker:BitLockerChoices.Operations}" SelectedIndex="0" SelectionChanged="OnBitLockerBackupChanged" Width="160" AutomationProperties.Name="BitLocker operation"><ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Converter={x:Static icons:ChoiceLabelConverter.Instance}}"/></DataTemplate></ComboBox.ItemTemplate></ComboBox></StackPanel>
+                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_Encryption}"/><ComboBox x:Name="BitLockerEncryptionChoice" ItemsSource="{x:Static bitlocker:BitLockerChoices.EncryptionMethods}" SelectedIndex="2" Width="140" AutomationProperties.Name="BitLocker encryption method"><ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Converter={x:Static icons:ChoiceLabelConverter.Instance}}"/></DataTemplate></ComboBox.ItemTemplate></ComboBox></StackPanel>
+                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_RecoveryBackup}"/><ComboBox x:Name="BitLockerDestination" ItemsSource="{x:Static bitlocker:BitLockerChoices.Destinations}" SelectedIndex="0" SelectionChanged="OnBitLockerBackupChanged" Width="160" AutomationProperties.Name="Recovery backup destination"><ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Converter={x:Static icons:ChoiceLabelConverter.Instance}}"/></DataTemplate></ComboBox.ItemTemplate></ComboBox></StackPanel>
                 <CheckBox x:Name="BitLockerUsedSpace" Content="{DynamicResource Str_BitLocker_UsedSpace}" VerticalAlignment="Center"/>
               </WrapPanel>
               <TextBlock Text="{DynamicResource Str_BitLocker_BackupFile}"/>
@@ -744,17 +752,17 @@
             <StackPanel x:Name="NetworkSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="{DynamicResource Str_Network_Hostname}" Margin="0,0,0,4"/>
               <TextBox x:Name="NetworkLookupHost" AutomationProperties.Name="Optional hostname to resolve"/>
-              <TextBlock Text="{DynamicResource Str_Network_Destination}" Margin="0,6,0,4"/>
+              <TextBlock Text="{DynamicResource Str_Network_DnsBoundary}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Network_Destination}" Margin="0,8,0,4"/>
               <TextBox x:Name="NetworkTcpHost" AutomationProperties.Name="Optional TCP hostname or IP address"/>
-              <TextBlock Text="{DynamicResource Str_Network_Port}" Margin="0,4,0,4"/>
+              <TextBlock Text="{DynamicResource Str_Network_Port}" Margin="0,6,0,4"/>
               <TextBox x:Name="NetworkTcpPort" AutomationProperties.Name="TCP destination port"/>
-              <TextBlock Text="{DynamicResource Str_Network_Timeout}" Margin="0,6,0,4"/>
+              <TextBlock Text="{DynamicResource Str_Network_ConnectionBoundary}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Network_Timeout}" Margin="0,8,0,4"/>
               <DockPanel>
                 <TextBlock DockPanel.Dock="Right" Text="{Binding Value, ElementName=NetworkTimeoutSeconds, StringFormat={}{0:0}}" Margin="8,0,0,0"/>
                 <Slider x:Name="NetworkTimeoutSeconds" Minimum="1" Maximum="60" Value="10" TickFrequency="1" IsSnapToTickEnabled="True" AutomationProperties.Name="Network timeout in seconds"/>
               </DockPanel>
-              <TextBlock Text="{DynamicResource Str_Network_ConnectionBoundary}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
-              <TextBlock Text="{DynamicResource Str_Network_DnsBoundary}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="AudioSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="{DynamicResource Str_Audio_EndpointScope}" Margin="0,0,0,4"/>

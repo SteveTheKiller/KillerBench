@@ -206,7 +206,8 @@ public partial class MainWindow
             radio.Checked += (_, _) =>
             {
                 LocaleManager.Apply(locale);
-                Report($"Language: {name}.");
+                RefreshLanguage();
+                Report(Controls.LocalizedText.Format("Str_Language_Changed", name));
                 languageMenu.IsOpen = false;
             };
             (index++ < split ? left : right).Children.Add(radio);

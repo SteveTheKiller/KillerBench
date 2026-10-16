@@ -15,8 +15,8 @@ public partial class MainWindow
         string summary = WorkflowReport.Format(result);
         AppendWorkflowOutput("Workflow completed: " + result.Status + ". Read the Report view for findings and next actions.");
         string source = demo
-            ? "Demo " + WorkflowCatalog.All.Single(item => item.Kind == result.Kind).Title
-            : "Workflow " + DateTime.Now.ToString("HHmmss");
+            ? Controls.LocalizedText.Format("Str_Output_DemoSource", Controls.LocalizedText.Workflow(result.Kind))
+            : Controls.LocalizedText.Format("Str_Output_WorkflowSource", DateTime.Now.ToString("HHmmss"));
         var text = new TextEvidence(source, EvidenceBox.Text.Replace("\r\n", "\n").Split('\n'), false);
         reports.Add(text, Investigation.Analyze(text) with { Limitation = demo
             ? "Synthetic demonstration. No machine evidence was collected and no repair was run."
@@ -213,7 +213,7 @@ public partial class MainWindow
             }
         }
         ComponentCleanupSettings?.Visibility =components ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-        MainAutoRepair.Content = selectedPrinter ? "Clear offline mode if confirmed (can release waiting jobs)" : storageRepair ? "Repair confirmed filesystem errors" : storageOptimization ? "Run selected optimization after analysis" : systemRestoreCreate ? "Create this restore point after fresh checks" : orca ? "Retain and clear selected Outlook caches" : components ? "Run recommended cleanup" : "Auto-repair confirmed issues";
+        MainAutoRepair.SetResourceReference(System.Windows.Controls.ContentControl.ContentProperty, selectedPrinter ? "Str_Main_AutoRepairPrinterOffline" : storageRepair ? "Str_Main_AutoRepairFilesystem" : storageOptimization ? "Str_Main_AutoRepairOptimization" : systemRestoreCreate ? "Str_Main_AutoRepairRestorePoint" : orca ? "Str_Main_AutoRepairOutlookCaches" : components ? "Str_Main_AutoRepairComponentCleanup" : "Str_Main_AutoRepair");
         BitLockerSettings?.Visibility =bitlocker ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         PrivacySettings?.Visibility =privacy ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
         UpdateSettings?.Visibility =updates ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
@@ -240,10 +240,8 @@ public partial class MainWindow
     private void UpdateMainActionLabel()
     {
         bool repairRequested = MainAutoRepair?.IsChecked == true;
-        MainGo.Content = repairRequested ? "Run repair" : "Run diagnosis";
-        MainGo.ToolTip = repairRequested
-            ? "Run the selected checks and only the explicitly approved repairs. A report opens when the workflow finishes."
-            : "Run the selected read-only checks and open a readable report.";
+        MainGo.SetResourceReference(System.Windows.Controls.ContentControl.ContentProperty, repairRequested ? "Str_Main_RunRepair" : "Str_Main_RunDiagnosis");
+        MainGo.SetResourceReference(System.Windows.FrameworkElement.ToolTipProperty, repairRequested ? "Str_Main_RunRepairTip" : "Str_Main_RunDiagnosisTip");
     }
 
     private void OnSystemRestoreOptionChanged(object sender, System.Windows.RoutedEventArgs e)
@@ -316,13 +314,11 @@ public partial class MainWindow
         SourcesList.IsEnabled = false;
         SearchBox.IsEnabled = false;
         string demoTitle = demo ? WorkflowCatalog.All.Single(item => item.Kind == kind).Title : kind.ToString();
-        EvidenceTitle.Text = demoTitle + (demo ? " / Demo" : " / Live");
+        EvidenceTitle.Text = Controls.LocalizedText.Format(demo ? "Str_Output_DemoRunning" : "Str_Output_LiveRunning", Controls.LocalizedText.Workflow(kind));
         EvidenceBox.Text = demo
             ? $"{demoTitle} / SYNTHETIC DEMO\nMACHINE: {DemoWorkflow.MachineName}\n\nPreparing fabricated evidence...\n"
             : $"{kind} / RUNNING\nTHIS PC: {Environment.MachineName}\n\nStarting live checks...\n";
-        CoverageLabel.Text = demo
-            ? "Synthetic output. No current machine evidence or repair result is shown."
-            : "Live output. You can browse tools and export earlier reports. Stop waits for the current servicing command.";
+        CoverageLabel.Text = Controls.LocalizedText.Get(demo ? "Str_Output_DemoCoverage" : "Str_Output_LiveCoverage");
         // Live work streams in Raw output; the readable report takes over when the result is registered.
         ShowRawOutput();
     }
@@ -443,7 +439,7 @@ public partial class MainWindow
             catch (ArgumentException error) { Report(error.Message); return; }
         }
         int debloatAction = kind == WorkflowKind.Debloat ? DebloatActionChoice.SelectedIndex : 0;
-        if (debloatAction is < 0 or > 3) { Report("Choose a valid declutter GO action."); return; }
+        if (debloatAction is < 0 or > 3) { Report("Choose a valid declutter action."); return; }
         if (debloatAction == 1 && debloatOptions.Areas != DebloatAreas.HighPerformancePower)
         { Report("High performance activation requires High performance power as the only selected area."); return; }
         if (debloatAction == 2 && (debloatOptions.Areas != DebloatAreas.SleepAndDisplayTimers || debloatOptions.PowerRequest is null))
@@ -453,7 +449,7 @@ public partial class MainWindow
         bool includeProvisioned = IncludeProvisionedPackages.IsChecked == true;
         CommonDiagnosticScope[]? diagnosticScopes = kind == WorkflowKind.CommonProblems && FocusDiagnosticAreas.IsChecked == true
             ? [.. DiagnosticAreaList.SelectedItems.Cast<DiagnosticArea>().Select(area => area.Scope)] : null;
-        if (diagnosticScopes is { Length: 0 }) { Report("Select at least one diagnostic area before GO."); return; }
+        if (diagnosticScopes is { Length: 0 }) { Report("Select at least one diagnostic area before selecting Run diagnosis."); return; }
         string[]? selectedRecipes = kind == WorkflowKind.CommonProblems && CustomizeRecipes.IsChecked == true
             ? [.. RecipeSelectionList.SelectedItems.Cast<RepairRecipe>().Select(recipe => recipe.Id)] : null;
         string? selectedQueue = kind == WorkflowKind.Printing ? PrinterQueues.SelectedItem as string : null;
@@ -1089,7 +1085,7 @@ public partial class MainWindow
                 if (!windowsSelected && !thirdPartySelected)
                 {
                     workflowOutputActive = false;
-                    Report("Select software updates, drivers or third-party apps before pressing GO.");
+                    Report("Select software updates, drivers or third-party apps before selecting Run diagnosis.");
                     SetScanLight("attention", "No update category was selected.");
                     return;
                 }
@@ -1455,7 +1451,7 @@ public partial class MainWindow
             }
             CaptureInfo.Text = result.Status + " | " + result.Checks.Count + " checks | " + result.Repairs.Count + " repairs";
             Report(result.Status + ". Journal: " + result.JournalPath);
-            SetScanLight(result.GetExitCode() == 0 ? "ready" : result.Status == "Needs attention" ? "attention" : "incomplete", result.Status + ". Applies only to checked scopes.");
+            SetScanLight(result.GetExitCode() == 0 ? "ready" : result.Status == "Needs attention" ? "attention" : "incomplete", Controls.LocalizedText.Format("Str_Output_CheckedScopes", LocalizedStatus(result.Status)));
         }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or InvalidOperationException or
             NotSupportedException or OperationCanceledException or TimeoutException or System.ComponentModel.Win32Exception or System.Security.SecurityException)

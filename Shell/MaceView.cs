@@ -38,7 +38,7 @@ public partial class MainWindow
         MaceReviewPackage.IsEnabled = choices.Length > 0;
         MacePackageRemovalConsent.IsChecked = false;
         MacePackageHint.Text = choices.Length == 0
-            ? "Run GO to find supported current-account package candidates."
+            ? Controls.LocalizedText.Get("Str_Mace_PackageHint")
             : choices.Length + " supported package candidate" + (choices.Length == 1 ? "" : "s") +
                 " found. Select one to review the final safeguards.";
         RefreshMacePackageRemoval();
@@ -70,7 +70,7 @@ public partial class MainWindow
         MacePackageRemovalEligibility eligibility = MacePackageRemoval.Evaluate(maceReview, selected.Identity);
         string text = "APP REMOVAL PACKAGE PLAN / " + (eligibility.Eligible ? "ELIGIBLE" : "BLOCKED") +
             "\n" + selected.Label + "\nPackage: " + selected.Identity + "\n\n" + eligibility.Detail +
-            "\n\nGO stays review-only. The separate red removal control requires its own confirmation and repeats fresh exact evidence before one request.";
+            "\n\nRun diagnosis stays review-only. The separate red removal control requires its own confirmation and repeats fresh exact evidence before one request.";
         BeginWorkflowOutput(WorkflowKind.Mace);
         AppendWorkflowOutput(text);
         string status = eligibility.Eligible
@@ -80,7 +80,7 @@ public partial class MainWindow
         {
             new WorkflowCheck("Selected package safeguards", eligibility.Eligible ? CheckState.Information : CheckState.Unknown, eligibility.Detail),
             new WorkflowCheck("Removal boundary", CheckState.Information,
-                "GO remains review-only. Any removal requires the separate red control, its own consent and a second confirmation after fresh safeguards pass.")
+                "Run diagnosis remains review-only. Any removal requires the separate red control, its own consent and a second confirmation after fresh safeguards pass.")
         };
         RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Mace, Environment.MachineName, DateTimeOffset.UtcNow,
             status, checks, [], "Read-only app removal package plan. No journal was written."), "App removal package plan");
