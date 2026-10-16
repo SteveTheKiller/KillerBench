@@ -496,7 +496,7 @@
   <sys:String x:Key="Str_Repair_ComponentStore">Repositório de componentes (DISM)</sys:String>
   <sys:String x:Key="Str_Repair_SystemFiles">Arquivos do sistema (SFC)</sys:String>
   <sys:String x:Key="Str_Repair_Consent">Executar este reparo neste PC</sys:String>
-  <sys:String x:Key="Str_Repair_Go">GO</sys:String>
+  <sys:String x:Key="Str_Repair_Go">IR</sys:String>
   <sys:String x:Key="Str_Repair_GoTip">Executa o reparo visualizado neste PC; exige direitos de administrador</sys:String>
   <sys:String x:Key="Str_Display_Console">Console</sys:String>
   <sys:String x:Key="Str_Display_ThemeColors">As cores seguem o tema ativo.</sys:String>

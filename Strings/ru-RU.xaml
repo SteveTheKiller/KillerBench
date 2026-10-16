@@ -92,10 +92,10 @@
   <sys:String x:Key="Str_Theme_Light">Светлая</sys:String>
   <sys:String x:Key="Str_Theme_Black">Чёрная</sys:String>
   <sys:String x:Key="Str_Theme_Blood">Кровь</sys:String>
-  <sys:String x:Key="Str_Theme_Greed">Жадность</sys:String>
+  <sys:String x:Key="Str_Theme_Greed">Алчность</sys:String>
   <sys:String x:Key="Str_Theme_Cyanotic">Цианоз</sys:String>
   <sys:String x:Key="Str_Theme_Malaise">Недомогание</sys:String>
-  <sys:String x:Key="Str_Theme_Sepulchre">Гробница</sys:String>
+  <sys:String x:Key="Str_Theme_Sepulchre">Склеп</sys:String>
   <sys:String x:Key="Str_Theme_Delirium">Бред</sys:String>
   <sys:String x:Key="Str_Findings">Находки</sys:String>
   <sys:String x:Key="Str_LoadDemo">Загрузить демо</sys:String>
@@ -501,7 +501,7 @@
   <sys:String x:Key="Str_Repair_ComponentStore">Хранилище компонентов (DISM)</sys:String>
   <sys:String x:Key="Str_Repair_SystemFiles">Системные файлы (SFC)</sys:String>
   <sys:String x:Key="Str_Repair_Consent">Запустите этот ремонт на этом ПК</sys:String>
-  <sys:String x:Key="Str_Repair_Go">ПОЕХАТЬ</sys:String>
+  <sys:String x:Key="Str_Repair_Go">ЗАПУСК</sys:String>
   <sys:String x:Key="Str_Repair_GoTip">Запустите предварительно просмотренный ремонт на этом ПК; требуются права администратора</sys:String>
   <sys:String x:Key="Str_Display_Console">Консоль</sys:String>
   <sys:String x:Key="Str_Display_ThemeColors">Цвета следуют за активной темой.</sys:String>

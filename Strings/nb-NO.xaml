@@ -496,7 +496,7 @@
   <sys:String x:Key="Str_Repair_ComponentStore">Komponentlager (DISM)</sys:String>
   <sys:String x:Key="Str_Repair_SystemFiles">Systemfiler (SFC)</sys:String>
   <sys:String x:Key="Str_Repair_Consent">Kjør denne reparasjonen på denne PC-en</sys:String>
-  <sys:String x:Key="Str_Repair_Go">GO</sys:String>
+  <sys:String x:Key="Str_Repair_Go">KJØR</sys:String>
   <sys:String x:Key="Str_Repair_GoTip">Kjør den forhåndsvisede reparasjonen på denne PC-en; krever administratorrettigheter</sys:String>
   <sys:String x:Key="Str_Display_Console">Konsoll</sys:String>
   <sys:String x:Key="Str_Display_ThemeColors">Fargene følger det aktive temaet.</sys:String>

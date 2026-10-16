@@ -92,11 +92,11 @@
   <sys:String x:Key="Str_Shortcuts_About">KillerBench hakkında</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">Katmanı kapat veya okumayı durdur</sys:String>
   <sys:String x:Key="Str_Theme_Blood">Kan</sys:String>
-  <sys:String x:Key="Str_Theme_Greed">Açgözlülük</sys:String>
+  <sys:String x:Key="Str_Theme_Greed">Hırs</sys:String>
   <sys:String x:Key="Str_Theme_Ectoplasm">Ektoplazma</sys:String>
   <sys:String x:Key="Str_Theme_Decay">Çürüme</sys:String>
-  <sys:String x:Key="Str_Theme_Malaise">Keyifsizlik</sys:String>
-  <sys:String x:Key="Str_Theme_Sepulchre">Lahit</sys:String>
+  <sys:String x:Key="Str_Theme_Malaise">Halsizlik</sys:String>
+  <sys:String x:Key="Str_Theme_Sepulchre">Kabir</sys:String>
   <sys:String x:Key="Str_Theme_Delirium">Hezeyan</sys:String>
   <sys:String x:Key="Str_Theme_Mourning">Yas</sys:String>
   <sys:String x:Key="Str_Theme_FilmGrain">Film greni</sys:String>
@@ -502,7 +502,7 @@
   <sys:String x:Key="Str_Repair_ComponentStore">Bileşen deposu (DISM)</sys:String>
   <sys:String x:Key="Str_Repair_SystemFiles">Sistem dosyaları (SFC)</sys:String>
   <sys:String x:Key="Str_Repair_Consent">Bu onarımı bu PC'de çalıştır</sys:String>
-  <sys:String x:Key="Str_Repair_Go">GO</sys:String>
+  <sys:String x:Key="Str_Repair_Go">BAŞLAT</sys:String>
   <sys:String x:Key="Str_Repair_GoTip">Önizlenen onarımı bu PC'de çalıştır; yönetici hakları gerekir</sys:String>
   <sys:String x:Key="Str_Display_Console">Konsol</sys:String>
   <sys:String x:Key="Str_Display_ThemeColors">Renkler etkin temayı izler.</sys:String>

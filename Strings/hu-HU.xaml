@@ -70,7 +70,7 @@
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">Átfedés bezárása vagy olvasás leállítása</sys:String>
   <sys:String x:Key="Str_Content_Close">Bezárás</sys:String>
   <sys:String x:Key="Str_Theme_Dark">Sötét</sys:String>
-  <sys:String x:Key="Str_Theme_Light">Világos</sys:String>
+  <sys:String x:Key="Str_Theme_Light">Fény</sys:String>
   <sys:String x:Key="Str_Theme_Black">Fekete</sys:String>
   <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
   <sys:String x:Key="Str_Theme_Blood">Vér</sys:String>
@@ -79,7 +79,7 @@
   <sys:String x:Key="Str_Theme_Ectoplasm">Ektoplazma</sys:String>
   <sys:String x:Key="Str_Theme_Decay">Bomlás</sys:String>
   <sys:String x:Key="Str_Theme_Malaise">Rosszullét</sys:String>
-  <sys:String x:Key="Str_Theme_Sepulchre">Sírbolt</sys:String>
+  <sys:String x:Key="Str_Theme_Sepulchre">Sír</sys:String>
   <sys:String x:Key="Str_Theme_Delirium">Delírium</sys:String>
   <sys:String x:Key="Str_Theme_Mourning">Gyász</sys:String>
   <sys:String x:Key="Str_Theme_FilmGrain">Filmszemcse</sys:String>
@@ -497,7 +497,7 @@
   <sys:String x:Key="Str_Repair_ComponentStore">Összetevőtár (DISM)</sys:String>
   <sys:String x:Key="Str_Repair_SystemFiles">Rendszerfájlok (SFC)</sys:String>
   <sys:String x:Key="Str_Repair_Consent">A javítás futtatása ezen a PC-n</sys:String>
-  <sys:String x:Key="Str_Repair_Go">GO</sys:String>
+  <sys:String x:Key="Str_Repair_Go">INDÍT</sys:String>
   <sys:String x:Key="Str_Repair_GoTip">Az előnézett javítás futtatása ezen a PC-n; rendszergazdai jog szükséges</sys:String>
   <sys:String x:Key="Str_Display_Console">Konzol</sys:String>
   <sys:String x:Key="Str_Display_ThemeColors">A színek az aktív témát követik.</sys:String>

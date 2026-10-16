@@ -496,7 +496,7 @@
   <sys:String x:Key="Str_Repair_ComponentStore">Сховище компонентів (DISM)</sys:String>
   <sys:String x:Key="Str_Repair_SystemFiles">Системні файли (SFC)</sys:String>
   <sys:String x:Key="Str_Repair_Consent">Виконати це виправлення на цьому ПК</sys:String>
-  <sys:String x:Key="Str_Repair_Go">GO</sys:String>
+  <sys:String x:Key="Str_Repair_Go">ЗАПУСК</sys:String>
   <sys:String x:Key="Str_Repair_GoTip">Виконати переглянуте виправлення на цьому ПК; потрібні права адміністратора</sys:String>
   <sys:String x:Key="Str_Display_Console">Консоль</sys:String>
   <sys:String x:Key="Str_Display_ThemeColors">Кольори відповідають активній темі.</sys:String>

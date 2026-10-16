@@ -75,10 +75,10 @@
   <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
   <sys:String x:Key="Str_Theme_Blood">Krew</sys:String>
   <sys:String x:Key="Str_Theme_Greed">Chciwość</sys:String>
-  <sys:String x:Key="Str_Theme_Cyanotic">Siniczy</sys:String>
+  <sys:String x:Key="Str_Theme_Cyanotic">Sinica</sys:String>
   <sys:String x:Key="Str_Theme_Ectoplasm">Ektoplazma</sys:String>
   <sys:String x:Key="Str_Theme_Decay">Rozkład</sys:String>
-  <sys:String x:Key="Str_Theme_Malaise">Niedomaganie</sys:String>
+  <sys:String x:Key="Str_Theme_Malaise">Marazm</sys:String>
   <sys:String x:Key="Str_Theme_Sepulchre">Grobowiec</sys:String>
   <sys:String x:Key="Str_Theme_Delirium">Delirium</sys:String>
   <sys:String x:Key="Str_Theme_Mourning">Żałoba</sys:String>
@@ -497,7 +497,7 @@
   <sys:String x:Key="Str_Repair_ComponentStore">Magazyn składników (DISM)</sys:String>
   <sys:String x:Key="Str_Repair_SystemFiles">Pliki systemowe (SFC)</sys:String>
   <sys:String x:Key="Str_Repair_Consent">Uruchom tę naprawę na tym komputerze</sys:String>
-  <sys:String x:Key="Str_Repair_Go">GO</sys:String>
+  <sys:String x:Key="Str_Repair_Go">START</sys:String>
   <sys:String x:Key="Str_Repair_GoTip">Uruchom podglądaną naprawę na tym komputerze; wymagane prawa administratora</sys:String>
   <sys:String x:Key="Str_Display_Console">Konsola</sys:String>
   <sys:String x:Key="Str_Display_ThemeColors">Kolory podążają za aktywnym motywem.</sys:String>

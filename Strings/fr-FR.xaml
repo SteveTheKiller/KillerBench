@@ -167,7 +167,7 @@
   <sys:String x:Key="Str_Repair_ComponentStore">Magasin de composants (DISM)</sys:String>
   <sys:String x:Key="Str_Repair_SystemFiles">Fichiers système (SFC)</sys:String>
   <sys:String x:Key="Str_Repair_Consent">Exécuter cette réparation sur ce PC</sys:String>
-  <sys:String x:Key="Str_Repair_Go">GO</sys:String>
+  <sys:String x:Key="Str_Repair_Go">LANCER</sys:String>
   <sys:String x:Key="Str_Repair_GoTip">Exécuter la réparation prévisualisée sur ce PC; droits administrateur requis</sys:String>
   <sys:String x:Key="Str_Display_Console">Console</sys:String>
   <sys:String x:Key="Str_Display_ThemeColors">Les couleurs suivent le thème actif.</sys:String>

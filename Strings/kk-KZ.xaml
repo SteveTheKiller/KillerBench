@@ -75,12 +75,12 @@
   <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
   <sys:String x:Key="Str_Theme_Blood">Қан</sys:String>
   <sys:String x:Key="Str_Theme_Greed">Ашкөздік</sys:String>
-  <sys:String x:Key="Str_Theme_Cyanotic">Цианозды</sys:String>
+  <sys:String x:Key="Str_Theme_Cyanotic">Цианоз</sys:String>
   <sys:String x:Key="Str_Theme_Ectoplasm">Эктоплазма</sys:String>
   <sys:String x:Key="Str_Theme_Decay">Ыдырау</sys:String>
-  <sys:String x:Key="Str_Theme_Malaise">Дімкәстік</sys:String>
-  <sys:String x:Key="Str_Theme_Sepulchre">Қабірхана</sys:String>
-  <sys:String x:Key="Str_Theme_Delirium">Делирий</sys:String>
+  <sys:String x:Key="Str_Theme_Malaise">Науқастық</sys:String>
+  <sys:String x:Key="Str_Theme_Sepulchre">Кесене</sys:String>
+  <sys:String x:Key="Str_Theme_Delirium">Сандырақ</sys:String>
   <sys:String x:Key="Str_Theme_Mourning">Аза</sys:String>
   <sys:String x:Key="Str_Theme_FilmGrain">Пленка түйіршігі</sys:String>
   <sys:String x:Key="Str_Findings">Нәтижелер</sys:String>
@@ -497,7 +497,7 @@
   <sys:String x:Key="Str_Repair_ComponentStore">Компоненттер қоймасы (DISM)</sys:String>
   <sys:String x:Key="Str_Repair_SystemFiles">Жүйелік файлдар (SFC)</sys:String>
   <sys:String x:Key="Str_Repair_Consent">Осы жөндеуді осы компьютерде іске қосу</sys:String>
-  <sys:String x:Key="Str_Repair_Go">GO</sys:String>
+  <sys:String x:Key="Str_Repair_Go">БАСТАУ</sys:String>
   <sys:String x:Key="Str_Repair_GoTip">Алдын ала көрсетілген жөндеуді осы компьютерде іске қосу; әкімші құқықтары қажет</sys:String>
   <sys:String x:Key="Str_Display_Console">Консоль</sys:String>
   <sys:String x:Key="Str_Display_ThemeColors">Түстер белсенді тақырыпқа сай болады.</sys:String>

@@ -502,7 +502,7 @@
   <sys:String x:Key="Str_Repair_ComponentStore">Archivio componenti (DISM)</sys:String>
   <sys:String x:Key="Str_Repair_SystemFiles">File di sistema (SFC)</sys:String>
   <sys:String x:Key="Str_Repair_Consent">Esegui questa riparazione su questo PC</sys:String>
-  <sys:String x:Key="Str_Repair_Go">GO</sys:String>
+  <sys:String x:Key="Str_Repair_Go">VAI</sys:String>
   <sys:String x:Key="Str_Repair_GoTip">Esegui la riparazione visualizzata in anteprima su questo PC; diritti amministratore richiesti</sys:String>
   <sys:String x:Key="Str_Display_Console">Console</sys:String>
   <sys:String x:Key="Str_Display_ThemeColors">I colori seguono il tema attivo.</sys:String>

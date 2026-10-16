@@ -503,7 +503,7 @@
   <sys:String x:Key="Str_Repair_ComponentStore">Almacén de componentes (DISM)</sys:String>
   <sys:String x:Key="Str_Repair_SystemFiles">Archivos del sistema (SFC)</sys:String>
   <sys:String x:Key="Str_Repair_Consent">Ejecutar esta reparación en este PC</sys:String>
-  <sys:String x:Key="Str_Repair_Go">GO</sys:String>
+  <sys:String x:Key="Str_Repair_Go">IR</sys:String>
   <sys:String x:Key="Str_Repair_GoTip">Ejecutar la reparación previsualizada en este PC; se requieren derechos de administrador</sys:String>
   <sys:String x:Key="Str_Display_Console">Consola</sys:String>
   <sys:String x:Key="Str_Display_ThemeColors">Los colores siguen el tema activo.</sys:String>

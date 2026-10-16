@@ -94,11 +94,11 @@
   <sys:String x:Key="Str_Shortcuts_About">KillerBenchについて</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">オーバーレイを閉じるか、読み取りを停止する</sys:String>
   <sys:String x:Key="Str_Theme_Ectoplasm">エクトプラズム</sys:String>
-  <sys:String x:Key="Str_Theme_Decay">腐敗</sys:String>
-  <sys:String x:Key="Str_Theme_Malaise">不快感</sys:String>
-  <sys:String x:Key="Str_Theme_Sepulchre">墳墓</sys:String>
-  <sys:String x:Key="Str_Theme_Delirium">せん妄</sys:String>
-  <sys:String x:Key="Str_Theme_Mourning">喪</sys:String>
+  <sys:String x:Key="Str_Theme_Decay">ディケイ</sys:String>
+  <sys:String x:Key="Str_Theme_Malaise">マレーズ</sys:String>
+  <sys:String x:Key="Str_Theme_Sepulchre">セパルカー</sys:String>
+  <sys:String x:Key="Str_Theme_Delirium">デリリウム</sys:String>
+  <sys:String x:Key="Str_Theme_Mourning">モーニング</sys:String>
   <sys:String x:Key="Str_Theme_FilmGrain">フィルムグレイン</sys:String>
   <sys:String x:Key="Str_Findings">調査結果</sys:String>
   <sys:String x:Key="Str_LoadDemo">デモを読み込む</sys:String>

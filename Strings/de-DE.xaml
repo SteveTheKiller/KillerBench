@@ -96,7 +96,7 @@
   <sys:String x:Key="Str_Theme_Ectoplasm">Ektoplasma</sys:String>
   <sys:String x:Key="Str_Theme_Decay">Verfall</sys:String>
   <sys:String x:Key="Str_Theme_Malaise">Unwohlsein</sys:String>
-  <sys:String x:Key="Str_Theme_Sepulchre">Grabkammer</sys:String>
+  <sys:String x:Key="Str_Theme_Sepulchre">Grabmal</sys:String>
   <sys:String x:Key="Str_Theme_Mourning">Trauer</sys:String>
   <sys:String x:Key="Str_Theme_FilmGrain">Filmkorn</sys:String>
   <sys:String x:Key="Str_Findings">Befunde</sys:String>
@@ -502,7 +502,7 @@
   <sys:String x:Key="Str_Repair_ComponentStore">Komponentenspeicher (DISM)</sys:String>
   <sys:String x:Key="Str_Repair_SystemFiles">Systemdateien (SFC)</sys:String>
   <sys:String x:Key="Str_Repair_Consent">Diese Reparatur auf diesem PC ausführen</sys:String>
-  <sys:String x:Key="Str_Repair_Go">GO</sys:String>
+  <sys:String x:Key="Str_Repair_Go">LOS</sys:String>
   <sys:String x:Key="Str_Repair_GoTip">Vorgeschauete Reparatur auf diesem PC ausführen; Administratorrechte erforderlich</sys:String>
   <sys:String x:Key="Str_Display_Console">Konsole</sys:String>
   <sys:String x:Key="Str_Display_ThemeColors">Farben folgen dem aktiven Design.</sys:String>
