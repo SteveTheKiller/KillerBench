@@ -133,4 +133,5 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - The exe files' properties show Steve the Killer as the copyright holder instead of leaving it blank.
 - The website top bar no longer leaves extra space under the wordmark and buttons.
 - Theme and language radio buttons and the Film Grain checkbox line up with their labels again.
+- On the website, text on accent-colored buttons, tabs and highlights switches to white or near-black for contrast, so it is never white on yellow.
 
