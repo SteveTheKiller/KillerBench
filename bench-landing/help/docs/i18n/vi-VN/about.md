@@ -1,6 +1,6 @@
 # Về KillerBench
 
-KillerBench là bộ công cụ chẩn đoán, sửa chữa và bảo trì Windows do Steve the Killer tạo ra, thuộc [dòng sản phẩm Killer Tools](https://killertools.net). Phiên bản 0.1.0 chưa được phát hành. Ứng dụng máy tính, Engine và CLI dùng chung bằng chứng chẩn đoán và các quy trình sửa chữa được hỗ trợ.
+KillerBench là bộ công cụ chẩn đoán, sửa chữa và bảo trì Windows do Steve the Killer tạo ra, thuộc [dòng sản phẩm Killer Tools](https://killertools.net). Phiên bản 1.0.0 chưa được phát hành. Ứng dụng máy tính, Engine và CLI dùng chung bằng chứng chẩn đoán và các quy trình sửa chữa được hỗ trợ.
 
 ## Tình trạng cung cấp và phạm vi
 

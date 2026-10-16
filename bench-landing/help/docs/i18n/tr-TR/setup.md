@@ -1,6 +1,6 @@
 # İndirme ve kurulum
 
-KillerBench 0.1.0 henüz yayımlanmadı. Herkese açık bir KillerBench paketi veya indirmesi henüz yok. Bu sayfa, resmî olmayan bir kopya indirmeden hazırlanabilmeniz için geçerli paket gereksinimlerini açıklar.
+KillerBench 1.0.0 henüz yayımlanmadı. Herkese açık bir KillerBench paketi veya indirmesi henüz yok. Bu sayfa, resmî olmayan bir kopya indirmeden hazırlanabilmeniz için geçerli paket gereksinimlerini açıklar.
 
 ## Windows ve çalışma zamanı
 

@@ -12,7 +12,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parent
-VERSION = "v0.1.0"
+VERSION = "v1.0.0"
 ASSET = "8"
 
 SITES = [

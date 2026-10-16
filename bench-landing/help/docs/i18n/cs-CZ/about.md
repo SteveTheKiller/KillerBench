@@ -1,6 +1,6 @@
 # O KillerBench
 
-KillerBench je pracovní nástroj pro diagnostiku, opravy a údržbu Windows od Steve the Killer, součást [rodiny Killer Tools](https://killertools.net). Verze 0.1.0 zatím není vydána. Jeho desktopová aplikace, Engine a CLI sdílejí diagnostické důkazy a podporované postupy oprav.
+KillerBench je pracovní nástroj pro diagnostiku, opravy a údržbu Windows od Steve the Killer, součást [rodiny Killer Tools](https://killertools.net). Verze 1.0.0 zatím není vydána. Jeho desktopová aplikace, Engine a CLI sdílejí diagnostické důkazy a podporované postupy oprav.
 
 ## Dostupnost a rozsah
 

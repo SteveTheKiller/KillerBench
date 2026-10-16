@@ -67,4 +67,4 @@ Capability-specific collectors are public when another host can use them safely 
 
 ## Versioning
 
-The Engine currently shares KillerBench version `0.1.0`. It has not reached a stable public package contract. Pin the exact repository revision used by an embedding application.
+The Engine currently shares KillerBench version `1.0.0`. It has not reached a stable public package contract. Pin the exact repository revision used by an embedding application.

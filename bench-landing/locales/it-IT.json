@@ -68,7 +68,7 @@
     "KillerBench": "KillerBench",
     "KillerBench is a Windows diagnostic and repair workbench in development. Diagnose first, follow the evidence, and fix only what the evidence proves, all on the local computer.": "KillerBench è un ambiente di diagnostica e riparazione di Windows in sviluppo. Prima la diagnosi, poi le evidenze e solo le correzioni che esse dimostrano, tutto sul computer locale.",
     "KillerBench is in development. Public downloads are not available yet. Native repair validation is still in progress.": "KillerBench è in sviluppo. I download pubblici non sono ancora disponibili. La convalida delle riparazioni native è ancora in corso.",
-    "KillerBench v0.1.0": "KillerBench v0.1.0",
+    "KillerBench v1.0.0": "KillerBench v1.0.0",
     "KillerBench | Diagnostic Workbench": "KillerBench | Ambiente diagnostico",
     "KillerMCP": "KillerMCP",
     "Knowledge packs": "Pacchetti di conoscenza",
@@ -135,7 +135,7 @@
     "platform": "piattaforma",
     "shows a first read-only workflow.": "mostra un primo flusso di sola lettura.",
     "status": "stato",
-    "v0.1.0 · © 2026": "v0.1.0 · © 2026",
+    "v1.0.0 · © 2026": "v1.0.0 · © 2026",
     "version": "versione",
     "© 2026": "© 2026",
     "·": "·"

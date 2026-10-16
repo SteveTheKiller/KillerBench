@@ -35,6 +35,6 @@ Native repair validation is still in progress. Read [How changes stay safe](http
 
 ## License and source
 
-KillerBench is licensed under GPLv3. See the complete [GNU General Public License version 3](LICENSE.txt). Every release attaches the complete source for that exact version, and the current release's source is [KillerBench-0.1.0-src.zip](https://github.com/SteveTheKiller/KillerBench/releases/download/v0.1.0/KillerBench-0.1.0-src.zip). See [licensing and release requirements](LICENSING.md).
+KillerBench is licensed under GPLv3. See the complete [GNU General Public License version 3](LICENSE.txt). Every release attaches the complete source for that exact version, and the current release's source is [KillerBench-1.0.0-src.zip](https://github.com/SteveTheKiller/KillerBench/releases/download/v1.0.0/KillerBench-1.0.0-src.zip). See [licensing and release requirements](LICENSING.md).
 
 Part of [killertools.net](https://killertools.net).

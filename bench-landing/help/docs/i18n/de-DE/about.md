@@ -1,6 +1,6 @@
 # Über KillerBench
 
-KillerBench ist eine Werkbank für Windows-Diagnose, -Reparatur und -Wartung von Steve the Killer und gehört zur [Killer Tools-Familie](https://killertools.net). Version 0.1.0 ist unveröffentlicht. Desktop-App, Engine und CLI teilen sich Diagnosenachweise und die unterstützten Reparatur-Workflows.
+KillerBench ist eine Werkbank für Windows-Diagnose, -Reparatur und -Wartung von Steve the Killer und gehört zur [Killer Tools-Familie](https://killertools.net). Version 1.0.0 ist unveröffentlicht. Desktop-App, Engine und CLI teilen sich Diagnosenachweise und die unterstützten Reparatur-Workflows.
 
 ## Verfügbarkeit und Umfang
 

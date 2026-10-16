@@ -1,6 +1,6 @@
 # Tải xuống và thiết lập
 
-KillerBench 0.1.0 chưa được phát hành. Chưa có gói hay bản tải xuống KillerBench công khai nào. Trang này mô tả các yêu cầu hiện tại của gói để bạn có thể chuẩn bị mà không cần tải một bản sao không chính thức.
+KillerBench 1.0.0 chưa được phát hành. Chưa có gói hay bản tải xuống KillerBench công khai nào. Trang này mô tả các yêu cầu hiện tại của gói để bạn có thể chuẩn bị mà không cần tải một bản sao không chính thức.
 
 ## Windows và môi trường chạy
 

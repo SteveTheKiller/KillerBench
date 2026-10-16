@@ -1,6 +1,6 @@
 # Download and setup
 
-KillerBench 0.1.0 is Unreleased. No public KillerBench package or download is available yet. This page describes the current package requirements so you can prepare without downloading an unofficial copy.
+KillerBench 1.0.0 is Unreleased. No public KillerBench package or download is available yet. This page describes the current package requirements so you can prepare without downloading an unofficial copy.
 
 ## Windows and runtime
 

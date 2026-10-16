@@ -68,7 +68,7 @@
     "KillerBench": "KillerBench",
     "KillerBench is a Windows diagnostic and repair workbench in development. Diagnose first, follow the evidence, and fix only what the evidence proves, all on the local computer.": "A KillerBench fejlesztés alatt álló Windows diagnosztikai és javítási munkapad. Először diagnosztizáljon, kövesse a bizonyítékokat, és csak bizonyított hibákat javítson, mindezt a helyi számítógépen.",
     "KillerBench is in development. Public downloads are not available yet. Native repair validation is still in progress.": "A KillerBench fejlesztés alatt áll. Nyilvános letöltések még nem érhetők el. A natív javítások ellenőrzése még folyamatban van.",
-    "KillerBench v0.1.0": "KillerBench v0.1.0",
+    "KillerBench v1.0.0": "KillerBench v1.0.0",
     "KillerBench | Diagnostic Workbench": "KillerBench | Diagnosztikai munkapad",
     "KillerMCP": "KillerMCP",
     "Knowledge packs": "Tudáscsomagok",
@@ -135,7 +135,7 @@
     "platform": "platform",
     "shows a first read-only workflow.": "bemutat egy első, csak olvasó folyamatot.",
     "status": "állapot",
-    "v0.1.0 · © 2026": "v0.1.0 · © 2026",
+    "v1.0.0 · © 2026": "v1.0.0 · © 2026",
     "version": "verzió",
     "© 2026": "© 2026",
     "·": "·"

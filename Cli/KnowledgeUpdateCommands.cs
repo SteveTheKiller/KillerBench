@@ -33,7 +33,7 @@ internal static class KnowledgeUpdateCommands
 
             var plan = configuration.CreatePlan(args[2]);
             using var client = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("KillerBench/0.1.0");
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("KillerBench/1.0.0");
             var source = new HttpKnowledgeCandidateSource(client, plan.Endpoints);
             var progress = new Progress<KnowledgeUpdateProgress>(item =>
                 Console.Error.WriteLine($"{item.PackId}: {item.Stage}. {item.Detail}"));

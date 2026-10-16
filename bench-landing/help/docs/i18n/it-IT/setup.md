@@ -1,6 +1,6 @@
 # Download e configurazione
 
-KillerBench 0.1.0 non è ancora stato rilasciato. Non è ancora disponibile alcun pacchetto o download pubblico di KillerBench. Questa pagina descrive i requisiti attuali del pacchetto, così puoi prepararti senza scaricare una copia non ufficiale.
+KillerBench 1.0.0 non è ancora stato rilasciato. Non è ancora disponibile alcun pacchetto o download pubblico di KillerBench. Questa pagina descrive i requisiti attuali del pacchetto, così puoi prepararti senza scaricare una copia non ufficiale.
 
 ## Windows e runtime
 

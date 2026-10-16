@@ -1,6 +1,6 @@
 # Pobieranie i konfiguracja
 
-KillerBench 0.1.0 nie został jeszcze wydany. Nie jest jeszcze dostępny żaden publiczny pakiet ani plik do pobrania. Ta strona opisuje bieżące wymagania pakietu, aby można było się przygotować bez pobierania nieoficjalnej kopii.
+KillerBench 1.0.0 nie został jeszcze wydany. Nie jest jeszcze dostępny żaden publiczny pakiet ani plik do pobrania. Ta strona opisuje bieżące wymagania pakietu, aby można było się przygotować bez pobierania nieoficjalnej kopii.
 
 ## Windows i środowisko uruchomieniowe
 

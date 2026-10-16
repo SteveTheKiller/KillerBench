@@ -68,7 +68,7 @@
     "KillerBench": "KillerBench",
     "KillerBench is a Windows diagnostic and repair workbench in development. Diagnose first, follow the evidence, and fix only what the evidence proves, all on the local computer.": "KillerBench әзірленіп жатқан Windows диагностикасы мен жөндеуінің жұмыс ортасы. Әуелі диагностика жасаңыз, дәлелдерді қадағалаңыз және тек дәлелмен расталған мәселелерді жергілікті компьютерде түзетіңіз.",
     "KillerBench is in development. Public downloads are not available yet. Native repair validation is still in progress.": "KillerBench әзірленіп жатыр. Жалпыға арналған жүктеу әзірше қолжетімсіз. Жергілікті жөндеулерді тексеру әлі жалғасуда.",
-    "KillerBench v0.1.0": "KillerBench v0.1.0",
+    "KillerBench v1.0.0": "KillerBench v1.0.0",
     "KillerBench | Diagnostic Workbench": "KillerBench | Диагностика жұмыс ортасы",
     "KillerMCP": "KillerMCP",
     "Knowledge packs": "Білім пакеттері",
@@ -135,7 +135,7 @@
     "platform": "платформа",
     "shows a first read-only workflow.": "алғашқы тек оқуға арналған үдерісті көрсетеді.",
     "status": "күйі",
-    "v0.1.0 · © 2026": "v0.1.0 · © 2026",
+    "v1.0.0 · © 2026": "v1.0.0 · © 2026",
     "version": "нұсқа",
     "© 2026": "© 2026",
     "·": "·"

@@ -40,7 +40,7 @@ internal static class NativeValidationEvidenceChecks
     private static NativeValidationRecord Record(NativeValidationScenario scenario, string recipeId, int recipeVersion,
         NativeValidationOutcome outcome, DateTimeOffset recordedUtc) =>
         new(NativeValidationEvidence.SchemaVersion, scenario.Id, recipeId, recipeVersion, outcome,
-            "Windows 11 Pro", "24H2", "26100.1", "x64", "0.1.0", recordedUtc,
+            "Windows 11 Pro", "24H2", "26100.1", "x64", "1.0.0", recordedUtc,
             [.. scenario.RequiredArtifacts.Select((kind, index) => new NativeValidationArtifact(kind, "artifact-" + index + ".json",
                 new string(index % 2 == 0 ? 'a' : 'b', 64)))], "Disposable VM fixture.");
 

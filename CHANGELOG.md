@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.0] - Unreleased
+## [1.0.0] - Unreleased
 
 KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. Its first release brings a read-only Full system scan, focused tools for common Windows problems, readable reports and a shared Engine and CLI for scripting and integration. It connects findings to targeted next steps and lets you review and approve supported repairs with fresh prerequisites, journals and follow-up verification. Native repair validation is still in progress.
 

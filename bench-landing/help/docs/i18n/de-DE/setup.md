@@ -1,6 +1,6 @@
 # Download und Einrichtung
 
-KillerBench 0.1.0 ist unveröffentlicht. Es gibt noch kein öffentliches KillerBench-Paket und keinen Download. Diese Seite beschreibt die aktuellen Paketanforderungen, damit Sie sich vorbereiten können, ohne eine inoffizielle Kopie herunterzuladen.
+KillerBench 1.0.0 ist unveröffentlicht. Es gibt noch kein öffentliches KillerBench-Paket und keinen Download. Diese Seite beschreibt die aktuellen Paketanforderungen, damit Sie sich vorbereiten können, ohne eine inoffizielle Kopie herunterzuladen.
 
 ## Windows und Laufzeit
 

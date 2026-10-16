@@ -57,7 +57,7 @@ public partial class MainWindow
 
     private void RefreshTheme()
     {
-        ThemeStatus.Text = "v0.1.0";
+        ThemeStatus.Text = "v1.0.0";
         RefreshWindowEdge();
         DwmChrome.SetThemeBorder(this);
     }

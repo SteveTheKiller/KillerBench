@@ -1,6 +1,6 @@
 # Stažení a nastavení
 
-KillerBench 0.1.0 zatím není vydán. Veřejný balíček ani stažení KillerBench zatím nejsou k dispozici. Tato stránka popisuje aktuální požadavky balíčku, abyste se mohli připravit bez stahování neoficiální kopie.
+KillerBench 1.0.0 zatím není vydán. Veřejný balíček ani stažení KillerBench zatím nejsou k dispozici. Tato stránka popisuje aktuální požadavky balíčku, abyste se mohli připravit bez stahování neoficiální kopie.
 
 ## Windows a modul runtime
 

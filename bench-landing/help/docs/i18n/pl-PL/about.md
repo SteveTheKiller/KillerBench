@@ -1,6 +1,6 @@
 # O KillerBench
 
-KillerBench to warsztat do diagnostyki, naprawy i konserwacji systemu Windows autorstwa Steve the Killer, należący do [rodziny Killer Tools](https://killertools.net). Wersja 0.1.0 nie została jeszcze wydana. Aplikacja komputerowa, Engine i CLI współdzielą dowody diagnostyczne oraz obsługiwane procesy naprawy.
+KillerBench to warsztat do diagnostyki, naprawy i konserwacji systemu Windows autorstwa Steve the Killer, należący do [rodziny Killer Tools](https://killertools.net). Wersja 1.0.0 nie została jeszcze wydana. Aplikacja komputerowa, Engine i CLI współdzielą dowody diagnostyczne oraz obsługiwane procesy naprawy.
 
 ## Dostępność i zakres
 

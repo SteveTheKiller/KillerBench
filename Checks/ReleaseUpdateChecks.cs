@@ -4,19 +4,19 @@ internal static class ReleaseUpdateChecks
 {
     public static void Run()
     {
-        var running = new Version(0, 1, 0);
-        Require(SelfUpdate.ParseNewerRelease("""{"tag_name":"v0.1.1","draft":false,"prerelease":false}""", running) == "v0.1.1",
+        var running = new Version(1, 0, 0);
+        Require(SelfUpdate.ParseNewerRelease("""{"tag_name":"v1.0.1","draft":false,"prerelease":false}""", running) == "v1.0.1",
             "A newer stable release is offered");
-        Require(SelfUpdate.ParseNewerRelease("""{"tag_name":"v0.1.0","draft":false,"prerelease":false}""", running) is null &&
-            SelfUpdate.ParseNewerRelease("""{"tag_name":"v0.0.9","draft":false,"prerelease":false}""", running) is null,
+        Require(SelfUpdate.ParseNewerRelease("""{"tag_name":"v1.0.0","draft":false,"prerelease":false}""", running) is null &&
+            SelfUpdate.ParseNewerRelease("""{"tag_name":"v0.9.9","draft":false,"prerelease":false}""", running) is null,
             "The running release and older releases are not offered");
-        Require(SelfUpdate.ParseNewerRelease("""{"tag_name":"v0.2.0","draft":false,"prerelease":true}""", running) is null &&
-            SelfUpdate.ParseNewerRelease("""{"tag_name":"v0.2.0","draft":true,"prerelease":false}""", running) is null &&
-            SelfUpdate.ParseNewerRelease("""{"tag_name":"v0.2.0","prerelease":null}""", running) is null,
+        Require(SelfUpdate.ParseNewerRelease("""{"tag_name":"v1.1.0","draft":false,"prerelease":true}""", running) is null &&
+            SelfUpdate.ParseNewerRelease("""{"tag_name":"v1.1.0","draft":true,"prerelease":false}""", running) is null &&
+            SelfUpdate.ParseNewerRelease("""{"tag_name":"v1.1.0","prerelease":null}""", running) is null,
             "Prereleases, drafts and unclear release states are never offered");
-        Require(SelfUpdate.ParseNewerRelease("""{"tag_name":"v0.2.0-beta"}""", running) is null &&
-            SelfUpdate.ParseNewerRelease("""{"tag_name":"v0.2.0 & del x"}""", running) is null &&
-            SelfUpdate.ParseNewerRelease("""{"tag_name":"0.2.0"}""", running) is null &&
+        Require(SelfUpdate.ParseNewerRelease("""{"tag_name":"v1.1.0-beta"}""", running) is null &&
+            SelfUpdate.ParseNewerRelease("""{"tag_name":"v1.1.0 & del x"}""", running) is null &&
+            SelfUpdate.ParseNewerRelease("""{"tag_name":"1.1.0"}""", running) is null &&
             SelfUpdate.ParseNewerRelease("""{"tag_name":2}""", running) is null &&
             SelfUpdate.ParseNewerRelease("[]", running) is null,
             "Only a plain vX.Y.Z tag can reach the update script");

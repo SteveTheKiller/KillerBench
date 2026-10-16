@@ -68,7 +68,7 @@
     "KillerBench": "KillerBench",
     "KillerBench is a Windows diagnostic and repair workbench in development. Diagnose first, follow the evidence, and fix only what the evidence proves, all on the local computer.": "KillerBench একটি উন্নয়নাধীন Windows রোগনির্ণয় এবং মেরামতের ওয়ার্কবেঞ্চ। আগে রোগনির্ণয় করুন, প্রমাণ অনুসরণ করুন এবং শুধু প্রমাণিত সমস্যা ঠিক করুন, সবই স্থানীয় কম্পিউটারে।",
     "KillerBench is in development. Public downloads are not available yet. Native repair validation is still in progress.": "KillerBench-এর উন্নয়ন চলছে। সর্বজনীন ডাউনলোড এখনো উপলব্ধ নয়। নেটিভ মেরামতের যাচাই এখনও চলছে.",
-    "KillerBench v0.1.0": "KillerBench v0.1.0",
+    "KillerBench v1.0.0": "KillerBench v1.0.0",
     "KillerBench | Diagnostic Workbench": "KillerBench | রোগনির্ণয় ওয়ার্কবেঞ্চ",
     "KillerMCP": "KillerMCP",
     "Knowledge packs": "জ্ঞান প্যাক",
@@ -135,7 +135,7 @@
     "platform": "প্ল্যাটফর্ম",
     "shows a first read-only workflow.": "প্রথমবার শুধু তথ্য পড়ার একটি প্রক্রিয়া দেখায়।",
     "status": "অবস্থা",
-    "v0.1.0 · © 2026": "v0.1.0 · © 2026",
+    "v1.0.0 · © 2026": "v1.0.0 · © 2026",
     "version": "সংস্করণ",
     "© 2026": "© 2026",
     "·": "·"

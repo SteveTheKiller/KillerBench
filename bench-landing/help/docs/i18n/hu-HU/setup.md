@@ -1,6 +1,6 @@
 # Letöltés és beállítás
 
-A KillerBench 0.1.0 még nem jelent meg. Nyilvános KillerBench-csomag vagy letöltés még nem érhető el. Ez az oldal a csomag jelenlegi követelményeit írja le, hogy nem hivatalos példány letöltése nélkül készülhessen fel.
+A KillerBench 1.0.0 még nem jelent meg. Nyilvános KillerBench-csomag vagy letöltés még nem érhető el. Ez az oldal a csomag jelenlegi követelményeit írja le, hogy nem hivatalos példány letöltése nélkül készülhessen fel.
 
 ## Windows és futtatókörnyezet
 

@@ -30,7 +30,7 @@ internal static class AppInfo
     internal static string Version =>
         Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
         ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)
-        ?? "0.1.0";
+        ?? "1.0.0";
 
     /// <summary>Numeric version used for comparing against a release tag.</summary>
     internal static System.Version? AssemblyVersion => Assembly.GetExecutingAssembly().GetName().Version;

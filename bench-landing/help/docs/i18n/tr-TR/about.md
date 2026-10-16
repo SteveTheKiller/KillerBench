@@ -1,6 +1,6 @@
 # KillerBench hakkında
 
-KillerBench, Steve the Killer tarafından geliştirilen ve [Killer Tools ailesinin](https://killertools.net) parçası olan bir Windows tanılama, onarım ve bakım tezgâhıdır. 0.1.0 sürümü henüz yayımlanmadı. Masaüstü uygulaması, Engine ve CLI, tanılama kanıtlarını ve desteklenen onarım iş akışlarını paylaşır.
+KillerBench, Steve the Killer tarafından geliştirilen ve [Killer Tools ailesinin](https://killertools.net) parçası olan bir Windows tanılama, onarım ve bakım tezgâhıdır. 1.0.0 sürümü henüz yayımlanmadı. Masaüstü uygulaması, Engine ve CLI, tanılama kanıtlarını ve desteklenen onarım iş akışlarını paylaşır.
 
 ## Kullanılabilirlik ve kapsam
 

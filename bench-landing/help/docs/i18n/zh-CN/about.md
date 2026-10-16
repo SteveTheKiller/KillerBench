@@ -1,6 +1,6 @@
 # 关于 KillerBench
 
-KillerBench 是由 Steve the Killer 开发的 Windows 诊断、修复和维护工作台，属于 [Killer Tools 系列](https://killertools.net)。0.1.0 版本尚未发布。其桌面应用、Engine 和 CLI 共享诊断证据和受支持的修复工作流程。
+KillerBench 是由 Steve the Killer 开发的 Windows 诊断、修复和维护工作台，属于 [Killer Tools 系列](https://killertools.net)。1.0.0 版本尚未发布。其桌面应用、Engine 和 CLI 共享诊断证据和受支持的修复工作流程。
 
 ## 可用性和范围
 

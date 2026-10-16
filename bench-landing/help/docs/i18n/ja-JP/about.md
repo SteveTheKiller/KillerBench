@@ -1,6 +1,6 @@
 # KillerBench について
 
-KillerBench は、Steve the Killer が作成した Windows の診断・修復・メンテナンス用ワークベンチで、[Killer Tools ファミリー](https://killertools.net) の一部です。バージョン 0.1.0 は未リリースです。デスクトップ アプリ、Engine、CLI は、診断の証拠と対応する修復のワークフローを共有しています。
+KillerBench は、Steve the Killer が作成した Windows の診断・修復・メンテナンス用ワークベンチで、[Killer Tools ファミリー](https://killertools.net) の一部です。バージョン 1.0.0 は未リリースです。デスクトップ アプリ、Engine、CLI は、診断の証拠と対応する修復のワークフローを共有しています。
 
 ## 提供状況と範囲
 

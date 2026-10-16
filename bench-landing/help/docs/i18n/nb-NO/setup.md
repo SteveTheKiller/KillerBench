@@ -1,6 +1,6 @@
 # Nedlasting og oppsett
 
-KillerBench 0.1.0 er ikke utgitt. Ingen offentlig KillerBench-pakke eller nedlasting er tilgjengelig ennå. Denne siden beskriver gjeldende pakkekrav, slik at du kan forberede deg uten å laste ned en uoffisiell kopi.
+KillerBench 1.0.0 er ikke utgitt. Ingen offentlig KillerBench-pakke eller nedlasting er tilgjengelig ennå. Denne siden beskriver gjeldende pakkekrav, slik at du kan forberede deg uten å laste ned en uoffisiell kopi.
 
 ## Windows og kjøretid
 

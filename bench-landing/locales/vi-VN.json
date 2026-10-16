@@ -68,7 +68,7 @@
     "KillerBench": "KillerBench",
     "KillerBench is a Windows diagnostic and repair workbench in development. Diagnose first, follow the evidence, and fix only what the evidence proves, all on the local computer.": "KillerBench là bộ công cụ chẩn đoán và sửa chữa Windows đang được phát triển. Chẩn đoán trước, theo dõi bằng chứng và chỉ sửa những gì bằng chứng xác nhận. Tất cả đều thực hiện trên máy tính cục bộ.",
     "KillerBench is in development. Public downloads are not available yet. Native repair validation is still in progress.": "KillerBench đang được phát triển. Chưa có bản tải xuống công khai. Việc kiểm chứng sửa chữa trực tiếp trên Windows vẫn đang diễn ra.",
-    "KillerBench v0.1.0": "KillerBench v0.1.0",
+    "KillerBench v1.0.0": "KillerBench v1.0.0",
     "KillerBench | Diagnostic Workbench": "KillerBench | Bộ công cụ chẩn đoán",
     "KillerMCP": "KillerMCP",
     "Knowledge packs": "Gói kiến thức",
@@ -135,7 +135,7 @@
     "platform": "nền tảng",
     "shows a first read-only workflow.": "minh họa quy trình chỉ đọc đầu tiên.",
     "status": "trạng thái",
-    "v0.1.0 · © 2026": "v0.1.0 · © 2026",
+    "v1.0.0 · © 2026": "v1.0.0 · © 2026",
     "version": "phiên bản",
     "© 2026": "© 2026",
     "·": "·"

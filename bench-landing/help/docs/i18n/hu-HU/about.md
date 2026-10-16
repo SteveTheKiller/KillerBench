@@ -1,6 +1,6 @@
 # A KillerBench névjegye
 
-A KillerBench Steve the Killer Windows diagnosztikai, javító- és karbantartóeszköze, a [Killer Tools család](https://killertools.net) tagja. A 0.1.0 verzió még nem jelent meg. Az asztali alkalmazás, az Engine és a CLI közösen használja a diagnosztikai bizonyítékokat és a támogatott javítási folyamatokat.
+A KillerBench Steve the Killer Windows diagnosztikai, javító- és karbantartóeszköze, a [Killer Tools család](https://killertools.net) tagja. A 1.0.0 verzió még nem jelent meg. Az asztali alkalmazás, az Engine és a CLI közösen használja a diagnosztikai bizonyítékokat és a támogatott javítási folyamatokat.
 
 ## Elérhetőség és hatókör
 
