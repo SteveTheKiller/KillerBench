@@ -355,7 +355,7 @@ public static partial class WorkflowOptionCatalog
 
     private static ReadOnlyCollection<WorkflowOptionDefinition> DefenderOptions() => Array.AsReadOnly<WorkflowOptionDefinition>(
     [
-        Choice("scanType", "GO action", "None", Array.AsReadOnly<WorkflowOptionChoice>(
+        Choice("scanType", "Action", "None", Array.AsReadOnly<WorkflowOptionChoice>(
         [
             new WorkflowOptionChoice("None", "Diagnosis only"),
             new WorkflowOptionChoice(nameof(DefenderScanType.Quick), "Quick scan"),

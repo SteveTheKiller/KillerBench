@@ -886,7 +886,7 @@ internal static class WorkflowChecks
             var readOnly = new Host { State = state };
             result = await Workflows.RunAsync(WorkflowKind.WindowsUpdate, false, folder, host: readOnly);
             Require(readOnly.Repaired.Count == 0 && result.Status == "Needs attention", "Diagnosis never repairs");
-            if (state == CheckState.Repairable) Require(WorkflowReport.Format(result).Contains("Repair available; not run") && WorkflowReport.Format(result).Contains("press GO") && WorkflowReport.Format(result, true).Contains("--auto-repair"), "Diagnosis report explains how to run eligible repairs on the current surface");
+            if (state == CheckState.Repairable) Require(WorkflowReport.Format(result).Contains("Repair available; not run") && WorkflowReport.Format(result).Contains("then select Run repair") && WorkflowReport.Format(result, true).Contains("--auto-repair"), "Diagnosis report explains how to run eligible repairs on the current surface");
         }
         var unknown = new Host { State = CheckState.Unknown };
         Require(InstallerDiagnostics.Assess(new(null, false, true)).State == CheckState.Clear, "Unconfigured MSI policy is not treated as explicit restriction");

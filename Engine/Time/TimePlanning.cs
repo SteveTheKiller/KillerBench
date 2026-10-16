@@ -33,7 +33,7 @@ public sealed record TimeConfigurationPlan(TimeSourceMode Source, IReadOnlyList<
         lines.Add("");
         lines.Add("No clock, service or source settings changed.");
         lines.Add("Source changes require separate explicit execution and fresh prerequisite checks.");
-        lines.Add("To check synchronization, select Keep configured source and press GO.");
+        lines.Add("To check synchronization, select Keep configured source, then select Run diagnosis.");
         return string.Join("\n", lines);
     }
 }
