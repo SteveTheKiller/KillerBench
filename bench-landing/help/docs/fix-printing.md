@@ -6,7 +6,7 @@ Use this when jobs sit in the queue, a printer shows offline, or the wrong print
 
 1. Open **Devices** and choose **Printing**.
 2. Press **Find local printers** and pick the queue that is misbehaving. To check every queue, choose **Use general printing checks**.
-3. Leave **Auto-repair confirmed issues** off and press **GO**.
+3. Leave **Auto-repair confirmed issues** off and press **Run diagnosis**.
 4. Read the report. It shows the Print Spooler state, paused queues, offline mode, visible jobs, driver conditions, port registrations, recent PrintService errors and, for network printers, one connection attempt to the printer's assigned address.
 
 A successful connection or a clean condition code does not prove the printer has paper, toner or a working mechanism.
@@ -21,11 +21,11 @@ A successful connection or a clean condition code does not prove the printer has
 
 1. Press **Find blocked print jobs**.
 2. Select the job that shows Error or Blocked and tick **Cancel only this selected job**.
-3. Press **GO**. Only that job is canceled, and the result is read back.
+3. Press **Run diagnosis**. Only that job is canceled, and the result is read back.
 
 ## Fix the default printer
 
-Choose the queue that should be the default and tick **Repair a missing or conflicting default with this queue**, then press **GO**. This only acts when the default is missing or conflicting.
+Choose the queue that should be the default and tick **Repair a missing or conflicting default with this queue**, then press **Run diagnosis**. This only acts when the default is missing or conflicting.
 
 ## From the command line
 

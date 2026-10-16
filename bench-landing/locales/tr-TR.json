@@ -20,7 +20,7 @@
     "CLI guide": "CLI kılavuzu",
     "Check before retrying": "Yeniden denemeden önce kontrol",
     "Choose a guide": "Bir kılavuz seçin",
-    "Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "Bir araç seçin, seçeneklerini inceleyin ve GO düğmesine basın. Ham çıktı veya Okunabilir rapor görünümündeki kanıtları izleyin. Desteklenen onarımlar güncel ön koşulları denetler, isteği kaydeder ve sonucu doğrular.",
+    "Choose a tool, review its options, and press Run diagnosis. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "Bir araç seçin, seçeneklerini inceleyin ve Tanılama çalıştır düğmesine basın. Ham çıktı veya Okunabilir rapor görünümündeki kanıtları izleyin. Desteklenen onarımlar güncel ön koşulları denetler, isteği kaydeder ve sonucu doğrular.",
     "Choose language": "Dil seçin",
     "Choose theme": "Tema seçin",
     "Close": "Kapat",

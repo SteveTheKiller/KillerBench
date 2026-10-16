@@ -79,6 +79,52 @@ def esc(value):
     return html.escape(value, quote=True)
 
 
+# Localized Help, Technical and About pages. Each locale keeps translated Markdown with the same
+# heading structure as English in help/docs/i18n/<locale>/, plus ui.json for page chrome. The
+# folder sits under docs/, so it is never part of the public export.
+I18N = ROOT / "help" / "docs" / "i18n"
+LOCALE_ORDER = ["en-US", "bn", "cs-CZ", "de-DE", "es", "fr-FR", "hu-HU", "it-IT", "ja-JP", "kk-KZ", "nb-NO", "pl-PL", "pt-BR", "ru-RU", "tr-TR", "uk-UA", "vi-VN", "zh-CN", "zh-TW"]
+DOC_PAGES = ("help.html", "technical.html", "about.html")
+LOCAL_ROUTES = set(DOC_PAGES) | {"index.html", "engine/index.html"}
+DOC_LOCALES = [c for c in LOCALE_ORDER[1:] if (I18N / c / "ui.json").is_file()]
+AVAILABLE = ["en-US"] + DOC_LOCALES
+
+
+class Loc:
+    def __init__(self, code):
+        self.code = code
+        catalog = ROOT / "locales" / (code + ".json")
+        data = json.loads(catalog.read_text(encoding="utf-8")) if catalog.is_file() else {"language": "English", "strings": {}}
+        self.language, self.catalog = data["language"], data["strings"]
+        self.ui = json.loads((I18N / code / "ui.json").read_text(encoding="utf-8")) if code != "en-US" else {}
+        self.sub = "" if code == "en-US" else code + "/"
+        self.up = "" if code == "en-US" else "../"
+
+    def t(self, text):
+        if self.code == "en-US":
+            return text
+        if text in self.ui:
+            return self.ui[text]
+        if text in self.catalog:
+            return self.catalog[text]
+        raise ValueError("%s: missing docs UI translation: %s" % (self.code, text))
+
+    def rebase(self, markup):
+        """Root-relative references in localized pages point one folder up unless the route is localized."""
+        if self.code == "en-US":
+            return markup
+        def fix(match):
+            ref = match.group(2)
+            url = urlsplit(html.unescape(ref))
+            if url.scheme or url.netloc or ref.startswith("#") or not url.path or url.path in LOCAL_ROUTES:
+                return match.group(0)
+            return '%s="../%s"' % (match.group(1), ref)
+        return re.sub(r'(href|src)="([^"]*)"', fix, markup)
+
+
+EN = Loc("en-US")
+
+
 def inline(value):
     code = []
 
@@ -197,16 +243,29 @@ def plain(markdown):
 NAV = [("help.html", "Help", "help"), ("technical.html", "Technical", "technical"), ("engine/index.html", "Engine", "engine"), ("about.html", "About", "about")]
 
 
-def topbar(prefix, active):
-    nav = "".join('<a%s href="%s%s">%s</a>' % (' class="on"' if key == active else "", prefix, href, text) for href, text, key in NAV)
-    themes = "".join('<button class="swatch sw-%s" data-theme="%s" title="%s"></button>' % (t, t, "Black" if t == "hc" else t.capitalize()) for t in THEMES)
-    accents = "".join('<button class="acc" data-accent="%s" style="background:%s;color:%s" title="%s"></button>' % (n, c, c, n.capitalize()) for n, c in ACCENTS)
+def topbar(prefix, active, loc=EN, pages=None):
+    """prefix reaches shared assets; pages reaches the localized routes (defaults to prefix)."""
+    pages = prefix if pages is None else pages
+    t = loc.t
+    nav = "".join('<a%s href="%s%s">%s</a>' % (' class="on"' if key == active else "", pages, href, esc(t(text))) for href, text, key in NAV)
+    themes = "".join('<button class="swatch sw-%s" data-theme="%s" title="%s"></button>' % (th, th, esc(t("Black" if th == "hc" else th.capitalize()))) for th in THEMES)
+    accents = "".join('<button class="acc" data-accent="%s" style="background:%s;color:%s" title="%s"></button>' % (n, c, c, esc(t(n.capitalize()))) for n, c in ACCENTS)
     return ('<header class="topbar"><a class="tb-home" href="%sindex.html" title="KillerBench"><img class="tb-icon" src="%sapp-icon.png" alt="KillerBench" width="44" height="44"><img class="wm-logo tb-wm" src="%sbrand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>'
             '<a class="tb-mcp-link" href="%smcp.html" aria-label="KillerMCP"><img src="%smcp.png" alt="" aria-hidden="true"><span class="tb-mcp-wordmark"><span>Killer</span><span class="tb-mcp-accent">MCP</span></span></a>'
-            '<span class="tb-spacer"></span><nav class="tb-nav">' % (prefix, prefix, prefix, prefix, prefix) + nav + '</nav>'
-            '<div class="tgrp" role="group" aria-label="Theme">' + themes + '</div>'
-            '<div class="acc-fly accent-switch" id="accentSwitch"><button class="acc-toggle" id="accentToggle" aria-haspopup="true" aria-expanded="false" title="Accent color"></button>'
-            '<div class="acc-pop" id="accentPop" hidden role="group" aria-label="Accent color"><span class="acc-pop-label">accent:</span>' + accents + '</div></div></header>')
+            '<span class="tb-spacer"></span><nav class="tb-nav">' % (pages, prefix, prefix, prefix, prefix) + nav + '</nav>'
+            '<div class="tgrp" role="group" aria-label="%s">' % esc(t("Theme")) + themes + '</div>'
+            '<div class="acc-fly accent-switch" id="accentSwitch"><button class="acc-toggle" id="accentToggle" aria-haspopup="true" aria-expanded="false" title="%s"></button>' % esc(t("Accent color")) +
+            '<div class="acc-pop" id="accentPop" hidden role="group" aria-label="%s"><span class="acc-pop-label">%s</span>' % (esc(t("Accent color")), esc(t("accent:"))) + accents + '</div></div></header>')
+
+
+def lang_switch(file, loc):
+    """The same language menu build-locales.py adds to the entry pages."""
+    items = []
+    for code in AVAILABLE:
+        other = Loc(code)
+        items.append('<a class="lang-item" hreflang="%s" lang="%s" href="%s" aria-pressed="%s">%s</a>' % (code, code, loc.up + other.sub + file, str(code == loc.code).lower(), esc(other.language)))
+    return ('<div class="lang-switch"><button class="lang-toggle" id="languageToggle" aria-haspopup="true" aria-expanded="false" aria-label="%s">%s</button>'
+            '<div class="lang-menu" id="languageMenu" hidden>%s</div></div>') % (esc(loc.t("Choose language")), esc(loc.code.split("-")[0].upper()), "".join(items))
 
 
 def header(site):
@@ -299,19 +358,54 @@ def tables(body):
     return body.replace("<table>", '<table class="spec-table">')
 
 
-def page_shell(file, title, description, active, style, aside, inner, script=""):
-    canonical = "https://killerbench.net/" + file
-    return ('<!doctype html>\n<html lang="en-US" data-theme="dark"><head><meta charset="utf-8">'
+def page_shell(file, title, description, active, style, aside, inner, script="", loc=EN):
+    canonical = "https://killerbench.net/" + loc.sub + file
+    alternates = "".join('<link rel="alternate" hreflang="%s" href="https://killerbench.net/%s%s">' % (c, Loc(c).sub, file) for c in AVAILABLE)
+    alternates += '<link rel="alternate" hreflang="x-default" href="https://killerbench.net/%s">' % file
+    ui = "".join(' data-ui-%s="%s"' % (k, esc(loc.t(v))) for k, v in (("theme", "Theme"), ("choose-theme", "Choose theme"), ("accent", "Accent color"), ("accent-label", "accent:"), ("close", "Close"), ("no-results", "No matching pages."))) if loc.code != "en-US" else ""
+    note = VERSION_NOTE if loc.code == "en-US" else '%s <a href="https://killertools.net">killertools.net</a>' % esc(loc.t("In development · Part of")).replace("·", "&middot;")
+    if loc.code != "en-US":
+        style = style.replace("url('grain.png", "url('../grain.png")
+    return ('<!doctype html>\n<html lang="%s" data-theme="dark"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width,initial-scale=1">'
-            '<meta name="description" content="%s"><link rel="canonical" href="%s">'
+            '<meta name="description" content="%s"><link rel="canonical" href="%s">%s'
             '<meta property="og:title" content="%s"><meta property="og:description" content="%s">'
             '<meta property="og:image" content="https://killerbench.net/og-image.png"><meta property="og:url" content="%s">'
             '<meta property="og:type" content="website"><meta name="twitter:card" content="summary_large_image">'
-            '<title>%s</title><link rel="stylesheet" href="family.css?v=12"><link rel="stylesheet" href="bench.css?v=6">'
-            '<style>%s</style><script defer src="bench.js?v=5"></script></head>'
-            '<body data-brand-base="brand">%s<div class="shell">%s<main class="content"><div class="content-scroll"><div class="content-inner">%s</div></div></main></div>'
+            '<title>%s</title><link rel="stylesheet" href="%sfamily.css?v=12"><link rel="stylesheet" href="%sbench.css?v=6">'
+            '<style>%s</style><script defer src="%sbench.js?v=5"></script></head>'
+            '<body data-brand-base="%sbrand"%s>%s%s<div class="shell">%s<main class="content"><div class="content-scroll"><div class="content-inner">%s</div></div></main></div>'
             '<footer class="statusbar"><span class="left">%s</span><span class="right">%s &middot; &copy; 2026 <b><a href="https://thekiller.net">Steve the Killer</a></b></span></footer>'
-            '%s</body></html>\n') % (esc(description), canonical, esc(title), esc(description), canonical, esc(title), style, topbar("", active), aside, inner, VERSION_NOTE, VERSION, script)
+            '%s</body></html>\n') % (loc.code, esc(description), canonical, alternates, esc(title), esc(description), canonical, esc(title), loc.up, loc.up, style, loc.up,
+                                     loc.up, ui, topbar(loc.up, active, loc, "")[:-len("</header>")], lang_switch(file, loc) + "</header>", loc.rebase(aside), loc.rebase(inner), note, VERSION, script)
+
+
+def render_page(page_id, loc=EN):
+    """Render one guide page. A translation must keep the English heading structure, and it
+    takes the English anchors so links and search results stay identical across languages."""
+    english = (ROOT / "help" / "docs" / (page_id + ".md")).read_text(encoding="utf-8")
+    body, headings, title = render(english)
+    if loc.code == "en-US":
+        return body, headings, title, english
+    markdown = (I18N / loc.code / (page_id + ".md")).read_text(encoding="utf-8")
+    local, local_headings, local_title = render(markdown)
+    pattern = r'<h([1-3]) id="([^"]+)">'
+    ids, local_ids = re.findall(pattern, body), re.findall(pattern, local)
+    if [level for level, _ in ids] != [level for level, _ in local_ids] or len(headings) != len(local_headings):
+        raise ValueError("%s/%s.md: heading structure differs from English" % (loc.code, page_id))
+    order = iter(ids)
+    local = re.sub(pattern, lambda m: '<h%s id="%s">' % (m.group(1), next(order)[1]), local)
+    if sorted(re.findall(r'<li id="([^"]+)"', local)) != sorted(re.findall(r'<li id="([^"]+)"', body)):
+        raise ValueError("%s/%s.md: command entries differ from English" % (loc.code, page_id))
+    return local, [(a, t, lvl) for (a, _, lvl), (_, t, _) in zip(headings, local_headings)], local_title, markdown
+
+
+def output(loc, file, page):
+    path = ROOT / loc.sub / file
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists():
+        path.read_text(encoding="utf-8")
+    path.write_text(page, encoding="utf-8", newline="\n")
 
 
 OUTLINE_CSS = (".sb-tabs .on{border-bottom:0}.outline{padding:8px 0;overflow-y:auto;flex:1;min-height:0}"
@@ -337,17 +431,17 @@ OUTLINE_SPY = ('<script>(function(){var links=[].slice.call(document.querySelect
                'sc.addEventListener("scroll",spy,{passive:true});window.addEventListener("load",spy);spy();})();</script>')
 
 
-def build_help():
+def build_help(loc=EN, write=True):
     groups, entries = [], []
     for page_id, title, group in HELP_PAGES:
-        markdown = (ROOT / "help" / "docs" / (page_id + ".md")).read_text(encoding="utf-8")
-        body, headings, _ = render(markdown)
+        title, group = loc.t(title), loc.t(group)
+        body, headings, _, markdown = render_page(page_id, loc)
         body = tables(relink(prefix_ids(without_title(body), page_id), True))
         anchor = help_anchor(page_id)
         if not groups or groups[-1][0] != group:
             groups.append((group, []))
         groups[-1][1].append((anchor, title, body))
-        entries.append({"u": "help.html", "a": anchor, "g": "Help", "t": title,
+        entries.append({"u": "help.html", "a": anchor, "g": loc.t("Help"), "t": title,
                         "h": [[anchor, title]] + [[help_anchor(page_id, a), re.sub(r"[`*]", "", t)] for a, t, _ in headings],
                         "x": plain(markdown)[:6000]})
     outline, inner = [], []
@@ -359,10 +453,10 @@ def build_help():
         for anchor, title, body in items:
             inner.append('<div class="acc-item" id="%s"><button class="acc-head" type="button" aria-expanded="false"><span>%s</span><span class="chev" aria-hidden="true">&#9656;</span></button>'
                          '<div class="acc-body"><div class="acc-body-inner">%s</div></div></div>' % (anchor, esc(title), body))
-    hero = ('<section class="help-hero"><span class="page-title">How to use</span>'
+    legend = esc(loc.t("Click a row to open it. For how KillerBench works underneath, see the {technical} page.")).replace("{technical}", '<a href="technical.html">%s</a>' % esc(loc.t("Technical")))
+    hero = ('<section class="help-hero"><span class="page-title">%s</span>'
             '<img class="help-wm wm-logo" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench">'
-            '<p>Every section and tool, what it does, and how to work through common jobs step by step.</p>'
-            '<p class="legend">Click a row to open it. For how KillerBench works underneath, see the <a href="technical.html">Technical</a> page.</p></section>')
+            '<p>%s</p><p class="legend">%s</p></section>') % (esc(loc.t("How to use")), esc(loc.t("Every section and tool, what it does, and how to work through common jobs step by step.")), legend)
     style = OUTLINE_CSS + (
         ".content-inner{max-width:880px;margin:0 auto;padding:0 28px 56px}"
         ".help-cat{font-family:var(--kt-font-section);font-size:18px;font-weight:normal;letter-spacing:.5px;color:var(--accent);margin:30px 2px 12px;padding-top:6px;scroll-margin-top:20px;text-shadow:0 2px 5px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.5)}"
@@ -386,9 +480,10 @@ def build_help():
               'window.addEventListener("hashchange",function(){go(location.hash.slice(1),true);});'
               'window.addEventListener("resize",function(){var o=document.querySelector(".acc-item.open .acc-body");if(o)o.style.maxHeight=o.scrollHeight+"px";});'
               'if(location.hash)go(decodeURIComponent(location.hash.slice(1)),false);})();</script>' + OUTLINE_SPY)
-    aside = '<aside class="sidebar"><div class="sb-tabs"><span class="on">Help</span></div><nav class="outline" aria-label="Help">%s</nav></aside>' % "".join(outline)
-    page = page_shell("help.html", "KillerBench | Help", "How to use the KillerBench Windows diagnostic and repair workbench.", "help", style, aside, hero + "".join(inner), script)
-    (ROOT / "help.html").write_text(page, encoding="utf-8", newline="\n")
+    aside = '<aside class="sidebar"><div class="sb-tabs"><span class="on">%s</span></div><nav class="outline" aria-label="%s">%s</nav></aside>' % (esc(loc.t("Help")), esc(loc.t("Help")), "".join(outline))
+    page = page_shell("help.html", "KillerBench | " + loc.t("Help"), loc.t("How to use the KillerBench Windows diagnostic and repair workbench."), "help", style, aside, hero + "".join(inner), script, loc)
+    if write:
+        output(loc, "help.html", page)
     return entries
 
 
@@ -407,9 +502,8 @@ def lede_text(lede):
     return re.sub(r"<[^>]+>", "", lede).strip()
 
 
-def build_technical():
-    markdown = (ROOT / "help" / "docs" / "technical.md").read_text(encoding="utf-8")
-    body, headings, _ = render(markdown)
+def build_technical(loc=EN, write=True):
+    body, headings, _, markdown = render_page("technical", loc)
     lede, secs = sections(tables(relink(without_title(body), False)))
     columns, weights = [[], []], [0, 0]
     for sec in secs:
@@ -421,8 +515,8 @@ def build_technical():
     for a, t, _, subs in secs:
         outline.append('<a href="#%s">%s</a>' % (a, t))
         outline.extend('<a class="sub" href="#%s">%s</a>' % (sa, st) for sa, st in subs)
-    hero = ('<section class="page-hero"><span class="page-title">The Tech of</span>'
-            '<img class="wm-logo" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"><p>%s</p></section>' % esc(lede_text(lede)))
+    hero = ('<section class="page-hero"><span class="page-title">%s</span>'
+            '<img class="wm-logo" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"><p>%s</p></section>' % (esc(loc.t("The Tech of")), esc(lede_text(lede))))
     style = OUTLINE_CSS + (
         ".content-inner{max-width:1440px;margin:0 auto;padding:0 28px 56px}"
         ".tech-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}.tech-column{display:grid;gap:18px;min-width:0}"
@@ -431,34 +525,45 @@ def build_technical():
         ".tech-sec h3{font-size:15px;font-weight:600;color:var(--text);margin:16px 0 6px}.tech-sec p{margin:0 0 10px}.tech-sec b,.tech-sec strong{color:var(--text)}"
         ".tech-sec ul,.tech-sec ol{margin:6px 0 12px;padding-left:22px}.tech-sec li{margin:3px 0}.tech-sec table{width:100%;margin:8px 0 12px}.tech-sec a{color:var(--accent)}"
         ".tech-sec>:last-child{margin-bottom:0}@media (max-width:1050px){.tech-grid{grid-template-columns:1fr}}")
-    aside = '<aside class="sidebar"><div class="sb-tabs"><span class="on">Technical</span></div><nav class="outline" aria-label="Technical">%s</nav></aside>' % "".join(outline)
-    page = page_shell("technical.html", "KillerBench | Technical", lede_text(lede), "technical", style, aside, hero + '<div class="tech-grid">%s</div>' % grid, OUTLINE_SPY)
-    (ROOT / "technical.html").write_text(page, encoding="utf-8", newline="\n")
-    return [{"u": "technical.html", "a": a, "g": "Technical", "t": re.sub(r"<[^>]+>", "", t),
+    aside = '<aside class="sidebar"><div class="sb-tabs"><span class="on">%s</span></div><nav class="outline" aria-label="%s">%s</nav></aside>' % (esc(loc.t("Technical")), esc(loc.t("Technical")), "".join(outline))
+    page = page_shell("technical.html", "KillerBench | " + loc.t("Technical"), lede_text(lede), "technical", style, aside, hero + '<div class="tech-grid">%s</div>' % grid, OUTLINE_SPY, loc)
+    if write:
+        output(loc, "technical.html", page)
+    return [{"u": "technical.html", "a": a, "g": loc.t("Technical"), "t": re.sub(r"<[^>]+>", "", t),
              "h": [[a, re.sub(r"<[^>]+>", "", t)]] + [[sa, re.sub(r"<[^>]+>", "", st)] for sa, st in subs],
              "x": re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", h))).strip()[:6000]} for a, t, h, subs in secs]
 
 
-def build_about():
-    markdown = (ROOT / "help" / "docs" / "about.md").read_text(encoding="utf-8")
-    body, _, _ = render(markdown)
+def build_about(loc=EN):
+    body, _, _, _ = render_page("about", loc)
     lede, secs = sections(tables(relink(without_title(body), False)))
     cards = "".join('<div class="about-card" id="%s">%s</div>' % (a, h.replace(' id="%s"' % a, "", 1)) for a, _, h, _ in secs)
     outline = "".join('<a href="#%s">%s</a>' % (a, t) for a, t, _, _ in secs)
-    hero = ('<section class="page-hero"><span class="page-title">About</span>'
+    hero = ('<section class="page-hero"><span class="page-title">%s</span>'
             '<img class="wm-logo" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></section>'
-            '<div class="about-card" id="overview">%s</div>' % lede.replace(' class="doc-lede"', ""))
+            '<div class="about-card" id="overview">%s</div>' % (esc(loc.t("About")), lede.replace(' class="doc-lede"', "")))
     style = OUTLINE_CSS + (".content-inner{max-width:880px;margin:0 auto;padding:0 28px 56px}.about-card{scroll-margin-top:20px}"
                            ".about-card ul{margin:6px 0 0;padding-left:22px;color:var(--muted);font-size:14.5px;line-height:1.7}")
-    aside = '<aside class="sidebar"><div class="sb-tabs"><span class="on">About</span></div><nav class="outline" aria-label="About"><a href="#overview">KillerBench</a>%s</nav></aside>' % outline
-    page = page_shell("about.html", "KillerBench | About", lede_text(lede), "about", style, aside, hero + cards, OUTLINE_SPY)
-    (ROOT / "about.html").write_text(page, encoding="utf-8", newline="\n")
+    aside = '<aside class="sidebar"><div class="sb-tabs"><span class="on">%s</span></div><nav class="outline" aria-label="%s"><a href="#overview">KillerBench</a>%s</nav></aside>' % (esc(loc.t("About")), esc(loc.t("About")), outline)
+    page = page_shell("about.html", "KillerBench | " + loc.t("About"), lede_text(lede), "about", style, aside, hero + cards, OUTLINE_SPY, loc)
+    output(loc, "about.html", page)
 
 
 def build_pages():
     entries = build_help() + build_technical()
     build_about()
+    for code in DOC_LOCALES:
+        loc = Loc(code)
+        build_help(loc)
+        build_technical(loc)
+        build_about(loc)
     return entries
+
+
+def search_entries(code):
+    """Localized Help and Technical search entries for build-locales.py, relative to the locale folder."""
+    loc = Loc(code)
+    return build_help(loc, write=False) + build_technical(loc, write=False)
 
 
 def build():

@@ -11,7 +11,7 @@ Use this to turn on BitLocker, back up the recovery key and confirm the drive is
 ## Check the drive
 
 1. Open **BitLocker** and choose the drive in **Volume**.
-2. Leave the operation on **Inspect** and press **GO**. The report shows encryption state, protection status and protector identities.
+2. Leave the operation on **Inspect** and press **Run diagnosis**. The report shows encryption state, protection status and protector identities.
 3. If the TPM is present but not ready, prepare it from **Security** first. KillerBench never clears a TPM.
 
 ## Add the protectors you need
@@ -24,8 +24,8 @@ Use this to turn on BitLocker, back up the recovery key and confirm the drive is
 
 1. Press **Find recovery protectors** and select the recovery password protector.
 2. Enter a full backup file path outside the drive you are encrypting.
-3. Choose **Encrypt**, pick the encryption method, and tick **Back up the selected recovery key, then start encryption when I press GO**.
-4. Press **GO**. KillerBench writes the backup, verifies it, then starts encryption once.
+3. Choose **Encrypt**, pick the encryption method, and tick **Back up the selected recovery key, then start encryption when I select Run diagnosis**.
+4. Press **Run diagnosis**. KillerBench writes the backup, verifies it, then starts encryption once.
 5. Encryption continues in the background. Run **Inspect** later to confirm the drive reports fully encrypted with protection on.
 
 ## Back up to Active Directory or Entra ID

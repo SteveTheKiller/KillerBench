@@ -6,18 +6,18 @@ Step-by-step guides: [Encrypt a drive with BitLocker](encrypt-with-bitlocker.htm
 
 ## Using the BitLocker tool
 
-Choose the drive letter and an **Operation**, then press **GO**.
+Choose the drive letter and an **Operation**, then press **Run diagnosis**.
 
 - **Inspect** reads encryption state, protection status and protector identities. It is the default and changes nothing.
-- **BackupRecovery** writes the selected recovery password to a new file outside the protected drive and verifies it. Press **Find recovery protectors** first, choose the protector, then confirm the backup.
+- **Back up recovery** writes the selected recovery password to a new file outside the protected drive and verifies it. Press **Find recovery protectors** first, choose the protector, then confirm the backup.
 - **Encrypt** backs up the selected recovery password, verifies the backup, then starts encryption once with the method you choose. The Windows drive needs a TPM protector and a recovery password. A data drive needs only a recovery password.
-- **ResumeProtection** turns protection back on for a fully encrypted drive where it was suspended.
+- **Resume protection** turns protection back on for a fully encrypted drive where it was suspended.
 
 Each of these needs its own confirmation box, and KillerBench rechecks the drive immediately before it acts.
 
 ## More BitLocker actions
 
-Open **More BitLocker actions** for changes that sit outside GO. Choose an action, press **Preview** to read exactly what it requires, then confirm and press **Run action**.
+Open **More BitLocker actions** for changes that sit outside **Run diagnosis**. Choose an action, press **Preview** to read exactly what it requires, then confirm and press **Run action**.
 
 - **Turn on auto-unlock** makes an encrypted data drive unlock when Windows starts. The Windows drive must be fully encrypted with protection on.
 - **Add a TPM protector** or **Add a recovery password** creates one new protector. KillerBench never shows or logs a new recovery password, so back it up straight away.

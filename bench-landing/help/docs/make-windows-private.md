@@ -6,13 +6,13 @@ Use this to review and tighten privacy on a laptop. KillerBench reads the curren
 
 1. Open **Privacy**.
 2. Tick the areas you want to review. Every area starts unchecked.
-3. Press **GO**. The report shows the current value for this machine and the account running KillerBench, and flags settings owned by policy.
+3. Press **Run diagnosis**. The report shows the current value for this machine and the account running KillerBench, and flags settings owned by policy.
 
 ## Change a setting
 
 1. Choose the setting in **Privacy setting**, such as camera, microphone, location, diagnostic data, advertising, clipboard history, cloud content search or search highlights.
-2. Choose the new value and tick **Apply when I press GO**.
-3. Press **GO**. KillerBench checks for a policy owner, records the current value, makes the one change and reads it back.
+2. Choose the new value and tick **Apply when I select Run diagnosis**.
+3. Press **Run diagnosis**. KillerBench checks for a policy owner, records the current value, makes the one change and reads it back.
 
 Settings owned by group policy or device management are left alone. Change those where they are managed.
 

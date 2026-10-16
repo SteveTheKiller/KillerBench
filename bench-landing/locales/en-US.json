@@ -20,7 +20,7 @@
     "CLI guide": "CLI guide",
     "Check before retrying": "Check before retrying",
     "Choose a guide": "Choose a guide",
-    "Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.",
+    "Choose a tool, review its options, and press Run diagnosis. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "Choose a tool, review its options, and press Run diagnosis. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.",
     "Choose language": "Choose language",
     "Choose theme": "Choose theme",
     "Close": "Close",

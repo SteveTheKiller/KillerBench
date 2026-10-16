@@ -6,7 +6,7 @@ Step-by-step guides: [Make Windows more private](make-windows-private.html).
 
 ## Reviewing and changing settings
 
-Select the privacy areas to inspect and press **GO**. Every area starts unchecked and the review is read-only.
+Select the privacy areas to inspect and press **Run diagnosis**. Every area starts unchecked and the review is read-only.
 
 To change a setting, use the **Privacy setting** control. KillerBench checks whether a policy or device management already owns the setting, records the current value, makes the one change you asked for and reads it back to confirm it. Settings owned by policy are left alone.
 

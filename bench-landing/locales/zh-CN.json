@@ -20,7 +20,7 @@
     "CLI guide": "CLI 指南",
     "Check before retrying": "重试前先检查",
     "Choose a guide": "选择指南",
-    "Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "选择工具，检查选项，然后按 GO。在“原始输出”或“可读报告”中查看证据。受支持的修复会检查当前前提条件、记录请求并验证结果。",
+    "Choose a tool, review its options, and press Run diagnosis. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "选择工具，检查选项，然后按“运行诊断”。在“原始输出”或“可读报告”中查看证据。受支持的修复会检查当前前提条件、记录请求并验证结果。",
     "Choose language": "选择语言",
     "Choose theme": "选择主题",
     "Close": "关闭",

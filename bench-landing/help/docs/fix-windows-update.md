@@ -11,13 +11,13 @@ Use this when updates fail, stall or keep reinstalling. KillerBench reads the up
 ## Find out why updates fail
 
 1. Open **Updates** and choose **Windows Update** in the tool sidebar.
-2. Leave **Auto-repair confirmed issues** off for the first pass and press **GO**.
+2. Leave **Auto-repair confirmed issues** off for the first pass and press **Run diagnosis**.
 3. Read the **Readable report**. It lists stopped update services, pending restarts, low free space, component-store corruption and the exact error codes Windows recorded, with a recommended next step.
 4. If the report names an error code, the matching follow-up checks run automatically. You can also look one up yourself with `killerbench-cli update-code 0x80070002`.
 
 ## Watch an update that seems stuck
 
-Choose **Servicing activity monitor** in **Updates** and press **GO**. It takes repeated snapshots of update, Setup and Installer activity, transfer totals and restart indicators. Activity is shown as evidence only; it never claims a stall or a fault on its own.
+Choose **Servicing activity monitor** in **Updates** and press **Run diagnosis**. It takes repeated snapshots of update, Setup and Installer activity, transfer totals and restart indicators. Activity is shown as evidence only; it never claims a stall or a fault on its own.
 
 ## Repair what the report found
 
@@ -29,7 +29,7 @@ Every repair is journaled and read back. See [How changes stay safe](safety.html
 
 ## Install a specific update
 
-1. Choose **Available updates** in **Updates** and press **GO** to discover updates from the configured source.
+1. Choose **Available updates** in **Updates** and press **Run diagnosis** to discover updates from the configured source.
 2. Select the updates you want and press **Preview selected**. The preview lists exactly what would install and any restart requirement.
 3. Install only after reading the preview. KillerBench never selects or approves an update for you.
 

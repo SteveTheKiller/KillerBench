@@ -20,7 +20,7 @@
     "CLI guide": "Guía de CLI",
     "Check before retrying": "Comprobar antes de reintentar",
     "Choose a guide": "Elegir una guía",
-    "Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "Elige una herramienta, revisa sus opciones y pulsa GO. Sigue las evidencias en la salida sin procesar o en el informe legible. Las reparaciones compatibles comprueban los requisitos actuales, registran la solicitud y verifican el resultado.",
+    "Choose a tool, review its options, and press Run diagnosis. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "Elige una herramienta, revisa sus opciones y pulsa «Ejecutar diagnóstico». Sigue las evidencias en la salida sin procesar o en el informe legible. Las reparaciones compatibles comprueban los requisitos actuales, registran la solicitud y verifican el resultado.",
     "Choose language": "Elegir idioma",
     "Choose theme": "Elegir tema",
     "Close": "Cerrar",

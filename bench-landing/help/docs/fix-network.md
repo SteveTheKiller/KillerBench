@@ -7,7 +7,7 @@ Use this when a computer has no internet, cannot reach a server or name, or keep
 1. Open **Network** and choose **Network**.
 2. To test something specific, fill in **Hostname lookup (optional)**, or **TCP destination (optional)** and **TCP port**. Leave them blank to check only the local configuration. No application data is sent.
 3. Set **Timeout per lookup or connection (seconds)** if the network is slow.
-4. Leave **Auto-repair confirmed issues** off and press **GO**.
+4. Leave **Auto-repair confirmed issues** off and press **Run diagnosis**.
 5. Read the report. It separates a missing address, a missing or unreachable gateway, DNS configuration problems, proxy settings, firewall profile mismatches and a failed lookup or connection, and gives the next step for each.
 
 A reply from the gateway does not prove internet access, and a failed lookup through your configured resolver does not mean the site is down.

@@ -20,7 +20,7 @@
     "CLI guide": "CLI нұсқаулығы",
     "Check before retrying": "Қайталап көруден бұрын тексеріңіз",
     "Choose a guide": "Нұсқаулықты таңдаңыз",
-    "Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "Құралды таңдап, параметрлерін қарап, GO түймесін басыңыз. Бастапқы шығыс деректеріндегі немесе оқуға ыңғайлы есептегі дәлелдерді қадағалаңыз. Қолдау көрсетілетін жөндеулер ағымдағы алғышарттарды тексереді, сұрауды тіркейді және нәтижені растайды.",
+    "Choose a tool, review its options, and press Run diagnosis. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "Құралды таңдап, параметрлерін қарап, «Диагнозды іске қосу» түймесін басыңыз. Бастапқы шығыс деректеріндегі немесе оқуға ыңғайлы есептегі дәлелдерді қадағалаңыз. Қолдау көрсетілетін жөндеулер ағымдағы алғышарттарды тексереді, сұрауды тіркейді және нәтижені растайды.",
     "Choose language": "Тілді таңдаңыз",
     "Choose theme": "Тақырыпты таңдаңыз",
     "Close": "Жабу",

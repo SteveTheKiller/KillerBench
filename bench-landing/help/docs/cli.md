@@ -4,7 +4,7 @@
 
 Step-by-step guides: [Run KillerBench from scripts](use-the-cli.html).
 
-Exit code 0 means the preview or verified result succeeded, 3 means blocked, failed or unverified, 2 means the arguments were not recognized, and 130 means you stopped it.
+Exit code 0 means the preview or verified result succeeded, 1 means a startup, input or journal error, 2 means the arguments were not recognized, 3 means blocked, failed or unverified, 4 means a workflow needs a restart before it can verify, and 130 means you stopped it.
 
 Run `killerbench-cli` with no arguments to print this list on your own machine.
 
@@ -35,7 +35,7 @@ Run `killerbench-cli` with no arguments to print this list on your own machine.
 - `update-events`: Read-only Windows Update Client history from the last seven days; JSON including raw evidence.
 - `update-followup DECIMAL_OR_0xHEX`: Fresh read-only diagnostics selected by a documented Windows Update result code.
 - `update-history`: Read-only newest 100 Windows Update operation outcomes; JSON evidence.
-- `update-plan --select GUID:REVISION [--drivers] [--no-software] [--allow-restart-required] [--json] [--execute]`: Repeat --select; preview by default.
+- `update-plan --select GUID:REVISION [--drivers] [--no-software] [--allow-restart-required] [--json] [--execute]`: Repeat `--select`; preview by default.
 - `update-policy`: Read-only managed Windows Update policy; JSON evidence.
 - `update-policy-surfaces`: Read-only classic and Policy CSP configuration-surface evidence; values and provider identities excluded.
 - `update-recover`: Check a pending update; never installs or retries it.
@@ -98,7 +98,7 @@ Run `killerbench-cli` with no arguments to print this list on your own machine.
 - `service-dependencies`: Read-only direct dependency integrity review; no service changes.
 - `service-dlls`: Read-only registered service DLL presence and Authenticode status; paths excluded and nonlocal paths not contacted.
 - `service-events`: Read-only service failure history; JSON including raw evidence.
-- `service-events | storage-events | time-events`: Read-only recent event history with JSON evidence.
+- `time-events`: Read-only recent Windows Time event history with JSON evidence.
 - `service-logons`: Read-only service account-class and desktop-interaction review; account identities excluded.
 - `service-path-quoting`: Read-only service executable path quoting review; full paths and arguments excluded.
 - `service-recovery-policy`: Read-only installed-service recovery action summary; commands and reboot messages excluded.
@@ -153,8 +153,7 @@ Run `killerbench-cli` with no arguments to print this list on your own machine.
 - `printer-conditions`: Read-only local queue condition codes; no physical verification or changes.
 - `printer-driver-files`: Read-only registered file presence and executable signature summary; full paths excluded.
 - `printer-driver-models`: Read-only version 3, version 4 and package-awareness summary; JSON evidence.
-- `printer-drivers`: Read-only queue/driver registration inventory; JSON evidence.
-- `printer-drivers`: Read-only queue/driver registration matching; JSON evidence.
+- `printer-drivers`: Read-only queue and driver registration inventory and matching; JSON evidence.
 - `printer-endpoint-check`: Bounded connections to exact assigned Standard TCP/IP printer endpoints; no discovery, SNMP or print data.
 - `printer-list`: Discover local queues without changing settings.
 - `printer-ports`: Read-only queue/port registration matching; JSON evidence.
@@ -293,7 +292,8 @@ Run `killerbench-cli` with no arguments to print this list on your own machine.
 - `knowledge-set CONTEXT CODE PACK_PATH [PACK_PATH ...]`: Resolve one exact identity across up to 32 packs; conflicts are never selected.
 - `knowledge-status CONFIG_JSON STORAGE_ROOT`: Verify every configured installed database; no download or activation.
 - `knowledge-update CONFIG_JSON STORAGE_ROOT`: Fetch and atomically activate signed database candidates from configured HTTPS endpoints.
-- `scan --output <new-file.kbench> [--json]\nkillerbench-cli open <file.kbench> [--json]`
+- `open <file.kbench> [--json]`: Reopen a saved capture and evaluate it again with the installed rules.
+- `scan --output <new-file.kbench> [--json]`: Read-only Windows Update capture saved to a new file.
 - `validation-coverage RECORD.json [...]`: Summarize current-version native VM evidence; no diagnostics or repairs.
 - `validation-plan [--recipe RECIPE_ID | --workflow WORKFLOW]`: Read-only disposable-VM scenario plan; no diagnostics or repairs.
 - `validation-record RECORD.json`: Validate one bounded native VM evidence record; no diagnostics or repairs.
@@ -320,7 +320,7 @@ Run `killerbench-cli` with no arguments to print this list on your own machine.
 - `delete-notifications`: Read-only NTFS and ReFS delete-notification configuration; JSON; no optimization or setting change.
 - `diagnostic-scopes [--all]`: List 11 recommended outcome groups, or all 49 read-only areas; no collection.
 - `full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Focused diagnostic journal; no repairs.
-- `full-scan [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json]`: All diagnostic areas; no repair unless --auto-repair is explicit.
+- `full-scan [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json]`: All diagnostic areas; no repair unless `--auto-repair` is explicit.
 - `gateway-check`: Bounded ICMP checks of exact configured default next hops; no address scan.
 - `infrastructure-service-events`: Read one bounded exact connectivity, remote-management, notification and core service failure snapshot.
 - `investigate-batch FILE [FILE ...]`: Up to 12 files; JSON Lines; exit 3 for failed or partial imports.

@@ -8,7 +8,7 @@ The sidebar on the left lists every tool in twelve sections: Diagnostics, Repair
 
 ## Tool options
 
-The center pane shows the selected section, its tool list and the options for the chosen tool. Options that could change the machine are always off by default. Press the run button to start the tool. **Stop** cancels the current run.
+The center pane shows the selected section, its tool list and the options for the chosen tool. Options that could change the machine are always off by default. Press **Run diagnosis** to start the tool. When **Auto-repair confirmed issues** is turned on, the same button reads **Run repair**. **Stop** ends the run after the current command finishes.
 
 ## Output
 
@@ -35,3 +35,5 @@ The smoked-glass console and readable reports follow the active theme. Confirmat
 | F2 | Show or hide the sidebar |
 | F3 | Show or hide the activity log |
 | F12 | About KillerBench |
+| Ctrl+O | Open evidence |
+| Esc | Close an overlay or stop reading a file |

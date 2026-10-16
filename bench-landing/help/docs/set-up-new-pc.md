@@ -10,12 +10,12 @@ Use this when preparing a new or freshly reset PC. KillerBench reviews the compu
 ## Review applications and configuration
 
 1. Open **Onboarding** and choose **Onboarding**.
-2. Select the applications and configuration groups you plan to set up and press **GO**. The review compares them with what is already installed. KillerBench does not download or run installers.
+2. Select the applications and configuration groups you plan to set up and press **Run diagnosis**. The review compares them with what is already installed. KillerBench does not download or run installers.
 3. Before running a vendor installer, verify it from the command line. KillerBench trusts it only when it carries a valid signature from that vendor's exact organization name.
 
 ## Name the computer
 
-1. Choose **Computer name**, enter the name and press **GO** to review it against the current identity and domain role.
+1. Choose **Computer name**, enter the name and press **Run diagnosis** to review it against the current identity and domain role.
 2. On a workgroup computer, tick **Rename this workgroup PC after fresh checks** to rename it. A restart is needed to finish.
 
 ## Protect and tidy it

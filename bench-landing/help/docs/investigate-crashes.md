@@ -5,7 +5,7 @@ Use this when Windows restarts unexpectedly, shows a stop error, or an applicati
 ## Check the computer
 
 1. Open **Diagnostics** and choose **Vitals**.
-2. Press **GO**. The report combines memory, disk health, device problems, Reliability Monitor history, hardware-error records, crash reports, unexpected shutdowns and Windows Memory Diagnostic results.
+2. Press **Run diagnosis**. The report combines memory, disk health, device problems, Reliability Monitor history, hardware-error records, crash reports, unexpected shutdowns and Windows Memory Diagnostic results.
 3. Read the conclusion and the evidence under it. Historical crashes explain what happened; they do not prove a fault is still present.
 
 ## Narrow it down

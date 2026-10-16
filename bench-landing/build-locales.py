@@ -11,6 +11,11 @@ from urllib.parse import urlsplit, unquote
 ROOT = Path(__file__).resolve().parent
 LOCALES = ['en-US', 'bn', 'cs-CZ', 'de-DE', 'es', 'fr-FR', 'hu-HU', 'it-IT', 'ja-JP', 'kk-KZ', 'nb-NO', 'pl-PL', 'pt-BR', 'ru-RU', 'tr-TR', 'uk-UA', 'vi-VN', 'zh-CN', 'zh-TW']
 PAGES = ['index.html', 'engine/index.html']
+# Help, Technical and About are rendered per locale by build-docs.py from translated Markdown.
+DOC_PAGES = ['help.html', 'technical.html', 'about.html']
+
+def doc_locales():
+    return [loc for loc in LOCALES[1:] if (ROOT / 'help' / 'docs' / 'i18n' / loc / 'ui.json').is_file()]
 VOID = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'}
 
 def route(locale, page):
@@ -48,7 +53,7 @@ class Localized(HTMLParser):
         if target.is_dir():
             target = target / 'index.html'
         relative = target.relative_to(ROOT).as_posix()
-        if relative in PAGES:
+        if relative in PAGES or (relative in DOC_PAGES and self.locale in doc_locales()):
             result = rel(self.locale, self.page, out_path(self.locale, relative))
         else:
             result = rel(self.locale, self.page, relative)
@@ -115,6 +120,10 @@ def write(path, text):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding='utf-8', newline='\n')
 
+def runpy_docs():
+    import runpy
+    return runpy.run_path(str(ROOT / 'build-docs.py'))
+
 def build():
     sources = {p: (ROOT / ('templates/index.en.html' if p == 'index.html' else p)).read_text(encoding='utf-8') for p in PAGES}
     english = {}
@@ -149,7 +158,11 @@ def build():
         if locale != 'en-US':
             english_index = (ROOT / 'docs-search-index.js').read_text(encoding='utf-8')
             details = json.loads(english_index.removeprefix('window.KillerBenchSearch=').strip().removesuffix(';'))
-            details = [dict(p, u='../' + p['u']) for p in details if p['u'] not in PAGES]
+            localized_docs = []
+            if locale in doc_locales():
+                localized_docs = runpy_docs()['search_entries'](locale)
+            details = [dict(p, u='../' + p['u']) for p in details if p['u'] not in PAGES and not (localized_docs and p['u'] in DOC_PAGES)]
+            details = localized_docs + details
             write(ROOT / locale / 'docs-search-index.js', 'window.KillerBenchSearch=' + json.dumps(localized_search + details, ensure_ascii=False, separators=(',', ':')) + ';\n')
     print('Built localized entry pages for ' + str(len(available)) + ' locales; English catalog has ' + str(len(english)) + ' keys.')
 
@@ -188,6 +201,17 @@ def check():
                 if u.fragment and target.suffix == '.html':
                     assert 'id="' + u.fragment + '"' in target.read_text(encoding='utf-8'), (path, ref)
                 checked += 1
+        if locale in doc_locales():
+            for page in DOC_PAGES:
+                path = ROOT / locale / page
+                source = path.read_text(encoding='utf-8')
+                assert '<html lang="' + locale + '"' in source, path
+                assert '<link rel="canonical" href="https://killerbench.net/' + locale + '/' + page + '"' in source, path
+                assert source.count('id="languageToggle"') == 1, path
+                for target in ['en-US'] + doc_locales():
+                    assert '<link rel="alternate" hreflang="' + target + '" href="https://killerbench.net/' + ('' if target == 'en-US' else target + '/') + page + '"' in source, (path, target)
+            home = (ROOT / locale / 'index.html').read_text(encoding='utf-8')
+            assert 'href="help.html' in home and 'href="technical.html"' in home, (locale, 'home does not link localized guides')
         if locale != 'en-US':
             index = (ROOT / locale / 'docs-search-index.js').read_text(encoding='utf-8')
             for result in json.loads(index.removeprefix('window.KillerBenchSearch=').strip().removesuffix(';')):

@@ -20,7 +20,7 @@
     "CLI guide": "CLI-útmutató",
     "Check before retrying": "Ellenőrizzen újrapróbálás előtt",
     "Choose a guide": "Válasszon útmutatót",
-    "Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "Válasszon eszközt, tekintse át a beállításait, majd nyomja meg a GO gombot. Kövesse a bizonyítékokat a nyers kimenetben vagy az olvasható jelentésben. A támogatott javítások ellenőrzik az aktuális előfeltételeket, rögzítik a kérést és ellenőrzik az eredményt.",
+    "Choose a tool, review its options, and press Run diagnosis. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "Válasszon eszközt, tekintse át a beállításait, majd nyomja meg a Diagnózis futtatása gombot. Kövesse a bizonyítékokat a nyers kimenetben vagy az olvasható jelentésben. A támogatott javítások ellenőrzik az aktuális előfeltételeket, rögzítik a kérést és ellenőrzik az eredményt.",
     "Choose language": "Nyelv kiválasztása",
     "Choose theme": "Téma kiválasztása",
     "Close": "Bezárás",

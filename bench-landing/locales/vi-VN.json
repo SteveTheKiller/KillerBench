@@ -20,7 +20,7 @@
     "CLI guide": "Hướng dẫn CLI",
     "Check before retrying": "Kiểm tra trước khi thử lại",
     "Choose a guide": "Chọn hướng dẫn",
-    "Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "Chọn công cụ, xem lại các tùy chọn và nhấn GO. Theo dõi bằng chứng trong Đầu ra thô hoặc Báo cáo có thể đọc được. Các thao tác sửa chữa được hỗ trợ sẽ kiểm tra điều kiện hiện tại, ghi lại yêu cầu và xác minh kết quả.",
+    "Choose a tool, review its options, and press Run diagnosis. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "Chọn công cụ, xem lại các tùy chọn và nhấn Chạy chẩn đoán. Theo dõi bằng chứng trong Đầu ra thô hoặc Báo cáo có thể đọc được. Các thao tác sửa chữa được hỗ trợ sẽ kiểm tra điều kiện hiện tại, ghi lại yêu cầu và xác minh kết quả.",
     "Choose language": "Chọn ngôn ngữ",
     "Choose theme": "Chọn giao diện",
     "Close": "Đóng",

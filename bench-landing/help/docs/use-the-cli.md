@@ -21,8 +21,10 @@ killerbench-cli full-scan --report C:\Reports\scan.html --json
 | Code | Meaning |
 | --- | --- |
 | 0 | The preview or verified result succeeded. |
-| 3 | Blocked, failed or unverified. |
+| 1 | A startup, input or journal error stopped the command. |
 | 2 | The arguments were not recognized. |
+| 3 | Blocked, failed or unverified. |
+| 4 | A workflow needs a restart before it can verify. |
 | 130 | You stopped it. |
 
 Exit 0 on a read-only command means it ran, not that the computer is healthy. Read the JSON for findings.

@@ -11,12 +11,12 @@ Use this when Windows components are corrupted: features fail to install, update
 ## Check for corruption
 
 1. Open **Repair** and choose **System files**.
-2. Leave **Auto-repair confirmed issues** off and press **GO**.
+2. Leave **Auto-repair confirmed issues** off and press **Run diagnosis**.
 3. Read the report. It inventories servicing package, optional-feature and capability states, checks prerequisites and scans protected system files. A clean result means no repair is offered.
 
 ## Repair confirmed corruption
 
-1. Turn on **Auto-repair confirmed issues** and press **GO** again. KillerBench chooses DISM or SFC only when the live check confirms corruption.
+1. Turn on **Auto-repair confirmed issues** and press **Run repair**. KillerBench chooses DISM or SFC only when the live check confirms corruption.
 2. Wait for verification. The report shows **Verified** only when the follow-up check reads back a repaired state.
 3. If the report says the store is unrecoverable or the repair source is unavailable, stop there. Repeating the repair will not change the outcome.
 

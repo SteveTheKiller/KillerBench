@@ -26,7 +26,7 @@ Inventory machine and running-account Run and RunOnce registration names, Startu
 
 ### Microsoft app removal
 
-Review selected OneDrive, Outlook, Office/M365, Project and Teams registrations with account-scope and retention choices. Machine, running-account and registered-package inventories are correlated; all-user review also includes packages provisioned for new users. A supported current-account package can receive a separate exact safeguard plan in the desktop or CLI. Native removal remains disconnected. No process, application, package, file, credential, folder location, registry value or user data is changed.
+Review selected OneDrive, Outlook, Office/M365, Project and Teams registrations with account-scope and retention choices. Machine, running-account and registered-package inventories are correlated; all-user review also includes packages provisioned for new users. A supported current-account package can receive a separate exact safeguard plan in the desktop or CLI. Removing that one package is a separate guarded desktop action with its own confirmations. The review itself changes no process, application, package, file, credential, folder location, registry value or user data.
 
 ### Outlook reset
 

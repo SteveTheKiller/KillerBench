@@ -20,7 +20,7 @@
     "CLI guide": "Посібник з CLI",
     "Check before retrying": "Перевірка перед повторною спробою",
     "Choose a guide": "Виберіть посібник",
-    "Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "Виберіть інструмент, перегляньте його параметри й натисніть GO. Вивчайте дані в поданнях «Вихідні дані» або «Зрозумілий звіт». Підтримувані виправлення перевіряють поточні передумови, реєструють запит і перевіряють результат.",
+    "Choose a tool, review its options, and press Run diagnosis. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "Виберіть інструмент, перегляньте його параметри й натисніть «Запустити діагностику». Вивчайте дані в поданнях «Вихідні дані» або «Зрозумілий звіт». Підтримувані виправлення перевіряють поточні передумови, реєструють запит і перевіряють результат.",
     "Choose language": "Виберіть мову",
     "Choose theme": "Виберіть тему",
     "Close": "Закрити",

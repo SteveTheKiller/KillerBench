@@ -16,7 +16,7 @@ Before distributing a binary, its publisher must provide Corresponding Source th
 
 ## Privacy and external services
 
-Diagnostics and log analysis run locally without an AI service or KillerBench account. Journals and retained evidence use the local account's `%LOCALAPPDATA%\KillerBench` folders. Selected actions can contact Windows Update, software download services, directories or other named destinations. Knowledge updates and the MCP installer page can also contact their configured services. An AI client using MCP may receive the returned reference result.
+Diagnostics and log analysis run locally without an AI service or KillerBench account. Journals and retained evidence use the local account's `%LOCALAPPDATA%\KillerBench` folders. Selected actions can contact Windows Update, software download services, directories or other named destinations. The startup update check contacts GitHub, and knowledge updates and the MCP installer page contact their configured services. An AI client using MCP may receive the returned reference result.
 
 This website stores theme and accent choices in the browser's local storage. Its guides do not run a diagnosis on your computer. Raw logs, imported files and exported evidence can contain computer names, accounts, paths or sensitive source text. Review them before sharing; do not include recovery keys, credentials or customer data in a public report.
 

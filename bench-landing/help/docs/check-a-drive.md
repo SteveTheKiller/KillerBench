@@ -10,7 +10,7 @@ Use this when a volume reports errors, Windows asks to scan a drive, or files fa
 ## Check the volume
 
 1. Open **Storage** and choose **Storage**.
-2. Pick the drive in **Volume to check** and press **GO**.
+2. Pick the drive in **Volume to check** and press **Run diagnosis**.
 3. Read the report. It shows disk and volume health, the dirty bit, online NTFS self-healing, controller and disk device errors, reliability counters and recent storage events such as resets, retries and unexpected removal.
 
 A clean check means no repair is offered. Disk temperature, wear and uncorrected I/O counters are review evidence and do not trigger a repair by themselves.

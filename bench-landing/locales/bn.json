@@ -20,7 +20,7 @@
     "CLI guide": "CLI নির্দেশিকা",
     "Check before retrying": "আবার চেষ্টা করার আগে যাচাই করুন",
     "Choose a guide": "একটি নির্দেশিকা বেছে নিন",
-    "Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "একটি টুল বেছে নিন, তার বিকল্পগুলো পর্যালোচনা করুন এবং GO চাপুন। অপরিশোধিত আউটপুট বা পাঠযোগ্য প্রতিবেদনে প্রমাণ অনুসরণ করুন। সমর্থিত মেরামত বর্তমান পূর্বশর্ত যাচাই করে, অনুরোধ নথিভুক্ত করে এবং ফলাফল যাচাই করে।",
+    "Choose a tool, review its options, and press Run diagnosis. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "একটি টুল বেছে নিন, তার বিকল্পগুলো পর্যালোচনা করুন এবং \"ডায়াগনসিস চালান\" চাপুন। অপরিশোধিত আউটপুট বা পাঠযোগ্য প্রতিবেদনে প্রমাণ অনুসরণ করুন। সমর্থিত মেরামত বর্তমান পূর্বশর্ত যাচাই করে, অনুরোধ নথিভুক্ত করে এবং ফলাফল যাচাই করে।",
     "Choose language": "ভাষা বেছে নিন",
     "Choose theme": "থিম বেছে নিন",
     "Close": "বন্ধ",

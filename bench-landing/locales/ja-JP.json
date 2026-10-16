@@ -20,7 +20,7 @@
     "CLI guide": "CLIガイド",
     "Check before retrying": "再試行の前に確認",
     "Choose a guide": "ガイドを選ぶ",
-    "Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "ツールを選び、オプションを確認してGOを押します。生の出力や読みやすいレポートで証拠を確認できます。対応する修復は現在の前提条件を確認し、要求を記録して結果を検証します。",
+    "Choose a tool, review its options, and press Run diagnosis. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.": "ツールを選び、オプションを確認して [診断を実行] を押します。生の出力や読みやすいレポートで証拠を確認できます。対応する修復は現在の前提条件を確認し、要求を記録して結果を検証します。",
     "Choose language": "言語を選択",
     "Choose theme": "テーマを選択",
     "Close": "閉じる",
