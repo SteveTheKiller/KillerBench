@@ -525,6 +525,10 @@
   <sys:String x:Key="Str_About_AlwaysCheckOnStartup">起動時に常に更新を確認する</sys:String>
   <sys:String x:Key="Str_About_UpdateAvailable">更新があります: {0}</sys:String>
   <sys:String x:Key="Str_About_Downloading">ダウンロード中...</sys:String>
+  <sys:String x:Key="Str_About_Computing">計算中...</sys:String>
+  <sys:String x:Key="Str_About_Unsigned">(署名なし、またはチェーンの検証に失敗)</sys:String>
+  <sys:String x:Key="Str_About_UpdateHeading">{0} {1} をダウンロードしてインストールしますか?</sys:String>
+  <sys:String x:Key="Str_About_UpdateDetail">アプリは終了し、自動的に再起動します。</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">保持するOffice言語を選択</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">英語（米国）</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">英語（英国）</sys:String>

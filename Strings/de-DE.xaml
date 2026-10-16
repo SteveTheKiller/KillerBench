@@ -525,6 +525,10 @@
   <sys:String x:Key="Str_About_AlwaysCheckOnStartup">Beim Start immer nach Updates suchen</sys:String>
   <sys:String x:Key="Str_About_UpdateAvailable">Update verfügbar: {0}</sys:String>
   <sys:String x:Key="Str_About_Downloading">Wird heruntergeladen...</sys:String>
+  <sys:String x:Key="Str_About_Computing">wird berechnet...</sys:String>
+  <sys:String x:Key="Str_About_Unsigned">(nicht signiert oder Kette ungültig)</sys:String>
+  <sys:String x:Key="Str_About_UpdateHeading">{0} {1} herunterladen und installieren?</sys:String>
+  <sys:String x:Key="Str_About_UpdateDetail">Die App wird geschlossen und automatisch neu gestartet.</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Beizubehaltende Office-Sprache auswählen</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Englisch (Vereinigte Staaten)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Englisch (Vereinigtes Königreich)</sys:String>

@@ -189,6 +189,10 @@
   <sys:String x:Key="Str_About_AlwaysCheckOnStartup">Toujours rechercher les mises à jour au démarrage</sys:String>
   <sys:String x:Key="Str_About_UpdateAvailable">Mise à jour disponible : {0}</sys:String>
   <sys:String x:Key="Str_About_Downloading">Téléchargement...</sys:String>
+  <sys:String x:Key="Str_About_Computing">calcul en cours...</sys:String>
+  <sys:String x:Key="Str_About_Unsigned">(non signé ou chaîne non valide)</sys:String>
+  <sys:String x:Key="Str_About_UpdateHeading">Télécharger et installer {0} {1} ?</sys:String>
+  <sys:String x:Key="Str_About_UpdateDetail">L'application se fermera et redémarrera automatiquement.</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Choisir la langue Office à conserver</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Anglais (États-Unis)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Anglais (Royaume-Uni)</sys:String>

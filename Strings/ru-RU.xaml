@@ -525,6 +525,10 @@
   <sys:String x:Key="Str_About_AlwaysCheckOnStartup">Всегда проверять обновления при запуске</sys:String>
   <sys:String x:Key="Str_About_UpdateAvailable">Доступно обновление: {0}</sys:String>
   <sys:String x:Key="Str_About_Downloading">Загрузка...</sys:String>
+  <sys:String x:Key="Str_About_Computing">вычисление...</sys:String>
+  <sys:String x:Key="Str_About_Unsigned">(не подписан или цепочка не прошла проверку)</sys:String>
+  <sys:String x:Key="Str_About_UpdateHeading">Загрузить и установить {0} {1}?</sys:String>
+  <sys:String x:Key="Str_About_UpdateDetail">Приложение автоматически закроется и снова откроется.</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Выберите язык Office для сохранения</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Английский (США)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Английский (Великобритания)</sys:String>

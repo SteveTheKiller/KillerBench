@@ -16,6 +16,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        about = new Features.About.AboutController(this);   // Features\About
         var titleFrames = System.Windows.Media.Imaging.BitmapDecoder.Create(
             new Uri("pack://application:,,,/KillerBench;component/Assets/AppIcon.ico"),
             System.Windows.Media.Imaging.BitmapCreateOptions.None,

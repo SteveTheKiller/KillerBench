@@ -525,6 +525,10 @@
   <sys:String x:Key="Str_About_AlwaysCheckOnStartup">Buscar siempre actualizaciones al iniciar</sys:String>
   <sys:String x:Key="Str_About_UpdateAvailable">Actualización disponible: {0}</sys:String>
   <sys:String x:Key="Str_About_Downloading">Descargando...</sys:String>
+  <sys:String x:Key="Str_About_Computing">calculando...</sys:String>
+  <sys:String x:Key="Str_About_Unsigned">(sin firmar o cadena no válida)</sys:String>
+  <sys:String x:Key="Str_About_UpdateHeading">¿Descargar e instalar {0} {1}?</sys:String>
+  <sys:String x:Key="Str_About_UpdateDetail">La aplicación se cerrará y volverá a abrirse automáticamente.</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Elegir idioma de Office para conservar</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Inglés (Estados Unidos)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Inglés (Reino Unido)</sys:String>

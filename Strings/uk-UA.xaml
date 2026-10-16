@@ -522,6 +522,10 @@
   <sys:String x:Key="Str_About_AlwaysCheckOnStartup">Завжди перевіряти під час запуску</sys:String>
   <sys:String x:Key="Str_About_UpdateAvailable">Доступне оновлення: {0}</sys:String>
   <sys:String x:Key="Str_About_Downloading">Завантаження...</sys:String>
+  <sys:String x:Key="Str_About_Computing">обчислення...</sys:String>
+  <sys:String x:Key="Str_About_Unsigned">(не підписано або ланцюжок недійсний)</sys:String>
+  <sys:String x:Key="Str_About_UpdateHeading">Завантажити й установити {0} {1}?</sys:String>
+  <sys:String x:Key="Str_About_UpdateDetail">Застосунок закриється та відкриється знову автоматично.</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Виберіть мову Office, яку залишити</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">англійська (США)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">англійська (Велика Британія)</sys:String>

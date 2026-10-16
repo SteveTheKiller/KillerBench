@@ -523,6 +523,10 @@
   <sys:String x:Key="Str_About_AlwaysCheckOnStartup">Mindig keressen frissítéseket indításkor</sys:String>
   <sys:String x:Key="Str_About_UpdateAvailable">Frissítés elérhető: {0}</sys:String>
   <sys:String x:Key="Str_About_Downloading">Letöltés...</sys:String>
+  <sys:String x:Key="Str_About_Computing">számítás...</sys:String>
+  <sys:String x:Key="Str_About_Unsigned">(nincs aláírva vagy a lánc érvénytelen)</sys:String>
+  <sys:String x:Key="Str_About_UpdateHeading">Letölti és telepíti a következőt: {0} {1}?</sys:String>
+  <sys:String x:Key="Str_About_UpdateDetail">Az alkalmazás bezárul, és automatikusan újraindul.</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Megőrzendő Office nyelv kiválasztása</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Angol (Egyesült Államok)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Angol (Egyesült Királyság)</sys:String>

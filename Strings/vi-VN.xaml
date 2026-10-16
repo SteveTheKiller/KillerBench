@@ -522,6 +522,10 @@
   <sys:String x:Key="Str_About_AlwaysCheckOnStartup">Luôn kiểm tra khi khởi động</sys:String>
   <sys:String x:Key="Str_About_UpdateAvailable">Có bản cập nhật: {0}</sys:String>
   <sys:String x:Key="Str_About_Downloading">Đang tải xuống...</sys:String>
+  <sys:String x:Key="Str_About_Computing">đang tính...</sys:String>
+  <sys:String x:Key="Str_About_Unsigned">(chưa ký hoặc chuỗi xác thực thất bại)</sys:String>
+  <sys:String x:Key="Str_About_UpdateHeading">Tải xuống và cài đặt {0} {1}?</sys:String>
+  <sys:String x:Key="Str_About_UpdateDetail">Ứng dụng sẽ tự động đóng và mở lại.</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Chọn ngôn ngữ Office để giữ lại</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Tiếng Anh (Hoa Kỳ)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Tiếng Anh (Vương Quốc Anh)</sys:String>

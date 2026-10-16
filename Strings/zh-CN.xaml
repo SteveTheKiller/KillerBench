@@ -525,6 +525,10 @@
   <sys:String x:Key="Str_About_AlwaysCheckOnStartup">启动时始终检查更新</sys:String>
   <sys:String x:Key="Str_About_UpdateAvailable">有可用更新：{0}</sys:String>
   <sys:String x:Key="Str_About_Downloading">正在下载...</sys:String>
+  <sys:String x:Key="Str_About_Computing">正在计算...</sys:String>
+  <sys:String x:Key="Str_About_Unsigned">(未签名或证书链验证失败)</sys:String>
+  <sys:String x:Key="Str_About_UpdateHeading">下载并安装 {0} {1}？</sys:String>
+  <sys:String x:Key="Str_About_UpdateDetail">应用将关闭并自动重新打开。</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">选择要保留的 Office 语言</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">英语（美国）</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">英语（英国）</sys:String>

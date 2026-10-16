@@ -525,6 +525,10 @@
   <sys:String x:Key="Str_About_AlwaysCheckOnStartup">Vždy kontrolovat aktualizace při spuštění</sys:String>
   <sys:String x:Key="Str_About_UpdateAvailable">K dispozici je aktualizace: {0}</sys:String>
   <sys:String x:Key="Str_About_Downloading">Stahuje se...</sys:String>
+  <sys:String x:Key="Str_About_Computing">počítá se...</sys:String>
+  <sys:String x:Key="Str_About_Unsigned">(nepodepsáno nebo neplatný řetěz)</sys:String>
+  <sys:String x:Key="Str_About_UpdateHeading">Stáhnout a nainstalovat {0} {1}?</sys:String>
+  <sys:String x:Key="Str_About_UpdateDetail">Aplikace se zavře a znovu se automaticky spustí.</sys:String>
   <sys:String x:Key="Str_Debloat_ChooseOfficeLanguage">Vyberte jazyk Office, který chcete zachovat</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedStates">Angličtina (Spojené státy)</sys:String>
   <sys:String x:Key="Str_Language_EnglishUnitedKingdom">Angličtina (Spojené království)</sys:String>
