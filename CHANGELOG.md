@@ -127,7 +127,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Added isolated UI tests on a separate desktop, synthetic repair demonstrations and a screenshot preset with fixed sample reports.
 
 ### Fixed
-- On the Light theme's Yellow accent, buttons, links, tabs and accent icons stay yellow with a dark shadow behind yellow text and icons, instead of turning near-black.
+- On the Light theme's Yellow accent, buttons, links, tabs and accent icons stay yellow with a thin gray outline around yellow text and icons, instead of turning near-black.
 - The website top bar no longer leaves extra space under the wordmark and buttons.
 - Theme and language radio buttons and the Film Grain checkbox line up with their labels again.
 
