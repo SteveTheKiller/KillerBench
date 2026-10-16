@@ -600,4 +600,8 @@
   <sys:String x:Key="Str_TT_ViewDetails">詳細表示</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">アイコン表示</sys:String>
   <sys:String x:Key="Str_TT_ViewList">一覧表示</sys:String>
+  <sys:String x:Key="Str_Scroll_PageUp">1 ページ上へ</sys:String>
+  <sys:String x:Key="Str_Scroll_PageDown">1 ページ下へ</sys:String>
+  <sys:String x:Key="Str_Scroll_PageLeft">1 ページ左へ</sys:String>
+  <sys:String x:Key="Str_Scroll_PageRight">1 ページ右へ</sys:String>
 </ResourceDictionary>

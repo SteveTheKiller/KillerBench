@@ -600,4 +600,8 @@
   <sys:String x:Key="Str_TT_ViewDetails">বিস্তারিত ভিউ</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">আইকন ভিউ</sys:String>
   <sys:String x:Key="Str_TT_ViewList">তালিকা ভিউ</sys:String>
+  <sys:String x:Key="Str_Scroll_PageUp">এক পৃষ্ঠা উপরে</sys:String>
+  <sys:String x:Key="Str_Scroll_PageDown">এক পৃষ্ঠা নিচে</sys:String>
+  <sys:String x:Key="Str_Scroll_PageLeft">এক পৃষ্ঠা বাঁয়ে</sys:String>
+  <sys:String x:Key="Str_Scroll_PageRight">এক পৃষ্ঠা ডানে</sys:String>
 </ResourceDictionary>

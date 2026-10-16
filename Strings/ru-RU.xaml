@@ -600,4 +600,8 @@
   <sys:String x:Key="Str_TT_ViewDetails">Таблица</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Значки</sys:String>
   <sys:String x:Key="Str_TT_ViewList">Список</sys:String>
+  <sys:String x:Key="Str_Scroll_PageUp">На страницу вверх</sys:String>
+  <sys:String x:Key="Str_Scroll_PageDown">На страницу вниз</sys:String>
+  <sys:String x:Key="Str_Scroll_PageLeft">На страницу влево</sys:String>
+  <sys:String x:Key="Str_Scroll_PageRight">На страницу вправо</sys:String>
 </ResourceDictionary>

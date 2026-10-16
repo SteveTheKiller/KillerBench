@@ -599,4 +599,8 @@
   <sys:String x:Key="Str_TT_ViewDetails">Exibição em detalhes</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Exibição em ícones</sys:String>
   <sys:String x:Key="Str_TT_ViewList">Exibição em lista</sys:String>
+  <sys:String x:Key="Str_Scroll_PageUp">Uma página acima</sys:String>
+  <sys:String x:Key="Str_Scroll_PageDown">Uma página abaixo</sys:String>
+  <sys:String x:Key="Str_Scroll_PageLeft">Uma página à esquerda</sys:String>
+  <sys:String x:Key="Str_Scroll_PageRight">Uma página à direita</sys:String>
 </ResourceDictionary>

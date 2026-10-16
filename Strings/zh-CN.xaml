@@ -600,4 +600,8 @@
   <sys:String x:Key="Str_TT_ViewDetails">详细信息视图</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">图标视图</sys:String>
   <sys:String x:Key="Str_TT_ViewList">列表视图</sys:String>
+  <sys:String x:Key="Str_Scroll_PageUp">向上翻页</sys:String>
+  <sys:String x:Key="Str_Scroll_PageDown">向下翻页</sys:String>
+  <sys:String x:Key="Str_Scroll_PageLeft">向左翻页</sys:String>
+  <sys:String x:Key="Str_Scroll_PageRight">向右翻页</sys:String>
 </ResourceDictionary>

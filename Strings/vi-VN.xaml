@@ -599,4 +599,8 @@
   <sys:String x:Key="Str_TT_ViewDetails">Dạng xem chi tiết</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Dạng xem biểu tượng</sys:String>
   <sys:String x:Key="Str_TT_ViewList">Dạng xem danh sách</sys:String>
+  <sys:String x:Key="Str_Scroll_PageUp">Lên một trang</sys:String>
+  <sys:String x:Key="Str_Scroll_PageDown">Xuống một trang</sys:String>
+  <sys:String x:Key="Str_Scroll_PageLeft">Sang trái một trang</sys:String>
+  <sys:String x:Key="Str_Scroll_PageRight">Sang phải một trang</sys:String>
 </ResourceDictionary>

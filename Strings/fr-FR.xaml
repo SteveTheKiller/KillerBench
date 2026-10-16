@@ -600,4 +600,8 @@
   <sys:String x:Key="Str_TT_ViewDetails">Vue détails</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Vue icônes</sys:String>
   <sys:String x:Key="Str_TT_ViewList">Vue liste</sys:String>
+  <sys:String x:Key="Str_Scroll_PageUp">Page vers le haut</sys:String>
+  <sys:String x:Key="Str_Scroll_PageDown">Page vers le bas</sys:String>
+  <sys:String x:Key="Str_Scroll_PageLeft">Page vers la gauche</sys:String>
+  <sys:String x:Key="Str_Scroll_PageRight">Page vers la droite</sys:String>
 </ResourceDictionary>
