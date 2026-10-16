@@ -129,6 +129,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 ### Fixed
 - On the Light theme's Yellow accent, buttons, links, tabs and accent icons stay yellow with a thin gray outline around yellow text and icons, instead of turning near-black.
 - On the website's Light theme with the Yellow accent, links, headings and labels stay yellow with a thin gray outline instead of turning olive brown.
+- The exe files' properties show Steve the Killer as the copyright holder instead of leaving it blank.
 - The website top bar no longer leaves extra space under the wordmark and buttons.
 - Theme and language radio buttons and the Film Grain checkbox line up with their labels again.
 

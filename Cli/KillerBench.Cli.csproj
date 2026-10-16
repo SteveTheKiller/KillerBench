@@ -6,6 +6,8 @@
     <Nullable>enable</Nullable>
     <AssemblyName>killerbench-cli</AssemblyName>
     <Version>0.1.0</Version>
+    <Authors>Steve the Killer</Authors>
+    <Copyright>Copyright (c) 2026 Steve the Killer</Copyright>
   </PropertyGroup>
   <ItemGroup>
     <None Include="../LICENSE.txt" Link="LICENSE.txt" CopyToPublishDirectory="PreserveNewest" />

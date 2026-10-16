@@ -8,6 +8,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Version>0.1.0</Version>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <Authors>Steve the Killer</Authors>
+    <Copyright>Copyright (c) 2026 Steve the Killer</Copyright>
     <FileVersion>0.1.0.0</FileVersion>
     <!-- Shown on the About card beside the version. Keep this as Unreleased during development.
          A final release must use the date on its CHANGELOG section; release.ps1 enforces that. -->
