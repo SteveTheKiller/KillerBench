@@ -125,6 +125,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Added update checks on startup and from the About card. A newer release was offered with an Always check on startup box, a Check for updates on startup checkbox at the top of the About card turned the check back on, and an accepted update was checked against the release checksum and signature before it replaced the installed or portable copy.
 - Added the killerbench.net landing site with a searchable user guide, the Engine developer guide and KillerMCP setup.
 - Expanded the website Help and Technical pages with a page for every section, step-by-step guides, a command reference and a glossary, translated into all 19 languages.
+- Added twelve demo-mode screenshots to the website's home page, each opening full size with a caption, and ten of them to the Microsoft Store listing.
 - Added deterministic VM validation plans, a gated native fault-injection runner and themed coverage reports.
 - Added the symptom coverage matrix with consistency checks.
 - Added isolated UI tests on a separate desktop, synthetic repair demonstrations and a screenshot preset with fixed sample reports.

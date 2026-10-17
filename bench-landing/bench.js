@@ -304,3 +304,81 @@
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !menu.hidden) { close(); btn.focus(); } });
   fit();
 })();
+/* Screenshot strip: fills the sidebar thumbnails on the home page in every language and opens a
+   thumbnail full size in a lightbox. Paths resolve from this script, so the language folders find
+   the shared screenshots folder. */
+(function () {
+  var strip = document.getElementById('sbThumbs');
+  if (!strip) return;
+  var script = document.querySelector('script[src*="bench.js"]');
+  var base = script ? new URL('.', script.src).href : '';
+  // One line per screenshot, describing what it actually shows: the tooltip and the lightbox caption.
+  var SHOTS = [
+    'Full system scan, Dark theme with the yellow accent - the readable report on a demo machine, with what needs attention and the next step',
+    'Windows Update readiness, Delirium theme - the update service, servicing activity and update history checks',
+    'Network, Light theme with the orange accent - hostname and TCP options beside a DNS finding, Film Grain off',
+    'Printing, 98SE theme - print queue, spooler and default printer checks beside the printer tools',
+    'Simulated repair, Malaise theme - Core Windows services after a demo repair at 110% app zoom',
+    'Raw output, Black theme with the teal accent - the full system scan log line by line',
+    'Microsoft Defender, Sepulchre theme - scan options and the report with the tools sidebar collapsed',
+    'Onboarding, Mourning theme - the application and configuration groups for a new computer',
+    'Storage, Ectoplasm theme - volume checks and drive maintenance options at 90% app zoom',
+    'BitLocker in Japanese, Light theme with the green accent - protection, recovery key backup and encryption options, Film Grain off',
+    'Keyboard shortcuts, Dark theme with the blue accent - the F1 overlay with every binding',
+    'Full system scan in German, Decay theme'
+  ];
+  var empty = strip.querySelector('.sb-empty');
+  if (empty) empty.remove();
+  function refade() { strip.classList.toggle('faded', strip.scrollHeight - strip.clientHeight - strip.scrollTop > 4); }
+  SHOTS.forEach(function (desc, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'sb-thumb';
+    b.title = desc;
+    b.setAttribute('aria-label', desc);
+    var img = document.createElement('img');
+    img.src = base + 'screenshots/' + (i < 9 ? '0' : '') + (i + 1) + '.png';
+    img.alt = desc;
+    img.loading = 'lazy';
+    img.addEventListener('load', refade);
+    img.addEventListener('error', refade);
+    b.appendChild(img);
+    strip.appendChild(b);
+  });
+  strip.addEventListener('scroll', refade, { passive: true });
+  window.addEventListener('resize', refade);
+  refade();
+
+  var box = document.createElement('div');
+  box.className = 'lightbox';
+  box.setAttribute('role', 'dialog');
+  box.setAttribute('aria-modal', 'true');
+  box.setAttribute('aria-label', 'Expanded KillerBench screenshot');
+  box.setAttribute('aria-hidden', 'true');
+  box.tabIndex = -1;
+  box.innerHTML = '<figure class="lightbox-figure"><img src="" alt=""><figcaption></figcaption></figure>';
+  document.body.appendChild(box);
+  var big = box.querySelector('img'), caption = box.querySelector('figcaption'), lastTrigger = null;
+  strip.addEventListener('click', function (e) {
+    var thumb = e.target.closest ? e.target.closest('.sb-thumb') : null;
+    if (!thumb) return;
+    var img = thumb.querySelector('img');
+    lastTrigger = thumb;
+    big.src = img.src;
+    big.alt = img.alt;
+    caption.textContent = img.alt;
+    box.setAttribute('aria-hidden', 'false');
+    box.classList.add('show');
+    box.focus();
+  });
+  function closeBox() {
+    if (!box.classList.contains('show')) return;
+    box.classList.remove('show');
+    box.setAttribute('aria-hidden', 'true');
+    if (lastTrigger) lastTrigger.focus();
+  }
+  box.addEventListener('click', closeBox);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && box.classList.contains('show')) { closeBox(); e.preventDefault(); }
+  });
+})();
