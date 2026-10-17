@@ -93,7 +93,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Desktop, accessibility and localization
 
-- Icon-only buttons give screen readers the name from their tooltip, icon glyphs stay out of what screen readers read, the tool list is named after its category, every part of each scroll bar has a name, and controls reached with the keyboard show a thin solid focus ring in the theme accent. Keyboard focus moves into the shortcuts and About cards when they open, stays there until they close, and then returns.
+- Icon-only buttons give screen readers the name from their tooltip, icon glyphs stay out of what screen readers read, the tool list is named after its category, every part of each scroll bar has a name, and controls reached with the keyboard show a thin solid focus ring in the theme accent. Keyboard focus moves into the shortcuts and About cards when they open, stays there until they close, and then returns. Tab skips hidden links.
 - Primary, outline and secondary buttons sit raised on a soft shadow that lifts on hover and sets down when pressed. 98SE keeps its flat beveled buttons.
 
 - Kept app icons sharp at fractional display DPI and app zoom by caching exact pixel sizes from a covering source and aligning the final draw to device pixels.
