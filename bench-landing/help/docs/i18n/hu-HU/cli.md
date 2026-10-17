@@ -116,8 +116,8 @@ Futtassa a `killerbench-cli` parancsot argumentumok nélkül, ha ezt a listát a
 - `disk-diagnostic`: A pontos lemezdiagnosztikai feladatok és az eseményelőzmények összevetése; nincs feladat- vagy lemezművelet.
 - `disk-diagnostic-tasks`: A gyűjtő és a feloldó feladat pontos előzményei csak olvasva; nincs feladat- vagy lemezművelet.
 - `disk-quotas`: Kötetenkénti kvóta-alapértékek és -állapot csak olvasva; felhasználói azonosítók kizárva; nincs módosítás.
-- `file-history-events`: Az Előzmények figyelmeztetéseinek és hibáinak adatvédelmi szempontból vetített száma; nincs módosítás.
-- `file-history-status`: Az aktuális fiók Előzmények védelmi állapota; nincs módosítás.
+- `file-history-events`: A Fájlelőzmények figyelmeztetéseinek és hibáinak adatvédelmi szempontból vetített száma; nincs módosítás.
+- `file-history-status`: Az aktuális fiók Fájlelőzmények védelmi állapota; nincs módosítás.
 - `search-index-rebuild [--execute]`: Alapértelmezés szerint előnézet; megőrzi a korábbi indexet, és ellenőrzi a friss állapotot.
 - `search-index-rebuild-recover`: Csak olvasó egyeztetés a javítóparancsok megismétlése nélkül.
 - `storage-check DRIVE_LETTER`: Rögzített, csak olvasó NTFS-ellenőrzés; JSON-eredmények és élő előrehaladás.

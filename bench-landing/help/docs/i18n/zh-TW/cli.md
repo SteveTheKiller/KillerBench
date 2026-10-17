@@ -69,7 +69,7 @@
 
 ## 安全和隱私
 
-- `certificate-chains`: 唯讀的個人證書本機僅快取信任鏈；不檢查吊銷，不下載。
+- `certificate-chains`: 唯讀的個人憑證本機僅快取信任鏈；不檢查撤銷，不下載。
 - `defender-overview [--report]`: 唯讀的保護、掃描時間和威脅彙總概覽；不執行操作。
 - `defender-protection [--report]`: 唯讀的保護首選項和已識別的原則面；排除敏感詳細資訊；不更改。
 - `defender-scan Quick|Full [--execute] [--report]`: 預設預覽；一次明確的受保護 Microsoft Defender 掃描。
@@ -79,7 +79,7 @@
 - `firewall-enable --profile Domain|Private|Public [--profile ...] [--execute]`: 預設預覽；僅限不受管理的本機設定檔。
 - `firewall-enable-recover`: 檢查待處理的更改，而不重複執行。
 - `firewall-events`: 讀取有範圍限制的 Windows 防火牆警告、錯誤和嚴重操作歷史記錄。
-- `firewall-logging`: 在不開啟記錄的情況下讀取域、專用和公用流量記錄設定。
+- `firewall-logging`: 在不開啟記錄的情況下讀取網域、私人和公用流量記錄設定。
 - `firewall-rules`: 讀取有隱私範圍限制的有效規則和原則來源數量。
 - `firewall-service-events`: 讀取 BFE 和 Windows Defender 防火牆的確切服務控制管理器故障歷史記錄。
 - `privacy-clipboard-history on|off [--execute]`: 預設預覽；在保留原則的情況下設定目前使用者的確切值。
@@ -125,9 +125,9 @@
 - `storage-jobs`: 唯讀的 Storage 模組作業彙總狀態和進度；JSON；不更改。
 - `storage-reliability`: 唯讀的溫度、磨損和 I/O 計數器；JSON；不修復。
 - `storage-repair DRIVE: SpotFix|OfflineScanAndFix [--allow-dismount] [--backup-confirmed] [--execute]`: 預設預覽；執行需要確認備份；系統磁碟區會安排在重新啟動時進行。
-- `storage-repair-plan DRIVE: SpotFix|OfflineScanAndFix [--allow-dismount]`: 僅預覽；不修復，不計畫。
+- `storage-repair-plan DRIVE: SpotFix|OfflineScanAndFix [--allow-dismount]`: 僅預覽；不修復，不排程。
 - `storage-repair-recover`: 驗證已完成或已排程的檔案系統修復，而不重複執行。
-- `storage-repair-review DRIVE: SpotFix|OfflineScanAndFix [--allow-dismount]`: 收集並繫結目前證據；不修復，不計畫。
+- `storage-repair-review DRIVE: SpotFix|OfflineScanAndFix [--allow-dismount]`: 收集並繫結目前證據；不修復，不排程。
 - `storage-sense-policy`: 唯讀的已識別電腦清理原則；排除使用者設定和檔案識別。
 - `storage-sense-task`: 唯讀的確切工作狀態和執行歷史記錄；不執行工作，不清理。
 - `storage-service-events`: 讀取儲存服務、最佳化磁碟機、VSS 和軟體陰影複製提供程式的確切故障歷史記錄。
@@ -177,7 +177,7 @@
 - `ip-addresses`: 唯讀的目前 IP 位址狀態、來源和衝突檢視；JSON 證據。
 - `ip-interface-config`: 唯讀的 IP 介面設定證據；JSON 結果。
 - `network-firewall`: 將活動的網路分配與相應防火牆設定檔的啟用狀態進行關聯。
-- `network-offload`: 唯讀的 Windows 全域性網路解除安裝設定；JSON 結果。
+- `network-offload`: 唯讀的 Windows 全域網路卸載設定；JSON 結果。
 - `network-profiles`: 唯讀的目前設定檔類別和連線分類；排除網路名稱。
 - `network-service-events`: 讀取 DHCP、DNS、Workstation、NLA、Network List 和 IP Helper 的確切故障歷史記錄。
 - `proxy-check`: 唯讀的已儲存 WinHTTP 和目前帳戶 Internet Proxy證據。
@@ -190,7 +190,7 @@
 - `tcp-port-pressure`: 唯讀的動態 TCP 範圍和本機連接埠使用匯總；排除端點和處理程序。
 - `tcp-settings`: 唯讀的 Windows TCP 模板設定證據；JSON 結果。
 - `vpn-profiles`: 唯讀的目前帳戶 VPN 設定檔設定；排除認證。
-- `winrm-listeners`: 唯讀的 WinRM 接聽程式註冊摘要；排除證書指紋。
+- `winrm-listeners`: 唯讀的 WinRM 接聽程式註冊摘要；排除憑證指紋。
 - `winsock-catalog`: 唯讀的原生 Winsock 通訊協定目錄結構；JSON 結果。
 - `winsock-namespaces`: 唯讀的原生 Winsock 命名空間提供程式結構；JSON 結果。
 - `winsock-provider-files`: 唯讀的通訊協定提供程式檔案存在情況和簽名；JSON 結果。
@@ -262,7 +262,7 @@
 - `profiles --recover`: 驗證已記錄的不存在狀態並保留復原證據；絕不重試刪除。
 - `profiles --recover-backup`: 驗證並存檔待處理的備份工件；絕不重試複製。
 - `profiles --select SID --backup-to NEW_DESTINATION [--execute]`: 先預覽；受保護的原生複製需要明確執行，且本機 NTFS 目標必須不存在。
-- `profiles --select SID --create-backup-artifact DESTINATION`: 比較現有的已複製備份並建立其固定工件；不復制或刪除設定檔。
+- `profiles --select SID --create-backup-artifact DESTINATION`: 比較現有的已複製備份並建立其固定工件；不複製或刪除設定檔。
 - `profiles [--days 90] [--dependencies] [--select SID ...] [--save-plan] [--verify-backup RECEIPT]`: 唯讀檢視；驗證需要選擇一個 SID。
 - `task-check`: 唯讀的工作清單、分類結論和 JSON 證據。
 - `task-definition TASK_FOLDER TASK_NAME`: 唯讀的確切工作 XML；不可用並不表示不存在。
@@ -271,7 +271,7 @@
 - `task-plan PLAN.json [--check-conflicts] [--inspect-executable] [--resolve-account] [--inspect-signature]`: 驗證並檢視工作草稿；不註冊。
 - `task-register PLAN.json YYYY-MM-DD [--execute] [--report OUTPUT.html|OUTPUT.txt]`: 預設預覽；已禁用的、僅建立的 Local System 定義。
 - `task-register-recover PLAN.json [--report OUTPUT.html|OUTPUT.txt]`: 唯讀的確切定義核對；絕不重試或執行工作。
-- `task-xml PLAN.json YYYY-MM-DD`: 將已禁用的檢視用 XML 輸出到 stdout；僅限本機時區的日曆計畫；不註冊。
+- `task-xml PLAN.json YYYY-MM-DD`: 將已禁用的檢視用 XML 輸出到 stdout；僅限本機時區的行事曆排程；不註冊。
 - `time-config`: 唯讀的 Windows 時間模式、對等節點和原則證據。
 - `time-configure --source DomainHierarchy|CustomPeers [--peer HOST ...] [--execute]`: 預設預覽；自訂模式需要對等節點。
 - `time-plan [--source Existing|DomainHierarchy|CustomPeers] [--peer HOST ...]`: 僅預覽。

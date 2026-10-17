@@ -174,7 +174,7 @@
   <sys:String x:Key="Str_Shell_Diagnostics">Diagnostics</sys:String>
   <sys:String x:Key="Str_Shell_ReadyNoScan">Prêt. Aucune analyse effectuée.</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">BASES DE CONNAISSANCES</sys:String>
-  <sys:String x:Key="Str_About_UpdateDatabases">Bases de données de mises à jour</sys:String>
+  <sys:String x:Key="Str_About_UpdateDatabases">Mettre à jour les bases de données</sys:String>
   <sys:String x:Key="Str_About_KillerMcp">Options de KillerMCP</sys:String>
   <sys:String x:Key="Str_About_KillerMcpNote">Ces paramètres s'appliquent uniquement si vous connectez un agent d'IA à ce PC via KillerMCP. KillerBench n'inclut aucun agent d'IA.</sys:String>
   <sys:String x:Key="Str_About_KillerMcpSafe">Autoriser KillerMCP à effectuer des réparations sûres</sys:String>

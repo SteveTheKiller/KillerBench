@@ -5,7 +5,7 @@
 Wynik zablokowany oznacza, że żądana akcja nie mogła być kontynuowana. Przeczytaj komunikat i dziennik, aby sprawdzić, czy zatrzymała się przed wysłaniem, czy po wcześniejszym kroku. Nie zakładaj, że częściowo ukończona operacja została wycofana. Najczęstsze przyczyny związane z wymaganiami podano poniżej.
 
 - **Wymagany jest dostęp administratora.** Zamknij KillerBench i uruchom go ponownie za pomocą **Uruchom jako administrator**.
-- **Nie może oczekiwać ponowne uruchomienie.** System Windows ma oczekujące ponowne uruchomienie. Uruchom ponownie komputer, a następnie wykonaj akcję jeszcze raz.
+- **Nie może być oczekującego ponownego uruchomienia.** System Windows ma oczekujące ponowne uruchomienie. Uruchom ponownie komputer, a następnie wykonaj akcję jeszcze raz.
 - **Obowiązują zarządzane zasady.** Ustawienie należy do zasad grupy lub zarządzania urządzeniami. Zmień je tam.
 - **Dowody się zmieniły.** Coś zmieniło się między pierwszą a końcową kontrolą. Uruchom narzędzie ponownie, aby odczytać nowy stan.
 

@@ -12,7 +12,7 @@ Sınırlı disk, bölüm ve sürücü harfli birim kimliklerini eşler, her sür
 
 ### Depolama Alanları
 
-İlk düzey olmayan Depolama Alanları havuzlarını ve sanal diskleri sağlık, işletim durumu, kapasite, ayırma ve dayanıklılık dahil envantere alır, ardından tek bir sınırlı işletim sonucu döndürür. Windows, bu salt okunur sorguyu yanıtlarken Depolama Alanları yönetim sağlayıcısını isteğe bağlı olarak başlatabilir. Havuzlar, sanal diskler, fiziksel diskler, birimler, dayanıklılık, ayırma, bakım ayarları, ilke ve başlangıç türü korunur. Hiçbir havuz, disk, birim, ayırma, ekleme, onarım, iyileştirme veya ayar işlemi istenmez. Sağlayıcı sonuçları havuz erişilebilirliğini, yedekliliği, veri bütünlüğünü, yedeklerin kurtarılabilirliğini veya uygulama G/Ç'sini doğrulamaz.
+Primordial olmayan Depolama Alanları havuzlarını ve sanal diskleri sağlık, işletim durumu, kapasite, ayırma ve dayanıklılık dahil envantere alır, ardından tek bir sınırlı işletim sonucu döndürür. Windows, bu salt okunur sorguyu yanıtlarken Depolama Alanları yönetim sağlayıcısını isteğe bağlı olarak başlatabilir. Havuzlar, sanal diskler, fiziksel diskler, birimler, dayanıklılık, ayırma, bakım ayarları, ilke ve başlangıç türü korunur. Hiçbir havuz, disk, birim, ayırma, ekleme, onarım, iyileştirme veya ayar işlemi istenmez. Sağlayıcı sonuçları havuz erişilebilirliğini, yedekliliği, veri bütünlüğünü, yedeklerin kurtarılabilirliğini veya uygulama G/Ç'sini doğrulamaz.
 
 ### Depolama Hizmeti
 

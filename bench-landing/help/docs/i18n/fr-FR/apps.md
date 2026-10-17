@@ -10,7 +10,7 @@ Examinez les applications installées, les packages du Store, Office et Outlook,
 
 ### Applications installées
 
-Lit les inscriptions de désinstallation des applications dans la portée sélectionnée de l'ordinateur ou du compte en cours d'exécution, puis combine cette portée avec des preuves délimitées d'erreurs du journal Application, de l'Analyseur de fiabilité et de redémarrages. Les autres comptes et les applications portables sont exclus. Les inscriptions et l'historique général ne prouvent pas exactement l'état ni la propriété d'une application. Aucune action de programme d'installation, de désinstallation, d'application, de processus, de service, de fichier, d'inscription, de compte, de stratégie ou de redémarrage n'est sélectionnée.
+Lit les inscriptions de désinstallation des applications dans la portée sélectionnée de l'ordinateur ou du compte en cours d'exécution, puis combine cette portée avec des preuves délimitées d'erreurs du journal Application, du Moniteur de fiabilité et de redémarrages. Les autres comptes et les applications portables sont exclus. Les inscriptions et l'historique général ne prouvent pas exactement l'état ni la propriété d'une application. Aucune action de programme d'installation, de désinstallation, d'application, de processus, de service, de fichier, d'inscription, de compte, de stratégie ou de redémarrage n'est sélectionnée.
 
 ### Packages d'applications
 

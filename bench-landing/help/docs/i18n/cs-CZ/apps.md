@@ -14,7 +14,7 @@ Kontrolujte nainstalované aplikace, balíčky Store, Office a Outlook, rozší�
 
 ### Balíčky aplikací
 
-Inventarizuje zaregistrované balíčky Appx/MSIX pro vybraný rozsah účtů. Výchozí je aktuální účet; všichni uživatelé vyžadují přístup správce. Uvádí přesné identity, příznaky rozhraní a neodebratelnosti a počty závislostí. Zřízené balíčky, aplikace Win32, spravované vlastnictví a data aplikací se nevyhodnocují. Žádné balíčky se neodebírají.
+Inventarizuje zaregistrované balíčky Appx/MSIX pro vybraný rozsah účtů. Výchozí je aktuální účet; všichni uživatelé vyžadují přístup správce. Uvádí přesné identity, příznaky frameworku a neodebratelnosti a počty závislostí. Zřízené balíčky, aplikace Win32, spravované vlastnictví a data aplikací se nevyhodnocují. Žádné balíčky se neodebírají.
 
 ### Rozšíření prohlížeče
 

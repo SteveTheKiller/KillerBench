@@ -255,7 +255,7 @@ Bu listeyi kendi makinenizde yazdırmak için `killerbench-cli` komutunu bağım
 - `event-channels`: Dört tanılama kanalı için salt okunur durum, saklama, boyut ve doluluk.
 - `font-registrations`: Salt okunur sınırlı makine ve geçerli kullanıcı kaydı ve dosya varlığı denetimi.
 - `memory-diagnostic-results`: Salt okunur sınırlı Windows Bellek Tanılama geçmişi; JSON kanıtı.
-- `minidump-analyze PATH`: Sınırlı yapısal mini döküm meta verileri; bellek sayfaları, simgeler veya değişiklik yok.
+- `minidump-analyze PATH`: Sınırlı yapısal mini döküm meta verileri; bellek sayfaları, semboller veya değişiklik yok.
 - `name-rename PROPOSED_NAME [--execute]`: Varsayılan olarak önizleme; yalnızca bağımsız çalışma grubu PC'leri; Windows'u hiçbir zaman yeniden başlatmaz.
 - `name-rename-recover`: Bekleyen bir yeniden adlandırmayı yinelemeden doğrular.
 - `name-review PROPOSED_NAME`: Salt okunur kimlik ve önerilen ad incelemesi.

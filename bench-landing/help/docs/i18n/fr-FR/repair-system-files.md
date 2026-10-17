@@ -5,7 +5,7 @@ Utilisez ce guide lorsque des composants Windows sont corrompus : des fonctionna
 ## Avant de commencer
 
 - Exécutez KillerBench en tant qu'administrateur.
-- Réglez d'abord tout redémarrage en attente.
+- Effectuez d'abord tout redémarrage en attente.
 - Si l'ordinateur est géré, vérifiez si une stratégie dirige DISM vers une source de réparation précise. KillerBench signale cette stratégie et ne la modifie pas.
 
 ## Rechercher une corruption

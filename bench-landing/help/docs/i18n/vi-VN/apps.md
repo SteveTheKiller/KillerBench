@@ -10,7 +10,7 @@ Xem lại ứng dụng đã cài, gói Store, Office và Outlook, tiện ích m�
 
 ### Ứng dụng đã cài đặt
 
-Đọc các đăng ký gỡ cài đặt ứng dụng trong phạm vi máy hoặc tài khoản đang chạy đã chọn, sau đó kết hợp phạm vi đó với bằng chứng có giới hạn về lỗi Application, Reliability Monitor và khởi động lại. Các tài khoản khác và ứng dụng di động bị loại trừ. Đăng ký và lịch sử chung không phải là bằng chứng chính xác về tình trạng hay quyền sở hữu ứng dụng. Không có thao tác nào về trình cài đặt, trình gỡ cài đặt, ứng dụng, tiến trình, dịch vụ, tệp, đăng ký, tài khoản, chính sách hay khởi động lại được chọn.
+Đọc các đăng ký gỡ cài đặt ứng dụng trong phạm vi máy hoặc tài khoản đang chạy đã chọn, sau đó kết hợp phạm vi đó với bằng chứng có giới hạn về lỗi Application, Reliability Monitor và khởi động lại. Các tài khoản khác và ứng dụng portable (chạy không cần cài đặt) bị loại trừ. Đăng ký và lịch sử chung không phải là bằng chứng chính xác về tình trạng hay quyền sở hữu ứng dụng. Không có thao tác nào về trình cài đặt, trình gỡ cài đặt, ứng dụng, tiến trình, dịch vụ, tệp, đăng ký, tài khoản, chính sách hay khởi động lại được chọn.
 
 ### Gói ứng dụng
 

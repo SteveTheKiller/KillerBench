@@ -4,7 +4,7 @@ KillerBench は、Steve the Killer が作成した Windows の診断・修復・
 
 ## 提供状況と範囲
 
-公開されている KillerBench のダウンロードや Engine パッケージはまだありません。[ダウンロードとセットアップ](setup.html) では、現在の Windows x64 の対象と Desktop Runtime の要件を説明しています。実機での修復の検証はまだ進行中です。ツールが存在することは、あらゆる障害、中断、Windows の構成がテスト済みであることの証明にはなりません。
+公開されている KillerBench のダウンロードや Engine パッケージはまだありません。[ダウンロードとセットアップ](setup.html) では、現在の Windows x64 の対象と Desktop Runtime の要件を説明しています。ネイティブ修復の検証はまだ進行中です。ツールが存在することは、あらゆる障害、中断、Windows の構成がテスト済みであることの証明にはなりません。
 
 ## ソースと配布に関する通知
 

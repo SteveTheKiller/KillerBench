@@ -186,7 +186,7 @@ KillerBench enthält keinen KI-Agenten. [KillerMCP](../mcp.html) kann einen Agen
 | Einstellung | Wirkung |
 | --- | --- |
 | Aus (Standard) | Der Agent kann keine Reparatur anfordern. |
-| KillerMCP sichere Reparaturen erlauben | Der Agent kann Reparaturen anfordern, die als sicher eingestuft sind. |
+| Sichere Reparaturen erlauben | Der Agent kann Reparaturen anfordern, die als sicher eingestuft sind. |
 | Auch störende Reparaturen erlauben | Störende Reparaturen werden verfügbar, und jede braucht weiterhin eine Genehmigung. |
 
 Nur eine Person an diesem Computer kann die Stufe anheben. Nach einem unsicheren Reparaturergebnis schreibt KillerMCP eine Sperre, und Reparaturen durch den Agenten bleiben blockiert, bis jemand sie unter „Info“ aufhebt.

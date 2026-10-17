@@ -289,7 +289,7 @@ Spuštěním `killerbench-cli` bez argumentů vypíšete tento seznam na vlastn�
 - `knowledge-log PACK_PATH CONTEXT LOG_PATH`: Připojí kontextové reference k pozorovaným kódům.
 - `knowledge-recover STORAGE_DIRECTORY PUBLIC_KEY_FILE PACK_ID MINIMUM_REVISION`: Vybere nejnovější ověřený uchovaný balíček; bez stahování.
 - `knowledge-search PACK_PATH CONTEXT TEXT`: Až 50 shod v referenčním textu; bez provádění oprav.
-- `knowledge-set CONTEXT CODE PACK_PATH [PACK_PATH ...]`: Přeloží jednu přesnou identitu až ve 32 balíčcích; konflikty se nikdy nevybírají.
+- `knowledge-set CONTEXT CODE PACK_PATH [PACK_PATH ...]`: Vyhodnotí jednu přesnou identitu až ve 32 balíčcích; konflikty se nikdy nevybírají.
 - `knowledge-status CONFIG_JSON STORAGE_ROOT`: Ověří každou nakonfigurovanou nainstalovanou databázi; bez stahování a bez aktivace.
 - `knowledge-update CONFIG_JSON STORAGE_ROOT`: Stáhne a atomicky aktivuje podepsané kandidátské databáze z nakonfigurovaných koncových bodů HTTPS.
 - `open <file.kbench> [--json]`: Znovu otevře uložený záznam a znovu jej vyhodnotí nainstalovanými pravidly.

@@ -507,7 +507,7 @@
   <sys:String x:Key="Str_About_Thumbprint">UJJLENYOMAT</sys:String>
   <sys:String x:Key="Str_About_ExeHash">EXE SHA-256</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">TUDÁSADATBÁZISOK</sys:String>
-  <sys:String x:Key="Str_About_UpdateDatabases">Frissítési adatbázisok</sys:String>
+  <sys:String x:Key="Str_About_UpdateDatabases">Adatbázisok frissítése</sys:String>
   <sys:String x:Key="Str_About_KillerMcp">KillerMCP beállítások</sys:String>
   <sys:String x:Key="Str_About_KillerMcpNote">Ezek a beállítások csak akkor érvényesek, ha a KillerMCP-n keresztül AI-ügynököt csatlakoztat ehhez a géphez. A KillerBench nem tartalmaz AI-ügynököt.</sys:String>
   <sys:String x:Key="Str_About_KillerMcpSafe">Biztonságos javítások engedélyezése a KillerMCP számára</sys:String>

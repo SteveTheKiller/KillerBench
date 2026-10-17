@@ -244,7 +244,7 @@
   <sys:String x:Key="Str_Shell_Tools">Verktøy</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">Personverninnstilling</sys:String>
   <sys:String x:Key="Str_Privacy_Action">Handling</sys:String>
-  <sys:String x:Key="Str_Privacy_Boundary">Bruk endrer bare denne kontoen. Samsvarende policy, enhetstilgang for hele maskinen, unntak per program, diagnoseinnsamling og lagret utklippstavleinnhold beholdes. Verifiserte journaler støtter beskyttet angring.</sys:String>
+  <sys:String x:Key="Str_Privacy_Boundary">Endringer gjelder bare denne kontoen. Samsvarende policy, enhetstilgang for hele maskinen, unntak per program, diagnoseinnsamling og lagret utklippstavleinnhold beholdes. Verifiserte journaler støtter beskyttet angring.</sys:String>
   <sys:String x:Key="Str_BitLocker_Description">Kjør diagnose inspiserer som standard. Sikkerhetskopiering, kryptering og gjenopptatt beskyttelse krever hver sin bekreftelse nedenfor.</sys:String>
   <sys:String x:Key="Str_BitLocker_Volume">Volum</sys:String>
   <sys:String x:Key="Str_BitLocker_Operation">Operasjon</sys:String>

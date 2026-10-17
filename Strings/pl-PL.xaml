@@ -245,7 +245,7 @@
   <sys:String x:Key="Str_Shell_Tools">Narzędzia</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">Ustawienie prywatności</sys:String>
   <sys:String x:Key="Str_Privacy_Action">Akcja</sys:String>
-  <sys:String x:Key="Str_Privacy_Boundary">Zastosowanie zmienia tylko to konto. Pasujące zasady, dostęp urządzenia dla całego komputera, wyjątki poszczególnych aplikacji, zbieranie diagnostyki i zapisana zawartość schowka są zachowane. Zweryfikowane dzienniki obsługują chronione cofnięcie.</sys:String>
+  <sys:String x:Key="Str_Privacy_Boundary">Zmiany dotyczą tylko tego konta. Pasujące zasady, dostęp urządzenia dla całego komputera, wyjątki poszczególnych aplikacji, zbieranie diagnostyki i zapisana zawartość schowka są zachowane. Zweryfikowane dzienniki obsługują chronione cofnięcie.</sys:String>
   <sys:String x:Key="Str_BitLocker_Description">Domyślnie Uruchom diagnozę tylko sprawdza. Kopia zapasowa, szyfrowanie i wznowienie ochrony wymagają każde odpowiedniego potwierdzenia poniżej.</sys:String>
   <sys:String x:Key="Str_BitLocker_Volume">Wolumin</sys:String>
   <sys:String x:Key="Str_BitLocker_Operation">Operacja</sys:String>
@@ -554,7 +554,7 @@
   <sys:String x:Key="Str_Debloat_DisplayAc30">Ekran AC: 30</sys:String>
   <sys:String x:Key="Str_Debloat_DisplayAc60">Ekran AC: 60</sys:String>
   <sys:String x:Key="Str_Debloat_DisplayAc120">Ekran AC: 120</sys:String>
-  <sys:String x:Key="Str_Debloat_DisplayBatteryNever">Ekran bateria: Nigdy</sys:String>
+  <sys:String x:Key="Str_Debloat_DisplayBatteryNever">Ekran na baterii: Nigdy</sys:String>
   <sys:String x:Key="Str_Debloat_DisplayBattery15">Ekran bateria: 15</sys:String>
   <sys:String x:Key="Str_Debloat_DisplayBattery30">Ekran bateria: 30</sys:String>
   <sys:String x:Key="Str_Debloat_DisplayBattery60">Ekran bateria: 60</sys:String>

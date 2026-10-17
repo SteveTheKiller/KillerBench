@@ -168,7 +168,7 @@
   <sys:String x:Key="Str_Orca_Description">Outlook sürümünü, hesap kapsamını ve sıfırlanacak alanları tam olarak seçin. Çalıştır düğmesi bunları inceler. Yalnızca çalışan hesabın önbellekleri için, yeni denetimlerden sonra önbellekleri kurtarma adlarına taşımak üzere saklamayı açın.</sys:String>
   <sys:String x:Key="Str_Orca_NewOutlook">Yeni Outlook</sys:String>
   <sys:String x:Key="Str_Orca_ClassicOutlook">Klasik Outlook</sys:String>
-  <sys:String x:Key="Str_Orca_ResetAreas">Sıfırlama alanları</sys:String>
+  <sys:String x:Key="Str_Orca_ResetAreas">Alanları sıfırla</sys:String>
   <sys:String x:Key="Str_Orca_Caches">Outlook önbellekleri</sys:String>
   <sys:String x:Key="Str_Orca_Profiles">Profil ve keşif ayarları</sys:String>
   <sys:String x:Key="Str_Orca_Authentication">Kimlik doğrulama durumu</sys:String>
@@ -478,7 +478,7 @@
   <sys:String x:Key="Str_Advanced_RepairEffects">Bu onarımların değiştirebilecekleri</sys:String>
   <sys:String x:Key="Str_Advanced_Tools">Gelişmiş: günlükler ve el ile onarımlar</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflow">Workflow aç</sys:String>
-  <sys:String x:Key="Str_Advanced_OpenWorkflowTip">Denetim veya onarım çalıştırmadan kaydedilmiş bir workflow günlüğünü incele.</sys:String>
+  <sys:String x:Key="Str_Advanced_OpenWorkflowTip">Denetim veya onarım çalıştırmadan kaydedilmiş bir iş akışı günlüğünü incele.</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">Workflow'lar</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">Onarımlar</sys:String>
   <sys:String x:Key="Str_Knowledge_Header">Bilgi başvurusu</sys:String>

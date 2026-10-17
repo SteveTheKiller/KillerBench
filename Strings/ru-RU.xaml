@@ -237,7 +237,7 @@
   <sys:String x:Key="Str_Profile_SelectAfterReview">Выбрать профили после проверки</sys:String>
   <sys:String x:Key="Str_Profile_PreviewSelected">Предварительный просмотр выбранных профилей</sys:String>
   <sys:String x:Key="Str_Profile_BackupHeader">Создать резервную копию и проверить профиль</sys:String>
-  <sys:String x:Key="Str_Profile_BackupDescription">Выберите ровно один проверенный профиль. Чтобы создать новую резервную копию, введите новый локальный NTFS-папку, которая не существует. Чтобы проверить существующую копию, выберите её папку. KillerBench никогда не удаляет профиль.</sys:String>
+  <sys:String x:Key="Str_Profile_BackupDescription">Выберите ровно один проверенный профиль. Чтобы создать новую резервную копию, введите новую локальную папку NTFS, которая не существует. Чтобы проверить существующую копию, выберите её папку. KillerBench никогда не удаляет профиль.</sys:String>
   <sys:String x:Key="Str_Profile_Browse">Обзор</sys:String>
   <sys:String x:Key="Str_Profile_BackupPathTip">Новая отсутствующая локальная NTFS-папка для копирования или существующая папка скопированного профиля для проверки</sys:String>
   <sys:String x:Key="Str_Profile_CopyVerify">Копировать и проверить</sys:String>
@@ -266,7 +266,7 @@
   <sys:String x:Key="Str_BitLocker_UsedSpace">Только используемое пространство</sys:String>
   <sys:String x:Key="Str_BitLocker_BackupFile">Файл резервной копии (для назначения «Файл»)</sys:String>
   <sys:String x:Key="Str_BitLocker_BackupPathTip">Для файлового резервного копирования укажите полный путь вне защищенного тома.</sys:String>
-  <sys:String x:Key="Str_BitLocker_FindProtectors">Найти предохранители восстановления</sys:String>
+  <sys:String x:Key="Str_BitLocker_FindProtectors">Найти протекторы восстановления</sys:String>
   <sys:String x:Key="Str_BitLocker_BackupConsent">Записать выбранную резервную копию восстановления, когда я выберу «Запустить диагностику»</sys:String>
   <sys:String x:Key="Str_BitLocker_EncryptConsent">Сохранить выбранный ключ восстановления, затем начать шифрование, когда я выберу «Запустить диагностику»</sys:String>
   <sys:String x:Key="Str_BitLocker_ResumeConsent">Возобновить защиту этого полностью зашифрованного тома, когда я выберу «Запустить диагностику»</sys:String>
@@ -274,7 +274,7 @@
   <sys:String x:Key="Str_BitLocker_MoreActions">Другие действия BitLocker</sys:String>
   <sys:String x:Key="Str_BitLocker_Action">Действие</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionAutoUnlock">Включить автоматическую разблокировку</sys:String>
-  <sys:String x:Key="Str_BitLocker_ActionAddTpm">Добавить предохранитель TPM</sys:String>
+  <sys:String x:Key="Str_BitLocker_ActionAddTpm">Добавить протектор TPM</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionAddRecovery">Добавить пароль восстановления</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionEscrowAd">Сохранить пароль восстановления в Active Directory</sys:String>
   <sys:String x:Key="Str_BitLocker_ActionEscrowEntra">Сохранить пароль восстановления в Microsoft Entra ID</sys:String>
@@ -465,7 +465,7 @@
   <sys:String x:Key="Str_Firewall_EnableProfiles">Включить выбранные профили Брандмауэра Windows</sys:String>
   <sys:String x:Key="Str_Firewall_Domain">Домен</sys:String>
   <sys:String x:Key="Str_Firewall_Private">Частный</sys:String>
-  <sys:String x:Key="Str_Firewall_Public">Общественный</sys:String>
+  <sys:String x:Key="Str_Firewall_Public">Общедоступный</sys:String>
   <sys:String x:Key="Str_Firewall_Apply">Применить выбранные локальные профили после новых проверок политики</sys:String>
   <sys:String x:Key="Str_Firewall_Boundary">Если не отмечено, выполняется обычная диагностика брандмауэра. Управляемые, включённые, отсутствующие или неоднозначные параметры профилей сохраняются. Правила, действия по умолчанию и параметры ведения журнала не изменяются.</sys:String>
   <sys:String x:Key="Str_Advanced_ChooseChecks">Выбрать проверки (расширенные)</sys:String>
@@ -622,7 +622,7 @@
   <sys:String x:Key="Str_Category_Security">Безопасность</sys:String>
   <sys:String x:Key="Str_Category_Security_Description">Проверяйте защиту, брандмауэр, сертификаты и службы входа.</sys:String>
   <sys:String x:Key="Str_Category_BitLocker">BitLocker</sys:String>
-  <sys:String x:Key="Str_Category_BitLocker_Description">Проверяйте шифрование, предохранители и сведения для восстановления, затем сохраняйте их или защищайте диск.</sys:String>
+  <sys:String x:Key="Str_Category_BitLocker_Description">Проверяйте шифрование, средства защиты ключей и сведения для восстановления, затем сохраняйте их или защищайте диск.</sys:String>
   <sys:String x:Key="Str_Category_Privacy">Конфиденциальность</sys:String>
   <sys:String x:Key="Str_Category_Privacy_Description">Проверяйте и меняйте разрешения приложений, рекомендации, параметры поиска и рекламы.</sys:String>
   <sys:String x:Key="Str_Category_Storage">Хранилище</sys:String>

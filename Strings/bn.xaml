@@ -37,7 +37,7 @@
   <sys:String x:Key="Str_Advanced_None">কোনোটি নয়</sys:String>
   <sys:String x:Key="Str_ToolTip_Scroll_here_to_resize_the_interface">ইন্টারফেসের আকার পরিবর্তন করতে এখানে স্ক্রল করুন</sys:String>
   <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">উইন্ডোজ মেইনটেন্যান্স ওয়ার্কবেঞ্চ</sys:String>
-  <sys:String x:Key="Str_ToolTip_Minimize">সর্বনিম্ন করুন</sys:String>
+  <sys:String x:Key="Str_ToolTip_Minimize">ছোট করুন</sys:String>
   <sys:String x:Key="Str_ToolTip_Maximize_or_restore">সর্বাধিক বা পুনরুদ্ধার করুন</sys:String>
   <sys:String x:Key="Str_ToolTip_Close">বন্ধ করুন</sys:String>
   <sys:String x:Key="Str_Text_EVIDENCE_SOURCES">প্রমাণ উৎস</sys:String>
@@ -120,7 +120,7 @@
   <sys:String x:Key="Str_Peek_Restart">পুনরায় চালু করার সূচক</sys:String>
   <sys:String x:Key="Str_Peek_Setup">প্যানথার সেটআপ কার্যক্রম</sys:String>
   <sys:String x:Key="Str_Peek_Compatibility">সেটআপ সামঞ্জস্যতা ব্লক</sys:String>
-  <sys:String x:Key="Str_Peek_Readiness">স্টোরেজ, পাওয়ার এবং বিটলকার প্রস্তুতি</sys:String>
+  <sys:String x:Key="Str_Peek_Readiness">স্টোরেজ, পাওয়ার এবং BitLocker প্রস্তুতি</sys:String>
   <sys:String x:Key="Str_Peek_Transfers">বর্তমান অ্যাকাউন্টের ব্যাকগ্রাউন্ড ট্রান্সফার</sys:String>
   <sys:String x:Key="Str_Peek_DeliveryOptimization">ডেলিভারি অপ্টিমাইজেশন কার্যক্রম</sys:String>
   <sys:String x:Key="Str_Peek_Installer">উইন্ডোজ ইন্সটলার কার্যক্রম</sys:String>
@@ -246,7 +246,7 @@
   <sys:String x:Key="Str_Profile_CopyVerifyTip">নির্বাচিত আনলোড করা প্রোফাইলটি একবার নতুন খালি লোকাল NTFS ফোল্ডারে কপি করুন, তারপর প্রতিটি নিয়মিত ফাইল যাচাই করুন</sys:String>
   <sys:String x:Key="Str_Profile_CreateVerification">ভেরিফিকেশন ফাইল তৈরি করুন</sys:String>
   <sys:String x:Key="Str_Profile_CreateVerificationTip">নির্বাচিত লাইভ প্রোফাইলটি বিদ্যমান নকল ফোল্ডারের সাথে তুলনা করুন, তারপর এর ম্যানিফেস্ট এবং রসিদ তৈরি করুন</sys:String>
-  <sys:String x:Key="Str_Profile_VerifyBackup">নকল ব্যাকআপ যাচাই করুন</sys:String>
+  <sys:String x:Key="Str_Profile_VerifyBackup">কপি করা ব্যাকআপ যাচাই করুন</sys:String>
   <sys:String x:Key="Str_Profile_VerifyBackupTip">লাইভ প্রোফাইল এবং নকল ফোল্ডারের সাথে বিদ্যমান ম্যানিফেস্ট এবং রসিদ যাচাই করুন</sys:String>
   <sys:String x:Key="Str_Profile_CheckInterrupted">বাধাপ্রাপ্ত ব্যাকআপ পরীক্ষা করুন</sys:String>
   <sys:String x:Key="Str_Profile_CheckInterruptedTip">ফাইলগুলো আবার কপি না করে একটি মুলতুবি ব্যাকআপ যাচাই করুন</sys:String>

@@ -209,7 +209,7 @@
 - `installed-apps [--current-user]`: আনইনস্টল নিবন্ধন ও সক্ষমতার ফ্ল্যাগ; কোনো অপসারণ নেই।
 - `installed-apps-compare BEFORE.json AFTER.json`: সংরক্ষিত তালিকার নিবন্ধনের পার্থক্য; কোনো কম্পিউটার পরিবর্তন নেই।
 - `installed-hotfixes`: শুধু-পড়া সীমিত ইনস্টল করা Windows হটফিক্সের তালিকা; JSON প্রমাণ।
-- `installer-activity`: শুধু-পড়া Installer প্রসেস ও লেনদেন-চিহ্নের প্রমাণ; JSON প্রমাণ।
+- `installer-activity`: শুধু-পড়া Installer প্রসেস ও ট্রানজ্যাকশন-মার্কারের প্রমাণ; JSON প্রমাণ।
 - `installer-check`: শুধু-পড়া Installer নীতি ও ইঞ্জিনের প্রস্তুতি; JSON প্রমাণ।
 - `installer-engine-files`: শুধু-পড়া প্রয়োজনীয় Installer ফাইলের উপস্থিতি ও Authenticode সারাংশ; JSON প্রমাণ।
 - `installer-events`: শেষ সাত দিনের শুধু-পড়া MSI ইতিহাস; JSON প্রমাণ।
@@ -295,7 +295,7 @@
 - `open <file.kbench> [--json]`: একটি সংরক্ষিত ক্যাপচার আবার খোলে এবং ইনস্টল করা নিয়ম দিয়ে আবার মূল্যায়ন করে।
 - `scan --output <new-file.kbench> [--json]`: একটি নতুন ফাইলে সংরক্ষিত শুধু-পড়া উইন্ডোজ আপডেট ক্যাপচার।
 - `validation-coverage RECORD.json [...]`: বর্তমান সংস্করণের নেটিভ VM প্রমাণের সারাংশ; কোনো ডায়াগনস্টিক্স বা মেরামত নেই।
-- `validation-plan [--recipe RECIPE_ID | --workflow WORKFLOW]`: শুধু-পড়া নিষ্পত্তিযোগ্য-VM দৃশ্যপট পরিকল্পনা; কোনো ডায়াগনস্টিক্স বা মেরামত নেই।
+- `validation-plan [--recipe RECIPE_ID | --workflow WORKFLOW]`: শুধু-পড়া অস্থায়ী-VM দৃশ্যপট পরিকল্পনা; কোনো ডায়াগনস্টিক্স বা মেরামত নেই।
 - `validation-record RECORD.json`: একটি সীমিত নেটিভ VM প্রমাণ রেকর্ড যাচাই করে; কোনো ডায়াগনস্টিক্স বা মেরামত নেই।
 - `validation-report OUTPUT.html|OUTPUT.txt RECORD.json [...] [--theme THEME] [--accent ACCENT] [--overwrite]`: স্থানীয় বর্তমান-সংস্করণ VM কভারেজ রিপোর্ট।
 - `workflow WORKFLOW --set KEY=VALUE [--set KEY=VALUE ...] [--report OUTPUT.html|OUTPUT.txt] [--json]`: একটি যাচাইকৃত শুধু-পড়া শেয়ার করা বিকল্প পরিকল্পনা চালায়।

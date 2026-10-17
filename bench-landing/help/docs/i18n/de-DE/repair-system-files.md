@@ -18,7 +18,7 @@ Verwenden Sie diese Anleitung, wenn Windows-Komponenten beschädigt sind: Featur
 
 1. Schalten Sie **Bestätigte Probleme automatisch reparieren** ein und drücken Sie **Reparatur ausführen**. KillerBench wählt DISM oder SFC nur, wenn die Live-Prüfung eine Beschädigung bestätigt.
 2. Warten Sie die Überprüfung ab. Der Bericht zeigt **Überprüft** nur, wenn die Folgeprüfung einen reparierten Zustand zurückliest.
-3. Meldet der Bericht, dass der Speicher nicht wiederherstellbar oder die Reparaturquelle nicht verfügbar ist, hören Sie dort auf. Eine Wiederholung der Reparatur ändert das Ergebnis nicht.
+3. Meldet der Bericht, dass der Komponentenspeicher nicht wiederherstellbar oder die Reparaturquelle nicht verfügbar ist, hören Sie dort auf. Eine Wiederholung der Reparatur ändert das Ergebnis nicht.
 
 Ein unterbrochener DISM- oder SFC-Lauf wird beim nächsten Start abgeglichen, ohne den Wartungsbefehl zu wiederholen.
 

@@ -92,7 +92,7 @@
   <sys:String x:Key="Str_OpenCapture">Mở ảnh chụp</sys:String>
   <sys:String x:Key="Str_SaveCapture">Lưu ảnh chụp</sys:String>
   <sys:String x:Key="Str_CaptureScope">Quét chỉ đọc. Ảnh chụp nhanh CBS và Panther, lên đến 200 sự kiện mỗi kênh từ 7 ngày qua. Nhấn Esc để dừng.</sys:String>
-  <sys:String x:Key="Str_ExportActivity">Xuất khẩu...</sys:String>
+  <sys:String x:Key="Str_ExportActivity">Xuất...</sys:String>
   <sys:String x:Key="Str_ExportActivityHint">Xuất hoạt động phiên đã lưu dưới dạng TXT, CSV hoặc HTML (tối đa 150 mục)</sys:String>
   <sys:String x:Key="Str_Peek_Description">Theo dõi hoạt động Windows Update và Cài đặt. Bộ theo dõi này chỉ đọc và không kết luận rằng hoạt động bị kẹt.</sys:String>
   <sys:String x:Key="Str_Peek_RefreshInterval">Khoảng thời gian làm mới (giây)</sys:String>

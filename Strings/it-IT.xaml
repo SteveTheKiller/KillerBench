@@ -240,7 +240,7 @@
   <sys:String x:Key="Str_Profile_Browse">Sfoglia</sys:String>
   <sys:String x:Key="Str_Profile_BackupPathTip">Una nuova cartella NTFS locale assente per la copia, o una cartella profilo copiata esistente per la verifica</sys:String>
   <sys:String x:Key="Str_Profile_CopyVerify">Copia e verifica</sys:String>
-  <sys:String x:Key="Str_Profile_CopyVerifyTip">Copia una volta il profilo scaricato selezionato in una nuova cartella NTFS locale vuota, poi verifica ogni file normale</sys:String>
+  <sys:String x:Key="Str_Profile_CopyVerifyTip">Copia una volta il profilo non caricato selezionato in una nuova cartella NTFS locale vuota, poi verifica ogni file normale</sys:String>
   <sys:String x:Key="Str_Profile_CreateVerification">Crea file di verifica</sys:String>
   <sys:String x:Key="Str_Profile_CreateVerificationTip">Confronta il profilo attivo selezionato con la cartella copiata esistente, poi crea manifesto e ricevuta</sys:String>
   <sys:String x:Key="Str_Profile_VerifyBackup">Verifica backup copiato</sys:String>
@@ -265,7 +265,7 @@
   <sys:String x:Key="Str_BitLocker_UsedSpace">Solo spazio usato</sys:String>
   <sys:String x:Key="Str_BitLocker_BackupFile">File di backup (per destinazione File)</sys:String>
   <sys:String x:Key="Str_BitLocker_BackupPathTip">Per backup su file, inserisci un percorso completo fuori dal volume protetto.</sys:String>
-  <sys:String x:Key="Str_BitLocker_FindProtectors">Trova protettori di ripristino</sys:String>
+  <sys:String x:Key="Str_BitLocker_FindProtectors">Trova protezioni di ripristino</sys:String>
   <sys:String x:Key="Str_BitLocker_BackupConsent">Scrivi il backup di ripristino selezionato quando seleziono Esegui diagnosi</sys:String>
   <sys:String x:Key="Str_BitLocker_EncryptConsent">Esegui il backup della chiave di ripristino selezionata, poi avvia la crittografia quando seleziono Esegui diagnosi</sys:String>
   <sys:String x:Key="Str_BitLocker_ResumeConsent">Riprendi la protezione su questo volume completamente crittografato quando seleziono Esegui diagnosi</sys:String>
@@ -351,7 +351,7 @@
   <sys:String x:Key="Str_Task_Startup">Avvio</sys:String>
   <sys:String x:Key="Str_Task_Time">Ora (HH:mm, non usata per avvio)</sys:String>
   <sys:String x:Key="Str_Task_TimeZone">Fuso orario calendario</sys:String>
-  <sys:String x:Key="Str_Task_SelectWeekdays">Seleziona giorni feriali (Ctrl-clic per multipli)</sys:String>
+  <sys:String x:Key="Str_Task_SelectWeekdays">Seleziona giorni della settimana (Ctrl-clic per multipli)</sys:String>
   <sys:String x:Key="Str_Task_SelectMonthDays">Seleziona giorni del mese (Ctrl-clic per multipli)</sys:String>
   <sys:String x:Key="Str_Task_LastDay">Ultimo giorno invece dei giorni selezionati</sys:String>
   <sys:String x:Key="Str_Task_AccountMode">Modalità account</sys:String>
@@ -507,7 +507,7 @@
   <sys:String x:Key="Str_Display_ThemeColors">I colori seguono il tema attivo.</sys:String>
   <sys:String x:Key="Str_Shell_Diagnostics">Diagnostica</sys:String>
   <sys:String x:Key="Str_Shell_ReadyNoScan">Pronto. Nessuna analisi eseguita.</sys:String>
-  <sys:String x:Key="Str_About_Thumbprint">IMPRONTA DIGITALE</sys:String>
+  <sys:String x:Key="Str_About_Thumbprint">IMPRONTA CERTIFICATO</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">DATABASE DI CONOSCENZE</sys:String>
   <sys:String x:Key="Str_About_UpdateDatabases">Database aggiornamenti</sys:String>
   <sys:String x:Key="Str_About_KillerMcp">Opzioni di KillerMCP</sys:String>

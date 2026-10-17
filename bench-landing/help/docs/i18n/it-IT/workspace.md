@@ -35,5 +35,5 @@ La console in vetro fumé e i rapporti leggibili seguono il tema attivo. Le conf
 | F2 | Mostra o nascondi la barra laterale |
 | F3 | Mostra o nascondi il registro attività |
 | F12 | Informazioni su KillerBench |
-| Ctrl+O | Apri prova |
+| Ctrl+O | Apri evidenze |
 | Esc | Chiudi una sovrapposizione o interrompi la lettura di un file |

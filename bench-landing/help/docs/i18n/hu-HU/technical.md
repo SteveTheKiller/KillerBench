@@ -53,7 +53,7 @@ Minden natív parancs és Windows-szolgáltató rögzített idő-, rekord- és m
 
 ### Minimális megőrzés
 
-A gyűjtők azt őrzik meg, amire egy megállapításnak szüksége van. Sok eredmény megőrzi a neveket, a kategóriákat, a darabszámokat, az állapotokat és az időbélyegeket, a hitelesítő adatokat, a parancssorokat, a teljes útvonalakat, a fiókazonosítókat, a hálózati végpontokat és a nem kapcsolódó eseményadatokat viszont kihagyja.
+A gyűjtők azt őrzik meg, amire egy megállapításnak szüksége van. Sok eredmény megőrzi a neveket, a kategóriákat, a darabszámokat, az állapotokat és az időbélyegeket, ugyanakkor kihagyja a hitelesítő adatokat, a parancssorokat, a teljes útvonalakat, a fiókazonosítókat, a hálózati végpontokat és a nem kapcsolódó eseményadatokat.
 
 ## Követhető bizonyítékok
 

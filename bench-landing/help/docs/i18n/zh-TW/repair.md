@@ -12,11 +12,11 @@
 
 ## 本區段的工具
 
-在診斷髮現問題後使用這些工具。修復需要已確認的證據和明確的核准。
+在診斷發現問題後使用這些工具。修復需要已確認的證據和明確的核准。
 
 ### Windows 核心服務
 
-同時檢查 Power、Plug and Play、User Manager、Group Policy Client、Network Store Interface、RPC Endpoint Mapper、Remote Procedure Call、DCOM Server Process Launcher、Background Tasks Infrastructure 和 CoreMessaging 服務。選用的復原僅啟動在啟動視窗和完整相依性檢查之後，經新證據確認已停止的確切已啟用自動啟動服務。按需啟動的服務在空閒時保持不變。電源計畫、裝置、驅動程式、帳戶、認證、設定檔、原則、介面卡、位址、路由、DNS、防火牆設定、註冊、端點、工作註冊、應用程式資料、服務權限和啟動類型保持不變。不會請求原則重新整理、裝置掃描、帳戶操作、網路更改、電源設定更改、註冊更改或工作啟動。驗證僅涵蓋服務的穩定狀態，不包括端到端的功能行為。
+同時檢查 Power、Plug and Play、User Manager、Group Policy Client、Network Store Interface、RPC Endpoint Mapper、Remote Procedure Call、DCOM Server Process Launcher、Background Tasks Infrastructure 和 CoreMessaging 服務。選用的復原僅啟動在啟動期間結束和完整相依性檢查之後，經新證據確認已停止的確切已啟用自動啟動服務。按需啟動的服務在空閒時保持不變。電源計畫、裝置、驅動程式、帳戶、認證、設定檔、原則、介面卡、位址、路由、DNS、防火牆設定、註冊、端點、工作註冊、應用程式資料、服務權限和啟動類型保持不變。不會請求原則重新整理、裝置掃描、帳戶操作、網路更改、電源設定更改、註冊更改或工作啟動。驗證僅涵蓋服務的穩定狀態，不包括端到端的功能行為。
 
 ### 系統檔案
 
@@ -48,7 +48,7 @@
 
 ### Windows 時間服務
 
-檢查 Windows 時間的設定、服務和同步。噹噹前狀態報告確切的服務已停止錯誤，並且新的原則、模式和相依性檢查均透過時，自動修復可以啟動 W32Time，然後請求重新同步並驗證新狀態。這可能會使用現有的已設定來源調整時鐘。啟動類型、來源設定和受管理的設定保持不變。
+檢查 Windows 時間的設定、服務和同步。當目前狀態報告確切的服務已停止錯誤，並且新的原則、模式和相依性檢查均透過時，自動修復可以啟動 W32Time，然後請求重新同步並驗證新狀態。這可能會使用現有的已設定來源調整時鐘。啟動類型、來源設定和受管理的設定保持不變。
 
 ### 工作排程器服務
 

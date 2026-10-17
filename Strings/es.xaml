@@ -261,7 +261,7 @@
   <sys:String x:Key="Str_Shell_Tools">Herramientas</sys:String>
   <sys:String x:Key="Str_Privacy_Setting">Configuración de privacidad</sys:String>
   <sys:String x:Key="Str_Privacy_Action">Acción</sys:String>
-  <sys:String x:Key="Str_Privacy_Boundary">Aplicar cambia solo esta cuenta. Se conservan directivas coincidentes, acceso a dispositivos de todo el equipo, excepciones por aplicación, recopilación de diagnósticos y contenido almacenado del portapapeles. Los diarios verificados admiten deshacer protegido.</sys:String>
+  <sys:String x:Key="Str_Privacy_Boundary">Los cambios se aplican solo a esta cuenta. Se conservan directivas coincidentes, acceso a dispositivos de todo el equipo, excepciones por aplicación, recopilación de diagnósticos y contenido almacenado del portapapeles. Los diarios verificados admiten deshacer protegido.</sys:String>
   <sys:String x:Key="Str_BitLocker_Description">De forma predeterminada, Ejecutar diagnóstico solo inspecciona. La copia de seguridad, el cifrado y la reanudación de la protección requieren cada uno la confirmación correspondiente de abajo.</sys:String>
   <sys:String x:Key="Str_BitLocker_Volume">Volumen</sys:String>
   <sys:String x:Key="Str_BitLocker_Encryption">Cifrado</sys:String>
@@ -330,7 +330,7 @@
   <sys:String x:Key="Str_FileReview_Header">Revisar carpeta seleccionada</sys:String>
   <sys:String x:Key="Str_FileReview_Description">Buscar archivos duplicados o archivos grandes en una carpeta local seleccionada. Ambas revisiones son de solo lectura y nunca seleccionan archivos para eliminación.</sys:String>
   <sys:String x:Key="Str_FileReview_Browse">Examinar</sys:String>
-  <sys:String x:Key="Str_FileReview_FolderTip">Una carpeta local. Se excluyen puntos de análisis y contenido inaccesible.</sys:String>
+  <sys:String x:Key="Str_FileReview_FolderTip">Una carpeta local. Se excluyen puntos de reanálisis y contenido inaccesible.</sys:String>
   <sys:String x:Key="Str_FileReview_Duplicates">Buscar duplicados</sys:String>
   <sys:String x:Key="Str_FileReview_DuplicatesTip">Revisión de duplicados SHA-256 de solo lectura</sys:String>
   <sys:String x:Key="Str_FileReview_LargeFiles">Buscar archivos grandes</sys:String>
@@ -367,10 +367,10 @@
   <sys:String x:Key="Str_Task_OverlapQueue">Poner en cola la ejecución nueva</sys:String>
   <sys:String x:Key="Str_Task_OverlapParallel">Ejecutar ambas a la vez</sys:String>
   <sys:String x:Key="Str_Task_OverlapStop">Detener la ejecución anterior</sys:String>
-  <sys:String x:Key="Str_Task_ReviewDraft">Revisar boleta</sys:String>
-  <sys:String x:Key="Str_Task_InspectDraft">Inspeccionar boleta en este PC</sys:String>
+  <sys:String x:Key="Str_Task_ReviewDraft">Revisar borrador</sys:String>
+  <sys:String x:Key="Str_Task_InspectDraft">Inspeccionar borrador en este PC</sys:String>
   <sys:String x:Key="Str_Task_InspectDraftTip">Lee identidad del ejecutable y conflictos de tareas visibles sin registrar ni ejecutar nada</sys:String>
-  <sys:String x:Key="Str_Task_SaveDraft">Guardar boleta nueva...</sys:String>
+  <sys:String x:Key="Str_Task_SaveDraft">Guardar borrador nuevo...</sys:String>
   <sys:String x:Key="Str_Task_SaveDraftTip">Guardar en un archivo JSON nuevo; los archivos existentes se conservan</sys:String>
   <sys:String x:Key="Str_Task_StartDate">Fecha de inicio XML (YYYY-MM-DD)</sys:String>
   <sys:String x:Key="Str_Task_StartDateTip">Límite inicial del calendario local; los desencadenadores de inicio no usan esta fecha</sys:String>
@@ -478,7 +478,7 @@
   <sys:String x:Key="Str_Advanced_All">Todo</sys:String>
   <sys:String x:Key="Str_Advanced_RepairEffects">Qué pueden cambiar estas reparaciones</sys:String>
   <sys:String x:Key="Str_Advanced_Tools">Avanzado: registros y reparaciones manuales</sys:String>
-  <sys:String x:Key="Str_Advanced_OpenWorkflow">Abrir workflow</sys:String>
+  <sys:String x:Key="Str_Advanced_OpenWorkflow">Abrir flujo de trabajo</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflowTip">Revisa un diario de workflow guardado sin ejecutar comprobaciones ni reparaciones.</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">Workflows</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">Reparaciones</sys:String>
@@ -509,7 +509,7 @@
   <sys:String x:Key="Str_Shell_Diagnostics">Diagnóstico</sys:String>
   <sys:String x:Key="Str_Shell_ReadyNoScan">Listo. No se realizó ningún análisis.</sys:String>
   <sys:String x:Key="Str_About_KnowledgeDatabases">BASES DE DATOS DE CONOCIMIENTO</sys:String>
-  <sys:String x:Key="Str_About_UpdateDatabases">Bases de datos de actualizaciones</sys:String>
+  <sys:String x:Key="Str_About_UpdateDatabases">Actualizar bases de datos</sys:String>
   <sys:String x:Key="Str_About_KillerMcp">Opciones de KillerMCP</sys:String>
   <sys:String x:Key="Str_About_KillerMcpNote">Esta configuración solo se aplica si conecta un agente de IA a este equipo mediante KillerMCP. KillerBench no incluye ningún agente de IA.</sys:String>
   <sys:String x:Key="Str_About_KillerMcpSafe">Permitir que KillerMCP ejecute reparaciones seguras</sys:String>

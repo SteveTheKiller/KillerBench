@@ -10,7 +10,7 @@ Użyj tego przewodnika, gdy aktualizacje kończą się niepowodzeniem, zawieszaj
 
 ## Ustal, dlaczego aktualizacje się nie udają
 
-1. Otwórz **Aktualizacje** i wybierz **Windows Update** na pasku narzędzi.
+1. Otwórz **Aktualizacje** i wybierz **Windows Update** na pasku bocznym narzędzi.
 2. Przy pierwszym przebiegu pozostaw wyłączoną opcję **Automatycznie napraw potwierdzone problemy** i naciśnij **Uruchom diagnozę**.
 3. Przeczytaj **Czytelny raport**. Wymienia zatrzymane usługi aktualizacji, oczekujące ponowne uruchomienia, mało wolnego miejsca, uszkodzenia magazynu składników i dokładne kody błędów zapisane przez system Windows, wraz z zalecanym następnym krokiem.
 4. Jeśli raport podaje kod błędu, odpowiednie kontrole uzupełniające uruchamiają się automatycznie. Kod możesz też sprawdzić samodzielnie za pomocą `killerbench-cli update-code 0x80070002`.
@@ -21,7 +21,7 @@ Wybierz **Monitor aktywności obsługi** w sekcji **Aktualizacje** i naciśnij *
 
 ## Napraw to, co wykazał raport
 
-1. Uruchom ponownie **Windows Update** z włączoną opcją **Automatycznie napraw potwierdzone problemy**. Może ona uruchomić włączone usługi aktualizacji, które są potwierdzenie zatrzymane, a DISM lub SFC uruchamia tylko wtedy, gdy kontrola na żywo potwierdzi uszkodzenie.
+1. Uruchom ponownie **Windows Update** z włączoną opcją **Automatycznie napraw potwierdzone problemy**. Może ona uruchomić włączone usługi aktualizacji, które zostały potwierdzone jako zatrzymane, a DISM lub SFC uruchamia tylko wtedy, gdy kontrola na żywo potwierdzi uszkodzenie.
 2. Dla pojedynczej usługi wybierz jej dedykowane narzędzie, na przykład **Usługa BITS**, **Usługi kryptograficzne**, **Instalator modułów systemu Windows** lub **Usługa Update Orchestrator**. Każde z nich oferuje odzyskiwanie tylko dla tej konkretnej usługi.
 3. Gdy raport każe uruchomić ponownie komputer, zrób to przed uruchomieniem czegokolwiek innego. KillerBench zapisuje wyniki wymagające ponownego uruchomienia i odkłada dalsze prace do czasu, aż ono nastąpi.
 

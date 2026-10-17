@@ -20,7 +20,7 @@ Przygotuj nowy komputer: aplikacje, nazwę i konfigurację.
 
 ### Wdrażanie
 
-Przegląda jawnie wybrane aplikacje do wdrożenia i grupy konfiguracji. Bieżące rejestracje odinstalowywania, pakietów aplikacji i Office Szybkie uruchamianie są zestawiane bez pobierania i uruchamiania instalatorów. Wybory konfiguracji opisują skutki i kierują do osobnych chronionych procesów, jeśli są dostępne. Nie jest wykonywana żadna akcja pobierania, instalacji, konta, aktualizacji, czyszczenia, zasad, rejestru, usług, profilu ani ponownego uruchomienia.
+Przegląda jawnie wybrane aplikacje do wdrożenia i grupy konfiguracji. Bieżące rejestracje odinstalowywania, pakietów aplikacji i Office Click-to-Run są zestawiane bez pobierania i uruchamiania instalatorów. Wybory konfiguracji opisują skutki i kierują do osobnych chronionych procesów, jeśli są dostępne. Nie jest wykonywana żadna akcja pobierania, instalacji, konta, aktualizacji, czyszczenia, zasad, rejestru, usług, profilu ani ponownego uruchomienia.
 
 ### Nazwa komputera
 

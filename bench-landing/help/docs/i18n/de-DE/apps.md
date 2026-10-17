@@ -38,7 +38,7 @@ Erfasst auf dem Computer installierte Foxit-Produkte und Werte des Updaters in d
 
 ### Windows Installer-Dienst
 
-Prüft vor der Dienstwiederherstellung die Installer-Richtlinien für Einschränkungen, Rollback, Erhöhung, Protokollierung und Debugging, Markierungen laufender Vorgänge, Binärdateien des Moduls und die Sichtbarkeit registrierter zwischengespeicherter Pakete. Aktuelle fehlgeschlagene und erfolgreiche Ergebnisse werden nur für genau gemeldete Produktidentitäten zugeordnet. Bestehen die Voraussetzungen, kann die automatische Reparatur den aktivierten Dienst starten und „Wird ausgeführt“ überprüfen. Historische Ergebnisse, Protokollierung, Sichtbarkeit des Caches und Debug-Befunde berechtigen nicht zu Paket- oder Richtlinienänderungen. Richtlinien, Protokolle, Transaktionsmarkierungen, Starttypen und zwischengespeicherte Pakete bleiben erhalten. Eine bestimmte Paketinstallation wird nicht getestet.
+Prüft vor der Dienstwiederherstellung die Installer-Richtlinien für Einschränkungen, Rollback, erhöhte Rechte, Protokollierung und Debugging, Markierungen laufender Vorgänge, Binärdateien des Moduls und die Sichtbarkeit registrierter zwischengespeicherter Pakete. Aktuelle fehlgeschlagene und erfolgreiche Ergebnisse werden nur für genau gemeldete Produktidentitäten zugeordnet. Bestehen die Voraussetzungen, kann die automatische Reparatur den aktivierten Dienst starten und „Wird ausgeführt“ überprüfen. Historische Ergebnisse, Protokollierung, Sichtbarkeit des Caches und Debug-Befunde berechtigen nicht zu Paket- oder Richtlinienänderungen. Richtlinien, Protokolle, Transaktionsmarkierungen, Starttypen und zwischengespeicherte Pakete bleiben erhalten. Eine bestimmte Paketinstallation wird nicht getestet.
 
 ### Windows Search
 

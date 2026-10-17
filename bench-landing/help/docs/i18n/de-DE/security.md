@@ -22,7 +22,7 @@ Liest die Aktivierungseinstellungen der Profile Domäne, Privat und Öffentlich 
 
 ### Zertifikatablauf
 
-Untersucht Zertifikatsdaten und bildet nur aus dem Cache lokale Vertrauensketten für die persönlichen Speicher des Computers und des aktuellen Benutzers und liefert eine begrenzte betriebliche Schlussfolgerung. Sperrung, Vorlage durch Server, Bindungen, Registrierung, Zuständigkeit von Richtlinien, Remotevertrauen und Nutzbarkeit privater Schlüssel bleiben ungeprüft. Kein Zertifikat, keine Vertrauenseinstellung, keine Registrierung, keine Bindung, kein privater Schlüssel, keine Anwendung, kein Dienst und keine Richtlinie wird geändert.
+Untersucht die Gültigkeitsdaten von Zertifikaten und bildet nur aus dem Cache lokale Vertrauensketten für die persönlichen Speicher des Computers und des aktuellen Benutzers und liefert eine begrenzte betriebliche Schlussfolgerung. Sperrung, Vorlage durch Server, Bindungen, Registrierung, Zuständigkeit von Richtlinien, Remotevertrauen und Nutzbarkeit privater Schlüssel bleiben ungeprüft. Kein Zertifikat, keine Vertrauenseinstellung, keine Registrierung, keine Bindung, kein privater Schlüssel, keine Anwendung, kein Dienst und keine Richtlinie wird geändert.
 
 ### Anmeldeinformationsverwaltung
 

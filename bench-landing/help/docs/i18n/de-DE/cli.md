@@ -30,7 +30,7 @@ Führen Sie `killerbench-cli` ohne Argumente aus, um diese Liste auf Ihrem eigen
 - `update-applicability`: Schreibgeschützte Nachweise zu Windows-Edition, Build und Architektur.
 - `update-cache`: Begrenzte, schreibgeschützte Summen des SoftwareDistribution-Caches; keine Dateinamen.
 - `update-code DECIMAL_OR_0xHEX`: Dokumentierte Referenz der Windows Update-Ergebniscodes; keine Untersuchung des Computers, keine Reparatur.
-- `update-context`: Schreibgeschützte Nachweise zu aktueller Erhöhung und Desktopsitzung; keine Kontokennungen.
+- `update-context`: Schreibgeschützte Nachweise zu aktuell erhöhten Rechten und Desktopsitzung; keine Kontokennungen.
 - `update-engine-files`: Schreibgeschützte Nachweise zu Vorhandensein, Version und Signatur des nativen Windows Update-Moduls.
 - `update-events`: Schreibgeschützter Verlauf des Windows Update-Clients der letzten sieben Tage; JSON einschließlich Rohnachweisen.
 - `update-followup DECIMAL_OR_0xHEX`: Aktuelle schreibgeschützte Diagnose, ausgewählt anhand eines dokumentierten Windows Update-Ergebniscodes.

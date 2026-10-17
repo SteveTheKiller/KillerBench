@@ -20,7 +20,7 @@ Prepara un nuovo computer: applicazioni, nome e configurazione.
 
 ### Configurazione iniziale
 
-Esamina le applicazioni di provisioning e i gruppi di configurazione selezionati esplicitamente. Le registrazioni attuali di disinstallazione, dei pacchetti di app e di Office A portata di clic vengono confrontate senza scaricare né eseguire programmi di installazione. Le selezioni di configurazione descrivono le conseguenze e rimandano a flussi di lavoro protetti separati quando sono disponibili. Non avviene alcuna azione di download, installazione, account, aggiornamento, pulizia, criteri, registro, servizi, profili o riavvio.
+Esamina le applicazioni di provisioning e i gruppi di configurazione selezionati esplicitamente. Le registrazioni attuali di disinstallazione, dei pacchetti di app e di Office Click-to-Run vengono confrontate senza scaricare né eseguire programmi di installazione. Le selezioni di configurazione descrivono le conseguenze e rimandano a flussi di lavoro protetti separati quando sono disponibili. Non avviene alcuna azione di download, installazione, account, aggiornamento, pulizia, criteri, registro, servizi, profili o riavvio.
 
 ### Nome computer
 

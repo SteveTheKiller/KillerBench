@@ -352,7 +352,7 @@
   <sys:String x:Key="Str_Task_Startup">Při spuštění</sys:String>
   <sys:String x:Key="Str_Task_Time">Čas (HH:mm, nepoužito při spuštění)</sys:String>
   <sys:String x:Key="Str_Task_TimeZone">Časové pásmo kalendáře</sys:String>
-  <sys:String x:Key="Str_Task_SelectWeekdays">Vybrat pracovní dny (Ctrl-klik pro více)</sys:String>
+  <sys:String x:Key="Str_Task_SelectWeekdays">Vybrat dny v týdnu (Ctrl-klik pro více)</sys:String>
   <sys:String x:Key="Str_Task_SelectMonthDays">Vybrat dny v měsíci (Ctrl-klik pro více)</sys:String>
   <sys:String x:Key="Str_Task_LastDay">Poslední den místo vybraných dnů</sys:String>
   <sys:String x:Key="Str_Task_AccountMode">Režim účtu</sys:String>

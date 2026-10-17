@@ -4,7 +4,7 @@ Verwenden Sie diese Anleitung, wenn Updates fehlschlagen, hängen bleiben oder s
 
 ## Bevor Sie beginnen
 
-- Führen Sie KillerBench als Administrator aus. Update-Dienste, der Komponentenspeicher und geschützte Systemdateien benötigen für vollständige Nachweise eine Erhöhung.
+- Führen Sie KillerBench als Administrator aus. Update-Dienste, der Komponentenspeicher und geschützte Systemdateien benötigen für vollständige Nachweise erhöhte Rechte.
 - Starten Sie zuerst neu, wenn Windows bereits einen Neustart erwartet. Viele Update-Reparaturen sind blockiert, bis die Neustartbereitschaft geklärt ist.
 - Lassen Sie den Computer bei Wartungsarbeiten am Netzteil.
 

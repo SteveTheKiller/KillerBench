@@ -170,7 +170,7 @@
   <sys:String x:Key="Str_Orca_ClassicOutlook">經典 Outlook</sys:String>
   <sys:String x:Key="Str_Orca_ResetAreas">要重設的區域</sys:String>
   <sys:String x:Key="Str_Orca_Caches">Outlook 快取</sys:String>
-  <sys:String x:Key="Str_Orca_Profiles">個人資料及偵測設定</sys:String>
+  <sys:String x:Key="Str_Orca_Profiles">設定檔及偵測設定</sys:String>
   <sys:String x:Key="Str_Orca_Authentication">認證狀態</sys:String>
   <sys:String x:Key="Str_Orca_OstFiles">經典 Outlook OST 檔案</sys:String>
   <sys:String x:Key="Str_Orca_AddIns">經典 Outlook 外掛程式</sys:String>
@@ -325,7 +325,7 @@
   <sys:String x:Key="Str_Storage_WindowsRecommended">Windows 建議</sys:String>
   <sys:String x:Key="Str_Storage_Retrim">重新修剪固態儲存裝置</sys:String>
   <sys:String x:Key="Str_Storage_Defragment">磁碟重組</sys:String>
-  <sys:String x:Key="Str_Storage_Boundary">「執行」按鈕始終先收集目前證據。檔案系統修復和磁碟機最佳化是單獨的選項。最佳化需要已確認的媒體類型，且絕不會更改計劃或重新啟動 Windows。</sys:String>
+  <sys:String x:Key="Str_Storage_Boundary">「執行」按鈕始終先收集目前證據。檔案系統修復和磁碟機最佳化是單獨的選項。最佳化需要已確認的媒體類型，且絕不會更改排程或重新啟動 Windows。</sys:String>
   <sys:String x:Key="Str_ComponentCleanup_Boundary">「執行」按鈕檢查 Windows 是否建議清理。可選清理會立即刪除已被取代的元件；不會自動撤銷或重新啟動。不會測量釋放的空間。</sys:String>
   <sys:String x:Key="Str_FileReview_Header">檢閱選定資料夾</sys:String>
   <sys:String x:Key="Str_FileReview_Description">在單一選定的本機資料夾中尋找重複檔案或大型檔案。兩種檢閱都是唯讀，且絕不會選擇檔案進行刪除。</sys:String>
@@ -402,9 +402,9 @@
   <sys:String x:Key="Str_Cleanup_IconCacheTip">僅限 Windows 圖示資料庫檔案。不包括檔案總管歷史、最近項目和已儲存的搜尋。Windows 會在需要時重新建立圖示。</sys:String>
   <sys:String x:Key="Str_Cleanup_ErrorReports">已封存的 Windows 錯誤報告</sys:String>
   <sys:String x:Key="Str_Cleanup_ErrorReportsTip">僅限目前使用者的 Windows 錯誤報告封存和佇列。刪除此類檔案將丟棄本機歷史崩潰證據。</sys:String>
-  <sys:String x:Key="Str_Cleanup_CrashDumps">應用程式崩潰轉儲</sys:String>
+  <sys:String x:Key="Str_Cleanup_CrashDumps">應用程式當機傾印檔</sys:String>
   <sys:String x:Key="Str_Cleanup_CrashDumpsTip">僅限目前使用者的 CrashDumps 資料夾。移除轉儲將丟棄可能需要用於調查應用程式故障的診斷證據。</sys:String>
-  <sys:String x:Key="Str_Cleanup_WindowsMinidumps">Windows 崩潰小型轉儲</sys:String>
+  <sys:String x:Key="Str_Cleanup_WindowsMinidumps">Windows 當機迷你傾印檔</sys:String>
   <sys:String x:Key="Str_Cleanup_WindowsMinidumpsTip">僅限 Windows Minidump 資料夾。通常需要管理員權限。MEMORY.DMP 被排除。移除小型轉儲將丟棄診斷證據。</sys:String>
   <sys:String x:Key="Str_Cleanup_DeliveryOptimization">傳遞最佳化快取</sys:String>
   <sys:String x:Key="Str_Cleanup_DeliveryOptimizationTip">僅限標準 Windows 傳遞最佳化快取。跳過最近、受保護及正在使用的檔案。移除的內容可能需要重新下載。</sys:String>
@@ -709,8 +709,8 @@
   <sys:String x:Key="Str_Workflow_StorageService">儲存服務</sys:String>
   <sys:String x:Key="Str_Workflow_OptimizeDrivesService">最佳化磁碟機服務</sys:String>
   <sys:String x:Key="Str_Workflow_WindowsImageAcquisitionService">Windows 影像擷取 (WIA)</sys:String>
-  <sys:String x:Key="Str_Workflow_FunctionDiscoveryProviderHostService">功能發現提供程式主機</sys:String>
-  <sys:String x:Key="Str_Workflow_FunctionDiscoveryResourcePublicationService">功能發現資源發佈</sys:String>
+  <sys:String x:Key="Str_Workflow_FunctionDiscoveryProviderHostService">功能探索提供者主機</sys:String>
+  <sys:String x:Key="Str_Workflow_FunctionDiscoveryResourcePublicationService">功能探索資源發佈</sys:String>
   <sys:String x:Key="Str_Workflow_HumanInterfaceDeviceService">人性化介面裝置服務</sys:String>
   <sys:String x:Key="Str_Workflow_PortableDeviceEnumeratorService">可攜式裝置列舉器服務</sys:String>
   <sys:String x:Key="Str_Workflow_WindowsFontCacheService">Windows 字型快取服務</sys:String>
@@ -785,7 +785,7 @@
   <sys:String x:Key="Str_Choice_CheckState_Unknown">未知</sys:String>
   <sys:String x:Key="Str_Choice_CheckState_Information">資訊</sys:String>
   <sys:String x:Key="Str_Choice_BitLockerOperation_Inspect">檢查</sys:String>
-  <sys:String x:Key="Str_Choice_BitLockerOperation_BackupRecovery">備份修復資訊</sys:String>
+  <sys:String x:Key="Str_Choice_BitLockerOperation_BackupRecovery">備份復原資訊</sys:String>
   <sys:String x:Key="Str_Choice_BitLockerOperation_Encrypt">加密</sys:String>
   <sys:String x:Key="Str_Choice_BitLockerOperation_ResumeProtection">繼續保護</sys:String>
   <sys:String x:Key="Str_Choice_BitLockerEncryption_Aes128">AES 128 位元</sys:String>

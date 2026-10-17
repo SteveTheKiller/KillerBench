@@ -1,7 +1,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
   <!-- Reused approved family translations. -->
   <sys:String x:Key="Str_ToolTip_Scroll_here_to_resize_the_interface">Интерфейс өлшемін өзгерту үшін осы жерде айналдырыңыз</sys:String>
-  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">Windows қызмет көрсету жұмыс үстелі</sys:String>
+  <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">Windows қызмет көрсету шеберханасы</sys:String>
   <sys:String x:Key="Str_ToolTip_Minimize">Кішірейту</sys:String>
   <sys:String x:Key="Str_ToolTip_Maximize_or_restore">Үлкейту немесе қалпына келтіру</sys:String>
   <sys:String x:Key="Str_ToolTip_Close">Жабу</sys:String>
@@ -16,7 +16,7 @@
   <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">Пернетақта тіркесімдері (F1)</sys:String>
   <sys:String x:Key="Str_ToolTip_Language">Тіл</sys:String>
   <sys:String x:Key="Str_ToolTip_Choose_app_theme">Қолданба тақырыбын таңдау</sys:String>
-  <sys:String x:Key="Str_Text_TEXT_LOG_INSPECTOR">WINDOWS UPDATE / ЖУРНАЛ ЖҰМЫС ҮСТЕЛІ</sys:String>
+  <sys:String x:Key="Str_Text_TEXT_LOG_INSPECTOR">WINDOWS UPDATE / ЖУРНАЛ ШЕБЕРХАНАСЫ</sys:String>
   <sys:String x:Key="Str_Text_SAMPLE_MODE">ҮЛГІ РЕЖИМІ</sys:String>
   <sys:String x:Key="Str_Content_Open_log">Журналды ашу</sys:String>
   <sys:String x:Key="Str_ToolTip_Open_text_log_Ctrl_O">Мәтіндік журналды ашу (Ctrl+O)</sys:String>
@@ -97,7 +97,7 @@
   <sys:String x:Key="Str_ExportActivityHint">Сақталған сеанс әрекетін TXT, CSV немесе HTML ретінде экспорттау (150 жазбаға дейін)</sys:String>
   <sys:String x:Key="Str_Peek_Description">Windows Update және Setup әрекетін бақылау. Бұл монитор тек оқуға арналған және әрекеттің тұрып қалғанын шешпейді.</sys:String>
   <sys:String x:Key="Str_Peek_RefreshInterval">Жаңарту аралығы (секунд)</sys:String>
-  <sys:String x:Key="Str_Peek_Snapshots">Суреттер</sys:String>
+  <sys:String x:Key="Str_Peek_Snapshots">Снапшоттар</sys:String>
   <sys:String x:Key="Str_Peek_Events">Соңғы Windows Update оқиғалары</sys:String>
   <sys:String x:Key="Str_Peek_History">Windows Update тарихы</sys:String>
   <sys:String x:Key="Str_Peek_Services">Қызмет көрсету қызметтерінің күйлері</sys:String>
@@ -346,8 +346,8 @@
   <sys:String x:Key="Str_Task_Startup">Іске қосылғанда</sys:String>
   <sys:String x:Key="Str_Task_Time">Уақыт (HH:mm, іске қосылу үшін пайдаланылмайды)</sys:String>
   <sys:String x:Key="Str_Task_TimeZone">Күнтізбе уақыт белдеуі</sys:String>
-  <sys:String x:Key="Str_Task_SelectWeekdays">Апта күндерін таңдаңыз (бірнешеге Ctrl-click)</sys:String>
-  <sys:String x:Key="Str_Task_SelectMonthDays">Ай күндерін таңдаңыз (бірнешеге Ctrl-click)</sys:String>
+  <sys:String x:Key="Str_Task_SelectWeekdays">Апта күндерін таңдаңыз (бірнешеге Ctrl+басу)</sys:String>
+  <sys:String x:Key="Str_Task_SelectMonthDays">Ай күндерін таңдаңыз (бірнешеге Ctrl+басу)</sys:String>
   <sys:String x:Key="Str_Task_LastDay">Таңдалған күндердің орнына соңғы күн</sys:String>
   <sys:String x:Key="Str_Task_AccountMode">Тіркелгі режимі</sys:String>
   <sys:String x:Key="Str_Task_InteractiveUser">Интерактивті пайдаланушы</sys:String>
@@ -565,7 +565,7 @@
   <sys:String x:Key="Str_Debloat_AsusAcerSoftware">ASUS және Acer бағдарламалық құралы</sys:String>
   <sys:String x:Key="Str_Debloat_LenovoSoftware">Lenovo бағдарламалық құралы</sys:String>
   <sys:String x:Key="Str_Installer_ProductCodeTip">Мысал: {00000000-0000-0000-0000-000000000000}</sys:String>
-  <sys:String x:Key="Str_About_DescriptionPrefix">Детерминистік Windows диагностика және жөндеу жұмыс үстелі.</sys:String>
+  <sys:String x:Key="Str_About_DescriptionPrefix">Детерминистік Windows диагностика және жөндеу жұмыс стенді.</sys:String>
   <sys:String x:Key="Str_About_DescriptionSuffix">утилитасы.</sys:String>
   <sys:String x:Key="Str_About_Aka">Басқа аты</sys:String>
     <sys:String x:Key="Str_KS_OnlineHelp">Толық нұсқаулық пен онлайн көмек</sys:String>

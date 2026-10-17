@@ -4,7 +4,7 @@ KillerBench 1.0.0 は未リリースです。公開されている KillerBench �
 
 ## Windows とランタイム
 
-- 現在の公開対象は **Windows x64** です。Windows 11 x64 が現在の実機検証の基準です。ネイティブの ARM64、x86、Windows Server 向けの配布は提供されません。
+- 現在の公開対象は **Windows x64** です。Windows 11 x64 が現在のネイティブ検証の基準です。ネイティブの ARM64、x86、Windows Server 向けの配布は提供されません。
 - KillerBench は 2 種類の形でパッケージ化されています。インストーラーは **フレームワーク依存** で、**.NET Desktop Runtime 10 for Windows x64** が必要です。通常の .NET Runtime、ASP.NET Core Runtime、.NET Framework には WPF が含まれません。ポータブル版は独自のランタイムを含み、別途インストールする必要はありません。コマンド ライン ツール `killerbench-cli.exe` には .NET 10 Runtime for Windows x64 が必要です。SDK は開発に必要なもので、通常の使用には必要ありません。
 - [.NET 10 on Windows](https://learn.microsoft.com/en-us/dotnet/core/install/windows) がサポートする Windows バージョンを使用してください。ランタイムがサポートされていても、KillerBench の修復がサポート対象のすべてのエディションやビルドで検証済みであることを意味するわけではありません。Windows 10 への対応は保留中で、サポートされるエディションは Microsoft の現在のライフサイクル要件によって制限されます。
 - Desktop Runtime は [Microsoft の .NET 10 ダウンロード ページ](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) からのみ入手し、**.NET Desktop Runtime**、**Windows**、**x64** を選択してください。組織のソフトウェア インストール規則に従ってください。
@@ -24,7 +24,7 @@ KillerBench 1.0.0 は未リリースです。公開されている KillerBench �
 
 ## 現在の制限
 
-現在のビルドには、12 のセクション、読み取り専用の診断、レポート、個別に選択する修復機能があります。実機での修復の検証はまだ進行中です。動作する UI、ビルドの成功、テスト データでの結果は、実際のコンピューターでの修復の動作を証明するものではありません。[変更の安全性を保つ仕組み](safety.html#development-status) を参照してください。
+現在のビルドには、12 のセクション、読み取り専用の診断、レポート、個別に選択する修復機能があります。ネイティブ修復の検証はまだ進行中です。動作する UI、ビルドの成功、テスト データでの結果は、実際のコンピューターでの修復の動作を証明するものではありません。[変更の安全性を保つ仕組み](safety.html#development-status) を参照してください。
 
 ランディング ページの説明用コンソールは合成された出力です。アプリの最終的なスクリーンショットと最初の公開パッケージはまだ準備中です。
 

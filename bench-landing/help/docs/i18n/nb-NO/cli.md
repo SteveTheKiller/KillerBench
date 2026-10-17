@@ -136,14 +136,14 @@ Kjør `killerbench-cli` uten argumenter for å skrive ut denne listen på din eg
 - `volume-optimize DRIVE: [Recommended|ReTrim|Defragment] [--execute]`: Skrivebeskyttet analyse som standard; krever et nøyaktig sunt volum og kompatible medier.
 - `volume-optimize-recover`: Verifiserer en ventende fullført operasjon uten å gjenta den.
 - `vss-providers`: Skrivebeskyttede navn, versjoner og typer for VSS-leverandører; identifikatorer utelatt; ingen registreringsendringer.
-- `vss-writers`: Rapporterte skrivertilstander; tolkning av engelske utdata; ingen tilbakestilling.
+- `vss-writers`: Rapporterte tilstander for VSS-writere; tolkning av engelske utdata; ingen tilbakestilling.
 
 ## Utskrift
 
 - `print-events`: Skrivebeskyttet administrasjonshistorikk for PrintService fra de siste sju dagene; JSON-bevis.
 - `print-extension-files`: Skrivebeskyttet oversikt over tilstedeværelse og signatur for binærfiler til utskriftsbehandlere og -overvåkere; fullstendige stier utelatt.
 - `print-job-cancel QUEUE JOB_ID [--execute] [--folder PATH]`: Forhåndsvisning som standard; bare en nøyaktig jobb med Feil eller Blokkert.
-- `print-job-cancel-recover [--folder PATH]`: Kontrollerer en avbrutt avbestilling på nytt uten å gjenta den.
+- `print-job-cancel-recover [--folder PATH]`: Kontrollerer en avbrutt kansellering på nytt uten å gjenta den.
 - `print-job-list`: Viser gjeldende synlige jobber uten å endre dem.
 - `print-operational-events`: Skrivebeskyttet tilstand for driftskanalen til PrintService og tilgjengelig historikk; JSON-bevis.
 - `print-policy`: Skrivebeskyttede Point and Print-begrensninger og policy for driverinstallasjon; JSON-bevis.
