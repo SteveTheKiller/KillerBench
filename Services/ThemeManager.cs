@@ -110,7 +110,8 @@ namespace KillerBench.Services
             }
 
             ApplyDerivedTokens(newDict);
-            newDict["PrimaryFillBrush"] = ButtonFill(newDict["PrimaryBrush"], theme == Theme.Retro98);
+            // A palette can fill buttons with a deeper shade than its accent text (PrimaryFillBaseBrush).
+            newDict["PrimaryFillBrush"] = ButtonFill(newDict.Contains("PrimaryFillBaseBrush") ? newDict["PrimaryFillBaseBrush"] : newDict["PrimaryBrush"], theme == Theme.Retro98);
             // 98SE keeps its classic light-gray hover face instead of filling with the accent.
             newDict["OutlineHoverFillBrush"] = theme == Theme.Retro98 && newDict.Contains("OutlineHoverBrush")
                 ? newDict["OutlineHoverBrush"]
@@ -125,6 +126,18 @@ namespace KillerBench.Services
         {
             if (!d.Contains("MenuSeparatorBrush") && d.Contains("MenuBorderBrush"))
                 d["MenuSeparatorBrush"] = d["MenuBorderBrush"];
+            // Dropdown fields: the window background on a solid theme, the pane on a gradient theme,
+            // so a gradient never re-ramps inside a narrow box. Light and 98SE state their own white.
+            if (!d.Contains("ComboFieldBrush") && d.Contains("BackgroundBrush"))
+                d["ComboFieldBrush"] = d["BackgroundBrush"] is System.Windows.Media.SolidColorBrush ? d["BackgroundBrush"] : d["PaneBrush"];
+            // Title bar text beside the wordmark (KillerPDF's key): muted text unless a theme states its own.
+            if (!d.Contains("FilenameBrush") && d.Contains("MutedTextBrush"))
+                d["FilenameBrush"] = d["MutedTextBrush"];
+            // Report cards and metric tiles. 98SE draws them as white client areas inside its gray pane.
+            if (!d.Contains("ReportCardBrush") && d.Contains("SurfaceBrush"))
+                d["ReportCardBrush"] = d["SurfaceBrush"];
+            if (!d.Contains("ReportMetricBrush") && d.Contains("PaneBrush"))
+                d["ReportMetricBrush"] = d["PaneBrush"];
 
             SetIfAbsent(d, "BevelLightThickness", new Thickness(0));
             SetIfAbsent(d, "BevelDarkThickness", new Thickness(0));

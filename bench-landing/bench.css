@@ -1,5 +1,5 @@
 html[data-theme="dark"]{--accent:#EAD900;--btn:#F2E500;--sel:#2A2908;--btn-text:#1e1f22;--accent-text:#1e1f22}
-html[data-theme="light"]{--accent:#C7710F;--btn:#C7710F}
+html[data-theme="light"]{--accent:#E8962C;--btn:#E8962C;--btn-text:#1e1f22;--accent-text:#1e1f22}
 html[data-theme="hc"]{--accent:#FF910A;--btn:#FF910A}
 .content-inner { max-width: 1100px; margin: 0 auto; padding: 0 28px 50px; }
 .lang-toggle{width:32px;height:32px;line-height:normal;color:var(--text);font:12px Consolas,monospace}
@@ -81,3 +81,23 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 .console{background:var(--modal) url('grain.png') repeat;color:var(--text);border:1px solid var(--pane-border);border-radius:6px;padding:20px;overflow:auto;font:14px/1.8 Consolas,monospace;box-shadow:inset 0 0 25px var(--fade)}
 .console p{white-space:nowrap}.console-note{margin-top:18px;color:var(--accent)}
 @media(max-width:900px){.sidebar{display:none}.shell{grid-template-columns:minmax(0,1fr)}}
+/* Top bar fit (see the top bar fit script): one row at every width. The Store and KillerMCP
+   buttons shrink to their logos, then items move into the More menu, instead of wrapping. */
+.topbar { flex-wrap: nowrap !important; min-width: 0; max-width: 100%; }
+.topbar > * { flex-shrink: 0; }
+.topbar .tb-nav { order: 0 !important; flex: 0 0 auto !important; flex-wrap: nowrap !important; padding-top: 0 !important; border-top: 0 !important; }
+.topbar > .tb-store { display: inline-flex !important; }
+.topbar.tb-compact > .tb-store > span,
+.topbar.tb-compact > .tb-mcp-link > .tb-mcp-wordmark,
+.topbar.tb-dl-icon > .tb-dl > span { display: none; }
+.topbar.tb-compact > .tb-store, .topbar.tb-compact > .tb-mcp-link { gap: 0; padding: 0 6px; }
+.tb-more { position: relative; display: inline-flex; align-items: center; }
+.tb-more[hidden] { display: none; }
+.tb-more-toggle { display: inline-flex; align-items: center; justify-content: center; width: 35px; height: 35px; padding: 0; border: 1px solid var(--accent); border-radius: 6px; background: transparent; color: var(--text); cursor: pointer; }
+.tb-more-toggle:hover, .tb-more-toggle[aria-expanded="true"] { border-color: color-mix(in srgb, var(--accent) 72%, var(--text)); }
+.tb-more-toggle svg { width: 18px; height: 18px; fill: currentColor; }
+.tb-more-menu > a { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 0; margin: 0; padding: 7px 12px; border: 0; border-radius: 6px; background: none; box-shadow: none; transform: none; color: var(--text); font-size: 13px; line-height: 1.4; text-decoration: none; white-space: nowrap; }
+.tb-more-menu > a:hover { background: var(--accent-dim); transform: none; box-shadow: none; filter: none; }
+.tb-more-menu > a img { width: 22px; height: 22px; }
+.tb-more-menu > a svg { width: 18px; height: 18px; }
+html[data-yellow-outline] .tb-more-menu > a { text-shadow: none !important; }

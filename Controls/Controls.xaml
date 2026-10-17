@@ -1459,7 +1459,7 @@
 
     
     <Style TargetType="ComboBox">
-    <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
+    <Setter Property="Background" Value="{DynamicResource ComboFieldBrush}"/>
     <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
     <Setter Property="FontFamily" Value="{DynamicResource UiFont}"/>
     <Setter Property="FontSize" Value="12"/>

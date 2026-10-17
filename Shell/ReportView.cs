@@ -139,7 +139,7 @@ public partial class MainWindow
         content.Children.Add(Body(detail, 12, new Thickness(0, 0, 0, 9)));
         content.Children.Add(Body(LocalizedText.Format("Str_Report_NextPrefix", action), 12, new Thickness(0), "MutedTextBrush"));
         var card = new Border { Child = content, Padding = new Thickness(12), Margin = new Thickness(0, 0, 0, 10), CornerRadius = new CornerRadius(4), BorderThickness = new Thickness(1) };
-        card.SetResourceReference(Border.BackgroundProperty, "SurfaceBrush");
+        card.SetResourceReference(Border.BackgroundProperty, "ReportCardBrush");
         card.SetResourceReference(Border.BorderBrushProperty, "PaneBorderBrush");
         return card;
     }
@@ -290,7 +290,7 @@ public partial class MainWindow
         metric.Children.Add(Heading(value.ToString(), 15));
         metric.Children.Add(Body(label, 11, new Thickness(0), "MutedTextBrush"));
         var card = new Border { Child = metric, Padding = new Thickness(10), Margin = new Thickness(0, 0, 8, 0), CornerRadius = new CornerRadius(4), BorderThickness = new Thickness(1) };
-        card.SetResourceReference(Border.BackgroundProperty, "PaneBrush");
+        card.SetResourceReference(Border.BackgroundProperty, "ReportMetricBrush");
         card.SetResourceReference(Border.BorderBrushProperty, "PaneBorderBrush");
         host.Children.Add(card);
     }
