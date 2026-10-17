@@ -20,14 +20,14 @@
     </LinearGradientBrush>
     <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#1e1e1e" po:Freeze="True"/>
     <SolidColorBrush x:Key="CardBorderBrush" Color="#2e2e2e" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PrimaryBrush"    Color="#1ea54c" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#1ea54c" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#1ea54c" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryBrush"    Color="#22bb56" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#22bb56" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#22bb56" po:Freeze="True"/>
     
     <SolidColorBrush x:Key="OnPrimaryBrush"  Color="#0a0a0a" po:Freeze="True"/>
-    <SolidColorBrush x:Key="OutlineBtnBrush" Color="#1ea54c" po:Freeze="True"/>
-    <SolidColorBrush x:Key="HeaderLineBrush" Color="#1ea54c" po:Freeze="True"/>
-    <SolidColorBrush x:Key="SelectionAccent" Color="#1ea54c" po:Freeze="True"/>
+    <SolidColorBrush x:Key="OutlineBtnBrush" Color="#22bb56" po:Freeze="True"/>
+    <SolidColorBrush x:Key="HeaderLineBrush" Color="#22bb56" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SelectionAccent" Color="#22bb56" po:Freeze="True"/>
     <SolidColorBrush x:Key="AccentLogo"     Color="#1ea54c" po:Freeze="True"/>
     <SolidColorBrush x:Key="InstallBtnBg"   Color="#1ea54c" po:Freeze="True"/>
     <SolidColorBrush x:Key="MenuBorderBrush" Color="#404040" po:Freeze="True"/>
@@ -43,17 +43,17 @@
     
     <SolidColorBrush x:Key="SettingsOpenRowBg" Color="#404040" po:Freeze="True"/>
     <SolidColorBrush x:Key="TextBrush"      Color="#e0e0e0" po:Freeze="True"/>
-    <SolidColorBrush x:Key="MutedTextBrush" Color="#a0a0a0" po:Freeze="True"/>
-    <SolidColorBrush x:Key="MenuTextBrush"  Color="#a0a0a0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MutedTextBrush" Color="#a3a3a3" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuTextBrush"  Color="#a3a3a3" po:Freeze="True"/>
     <SolidColorBrush x:Key="ChromeTextBrush" Color="#b6b6b6" po:Freeze="True"/>
-    <SolidColorBrush x:Key="FilenameBrush"  Color="#a0a0a0" po:Freeze="True"/>
-    <SolidColorBrush x:Key="DimTextBrush"   Color="#6a6a6a" po:Freeze="True"/>
+    <SolidColorBrush x:Key="FilenameBrush"  Color="#a3a3a3" po:Freeze="True"/>
+    <SolidColorBrush x:Key="DimTextBrush"   Color="#858585" po:Freeze="True"/>
     <SolidColorBrush x:Key="TextFooter" Color="#858585" po:Freeze="True" xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" />
     <SolidColorBrush x:Key="DangerRed"      Color="#ef4444" po:Freeze="True"/>
     <SolidColorBrush x:Key="BgDragHandle"   Color="#555555" po:Freeze="True"/>
     <SolidColorBrush x:Key="DragLine"       Color="#363636" po:Freeze="True"/>
-    <SolidColorBrush x:Key="ScrollThumbBrush"      Color="#551ea54c" po:Freeze="True"/>
-    <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#1ea54c" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScrollThumbBrush"      Color="#5522bb56" po:Freeze="True"/>
+    <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#22bb56" po:Freeze="True"/>
     
     <SolidColorBrush x:Key="TableHeaderBrush" Color="#333333" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowAltBrush"      Color="#18FFFFFF" po:Freeze="True"/>
@@ -62,7 +62,7 @@
     
     <SolidColorBrush x:Key="TreeLineBrush"    Color="#3d3d3d" po:Freeze="True"/>
     <SolidColorBrush x:Key="SliderTrack"    Color="#505050" po:Freeze="True"/>
-    <SolidColorBrush x:Key="RadioAccent"    Color="#1ea54c" po:Freeze="True"/>
+    <SolidColorBrush x:Key="RadioAccent"    Color="#22bb56" po:Freeze="True"/>
     <SolidColorBrush x:Key="BgOverlay"      Color="#BB000000" po:Freeze="True"/>
     <sys:Double x:Key="GrainOpacity" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.24</sys:Double>
     <sys:Double x:Key="IconShadowOpacity">0.9</sys:Double>
@@ -70,9 +70,9 @@
 
     <SolidColorBrush x:Key="BgCanvas"                                                       Color="#3a3a3a" po:Freeze="True"/>
     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"                      Color="#0d2a18" po:Freeze="True"/>
-    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"                  Color="#1ea54c" po:Freeze="True"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"                  Color="#22bb56" po:Freeze="True"/>
     <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"     Color="#0d2a18" po:Freeze="True"/>
-    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#1ea54c" po:Freeze="True"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#22bb56" po:Freeze="True"/>
 
     
     <SolidColorBrush x:Key="KsCatFile"      Color="#00fff9" po:Freeze="True"/>
