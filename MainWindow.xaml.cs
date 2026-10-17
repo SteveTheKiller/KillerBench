@@ -16,6 +16,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        new KillerFamily.Accessibility.OverlayFocus(this).Track(ShortcutsOverlay, AboutOverlay);
         about = new Features.About.AboutController(this);   // Features\About
         var titleFrames = System.Windows.Media.Imaging.BitmapDecoder.Create(
             new Uri("pack://application:,,,/KillerBench;component/Assets/AppIcon.ico"),
