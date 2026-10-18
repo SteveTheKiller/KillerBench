@@ -36,5 +36,12 @@
 "Click a row to open it. For how KillerBench works underneath, see the {technical} page.": "খুলতে একটি সারিতে ক্লিক করুন। KillerBench ভেতরে কীভাবে কাজ করে তা জানতে {technical} পৃষ্ঠা দেখুন।",
 "How to use the KillerBench Windows diagnostic and repair workbench.": "Windows ডায়াগনসিস ও মেরামতের ওয়ার্কবেঞ্চ KillerBench কীভাবে ব্যবহার করবেন।",
 "The Tech of": "প্রযুক্তি",
-"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "স্তরটি দেখতে Ctrl বা Alt+Shift চেপে ধরুন। কোনো জ্বলন্ত কী-র ওপর পয়েন্টার রাখলে তার কাজ দেখা যাবে।"
+"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "স্তরটি দেখতে Ctrl বা Alt+Shift চেপে ধরুন। কোনো জ্বলন্ত কী-র ওপর পয়েন্টার রাখলে তার কাজ দেখা যাবে।",
+"Also try...": "এটিও দেখুন...",
+"Open-source PDF editor for Windows": "Windows-এর জন্য ওপেন-সোর্স PDF এডিটর",
+"Open-source network scanner for Windows": "Windows-এর জন্য ওপেন-সোর্স নেটওয়ার্ক স্ক্যানার",
+"Open-source Windows shell for power users": "Windows পাওয়ার ইউজারদের জন্য ওপেন-সোর্স শেল",
+"Open-source encrypted notepad for Windows": "Windows-এর জন্য ওপেন-সোর্স এনক্রিপ্টেড নোটপ্যাড",
+"Open-source encrypted calendar for Windows": "Windows-এর জন্য ওপেন-সোর্স এনক্রিপ্টেড ক্যালেন্ডার",
+"Open-source encrypted screenshot album for Windows": "Windows-এর জন্য ওপেন-সোর্স এনক্রিপ্টেড স্ক্রিনশট অ্যালবাম"
 }

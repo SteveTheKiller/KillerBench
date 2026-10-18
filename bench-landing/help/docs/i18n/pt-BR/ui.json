@@ -36,5 +36,12 @@
 "Click a row to open it. For how KillerBench works underneath, see the {technical} page.": "Clique em uma linha para abri-la. Para saber como o KillerBench funciona por dentro, consulte a página {technical}.",
 "How to use the KillerBench Windows diagnostic and repair workbench.": "Como usar o KillerBench, a bancada de diagnóstico e reparo do Windows.",
 "The Tech of": "A técnica do",
-"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "Mantenha Ctrl ou Alt+Shift pressionado para ver essa camada. Passe o ponteiro sobre uma tecla acesa para ver a ação."
+"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "Mantenha Ctrl ou Alt+Shift pressionado para ver essa camada. Passe o ponteiro sobre uma tecla acesa para ver a ação.",
+"Also try...": "Experimente também...",
+"Open-source PDF editor for Windows": "Editor de PDF de código aberto para Windows",
+"Open-source network scanner for Windows": "Scanner de rede de código aberto para Windows",
+"Open-source Windows shell for power users": "Shell para Windows de código aberto para usuários avançados",
+"Open-source encrypted notepad for Windows": "Bloco de notas criptografado de código aberto para Windows",
+"Open-source encrypted calendar for Windows": "Calendário criptografado de código aberto para Windows",
+"Open-source encrypted screenshot album for Windows": "Álbum de capturas de tela criptografado de código aberto para Windows"
 }

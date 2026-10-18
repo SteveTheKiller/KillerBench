@@ -592,6 +592,35 @@ def build_technical(loc=EN, write=True):
              "x": re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", h))).strip()[:6000]} for a, t, h, subs in secs]
 
 
+# The family cross-promotion grid at the end of the About page, as on the other apps' sites:
+# each app in its own signature color, from the brand-dark and brand-light wordmark pairs.
+ALSO_TRY = [
+    ("https://killerpdf.net", "kp-icon.png", "KillerPDF", "killerpdf", "Open-source PDF editor for Windows"),
+    ("https://killerscan.net", "ks-icon.png", "KillerScan", "killerscan", "Open-source network scanner for Windows"),
+    ("https://killershell.net", "ksh-icon.png", "KillerShell", "killershell", "Open-source Windows shell for power users"),
+    ("https://killernotes.net", "kn-icon.png", "KillerNotes", "killernotes", "Open-source encrypted notepad for Windows"),
+    ("https://killendar.net", "kd-icon.png", "Killendar", "killendar", "Open-source encrypted calendar for Windows"),
+    ("https://killershot.net", "kst-icon.png", "KillerShot", "killershot", "Open-source encrypted screenshot album for Windows"),
+]
+ALSO_CSS = (".also-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:12px;margin-top:4px}#also h2{white-space:nowrap}"
+            ".also-card{display:flex;align-items:center;gap:16px;padding:10px 12px;border-radius:10px;transition:background .15s}"
+            ".also-card:hover{background:color-mix(in srgb,var(--accent) 10%,transparent);filter:none}"
+            ".also-icon{width:76px;height:76px;border-radius:14px;flex-shrink:0}"
+            ".also-body{display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-width:0}"
+            ".also-wm{height:36px;width:auto;display:block;max-width:100%;object-fit:contain;object-position:left center}"
+            ".also-wm.light{display:none}html[data-theme=\"light\"] .also-wm.dark{display:none}html[data-theme=\"light\"] .also-wm.light{display:block}"
+            ".also-tag{font-size:12.5px;color:var(--muted)}")
+
+
+def also_try(loc):
+    cards = "".join(
+        '<a class="also-card" href="%s" target="_blank" rel="noopener"><img class="also-icon" src="brand/%s" alt="%s" width="46" height="46">'
+        '<span class="also-body"><img class="also-wm dark" src="brand/%s-logo-brand-dark.svg" alt="%s">'
+        '<img class="also-wm light" src="brand/%s-logo-brand-light.svg" alt="%s"><span class="also-tag">%s</span></span></a>'
+        % (url, icon, name, lower, name, lower, name, esc(loc.t(tag))) for url, icon, name, lower, tag in ALSO_TRY)
+    return '<div class="about-card" id="also"><h2>%s</h2><div class="also-grid">%s</div></div>' % (esc(loc.t("Also try...")), cards)
+
+
 def build_about(loc=EN):
     body, _, _, _ = render_page("about", loc)
     lede, secs = sections(tables(relink(without_title(body), False)))
@@ -601,9 +630,9 @@ def build_about(loc=EN):
             '<img class="wm-logo" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></section>'
             '<div class="about-card" id="overview">%s</div>' % (esc(loc.t("About")), lede.replace(' class="doc-lede"', "")))
     style = OUTLINE_CSS + (".content-inner{max-width:880px;margin:0 auto;padding:0 28px 56px}.about-card{scroll-margin-top:20px}"
-                           ".about-card ul{margin:6px 0 0;padding-left:22px;color:var(--muted);font-size:14.5px;line-height:1.7}")
-    aside = '<aside class="sidebar"><div class="sb-tabs"><span class="on">%s</span></div><nav class="outline" aria-label="%s"><a href="#overview">KillerBench</a>%s</nav></aside>' % (esc(loc.t("About")), esc(loc.t("About")), outline)
-    page = page_shell("about.html", "KillerBench | " + loc.t("About"), lede_text(lede), "about", style, aside, hero + cards, OUTLINE_SPY, loc)
+                           ".about-card ul{margin:6px 0 0;padding-left:22px;color:var(--muted);font-size:14.5px;line-height:1.7}") + ALSO_CSS
+    aside = '<aside class="sidebar"><div class="sb-tabs"><span class="on">%s</span></div><nav class="outline" aria-label="%s"><a href="#overview">KillerBench</a>%s<a href="#also">%s</a></nav></aside>' % (esc(loc.t("About")), esc(loc.t("About")), outline, esc(loc.t("Also try...")))
+    page = page_shell("about.html", "KillerBench | " + loc.t("About"), lede_text(lede), "about", style, aside, hero + cards + also_try(loc), OUTLINE_SPY, loc)
     output(loc, "about.html", page)
 
 

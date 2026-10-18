@@ -36,5 +36,12 @@
 "Click a row to open it. For how KillerBench works underneath, see the {technical} page.": "Açmak için bir satıra tıklayın. KillerBench'in arka planda nasıl çalıştığı için {technical} sayfasına bakın.",
 "How to use the KillerBench Windows diagnostic and repair workbench.": "KillerBench Windows tanılama ve onarım tezgâhının kullanımı.",
 "The Tech of": "Teknoloji",
-"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "O katmanı görmek için Ctrl veya Alt+Shift tuşunu basılı tutun. Eylemini görmek için yanan bir tuşun üzerine gelin."
+"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "O katmanı görmek için Ctrl veya Alt+Shift tuşunu basılı tutun. Eylemini görmek için yanan bir tuşun üzerine gelin.",
+"Also try...": "Şunu da dene...",
+"Open-source PDF editor for Windows": "Windows için açık kaynaklı PDF düzenleyici",
+"Open-source network scanner for Windows": "Windows için açık kaynaklı ağ tarayıcı",
+"Open-source Windows shell for power users": "İleri düzey kullanıcılar için açık kaynaklı Windows kabuğu",
+"Open-source encrypted notepad for Windows": "Windows için açık kaynaklı şifreli not defteri",
+"Open-source encrypted calendar for Windows": "Windows için açık kaynaklı şifreli takvim",
+"Open-source encrypted screenshot album for Windows": "Windows için açık kaynaklı, şifreli ekran görüntüsü albümü"
 }

@@ -36,5 +36,12 @@
 "Click a row to open it. For how KillerBench works underneath, see the {technical} page.": "行をクリックすると開きます。KillerBench の内部の仕組みについては、{technical} のページを参照してください。",
 "How to use the KillerBench Windows diagnostic and repair workbench.": "Windows の診断と修復のためのワークベンチ、KillerBench の使い方。",
 "The Tech of": "技術解説",
-"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "Ctrl または Alt+Shift を押し続けるとそのレイヤーを表示します。点灯したキーにポインターを合わせると動作が表示されます。"
+"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "Ctrl または Alt+Shift を押し続けるとそのレイヤーを表示します。点灯したキーにポインターを合わせると動作が表示されます。",
+"Also try...": "こちらもどうぞ...",
+"Open-source PDF editor for Windows": "Windows 用オープンソース PDF エディター",
+"Open-source network scanner for Windows": "Windows向けオープンソースネットワークスキャナー",
+"Open-source Windows shell for power users": "Windows パワーユーザー向けオープンソースシェル",
+"Open-source encrypted notepad for Windows": "Windows 用オープンソース暗号化メモ帳",
+"Open-source encrypted calendar for Windows": "Windows 用オープンソース暗号化カレンダー",
+"Open-source encrypted screenshot album for Windows": "Windows 用オープンソース暗号化スクリーンショットアルバム"
 }
