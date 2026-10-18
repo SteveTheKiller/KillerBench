@@ -1077,7 +1077,7 @@
                   <Hyperlink NavigateUri="https://killerbench.net/help.html#workspace_themes-languages-and-shortcuts" RequestNavigate="OnAboutLink" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None"><Run Text="{DynamicResource Str_KS_OnlineHelp}"/></Hyperlink>
                 </TextBlock>
               </Grid>
-              <ScrollViewer x:Name="ShortcutListScroll" MaxHeight="520" VerticalScrollBarVisibility="Auto"><StackPanel x:Name="ShortcutListHost"/></ScrollViewer>
+              <ScrollViewer x:Name="ShortcutListScroll" MaxHeight="520" Margin="0,0,-24,0" VerticalScrollBarVisibility="Auto"><StackPanel x:Name="ShortcutListHost" Margin="0,0,24,0"/></ScrollViewer>
               <StackPanel x:Name="ShortcutMapHost" Visibility="Collapsed">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10"><Button x:Name="ShortcutBaseButton" Content="{DynamicResource Str_Shortcuts_Base}" Click="OnShortcutBase" Margin="0,0,6,0"/><Button x:Name="ShortcutCtrlButton" Content="{DynamicResource Str_Shortcuts_Ctrl}" Click="OnShortcutCtrl" Margin="0,0,6,0"/><Button x:Name="ShortcutAltShiftButton" Content="ALT+SHIFT" Click="OnShortcutAltShift"/></StackPanel>
                 <StackPanel x:Name="ShortcutKeyboardRows"/>
