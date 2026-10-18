@@ -7,6 +7,8 @@
         Title="KillerBench" Icon="Assets/AppIcon.ico" Width="1025" Height="700" MinWidth="800" MinHeight="500"
         WindowStyle="None" ResizeMode="CanResize" SizeToContent="Manual" Background="{DynamicResource BackgroundBrush}"
         Foreground="{DynamicResource TextBrush}" FontFamily="{DynamicResource UiFont}" FontSize="12"
+        TextOptions.TextFormattingMode="Display" TextOptions.TextRenderingMode="ClearType"
+        UseLayoutRounding="True" SnapsToDevicePixels="True"
         AllowDrop="True" Drop="OnDrop" PreviewDragOver="OnDragOver" PreviewKeyDown="OnKeyDown">
   <shell:WindowChrome.WindowChrome><shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0"/></shell:WindowChrome.WindowChrome>
   <Border x:Name="WindowEdgeBorder" BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="{DynamicResource WindowEdgeThickness}">
