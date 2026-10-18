@@ -93,12 +93,8 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Desktop, accessibility and localization
 
-- The shortcut list's scrollbar sits at the card edge while its text keeps the existing inset.
-- Tool, category, report, inspector, evidence-source and file-picker shadows extend beneath the scrollbars; 98SE stays flat.
-
 - Icon-only buttons give screen readers the name from their tooltip, icon glyphs stay out of what screen readers read, the tool list is named after its category, every part of each scroll bar has a name, and controls reached with the keyboard show a thin solid focus ring in the theme accent. Keyboard focus moves into the shortcuts and About cards when they open, stays there until they close, and then returns. Tab skips hidden links. Empty text and the hidden parts of scroll bars no longer read as items on screen. Each group of option buttons is one Tab stop that lands on the selected option, and the arrow keys move between its options.
 - Primary, outline and secondary buttons sit raised on a soft shadow that lifts on hover and sets down when pressed. 98SE keeps its flat beveled buttons.
-- Pressed format-bar buttons use the theme's matched selection fill and text colors.
 
 - Kept app icons sharp at fractional display DPI and app zoom by caching exact pixel sizes from a covering source and aligning the final draw to device pixels.
 
@@ -139,8 +135,6 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - The website's About page has Also try cards for the other Killer Tools apps, each in its own color.
 
 ### Fixed
-- Dialog and file-picker outlines follow the app frame color and stay black on 98SE.
-- Selected table rows keep readable text in every theme and accent.
 - On the Light theme's Yellow and Orange accents, buttons, links, tabs and accent icons keep their color with a thin gray outline around accent text and icons, instead of turning near-black or brown.
 - Gray, menu and accent text reads at 4.5:1 contrast or better in every theme and accent, and the footer's version and copyright are slightly dimmed.
 - The Dark theme's Red accent stays a true red on buttons, lines, scroll bars and the website's accent swatches, and only small red text uses a lighter red.

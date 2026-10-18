@@ -223,11 +223,8 @@ internal static class Program
             window.Show();
             window.UpdateLayout();
             RenderedTypographyChecks.VerifySubtitle(window);
-            // Fractional DPI rounds the native window to whole device pixels.
-            var windowDpi = VisualTreeHelper.GetDpi(window);
-            Require(Math.Abs(window.Width - 1025) <= 1 / windowDpi.DpiScaleX &&
-                Math.Abs(window.Height - 700) <= 1 / windowDpi.DpiScaleY && window.MinWidth == 800 && window.MinHeight == 500 &&
-                window.SizeToContent == SizeToContent.Manual, $"Workbench window keeps its family window geometry: {window.Width}x{window.Height}, minimum {window.MinWidth}x{window.MinHeight}, sizing {window.SizeToContent}");
+            Require(window.Width == 1025 && window.Height == 700 && window.MinWidth == 800 && window.MinHeight == 500 &&
+                window.SizeToContent == SizeToContent.Manual, "Workbench window keeps its family window geometry");
             Require(window.FindName("ZoomViewport") is FrameworkElement { ClipToBounds: true },
                 "Zoom content remains clipped to the workbench window");
             Require(window.FindName("ServicingMonitorSamples") is Slider { Minimum: 1, Maximum: 120, Value: 3 },
@@ -947,8 +944,6 @@ internal static class Program
             window.Top = SystemParameters.VirtualScreenTop;
             IsolatedDesktop.Verify();
             window.Show();
-            // Startup fitting keeps windows on a monitor. Move this hidden test window away again.
-            window.Left = SystemParameters.VirtualScreenLeft - Math.Max(window.ActualWidth, window.MinWidth) - 200;
             var text = (TextBox)window.FindName("EvidenceBox");
             window.UpdateLayout();
             Require(window.Left + window.ActualWidth < SystemParameters.VirtualScreenLeft && !window.ShowActivated && !window.ShowInTaskbar,
@@ -1250,9 +1245,7 @@ internal static class Program
             Capture(window, Path.Combine(scratch, "simple-start.png"));
             var titleIcon = (Image)window.FindName("TitlebarIcon");
             Require(window.Icon is not null && titleIcon.Source is not null, "Window and titlebar use packaged icon resources");
-            var iconDpi = VisualTreeHelper.GetDpi(titleIcon);
-            Require(Math.Abs(titleIcon.ActualWidth - 27) <= 1 / iconDpi.DpiScaleX &&
-                Math.Abs(titleIcon.ActualHeight - 27) <= 1 / iconDpi.DpiScaleY &&
+            Require(Math.Abs(titleIcon.ActualWidth - 27) < .1 && Math.Abs(titleIcon.ActualHeight - 27) < .1 &&
                 Equals(window.FindResource("TitleIconSize"), 27d), "Titlebar retains its approved 27-pixel family icon size");
             var stableTitleIconSize = new Size(titleIcon.ActualWidth, titleIcon.ActualHeight);
             var zoomHost = (FrameworkElement)window.FindName("ScaleHost");

@@ -5,9 +5,6 @@
                     xmlns:snap="clr-namespace:KillerFamily.Windowing"
                     xmlns:kl="clr-namespace:KillerFamily.Layout"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="ScrollShadows.xaml"/>
-    </ResourceDictionary.MergedDictionaries>
 
     
     <ImageBrush x:Key="GrainTileBrush" TileMode="Tile"
@@ -73,8 +70,8 @@
                 <Setter Property="Background" Value="{DynamicResource RowHoverBrush}"/>
             </Trigger>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="{DynamicResource SelectionBg}"/>
-                <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                <Setter Property="Background" Value="{DynamicResource RowSelectedBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -95,7 +92,7 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
                 <Setter Property="Effect">
                     <Setter.Value>
                         <DropShadowEffect Color="Black" BlurRadius="4" ShadowDepth="0" Opacity="0.7"/>
@@ -895,8 +892,7 @@
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SelectionBg}"/>
-                            <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource RowSelectedBrush}"/>
                             <Setter TargetName="bTopLeft" Property="BorderBrush" Value="{DynamicResource BevelDarkBrush}"/>
                             <Setter TargetName="bTopLeft" Property="BorderThickness" Value="{DynamicResource BevelLightThickness}"/>
                             <Setter TargetName="bBotRight" Property="BorderBrush" Value="{DynamicResource BevelLightBrush}"/>
@@ -1794,7 +1790,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="TreeView">
                     <Border Background="{TemplateBinding Background}" BorderThickness="0">
-                        <ScrollViewer Style="{StaticResource ShadowScrollViewer}"
+                        <ScrollViewer Style="{StaticResource BareScrollViewer}"
                                       Padding="{TemplateBinding Padding}"
                                       CanContentScroll="False"
                                       HorizontalScrollBarVisibility="Auto"

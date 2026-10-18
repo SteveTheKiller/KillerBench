@@ -174,8 +174,6 @@ namespace KillerBench.Services
             if (!d.Contains("WindowEdgeBrush") && d.Contains("AppBorderBrush"))
                 d["WindowEdgeBrush"] = d["AppBorderBrush"];
             SetIfAbsent(d, "WindowEdgeThickness", new Thickness(1));
-            if (!d.Contains("DialogFrameBrush") && d.Contains("AppBorderBrush"))
-                d["DialogFrameBrush"] = d["AppBorderBrush"];
 
             if (!d.Contains("DialogTitleBarBrush"))
                 d["DialogTitleBarBrush"] = d.Contains("UseDialogCaption") && d.Contains("TitleBarBrush")

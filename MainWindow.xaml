@@ -200,7 +200,7 @@
         <a11y:Glyph Text="&#xE90F;" FontFamily="Segoe MDL2 Assets" FontSize="16" Margin="0,0,6,0" Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
         <TextBlock x:Name="SidebarHeading" Text="{DynamicResource Str_Shell_Tools}" Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource HeadingFont}" FontSize="20" TextTrimming="CharacterEllipsis"/>
       </StackPanel>
-      <ListBox x:Name="CategoryList" Style="{StaticResource ShadowListBox}" Margin="0" Background="Transparent" BorderThickness="0" SelectionChanged="OnCategorySelected" AutomationProperties.Name="Tool categories" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
+      <ListBox x:Name="CategoryList" Margin="0" Background="Transparent" BorderThickness="0" SelectionChanged="OnCategorySelected" AutomationProperties.Name="Tool categories" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
         <ListBox.Resources><icons:TallCategoryConverter x:Key="TallCategory"/></ListBox.Resources>
         <ListBox.ItemTemplate><DataTemplate>
           <DockPanel x:Name="CategoryLabel" VerticalAlignment="Center">
@@ -251,14 +251,14 @@
           <Grid.RowDefinitions><RowDefinition Height="*"/></Grid.RowDefinitions>
         <Border x:Name="ToolCard" Grid.Row="0" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Margin="0">
 <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
-<Border>
-          <ScrollViewer x:Name="ToolScroll" Style="{StaticResource ShadowScrollViewer}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{Binding Text, ElementName=CategoryTitle}">
+<Border Padding="14">
+          <ScrollViewer x:Name="ToolScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{Binding Text, ElementName=CategoryTitle}">
             <ScrollViewer.Resources>
               <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
                 <Setter Property="ContentTemplate"><Setter.Value><DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap"/></DataTemplate></Setter.Value></Setter>
               </Style>
             </ScrollViewer.Resources>
-          <StackPanel Margin="14">
+          <StackPanel>
             <TextBlock x:Name="CategoryTitle" Text="{DynamicResource Str_Shell_Diagnostics}" FontFamily="{DynamicResource HeadingFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" Margin="0,0,0,4"/>
             <TextBlock x:Name="CategoryDescription" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,8"/>
             <WrapPanel Margin="0,0,0,6">
@@ -875,7 +875,7 @@
                 </ListBox>
                 <TextBlock x:Name="RecipeSelectionSummary" TextWrapping="Wrap" Margin="0,4,0,0"/>
                 <Expander Header="{DynamicResource Str_Advanced_RepairEffects}" Foreground="{DynamicResource TextBrush}" Margin="0,4,0,0">
-                  <ScrollViewer Style="{StaticResource ShadowScrollViewer}" MaxHeight="180" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                  <ScrollViewer MaxHeight="180" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <TextBlock x:Name="RecipeEffectsSummary" TextWrapping="Wrap"/>
                   </ScrollViewer>
                 </Expander>
@@ -916,7 +916,7 @@
           <Border x:Name="DetailsPanel" Grid.Column="1" Grid.RowSpan="2" Width="270" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Margin="4,0,0,0" ClipToBounds="True" Visibility="Collapsed">
 <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
 <Border Padding="0">
-            <ScrollViewer Style="{StaticResource ShadowScrollViewer}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
               <StackPanel Width="236" HorizontalAlignment="Left" Margin="8">
                 <TextBlock Text="{DynamicResource Str_Text_INSPECTOR}" Style="{StaticResource SectionLabel}"/>
                 <StackPanel x:Name="RepairPanel" Visibility="Collapsed" Margin="0,0,0,12">
@@ -965,7 +965,7 @@
             </Border>
             <TextBlock x:Name="StartGuide" Grid.Row="3" Visibility="Collapsed" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" LineHeight="18" Margin="0,4,0,0"/>
             <Border x:Name="ReportPane" Grid.Row="3" Visibility="Collapsed">
-              <ScrollViewer Style="{StaticResource ShadowScrollViewer}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+              <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel x:Name="ReportContent" Margin="0,4,6,0"/>
               </ScrollViewer>
             </Border>
@@ -974,7 +974,9 @@
                 <Grid Height="140">
                   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
                   <DockPanel><Button DockPanel.Dock="Right" Content="{DynamicResource Str_Session_LoadSample}" Click="OnSample"/><TextBlock x:Name="SessionLabel" VerticalAlignment="Center"/></DockPanel>
-                  <ListBox x:Name="SourcesList" Style="{StaticResource ShadowListBox}" Grid.Row="1" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" SelectionChanged="OnSourceSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Evidence_sources}"/>
+                  <ListBox x:Name="SourcesList" Grid.Row="1" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" SelectionChanged="OnSourceSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Evidence_sources}"/>
+                  <Border x:Name="SourceFadeTop" Style="{StaticResource SidebarFadeTop}" IsHitTestVisible="False"/>
+                  <Border x:Name="SourceFadeBottom" Style="{StaticResource SidebarFadeBottom}" IsHitTestVisible="False"/>
                 </Grid>
               </Expander>
           </Grid>
@@ -1077,7 +1079,7 @@
                   <Hyperlink NavigateUri="https://killerbench.net/help.html#workspace_themes-languages-and-shortcuts" RequestNavigate="OnAboutLink" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None"><Run Text="{DynamicResource Str_KS_OnlineHelp}"/></Hyperlink>
                 </TextBlock>
               </Grid>
-              <ScrollViewer x:Name="ShortcutListScroll" MaxHeight="520" Margin="0,0,-24,0" VerticalScrollBarVisibility="Auto"><StackPanel x:Name="ShortcutListHost" Margin="0,0,24,0"/></ScrollViewer>
+              <ScrollViewer x:Name="ShortcutListScroll" MaxHeight="520" VerticalScrollBarVisibility="Auto"><StackPanel x:Name="ShortcutListHost"/></ScrollViewer>
               <StackPanel x:Name="ShortcutMapHost" Visibility="Collapsed">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10"><Button x:Name="ShortcutBaseButton" Content="{DynamicResource Str_Shortcuts_Base}" Click="OnShortcutBase" Margin="0,0,6,0"/><Button x:Name="ShortcutCtrlButton" Content="{DynamicResource Str_Shortcuts_Ctrl}" Click="OnShortcutCtrl" Margin="0,0,6,0"/><Button x:Name="ShortcutAltShiftButton" Content="ALT+SHIFT" Click="OnShortcutAltShift"/></StackPanel>
                 <StackPanel x:Name="ShortcutKeyboardRows"/>

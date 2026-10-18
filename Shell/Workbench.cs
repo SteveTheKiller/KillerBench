@@ -24,6 +24,7 @@ public partial class MainWindow
     private void InitializeShell()
     {
         GrainTexture.Apply(this);
+        Shell.SidebarChrome.WireEdgeFades(SourcesList, SourceFadeTop, SourceFadeBottom);
         InitializeShortcuts();
         SourceInitialized += (_, _) => { RefreshWindowEdge(); DwmChrome.SetThemeBorder(this); };
         // Windows 11 snap layouts flyout on the maximize button. Attached after WindowChrome's
