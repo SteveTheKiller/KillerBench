@@ -5,6 +5,9 @@
                     xmlns:snap="clr-namespace:KillerFamily.Windowing"
                     xmlns:kl="clr-namespace:KillerFamily.Layout"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="ScrollShadows.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
 
     
     <ImageBrush x:Key="GrainTileBrush" TileMode="Tile"
