@@ -4,6 +4,7 @@ namespace KillerBench;
 
 public partial class App : Application
 {
+    private bool _commandLine;
     public static bool DemoMode { get; private set; }
     public static bool ScreenshotMode { get; private set; }
 
@@ -19,6 +20,13 @@ public partial class App : Application
     {
         KillerFamily.Accessibility.AccessibleControls.Initialize();
         KillerFamily.Theming.AccentShadow.Initialize();
+        var cli = KillerFamily.CommandLine.CommandLineEntry.GetArguments(e.Args, Cli.CommandEngine.CommandNames);
+        if (cli != null)
+        {
+            _commandLine = true;
+            _ = RunCommandAsync(cli);
+            return;
+        }
         if (TryRunInstallerCommand(e)) return;
         ScreenshotMode = e.Args.Any(IsScreenshotArgument);
         DemoMode = ScreenshotMode || e.Args.Any(IsDemoArgument);
@@ -52,7 +60,27 @@ public partial class App : Application
     }
     protected override void OnExit(ExitEventArgs e)
     {
-        Services.Preferences.Save();
+        if (!_commandLine) Services.Preferences.Save();
         base.OnExit(e);
+    }
+
+    private async Task RunCommandAsync(string[] args)
+    {
+        int code;
+        try
+        {
+            Services.CliConsole.AttachToParent();
+            using var output = new System.IO.StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true };
+            using var error = new System.IO.StreamWriter(Console.OpenStandardError()) { AutoFlush = true };
+            Console.SetOut(output);
+            Console.SetError(error);
+            code = await Task.Run(() => Cli.CommandEngine.RunAsync(args));
+        }
+        catch (Exception error)
+        {
+            try { Console.Error.WriteLine(error.Message); } catch { }
+            code = 1;
+        }
+        Shutdown(code);
     }
 }

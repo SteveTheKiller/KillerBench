@@ -14,6 +14,26 @@ internal static class Program
         WindowsEngine.Register();
         try
         {
+            if (args is ["--only", "command-path"])
+            {
+                CommandLinePathChecks.Run();
+                return 0;
+            }
+            if (args is ["--only", "cli-entry"])
+            {
+                using var output = new StringWriter();
+                var previous = Console.Out;
+                try
+                {
+                    Console.SetOut(output);
+                    int code = KillerBench.Cli.CommandEngine.RunAsync(["--help"]).GetAwaiter().GetResult();
+                    if (code != 0 || !output.ToString().Contains("workflow"))
+                        throw new InvalidOperationException("The shared command engine must return help without opening a window.");
+                }
+                finally { Console.SetOut(previous); }
+                Console.WriteLine("PASS: the shared command engine lists commands without desktop startup.");
+                return 0;
+            }
             if (args.Length == 0) return RunChecks(includeUi: false);
             if (args is ["--isolated-ui"]) return RunChecks(includeUi: true);
             if (args is ["--isolated-ui-smoke"]) return RunUiSmoke();

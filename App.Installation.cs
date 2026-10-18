@@ -104,6 +104,7 @@ public partial class App
             key.SetValue("NoModify", 1);
             key.SetValue("NoRepair", 1);
         }
+        Services.CommandLinePath.Register(installDirectory, machine);
     }
 
     private static void Uninstall(bool silent)
@@ -141,6 +142,7 @@ public partial class App
     // its own folder, so that removal is deferred to a short batch file that runs after it exits.
     private static void RemoveInstalledCopy(bool machine, string installDirectory, bool deferDirectory = false)
     {
+        Services.CommandLinePath.Unregister(installDirectory, machine);
         try { File.Delete(Path.Combine(StartMenuDir(machine), AppName + ".lnk")); } catch { }
         try { Directory.Delete(StartMenuDir(machine), recursive: false); } catch { }
         try { File.Delete(DesktopShortcut(machine)); } catch { }

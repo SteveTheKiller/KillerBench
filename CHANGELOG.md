@@ -76,7 +76,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 ### Engine, CLI and reports
 
 - Added The KillerBench.Engine with the platform-neutral Engine.Core, declarative recipe packs, a whitelisted primitive library, a journaled recipe runner and Windows providers in Engine.Windows.
-- Added `killerbench-cli` with the full command catalog, JSON output, live progress, distinct exit codes for verified, restart, canceled and incomplete outcomes, and `-recover` commands for interrupted actions.
+- Commands run through the normal app as `killerbench analyze log.txt`, with `killerbench --help` listing them and `killerbench-cli` still supported. Both use the packaged command engine, with JSON output, live progress, distinct exit codes and recovery commands. Installed copies add their folder to PATH and remove it on uninstall; portable copies register nothing. Command runs leave desktop preferences alone.
 - Bound Engine-owned option definitions to every matching desktop control, so defaults, limits and help text matched across the app, Engine and CLI.
 - Added readable reports beside raw output, with prioritized findings, next steps, elevation guidance, bounded evidence previews, and themed HTML and text export.
 - Opened saved workflow journals, Windows Update captures and EVTX files in the report view with their historical scope.

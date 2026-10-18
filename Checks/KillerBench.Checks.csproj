@@ -12,4 +12,5 @@
        Link the production font bytes at their production paths without changing app resources. -->
   <ItemGroup><Resource Include="../Fonts/*.ttf" Link="Fonts/%(Filename)%(Extension)" /></ItemGroup>
   <ItemGroup><Compile Include="../Cli/TaskPlanCommands.cs" Link="TaskPlanCommands.cs" /></ItemGroup>
+  <ItemGroup><Compile Include="../Services/CommandLinePath.cs" Link="CommandLinePath.cs" /></ItemGroup>
 </Project>

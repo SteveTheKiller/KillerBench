@@ -36,5 +36,6 @@
     <Compile Remove="Engine\**\*.cs;Engine.Core\**\*.cs;Engine.Windows\**\*.cs;Checks\**\*.cs;Cli\**\*.cs;Tools\**\*.cs" />
     <ProjectReference Include="Engine\KillerBench.Engine.csproj" />
     <ProjectReference Include="Engine.Windows\KillerBench.Engine.Windows.csproj" />
+    <ProjectReference Include="Cli\KillerBench.Cli.csproj" />
   </ItemGroup>
 </Project>
