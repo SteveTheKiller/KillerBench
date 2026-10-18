@@ -30,6 +30,9 @@ public partial class MainWindow
         // Windows 11 snap layouts flyout on the maximize button. Attached after WindowChrome's
         // hook, so it answers WM_NCHITTEST first.
         SourceInitialized += (_, _) => SnapLayouts.Attach(this, MaximizeButton);
+        // Before the first show: a default size larger than this monitor's work area is shrunk
+        // to fit and the window moved onto it.
+        SourceInitialized += (_, _) => WorkAreaFit.Fit(this);
         StateChanged += (_, _) =>
         {
             RefreshWindowEdge();

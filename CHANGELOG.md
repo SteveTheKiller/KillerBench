@@ -111,6 +111,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Added the family List and Keyboard shortcut views from one binding table, linked to the online guide, with F12 for About.
 - Used KillerUI-style confirmations and Open, Save and Folder dialogs throughout the app.
 - Zoom enlarged inputs and output inside fixed panes, and the workspace stayed within the window when changing tools or zoom.
+- The window opens inside the work area of the monitor it starts on, so a small or high-scaling display shows all of it.
 - Matched the family palette, control states, gradients, menus, rail flyout spacing, footers and About card. Submenus attached to their opening rows with native direction and screen-edge placement.
 - Improved text contrast on selected sections, expanders, option labels, menus and footers.
 - Centered website logos with space above and below at every screen size and standardized Lacquer headers and documentation text.
