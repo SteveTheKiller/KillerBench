@@ -135,6 +135,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - The website's About page has Also try cards for the other Killer Tools apps, each in its own color.
 
 ### Fixed
+- Windows contrast themes now use system colors for text, icons, panels and selections, without decorative grain or shadows.
 - On the Light theme's Yellow and Orange accents, buttons, links, tabs and accent icons keep their color with a thin gray outline around accent text and icons, instead of turning near-black or brown.
 - Gray, menu and accent text reads at 4.5:1 contrast or better in every theme and accent, and the footer's version and copyright are slightly dimmed.
 - The Dark theme's Red accent stays a true red on buttons, lines, scroll bars and the website's accent swatches, and only small red text uses a lighter red.
