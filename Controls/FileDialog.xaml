@@ -299,7 +299,7 @@
                     <TreeView x:Name="FolderTreeCtl" Grid.Row="0"
                               VirtualizingStackPanel.IsVirtualizing="True"
                               VirtualizingStackPanel.VirtualizationMode="Recycling"
-                              Margin="0,3,2,4"
+                              Padding="0,3,2,4"
                               PreviewMouseWheel="FolderTree_PreviewMouseWheel"
                               TreeViewItem.Expanded="FolderTree_Expanded"
                               ContextMenuOpening="FolderTree_ContextMenuOpening"
@@ -310,7 +310,7 @@
                                     <Setter.Value>
                                         <ControlTemplate TargetType="TreeView">
                                             <Border Background="{TemplateBinding Background}" BorderThickness="0">
-                                                <ScrollViewer Style="{StaticResource BareScrollViewer}"
+                                                <ScrollViewer Style="{StaticResource ShadowScrollViewer}"
                                                               Padding="{TemplateBinding Padding}"
                                                               CanContentScroll="True"
                                                               HorizontalScrollBarVisibility="Auto"
@@ -349,40 +349,6 @@
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>
                     </TreeView>
-                    <!-- Edge fades, KillerShell's tree pattern verbatim (MainWindow.xaml): the
-                         overlay IS the surface - BackgroundBrush plus the same grain - under an
-                         opacity mask, so rows dissolve into an exact match instead of a flat
-                         band. Hit-test-transparent; each edge only shows while there is
-                         something PAST it, ramped in code (SyncTreeEdgeFades). Right inset
-                         clears the scrollbar; the bottom margin is driven from code when a
-                         horizontal bar appears (SyncTreeFade). -->
-
-                    <Border x:Name="TreeFadeTop" Grid.Row="0" Height="18" Opacity="0"
-                            VerticalAlignment="Top" Margin="0,3,14,0" IsHitTestVisible="False">
-                        <Border.OpacityMask>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                <GradientStop Color="#FF000000" Offset="0"/>
-                                <GradientStop Color="#00000000" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Border.OpacityMask>
-                        <Grid>
-                            <Border Background="{DynamicResource BackgroundBrush}"/>
-                            <Border Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
-                        </Grid>
-                    </Border>
-                    <Border x:Name="TreeFadeBottom" Grid.Row="0" Height="22" Opacity="0"
-                            VerticalAlignment="Bottom" Margin="0,0,14,4" IsHitTestVisible="False">
-                        <Border.OpacityMask>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                <GradientStop Color="#00000000" Offset="0"/>
-                                <GradientStop Color="#FF000000" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Border.OpacityMask>
-                        <Grid>
-                            <Border Background="{DynamicResource BackgroundBrush}"/>
-                            <Border Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
-                        </Grid>
-                    </Border>
                 </Grid>
 
                 <Grid Grid.Column="2">
