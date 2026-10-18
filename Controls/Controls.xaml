@@ -895,7 +895,8 @@
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource RowSelectedBrush}"/>
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SelectionBg}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
                             <Setter TargetName="bTopLeft" Property="BorderBrush" Value="{DynamicResource BevelDarkBrush}"/>
                             <Setter TargetName="bTopLeft" Property="BorderThickness" Value="{DynamicResource BevelLightThickness}"/>
                             <Setter TargetName="bBotRight" Property="BorderBrush" Value="{DynamicResource BevelLightBrush}"/>
