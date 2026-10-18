@@ -102,7 +102,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Added category icons and a slimmer default sidebar whose buttons share the available height, keep a readable minimum with scrolling, and place icons above labels when the buttons are tall.
 - Added KillerMCP Options to the About card. Agent repairs through KillerMCP stayed off until turned on there, disruptive repairs needed a separate setting and desktop approval, and a locked state after an uncertain result could be cleared from the same place.
 - Added 13 family themes with yellow and magenta accents on the neutral and 98SE themes. New installs and the website started on Dark with the yellow accent.
-- Added a Film Grain switch to the theme menu and Alt+Shift+G to toggle it, listed on the shortcut views' new Alt+Shift layer. It was on by default, and turning it off removed the grain texture from every surface.
+- Added a Film Grain switch to the theme menu and Alt+Shift+G to toggle it, listed on the shortcut views' new Alt+Shift layer. It was on by default, and turning it off removed the grain texture from every surface. The grain is soft, in many shades, with some specks leaning toward a color opposite the theme accent.
 - Added the Windows 11 snap layouts menu to the maximize button.
 - Gave the About card, the confirmation dialog and the file picker the family close button: an X that turns red on hover without filling, and the classic caption X on 98SE.
 - Set the wordmarks in Punktype and Lacquer, page, sidebar and dialog headings in Lacquer, and the interface text and footers in Killer Sans, in place of the typewriter font in the app and on the website.
