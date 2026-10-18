@@ -93,7 +93,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Desktop, accessibility and localization
 
-- Tool, category, report, inspector and evidence-source scroll shadows extend beneath the scrollbars; 98SE stays flat.
+- Tool, category, report, inspector, evidence-source and file-picker list shadows extend beneath the scrollbars; 98SE stays flat.
 
 - Icon-only buttons give screen readers the name from their tooltip, icon glyphs stay out of what screen readers read, the tool list is named after its category, every part of each scroll bar has a name, and controls reached with the keyboard show a thin solid focus ring in the theme accent. Keyboard focus moves into the shortcuts and About cards when they open, stays there until they close, and then returns. Tab skips hidden links. Empty text and the hidden parts of scroll bars no longer read as items on screen. Each group of option buttons is one Tab stop that lands on the selected option, and the arrow keys move between its options.
 - Primary, outline and secondary buttons sit raised on a soft shadow that lifts on hover and sets down when pressed. 98SE keeps its flat beveled buttons.
