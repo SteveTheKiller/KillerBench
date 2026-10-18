@@ -137,6 +137,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - The website's About page has Also try cards for the other Killer Tools apps, each in its own color.
 
 ### Fixed
+- Dialog and file-picker outlines follow the app frame color and stay black on 98SE.
 - Selected table rows keep readable text in every theme and accent.
 - On the Light theme's Yellow and Orange accents, buttons, links, tabs and accent icons keep their color with a thin gray outline around accent text and icons, instead of turning near-black or brown.
 - Gray, menu and accent text reads at 4.5:1 contrast or better in every theme and accent, and the footer's version and copyright are slightly dimmed.

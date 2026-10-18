@@ -9,9 +9,9 @@
         Background="Transparent" ShowInTaskbar="False"
         TextOptions.TextFormattingMode="Display" TextOptions.TextRenderingMode="ClearType"
         UseLayoutRounding="True" SnapsToDevicePixels="True">
-    <local:PickerBorder x:Name="RootBorder" Opacity="0"
+<local:PickerBorder x:Name="RootBorder" Opacity="0"
                         Background="{DynamicResource BackgroundBrush}"
-                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderBrush="{DynamicResource DialogFrameBrush}"
                         BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}"
                         Margin="{DynamicResource DialogHaloMargin}">
         <local:PickerBorder.Effect>
