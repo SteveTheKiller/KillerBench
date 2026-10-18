@@ -35,5 +35,6 @@
 "Every section and tool, what it does, and how to work through common jobs step by step.": "Mọi mục và công cụ, chức năng của chúng và cách thực hiện từng bước các công việc thường gặp.",
 "Click a row to open it. For how KillerBench works underneath, see the {technical} page.": "Nhấp vào một hàng để mở. Để biết KillerBench hoạt động bên trong như thế nào, hãy xem trang {technical}.",
 "How to use the KillerBench Windows diagnostic and repair workbench.": "Cách sử dụng KillerBench, bộ công cụ chẩn đoán và sửa chữa Windows.",
-"The Tech of": "Công nghệ của"
+"The Tech of": "Công nghệ của",
+"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "Giữ Ctrl hoặc Alt+Shift để xem lớp đó. Di chuột lên một phím sáng để xem thao tác của nó."
 }

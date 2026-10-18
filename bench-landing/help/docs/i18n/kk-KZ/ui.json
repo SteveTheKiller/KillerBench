@@ -35,5 +35,6 @@
 "Every section and tool, what it does, and how to work through common jobs step by step.": "Әр бөлім мен құрал: не істейді және жиі кездесетін жұмыстарды қадам бойынша қалай орындауға болады.",
 "Click a row to open it. For how KillerBench works underneath, see the {technical} page.": "Ашу үшін жолды басыңыз. KillerBench-тің ішкі жұмысы туралы {technical} бетінен оқыңыз.",
 "How to use the KillerBench Windows diagnostic and repair workbench.": "Windows диагностикасы мен жөндеуіне арналған KillerBench жұмыс құралын пайдалану жолы.",
-"The Tech of": "Технологиялар"
+"The Tech of": "Технологиялар",
+"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "Сол қабатты көру үшін Ctrl немесе Alt+Shift пернесін басып тұрыңыз. Әрекетін көру үшін жанған пернеге меңзерді апарыңыз."
 }

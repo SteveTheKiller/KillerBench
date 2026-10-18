@@ -34,6 +34,7 @@ La consola de cristal ahumado y los informes legibles siguen el tema activo. Las
 | F1 | Atajos de teclado |
 | F2 | Mostrar u ocultar la barra lateral |
 | F3 | Mostrar u ocultar el registro de actividad |
+| Alt+Shift+G | Grano de película |
 | F12 | Acerca de KillerBench |
 | Ctrl+O | Abrir evidencia |
 | Esc | Cerrar una superposición o dejar de leer un archivo |

@@ -34,6 +34,7 @@ The smoked-glass console and readable reports follow the active theme. Confirmat
 | F1 | Keyboard shortcuts |
 | F2 | Show or hide the sidebar |
 | F3 | Show or hide the activity log |
+| Alt+Shift+G | Film Grain |
 | F12 | About KillerBench |
 | Ctrl+O | Open evidence |
 | Esc | Close an overlay or stop reading a file |

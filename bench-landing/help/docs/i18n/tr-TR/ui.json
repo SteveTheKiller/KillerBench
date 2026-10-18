@@ -35,5 +35,6 @@
 "Every section and tool, what it does, and how to work through common jobs step by step.": "Her bölüm ve araç, ne yaptığı ve yaygın işlerin adım adım nasıl yapılacağı.",
 "Click a row to open it. For how KillerBench works underneath, see the {technical} page.": "Açmak için bir satıra tıklayın. KillerBench'in arka planda nasıl çalıştığı için {technical} sayfasına bakın.",
 "How to use the KillerBench Windows diagnostic and repair workbench.": "KillerBench Windows tanılama ve onarım tezgâhının kullanımı.",
-"The Tech of": "Teknoloji"
+"The Tech of": "Teknoloji",
+"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "O katmanı görmek için Ctrl veya Alt+Shift tuşunu basılı tutun. Eylemini görmek için yanan bir tuşun üzerine gelin."
 }

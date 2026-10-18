@@ -35,5 +35,6 @@
 "Every section and tool, what it does, and how to work through common jobs step by step.": "すべてのセクションとツールの機能、およびよくある作業の手順を説明します。",
 "Click a row to open it. For how KillerBench works underneath, see the {technical} page.": "行をクリックすると開きます。KillerBench の内部の仕組みについては、{technical} のページを参照してください。",
 "How to use the KillerBench Windows diagnostic and repair workbench.": "Windows の診断と修復のためのワークベンチ、KillerBench の使い方。",
-"The Tech of": "技術解説"
+"The Tech of": "技術解説",
+"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "Ctrl または Alt+Shift を押し続けるとそのレイヤーを表示します。点灯したキーにポインターを合わせると動作が表示されます。"
 }

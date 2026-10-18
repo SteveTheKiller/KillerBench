@@ -34,6 +34,7 @@ Røykglasskonsollen og de lesbare rapportene følger det aktive temaet. Bekrefte
 | F1 | Hurtigtaster |
 | F2 | Vis eller skjul sidefeltet |
 | F3 | Vis eller skjul aktivitetsloggen |
+| Alt+Shift+G | Filmkorn |
 | F12 | Om KillerBench |
 | Ctrl+O | Åpne bevis |
 | Esc | Lukk et overlegg eller stopp lesing av en fil |

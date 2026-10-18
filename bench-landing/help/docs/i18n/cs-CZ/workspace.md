@@ -34,6 +34,7 @@ Konzole z kouřového skla a čitelné zprávy se řídí aktivním motivem. Pot
 | F1 | Klávesové zkratky |
 | F2 | Zobrazit nebo skrýt boční panel |
 | F3 | Zobrazit nebo skrýt protokol činnosti |
+| Alt+Shift+G | Filmové zrno |
 | F12 | O KillerBench |
 | Ctrl+O | Otevřít důkaz |
 | Esc | Zavřít překryv nebo ukončit čtení souboru |

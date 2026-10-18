@@ -34,6 +34,7 @@ A füstüveg hatású konzol és az olvasható jelentések az aktív témát kö
 | F1 | Billentyűparancsok |
 | F2 | Oldalsáv megjelenítése vagy elrejtése |
 | F3 | Tevékenységnapló megjelenítése vagy elrejtése |
+| Alt+Shift+G | Filmszemcse |
 | F12 | A KillerBench névjegye |
 | Ctrl+O | Bizonyíték megnyitása |
 | Esc | Átfedés bezárása vagy fájl olvasásának leállítása |

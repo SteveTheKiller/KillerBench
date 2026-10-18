@@ -34,6 +34,7 @@ O console de vidro fumê e os relatórios legíveis seguem o tema ativo. As conf
 | F1 | Atalhos de teclado |
 | F2 | Mostrar ou ocultar a barra lateral |
 | F3 | Mostrar ou ocultar o log de atividades |
+| Alt+Shift+G | Granulação de filme |
 | F12 | Sobre o KillerBench |
 | Ctrl+O | Abrir evidências |
 | Esc | Fechar uma sobreposição ou parar de ler um arquivo |

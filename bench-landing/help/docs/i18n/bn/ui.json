@@ -35,5 +35,6 @@
 "Every section and tool, what it does, and how to work through common jobs step by step.": "প্রতিটি বিভাগ ও টুল কী করে, এবং সাধারণ কাজগুলো কীভাবে ধাপে ধাপে করবেন।",
 "Click a row to open it. For how KillerBench works underneath, see the {technical} page.": "খুলতে একটি সারিতে ক্লিক করুন। KillerBench ভেতরে কীভাবে কাজ করে তা জানতে {technical} পৃষ্ঠা দেখুন।",
 "How to use the KillerBench Windows diagnostic and repair workbench.": "Windows ডায়াগনসিস ও মেরামতের ওয়ার্কবেঞ্চ KillerBench কীভাবে ব্যবহার করবেন।",
-"The Tech of": "প্রযুক্তি"
+"The Tech of": "প্রযুক্তি",
+"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "স্তরটি দেখতে Ctrl বা Alt+Shift চেপে ধরুন। কোনো জ্বলন্ত কী-র ওপর পয়েন্টার রাখলে তার কাজ দেখা যাবে।"
 }

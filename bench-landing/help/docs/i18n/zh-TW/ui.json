@@ -35,5 +35,6 @@
 "Every section and tool, what it does, and how to work through common jobs step by step.": "介紹每個區段和工具的作用，以及如何逐步完成常見工作。",
 "Click a row to open it. For how KillerBench works underneath, see the {technical} page.": "按一下某一行即可開啟。若要了解 KillerBench 的內部工作原理，請參閱 {technical} 頁面。",
 "How to use the KillerBench Windows diagnostic and repair workbench.": "如何使用 KillerBench 這一 Windows 診斷和修復工作台。",
-"The Tech of": "技術解析"
+"The Tech of": "技術解析",
+"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "按住 Ctrl 或 Alt+Shift 可預覽該層。將指標停在亮起的按鍵上可查看其動作。"
 }

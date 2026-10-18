@@ -35,5 +35,6 @@
 "Every section and tool, what it does, and how to work through common jobs step by step.": "Hver seksjon og hvert verktøy, hva de gjør, og hvordan du løser vanlige oppgaver trinn for trinn.",
 "Click a row to open it. For how KillerBench works underneath, see the {technical} page.": "Klikk på en rad for å åpne den. Se siden {technical} for hvordan KillerBench fungerer under panseret.",
 "How to use the KillerBench Windows diagnostic and repair workbench.": "Slik bruker du KillerBench, arbeidsbenken for diagnose og reparasjon av Windows.",
-"The Tech of": "Teknikken i"
+"The Tech of": "Teknikken i",
+"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "Hold inne Ctrl eller Alt+Shift for å se det laget. Pek på en opplyst tast for å se handlingen."
 }

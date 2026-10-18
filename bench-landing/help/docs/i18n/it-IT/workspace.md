@@ -34,6 +34,7 @@ La console in vetro fumé e i rapporti leggibili seguono il tema attivo. Le conf
 | F1 | Scorciatoie da tastiera |
 | F2 | Mostra o nascondi la barra laterale |
 | F3 | Mostra o nascondi il registro attività |
+| Alt+Shift+G | Grana pellicola |
 | F12 | Informazioni su KillerBench |
 | Ctrl+O | Apri evidenze |
 | Esc | Chiudi una sovrapposizione o interrompi la lettura di un file |

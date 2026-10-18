@@ -34,6 +34,7 @@ Füme cam konsol ve okunabilir raporlar etkin temayı izler. Onaylar ve Aç, Kay
 | F1 | Klavye kısayolları |
 | F2 | Kenar çubuğunu göster veya gizle |
 | F3 | Etkinlik günlüğünü göster veya gizle |
+| Alt+Shift+G | Film greni |
 | F12 | KillerBench hakkında |
 | Ctrl+O | Kanıt aç |
 | Esc | Katmanı kapat veya dosya okumayı durdur |

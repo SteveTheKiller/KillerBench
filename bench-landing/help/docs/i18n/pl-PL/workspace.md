@@ -34,6 +34,7 @@ Konsola z przydymionego szkła i czytelne raporty używają aktywnego motywu. Po
 | F1 | Skróty klawiaturowe |
 | F2 | Pokaż lub ukryj pasek boczny |
 | F3 | Pokaż lub ukryj dziennik aktywności |
+| Alt+Shift+G | Ziarno filmowe |
 | F12 | O KillerBench |
 | Ctrl+O | Otwórz dowody |
 | Esc | Zamknij nakładkę lub przerwij odczyt pliku |

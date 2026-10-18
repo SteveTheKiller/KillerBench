@@ -35,5 +35,6 @@
 "Every section and tool, what it does, and how to work through common jobs step by step.": "Кожен розділ та інструмент: що він робить і як крок за кроком виконати типові завдання.",
 "Click a row to open it. For how KillerBench works underneath, see the {technical} page.": "Клацніть рядок, щоб відкрити його. Як KillerBench працює всередині, описано на сторінці {technical}.",
 "How to use the KillerBench Windows diagnostic and repair workbench.": "Як користуватися KillerBench, робочим інструментом для діагностики й виправлення Windows.",
-"The Tech of": "Технології"
+"The Tech of": "Технології",
+"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "Утримуйте Ctrl або Alt+Shift, щоб побачити цей шар. Наведіть вказівник на підсвічену клавішу, щоб побачити її дію."
 }

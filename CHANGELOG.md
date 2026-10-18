@@ -131,6 +131,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Added deterministic VM validation plans, a gated native fault-injection runner and themed coverage reports.
 - Added the symptom coverage matrix with consistency checks.
 - Added isolated UI tests on a separate desktop, synthetic repair demonstrations and a screenshot preset with fixed sample reports.
+- The website's Help page has the keyboard map above the shortcut list, and the list includes Alt+Shift+G for Film Grain.
 
 ### Fixed
 - On the Light theme's Yellow and Orange accents, buttons, links, tabs and accent icons keep their color with a thin gray outline around accent text and icons, instead of turning near-black or brown.

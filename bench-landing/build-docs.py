@@ -431,12 +431,70 @@ OUTLINE_SPY = ('<script>(function(){var links=[].slice.call(document.querySelect
                'sc.addEventListener("scroll",spy,{passive:true});window.addEventListener("load",spy);spy();})();</script>')
 
 
+# The Help page's shortcut table gets the family keyboard map above it, as the other apps'
+# sites have. The map reads its captions from the table rows, so it follows the page language
+# and can never describe a key differently from the list. Keys and layers mirror
+# Shell/ShortcutsOverlay.cs.
+KBMAP_CSS = (".kbmap{--kc-file:#00fff9;--kc-view:#f222ff;--kc-nav:#8c1eff;--kc-help:#39ff14;margin:12px 0 4px}"
+             "html[data-theme=\"hc\"] .kbmap{--kc-nav:#a64dff}"
+             "html[data-theme=\"light\"] .kbmap{--kc-file:#009e99;--kc-view:#a316b5;--kc-nav:#6a11cc;--kc-help:#128c07}"
+             ".kbmap-layers{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}"
+             ".kbmap-layers button{font-family:Consolas,monospace;font-size:12px;padding:5px 12px;background:var(--surface);color:var(--text2);border:1px solid var(--border);border-radius:4px;cursor:pointer}"
+             ".kbmap-layers button.on{color:var(--accent);border-color:var(--accent)}.kbmap-hint{font-size:11.5px;color:var(--muted);margin-left:6px}"
+             ".kbmap-scroll{overflow:hidden;padding-top:6px}.kbmap-board{display:inline-block;transform-origin:0 0}.kbmap-row{display:flex;margin-bottom:4px}"
+             ".kb-key{flex:none;margin-right:4px;height:44px;background:var(--panel);border:1px solid color-mix(in srgb,var(--text) 16%,transparent);border-radius:4px;font-family:Consolas,monospace;color:var(--text);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:5px 2px 3px;transition:transform .09s ease}"
+             ".kb-key .cap{font-size:11.5px;line-height:1}.kb-key .act{font-size:8.5px;line-height:1;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:0 2px;visibility:hidden}"
+             ".kb-key .bar{height:3px;width:calc(100% - 6px);border-radius:1.5px;visibility:hidden}.kb-key.bound{border-color:var(--kc)}"
+             ".kb-key.bound .act{visibility:visible;color:var(--kc)}.kb-key.bound .bar{visibility:visible;background:var(--kc)}.kb-key.bound:hover{transform:translateY(-3px)}"
+             ".kb-key.mod-on{border-color:var(--accent);color:var(--accent)}.kbmap-detail{font-family:Consolas,monospace;font-size:13px;color:var(--accent);min-height:20px;margin-top:10px}")
+
+KBMAP_JS = r"""<script>(function(){var map=document.querySelector(".kbmap");if(!map)return;var table=map.nextElementSibling;if(!table||table.tagName!=="TABLE")return;
+var KEYS={"F1":["F1","base","help"],"F2":["F2","base","view"],"F3":["F3","base","view"],"F12":["F12","base","help"],"Esc":["Esc","base","nav"],"Ctrl+O":["O","ctrl","file"],"Alt+Shift+G":["G","altshift","view"]};
+var KBL={base:{},ctrl:{},altshift:{}};
+[].slice.call(table.querySelectorAll("tbody tr")).forEach(function(tr){var td=tr.querySelectorAll("td");if(td.length<2)return;var k=KEYS[td[0].textContent.replace(/\s+/g,"")];if(k)KBL[k[1]][k[0]]=[k[2],td[1].textContent.trim()];});
+var ROWS=[[["Esc","Esc",1],["",0.8],["F1","F1",1],["F2","F2",1],["F3","F3",1],["F4","F4",1],["",0.6],["F5","F5",1],["F6","F6",1],["F7","F7",1],["F8","F8",1],["",0.6],["F9","F9",1],["F10","F10",1],["F11","F11",1],["F12","F12",1]],
+[["Grave","`",1],["D1","1",1],["D2","2",1],["D3","3",1],["D4","4",1],["D5","5",1],["D6","6",1],["D7","7",1],["D8","8",1],["D9","9",1],["D0","0",1],["Minus","-",1],["Equals","=",1],["Back","&#8592;",2],["",0.6],["Ins","Ins",1],["Home","Home",1],["PgUp","PgUp",1]],
+[["Tab","Tab",1.5],["Q","Q",1],["W","W",1],["E","E",1],["R","R",1],["T","T",1],["Y","Y",1],["U","U",1],["I","I",1],["O","O",1],["P","P",1],["LBr","[",1],["RBr","]",1],["Bslash","\\",1.5],["",0.6],["Del","Del",1],["End","End",1],["PgDn","PgDn",1]],
+[["Caps","Caps",1.8],["A","A",1],["S","S",1],["D","D",1],["F","F",1],["G","G",1],["H","H",1],["J","J",1],["K","K",1],["L","L",1],["Semi",";",1],["Quote","'",1],["Enter","Enter",2.2]],
+[["Shift","Shift",2.3],["Z","Z",1],["X","X",1],["C","C",1],["V","V",1],["B","B",1],["N","N",1],["M","M",1],["Comma",",",1],["Period",".",1],["Slash","/",1],["RShift","Shift",2.7],["",1.6],["Up","&#8593;",1]],
+[["Ctrl","Ctrl",1.5],["Win","Win",1.2],["Alt","Alt",1.5],["Space","",6.8],["RAlt","Alt",1.5],["Menu","&#9776;",1],["RCtrl","Ctrl",1.5],["",0.6],["Left","&#8592;",1],["Down","&#8595;",1],["Right","&#8594;",1]]];
+var MODS={base:[],ctrl:["Ctrl","RCtrl"],altshift:["Alt","RAlt","Shift","RShift"]};
+var U=46,board=map.querySelector(".kbmap-board"),detail=map.querySelector(".kbmap-detail"),layer="base",keys={},hover=null;
+ROWS.forEach(function(row){var r=document.createElement("div");r.className="kbmap-row";row.forEach(function(c){if(!c[0]){var g=document.createElement("div");g.style.cssText="flex:none;width:"+(U*c[1])+"px";r.appendChild(g);return;}
+var k=document.createElement("div");k.className="kb-key";k.style.width=(U*c[2]-4)+"px";k.innerHTML='<span class="cap"></span><span class="act"></span><span class="bar"></span>';k.firstChild.innerHTML=c[1];var id=c[0];
+k.addEventListener("mouseenter",function(){hover=id;var b=KBL[layer][id];detail.textContent=b?b[1]:" ";});k.addEventListener("mouseleave",function(){hover=null;detail.textContent=" ";});keys[id]=k;r.appendChild(k);});board.appendChild(r);});
+function paint(){Object.keys(keys).forEach(function(id){var k=keys[id],b=KBL[layer][id];k.classList.toggle("bound",!!b);if(b){k.style.setProperty("--kc","var(--kc-"+b[0]+")");k.querySelector(".act").textContent=b[1];}k.classList.toggle("mod-on",MODS[layer].indexOf(id)>=0);});
+[].slice.call(map.querySelectorAll(".kbmap-layers button")).forEach(function(b){b.classList.toggle("on",b.getAttribute("data-kblayer")===layer);});if(hover){var hb=KBL[layer][hover];detail.textContent=hb?hb[1]:" ";}}
+[].slice.call(map.querySelectorAll(".kbmap-layers button")).forEach(function(b){b.addEventListener("click",function(){layer=b.getAttribute("data-kblayer");paint();});});
+function sync(e){if(e.getModifierState&&e.getModifierState("AltGraph"))return;var l=e.altKey&&e.shiftKey?"altshift":e.ctrlKey&&!e.altKey?"ctrl":"base";if(l!==layer){layer=l;paint();}}
+window.addEventListener("keydown",sync);window.addEventListener("keyup",sync);window.addEventListener("blur",function(){layer="base";paint();});paint();
+function fit(){var wrap=board.parentNode;board.style.transform="";wrap.style.height="";var s=wrap.clientWidth/board.offsetWidth;if(s>0&&s<1){board.style.transform="scale("+s+")";wrap.style.height=(board.offsetHeight*s+6)+"px";}}
+fit();window.addEventListener("resize",fit);map.closest(".acc-item")&&map.closest(".acc-item").querySelector(".acc-head").addEventListener("click",function(){setTimeout(fit,0);});})();</script>"""
+
+
+def add_keyboard_map(body, loc):
+    """Puts the keyboard map just above the shortcut table under the Workspace page's
+    Themes, languages and shortcuts heading."""
+    head = body.find(' id="%s"' % help_anchor("workspace", "themes-languages-and-shortcuts"))
+    table = body.find('<table class="spec-table">', head)
+    if head < 0 or table < 0:
+        raise ValueError("%s: the Workspace shortcut table was not found" % loc.code)
+    layers = "".join('<button type="button" data-kblayer="%s"%s>%s</button>' % (l, ' class="on"' if l == "base" else "", n)
+                     for l, n in (("base", "BASE"), ("ctrl", "CTRL"), ("altshift", "ALT+SHIFT")))
+    kbmap = ('<div class="kbmap"><div class="kbmap-layers">%s<span class="kbmap-hint">%s</span></div>'
+             '<div class="kbmap-scroll"><div class="kbmap-board"></div></div><div class="kbmap-detail">&nbsp;</div></div>'
+             % (layers, esc(loc.t("Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action."))))
+    return body[:table] + kbmap + body[table:]
+
+
 def build_help(loc=EN, write=True):
     groups, entries = [], []
     for page_id, title, group in HELP_PAGES:
         title, group = loc.t(title), loc.t(group)
         body, headings, _, markdown = render_page(page_id, loc)
         body = tables(relink(prefix_ids(without_title(body), page_id), True))
+        if page_id == "workspace":
+            body = add_keyboard_map(body, loc)
         anchor = help_anchor(page_id)
         if not groups or groups[-1][0] != group:
             groups.append((group, []))
@@ -469,7 +527,7 @@ def build_help(loc=EN, write=True):
         ".acc-body-inner{padding:2px 18px 16px}.acc-body p{margin-bottom:9px}.acc-body b,.acc-body strong{color:var(--text);font-weight:600}"
         ".acc-body h2{font-size:15px;font-weight:600;color:var(--text);margin:16px 0 6px;scroll-margin-top:16px}.acc-body h3{font-size:14px;font-weight:600;color:var(--text2);margin:12px 0 5px;scroll-margin-top:16px}"
         ".acc-body ul,.acc-body ol{margin:6px 0 10px;padding-left:22px}.acc-body li{margin:3px 0;scroll-margin-top:16px}.acc-body .spec-table{margin:10px 0 12px}"
-        ".acc-body a{color:var(--accent)}")
+        ".acc-body a{color:var(--accent)}") + KBMAP_CSS
     script = ('<script>(function(){var items=[].slice.call(document.querySelectorAll(".acc-item"));'
               'function shut(o){o.classList.remove("open");o.querySelector(".acc-head").setAttribute("aria-expanded","false");o.querySelector(".acc-body").style.maxHeight=null;}'
               'function show(it){items.forEach(function(o){if(o!==it)shut(o);});it.classList.add("open");it.querySelector(".acc-head").setAttribute("aria-expanded","true");var b=it.querySelector(".acc-body");b.style.maxHeight=b.scrollHeight+"px";}'
@@ -479,7 +537,7 @@ def build_help(loc=EN, write=True):
               'document.addEventListener("click",function(e){var a=e.target.closest("a[href^=\'#\']");if(!a)return;var id=a.getAttribute("href").slice(1);if(!document.getElementById(id))return;e.preventDefault();history.pushState(null,"","#"+id);go(id,true);});'
               'window.addEventListener("hashchange",function(){go(location.hash.slice(1),true);});'
               'window.addEventListener("resize",function(){var o=document.querySelector(".acc-item.open .acc-body");if(o)o.style.maxHeight=o.scrollHeight+"px";});'
-              'if(location.hash)go(decodeURIComponent(location.hash.slice(1)),false);})();</script>' + OUTLINE_SPY)
+              'if(location.hash)go(decodeURIComponent(location.hash.slice(1)),false);})();</script>' + OUTLINE_SPY + KBMAP_JS)
     aside = '<aside class="sidebar"><div class="sb-tabs"><span class="on">%s</span></div><nav class="outline" aria-label="%s">%s</nav></aside>' % (esc(loc.t("Help")), esc(loc.t("Help")), "".join(outline))
     page = page_shell("help.html", "KillerBench | " + loc.t("Help"), loc.t("How to use the KillerBench Windows diagnostic and repair workbench."), "help", style, aside, hero + "".join(inner), script, loc)
     if write:

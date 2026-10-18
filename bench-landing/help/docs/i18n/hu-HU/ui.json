@@ -35,5 +35,6 @@
 "Every section and tool, what it does, and how to work through common jobs step by step.": "Minden szakasz és eszköz: mit csinál, és hogyan végezhetők el lépésről lépésre a gyakori feladatok.",
 "Click a row to open it. For how KillerBench works underneath, see the {technical} page.": "Kattintson egy sorra a megnyitásához. A KillerBench belső működését a(z) {technical} oldal ismerteti.",
 "How to use the KillerBench Windows diagnostic and repair workbench.": "A KillerBench, a Windows diagnosztikai és javítóeszköz használata.",
-"The Tech of": "Technológia"
+"The Tech of": "Technológia",
+"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "Tartsa lenyomva a Ctrl vagy az Alt+Shift billentyűt a réteg megtekintéséhez. Vigye az egeret egy kiemelt billentyűre a művelet megtekintéséhez."
 }

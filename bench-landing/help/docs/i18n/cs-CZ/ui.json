@@ -35,5 +35,6 @@
 "Every section and tool, what it does, and how to work through common jobs step by step.": "Každá sekce a každý nástroj, co dělají a jak krok za krokem zvládnout běžné úkoly.",
 "Click a row to open it. For how KillerBench works underneath, see the {technical} page.": "Kliknutím na řádek jej otevřete. Jak KillerBench funguje uvnitř, popisuje stránka {technical}.",
 "How to use the KillerBench Windows diagnostic and repair workbench.": "Jak používat KillerBench, pracovní nástroj pro diagnostiku a opravy Windows.",
-"The Tech of": "Technologie"
+"The Tech of": "Technologie",
+"Hold Ctrl or Alt+Shift to preview that layer. Hover a lit key for its action.": "Podržením Ctrl nebo Alt+Shift zobrazíte danou vrstvu. Najetím na zvýrazněnou klávesu zobrazíte její akci."
 }

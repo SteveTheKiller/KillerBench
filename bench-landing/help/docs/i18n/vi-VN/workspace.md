@@ -34,6 +34,7 @@ Bảng điều khiển kính mờ và báo cáo dễ đọc theo chủ đề đa
 | F1 | Phím tắt |
 | F2 | Hiện hoặc ẩn thanh bên |
 | F3 | Hiện hoặc ẩn nhật ký hoạt động |
+| Alt+Shift+G | Hạt phim |
 | F12 | Về KillerBench |
 | Ctrl+O | Mở bằng chứng |
 | Esc | Đóng lớp phủ hoặc dừng đọc tệp |
