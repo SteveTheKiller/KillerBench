@@ -11,6 +11,9 @@
         UseLayoutRounding="True" SnapsToDevicePixels="True"
         AllowDrop="True" Drop="OnDrop" PreviewDragOver="OnDragOver" PreviewKeyDown="OnKeyDown">
   <shell:WindowChrome.WindowChrome><shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0"/></shell:WindowChrome.WindowChrome>
+  <Window.Resources>
+    <ResourceDictionary Source="/KillerBench;component/Controls/OverlayScrollViewer.xaml"/>
+  </Window.Resources>
   <Border x:Name="WindowEdgeBorder" BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="{DynamicResource WindowEdgeThickness}">
   <Grid x:Name="RootGrid">
     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="24"/></Grid.RowDefinitions>
@@ -253,8 +256,9 @@
           <Grid.RowDefinitions><RowDefinition Height="*"/></Grid.RowDefinitions>
         <Border x:Name="ToolCard" Grid.Row="0" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Margin="0">
 <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
-<Border Padding="14">
-          <ScrollViewer x:Name="ToolScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{Binding Text, ElementName=CategoryTitle}">
+<Border>
+          <ScrollViewer x:Name="ToolScroll" Style="{StaticResource OverlayScrollViewer}" Padding="14"
+                        VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{Binding Text, ElementName=CategoryTitle}">
             <ScrollViewer.Resources>
               <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
                 <Setter Property="ContentTemplate"><Setter.Value><DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap"/></DataTemplate></Setter.Value></Setter>
@@ -918,7 +922,7 @@
           <Border x:Name="DetailsPanel" Grid.Column="1" Grid.RowSpan="2" Width="270" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Margin="4,0,0,0" ClipToBounds="True" Visibility="Collapsed">
 <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
 <Border Padding="0">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer Style="{StaticResource OverlayScrollViewer}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
               <StackPanel Width="236" HorizontalAlignment="Left" Margin="8">
                 <TextBlock Text="{DynamicResource Str_Text_INSPECTOR}" Style="{StaticResource SectionLabel}"/>
                 <StackPanel x:Name="RepairPanel" Visibility="Collapsed" Margin="0,0,0,12">
@@ -1072,7 +1076,8 @@
       <Border x:Name="ShortcutCard" Style="{StaticResource Panel}" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="430" MaxWidth="640" MouseLeftButtonDown="OnShortcutsCard">
         <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
           <Border Padding="24">
-            <StackPanel>
+            <Grid>
+              <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
               <Grid Margin="0,0,0,16">
                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                 <TextBlock Text="{DynamicResource Str_Text_Keyboard_shortcuts}" FontSize="20" VerticalAlignment="Center" TextWrapping="Wrap"/>
@@ -1081,13 +1086,18 @@
                   <Hyperlink NavigateUri="https://killerbench.net/help.html#workspace_themes-languages-and-shortcuts" RequestNavigate="OnAboutLink" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None"><Run Text="{DynamicResource Str_KS_OnlineHelp}"/></Hyperlink>
                 </TextBlock>
               </Grid>
-              <ScrollViewer x:Name="ShortcutListScroll" MaxHeight="520" VerticalScrollBarVisibility="Auto"><StackPanel x:Name="ShortcutListHost"/></ScrollViewer>
+              <ScrollViewer x:Name="ShortcutListScroll" Grid.Row="1" MaxHeight="520" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                            Style="{StaticResource OverlayScrollViewer}" Margin="-24,0,-24,0" Padding="24,0,24,0"><StackPanel x:Name="ShortcutListHost"/></ScrollViewer>
+              <ScrollViewer Grid.Row="1" MaxHeight="520" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                            Style="{StaticResource OverlayScrollViewer}" Margin="-24,0,-24,0" Padding="24,0,24,0"
+                            Visibility="{Binding Visibility, ElementName=ShortcutMapHost}">
               <StackPanel x:Name="ShortcutMapHost" Visibility="Collapsed">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10"><Button x:Name="ShortcutBaseButton" Content="{DynamicResource Str_Shortcuts_Base}" Click="OnShortcutBase" Margin="0,0,6,0"/><Button x:Name="ShortcutCtrlButton" Content="{DynamicResource Str_Shortcuts_Ctrl}" Click="OnShortcutCtrl" Margin="0,0,6,0"/><Button x:Name="ShortcutAltShiftButton" Content="ALT+SHIFT" Click="OnShortcutAltShift"/></StackPanel>
                 <StackPanel x:Name="ShortcutKeyboardRows"/>
               </StackPanel>
-              <Button Content="{DynamicResource Str_Content_Close}" Click="OnShortcuts" Margin="0,16,0,0"/>
-            </StackPanel>
+              </ScrollViewer>
+              <Button Grid.Row="2" Content="{DynamicResource Str_Content_Close}" Click="OnShortcuts" Margin="0,16,0,0"/>
+            </Grid>
           </Border>
         </Grid>
       </Border>
