@@ -33,11 +33,13 @@
     Skip signing for local test builds. Only allowed with -DryRun.
 
 .PARAMETER DryRun
-    Everything except the README commit, tag push, and GitHub release.
+    Build and validate without committing, tagging, or publishing. Requires the README source
+    link to already point at this version so the archive can match the prospective tag commit.
 
 .PARAMETER PublishOnly
     Skip build and sign and publish the artifacts already in the release folder
     (use after a completed normal run, so the signed executables are not rebuilt).
+    Requires the existing source archive to match the commit being tagged.
 
 .EXAMPLE
     .\release.ps1 -DryRun -SkipSign
@@ -415,24 +417,6 @@ $cliHelp = @(& $cliExe --help 2>&1)
 if ($LASTEXITCODE -ne 0) { throw "killerbench-cli --help failed with exit code $LASTEXITCODE." }
 Write-Host "    killerbench-cli --help returned $($cliHelp.Count) lines" -ForegroundColor Green
 
-# --- 11. GPLv3 source archive ---
-# Built from the exact commit being tagged, which the git preflight proved is clean and
-# identical to origin. The landing site is a separate deployable and stays out, as in the
-# other Killer apps. An existing archive is never overwritten.
-Write-Host "`n==> Building the source archive..." -ForegroundColor Cyan
-$srcZipPath = Join-Path $releaseDir "KillerBench-$Version-src.zip"
-if ([IO.File]::Exists($srcZipPath)) {
-    Write-Host "    Source archive already present, keeping it: $srcZipPath" -ForegroundColor DarkGray
-} else {
-    Push-Location $PSScriptRoot
-    try {
-        git archive --format=zip --prefix="KillerBench-$Version/" -o $srcZipPath $releaseCommit -- . ':(exclude)bench-landing'
-        if ($LASTEXITCODE -ne 0) { throw "git archive failed." }
-    } finally {
-        Pop-Location
-    }
-}
-
 } else {
     Write-Host "`n==> PublishOnly: skipping build and sign, using existing artifacts." -ForegroundColor Yellow
     foreach ($artifact in @($desktopExe, $portableExe, $cliExe)) {
@@ -445,6 +429,52 @@ if ([IO.File]::Exists($srcZipPath)) {
     $srcZipPath = Join-Path $releaseDir "KillerBench-$Version-src.zip"
     $actualThumb = "(existing signature)"
     $actualCN    = "(existing signature)"
+}
+
+# --- 11. README source link and GPLv3 source archive ---
+# The README update must be in the commit that the archive and tag identify.
+Push-Location $PSScriptRoot
+try {
+    $readmePath = Join-Path $PSScriptRoot 'README.md'
+    $readmeRaw  = [System.IO.File]::ReadAllText($readmePath)
+    $readmeNew  = $readmeRaw -replace 'releases/download/v[0-9]+\.[0-9]+\.[0-9]+/KillerBench-[0-9]+\.[0-9]+\.[0-9]+-src\.zip', "releases/download/v$Version/KillerBench-$Version-src.zip"
+    if ($readmeNew -ne $readmeRaw) {
+        if ($DryRun -or $PublishOnly) {
+            throw "README source link is stale for $Tag. Update and sync README before using -DryRun or -PublishOnly."
+        }
+        Write-Host "    Updating README source link to $Tag"
+        [System.IO.File]::WriteAllText($readmePath, $readmeNew)
+        git commit README.md -m "v${Version}: point README source link at release" --quiet
+        if ($LASTEXITCODE -ne 0) { throw "README source-link commit failed" }
+        git push origin $defaultBranch --quiet
+        if ($LASTEXITCODE -ne 0) { throw "README source-link commit failed to push" }
+    }
+    $defaultBranch = Assert-CleanSyncedBranch
+    $releaseCommit = (git rev-parse HEAD).Trim()
+
+    Write-Host "`n==> Checking the source archive against $releaseCommit..." -ForegroundColor Cyan
+    $srcZipPath = Join-Path $releaseDir "KillerBench-$Version-src.zip"
+    if (-not [IO.Directory]::Exists($releaseDir)) { [void][IO.Directory]::CreateDirectory($releaseDir) }
+    $candidateZip = Join-Path $releaseDir "KillerBench-$Version-src-$([guid]::NewGuid().ToString('N')).zip"
+    try {
+        git archive --format=zip --prefix="KillerBench-$Version/" -o $candidateZip $releaseCommit -- . ':(exclude)bench-landing'
+        if ($LASTEXITCODE -ne 0) { throw "git archive failed." }
+        if ([IO.File]::Exists($srcZipPath)) {
+            $existingHash = (Get-FileHash -LiteralPath $srcZipPath -Algorithm SHA256).Hash
+            $candidateHash = (Get-FileHash -LiteralPath $candidateZip -Algorithm SHA256).Hash
+            if ($existingHash -ne $candidateHash) {
+                throw "Existing source archive does not match tag commit $releaseCommit. Remove the stale archive and rerun the full release build."
+            }
+            Write-Host "    Source archive matches the tag commit: $srcZipPath" -ForegroundColor DarkGray
+        } else {
+            if ($PublishOnly) { throw "Source archive is missing. Run a full release build before publishing." }
+            Move-Item -LiteralPath $candidateZip -Destination $srcZipPath
+        }
+    } finally {
+        if ([IO.File]::Exists($candidateZip)) { Remove-Item -LiteralPath $candidateZip }
+    }
+} finally {
+    Pop-Location
 }
 
 if (-not [IO.File]::Exists($srcZipPath)) {
@@ -498,20 +528,9 @@ Push-Location $PSScriptRoot
 try {
     $defaultBranch = Assert-CleanSyncedBranch
 
-    # Keep the README's GPLv3 source link pointed at the current release.
-    $readmePath = Join-Path $PSScriptRoot 'README.md'
-    $readmeRaw  = [System.IO.File]::ReadAllText($readmePath)
-    $readmeNew  = $readmeRaw -replace 'releases/download/v[0-9]+\.[0-9]+\.[0-9]+/KillerBench-[0-9]+\.[0-9]+\.[0-9]+-src\.zip', "releases/download/v$Version/KillerBench-$Version-src.zip"
-    if ($readmeNew -ne $readmeRaw) {
-        if ($DryRun) {
-            Write-Host "    DryRun: README source link is stale, would update it to $Tag" -ForegroundColor Yellow
-        } else {
-            Write-Host "    Updating README source link to $Tag"
-            [System.IO.File]::WriteAllText($readmePath, $readmeNew)
-            git commit README.md -m "v${Version}: point README source link at release" --quiet
-            git push origin $defaultBranch --quiet
-            if ($LASTEXITCODE -ne 0) { throw "README source-link commit failed to push" }
-        }
+    $tagCommit = (git rev-parse HEAD).Trim()
+    if ($tagCommit -ne $releaseCommit) {
+        throw "HEAD changed after the source archive was verified. Rebuild the release artifacts before tagging."
     }
 
     # Prose claims no other gate reaches: compare the interface language count to the copy.
