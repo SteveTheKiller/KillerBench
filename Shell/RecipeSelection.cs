@@ -66,14 +66,14 @@ public partial class MainWindow
         var ids = RecipeSelectionList.SelectedItems.Cast<RepairRecipe>().Select(recipe => recipe.Id).ToArray();
         var plan = RecipeCatalog.SelectForWorkflow(WorkflowKind.CommonProblems, ids);
         RecipeSelectionSummary.Text = CustomizeRecipes.IsChecked != true
-            ? $"All {CommonDiagnosticCatalog.All.Count} diagnostic areas and all {RecipeCatalog.ForWorkflow(WorkflowKind.CommonProblems).Count} recipe checks are selected. Automatic repair remains off until enabled." :
+            ? $"All {CommonDiagnosticCatalog.All.Count} diagnostic areas and all {RecipeCatalog.ForWorkflow(WorkflowKind.CommonProblems).Count} recipe checks are selected. Full system scan is diagnostic-only." :
             ids.Length == 0 ? "No recipe checks selected. General diagnostic snapshots still run." :
             $"{ids.Length} selected; {plan.Count} checks including prerequisites. General diagnostic snapshots still run.";
         if (RecipeEffectsSummary is not null)
         {
             var reviewed = CustomizeRecipes.IsChecked == true ? plan : RecipeCatalog.ForWorkflow(WorkflowKind.CommonProblems);
-            RecipeEffectsSummary.Text = reviewed.Count == 0 ? "No recipe repairs selected." :
-                "Repairs run only when enabled and fresh checks establish eligibility. Included prerequisites are listed too.\n\n" +
+            RecipeEffectsSummary.Text = reviewed.Count == 0 ? "No recipe checks selected." :
+                "These checks do not run repairs. Use a focused repair workflow after reviewing current findings. Included prerequisites are listed too.\n\n" +
                 string.Join("\n\n", reviewed.Select(recipe => recipe.Title + "\n" + recipe.Effects + "\nVerifies: " + recipe.VerificationScope));
         }
     }

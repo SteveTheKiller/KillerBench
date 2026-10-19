@@ -535,7 +535,7 @@ public static class CommandEngine
             Console.WriteLine("killerbench bitlocker-encrypt DRIVE: RECOVERY_PROTECTOR_GUID NEW_BACKUP_FILE [--encryption XtsAes128] [--used-space-only] [--execute] (preview by default; requires existing TPM and recovery protectors)");
             Console.WriteLine("killerbench bitlocker-encrypt-recover (verify pending conversion state without repeating the request)");
             Console.WriteLine("killerbench cleanup --user-temp [--windows-temp] [--system-temp] [--shader-caches] [--browser-caches] [--office-caches] [--thumbnail-cache] [--icon-cache] [--error-reports] [--crash-dumps] [--windows-minidumps] [--delivery-optimization-cache] [--recycle-bin] [--days 7] [--max-files 100] [--json] [--execute] (preview by default; Recycle Bin is all-or-nothing and age does not apply)");
-            Console.WriteLine("killerbench full-scan [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json] (all diagnostic areas; no repair unless --auto-repair is explicit)");
+            Console.WriteLine("killerbench full-scan [--recipes ID[,ID]] [--report OUTPUT.html|OUTPUT.txt] [--json] (all diagnostic areas; diagnostic-only)");
             Console.WriteLine("killerbench full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json] (focused diagnostic journal; no repairs)");
             Console.WriteLine("killerbench workflow <" + WorkflowCatalog.CommandChoices + "> [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json]");
             Console.WriteLine("killerbench workflow WORKFLOW --set KEY=VALUE [--set KEY=VALUE ...] [--report OUTPUT.html|OUTPUT.txt] [--json] (run a validated read-only shared option plan)");

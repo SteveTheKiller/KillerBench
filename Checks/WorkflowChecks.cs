@@ -54,6 +54,7 @@ internal static class WorkflowChecks
         Require(standardUserService.GetExitCode() == 0 && standardUserServiceHost.Scanned.SequenceEqual([RepairKind.BackgroundTransfer]) &&
             standardUserServiceHost.Repaired.Count == 0 && standardUserService.Recipes.Single().Outcome == RecipeOutcome.Clear,
             "Informational standard-user context permits exact service diagnosis while repair execution remains unrequested");
+        int focusedInspections = focusedHost.Inspections;
         try
         {
             await Workflows.RunAsync(WorkflowKind.CommonProblems, true, folder, host: focusedHost,
@@ -61,6 +62,8 @@ internal static class WorkflowChecks
             throw new Exception("Focused scan accepted automatic repair");
         }
         catch (ArgumentException) { }
+        Require(focusedHost.Inspections == focusedInspections && focusedHost.Scanned.Count == 0 && focusedHost.Repaired.Count == 0,
+            "Full system scan rejects automatic repair before inspecting selected areas");
         using (var focusedStop = new CancellationTokenSource())
         {
             var partialFocused = await Workflows.RunAsync(WorkflowKind.CommonProblems, false, folder,
@@ -138,11 +141,11 @@ internal static class WorkflowChecks
             Require(subsetJournal.RootElement.GetProperty("requestedRecipeIds").GetArrayLength() == 1 && subsetJournal.RootElement.GetProperty("plannedRecipeIds").GetArrayLength() == 2,
                 "Journal distinguishes requested recipes from expanded prerequisites");
         var emptyHost = new Host { State = CheckState.Repairable };
-        var emptySelection = await Workflows.RunAsync(WorkflowKind.CommonProblems, true, folder, host: emptyHost, selectedRecipes: []);
+        var emptySelection = await Workflows.RunAsync(WorkflowKind.CommonProblems, false, folder, host: emptyHost, selectedRecipes: []);
         Require(emptySelection.Status == "Inspection completed; no recipes selected" && emptyHost.Scanned.Count == 0 && emptyHost.Repaired.Count == 0,
             "Explicit empty selection never expands into automatic repairs");
         bool invalidSelection = false;
-        try { await Workflows.RunAsync(WorkflowKind.CommonProblems, true, folder, host: emptyHost, selectedRecipes: ["unknown"]); }
+        try { await Workflows.RunAsync(WorkflowKind.CommonProblems, false, folder, host: emptyHost, selectedRecipes: ["unknown"]); }
         catch (ArgumentException) { invalidSelection = true; }
         Require(invalidSelection && emptyHost.Inspections == 1, "Invalid recipe selection is rejected before inspecting the machine");
         var repairedFixture = RecipeChecks.Success(RepairKind.SystemFiles);
@@ -402,7 +405,7 @@ internal static class WorkflowChecks
         foreach (var kind in Enum.GetValues<WorkflowKind>())
         {
             var empty = new Host { EmptyInspection = true };
-            var missing = await Workflows.RunAsync(kind, true, folder, host: empty);
+            var missing = await Workflows.RunAsync(kind, kind != WorkflowKind.CommonProblems, folder, host: empty);
             Require(missing.Status == "Needs attention" && missing.Checks.Any(c => c.State == CheckState.Unknown) &&
                 empty.Scanned.Count == 0 && empty.Repaired.Count == 0, "Missing inspection evidence blocks execution and cannot claim health");
         }
@@ -840,35 +843,37 @@ internal static class WorkflowChecks
         Require(commonHost.Scanned.SequenceEqual(commonScopes) && common.Repairs.Count == 0 && common.Recipes.Count == commonScopes.Length,
             "Common problems diagnoses every selected recipe in one journal without implicit repair");
         commonHost = new Host { State = CheckState.Repairable };
-        common = await Workflows.RunAsync(WorkflowKind.CommonProblems, true, folder, host: commonHost);
-        int executableCommonRecipes = RecipeCatalog.ForWorkflow(WorkflowKind.CommonProblems).Count(recipe => recipe.CanAutoExecute);
-        Require(common.Repairs.Count == executableCommonRecipes && common.Repairs.All(Repairs.IsVerified) &&
-            !commonHost.Repaired.Contains(RepairKind.WmiProvider), "Combined automatic recovery preserves diagnostic-only scope and verification");
+        common = await Workflows.RunAsync(WorkflowKind.CommonProblems, false, folder, host: commonHost);
+        Require(commonHost.Scanned.Count > 0 && common.Repairs.Count == 0 &&
+            commonHost.Repaired.Count == 0 && common.Recipes.All(recipe => recipe.Outcome != RecipeOutcome.Repaired),
+            "Full system scan reports repairable findings without executing repairs");
+        foreach (IReadOnlyList<string>? selection in new IReadOnlyList<string>?[] { null, [], ["windows.system-files"] })
+        {
+            var rejectedHost = new Host { State = CheckState.Repairable };
+            bool rejected = false;
+            try { await Workflows.RunAsync(WorkflowKind.CommonProblems, true, folder, host: rejectedHost, selectedRecipes: selection); }
+            catch (ArgumentException) { rejected = true; }
+            Require(rejected && rejectedHost.Inspections == 0 && rejectedHost.Scanned.Count == 0 && rejectedHost.Repaired.Count == 0,
+                "Full system scan rejects automatic repair before host access for every recipe selection");
+        }
         Require(RecipeCatalog.ForWorkflow(WorkflowKind.CommonProblems).Single(r => r.Action == RepairKind.SystemFiles).Dependencies.Contains("windows.component-store"),
-            "Combined recovery preserves component-store prerequisite for system files");
+            "System files retains its component-store prerequisite");
         foreach (string blocker in new[] { "Administrator", "Restart", "System disk" })
         {
             var blockedCommon = new Host { State = CheckState.Repairable, Blocker = blocker };
-            var blockedResult = await Workflows.RunAsync(WorkflowKind.CommonProblems, true, folder, host: blockedCommon);
+            var blockedResult = await Workflows.RunAsync(WorkflowKind.CommonProblems, false, folder, host: blockedCommon);
             Require(blockedResult.Status == (blocker == "Administrator" ? "Administrator access required; workflow incomplete" : "Needs attention") && blockedCommon.Scanned.Count == 0 && blockedCommon.Repaired.Count == 0,
-                "Combined workflow obeys machine-wide prerequisite: " + blocker);
+                "Full system scan obeys machine-wide prerequisite: " + blocker);
         }
-        var failedCommon = new Host { State = CheckState.Repairable, Verified = false };
         var timedInspectionHost = new Host { State = CheckState.Repairable, TimedInspection = true };
-        var timedInspection = await Workflows.RunAsync(WorkflowKind.CommonProblems, true, folder, host: timedInspectionHost);
+        var timedInspection = await Workflows.RunAsync(WorkflowKind.CommonProblems, false, folder, host: timedInspectionHost);
         Require(timedInspectionHost.Scanned.Count == 0 && timedInspectionHost.Repaired.Count == 0 &&
             timedInspection.RecoveryPlan.Action == RecoveryNextAction.RecheckTimedOutWork && timedInspection.Repairs.Count == 0,
             "Timed-out preliminary collection defers recipe execution and directs fresh verification");
-        var failedCommonResult = await Workflows.RunAsync(WorkflowKind.CommonProblems, true, folder, host: failedCommon);
-        Require(failedCommonResult.Status == "Needs attention" && !failedCommon.Scanned.Contains(RepairKind.SystemFiles) &&
-            !failedCommon.Scanned.Contains(RepairKind.PrintQueues) && !failedCommon.Scanned.Contains(RepairKind.DhcpLease) &&
-            !failedCommon.Scanned.Contains(RepairKind.WindowsAudio) && failedCommon.Scanned.Contains(RepairKind.WindowsSearch) &&
-            failedCommonResult.Repairs.All(repair => !Repairs.IsVerified(repair)),
-            "Unverified prerequisites block dependent repairs while independent checks continue without success claims");
-        using (var failedCommonJournal = JsonDocument.Parse(await File.ReadAllTextAsync(failedCommonResult.JournalPath)))
-            Require(failedCommonJournal.RootElement.GetProperty("recipes").GetArrayLength() == commonScopes.Length &&
-                failedCommonJournal.RootElement.GetProperty("repairs").GetArrayLength() == failedCommonResult.Repairs.Count,
-                "Combined failure journal retains every recipe and attempted repair");
+        using (var commonJournal = JsonDocument.Parse(await File.ReadAllTextAsync(common.JournalPath)))
+            Require(commonJournal.RootElement.GetProperty("recipes").GetArrayLength() == commonScopes.Length &&
+                commonJournal.RootElement.GetProperty("repairs").GetArrayLength() == 0,
+                "Full system scan journal retains every finding without repair records");
         var result = await Workflows.RunAsync(WorkflowKind.WindowsUpdate, true, folder, host: clean);
         Require(clean.Scanned.SequenceEqual(Workflows.Scopes(WorkflowKind.WindowsUpdate)) && clean.Repaired.Count == 0 &&
             result.Status.StartsWith("No issues"), "Clean scans do not repair");

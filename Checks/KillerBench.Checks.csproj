@@ -7,7 +7,10 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <ItemGroup><ProjectReference Include="../KillerBench.csproj" /></ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../KillerBench.csproj" />
+    <ProjectReference Include="../Cli/KillerBench.Cli.csproj" />
+  </ItemGroup>
   <!-- Application-relative font URIs resolve against this executable during hosted captures.
        Link the production font bytes at their production paths without changing app resources. -->
   <ItemGroup><Resource Include="../Fonts/*.ttf" Link="Fonts/%(Filename)%(Extension)" /></ItemGroup>

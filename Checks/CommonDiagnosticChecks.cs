@@ -228,7 +228,7 @@ internal static class CommonDiagnosticChecks
         using var journalStop = new CancellationTokenSource();
         string journalFolder = Path.Combine(folder, "partial-common");
         var host = new PartialHost(journalFolder, journalStop);
-        var stopped = await Workflows.RunAsync(WorkflowKind.CommonProblems, true, journalFolder, token: journalStop.Token, host: host);
+        var stopped = await Workflows.RunAsync(WorkflowKind.CommonProblems, false, journalFolder, token: journalStop.Token, host: host);
         Require(stopped.Status.StartsWith("Stopped") && stopped.Checks.Count == 1 && stopped.Checks[0].Name == "Retained fixture" && stopped.Repairs.Count == 0,
             "Stopped inspection retains completed evidence without running recipes");
         string finalJournal = await File.ReadAllTextAsync(stopped.JournalPath);
@@ -239,7 +239,7 @@ internal static class CommonDiagnosticChecks
             string failedFolder = Path.Combine(folder, "partial-" + failure.GetType().Name);
             using var failureStop = new CancellationTokenSource();
             var failedHost = new PartialHost(failedFolder, failureStop) { Failure = failure };
-            var failed = await Workflows.RunAsync(WorkflowKind.CommonProblems, true, failedFolder, host: failedHost);
+            var failed = await Workflows.RunAsync(WorkflowKind.CommonProblems, false, failedFolder, host: failedHost);
             Require(failed.GetExitCode() != 0 && failed.Checks.Count == 2 &&
                 failed.Checks.Single(check => check.Name == "Retained fixture").Evidence?.Output == "raw fixture" &&
                 failed.Checks.Single(check => check.Name == "Workflow") is { State: CheckState.Unknown } errorCheck && errorCheck.Detail == failure.Message &&

@@ -48,6 +48,15 @@ internal static class FullSystemScanChecks
             result.Repairs.Count == 0 && result.Checks.Count == 1 && host.Inspections == 1 &&
             progress.Any(message => message.Contains("Checking this PC's current state")),
             "Named full scan uses the journaled workflow and preserves focused read-only selection");
+        bool rejected = false;
+        try { await Workflows.RunAsync(WorkflowKind.CommonProblems, true, folder, host: host); }
+        catch (ArgumentException) { rejected = true; }
+        Require(rejected, "Full system scan rejects automatic repair before inspecting or dispatching a repair");
+        rejected = false;
+        try { await FullSystemScan.RunAsync(folder, autoRepair: true, host: host); }
+        catch (ArgumentException) { rejected = true; }
+        Require(rejected && await KillerBench.Cli.CommandEngine.RunAsync(["full-scan", "--auto-repair"]) == 2,
+            "Engine and CLI full scan entry points reject automatic repair");
         Console.WriteLine("PASS: named full-system Engine entry point exposes complete catalogs and the journaled workflow without widening selections.");
     }
 
@@ -60,8 +69,8 @@ internal static class FullSystemScanChecks
             IReadOnlyList<CommonDiagnosticScope>? selectedScopes, CancellationToken token)
         {
             Inspections++;
-            Require(kind == WorkflowKind.CommonProblems && selectedScopes?.SequenceEqual(
-                [CommonDiagnosticScope.SystemVolumeCapacity]) == true, "Named full scan lost its selected area");
+            Require(kind == WorkflowKind.CommonProblems && (selectedScopes is null || selectedScopes.SequenceEqual(
+                [CommonDiagnosticScope.SystemVolumeCapacity])), "Named full scan lost its selected area");
             return Task.FromResult<IReadOnlyList<WorkflowCheck>>(
                 [new("Volume capacity", CheckState.Information, "Fixture read-only capacity evidence")]);
         }
