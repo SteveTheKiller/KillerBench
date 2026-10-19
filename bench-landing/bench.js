@@ -313,6 +313,18 @@
   if (!strip || !box) return;
   var big = document.getElementById('lightboxImg'), caption = document.getElementById('lightboxCaption');
   var lastTrigger = null;
+  var inertSiblings = [];
+  function setPageInert() {
+    Array.prototype.forEach.call(document.body.children, function (element) {
+      if (element === box) return;
+      inertSiblings.push({ element: element, wasInert: element.inert });
+      element.inert = true;
+    });
+  }
+  function restorePage() {
+    inertSiblings.forEach(function (entry) { entry.element.inert = entry.wasInert; });
+    inertSiblings = [];
+  }
   function refade() { strip.classList.toggle('faded', strip.scrollHeight - strip.clientHeight - strip.scrollTop > 4); }
   Array.prototype.forEach.call(strip.querySelectorAll('img'), function (img) {
     img.addEventListener('load', refade);
@@ -331,16 +343,23 @@
     caption.textContent = img.alt;
     box.setAttribute('aria-hidden', 'false');
     box.classList.add('show');
+    setPageInert();
     box.focus();
   });
   function closeBox() {
     if (!box.classList.contains('show')) return;
     box.classList.remove('show');
     box.setAttribute('aria-hidden', 'true');
-    if (lastTrigger) lastTrigger.focus();
+    restorePage();
+    if (lastTrigger && lastTrigger.isConnected) lastTrigger.focus();
   }
   box.addEventListener('click', closeBox);
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && box.classList.contains('show')) { closeBox(); e.preventDefault(); }
+    if (!box.classList.contains('show')) return;
+    if (e.key === 'Escape') { closeBox(); e.preventDefault(); }
+    if (e.key === 'Tab') { e.preventDefault(); box.focus(); }
+  });
+  document.addEventListener('focusin', function (e) {
+    if (box.classList.contains('show') && !box.contains(e.target)) box.focus();
   });
 })();
