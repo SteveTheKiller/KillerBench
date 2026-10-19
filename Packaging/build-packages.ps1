@@ -6,13 +6,15 @@
     Publishes the multi-file KillerBench payload, writes its SHA-256 manifest, compresses it once,
     and embeds it in the Packaging\KillerLauncher launcher. The installer payload is
     framework-dependent and its wizard checks for the .NET 10 Desktop Runtime. The portable payload
-    is self-contained, so it runs on a PC without the runtime.
+    is self-contained, so it runs on a PC without the runtime. The Microsoft Store package
+    (KillerBench-Store.exe) is the installer with the portable's bundled runtime, because the Store
+    installs silently on PCs that may not have the .NET 10 Desktop Runtime. Both builds all three.
     -RepackOnly reuses a prepared (for example, freshly signed) payload. -RequireSignature refuses
     unsigned first-party payload files and builds a launcher that only installs signed downloads.
 #>
 param(
     [string]$Configuration = "Release",
-    [ValidateSet("Both", "Portable", "Installer")]
+    [ValidateSet("Both", "Portable", "Installer", "Store")]
     [string]$PackageKind = "Both",
     [switch]$RepackOnly,
     [switch]$RequireSignature
@@ -49,15 +51,17 @@ $version = [string]$versionXml.SelectSingleNode('/Project/PropertyGroup/Version'
 $fileVersion = [string]$versionXml.SelectSingleNode('/Project/PropertyGroup/FileVersion').InnerText
 if (-not $version -or -not $fileVersion) { throw 'KillerBench.csproj needs Version and FileVersion.' }
 
-$kinds = if ($PackageKind -eq 'Both') { @('Installer', 'Portable') } else { @($PackageKind) }
+$kinds = if ($PackageKind -eq 'Both') { @('Installer', 'Portable', 'Store') } else { @($PackageKind) }
 $results = foreach ($kind in $kinds) {
-    $isInstaller = $kind -eq 'Installer'
-    $slug = if ($isInstaller) { 'installer-package' } else { 'portable-package' }
+    $isStore = $kind -eq 'Store'
+    $isInstaller = $kind -ne 'Portable'
+    $bundlesRuntime = $isStore -or -not $isInstaller
+    $slug = if ($isStore) { 'store-package' } elseif ($isInstaller) { 'installer-package' } else { 'portable-package' }
     $artifactRoot = Join-Path $projectDir "bin\$Configuration\net10.0-windows\$slug"
     $payloadDir = Join-Path $artifactRoot 'payload'
     $payloadZip = Join-Path $artifactRoot 'payload.zip'
     $launcherOutput = Join-Path $artifactRoot 'launcher'
-    $publicExe = Join-Path $publicDir $(if ($isInstaller) { 'KillerBench.exe' } else { 'KillerBench-Portable.exe' })
+    $publicExe = Join-Path $publicDir $(if ($isStore) { 'KillerBench-Store.exe' } elseif ($isInstaller) { 'KillerBench.exe' } else { 'KillerBench-Portable.exe' })
 
     if (-not $RepackOnly -and [IO.Directory]::Exists($artifactRoot)) { [IO.Directory]::Delete($artifactRoot, $true) }
     if ([IO.Directory]::Exists($launcherOutput)) { [IO.Directory]::Delete($launcherOutput, $true) }
@@ -66,7 +70,7 @@ $results = foreach ($kind in $kinds) {
     if (-not $RepackOnly) {
         Write-Host "==> Publishing the $kind payload for KillerBench $version..." -ForegroundColor Cyan
         & dotnet publish $appProject -c $Configuration -r win-x64 `
-            --self-contained $(!$isInstaller) `
+            --self-contained $bundlesRuntime `
             -p:PublishSingleFile=false `
             -p:PublishReadyToRun=true `
             -p:PublishDir="$payloadDir\"
@@ -129,6 +133,7 @@ $results = foreach ($kind in $kinds) {
         -p:LauncherIcon="$(Join-Path $projectDir 'Assets\AppIcon.ico')" `
         -p:PayloadZip="$payloadZip" `
         -p:InstallerPackage="$isInstaller" `
+        -p:StorePackage="$isStore" `
         -p:AllowUnsignedInstall="$(!$RequireSignature)" `
         -p:PublishDir="$launcherOutput\"
     if ($LASTEXITCODE -ne 0) { throw "$kind launcher build failed." }
@@ -145,7 +150,9 @@ $results = foreach ($kind in $kinds) {
         try {
             [Environment]::SetEnvironmentVariable('KILLERBENCH_TEST_INSTALL_ROOT', $smokeRoot)
             [Environment]::SetEnvironmentVariable('KILLERBENCH_SKIP_REGISTRATION', '1')
-            $install = Start-Process -FilePath $builtLauncher -ArgumentList '/install-user' -Wait -PassThru
+            # The Store runs its installer with /silent, so that is the path its package is tested on.
+            $smokeArgument = if ($isStore) { '/silent' } else { '/install-user' }
+            $install = Start-Process -FilePath $builtLauncher -ArgumentList $smokeArgument -Wait -PassThru
             if ($install.ExitCode -ne 0) { throw "Launcher install smoke test failed with exit code $($install.ExitCode)." }
             foreach ($required in 'KillerBench.exe', 'payload.manifest') {
                 if (-not [IO.File]::Exists((Join-Path $smokeRoot $required))) {

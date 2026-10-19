@@ -111,6 +111,7 @@ namespace KillerLauncher
 
         private void SetRuntimeStatus()
         {
+            if (Program.IsStorePackage) { RuntimeStatus.Visibility = Visibility.Collapsed; return; }
             bool ready = Program.HasDesktopRuntime10();
             RuntimeStatus.Text = ready ? LauncherStrings.Get("RuntimeDetected") : LauncherStrings.Get("RuntimeRequired");
             RuntimeStatus.Foreground = new SolidColorBrush(ready
@@ -137,7 +138,7 @@ namespace KillerLauncher
                 ShowNotice(LauncherStrings.Get("CheckOptions"), ex.Message, NoticeKind.Warning);
                 return;
             }
-            if (!Program.HasDesktopRuntime10())
+            if (!Program.RuntimeReady())
             {
                 Process.Start(new ProcessStartInfo("https://dotnet.microsoft.com/en-us/download/dotnet/10.0") { UseShellExecute = true });
                 ShowNotice(LauncherStrings.Get("RuntimeRequired"),

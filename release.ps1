@@ -69,13 +69,16 @@ $packageBuild = Join-Path $PSScriptRoot "Packaging\build-packages.ps1"
 $packageDir  = Join-Path $PSScriptRoot "bin\Release\net10.0-windows\publish"
 $payloadDirs = @(
     (Join-Path $PSScriptRoot "bin\Release\net10.0-windows\installer-package\payload"),
-    (Join-Path $PSScriptRoot "bin\Release\net10.0-windows\portable-package\payload")
+    (Join-Path $PSScriptRoot "bin\Release\net10.0-windows\portable-package\payload"),
+    (Join-Path $PSScriptRoot "bin\Release\net10.0-windows\store-package\payload")
 )
 $firstPartyNames = @('KillerBench.exe', 'KillerBench.dll', 'KillerBench.Engine.dll', 'KillerBench.Engine.Core.dll', 'KillerBench.Engine.Windows.dll')
 $cliDir      = Join-Path $PSScriptRoot "Cli\bin\Release\net10.0\publish\single-file-win-x64"
 $releaseDir  = Join-Path $PSScriptRoot "bin\Release\release"
 $desktopExe  = Join-Path $releaseDir "KillerBench.exe"
 $portableExe = Join-Path $releaseDir "KillerBench-Portable.exe"
+# The Microsoft Store installer carries its own .NET runtime; the Store downloads it through killerbench.net/store.
+$storeExe    = Join-Path $releaseDir "KillerBench-Store.exe"
 $cliExe      = Join-Path $releaseDir "killerbench-cli.exe"
 $licenseOut  = Join-Path $releaseDir "LICENSE.txt"
 
@@ -299,11 +302,13 @@ if ($LASTEXITCODE -ne 0) { throw "CLI publish failed." }
 if (-not [IO.Directory]::Exists($releaseDir)) { [void][IO.Directory]::CreateDirectory($releaseDir) }
 Copy-Item -LiteralPath (Join-Path $packageDir 'KillerBench.exe') -Destination $desktopExe -Force
 Copy-Item -LiteralPath (Join-Path $packageDir 'KillerBench-Portable.exe') -Destination $portableExe -Force
+Copy-Item -LiteralPath (Join-Path $packageDir 'KillerBench-Store.exe') -Destination $storeExe -Force
 Copy-Item -LiteralPath (Join-Path $cliDir 'killerbench-cli.exe') -Destination $cliExe -Force
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'LICENSE.txt') -Destination $licenseOut -Force
-foreach ($artifact in @($desktopExe, $portableExe, $cliExe)) { Assert-ReleaseArtifactVersion $artifact $expectedFileVersion }
+foreach ($artifact in @($desktopExe, $portableExe, $storeExe, $cliExe)) { Assert-ReleaseArtifactVersion $artifact $expectedFileVersion }
 Write-Host "    Installer: $desktopExe" -ForegroundColor Green
 Write-Host "    Portable : $portableExe" -ForegroundColor Green
+Write-Host "    Store    : $storeExe" -ForegroundColor Green
 Write-Host "    CLI      : $cliExe" -ForegroundColor Green
 
 # --- 9. Sign ---
@@ -351,10 +356,12 @@ if (-not $SkipSign) {
     if ($LASTEXITCODE -ne 0) { throw "Signed payload repack failed." }
     Copy-Item -LiteralPath (Join-Path $packageDir 'KillerBench.exe') -Destination $desktopExe -Force
     Copy-Item -LiteralPath (Join-Path $packageDir 'KillerBench-Portable.exe') -Destination $portableExe -Force
+    Copy-Item -LiteralPath (Join-Path $packageDir 'KillerBench-Store.exe') -Destination $storeExe -Force
 
     $signTargets = @(
         @{ Path = $desktopExe;  Description = 'KillerBench' },
         @{ Path = $portableExe; Description = 'KillerBench Portable' },
+        @{ Path = $storeExe;    Description = 'KillerBench' },
         @{ Path = $cliExe;      Description = 'KillerBench CLI' }
     )
     foreach ($target in $signTargets) {
@@ -546,7 +553,7 @@ try {
 
     if ($DryRun) {
         Write-Host "`n==> DryRun: stopping before tag and release." -ForegroundColor Yellow
-        Write-Host "    Would tag $Tag and publish KillerBench.exe, KillerBench-Portable.exe, killerbench-cli.exe, LICENSE.txt, $($srcZip.Name) and SHA256SUMS.txt."
+        Write-Host "    Would tag $Tag and publish KillerBench.exe, KillerBench-Portable.exe, KillerBench-Store.exe, killerbench-cli.exe, LICENSE.txt, $($srcZip.Name) and SHA256SUMS.txt."
         exit 0
     }
 
@@ -556,7 +563,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Tag push failed" }
 
     Write-Host "`n==> Creating GitHub release..." -ForegroundColor Cyan
-    $assets = @($desktopExe, $portableExe, $cliExe, $licenseOut, $srcZip.FullName, $sumsPath)
+    $assets = @($desktopExe, $portableExe, $storeExe, $cliExe, $licenseOut, $srcZip.FullName, $sumsPath)
     gh release create $Tag @assets --title "KillerBench $Tag" --notes-file $notesFile --verify-tag
     if ($LASTEXITCODE -ne 0) { throw "gh release create failed" }
 

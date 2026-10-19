@@ -46,7 +46,7 @@ namespace KillerLauncher
                     // /install-user is the automatic update hand-off. Keep that path when the
                     // runtime is ready, but show the prerequisite-aware wizard on machines that
                     // cannot launch the new app yet.
-                    if (!HasDesktopRuntime10())
+                    if (!RuntimeReady())
                     {
                         Application.EnableVisualStyles();
                         Application.SetCompatibleTextRenderingDefault(false);
@@ -60,7 +60,7 @@ namespace KillerLauncher
                     // Unattended installs cannot show the prerequisite wizard. Refuse before
                     // extraction so automation receives a stable failure code and the machine is
                     // left completely untouched when the .NET 10 Desktop Runtime is absent.
-                    int? rejection = InstallerPrerequisitePolicy.SilentInstallRejection(HasDesktopRuntime10());
+                    int? rejection = InstallerPrerequisitePolicy.SilentInstallRejection(RuntimeReady());
                     if (rejection.HasValue) return rejection.Value;
                     // With admin rights (winget, choco, RMM) the install is machine-wide. Without
                     // them, as the Microsoft Store runs installers, it is the normal per-user
@@ -338,6 +338,19 @@ namespace KillerLauncher
             try { return Encoding.UTF8.GetString(Convert.FromBase64String(value.Substring(prefix.Length))); }
             catch (FormatException) { throw new InvalidOperationException(LauncherStrings.Get("RequestedDirectoryInvalid")); }
         }
+
+        /// <summary>
+        /// True for the Microsoft Store package, whose payload carries its own .NET runtime because the
+        /// Store installs silently on machines that may not have the .NET 10 Desktop Runtime.
+        /// </summary>
+        internal static bool IsStorePackage =>
+#if STORE_PACKAGE
+            true;
+#else
+            false;
+#endif
+
+        internal static bool RuntimeReady() => IsStorePackage || HasDesktopRuntime10();
 
         internal static bool HasDesktopRuntime10()
         {
