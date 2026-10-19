@@ -63,7 +63,7 @@ public static class WindowsSettingsPack
         },
         new RecipeDefinition("shell.explorer-start", 1, "Start the Windows shell when it is not running", "Windows",
             "An explorer.exe process exists after the change; taskbar and desktop rendering are not verified",
-            new ProbeSpec("process.running", new Dictionary<string, string> { ["name"] = "explorer" }, new ExpectSpec(
+            new ProbeSpec("process.running", new Dictionary<string, string> { ["name"] = "explorer", ["scope"] = "current-session" }, new ExpectSpec(
             [
                 new ExpectClause("equals", "Running", ProbeVerdict.Clear) { Detail = "The Windows shell is running." },
                 new ExpectClause("equals", "NotRunning", ProbeVerdict.Repairable) { Detail = "No explorer.exe process is running; the desktop and taskbar are absent." },

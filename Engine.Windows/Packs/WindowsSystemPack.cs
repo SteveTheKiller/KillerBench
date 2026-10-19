@@ -182,7 +182,7 @@ public static class WindowsSystemPack
         },
         new RecipeDefinition("shell.explorer-restart", 1, "Restart the Windows shell", "Windows",
             "An explorer.exe process exists after the restart; open File Explorer windows are closed",
-            new ProbeSpec("process.running", new Dictionary<string, string> { ["name"] = "explorer" }, new ExpectSpec(
+            new ProbeSpec("process.running", new Dictionary<string, string> { ["name"] = "explorer", ["scope"] = "current-session" }, new ExpectSpec(
             [
                 new ExpectClause("equals", "Running", ProbeVerdict.Repairable) { Detail = "The shell is running; restarting it rebuilds the taskbar and desktop." },
                 new ExpectClause("equals", "NotRunning", ProbeVerdict.Attention) { Detail = "No shell is running; use the shell start recipe instead." },
@@ -191,7 +191,7 @@ public static class WindowsSystemPack
         {
             Symptoms = ["shell.taskbar-unresponsive"],
             Action = new ActionSpec("explorer.restart", None) { Timeout = TimeSpan.FromSeconds(20), Effects = "Ends explorer.exe for the current session and starts it again. Open File Explorer windows close; unsaved work in other apps is unaffected." },
-            Verify = new ProbeSpec("process.running", new Dictionary<string, string> { ["name"] = "explorer" }, ExpectSpec.ClearWhenEquals("Running", ProbeVerdict.Attention)),
+            Verify = new ProbeSpec("process.running", new Dictionary<string, string> { ["name"] = "explorer", ["scope"] = "current-session" }, ExpectSpec.ClearWhenEquals("Running", ProbeVerdict.Attention)),
             Risk = RecipeRisk.Reversible,
             RequiresExplicitOptions = true,
             Limitations = "A hang is not detected; the recipe assumes the person asked for the restart."

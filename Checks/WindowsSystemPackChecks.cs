@@ -7,6 +7,10 @@ internal static class WindowsSystemPackChecks
     {
         var library = WindowsPrimitiveLibrary.Create();
         var pack = WindowsSystemPack.Build();
+        var explorerRestart = pack.Recipes.Single(recipe => recipe.Id == "shell.explorer-restart");
+        if (!explorerRestart.Detect.Parameters.TryGetValue("scope", out var detectScope) || detectScope != "current-session" ||
+            explorerRestart.Verify?.Parameters.TryGetValue("scope", out var verifyScope) != true || verifyScope != "current-session")
+            throw new Exception("Explorer restart diagnosis and verification must inspect only the current session.");
         var validation = RecipePackValidation.Validate(pack, library);
         if (!validation.IsValid) throw new Exception("System pack is invalid: " + string.Join("; ", validation.Issues.Select(i => i.RecipeId + ": " + i.Message)));
         if (RecipePackJson.Serialize(RecipePackJson.Deserialize(RecipePackJson.Serialize(pack))) != RecipePackJson.Serialize(pack)) throw new Exception("System pack did not round-trip.");

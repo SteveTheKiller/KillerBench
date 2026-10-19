@@ -112,25 +112,42 @@ public sealed class WindowsExplorerRestartAction : IActionPrimitive
     {
         if (!OperatingSystem.IsWindows()) return new ActionResult(false, false, "", "Explorer restart requires Windows.");
         int ended = 0;
+        bool killAttempted = false;
         try
         {
-            foreach (var process in Process.GetProcessesByName("explorer"))
+            token.ThrowIfCancellationRequested();
+            using var current = Process.GetCurrentProcess();
+            int currentSession = current.SessionId;
+            var processes = Process.GetProcessesByName("explorer");
+            try
             {
-                using (process)
+                // Resolve every session before ending any process so an uncertain inventory cannot cause a partial restart.
+                var targets = processes.Where(process => process.SessionId == currentSession).ToArray();
+                if (targets.Length == 0)
+                    return new ActionResult(false, false, "", "No Explorer process is running in the current session.");
+                int waitMilliseconds = (int)Math.Clamp(timeout.TotalMilliseconds, 1, 3000);
+                foreach (var process in targets)
                 {
-                    try { process.Kill(); ended++; }
+                    killAttempted = true;
+                    try { process.Kill(); }
+                    catch (Exception error) when (error is InvalidOperationException or System.ComponentModel.Win32Exception) { }
+                    try { if (process.WaitForExit(waitMilliseconds)) ended++; }
                     catch (Exception error) when (error is InvalidOperationException or System.ComponentModel.Win32Exception) { }
                 }
+                if (ended == 0)
+                    return new ActionResult(true, false, "ended 0 of " + targets.Length, "No current-session Explorer process was confirmed stopped. Nothing was started.");
+                await Task.Delay(1000).ConfigureAwait(false);
+                string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
+                using var started = Process.Start(new ProcessStartInfo(path) { UseShellExecute = false });
+                bool complete = ended == targets.Length && started is not null;
+                return new ActionResult(true, complete, "ended " + ended + " of " + targets.Length + "; started " + (started?.Id.ToString(CultureInfo.InvariantCulture) ?? "none"),
+                    complete ? null : "Explorer restart was incomplete. Review the current session before retrying.");
             }
-            await Task.Delay(1000, token).ConfigureAwait(false);
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
-            using var started = Process.Start(new ProcessStartInfo(path) { UseShellExecute = false });
-            return new ActionResult(true, started is not null, "ended " + ended + "; started " + (started?.Id.ToString(CultureInfo.InvariantCulture) ?? "none"),
-                started is null ? "Explorer did not start after " + ended + " process(es) were ended." : null);
+            finally { foreach (var process in processes) process.Dispose(); }
         }
         catch (Exception error) when (error is InvalidOperationException or System.ComponentModel.Win32Exception or IOException)
         {
-            return new ActionResult(ended > 0, false, "ended " + ended, "Explorer restart failed: " + error.Message);
+            return new ActionResult(killAttempted, false, "ended " + ended, "Explorer restart failed: " + error.Message);
         }
     }
 }

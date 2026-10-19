@@ -77,24 +77,37 @@ public sealed class WindowsWinsockResetAction : IActionPrimitive
     }
 }
 
-/// <summary>Reports whether at least one process with the given image name is running for any account. Value is Running or NotRunning.</summary>
+/// <summary>Reports whether a named process is running for any account or in the current session. Value is Running or NotRunning.</summary>
 public sealed class WindowsProcessRunningProbe : IProbePrimitive
 {
     public string Name => "process.running";
-    public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [new("name", true, "Process image name without extension") { Pattern = "[A-Za-z0-9_-]{1,64}" }];
+    public IReadOnlyList<PrimitiveParameter> Parameters { get; } =
+    [
+        new("name", true, "Process image name without extension") { Pattern = "[A-Za-z0-9_-]{1,64}" },
+        new("scope", false, "all or current-session") { Pattern = "all|current-session" }
+    ];
 
     public Task<PrimitiveResult> ObserveAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(parameters);
         token.ThrowIfCancellationRequested();
         string name = parameters["name"];
+        string scope = parameters.GetValueOrDefault("scope") ?? "all";
+        if (scope is not ("all" or "current-session"))
+            return Task.FromResult(PrimitiveResult.Unavailable("Unsupported process scope."));
         try
         {
             var processes = Process.GetProcessesByName(name);
-            int count = processes.Length;
-            foreach (var process in processes) process.Dispose();
-            return Task.FromResult(new PrimitiveResult(true, count > 0 ? "Running" : "NotRunning", count + " process(es) named " + name)
-            { Detail = count > 0 ? count + " " + name + " process(es) running." : "No " + name + " process is running." });
+            try
+            {
+                using var current = Process.GetCurrentProcess();
+                int currentSession = scope == "current-session" ? current.SessionId : -1;
+                int count = processes.Count(process => scope == "all" || process.SessionId == currentSession);
+                string context = scope == "current-session" ? " in the current session" : "";
+                return Task.FromResult(new PrimitiveResult(true, count > 0 ? "Running" : "NotRunning", count + " process(es) named " + name + context)
+                { Detail = count > 0 ? count + " " + name + " process(es) running" + context + "." : "No " + name + " process is running" + context + "." });
+            }
+            finally { foreach (var process in processes) process.Dispose(); }
         }
         catch (Exception exception) when (exception is InvalidOperationException or System.ComponentModel.Win32Exception)
         {
@@ -111,23 +124,23 @@ public sealed class WindowsExplorerStartAction : IActionPrimitive
     public RecipeRisk Risk => RecipeRisk.Reversible;
     public bool RequiresElevation => false;
 
-    public Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
+    public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
-        if (!OperatingSystem.IsWindows()) return Task.FromResult(new ActionResult(false, false, "", "Explorer start requires Windows."));
+        if (!OperatingSystem.IsWindows()) return new ActionResult(false, false, "", "Explorer start requires Windows.");
         try
         {
-            var existing = Process.GetProcessesByName("explorer");
-            int running = existing.Length;
-            foreach (var process in existing) process.Dispose();
-            if (running > 0) return Task.FromResult(new ActionResult(false, true, running + " explorer process(es) present", "Explorer is already running; nothing was started."));
+            var existing = await new WindowsProcessRunningProbe().ObserveAsync(
+                new Dictionary<string, string> { ["name"] = "explorer", ["scope"] = "current-session" }, timeout, token).ConfigureAwait(false);
+            if (!existing.Complete) return new ActionResult(false, false, "", existing.Error ?? "Current-session Explorer state is unavailable.");
+            if (existing.Value == "Running") return new ActionResult(false, true, existing.Raw, "Explorer is already running in the current session; nothing was started.");
             string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
             using var started = Process.Start(new ProcessStartInfo(path) { UseShellExecute = false });
-            return Task.FromResult(new ActionResult(true, started is not null, started is null ? "" : "started pid " + started.Id, started is null ? "Explorer did not start." : null));
+            return new ActionResult(true, started is not null, started is null ? "" : "started pid " + started.Id, started is null ? "Explorer did not start." : null);
         }
         catch (Exception exception) when (exception is InvalidOperationException or System.ComponentModel.Win32Exception or IOException)
         {
-            return Task.FromResult(new ActionResult(false, false, "", "Explorer could not be started: " + exception.Message));
+            return new ActionResult(false, false, "", "Explorer could not be started: " + exception.Message);
         }
     }
 }

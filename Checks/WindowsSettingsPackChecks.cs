@@ -27,6 +27,9 @@ internal static class WindowsSettingsPackChecks
     {
         var library = WindowsPrimitiveLibrary.Create();
         var pack = WindowsSettingsPack.Build();
+        var explorerStart = pack.Recipes.Single(recipe => recipe.Id == "shell.explorer-start");
+        if (!explorerStart.Detect.Parameters.TryGetValue("scope", out var startScope) || startScope != "current-session")
+            throw new Exception("Explorer start diagnosis must inspect only the current session.");
         var validation = RecipePackValidation.Validate(pack, library);
         if (!validation.IsValid) throw new Exception("Settings pack is invalid: " + string.Join("; ", validation.Issues.Select(i => i.RecipeId + ": " + i.Message)));
         if (RecipePackJson.Serialize(RecipePackJson.Deserialize(RecipePackJson.Serialize(pack))) != RecipePackJson.Serialize(pack)) throw new Exception("Settings pack did not round-trip.");
