@@ -13,4 +13,5 @@
   <ItemGroup><Resource Include="../Fonts/*.ttf" Link="Fonts/%(Filename)%(Extension)" /></ItemGroup>
   <ItemGroup><Compile Include="../Cli/TaskPlanCommands.cs" Link="TaskPlanCommands.cs" /></ItemGroup>
   <ItemGroup><Compile Include="../Services/CommandLinePath.cs" Link="CommandLinePath.cs" /></ItemGroup>
+  <ItemGroup><Compile Include="../Packaging/KillerLauncher/InstallerPrerequisitePolicy.cs" Link="InstallerPrerequisitePolicy.cs" /></ItemGroup>
 </Project>

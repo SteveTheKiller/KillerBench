@@ -352,12 +352,25 @@ namespace KillerLauncher
 
         internal static bool RuntimeReady() => IsStorePackage || HasDesktopRuntime10();
 
-        internal static bool HasDesktopRuntime10()
+        internal static bool HasDesktopRuntime10() => InstallerPrerequisitePolicy.HasDesktopRuntime10(
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), IsArm64Host());
+
+        private const ushort ImageFileMachineArm64 = 0xAA64;
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool IsWow64Process2(IntPtr process, out ushort processMachine, out ushort nativeMachine);
+
+        /// <summary>True on Arm64 Windows, where this x64 setup runs under emulation.</summary>
+        private static bool IsArm64Host()
         {
-            string root = Path.Combine(Environment.GetFolderPath(
-                Environment.SpecialFolder.ProgramFiles), "dotnet", "shared", "Microsoft.WindowsDesktop.App");
-            try { return Directory.Exists(root) && Directory.GetDirectories(root, "10.*").Length > 0; }
-            catch { return false; }
+            try
+            {
+                return IsWow64Process2(Process.GetCurrentProcess().Handle, out _, out ushort native) &&
+                    native == ImageFileMachineArm64;
+            }
+            catch (EntryPointNotFoundException) { return false; }
         }
 
         private static int RunRegistration(string directory, bool machine, bool desktop)

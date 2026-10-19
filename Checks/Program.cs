@@ -19,6 +19,11 @@ internal static class Program
                 CommandLinePathChecks.Run();
                 return 0;
             }
+            if (args is ["--only", "installer-runtime"])
+            {
+                InstallerRuntimeChecks.Run();
+                return 0;
+            }
             if (args is ["--only", "cli-entry"])
             {
                 using var output = new StringWriter();
@@ -491,6 +496,7 @@ internal static class Program
         try
         {
             CheckEvidence(scratch).GetAwaiter().GetResult();
+            InstallerRuntimeChecks.Run();
             RecipePackChecks.RunAsync().GetAwaiter().GetResult();
             WindowsServicePackChecks.RunAsync().GetAwaiter().GetResult();
             WindowsSettingsPackChecks.RunAsync().GetAwaiter().GetResult();
