@@ -1,3 +1,4 @@
+using System.IO;
 using KillerBench.Engine;
 using KillerBench.Engine.Core;
 
@@ -25,6 +26,15 @@ internal static class SymptomTriageChecks
         {
             execute(parameters["name"]);
             return Task.FromResult(new ActionResult(true, true, "ok"));
+        }
+    }
+
+    private sealed class DispatchedJournalFailure : IRecipeJournal
+    {
+        public Task RecordAsync(RecipeJournalEntry entry, CancellationToken token)
+        {
+            if (entry.Stage == RecipeJournalStage.Dispatched) throw new IOException("Simulated journal failure.");
+            return Task.CompletedTask;
         }
     }
 
@@ -118,6 +128,17 @@ internal static class SymptomTriageChecks
             .AddProbe(new FakeProbe("service.check", _ => "Repairable")).AddProbe(new FakeProbe("service.running", _ => "Running")).AddAction(new FakeAction(_ => { })), new MemoryRecipeJournal());
         var capped = await repairCap.RunAsync("test.symptom", new GoalRunOptions { AuthorizeRepair = true, MaximumRepairs = 1 });
         if (capped.Repaired.Count != 1 || capped.Outcome != GoalOutcome.NeedsHuman) throw new Exception("Repair cap was not enforced: " + capped.Outcome + " repaired " + capped.Repaired.Count);
+        int dispatchedBeforeJournalFailure = 0;
+        var journalFailureLibrary = new PrimitiveLibrary("Test")
+            .AddProbe(new FakeProbe("service.check", _ => "Repairable"))
+            .AddProbe(new FakeProbe("service.running", _ => "Running"))
+            .AddAction(new FakeAction(_ => dispatchedBeforeJournalFailure++));
+        var journalFailureRunner = new GoalRunner(catalog, [pack], journalFailureLibrary, new DispatchedJournalFailure());
+        var journalFailureReport = await journalFailureRunner.RunAsync("test.symptom", new GoalRunOptions { AuthorizeRepair = true });
+        if (journalFailureReport.Outcome != GoalOutcome.Unresolved || dispatchedBeforeJournalFailure != 1 ||
+            !journalFailureReport.Unresolved.SequenceEqual(["test.alpha"]) ||
+            journalFailureReport.Steps is not [{ Recipe: { JournalFailure: true, Action: { Dispatched: true } } }])
+            throw new Exception("Triage continued or lost action evidence after the journal failed.");
 
         // Confirm probe and questions.
         var confirmed = catalog with { Symptoms = [catalog.Symptoms[0] with { Confirm = new ProbeSpec("service.check", new Dictionary<string, string> { ["name"] = "Symptom" }, StateExpect()) }, catalog.Symptoms[1]] };
@@ -144,6 +165,16 @@ internal static class SymptomTriageChecks
         using var canceled = new CancellationTokenSource();
         canceled.Cancel();
         if ((await runner.RunAsync("test.symptom", new GoalRunOptions(), canceled.Token)).Outcome != GoalOutcome.Canceled) throw new Exception("Cancellation was not reported.");
+        using var canceledAfterRepair = new CancellationTokenSource();
+        var cancelLibrary = new PrimitiveLibrary("Test")
+            .AddProbe(new FakeProbe("service.check", _ => "Repairable"))
+            .AddProbe(new FakeProbe("service.running", _ => "NotRunning"))
+            .AddAction(new FakeAction(_ => canceledAfterRepair.Cancel()));
+        var cancelRunner = new GoalRunner(catalog, [pack], cancelLibrary, new MemoryRecipeJournal());
+        var canceledReport = await cancelRunner.RunAsync("test.symptom", new GoalRunOptions { AuthorizeRepair = true }, canceledAfterRepair.Token);
+        if (canceledReport.Outcome != GoalOutcome.Canceled || !canceledReport.Unresolved.Contains("test.alpha") ||
+            canceledReport.Steps is not [{ Recipe: { Outcome: RecipeRunOutcome.Canceled, Action: { Dispatched: true }, ExecutionUncertain: true } }])
+            throw new Exception("Canceled triage hid the dispatched repair step.");
 
         // Built-in Windows catalog against the built-in pack and library.
         var windows = WindowsSymptomCatalog.Build();

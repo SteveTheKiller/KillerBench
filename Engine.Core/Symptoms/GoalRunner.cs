@@ -133,12 +133,15 @@ public sealed class GoalRunner(SymptomCatalog catalog, IReadOnlyList<RecipePack>
                         {
                             case RecipeRunOutcome.Clear: ruledOut.Add(recipe.Id); break;
                             case RecipeRunOutcome.Repaired: repaired.Add(recipe.Id); break;
-                            case RecipeRunOutcome.Canceled: throw new OperationCanceledException(runToken);
                             default: unresolved.Add(recipe.Id); break;
                         }
                         string key = outcome.ToString();
                         string? next = Branch(node, key);
                         steps.Add(new(index, node.Id, node.Kind, recipe.Title + ": " + outcome + ". " + result.Detail) { Recipe = result, BranchKey = next is null ? null : key });
+                        if (result.JournalFailure)
+                            return Report(GoalOutcome.Unresolved, "The repair journal could not be saved. Stop further repairs and inspect the current state before retrying.");
+                        if (outcome == RecipeRunOutcome.Canceled)
+                            throw new OperationCanceledException(runToken);
                         if (outcome == RecipeRunOutcome.RestartRequired)
                             return Report(GoalOutcome.RestartRequired, "A repair requires a restart. Run this symptom again after restarting to continue triage.");
                         if (outcome == RecipeRunOutcome.Repaired && symptom.Confirm is not null)

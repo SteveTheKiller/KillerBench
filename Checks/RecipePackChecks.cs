@@ -31,6 +31,15 @@ internal static class RecipePackChecks
         }
     }
 
+    private sealed class FailingJournal(RecipeJournalStage failureStage) : IRecipeJournal
+    {
+        public Task RecordAsync(RecipeJournalEntry entry, CancellationToken token)
+        {
+            if (entry.Stage == failureStage) throw new IOException("Simulated journal failure.");
+            return Task.CompletedTask;
+        }
+    }
+
     private static Dictionary<string, string> Target(string name = "Spooler") => new() { ["name"] = name };
 
     private static RecipeDefinition ServiceRecipe(bool withAction = true, bool elevation = false, RecipeRisk risk = RecipeRisk.Reversible) =>
@@ -231,6 +240,27 @@ internal static class RecipePackChecks
         if (!stages.SequenceEqual(expectedStages)) throw new Exception("Journal stages were " + string.Join(",", stages));
         if (Array.IndexOf(stages, RecipeJournalStage.Prepared) > Array.IndexOf(stages, RecipeJournalStage.Dispatched)) throw new Exception("Prepared was not journaled before dispatch.");
 
+        foreach (var failureStage in new[] { RecipeJournalStage.Dispatched, RecipeJournalStage.Verified, RecipeJournalStage.Completed })
+        {
+            serviceState = "Stopped";
+            var actionAfterJournal = new FakeAction("service.start", _ =>
+            {
+                serviceState = "Running";
+                return new ActionResult(true, true, "started");
+            });
+            var failedJournalRunner = new RecipeRunner(new PrimitiveLibrary("Test").AddProbe(stateProbe).AddProbe(registeredProbe).AddAction(actionAfterJournal), new FailingJournal(failureStage));
+            var journalFailure = await failedJournalRunner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true });
+            if (actionAfterJournal.Calls != 1 || journalFailure.Outcome != RecipeRunOutcome.Unknown || !journalFailure.ExecutionUncertain ||
+                !journalFailure.JournalFailure || journalFailure.Action is not { Dispatched: true })
+                throw new Exception("Post-dispatch journal failure lost action evidence at " + failureStage + ".");
+        }
+        serviceState = "Stopped";
+        var blockedBeforeAction = new FakeAction("service.start", _ => new ActionResult(true, true, "started"));
+        var preparedFailureRunner = new RecipeRunner(new PrimitiveLibrary("Test").AddProbe(stateProbe).AddProbe(registeredProbe).AddAction(blockedBeforeAction), new FailingJournal(RecipeJournalStage.Prepared));
+        try { await preparedFailureRunner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true }); throw new Exception("Prepared journal failure did not stop dispatch."); }
+        catch (IOException) { }
+        if (blockedBeforeAction.Calls != 0) throw new Exception("Action ran after Prepared journal failure.");
+
         var stuck = new FakeAction("service.start", _ => new ActionResult(true, true, "requested"));
         var unverifiedRunner = new RecipeRunner(new PrimitiveLibrary("Test").AddProbe(stateProbe).AddProbe(registeredProbe).AddAction(stuck), journal);
         serviceState = "Stopped";
@@ -242,6 +272,17 @@ internal static class RecipePackChecks
         var declinedRunner = new RecipeRunner(new PrimitiveLibrary("Test").AddProbe(stateProbe).AddProbe(registeredProbe).AddAction(declined), journal);
         var notDispatched = await declinedRunner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true });
         if (notDispatched.Outcome != RecipeRunOutcome.Blocked || notDispatched.ExecutionUncertain) throw new Exception("Undispatched action was not reported as blocked.");
+
+        var failedAction = new FakeAction("service.start", _ =>
+        {
+            serviceState = "Running";
+            return new ActionResult(true, false, "partial change", "provider failed");
+        });
+        var failedRunner = new RecipeRunner(new PrimitiveLibrary("Test").AddProbe(stateProbe).AddProbe(registeredProbe).AddAction(failedAction), journal);
+        var failedResult = await failedRunner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true });
+        if (failedResult.Outcome != RecipeRunOutcome.Unknown || !failedResult.ExecutionUncertain || failedResult.Action is not { Succeeded: false })
+            throw new Exception("A failed dispatched action was reported as verified.");
+        serviceState = "Stopped";
 
         var timedOutAction = new FakeAction("service.start", _ => new ActionResult(true, false, "", "timeout") { TimedOut = true });
         var timeoutRunner = new RecipeRunner(new PrimitiveLibrary("Test").AddProbe(stateProbe).AddProbe(registeredProbe).AddAction(timedOutAction), journal);
@@ -257,6 +298,29 @@ internal static class RecipePackChecks
         canceled.Cancel();
         var canceledResult = await runner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true }, canceled.Token);
         if (canceledResult.Outcome != RecipeRunOutcome.Canceled) throw new Exception("Cancellation was not reported.");
+
+        using var canceledAfterDispatch = new CancellationTokenSource();
+        var cancelAfterAction = new FakeAction("service.start", _ =>
+        {
+            canceledAfterDispatch.Cancel();
+            return new ActionResult(true, true, "dispatched");
+        });
+        var cancelAfterRunner = new RecipeRunner(new PrimitiveLibrary("Test").AddProbe(stateProbe).AddProbe(registeredProbe).AddAction(cancelAfterAction), journal);
+        var afterDispatch = await cancelAfterRunner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true }, canceledAfterDispatch.Token);
+        if (afterDispatch.Outcome != RecipeRunOutcome.Canceled || afterDispatch.EffectiveOutcome != RecipeRunOutcome.Canceled ||
+            afterDispatch.Action is not { Dispatched: true } || !afterDispatch.ExecutionUncertain)
+            throw new Exception("Cancellation after dispatch lost the action or uncertainty.");
+
+        using var canceledDuringDispatch = new CancellationTokenSource();
+        var cancelInsideAction = new FakeAction("service.start", _ =>
+        {
+            canceledDuringDispatch.Cancel();
+            throw new OperationCanceledException(canceledDuringDispatch.Token);
+        });
+        var cancelInsideRunner = new RecipeRunner(new PrimitiveLibrary("Test").AddProbe(stateProbe).AddProbe(registeredProbe).AddAction(cancelInsideAction), journal);
+        var duringDispatch = await cancelInsideRunner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true }, canceledDuringDispatch.Token);
+        if (duringDispatch.Outcome != RecipeRunOutcome.Canceled || !duringDispatch.ExecutionUncertain || duringDispatch.Action is not null)
+            throw new Exception("Cancellation during dispatch was not marked uncertain.");
 
         var missingPrimitive = new RecipeRunner(new PrimitiveLibrary("Test").AddProbe(registeredProbe), journal);
         try { await missingPrimitive.RunAsync(recipe, new RecipeRunOptions()); throw new Exception("Missing primitive did not fail."); }

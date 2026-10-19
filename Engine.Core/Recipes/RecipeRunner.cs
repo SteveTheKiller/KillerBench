@@ -12,7 +12,9 @@ public sealed record RecipeRunResult(
     public ActionResult? Action { get; init; }
     /// <summary>True when a change was dispatched but verification did not confirm the expected state.</summary>
     public bool ExecutionUncertain { get; init; }
-    public RecipeRunOutcome EffectiveOutcome => ExecutionUncertain ? RecipeRunOutcome.Unknown : Outcome;
+    /// <summary>True when a journal write failed after action dispatch; callers must stop further repairs.</summary>
+    public bool JournalFailure { get; init; }
+    public RecipeRunOutcome EffectiveOutcome => Outcome == RecipeRunOutcome.Canceled ? Outcome : ExecutionUncertain ? RecipeRunOutcome.Unknown : Outcome;
 }
 
 public sealed record RecipeRunOptions
@@ -42,8 +44,13 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
         ArgumentNullException.ThrowIfNull(recipe);
         ArgumentNullException.ThrowIfNull(options);
         var probes = new List<ProbeOutcome>();
-        RecipeRunResult Result(RecipeRunOutcome outcome, string detail, ActionResult? action = null, bool uncertain = false) =>
-            new(recipe.Id, recipe.Version, outcome, detail, probes.AsReadOnly()) { Action = action, ExecutionUncertain = uncertain };
+        RecipeRunResult Result(RecipeRunOutcome outcome, string detail, ActionResult? action = null, bool uncertain = false, bool journalFailure = false) =>
+            new(recipe.Id, recipe.Version, outcome, detail, probes.AsReadOnly()) { Action = action, ExecutionUncertain = uncertain, JournalFailure = journalFailure };
+        async Task<bool> RecordAfterDispatchAsync(RecipeJournalStage stage, string detail, string? raw)
+        {
+            try { await RecordAsync(recipe, stage, detail, raw).ConfigureAwait(false); return true; }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException) { return false; }
+        }
 
         var problems = RecipeOptions.Resolve(recipe, options.Options, out var optionValues);
         if (problems.Count > 0)
@@ -53,6 +60,8 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
             return Result(RecipeRunOutcome.RepairAvailable, "This recipe needs options before it can run: " + string.Join(" ", problems));
         }
         recipe = RecipeOptions.Apply(recipe, optionValues);
+        ActionResult? dispatchedAction = null;
+        bool dispatchAttempted = false;
 
         try
         {
@@ -115,6 +124,7 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
                 deadline.CancelAfter(recipe.Action.Timeout > recipe.ExecutionTimeout ? recipe.ExecutionTimeout : recipe.Action.Timeout);
                 try
                 {
+                    dispatchAttempted = true;
                     actionResult = await action.ExecuteAsync(recipe.Action.Parameters, recipe.Action.Timeout, options.Progress, deadline.Token).ConfigureAwait(false)
                         ?? throw new InvalidOperationException("The action primitive returned no result.");
                 }
@@ -123,23 +133,29 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
                     actionResult = new ActionResult(true, false, "", "The action exceeded its time limit.") { TimedOut = true };
                 }
             }
-            await RecordAsync(recipe, RecipeJournalStage.Dispatched,
+            dispatchedAction = actionResult;
+            if (!await RecordAfterDispatchAsync(RecipeJournalStage.Dispatched,
                 (actionResult.Dispatched ? "Dispatched" : "Not dispatched") + (actionResult.Succeeded ? ", reported success." : ", reported failure. ") + (actionResult.Error ?? ""),
-                actionResult.Raw).ConfigureAwait(false);
+                actionResult.Raw).ConfigureAwait(false))
+                return Result(RecipeRunOutcome.Unknown, "The journal could not be saved after the action. Stop further repairs and inspect the current state before retrying.", actionResult, uncertain: true, journalFailure: true);
             if (!actionResult.Dispatched)
                 return Result(RecipeRunOutcome.Blocked, "The repair was not dispatched: " + (actionResult.Error ?? "the provider declined.") + " No change was made.", actionResult);
             if (actionResult.TimedOut)
                 return Result(RecipeRunOutcome.Unknown, "The repair timed out; the change may still be in progress. Verification was not attempted.", actionResult, uncertain: true);
+            if (!actionResult.Succeeded)
+                return Result(RecipeRunOutcome.Unknown, "The repair reported a failure; its final state is uncertain. Review the current state before retrying: " + (actionResult.Error ?? "no failure detail was provided."), actionResult, uncertain: true);
             if (actionResult.RestartRequired)
                 return Result(RecipeRunOutcome.RestartRequired, "The repair requires a restart before it can be verified.", actionResult);
 
             token.ThrowIfCancellationRequested();
             var verify = await ProbeAsync("verify", recipe.Verify ?? recipe.Detect, recipe.InspectionTimeout, token).ConfigureAwait(false);
             probes.Add(verify);
-            await RecordAsync(recipe, RecipeJournalStage.Verified, verify.Evaluation.Verdict + ": " + verify.Evaluation.Detail, verify.Result.Raw).ConfigureAwait(false);
+            if (!await RecordAfterDispatchAsync(RecipeJournalStage.Verified, verify.Evaluation.Verdict + ": " + verify.Evaluation.Detail, verify.Result.Raw).ConfigureAwait(false))
+                return Result(RecipeRunOutcome.Unknown, "The journal could not be saved after the action. Stop further repairs and inspect the current state before retrying.", actionResult, uncertain: true, journalFailure: true);
             if (verify.Evaluation.Verdict is ProbeVerdict.Clear or ProbeVerdict.Information)
             {
-                await RecordAsync(recipe, RecipeJournalStage.Completed, "Repaired and verified within scope: " + recipe.VerificationScope, null).ConfigureAwait(false);
+                if (!await RecordAfterDispatchAsync(RecipeJournalStage.Completed, "Repaired and verified within scope: " + recipe.VerificationScope, null).ConfigureAwait(false))
+                    return Result(RecipeRunOutcome.Unknown, "The journal could not be saved after the action. Stop further repairs and inspect the current state before retrying.", actionResult, uncertain: true, journalFailure: true);
                 return Result(RecipeRunOutcome.Repaired, "Verified: " + recipe.VerificationScope + ". " + recipe.Limitations, actionResult);
             }
             return Result(RecipeRunOutcome.NeedsAttention,
@@ -148,7 +164,8 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested)
         {
-            return Result(RecipeRunOutcome.Canceled, "Canceled. Review the journal before retrying; a dispatched change may have completed.");
+            bool uncertain = dispatchAttempted && dispatchedAction is not { Dispatched: false };
+            return Result(RecipeRunOutcome.Canceled, "Canceled. Review the journal before retrying; a dispatched change may have completed.", dispatchedAction, uncertain);
         }
     }
 
