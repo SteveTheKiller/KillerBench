@@ -99,6 +99,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Kept app icons sharp at fractional display DPI and app zoom by caching exact pixel sizes from a covering source and aligning the final draw to device pixels.
 
 - Added the three-pane workbench: a resizable section sidebar with the icon rail, the selected tool's options in the center, and a wider output pane on the right whose Raw output opens during a run and gives way to the Readable report, plus an activity log.
+- Added the installer, portable and Microsoft Store packages. The installer checks for the .NET 10 Desktop Runtime, including the x64 runtime on Arm64 Windows, while the portable and Microsoft Store packages carry their own runtime.
 - Added category icons and a slimmer default sidebar whose buttons share the available height, keep a readable minimum with scrolling, and place icons above labels when the buttons are tall.
 - Added KillerMCP Options to the About card. Agent repairs through KillerMCP stayed off until turned on there, disruptive repairs needed a separate setting and desktop approval, and a locked state after an uncertain result could be cleared from the same place.
 - Added 13 family themes with yellow and magenta accents on the neutral and 98SE themes. New installs and the website started on Dark with the yellow accent.
