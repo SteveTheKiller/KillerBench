@@ -9,9 +9,11 @@ public partial class MainWindow
     private async void OnMainGo(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
+        if (MainWorkflow.SelectedItem is not WorkflowDefinition selected) return;
+        var kind = selected.Kind;
         OnWorkflows(sender, e);
-        RepairChoice.SelectedIndex = MainWorkflow.SelectedIndex;
-        var kind = (WorkflowKind)MainWorkflow.SelectedIndex;
+        RepairChoice.SelectedItem = RepairChoice.Items.OfType<System.Windows.Controls.ComboBoxItem>()
+            .Single(item => item.Tag is WorkflowKind workflow && workflow == kind);
         if (kind == WorkflowKind.Defender && DefenderScanChoice.SelectedIndex > 0)
         {
             SetDetailsOpen(false);

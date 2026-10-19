@@ -337,7 +337,7 @@ public partial class MainWindow
     private async Task RunWorkflowAsync()
     {
         if (readCancellation is not null) return;
-        var kind = (WorkflowKind)Math.Max(0, RepairChoice.SelectedIndex);
+        if (RepairChoice.SelectedItem is not System.Windows.Controls.ComboBoxItem { Tag: WorkflowKind kind }) return;
         if (App.DemoMode)
         {
             await RunDemoWorkflowAsync(kind, RepairConsent.IsChecked == true, App.ScreenshotMode);

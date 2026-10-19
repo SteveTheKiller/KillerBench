@@ -382,6 +382,19 @@ internal static class Program
             Require(window.FindName("CategoryList") is ListBox { SelectedItem: not null } browserCategories && browserCategories.SelectedItem.ToString() == "Apps" &&
                 window.FindName("MainAutoRepair") is CheckBox { IsChecked: not true, IsEnabled: false },
                 "Browser extension inventory appears in Apps without repair controls");
+            ((Expander)window.FindName("AdvancedTools")).IsExpanded = true;
+            window.UpdateLayout();
+            FindButtons(window).Single(button => Equals(button.Content, "Workflows")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            var workflowChoices = (ComboBox)window.FindName("RepairChoice");
+            var workflowPreview = (TextBox)window.FindName("RepairPreview");
+            var workflowConsent = (CheckBox)window.FindName("RepairConsent");
+            workflowChoices.SelectedItem = workflowChoices.Items.Cast<ComboBoxItem>().Single(item => Equals(item.Content, "Browser extensions"));
+            Require(workflowPreview.Text.Contains("Inventory bounded Chrome, Edge, Brave and Firefox extension identities", StringComparison.Ordinal) &&
+                !workflowConsent.IsEnabled,
+                "Advanced Browser extensions selection previews only browser inventory without repair consent");
+            workflowChoices.SelectedItem = workflowChoices.Items.Cast<ComboBoxItem>().Single(item => Equals(item.Content, "Backup services"));
+            Require(workflowPreview.Text.Contains("Check Volume Shadow Copy", StringComparison.Ordinal) && workflowConsent.IsEnabled,
+                "Advanced Backup services selection previews its own repair-capable workflow");
             ((ComboBox)window.FindName("MainWorkflow")).SelectedItem = WorkflowCatalog.All.Single(workflow => workflow.Kind == WorkflowKind.InstalledApps);
             window.UpdateLayout();
             ((Button)window.FindName("ReviewBrowserExtensions")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));

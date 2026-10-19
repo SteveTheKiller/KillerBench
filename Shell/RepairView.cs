@@ -16,7 +16,7 @@ public partial class MainWindow
         workflowMode = true;
         RepairChoice.Items.Clear();
         foreach (var workflow in WorkflowCatalog.All)
-            RepairChoice.Items.Add(new ComboBoxItem { Content = Controls.LocalizedText.Workflow(workflow.Kind) });
+            RepairChoice.Items.Add(new ComboBoxItem { Content = Controls.LocalizedText.Workflow(workflow.Kind), Tag = workflow.Kind });
         RepairChoice.SelectedIndex = 0;
         RepairConsent.SetResourceReference(ContentProperty, "Str_Main_AutoRepair");
         System.Windows.Data.BindingOperations.ClearBinding(RepairRun, IsEnabledProperty);
@@ -49,19 +49,20 @@ public partial class MainWindow
     }
     private void OnRepairChoice(object sender, SelectionChangedEventArgs e)
     {
-        if (RepairPreview is not null)
+        if (RepairPreview is null) return;
+        if (workflowMode)
         {
-            if (workflowMode && RepairChoice.SelectedIndex == (int)WorkflowKind.Cleanup)
-                MainWorkflow.SelectedIndex = (int)WorkflowKind.Cleanup;
-            if (workflowMode && RepairChoice.SelectedIndex == (int)WorkflowKind.Defender)
-                MainWorkflow.SelectedIndex = (int)WorkflowKind.Defender;
-            if (workflowMode && RepairChoice.SelectedIndex == (int)WorkflowKind.AvailableUpdates)
-                MainWorkflow.SelectedIndex = (int)WorkflowKind.AvailableUpdates;
-            RepairPreview.Text = workflowMode ? Workflows.Preview((WorkflowKind)Math.Max(0, RepairChoice.SelectedIndex))
-                : Repairs.Preview(RepairChoice.SelectedIndex == 1 ? RepairKind.SystemFiles : RepairKind.ComponentStore);
+            if (RepairChoice.SelectedItem is not ComboBoxItem { Tag: WorkflowKind kind }) return;
+            if (kind is WorkflowKind.Cleanup or WorkflowKind.Defender or WorkflowKind.AvailableUpdates)
+                MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(workflow => workflow.Kind == kind);
+            RepairPreview.Text = Workflows.Preview(kind);
             RepairConsent.IsChecked = false;
-            RepairConsent.IsEnabled = !workflowMode || Workflows.SupportsRepair((WorkflowKind)Math.Max(0, RepairChoice.SelectedIndex));
+            RepairConsent.IsEnabled = Workflows.SupportsRepair(kind);
+            return;
         }
+        RepairPreview.Text = Repairs.Preview(RepairChoice.SelectedIndex == 1 ? RepairKind.SystemFiles : RepairKind.ComponentStore);
+        RepairConsent.IsChecked = false;
+        RepairConsent.IsEnabled = true;
     }
     private async void OnRunRepair(object sender, RoutedEventArgs e)
     {
