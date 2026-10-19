@@ -46,7 +46,7 @@ ProductFeatures20,Text,
 ShortDescription,Text,"Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result."
 SearchTerms1,Text,Windows diagnostics
 SearchTerms2,Text,Windows repair
-SearchTerms3,Text,BitLocker
+SearchTerms3,Text,disk encryption
 SearchTerms4,Text,privacy settings
 SearchTerms5,Text,system maintenance
 SearchTerms6,Text,IT tools
