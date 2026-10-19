@@ -11,7 +11,7 @@
 .PARAMETER Cli
     Path to killerbench-cli.exe.
 .PARAMETER Output
-    Folder that receives one JSON record per scenario, artifact folders and the HTML report.
+    Parent folder for a new run folder containing scenario records, artifacts and the HTML report.
 .PARAMETER DisposableMachine
     This machine's name, typed on purpose.
 .PARAMETER Recipe
@@ -30,21 +30,53 @@ $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.
 if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) { throw 'Run from an elevated PowerShell.' }
 if (-not (Test-Path $Cli)) { throw "CLI not found: $Cli" }
 New-Item -ItemType Directory -Force $Output | Out-Null
+$runOutput = Join-Path $Output ('run-' + [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssZ') + '-' + [Guid]::NewGuid().ToString('N').Substring(0, 8))
+New-Item -ItemType Directory $runOutput | Out-Null
 
-$packJson = Join-Path $Output 'windows.services.json'
-if (Test-Path $packJson) { Remove-Item $packJson }
+$packJson = Join-Path $runOutput 'windows.services.json'
 & $Cli pack export windows.services $packJson | Out-Null
-$recipes = (Get-Content $packJson -Raw | ConvertFrom-Json).Recipes | ForEach-Object { $_.Id }
+if ($LASTEXITCODE -ne 0) { throw "Service pack export failed with exit code $LASTEXITCODE." }
+$recipes = @((Get-Content $packJson -Raw | ConvertFrom-Json).Recipes | ForEach-Object { $_.Id })
 if ($Recipe) { $recipes = $recipes | Where-Object { $_ -eq $Recipe }; if (-not $recipes) { throw "Recipe '$Recipe' is not in the service pack." } }
+if (-not $recipes) { throw 'The service pack contains no recipes.' }
+$planJson = & $Cli validation-plan
+if ($LASTEXITCODE -ne 0) { throw "Validation plan failed with exit code $LASTEXITCODE." }
+$plans = @(($planJson | ConvertFrom-Json).recipes | Where-Object { $recipes -contains $_.recipeId })
+if ($plans.Count -ne $recipes.Count) { throw 'The validation plan does not cover every requested service recipe.' }
+$scenarios = @($plans | ForEach-Object { $_.scenarios })
+if ($scenarios.Count -eq 0) { throw 'The validation plan contains no scenarios for the requested recipes.' }
+$injectableKinds = @('Healthy', 'Preview', 'Ineligible', 'VerifiedExecution', 'Cancellation')
 
 $summary = @()
 foreach ($id in $recipes) {
     Write-Host ("=== " + $id)
-    & $Cli validate-native $id all $Output --disposable $DisposableMachine 2>&1 | ForEach-Object { Write-Host $_ }
+    & $Cli validate-native $id all $runOutput --disposable $DisposableMachine 2>&1 | ForEach-Object { Write-Host $_ }
     $summary += [pscustomobject]@{ Recipe = $id; ExitCode = $LASTEXITCODE }
 }
-$records = Get-ChildItem $Output -Filter '*.json' | Where-Object { $_.Name -ne 'windows.services.json' } | ForEach-Object { $_.FullName }
-$report = Join-Path $Output 'native-validation-report.html'
+$records = @(Get-ChildItem $runOutput -Filter '*.json' | Where-Object { $_.Name -ne 'windows.services.json' } | ForEach-Object { $_.FullName })
+if ($records.Count -eq 0) { throw "No scenario records were written to $runOutput." }
+$report = Join-Path $runOutput 'native-validation-report.html'
 & $Cli validation-report $report @records | ForEach-Object { Write-Host $_ }
+$reportExitCode = $LASTEXITCODE
 $summary | Format-Table -AutoSize
+if ($reportExitCode -ne 0) { throw "Validation report failed with exit code $reportExitCode." }
+if (-not (Test-Path $report)) { throw "Validation report was not written to $report." }
 Write-Host ("Report: " + $report)
+$failed = @($summary | Where-Object { $_.ExitCode -ne 0 })
+if ($failed.Count -gt 0) { throw "$($failed.Count) service recipe validation run(s) failed. See $runOutput." }
+$outcomes = @($records | ForEach-Object { Get-Content $_ -Raw | ConvertFrom-Json })
+$incomplete = @()
+$scenarioIds = @($scenarios | ForEach-Object { $_.id })
+foreach ($outcome in $outcomes) {
+    if ($scenarioIds -notcontains $outcome.scenarioId) { $incomplete += "$($outcome.scenarioId) (unexpected record)" }
+}
+foreach ($scenario in $scenarios) {
+    $matching = @($outcomes | Where-Object { $_.scenarioId -eq $scenario.id })
+    if ($matching.Count -ne 1) { $incomplete += "$($scenario.id) (missing or duplicate record)"; continue }
+    if ($injectableKinds -contains $scenario.kind) {
+        if ($matching[0].outcome -ne 'Passed') { $incomplete += "$($scenario.id) ($($matching[0].outcome))" }
+    } elseif ($matching[0].outcome -ne 'Blocked' -or $matching[0].notes -notmatch 'not injectable by this runner yet') {
+        $incomplete += "$($scenario.id) (expected an explicit unsupported-kind Blocked record)"
+    }
+}
+if ($incomplete.Count -gt 0) { throw "$($incomplete.Count) scenario record(s) need attention: $($incomplete -join ', '). See $report." }
