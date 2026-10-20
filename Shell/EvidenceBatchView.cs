@@ -36,20 +36,7 @@ public partial class MainWindow
             }, stop.Token);
             if (loaded > 0)
             {
-                var findings = imported.SelectMany(report => report.Findings).ToArray();
-                var checks = new List<WorkflowCheck>
-                {
-                    new("Imported sources", failed == 0 ? CheckState.Information : CheckState.Unknown,
-                        loaded + " source" + (loaded == 1 ? " was" : "s were") + " imported. " + failed + " failed.")
-                };
-                checks.AddRange(findings.Select(finding => new WorkflowCheck(finding.Title,
-                    finding.Severity == "Information" ? CheckState.Information : CheckState.Attention,
-                    finding.Explanation + " Next: " + finding.NextStep)));
-                var summary = new WorkflowResult(WorkflowKind.WindowsUpdate, Environment.MachineName, DateTimeOffset.UtcNow,
-                    findings.Length == 0 ? "Imported evidence reviewed" : "Imported evidence needs review",
-                    checks, [],
-                    "Imported evidence only. No repair journal was written.");
-                var overview = new TextEvidence("Imported evidence summary", ["IMPORTED EVIDENCE", loaded + " loaded", failed + " failed"], false);
+                var (overview, summary) = EvidenceBatch.Summarize(imported, failed);
                 workflowSummaries.Add(overview, summary);
                 workflowReportTitles.Add(overview, "Imported evidence");
                 RegisterSource(overview);
