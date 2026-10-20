@@ -6,6 +6,8 @@ public sealed record WorkflowJournalSnapshot(string Source, string Machine, stri
     DateTimeOffset StartedUtc, int CheckCount, int RepairCount, JsonElement Record)
 {
     public static string Scope => "Historical file contents only. Outcomes are recorded claims, not current verification. No commands run and no retry is authorized.";
+    [System.Text.Json.Serialization.JsonPropertyName("scope")]
+    public string HistoricalScope => Scope;
 }
 
 public static class WorkflowJournalReview
