@@ -1,0 +1,21 @@
+global using ProfileBackupExecution = Harmless.BackupBoundary;
+
+namespace Harmless;
+
+internal static class BackupBoundary
+{
+    internal static int Calls, ReceivedDays, UiThread;
+    internal static string? Destination, Sid;
+    public static Task<ProfileBackupExecutionResult> RunAsync(ProfileSnapshot target, int minimumDays,
+        string destinationPath, string folder, IProfileBackupHost host, IProgress<string>? progress = null,
+        TimeSpan? operationLimit = null, CancellationToken token = default)
+    {
+        if (Environment.CurrentManagedThreadId == UiThread) throw new Exception("Backup fixture did not execute on a worker.");
+        Calls++;
+        ReceivedDays = minimumDays;
+        Destination = destinationPath;
+        Sid = target.Sid;
+        return Task.FromResult(new ProfileBackupExecutionResult("Verified", "synthetic-journal",
+            new ProfileBackupVerification(null, true, "Fixture boundary received age " + minimumDays + ".")));
+    }
+}

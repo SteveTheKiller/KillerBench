@@ -1,0 +1,68 @@
+using System.Diagnostics;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
+
+internal static class FixtureEntry
+{
+    [STAThread]
+    private static int Main(string[] args)
+    {
+        if (args is not ["--profile-child"]) return IsolatedDesktop.Run("--profile-child");
+        IsolatedDesktop.Verify();
+        var app = new Application();
+        SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(app.Dispatcher));
+        foreach (string resource in new[] { "Themes/Black.xaml", "Controls/Controls.xaml", "Themes/Instrument.xaml", "Strings/en-US.xaml" })
+            app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/KillerBench;component/" + resource, UriKind.Relative) });
+        KillerBench.Services.ThemeManager.Initialize();
+        var window = new KillerBench.MainWindow { ShowActivated = false, ShowInTaskbar = false, WindowStartupLocation = WindowStartupLocation.Manual };
+        try
+        {
+            window.Show();
+            window.Left = SystemParameters.VirtualScreenLeft - window.Width - 200;
+            ((ComboBox)window.FindName("MainWorkflow")).SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == WorkflowKind.Profiles);
+            var profile = new ProfileSnapshot("S-1-5-21-1-2-3-1001", @"C:\Fixture\Profile", false, false, DateTimeOffset.UtcNow.AddDays(-200), false);
+            typeof(KillerBench.MainWindow).GetField("profileInventory", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(window, new ProfileInventoryResult([profile], true));
+            var selection = (ListBox)window.FindName("ProfileSelection");
+            selection.ItemsSource = new[] { profile };
+            selection.SelectedItem = profile;
+            ((Slider)window.FindName("ProfileAge")).Value = 137;
+            ((TextBox)window.FindName("ProfileBackupPath")).Text = @"C:\Fixture\NeverCreatedBackup";
+            ((Expander)window.FindName("AdvancedTools")).IsExpanded = true;
+            ((Expander)window.FindName("ProfileSelectionExpander")).IsExpanded = true;
+            window.UpdateLayout();
+            Harmless.BackupBoundary.UiThread = Environment.CurrentManagedThreadId;
+            var button = (Button)window.FindName("CopyProfileBackupButton");
+            if (!button.IsEnabled) throw new Exception("The real Copy and verify button was unavailable in the reviewed fixture state.");
+            button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            var watch = Stopwatch.StartNew();
+            while (((TextBlock)window.FindName("ModeLabel")).Text != "PROFILE BACKUP CHECK ENDED" && watch.Elapsed < TimeSpan.FromSeconds(20))
+            {
+                var frame = new DispatcherFrame();
+                window.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => frame.Continue = false));
+                Dispatcher.PushFrame(frame);
+                Thread.Sleep(5);
+            }
+            if (Harmless.BackupBoundary.Calls != 1 || Harmless.BackupBoundary.ReceivedDays != 137 || Harmless.BackupBoundary.Sid != profile.Sid ||
+                Harmless.BackupBoundary.Destination != @"C:\Fixture\NeverCreatedBackup")
+                throw new Exception("Copy and verify did not deliver selected age 137 and exact reviewed inputs to the harmless backup boundary.");
+            var report = (Border)window.FindName("ReportPane");
+            if (!report.IsVisible || !Text(report).Any(value => value.Contains("Fixture boundary received age 137.", StringComparison.Ordinal)))
+                throw new Exception("Copy and verify did not show its synthetic successful result in the readable report.");
+            if (!button.IsEnabled || !((FrameworkElement)window.FindName("RepairPanel")).IsEnabled ||
+                ((TextBlock)window.FindName("ModeLabel")).Text != "PROFILE BACKUP CHECK ENDED")
+                throw new Exception("Copy and verify did not restore its public controls after completion.");
+            Console.WriteLine("PASS public Copy and verify event captured selected age 137 on UI thread before harmless worker dispatch.");
+            return 0;
+        }
+        finally { window.Close(); app.Shutdown(); }
+    }
+
+    private static IEnumerable<string> Text(DependencyObject root)
+    {
+        if (root is TextBlock block) yield return block.Text;
+        foreach (var child in LogicalTreeHelper.GetChildren(root).OfType<DependencyObject>())
+            foreach (string value in Text(child)) yield return value;
+    }
+}

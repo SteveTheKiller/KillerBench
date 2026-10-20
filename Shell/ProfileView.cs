@@ -36,9 +36,10 @@ public partial class MainWindow
         BeginProfileBackupOperation(stop, "PROFILE BACKUP / COPY AND VERIFY");
         try
         {
+            int days = (int)ProfileAge.Value;
             string folder = ProfileOperationFolder();
             var progress = new Progress<string>(AppendWorkflowOutput);
-            var result = await Task.Run(() => ProfileBackupExecution.RunAsync(selected[0], (int)ProfileAge.Value,
+            var result = await Task.Run(() => ProfileBackupExecution.RunAsync(selected[0], days,
                 destination, folder, new WindowsProfileBackupHost(), progress, token: stop.Token));
             if (result.Verification is not null)
             {
