@@ -24,6 +24,11 @@ internal static class Program
                 GoalOptionValidationChecks.RunAsync().GetAwaiter().GetResult();
                 return 0;
             }
+            if (args is ["--only", "scenario-restoration"])
+            {
+                NativeScenarioRestorationChecks.RunAsync().GetAwaiter().GetResult();
+                return 0;
+            }
             if (args is ["--only", "command-path"])
             {
                 CommandLinePathChecks.Run();
@@ -522,6 +527,7 @@ internal static class Program
             AggregateCancellationChecks.RunAsync(scratch).GetAwaiter().GetResult();
             GoalOptionValidationChecks.RunAsync().GetAwaiter().GetResult();
             InstallerRuntimeChecks.Run();
+            NativeScenarioRestorationChecks.RunAsync().GetAwaiter().GetResult();
             RecipePackChecks.RunAsync().GetAwaiter().GetResult();
             WindowsServicePackChecks.RunAsync().GetAwaiter().GetResult();
             WindowsSettingsPackChecks.RunAsync().GetAwaiter().GetResult();

@@ -8,12 +8,15 @@ using Microsoft.Win32;
 namespace KillerBench.Engine.Windows.Validation;
 
 /// <summary>Result of one injected scenario run: the validation record written and the folder holding its artifacts.</summary>
-public sealed record NativeScenarioResult(string ScenarioId, NativeValidationOutcome Outcome, string RecordPath, string ArtifactFolder, string Notes);
+public sealed record NativeScenarioResult(string ScenarioId, NativeValidationOutcome Outcome, string RecordPath, string ArtifactFolder, string Notes)
+{
+    public bool RestorationSucceeded { get; init; } = true;
+}
 
 /// <summary>
 /// Runs fault-injection scenarios for pack recipes on a disposable machine and writes native validation records that
 /// validation-record and validation-report accept. It refuses to run unless the caller names this exact machine and the
-/// KILLERBENCH_DISPOSABLE environment variable states that the machine is disposable. It always restores the injected state.
+/// KILLERBENCH_DISPOSABLE environment variable states that the machine is disposable. It attempts and verifies restoration after every mutating request.
 /// </summary>
 public sealed class NativeScenarioRunner
 {
@@ -57,7 +60,9 @@ public sealed class NativeScenarioRunner
         {
             token.ThrowIfCancellationRequested();
             progress?.Report(scenario.Id + ": " + scenario.Title);
-            results.Add(await RunScenarioAsync(recipe, plan, scenario, service, outputFolder, progress, token).ConfigureAwait(false));
+            var result = await RunScenarioAsync(recipe, plan, scenario, service, outputFolder, progress, token).ConfigureAwait(false);
+            results.Add(result);
+            if (!result.RestorationSucceeded) break;
         }
         return results.AsReadOnly();
     }
@@ -78,10 +83,16 @@ public sealed class NativeScenarioRunner
         var progressLines = new StringBuilder();
         var capture = new Progress<string>(line => { progressLines.AppendLine(line); progress?.Report(line); });
         var runner = new RecipeRunner(library, journal);
-        bool injected = false;
+        var injection = new NativeServiceScenario(new ServiceBoundary(service), before);
+        bool restored = true;
         try
         {
-            switch (scenario.Kind)
+            if (!injection.SupportedBaseline)
+            {
+                outcome = NativeValidationOutcome.Blocked;
+                notes.Append("The original service runtime state or configuration cannot be safely restored; no injection was requested.");
+            }
+            else switch (scenario.Kind)
             {
                 case NativeValidationScenarioKind.Healthy:
                 {
@@ -94,7 +105,7 @@ public sealed class NativeScenarioRunner
                 }
                 case NativeValidationScenarioKind.Preview:
                 {
-                    injected = await StopAsync(service, token).ConfigureAwait(false);
+                    bool injected = await injection.StopAsync(token).ConfigureAwait(false);
                     if (!injected) { outcome = NativeValidationOutcome.Blocked; notes.Append("The service could not be stopped to inject the fault."); break; }
                     var result = await runner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = false, Elevated = true, Progress = capture }, token).ConfigureAwait(false);
                     artifacts["preview output"] = await WriteAsync(folder, "preview-output.txt", Evidence(result), token).ConfigureAwait(false);
@@ -105,7 +116,7 @@ public sealed class NativeScenarioRunner
                 }
                 case NativeValidationScenarioKind.Ineligible:
                 {
-                    injected = await StopAsync(service, token).ConfigureAwait(false) && await SetStartAsync(service, "disabled", token).ConfigureAwait(false);
+                    bool injected = await injection.StopAsync(token).ConfigureAwait(false) && await injection.DisableAsync(token).ConfigureAwait(false);
                     if (!injected) { outcome = NativeValidationOutcome.Blocked; notes.Append("The service could not be stopped and disabled to inject the fault."); break; }
                     var result = await runner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true, Elevated = true, Progress = capture }, token).ConfigureAwait(false);
                     var after = await SnapshotAsync(service, token).ConfigureAwait(false);
@@ -116,7 +127,7 @@ public sealed class NativeScenarioRunner
                 }
                 case NativeValidationScenarioKind.VerifiedExecution:
                 {
-                    injected = await StopAsync(service, token).ConfigureAwait(false);
+                    bool injected = await injection.StopAsync(token).ConfigureAwait(false);
                     if (!injected) { outcome = NativeValidationOutcome.Blocked; notes.Append("The service could not be stopped to inject the fault."); break; }
                     var result = await runner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true, Elevated = true, Progress = capture }, token).ConfigureAwait(false);
                     var after = await SnapshotAsync(service, token).ConfigureAwait(false);
@@ -129,7 +140,7 @@ public sealed class NativeScenarioRunner
                 }
                 case NativeValidationScenarioKind.Cancellation:
                 {
-                    injected = await StopAsync(service, token).ConfigureAwait(false);
+                    bool injected = await injection.StopAsync(token).ConfigureAwait(false);
                     if (!injected) { outcome = NativeValidationOutcome.Blocked; notes.Append("The service could not be stopped to inject the fault."); break; }
                     using var canceled = new CancellationTokenSource();
                     canceled.Cancel();
@@ -145,14 +156,20 @@ public sealed class NativeScenarioRunner
                     break;
             }
         }
+        catch (Exception exception)
+        {
+            outcome = NativeValidationOutcome.Failed;
+            notes.Append(" Scenario interrupted: ").Append(exception.GetType().Name).Append('.');
+        }
         finally
         {
-            if (injected)
-            {
-                bool restored = await RestoreAsync(service, before).ConfigureAwait(false);
-                notes.Append(restored ? " Injected state restored." : " WARNING: injected state could not be fully restored; review the service manually.");
-            }
+            restored = await injection.RestoreAsync().ConfigureAwait(false);
+            notes.Append(restored ? " Restoration responsibility completed." : " WARNING: injected state could not be fully restored; stop validation and review the service manually.");
         }
+        if (!restored) outcome = NativeValidationOutcome.Failed;
+        // Evidence and restoration must survive cancellation of the scenario itself.
+        token = CancellationToken.None;
+        artifacts["restoration stages"] = await WriteAsync(folder, "restoration-stages.txt", string.Join("\n", injection.Stages), token).ConfigureAwait(false);
         artifacts["progress log"] = await WriteAsync(folder, "progress-log.txt", progressLines.ToString(), token).ConfigureAwait(false);
         if (!File.Exists(journalPath)) await File.WriteAllTextAsync(journalPath, "", token).ConfigureAwait(false);
         artifacts["workflow journal"] = "workflow-journal.jsonl";
@@ -173,12 +190,10 @@ public sealed class NativeScenarioRunner
         NativeValidationEvidence.Read(Encoding.UTF8.GetBytes(json));
         string recordPath = Path.Combine(outputFolder, scenario.Id + ".json");
         await File.WriteAllTextAsync(recordPath, json, token).ConfigureAwait(false);
-        return new NativeScenarioResult(scenario.Id, outcome, recordPath, folder, record.Notes);
+        return new NativeScenarioResult(scenario.Id, outcome, recordPath, folder, record.Notes) { RestorationSucceeded = restored };
     }
 
-    private sealed record Snapshot(int? State, int? Start, bool Delayed, string Text);
-
-    private static async Task<Snapshot> SnapshotAsync(string service, CancellationToken token)
+    private static async Task<NativeServiceSnapshot> SnapshotAsync(string service, CancellationToken token)
     {
         var query = await NativeTool.RunAsync("sc.exe", ["query", service], token: token).ConfigureAwait(false);
         var config = await NativeTool.RunAsync("sc.exe", ["qc", service], token: token).ConfigureAwait(false);
@@ -190,7 +205,7 @@ public sealed class NativeScenarioRunner
             start = key?.GetValue("Start") as int?;
             delayed = key?.GetValue("DelayedAutostart") is int value && value == 1;
         }
-        return new Snapshot(ServiceRecovery.State(query), start, delayed,
+        return new NativeServiceSnapshot(ServiceRecovery.State(query), start, delayed,
             DateTimeOffset.UtcNow.ToString("O") + "\n" + query.Output + "\n" + config.Output + "\nStart=" + start + " Delayed=" + delayed);
     }
 
@@ -213,24 +228,23 @@ public sealed class NativeScenarioRunner
         return result.ExitCode == 0;
     }
 
-    private static async Task<bool> RestoreAsync(string service, Snapshot before)
+    private sealed class ServiceBoundary(string service) : INativeScenarioService
     {
-        bool ok = true;
-        string? start = before.Start switch { 2 => before.Delayed ? "delayed-auto" : "auto", 3 => "demand", 4 => "disabled", _ => null };
-        if (start is not null) ok &= await SetStartAsync(service, start, CancellationToken.None).ConfigureAwait(false);
-        if (before.State == 4)
+        public Task<NativeServiceSnapshot> SnapshotAsync(CancellationToken token) => NativeScenarioRunner.SnapshotAsync(service, token);
+        public Task<bool> StopAsync(CancellationToken token) => NativeScenarioRunner.StopAsync(service, token);
+        public Task<bool> SetStartAsync(string start, CancellationToken token) => NativeScenarioRunner.SetStartAsync(service, start, token);
+        public async Task<bool> StartAsync(CancellationToken token)
         {
-            var result = await NativeTool.RunAsync("sc.exe", ["start", service], token: CancellationToken.None).ConfigureAwait(false);
-            ok &= result.ExitCode is 0 or 1056;
+            var result = await NativeTool.RunAsync("sc.exe", ["start", service], token: token).ConfigureAwait(false);
+            if (result.ExitCode is not (0 or 1056)) return false;
             for (int i = 0; i < 60; i++)
             {
-                var query = await NativeTool.RunAsync("sc.exe", ["query", service], token: CancellationToken.None).ConfigureAwait(false);
-                if (ServiceRecovery.State(query) == 4) return ok;
-                await Task.Delay(500, CancellationToken.None).ConfigureAwait(false);
+                var query = await NativeTool.RunAsync("sc.exe", ["query", service], token: token).ConfigureAwait(false);
+                if (ServiceRecovery.State(query) == 4) return true;
+                await Task.Delay(500, token).ConfigureAwait(false);
             }
             return false;
         }
-        return ok;
     }
 
     private static string Evidence(RecipeRunResult result) =>
