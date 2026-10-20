@@ -99,10 +99,22 @@ foreach ($command in @('crash-review', 'bits-jobs', 'backup-events', 'vss-provid
                 }
                 $expectedCount = if ($command -eq 'infrastructure-service-events') { 29 } elseif ($command -eq 'platform-service-events') { 23 } elseif ($command -in @('servicing-service-states', 'servicing-service-events', 'network-service-events', 'feature-service-events')) { 6 } elseif ($command -eq 'security-check') { 13 } elseif ($command -in @('event-channels', 'dhcp-events', 'storage-service-events', 'backup-service-events', 'winsock-readiness')) { 4 } elseif ($command -eq 'installer-pending-state') { 3 } elseif ($command -eq 'service-check --all') { 81 } elseif ($command -eq 'vitals-check') { 11 } elseif ($command -eq 'disk-diagnostic') { 6 } elseif ($command -in @('backup-events', 'dns-client-events', 'firewall-service-events', 'service-check Spooler spooler Dhcp', 'proxy-check', 'disk-diagnostic-tasks', 'tcp-port-pressure', 'delete-notifications')) { 2 } else { 1 }
                 if ($command -eq 'crash-review') {
-                    $expectedCount = 7
-                    foreach ($name in @('Crash dump configuration', 'Crash dump files', 'Minidump structure', 'Recent system crash reports', 'Reported dump file matches', 'Crash incident correlation', 'Recent unexpected shutdowns')) {
+                    foreach ($name in @('Crash dump configuration', 'Crash dump files', 'Recent system crash reports', 'Recent unexpected shutdowns')) {
                         if (@($checks | Where-Object Name -eq $name).Count -ne 1) { throw "Crash review lost scope: $name" }
                     }
+                    $dumpInventory = ($checks | Where-Object Name -eq 'Crash dump files').Evidence.Output | ConvertFrom-Json
+                    $expectedStructures = [Math]::Min(3, @($dumpInventory.files).Count)
+                    if (@($checks | Where-Object Name -eq 'Minidump structure').Count -ne $expectedStructures) {
+                        throw 'Crash review lost bounded per-file structural coverage.'
+                    }
+                    $history = $checks | Where-Object Name -eq 'Recent system crash reports'
+                    $expectedCorrelations = if ($null -ne $history.Evidence) { 2 } else { 0 }
+                    foreach ($name in @('Reported dump file matches', 'Crash incident correlation')) {
+                        if (@($checks | Where-Object Name -eq $name).Count -ne ($expectedCorrelations / 2)) {
+                            throw "Crash review lost available correlation scope: $name"
+                        }
+                    }
+                    $expectedCount = 4 + $expectedStructures + $expectedCorrelations
                 }
                 if ($command -eq 'service-check --all' -and @($checks | Where-Object Name -eq 'Workstation').Count -ne 1) {
                     throw 'All-service inspection lost SMB client coverage.'
