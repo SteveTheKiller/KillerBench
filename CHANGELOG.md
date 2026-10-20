@@ -137,6 +137,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Fixed
 - Interrupted spool-file cleanup restores the Print Spooler after a pending stop, preserves partial file counts and retained paths, and reports recovery failures.
+- Failed portable updates retain complete executable copies and a recovery report.
 - Large-file and duplicate reviews keep accessible results and report incomplete coverage when a folder cannot be read.
 - Windows contrast themes now use system colors for text, icons, panels and selections, without decorative grain or shadows.
 - On the Light theme's Yellow and Orange accents, buttons, links, tabs and accent icons keep their color with a thin gray outline around accent text and icons, instead of turning near-black or brown.

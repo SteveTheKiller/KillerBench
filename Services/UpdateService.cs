@@ -66,22 +66,29 @@ internal static class UpdateService
         // user, so the script runs elevated there. It relaunches through explorer.exe so the app comes
         // back at the user's normal integrity level.
         bool elevate = target.Machine || !CanWriteTo(Path.GetDirectoryName(replaced)!);
-        string relaunch = elevate ? $"start \"\" explorer.exe \"{Bat(replaced)}\"" : $"start \"\" \"{Bat(replaced)}\"";
+        string explorer = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
+        string relaunch = elevate ? $"start \"\" \"{Bat(explorer)}\" \"{Bat(replaced)}\"" : $"start \"\" \"{Bat(replaced)}\"";
+        string system = Environment.GetFolderPath(Environment.SpecialFolder.System);
+        string tasklist = Bat(Path.Combine(system, "tasklist.exe"));
+        string find = Bat(Path.Combine(system, "find.exe"));
+        string ping = Bat(Path.Combine(system, "ping.exe"));
 
         var script = new StringBuilder()
             .AppendLine("@echo off")
+            .AppendLine("setlocal DisableDelayedExpansion")
             .AppendLine(":waitapp")
-            .AppendLine($"tasklist /fi \"PID eq {pid}\" 2>nul | find \"{pid}\" >nul")
-            .AppendLine("if not errorlevel 1 ( ping -n 2 127.0.0.1 >nul & goto waitapp )");
+            .AppendLine($"\"{tasklist}\" /fi \"PID eq {pid}\" 2>nul | \"{find}\" \"{pid}\" >nul")
+            .AppendLine($"if not errorlevel 1 ( \"{ping}\" -n 2 127.0.0.1 >nul & goto waitapp )");
         if (target.Launcher is not null)
         {
             if (target.LauncherPid > 0)
                 script.AppendLine(":waitlauncher")
-                      .AppendLine($"tasklist /fi \"PID eq {target.LauncherPid}\" 2>nul | find \"{target.LauncherPid}\" >nul")
-                      .AppendLine("if not errorlevel 1 ( ping -n 2 127.0.0.1 >nul & goto waitlauncher )");
-            script.AppendLine($"attrib -r \"{Bat(target.Launcher)}\" >nul 2>&1")
-                  .AppendLine($"copy /y \"{Bat(download)}\" \"{Bat(target.Launcher)}\" >nul 2>&1")
-                  .AppendLine("if errorlevel 1 goto failed");
+                      .AppendLine($"\"{tasklist}\" /fi \"PID eq {target.LauncherPid}\" 2>nul | \"{find}\" \"{target.LauncherPid}\" >nul")
+                      .AppendLine($"if not errorlevel 1 ( \"{ping}\" -n 2 127.0.0.1 >nul & goto waitlauncher )");
+            script.AppendLine(UpdateImagePublication.Command(download, target.Launcher, elevate,
+                      ReleasesUrl, AppInfo.DisplayName) + " >\"%~dpn0.helper.log\" 2>&1")
+                  .AppendLine("if errorlevel 1 goto failed")
+                  .AppendLine("goto cleanup");
         }
         else
         {
@@ -94,20 +101,23 @@ internal static class UpdateService
               .AppendLine("goto cleanup")
               .AppendLine(":failed")
               .AppendLine($"start \"\" \"{ReleasesUrl}\"")
-              .AppendLine(":cleanup")
-              .AppendLine($"del \"{Bat(download)}\" >nul 2>&1")
-              .AppendLine("del \"%~f0\" >nul 2>&1");
+              .AppendLine(":cleanup");
+        if (target.Launcher is null) script.AppendLine($"del \"{Bat(download)}\" >nul 2>&1");
+        script.AppendLine("del \"%~f0\" >nul 2>&1");
         string batch = Path.Combine(Path.GetTempPath(), $"killerbench_update_{Guid.NewGuid():N}.bat");
         File.WriteAllText(batch, script.ToString());
 
-        var start = new ProcessStartInfo("cmd.exe", $"/c \"{batch}\"")
+        var start = new ProcessStartInfo(
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "cmd.exe"),
+            $"/d /v:off /c \"{Path.GetFileName(batch)}\"")
         {
             WindowStyle = ProcessWindowStyle.Hidden,
             WorkingDirectory = Path.GetTempPath(),
             UseShellExecute = true
         };
         if (elevate) start.Verb = "runas";
-        Process.Start(start);
+        if (Process.Start(start) is null)
+            throw new IOException("The update helper did not start. Download retained at: " + download);
     }
 
     /// <summary>Deletes a downloaded update that will not be installed.</summary>

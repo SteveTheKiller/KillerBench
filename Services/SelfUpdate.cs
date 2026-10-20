@@ -92,6 +92,7 @@ public static partial class SelfUpdate
                 return null;
             string path = Path.Combine(Path.GetTempPath(), $"KillerBench_update_{Guid.NewGuid():N}.exe");
             await File.WriteAllBytesAsync(path, package).ConfigureAwait(false);
+            UpdateImagePublication.RememberVerified(path, expected);
             return path;
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or IOException or UnauthorizedAccessException)
