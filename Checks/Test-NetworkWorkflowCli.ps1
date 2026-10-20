@@ -14,7 +14,8 @@ try {
     $null = $process.Start()
     $stdout = $process.StandardOutput.ReadToEndAsync()
     $stderr = $process.StandardError.ReadToEndAsync()
-    if (-not $process.WaitForExit(60000)) { $process.Kill(); throw 'Read-only network workflow timed out.' }
+    # Inspection permits five minutes, followed by bounded journal persistence.
+    if (-not $process.WaitForExit(360000)) { $process.Kill(); throw 'Read-only network workflow timed out.' }
     $result = $stdout.GetAwaiter().GetResult() | ConvertFrom-Json
     if ($process.ExitCode -notin @(0, 3, 4) -or @($result.Repairs).Count -ne 0 -or
         @($result.Recipes | Where-Object { $null -ne $_.Repair }).Count -ne 0) {
