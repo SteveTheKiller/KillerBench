@@ -6,6 +6,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Data protection and repair safeguards
 
+- Release preflight includes Store executable version, signature and checksum coverage.
 - Profile backup captures the selected age before starting background work.
 - Batch evidence reports retain incomplete coverage from capped or failed imports.
 - Ordinary Entra diagnostic reports and journals retain only join and token flags, excluding account and device identities.

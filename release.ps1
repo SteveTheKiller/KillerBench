@@ -41,6 +41,13 @@
     (use after a completed normal run, so the signed executables are not rebuilt).
     Requires the existing source archive to match the commit being tagged.
 
+.PARAMETER ArtifactPreflightOnly
+    Read existing executable versions, signatures, and SHA256 hashes, then return without
+    building, signing, changing files, invoking Git, or publishing.
+
+.PARAMETER ArtifactDirectory
+    Optional artifact folder for -ArtifactPreflightOnly. Normal releases use the fixed release folder.
+
 .EXAMPLE
     .\release.ps1 -DryRun -SkipSign
 .EXAMPLE
@@ -53,7 +60,9 @@ param(
     [string]$CertName       = "Open Source Developer Stephen Riley",
     [switch]$SkipSign,
     [switch]$DryRun,
-    [switch]$PublishOnly
+    [switch]$PublishOnly,
+    [switch]$ArtifactPreflightOnly,
+    [string]$ArtifactDirectory = ""
 )
 
 $ErrorActionPreference = 'Stop'
@@ -77,12 +86,23 @@ $payloadDirs = @(
 $firstPartyNames = @('KillerBench.exe', 'KillerBench.dll', 'KillerBench.Engine.dll', 'KillerBench.Engine.Core.dll', 'KillerBench.Engine.Windows.dll')
 $cliDir      = Join-Path $PSScriptRoot "Cli\bin\Release\net10.0\publish\single-file-win-x64"
 $releaseDir  = Join-Path $PSScriptRoot "bin\Release\release"
+if ($ArtifactDirectory) {
+    if (-not $ArtifactPreflightOnly) { throw "-ArtifactDirectory is only available with -ArtifactPreflightOnly." }
+    $releaseDir = [IO.Path]::GetFullPath($ArtifactDirectory)
+}
 $desktopExe  = Join-Path $releaseDir "KillerBench.exe"
 $portableExe = Join-Path $releaseDir "KillerBench-Portable.exe"
 # The Microsoft Store installer carries its own .NET runtime; the Store downloads it through killerbench.net/store.
 $storeExe    = Join-Path $releaseDir "KillerBench-Store.exe"
 $cliExe      = Join-Path $releaseDir "killerbench-cli.exe"
 $licenseOut  = Join-Path $releaseDir "LICENSE.txt"
+$releaseExecutables = @(
+    @{ Path = $desktopExe;  Description = 'KillerBench' },
+    @{ Path = $portableExe; Description = 'KillerBench Portable' },
+    @{ Path = $storeExe;    Description = 'KillerBench' },
+    @{ Path = $cliExe;      Description = 'KillerBench CLI' }
+)
+$releaseExecutablePaths = @($releaseExecutables | ForEach-Object { $_.Path })
 
 # TSA endpoints, tried in order; first success wins.
 $tsaList = @(
@@ -137,12 +157,60 @@ function Assert-ReleaseArtifactVersion([string]$Path, [string]$ExpectedVersion) 
     }
 }
 
+function Assert-ExistingReleaseArtifacts([string[]]$Paths, [string]$ExpectedVersion) {
+    foreach ($artifact in $Paths) {
+        Assert-ReleaseArtifactVersion $artifact $ExpectedVersion
+        $signature = Get-AuthenticodeSignature -LiteralPath $artifact
+        if ($signature.Status -ne [System.Management.Automation.SignatureStatus]::Valid) {
+            throw "Existing artifact $artifact is not validly signed. Run a full release."
+        }
+    }
+}
+
+function Get-ReleaseArtifactHashes([string[]]$Paths) {
+    $hashes = @{}
+    foreach ($artifact in $Paths) {
+        $hashes[[IO.Path]::GetFileName($artifact)] = (Get-FileHash -LiteralPath $artifact -Algorithm SHA256).Hash
+    }
+    return $hashes
+}
+
+function Get-ReleaseChecksumLines([string[]]$Paths, [hashtable]$Hashes) {
+    foreach ($artifact in $Paths) {
+        $name = [IO.Path]::GetFileName($artifact)
+        Write-Output "$($name.PadRight(24)) $($Hashes[$name])"
+    }
+}
+
+function Assert-ReleaseChecksums([string]$Path, [string[]]$Lines) {
+    $sumsRaw = Get-Content -LiteralPath $Path -Raw
+    foreach ($line in $Lines) {
+        $parts = $line -split '\s+'
+        $pattern = '(?im)^' + [regex]::Escape($parts[0]) + '\s+' + [regex]::Escape($parts[1]) + '\s*$'
+        if ($sumsRaw -notmatch $pattern) {
+            throw "SHA256SUMS.txt does not match $($parts[0]). Run a full release build before publishing."
+        }
+    }
+}
+
 function Find-Python {
     foreach ($candidate in @('py', 'python', 'python3')) {
         $cmd = Get-Command $candidate -ErrorAction SilentlyContinue
         if ($cmd) { return $cmd.Source }
     }
     throw "Python 3 was not found. It is needed for check-license.py."
+}
+
+if ($ArtifactPreflightOnly) {
+    [xml]$metadata = Get-Content -LiteralPath $proj -Raw
+    Assert-ExistingReleaseArtifacts $releaseExecutablePaths ([string]$metadata.Project.PropertyGroup.FileVersion)
+    $hashes = Get-ReleaseArtifactHashes $releaseExecutablePaths
+    $checksumLines = @(Get-ReleaseChecksumLines $releaseExecutablePaths $hashes)
+    $existingSums = Join-Path $releaseDir 'SHA256SUMS.txt'
+    if ([IO.File]::Exists($existingSums)) { Assert-ReleaseChecksums $existingSums $checksumLines }
+    Write-Output $checksumLines
+    Write-Host 'PASS: existing release artifact preflight.'
+    return
 }
 
 # --- 1. Release metadata preflight ---
@@ -307,7 +375,7 @@ Copy-Item -LiteralPath (Join-Path $packageDir 'KillerBench-Portable.exe') -Desti
 Copy-Item -LiteralPath (Join-Path $packageDir 'KillerBench-Store.exe') -Destination $storeExe -Force
 Copy-Item -LiteralPath (Join-Path $cliDir 'killerbench-cli.exe') -Destination $cliExe -Force
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'LICENSE.txt') -Destination $licenseOut -Force
-foreach ($artifact in @($desktopExe, $portableExe, $storeExe, $cliExe)) { Assert-ReleaseArtifactVersion $artifact $expectedFileVersion }
+foreach ($artifact in $releaseExecutablePaths) { Assert-ReleaseArtifactVersion $artifact $expectedFileVersion }
 Write-Host "    Installer: $desktopExe" -ForegroundColor Green
 Write-Host "    Portable : $portableExe" -ForegroundColor Green
 Write-Host "    Store    : $storeExe" -ForegroundColor Green
@@ -360,12 +428,7 @@ if (-not $SkipSign) {
     Copy-Item -LiteralPath (Join-Path $packageDir 'KillerBench-Portable.exe') -Destination $portableExe -Force
     Copy-Item -LiteralPath (Join-Path $packageDir 'KillerBench-Store.exe') -Destination $storeExe -Force
 
-    $signTargets = @(
-        @{ Path = $desktopExe;  Description = 'KillerBench' },
-        @{ Path = $portableExe; Description = 'KillerBench Portable' },
-        @{ Path = $storeExe;    Description = 'KillerBench' },
-        @{ Path = $cliExe;      Description = 'KillerBench CLI' }
-    )
+    $signTargets = $releaseExecutables
     foreach ($target in $signTargets) {
         $signed = $false
         foreach ($tsa in $tsaList) {
@@ -419,13 +482,7 @@ Write-Host "    killerbench-cli --help returned $($cliHelp.Count) lines" -Foregr
 
 } else {
     Write-Host "`n==> PublishOnly: skipping build and sign, using existing artifacts." -ForegroundColor Yellow
-    foreach ($artifact in @($desktopExe, $portableExe, $cliExe)) {
-        Assert-ReleaseArtifactVersion $artifact $expectedFileVersion
-        $signature = Get-AuthenticodeSignature -LiteralPath $artifact
-        if ($signature.Status -ne [System.Management.Automation.SignatureStatus]::Valid) {
-            throw "Existing artifact $artifact is not validly signed. Run a full release."
-        }
-    }
+    Assert-ExistingReleaseArtifacts $releaseExecutablePaths $expectedFileVersion
     $srcZipPath = Join-Path $releaseDir "KillerBench-$Version-src.zip"
     $actualThumb = "(existing signature)"
     $actualCN    = "(existing signature)"
@@ -484,25 +541,18 @@ $srcZip = Get-Item -LiteralPath $srcZipPath
 
 # --- 12. SHA256SUMS.txt ---
 Write-Host "`n==> Computing SHA256 values..." -ForegroundColor Cyan
-$desktopHash = (Get-FileHash $desktopExe -Algorithm SHA256).Hash
-$portableHash = (Get-FileHash $portableExe -Algorithm SHA256).Hash
-$cliHash     = (Get-FileHash $cliExe -Algorithm SHA256).Hash
+$artifactHashes = Get-ReleaseArtifactHashes $releaseExecutablePaths
+$desktopHash = $artifactHashes[[IO.Path]::GetFileName($desktopExe)]
+$portableHash = $artifactHashes[[IO.Path]::GetFileName($portableExe)]
+$storeHash = $artifactHashes[[IO.Path]::GetFileName($storeExe)]
+$cliHash = $artifactHashes[[IO.Path]::GetFileName($cliExe)]
 $srcHash     = (Get-FileHash $srcZip.FullName -Algorithm SHA256).Hash
 $sumsPath    = Join-Path $releaseDir "SHA256SUMS.txt"
 $lines = [System.Collections.Generic.List[string]]::new()
-$lines.Add("KillerBench.exe          $desktopHash")
-$lines.Add("KillerBench-Portable.exe $portableHash")
-$lines.Add("killerbench-cli.exe      $cliHash")
+foreach ($line in @(Get-ReleaseChecksumLines $releaseExecutablePaths $artifactHashes)) { $lines.Add($line) }
 $lines.Add("$($srcZip.Name.PadRight(24)) $srcHash")
 if ($PublishOnly -and (Test-Path $sumsPath)) {
-    $sumsRaw = Get-Content -LiteralPath $sumsPath -Raw
-    foreach ($line in $lines) {
-        $parts = $line -split '\s+'
-        $pattern = '(?im)^' + [regex]::Escape($parts[0]) + '\s+' + [regex]::Escape($parts[1]) + '\s*$'
-        if ($sumsRaw -notmatch $pattern) {
-            throw "SHA256SUMS.txt does not match $($parts[0]). Run a full release build before publishing."
-        }
-    }
+    Assert-ReleaseChecksums $sumsPath $lines
 } else {
     [System.IO.File]::WriteAllLines($sumsPath, $lines, [System.Text.UTF8Encoding]::new($false))
 }
@@ -511,11 +561,13 @@ Write-Host "`n==============================================================" -F
 Write-Host   "  KillerBench $Tag release artifacts" -ForegroundColor White
 Write-Host   "  APP    : $desktopExe"
 Write-Host   "  PORTABLE: $portableExe"
+Write-Host   "  STORE  : $storeExe"
 Write-Host   "  CLI    : $cliExe"
 Write-Host   "  SOURCE : $($srcZip.FullName)"
 Write-Host   ""
 Write-Host   "  SHA256 (App)   : $desktopHash" -ForegroundColor Green
 Write-Host   "  SHA256 (Portable): $portableHash" -ForegroundColor Green
+Write-Host   "  SHA256 (Store) : $storeHash" -ForegroundColor Green
 Write-Host   "  SHA256 (CLI)   : $cliHash" -ForegroundColor Green
 Write-Host   "  SHA256 (Source): $srcHash" -ForegroundColor Green
 Write-Host   ""
@@ -572,7 +624,8 @@ try {
 
     if ($DryRun) {
         Write-Host "`n==> DryRun: stopping before tag and release." -ForegroundColor Yellow
-        Write-Host "    Would tag $Tag and publish KillerBench.exe, KillerBench-Portable.exe, KillerBench-Store.exe, killerbench-cli.exe, LICENSE.txt, $($srcZip.Name) and SHA256SUMS.txt."
+        $executableNames = @($releaseExecutablePaths | ForEach-Object { [IO.Path]::GetFileName($_) }) -join ', '
+        Write-Host "    Would tag $Tag and publish $executableNames, LICENSE.txt, $($srcZip.Name) and SHA256SUMS.txt."
         exit 0
     }
 
@@ -582,7 +635,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Tag push failed" }
 
     Write-Host "`n==> Creating GitHub release..." -ForegroundColor Cyan
-    $assets = @($desktopExe, $portableExe, $storeExe, $cliExe, $licenseOut, $srcZip.FullName, $sumsPath)
+    $assets = @($releaseExecutablePaths) + @($licenseOut, $srcZip.FullName, $sumsPath)
     gh release create $Tag @assets --title "KillerBench $Tag" --notes-file $notesFile --verify-tag
     if ($LASTEXITCODE -ne 0) { throw "gh release create failed" }
 
