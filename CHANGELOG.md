@@ -6,6 +6,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Data protection and repair safeguards
 
+- Interface zoom scales reports and action controls, preserves titlebar geometry, and keeps enlarged panes scrollable.
 - Setup verifies destination ownership and elevated access, preserves recovery folders, and avoids destructive cleanup rollback. Uninstall removes matching registration and shortcuts while retaining files and showing their location.
 - Retention pins selected directory identities and refuses redirected children or cross-volume moves.
 - Release preflight includes Store executable version, signature and checksum coverage.

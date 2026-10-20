@@ -20,7 +20,6 @@ public partial class MainWindow
     private bool shellReady;
     private bool sourcesOpen = true;
     private double appScale = 1;
-    private readonly Dictionary<Control, double> zoomFonts = [];
     private void InitializeShell()
     {
         GrainTexture.Apply(this);
@@ -44,6 +43,8 @@ public partial class MainWindow
         appScale = ReadNumber("AppScale", 1, 0.7, 2.5);
         ApplyAppScale(appScale);
         InitializePanels();
+        OutputScroll.SizeChanged += (_, _) => UpdateScaledWorkspaceWidths();
+        ToolScroll.SizeChanged += (_, _) => UpdateScaledWorkspaceWidths();
         shellReady = true;
         RefreshTheme();
     }
@@ -138,7 +139,7 @@ public partial class MainWindow
     {
         sourcesOpen = !sourcesOpen;
         LeftPanel.IsEnabled = sourcesOpen;
-        AnimateWidth(LeftPanel, sourcesOpen ? sidebarWidth : 0);
+        AnimateWidth(LeftPanel, sourcesOpen ? sidebarWidth / appScale : 0);
         SidebarButton.Content = ((char)(sourcesOpen ? 0xE76B : 0xE76C)).ToString();
     }
     private void SetDetailsOpen(bool _) => DetailsPanel.Visibility = Visibility.Collapsed;
@@ -180,35 +181,29 @@ public partial class MainWindow
     }
     private void ApplyAppScale(double scale)
     {
+        if (shellReady && sourcesOpen) sidebarWidth = (double.IsNaN(LeftPanel.Width) ? LeftPanel.ActualWidth : LeftPanel.Width) * appScale;
         appScale = double.IsFinite(scale) ? Math.Clamp(Math.Round(scale, 3), 0.7, 2.5) : 1;
-        ScaleHost.LayoutTransform = Transform.Identity;
-        var controls = FindZoomControls(ScaleHost).ToArray();
-        foreach (var control in controls)
-            if (!zoomFonts.ContainsKey(control)) zoomFonts.Add(control, control.FontSize);
-        foreach (var control in controls)
-        {
-            control.SetCurrentValue(Control.FontSizeProperty, zoomFonts[control] * appScale);
-            if (control is ComboBox)
-            {
-                control.SetCurrentValue(HeightProperty, double.NaN);
-                control.SetCurrentValue(MinHeightProperty, Math.Max(24, control.FontSize * 1.5 + 8));
-            }
-        }
-        EvidenceBox.FontSize = SizeSlider.Value * appScale;
+        ScaleHost.LayoutTransform = new ScaleTransform(appScale, appScale);
+        SidebarRail.LayoutTransform = new ScaleTransform(1 / appScale, 1 / appScale);
+        LeftPanel.Width = sourcesOpen ? sidebarWidth / appScale : 0;
+        ScaleHost.ColumnDefinitions[1].Width = new GridLength(24 / appScale);
+        ContentPane.ColumnDefinitions[1].Width = new GridLength(24 / appScale);
+        ContentPane.ColumnDefinitions[2].MinWidth = (appScale > 1 ? 200 : 300) / appScale;
+        ToolScroll.HorizontalScrollBarVisibility = appScale > 1 ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+        OutputScroll.HorizontalScrollBarVisibility = appScale > 1 ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+        UpdateScaledWorkspaceWidths();
+        EvidenceBox.FontSize = SizeSlider.Value;
         EvidenceBox.TextWrapping = TextWrapping.Wrap;
         EvidenceBox.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
         ActivityLog.TextWrapping = TextWrapping.Wrap;
         TextOptions.SetTextFormattingMode(ScaleHost, appScale == 1 ? TextFormattingMode.Display : TextFormattingMode.Ideal);
         TextOptions.SetTextRenderingMode(ScaleHost, appScale == 1 ? TextRenderingMode.Auto : TextRenderingMode.Grayscale);
     }
-    private static IEnumerable<Control> FindZoomControls(DependencyObject parent)
+    private void UpdateScaledWorkspaceWidths()
     {
-        foreach (object child in LogicalTreeHelper.GetChildren(parent))
-        {
-            if (child is not DependencyObject element) continue;
-            if (element is TextBox or ComboBox) yield return (Control)element;
-            foreach (var nested in FindZoomControls(element)) yield return nested;
-        }
+        OutputWorkspace.Width = appScale > 1 ? Math.Max(400, OutputScroll.ActualWidth) : double.NaN;
+        if (ToolScroll.Content is FrameworkElement content)
+            content.Width = appScale > 1 ? Math.Max(300, ToolScroll.ActualWidth) : double.NaN;
     }
     private bool HandleShellKey(KeyEventArgs e)
     {

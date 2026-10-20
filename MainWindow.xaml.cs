@@ -238,7 +238,7 @@ public partial class MainWindow : Window
     private void ApplyDisplay()
     {
         if (EvidenceBox is null || SizeSlider is null) return;
-        EvidenceBox.FontSize = SizeSlider.Value * appScale;
+        EvidenceBox.FontSize = SizeSlider.Value;
         SaveDisplayPreferences();
     }
 

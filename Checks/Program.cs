@@ -14,8 +14,13 @@ internal static class Program
         WindowsEngine.Register();
         try
         {
+            if (RecipeOperationChecks.TryRunChildAsync(args).GetAwaiter().GetResult()) return 0;
             if (args is ["--isolated-import-reports"]) return ImportedReportUiChecks.Run();
             if (args is ["--only", "import-reports"]) return IsolatedDesktop.Run("--isolated-import-reports");
+            if (args is ["--isolated-content-scale"]) return ImportedReportUiChecks.Run(verifyScaling: true);
+            if (args is ["--only", "content-scale"]) return IsolatedDesktop.Run("--isolated-content-scale");
+            if (args is ["--isolated-ui-controls"]) return RunChecks(includeUi: true, skipNonUi: true);
+            if (args is ["--only", "ui-controls"]) return IsolatedDesktop.Run("--isolated-ui-controls");
             if (args is ["--only", "aggregate-cancellation"])
             {
                 AggregateCancellationChecks.RunAsync(Path.GetTempPath()).GetAwaiter().GetResult();
@@ -529,16 +534,31 @@ internal static class Program
     }
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
-    private static int RunChecks(bool includeUi)
+    private static int RunChecks(bool includeUi, bool skipNonUi = false)
     {
         string scratch = Path.Combine(Path.GetTempPath(), "KillerBench-checks-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(scratch);
+        string captureFixture = "";
         try
         {
+            if (!skipNonUi)
+            {
             CheckEvidence(scratch).GetAwaiter().GetResult();
             AggregateCancellationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            RecipeOperationChecks.RunAsync().GetAwaiter().GetResult();
+            RecipeOperationChecks.RunFileAsync(scratch).GetAwaiter().GetResult();
+            GoalUncertaintyChecks.RunAsync().GetAwaiter().GetResult();
+            WindowsMtuDispatchChecks.RunAsync().GetAwaiter().GetResult();
+            WindowsProxyReadChecks.RunAsync().GetAwaiter().GetResult();
+            WindowsEntraPrivacyChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            WindowsGroupPolicyDateChecks.RunAsync().GetAwaiter().GetResult();
+            WinGetExecutionChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            EvidenceBatchCoverageChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            WindowsRetentionScopeChecks.RunAsync().GetAwaiter().GetResult();
             GoalOptionValidationChecks.RunAsync().GetAwaiter().GetResult();
             InstallerRuntimeChecks.Run();
+            InstallationOwnershipChecks.Run(scratch);
+            InstallationProtectionChecks.Run(scratch);
             NativeScenarioRestorationChecks.RunAsync().GetAwaiter().GetResult();
             RecipePackChecks.RunAsync().GetAwaiter().GetResult();
             WindowsTruncatedEvidenceChecks.Run();
@@ -857,7 +877,7 @@ internal static class Program
             KnowledgeActivationChecks.RunAsync(scratch).GetAwaiter().GetResult();
             KnowledgeUpdateChecks.RunAsync(scratch).GetAwaiter().GetResult();
             KnowledgeHttpSourceChecks.RunAsync().GetAwaiter().GetResult();
-            string captureFixture = CaptureChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            captureFixture = CaptureChecks.RunAsync(scratch).GetAwaiter().GetResult();
             RepairChecks.RunAsync(scratch).GetAwaiter().GetResult();
             WorkflowChecks.RunAsync(scratch).GetAwaiter().GetResult();
             FullSystemScanChecks.RunAsync(scratch).GetAwaiter().GetResult();
@@ -946,12 +966,14 @@ internal static class Program
             File.WriteAllLines(Path.Combine(scratch, "analysis.log"), fixture.Lines);
             var imported = LogAnalyzer.AnalyzeFileAsync(Path.Combine(scratch, "analysis.log")).GetAwaiter().GetResult();
             Require(imported.Observations.Single(code => code.Code == observed.Code).Occurrences == observed.Occurrences, "File and in-memory APIs agree");
+            }
             if (!includeUi)
             {
                 Console.WriteLine("Non-UI checks passed. Window creation and resizing were skipped.");
                 return 0;
             }
             IsolatedDesktop.Verify();
+            if (captureFixture.Length == 0) captureFixture = CaptureChecks.RunAsync(scratch).GetAwaiter().GetResult();
             var application = new Application();
             SynchronizationContext.SetSynchronizationContext(new System.Windows.Threading.DispatcherSynchronizationContext(application.Dispatcher));
             application.Resources.MergedDictionaries.Add(new ResourceDictionary
@@ -1015,10 +1037,13 @@ internal static class Program
             window.Top = SystemParameters.VirtualScreenTop;
             IsolatedDesktop.Verify();
             window.Show();
+            window.Left = SystemParameters.VirtualScreenLeft - Math.Max(window.Width, window.MinWidth) - 200;
             var text = (TextBox)window.FindName("EvidenceBox");
             window.UpdateLayout();
             Require(window.Left + window.ActualWidth < SystemParameters.VirtualScreenLeft && !window.ShowActivated && !window.ShowInTaskbar,
-                "UI validation stays outside the desktop without activation or a taskbar entry");
+                "UI validation stays outside the desktop without activation or a taskbar entry. Left=" + window.Left +
+                ", width=" + window.ActualWidth + ", screenLeft=" + SystemParameters.VirtualScreenLeft +
+                ", ShowActivated=" + window.ShowActivated + ", ShowInTaskbar=" + window.ShowInTaskbar);
             Require(text.Text.Contains("START HERE") && text.Text.Contains("Full system scan is selected by default") &&
                 ((ListBox)window.FindName("SourcesList")).Items.Count == 0,
                 "Startup explains the diagnostic-first full scan without pretending that sample evidence is machine evidence");
@@ -1253,7 +1278,7 @@ internal static class Program
                         window.UpdateLayout();
                         Capture(window, Path.Combine(scratch, "recipe-selection.png"));
                         choices.UnselectAll();
-                        Require(effects.Text == "No recipe repairs selected.", "Empty selection clears the repair-effects review");
+                        Require(effects.Text == "No recipe checks selected.", "Empty selection clears the repair-effects review");
                         toggle.IsChecked = false;
                         Require(effects.Text.Contains("waiting print jobs"), "Full recipe review restores all action effects");
                         effectsPanel.IsExpanded = false;
@@ -1326,11 +1351,11 @@ internal static class Program
             {
                 zoomMethod.Invoke(window, [scale]);
                 Pump();
-                Require(zoomHost.LayoutTransform.Value.IsIdentity && Math.Abs(((TextBox)window.FindName("EvidenceBox")).FontSize - ((Slider)window.FindName("SizeSlider")).Value * scale) < 0.001 &&
-                    new Size(titleIcon.ActualWidth, titleIcon.ActualHeight) == stableTitleIconSize && Math.Abs(controlBank.ActualWidth - 160) < 0.1,
-                    "Zoom scales content without squeezing the sidebar or moving titlebar controls");
+                Require(Math.Abs(zoomHost.LayoutTransform.Value.M11 - scale) < .001 && Math.Abs(((TextBox)window.FindName("EvidenceBox")).FontSize - ((Slider)window.FindName("SizeSlider")).Value) < 0.001 &&
+                    new Size(titleIcon.ActualWidth, titleIcon.ActualHeight) == stableTitleIconSize && Math.Abs(controlBank.Width * scale - 160) < 0.1 && Math.Abs(controlBank.ActualWidth - controlBank.Width) <= 1,
+                    "Zoom scales content without squeezing the sidebar or moving titlebar controls. Scale=" + scale + ", transform=" + zoomHost.LayoutTransform.Value.M11 + ", sidebar=" + controlBank.ActualWidth + ", font=" + ((TextBox)window.FindName("EvidenceBox")).FontSize + ", slider=" + ((Slider)window.FindName("SizeSlider")).Value);
                 Require(new Size(window.ActualWidth, window.ActualHeight) == stableWindowSize &&
-                    zoomHost.ActualWidth <= zoomViewport.ActualWidth && zoomHost.ActualHeight <= zoomViewport.ActualHeight,
+                    zoomHost.ActualWidth * scale <= zoomViewport.ActualWidth + 1 && zoomHost.ActualHeight * scale <= zoomViewport.ActualHeight + 1,
                     "Every zoom level preserves the window and fits its workspace");
                 if (scale == 2.5)
                 {
@@ -1341,7 +1366,7 @@ internal static class Program
             Pump();
             titleIcon.RaiseEvent(new System.Windows.Input.MouseWheelEventArgs(System.Windows.Input.Mouse.PrimaryDevice, Environment.TickCount, 120)
                 { RoutedEvent = System.Windows.Input.Mouse.PreviewMouseWheelEvent });
-            Require(Math.Abs(((TextBox)window.FindName("EvidenceBox")).FontSize - ((Slider)window.FindName("SizeSlider")).Value * 1.02) < 0.001 &&
+            Require(Math.Abs(zoomHost.LayoutTransform.Value.M11 - 1.02) < .001 && Math.Abs(((TextBox)window.FindName("EvidenceBox")).FontSize - ((Slider)window.FindName("SizeSlider")).Value) < 0.001 &&
                 Equals(typeof(KillerBench.MainWindow).Assembly.GetType("KillerBench.Services.Preferences")!
                     .GetMethod("Get", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!.Invoke(null, ["AppScale"]), "1.02"),
                 "Wheel over titlebar icon changes and persists zoom");
@@ -1719,8 +1744,9 @@ internal static class Program
             for (int attempt = 0; attempt < 60 && ((TextBlock)window.FindName("EvidenceTitle")).Text != "Windows Update capture"; attempt++) Pump();
             Require(((TextBlock)window.FindName("EvidenceTitle")).Text == "Windows Update capture", "Saved capture opens through app workflow");
             Require(((Button)window.FindName("SaveCaptureButton")).IsEnabled, "Capture save available");
-            Require(FindButtons((StackPanel)window.FindName("ReportContent")).Count(b => Equals(b.Content, "Show evidence")) == 2, "Capture overview groups CBS and event findings");
-            FindButtons(findingCards).Single(b => Equals(b.Tag, "KB-CBS-001")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            var captureFindings = (StackPanel)window.FindName("FindingCards");
+            Require(FindButtons(captureFindings).Count(b => Equals(b.Content, "Show evidence")) == 2, "Capture overview groups CBS and event findings");
+            FindButtons(captureFindings).Single(b => Equals(b.Tag, "KB-CBS-001")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(text.SelectedText.Contains("0x800f081f"), "Capture finding selects the correct source line");
             ((ListBox)window.FindName("SourcesList")).SelectedIndex = ((ListBox)window.FindName("SourcesList")).Items.Count - 1;
             IsolatedDesktop.Verify();

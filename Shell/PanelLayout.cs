@@ -24,7 +24,7 @@ public partial class MainWindow
     private void InitializePanels()
     {
         sidebarWidth = ReadNumber("SidebarWidth", SidebarDefaultWidth, SidebarMinOpen, SidebarMaxWidth);
-        LeftPanel.Width = sidebarWidth;
+        LeftPanel.Width = sidebarWidth / appScale;
         SetOutputView();
     }
 
@@ -81,27 +81,27 @@ public partial class MainWindow
     private void OnSidebarGripDelta(object sender, DragDeltaEventArgs e)
     {
         double current = double.IsNaN(LeftPanel.Width) ? LeftPanel.ActualWidth : LeftPanel.Width;
-        double next = current + e.HorizontalChange;
+        double next = current + e.HorizontalChange / appScale;
         if (sidebarDragOpening)
         {
-            LeftPanel.Width = Math.Clamp(next, 0, SidebarMaxWidth);
+            LeftPanel.Width = Math.Clamp(next, 0, SidebarMaxWidth / appScale);
             return;
         }
-        sidebarWantClose = Mouse.GetPosition(ScaleHost).X < SidebarMinOpen - PanelCloseBuffer;
-        LeftPanel.Width = Math.Clamp(next, SidebarMinOpen, SidebarMaxWidth);
+        sidebarWantClose = Mouse.GetPosition(ScaleHost).X * appScale < SidebarMinOpen - PanelCloseBuffer;
+        LeftPanel.Width = Math.Clamp(next, SidebarMinOpen / appScale, SidebarMaxWidth / appScale);
     }
 
     private void OnSidebarGripCompleted(object sender, DragCompletedEventArgs e)
     {
         sidebarDragOpening = false;
-        double width = double.IsNaN(LeftPanel.Width) ? LeftPanel.ActualWidth : LeftPanel.Width;
+        double width = (double.IsNaN(LeftPanel.Width) ? LeftPanel.ActualWidth : LeftPanel.Width) * appScale;
         if (sidebarWantClose || width < SidebarMinOpen / 2)
         {
             sidebarWantClose = false;
             CollapseSidebar();
             return;
         }
-        if (width < SidebarMinOpen) LeftPanel.Width = width = SidebarMinOpen;
+        if (width < SidebarMinOpen) { width = SidebarMinOpen; LeftPanel.Width = width / appScale; }
         sidebarWidth = width;
         Preferences.Set("SidebarWidth", width.ToString(CultureInfo.InvariantCulture));
     }

@@ -950,7 +950,8 @@
         <Border x:Name="TerminalPanel" Grid.Column="3" Grid.RowSpan="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Margin="8,0,0,0" ClipToBounds="True">
 <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
 <Border Padding="14">
-          <Grid>
+          <ScrollViewer x:Name="OutputScroll" Style="{StaticResource OverlayScrollViewer}" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
+          <Grid x:Name="OutputWorkspace">
             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <DockPanel Margin="0,0,0,8">
               <TextBlock x:Name="EvidenceTitle" Text="{DynamicResource Str_Text_Evidence}" FontFamily="{DynamicResource HeadingFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,8,0"/>
@@ -986,6 +987,7 @@
                 </Grid>
               </Expander>
           </Grid>
+          </ScrollViewer>
         </Border>
         </Grid>
 </Border>

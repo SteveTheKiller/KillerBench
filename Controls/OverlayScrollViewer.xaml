@@ -8,6 +8,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollViewer">
                     <Grid Background="{TemplateBinding Background}">
+                        <Grid.RowDefinitions><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
@@ -51,6 +52,10 @@
                                    ViewportSize="{TemplateBinding ViewportHeight}"
                                    Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
                                    Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                        <ScrollBar x:Name="PART_HorizontalScrollBar" Grid.Row="1" Orientation="Horizontal"
+                                   Minimum="0" Maximum="{TemplateBinding ScrollableWidth}" ViewportSize="{TemplateBinding ViewportWidth}"
+                                   Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                   Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
