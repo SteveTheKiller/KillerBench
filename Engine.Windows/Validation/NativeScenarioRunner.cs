@@ -29,9 +29,13 @@ public sealed class NativeScenarioRunner
 
     public static bool IsDisposable(string? declaredMachine) =>
         OperatingSystem.IsWindows() &&
+        MatchesDisposableIdentity(declaredMachine, Environment.MachineName, Environment.GetEnvironmentVariable(DisposableVariable));
+
+    /// <summary>Validates captured gate inputs without changing the current process environment.</summary>
+    public static bool MatchesDisposableIdentity(string? declaredMachine, string actualMachine, string? marker) =>
         !string.IsNullOrWhiteSpace(declaredMachine) &&
-        string.Equals(declaredMachine, Environment.MachineName, StringComparison.OrdinalIgnoreCase) &&
-        string.Equals(Environment.GetEnvironmentVariable(DisposableVariable), DisposableValue, StringComparison.Ordinal);
+        string.Equals(declaredMachine, actualMachine, StringComparison.OrdinalIgnoreCase) &&
+        string.Equals(marker, DisposableValue, StringComparison.Ordinal);
 
     /// <summary>Scenarios this runner can inject natively for a service recipe. Others are recorded as Blocked with the reason.</summary>
     public static IReadOnlyList<NativeValidationScenarioKind> Injectable { get; } =
