@@ -1,0 +1,196 @@
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Security.Principal;
+using System.Text.Json;
+using Microsoft.Win32;
+using KillerBench.Engine.Windows.Validation;
+
+// This executable is retained for separately authorized disposable guest execution only.
+internal static class Program
+{
+    private static async Task<int> Main(string[] args)
+    {
+        var evidence = new List<object>();
+        try
+        {
+            if (!OperatingSystem.IsWindows() || Environment.MachineName != "KILLERLAB-W11" ||
+                !NativeScenarioRunner.IsDisposable("KILLERLAB-W11"))
+                throw new InvalidOperationException("Exact disposable guest identity gate refused execution.");
+            using var identity = WindowsIdentity.GetCurrent();
+            if (!new WindowsPrincipal(identity).IsInRole(WindowsBuiltInRole.Administrator))
+                throw new InvalidOperationException("Elevated guest token required.");
+            if (args.Length != 1 || args[0] is not ("disable-failure" or "cancel" or "timeout" or "originally-stopped"))
+                throw new ArgumentException("Select one restoration scenario per checkpoint.");
+            EmptySpool();
+            var native = new Service(evidence);
+            var original = await native.SnapshotAsync(default);
+            if (!new NativeServiceScenario(native, original).SupportedBaseline || original.Start == 4)
+                throw new InvalidOperationException("An enabled stable Spooler baseline is required.");
+            bool passed = false, restored = false;
+            NativeServiceSnapshot? after = null;
+            try
+            {
+                // Establish a deterministic running or stopped baseline before the reviewed operation.
+                bool prepared = args[0] == "originally-stopped" ? await native.StopAsync(default) : await native.StartAsync(default);
+                if (!prepared) throw new IOException("Scenario baseline preparation failed.");
+                var baseline = await native.SnapshotAsync(default);
+                using var cancellation = new CancellationTokenSource();
+                var injected = new Injection(native, args[0], cancellation, evidence);
+                var scenario = new NativeServiceScenario(injected, baseline);
+                string interruption = "none";
+                try
+                {
+                    bool stopped = await scenario.StopAsync(cancellation.Token);
+                    if (args[0] == "timeout")
+                    {
+                        if (stopped) throw new Exception("Injected timeout was not observed.");
+                        interruption = "timeout-after-confirmed-stop";
+                    }
+                    else if (!stopped) throw new IOException("Actual stop failed.");
+                    if (args[0] == "disable-failure" && await scenario.DisableAsync(default))
+                        throw new Exception("Injected disable failure was not observed.");
+                    if (args[0] == "originally-stopped")
+                    {
+                        if (!await scenario.DisableAsync(default) || !await native.SetStartAsync("demand", default) ||
+                            !await native.StartAsync(default)) throw new IOException("Stopped-baseline exercise failed.");
+                    }
+                }
+                catch (OperationCanceledException) when (args[0] == "cancel" && cancellation.IsCancellationRequested)
+                { interruption = "canceled-after-confirmed-stop"; }
+                finally
+                {
+                    bool scenarioRestored = await scenario.RestoreAsync();
+                    var observed = await native.SnapshotAsync(default);
+                    evidence.Add(new { baseline, observed, scenarioRestored, interruption, stages = scenario.Stages });
+                    passed = scenarioRestored && Equal(baseline, observed) && injected.Triggered;
+                }
+            }
+            finally
+            {
+                // Independent cleanup deliberately bypasses the injected boundary and scenario bookkeeping.
+                bool config = false, runtime = false;
+                try { config = await native.SetStartAsync(StartName(original), default); }
+                catch (Exception exception) { evidence.Add(new { cleanupConfigurationFailure = exception.GetType().Name }); }
+                try { runtime = original.State == 4 ? await native.StartAsync(default) : await native.StopAsync(default); }
+                catch (Exception exception) { evidence.Add(new { cleanupRuntimeFailure = exception.GetType().Name }); }
+                try { after = await native.SnapshotAsync(default); }
+                catch (Exception exception) { evidence.Add(new { cleanupVerificationFailure = exception.GetType().Name }); }
+                restored = config && runtime && after is not null && Equal(original, after);
+                evidence.Add(new { independentRestoration = restored, original, after });
+            }
+            Console.WriteLine(JsonSerializer.Serialize(new { scenario = args[0], passed, restored, evidence }));
+            return passed && restored ? 0 : 1;
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine(JsonSerializer.Serialize(new { passed = false, error = exception.GetType().Name, detail = exception.Message, evidence }));
+            return 1;
+        }
+    }
+
+    private static bool Equal(NativeServiceSnapshot a, NativeServiceSnapshot b) => a.State == b.State && a.Start == b.Start && a.Delayed == b.Delayed;
+    private static string StartName(NativeServiceSnapshot state) => state.Start switch { 2 => state.Delayed ? "delayed-auto" : "auto", 3 => "demand", 4 => "disabled", _ => throw new InvalidOperationException("Unsupported configuration.") };
+    private static void EmptySpool()
+    {
+        using var key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\Print\Printers");
+        string expected = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "System32", "spool", "PRINTERS");
+        string actual = Environment.ExpandEnvironmentVariables(key?.GetValue("DefaultSpoolDirectory") as string ?? expected);
+        if (!Path.GetFullPath(actual).Equals(Path.GetFullPath(expected), StringComparison.OrdinalIgnoreCase) ||
+            !Directory.Exists(actual) || Directory.EnumerateFileSystemEntries(actual).Any() ||
+            (File.GetAttributes(actual) & FileAttributes.ReparsePoint) != 0)
+            throw new InvalidOperationException("An empty standard spool directory without redirection is required.");
+    }
+
+    private sealed class Injection(Service real, string mode, CancellationTokenSource cancellation, List<object> evidence) : INativeScenarioService
+    {
+        public bool Triggered;
+        public Task<NativeServiceSnapshot> SnapshotAsync(CancellationToken token) => real.SnapshotAsync(token);
+        public async Task<bool> StopAsync(CancellationToken token)
+        {
+            bool stopped = await real.StopAsync(token);
+            if (!Triggered && stopped && mode is "cancel" or "timeout")
+            {
+                Triggered = true;
+                evidence.Add(new { fault = mode, confirmedState = (await real.SnapshotAsync(default)).State });
+                if (mode == "cancel") { cancellation.Cancel(); token.ThrowIfCancellationRequested(); }
+                return false;
+            }
+            return stopped;
+        }
+        public Task<bool> SetStartAsync(string start, CancellationToken token)
+        {
+            if (!Triggered && mode == "disable-failure" && start == "disabled")
+            { Triggered = true; evidence.Add(new { fault = "disable-refused-before-dispatch" }); return Task.FromResult(false); }
+            if (mode == "originally-stopped" && start == "disabled") Triggered = true;
+            return real.SetStartAsync(start, token);
+        }
+        public Task<bool> StartAsync(CancellationToken token) => real.StartAsync(token);
+    }
+
+    private sealed class Service(List<object> evidence) : INativeScenarioService
+    {
+        public Task<NativeServiceSnapshot> SnapshotAsync(CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+            nint manager = OpenSCManagerW(null, null, 1);
+            if (manager == 0) throw new Win32Exception();
+            try
+            {
+                nint service = OpenServiceW(manager, "Spooler", 4);
+                if (service == 0) throw new Win32Exception();
+                try
+                {
+                    if (!QueryServiceStatus(service, out var status)) throw new Win32Exception();
+                    using var key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\Spooler");
+                    return Task.FromResult(new NativeServiceSnapshot(status.State, key?.GetValue("Start") as int?,
+                        key?.GetValue("DelayedAutostart") is int delayed && delayed == 1, "SCM Spooler snapshot"));
+                }
+                finally { CloseServiceHandle(service); }
+            }
+            finally { CloseServiceHandle(manager); }
+        }
+        public async Task<bool> StopAsync(CancellationToken token) => await Transition("stop", 1, 1062, token);
+        public async Task<bool> StartAsync(CancellationToken token) => await Transition("start", 4, 1056, token);
+        public async Task<bool> SetStartAsync(string start, CancellationToken token) => await Run(["config", "Spooler", "start=", start], token) == 0;
+        private async Task<bool> Transition(string verb, int state, int accepted, CancellationToken token)
+        {
+            EmptySpool();
+            int exit = await Run([verb, "Spooler"], token);
+            if (exit != 0 && exit != accepted) return false;
+            for (int i = 0; i < 120; i++)
+            {
+                if ((await SnapshotAsync(token)).State == state) return true;
+                await Task.Delay(250, token);
+            }
+            return false;
+        }
+        private async Task<int> Run(string[] arguments, CancellationToken token)
+        {
+            var start = new ProcessStartInfo(Path.Combine(Environment.SystemDirectory, "sc.exe"))
+            { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true, WorkingDirectory = AppContext.BaseDirectory };
+            foreach (string argument in arguments) start.ArgumentList.Add(argument);
+            using var process = Process.Start(start) ?? throw new IOException("SCM subprocess failed to start.");
+            Task<string> stdout = process.StandardOutput.ReadToEndAsync(), stderr = process.StandardError.ReadToEndAsync();
+            using var deadline = CancellationTokenSource.CreateLinkedTokenSource(token);
+            deadline.CancelAfter(TimeSpan.FromSeconds(20));
+            try { await process.WaitForExitAsync(deadline.Token); }
+            catch
+            {
+                if (!process.HasExited) process.Kill(true);
+                await process.WaitForExitAsync();
+                await Task.WhenAll(stdout, stderr);
+                evidence.Add(new { command = arguments, interrupted = true, exitCode = process.ExitCode });
+                throw;
+            }
+            await Task.WhenAll(stdout, stderr);
+            evidence.Add(new { command = arguments, exitCode = process.ExitCode, stdoutCharacters = stdout.Result.Length, stderrCharacters = stderr.Result.Length });
+            return process.ExitCode;
+        }
+    }
+    [StructLayout(LayoutKind.Sequential)] private struct Status { public int Type, State, Accepted, Win32Exit, ServiceExit, Checkpoint, WaitHint; }
+    [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)] private static extern nint OpenSCManagerW(string? machine, string? database, uint access);
+    [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)] private static extern nint OpenServiceW(nint manager, string name, uint access);
+    [DllImport("advapi32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool QueryServiceStatus(nint service, out Status status);
+    [DllImport("advapi32.dll")] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool CloseServiceHandle(nint handle);
+}
