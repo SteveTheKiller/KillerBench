@@ -122,7 +122,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Documentation, packaging and validation
 
-- Silent installs return specific Windows error codes and reject a second concurrent install instead of reporting a general failure.
+- Silent installs return specific Windows error codes, including 1618 when KillerBench is running so deployment tools retry, and reject a second concurrent install instead of reporting a general failure.
 - A silent install started without admin rights, as the Microsoft Store runs it, installs for the current user with no prompt instead of failing.
 - Added the KillerBench installer, which checks for the .NET 10 Desktop Runtime and adds Start menu, desktop and Installed Apps entries, and a portable build that carries its own runtime. Both packages and the single-file CLI include the GPLv3 license.
 - Added update checks on startup and from the About card. A newer release was offered with an Always check on startup box, a Check for updates on startup checkbox at the top of the About card turned the check back on, and an accepted update was checked against the release checksum and signature before it replaced the installed or portable copy.
