@@ -18,11 +18,27 @@ public static class WindowsMaintenanceFolders
     };
 
     public static string RetainRoot => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Retained");
+
+    internal static string Anchor(string? token) => Environment.GetFolderPath(token == "spool-printers"
+        ? Environment.SpecialFolder.Windows : Environment.SpecialFolder.ApplicationData);
 }
 
 /// <summary>Counts files in a known folder. Value is the count.</summary>
 public sealed class WindowsFileCountProbe : IProbePrimitive
 {
+    private readonly Func<string?, (string Path, string Filter)?> resolveFolder;
+    private readonly Func<string?, string, string> sourceAnchor;
+
+    public WindowsFileCountProbe() : this(null) { }
+
+    public WindowsFileCountProbe(Func<string?, (string Path, string Filter)?>? resolveFolder, Func<string?, string>? sourceAnchor = null)
+    {
+        this.resolveFolder = resolveFolder ?? WindowsMaintenanceFolders.Resolve;
+        this.sourceAnchor = sourceAnchor is not null ? (token, _) => sourceAnchor(token)
+            : resolveFolder is null ? (token, _) => WindowsMaintenanceFolders.Anchor(token)
+            : (_, path) => Path.GetPathRoot(Path.GetFullPath(path))!;
+    }
+
     public string Name => "file.count";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [WindowsMaintenanceFolders.FolderParameter];
 
@@ -30,11 +46,13 @@ public sealed class WindowsFileCountProbe : IProbePrimitive
     {
         ArgumentNullException.ThrowIfNull(parameters);
         token.ThrowIfCancellationRequested();
-        if (WindowsMaintenanceFolders.Resolve(parameters.GetValueOrDefault("folder")) is not { } target) return Task.FromResult(PrimitiveResult.Unavailable("Unknown folder token."));
+        string? folder = parameters.GetValueOrDefault("folder");
+        if (resolveFolder(folder) is not { } target) return Task.FromResult(PrimitiveResult.Unavailable("Unknown folder token."));
         try
         {
-            if (!Directory.Exists(target.Path)) return Task.FromResult(new PrimitiveResult(true, "0", "absent: " + target.Path) { Detail = "The folder does not exist." });
-            int count = Directory.EnumerateFiles(target.Path, target.Filter, SearchOption.TopDirectoryOnly).Take(10001).Count();
+            using var source = MaintenanceDirectoryScope.Open(sourceAnchor(folder, target.Path), target.Path);
+            if (!source.Exists) return Task.FromResult(new PrimitiveResult(true, "0", "absent: " + target.Path) { Detail = "The folder does not exist." });
+            int count = source.EnumerateFiles(target.Filter).Take(10001).Count();
             if (count > 10000) return Task.FromResult(new PrimitiveResult(false, null, target.Path, "More than 10,000 files; not counted.") { Truncated = true });
             return Task.FromResult(new PrimitiveResult(true, count.ToString(CultureInfo.InvariantCulture), target.Path) { Detail = count + " file(s) in " + target.Path + "." });
         }
@@ -50,16 +68,37 @@ public sealed class WindowsRetainFolderFilesAction : IActionPrimitive
 {
     private readonly Func<string?, (string Path, string Filter)?> resolveFolder;
     private readonly Func<string> retainRoot;
-    private readonly Action<string, string> moveFile;
+    private readonly Action<string, string>? moveFile;
+    private readonly Action<string, string, Action>? dispatchMove;
+    private readonly Action<string, Action>? createDirectory;
+    private readonly Func<string?, string, string> sourceAnchor;
+    private readonly Func<string, string> destinationAnchor;
 
     public WindowsRetainFolderFilesAction(
         Func<string?, (string Path, string Filter)?>? resolveFolder = null,
         Func<string>? retainRoot = null,
-        Action<string, string>? moveFile = null)
+        Action<string, string>? moveFile = null) : this(resolveFolder, retainRoot, moveFile, null, null) { }
+
+    public WindowsRetainFolderFilesAction(
+        Func<string?, (string Path, string Filter)?>? resolveFolder,
+        Func<string>? retainRoot,
+        Action<string, string>? moveFile,
+        Func<string?, string>? sourceAnchor,
+        Func<string>? destinationAnchor,
+        Action<string, string, Action>? dispatchMove = null,
+        Action<string, Action>? createDirectory = null)
     {
         this.resolveFolder = resolveFolder ?? WindowsMaintenanceFolders.Resolve;
         this.retainRoot = retainRoot ?? (() => WindowsMaintenanceFolders.RetainRoot);
-        this.moveFile = moveFile ?? ((source, destination) => File.Move(source, destination, false));
+        this.moveFile = moveFile;
+        this.dispatchMove = dispatchMove;
+        this.createDirectory = createDirectory;
+        this.sourceAnchor = sourceAnchor is not null ? (token, _) => sourceAnchor(token)
+            : resolveFolder is null ? (token, _) => WindowsMaintenanceFolders.Anchor(token)
+            : (_, path) => Path.GetPathRoot(Path.GetFullPath(path))!;
+        this.destinationAnchor = destinationAnchor is not null ? _ => destinationAnchor()
+            : retainRoot is null ? _ => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
+            : path => Path.GetPathRoot(Path.GetFullPath(path))!;
     }
 
     public string Name => "file.retain-folder";
@@ -73,17 +112,35 @@ public sealed class WindowsRetainFolderFilesAction : IActionPrimitive
         token.ThrowIfCancellationRequested();
         string tokenName = parameters.GetValueOrDefault("folder") ?? "";
         if (resolveFolder(tokenName) is not { } target) return Task.FromResult(new ActionResult(false, false, "", "Unknown folder token."));
-        if (!Directory.Exists(target.Path)) return Task.FromResult(new ActionResult(false, true, "absent", "The folder does not exist; nothing to retain."));
-        string retained = Path.Combine(retainRoot(), tokenName + "-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture));
+        if (tokenName is not ("recent-automatic-destinations" or "spool-printers")) return Task.FromResult(new ActionResult(false, false, "", "Unknown folder token."));
+        string retained = "";
         int moved = 0, failed = 0;
+        var failures = new List<string>();
         try
         {
-            Directory.CreateDirectory(retained);
-            foreach (string file in Directory.EnumerateFiles(target.Path, target.Filter, SearchOption.TopDirectoryOnly).Take(10000).ToArray())
+            using var source = MaintenanceDirectoryScope.Open(sourceAnchor(tokenName, target.Path), target.Path);
+            if (!source.Exists) return Task.FromResult(new ActionResult(false, true, "absent", "The folder does not exist; nothing to retain."));
+            string retainBase = retainRoot();
+            using var destination = MaintenanceDirectoryScope.Open(destinationAnchor(retainBase), retainBase, create: true, createDirectory);
+            string leaf = tokenName + "-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture) + "-" + Guid.NewGuid().ToString("N");
+            retained = Path.Combine(retainBase, leaf);
+            destination.Descend(leaf, create: true);
+            foreach (string file in source.EnumerateFiles(target.Filter).Take(10000).ToArray())
             {
                 token.ThrowIfCancellationRequested();
-                try { moveFile(file, Path.Combine(retained, Path.GetFileName(file))); moved++; }
-                catch (Exception error) when (error is IOException or UnauthorizedAccessException) { failed++; }
+                try
+                {
+                    if (moveFile is not null && (File.GetAttributes(file) & FileAttributes.ReparsePoint) != 0) throw new IOException("A retained file is redirected.");
+                    string destinationFile = Path.Combine(destination.Path, Path.GetFileName(file));
+                    void Move() { if (moveFile is not null) moveFile(file, destinationFile); else source.MoveFileTo(file, destination); }
+                    if (dispatchMove is not null) dispatchMove(file, destinationFile, Move); else Move();
+                    moved++;
+                }
+                catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+                {
+                    failed++;
+                    if (failures.Count < 10) failures.Add(moveFile is null && dispatchMove is null ? error.Message : "A file was unavailable or could not be retained.");
+                }
             }
         }
         catch (OperationCanceledException)
@@ -98,7 +155,7 @@ public sealed class WindowsRetainFolderFilesAction : IActionPrimitive
         }
         if (moved == 0 && failed == 0) return Task.FromResult(new ActionResult(false, true, "nothing to move", "The folder held no matching files; nothing changed."));
         return Task.FromResult(new ActionResult(true, failed == 0, "moved " + moved + ", failed " + failed + ", retained under " + retained,
-            failed == 0 ? null : failed + " file(s) were in use and stayed in place."));
+            failed == 0 ? null : failed + " file(s) could not be retained; inspect the source and retained folders before retrying. " + string.Join(" ", failures.Distinct())));
     }
 }
 
