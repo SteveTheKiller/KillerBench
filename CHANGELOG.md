@@ -10,6 +10,9 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Kept diagnosis and repair separate. Full system scan was read-only, saved reports and historical events could not authorize a change, and standard-user diagnostics started without an elevation prompt while repairs kept their administrator gates.
 - Kept missing, failed, timed-out, malformed, duplicate, contradictory and truncated evidence unknown, so it blocked dependent steps and repairs and never reported as healthy or verified. Independent checks continued when one provider failed.
 - Bounded every provider, checkpoint, workflow, repair and journal wait with deadlines and Stop support. Late provider results could not overwrite a final journal or count as verified success, and failed persistence stopped the workflow.
+- Interrupted spool-file cleanup restores the Print Spooler after a pending stop, preserves partial file counts and retained paths, and reports recovery failures.
+- Large-file and duplicate reviews keep accessible results and report incomplete coverage when a folder cannot be read.
+- Failed portable updates retain complete executable copies and a recovery report.
 - Repair parsers for DISM, SFC, component cleanup, DHCP, printing, services, Windows Time and WMI rejected command error output before accepting eligibility or verification evidence; integrity results retained raw evidence.
 - Service recovery required configured automatic startup, fresh executable and ServiceDll presence, matching identity, complete stopped-service evidence, nested dependency checks with cycle and size limits, and two consecutive Running observations before reporting success. Unmapped failure codes, startup timeouts and unexpected exits deferred automatic starts for review.
 - Workflow recovery kept the mutation guard through target-specific verification and prioritized interrupted work, failures, timeouts and restarts before another repair. Repair workflows stopped for review when a provider returned an unexpected repair identity.
@@ -99,7 +102,6 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Kept app icons sharp at fractional display DPI and app zoom by caching exact pixel sizes from a covering source and aligning the final draw to device pixels.
 
 - Added the three-pane workbench: a resizable section sidebar with the icon rail, the selected tool's options in the center, and a wider output pane on the right whose Raw output opens during a run and gives way to the Readable report, plus an activity log.
-- Added the installer, portable and Microsoft Store packages. The installer checks for the .NET 10 Desktop Runtime, including the x64 runtime on Arm64 Windows, while the portable and Microsoft Store packages carry their own runtime.
 - Added category icons and a slimmer default sidebar whose buttons share the available height, keep a readable minimum with scrolling, and place icons above labels when the buttons are tall.
 - Added KillerMCP Options to the About card. Agent repairs through KillerMCP stayed off until turned on there, disruptive repairs needed a separate setting and desktop approval, and a locked state after an uncertain result could be cleared from the same place.
 - Added 13 family themes with yellow and magenta accents on the neutral and 98SE themes. New installs and the website started on Dark with the yellow accent.
@@ -125,6 +127,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Silent installs return specific Windows error codes, including 1618 when KillerBench is running so deployment tools retry, and reject a second concurrent install instead of reporting a general failure.
 - A silent install started without admin rights, as the Microsoft Store runs it, installs for the current user with no prompt instead of failing.
 - Added the KillerBench installer, which checks for the .NET 10 Desktop Runtime and adds Start menu, desktop and Installed Apps entries, and a portable build that carries its own runtime. Both packages and the single-file CLI include the GPLv3 license.
+- Added the installer, portable and Microsoft Store packages. The installer checks for the .NET 10 Desktop Runtime, including the x64 runtime on Arm64 Windows, while the portable and Microsoft Store packages carry their own runtime.
 - Added update checks on startup and from the About card. A newer release was offered with an Always check on startup box, a Check for updates on startup checkbox at the top of the About card turned the check back on, and an accepted update was checked against the release checksum and signature before it replaced the installed or portable copy.
 - Added the killerbench.net landing site with a searchable user guide, the Engine developer guide and KillerMCP setup.
 - Expanded the website Help and Technical pages with a page for every section, step-by-step guides, a command reference and a glossary, translated into all 19 languages.
@@ -136,9 +139,6 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - The website's About page has Also try cards for the other Killer Tools apps, each in its own color.
 
 ### Fixed
-- Interrupted spool-file cleanup restores the Print Spooler after a pending stop, preserves partial file counts and retained paths, and reports recovery failures.
-- Failed portable updates retain complete executable copies and a recovery report.
-- Large-file and duplicate reviews keep accessible results and report incomplete coverage when a folder cannot be read.
 - Windows contrast themes now use system colors for text, icons, panels and selections, without decorative grain or shadows.
 - On the Light theme's Yellow and Orange accents, buttons, links, tabs and accent icons keep their color with a thin gray outline around accent text and icons, instead of turning near-black or brown.
 - Gray, menu and accent text reads at 4.5:1 contrast or better in every theme and accent, and the footer's version and copyright are slightly dimmed.
