@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType><TargetFramework>net48</TargetFramework><PlatformTarget>x64</PlatformTarget>
+    <LangVersion>latest</LangVersion><Nullable>enable</Nullable><ImplicitUsings>disable</ImplicitUsings>
+    <UseWindowsForms>true</UseWindowsForms><UseWPF>true</UseWPF><DefineConstants>INSTALLER_PACKAGE</DefineConstants>
+    <EnableDefaultItems>false</EnableDefaultItems><StartupObject Condition="'$(StartupObject)' == ''">InstallerDiscoveryChecks</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../KillerLauncher/**/*.cs" Exclude="../KillerLauncher/**/obj/**/*.cs;../KillerLauncher/**/bin/**/*.cs" />
+    <Compile Include="../../Services/InstallationOwnership.cs;InstallerDiscoveryChecks.cs;LauncherPreparationProbe.cs" />
+    <Page Include="../KillerLauncher/*.xaml" Link="%(Filename)%(Extension)" />
+    <EmbeddedResource Include="$(IntermediateOutputPath)payload.zip" LogicalName="KillerLauncher.payload.zip" />
+    <EmbeddedResource Include="../KillerLauncher/Strings.xml" LogicalName="KillerLauncher.Strings.xml" />
+    <Resource Include="../../Fonts/*.ttf" Link="Fonts/%(Filename)%(Extension)" />
+    <Resource Include="../../Assets/AppIcon.ico" Link="Resources/AppIcon.ico" />
+    <Resource Include="../../Assets/AppIcon.png" Link="Resources/app-icon-master.png" />
+    <Reference Include="System.IO.Compression" /><Reference Include="System.Xml" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+  <Target Name="PrepareSyntheticPayload" BeforeTargets="PrepareResources">
+    <MakeDir Directories="$(IntermediateOutputPath)" />
+    <ZipDirectory SourceDirectory="$(MSBuildThisFileDirectory)Payload" DestinationFile="$(IntermediateOutputPath)payload.zip" Overwrite="true" />
+  </Target>
+</Project>

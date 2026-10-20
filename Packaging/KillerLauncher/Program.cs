@@ -229,21 +229,48 @@ namespace KillerLauncher
 
         internal static InstalledCopy? FindInstalledCopy()
         {
-            InstalledCopy? machine = FindInstalledCopy(MachineInstallDirectory, true);
-            return machine ?? FindInstalledCopy(UserInstallDirectory, false);
+            return FindInstalledCopy(ReadRegisteredExecutable, IsTrustedInstalledProduct, machine =>
+                File.Exists(Path.Combine(Environment.GetFolderPath(machine
+                    ? Environment.SpecialFolder.CommonDesktopDirectory
+                    : Environment.SpecialFolder.DesktopDirectory), "KillerBench.lnk")), MachineInstallDirectory, UserInstallDirectory);
         }
 
-        private static InstalledCopy? FindInstalledCopy(string directory, bool machine)
+        internal static InstalledCopy? FindInstalledCopy(Func<bool, string?> registeredExecutable,
+            Func<string, bool> trustedProduct, Func<bool, bool> desktopShortcut, string machineDefault, string userDefault)
         {
-            string executable = Path.Combine(directory, InnerExeName);
-            if (!File.Exists(executable)) return null;
+            InstalledCopy? Candidate(string? executable, bool machine)
+            {
+                if (executable == null || string.IsNullOrWhiteSpace(executable)) return null;
+                try
+                {
+                    if (!Path.IsPathRooted(executable) || !string.Equals(Path.GetFullPath(executable), executable, StringComparison.OrdinalIgnoreCase) ||
+                        !string.Equals(Path.GetFileName(executable), InnerExeName, StringComparison.OrdinalIgnoreCase)) return null;
+                    string directory = ValidateInstallDirectory(Path.GetDirectoryName(executable)!);
+                    for (var ancestor = new DirectoryInfo(directory); ancestor != null; ancestor = ancestor.Parent)
+                        if (ancestor.Exists && (ancestor.Attributes & FileAttributes.ReparsePoint) != 0) return null;
+                    if (!File.Exists(executable) || (File.GetAttributes(executable) & FileAttributes.ReparsePoint) != 0 || !trustedProduct(executable)) return null;
+                    string rawVersion = FileVersionInfo.GetVersionInfo(executable).FileVersion ?? "installed";
+                    string version = Version.TryParse(rawVersion, out Version? parsed) ? parsed.ToString(3) : rawVersion;
+                    return new InstalledCopy(directory, executable, version, machine, desktopShortcut(machine));
+                }
+                catch (Exception ex) when (ex is ArgumentException || ex is NotSupportedException || ex is IOException ||
+                    ex is UnauthorizedAccessException || ex is System.Security.SecurityException || ex is System.ComponentModel.Win32Exception || ex is InvalidOperationException)
+                { return null; }
+            }
+            return Candidate(registeredExecutable(true), true) ?? Candidate(registeredExecutable(false), false) ??
+                Candidate(Path.Combine(machineDefault, InnerExeName), true) ?? Candidate(Path.Combine(userDefault, InnerExeName), false);
+        }
 
-            string rawVersion = FileVersionInfo.GetVersionInfo(executable).FileVersion ?? "installed";
-            string version = Version.TryParse(rawVersion, out Version? parsed) ? parsed.ToString(3) : rawVersion;
-            string desktop = Path.Combine(Environment.GetFolderPath(machine
-                ? Environment.SpecialFolder.CommonDesktopDirectory
-                : Environment.SpecialFolder.DesktopDirectory), "KillerBench.lnk");
-            return new InstalledCopy(directory, executable, version, machine, File.Exists(desktop));
+        private static string? ReadRegisteredExecutable(bool machine)
+        {
+            try
+            {
+                using var registration = (machine ? Microsoft.Win32.Registry.LocalMachine : Microsoft.Win32.Registry.CurrentUser)
+                    .OpenSubKey(@"Software\KillerBench");
+                return registration?.GetValue("InstallPath") as string;
+            }
+            catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException || ex is System.Security.SecurityException)
+            { return null; }
         }
 
         internal static string SetupVersion =>
