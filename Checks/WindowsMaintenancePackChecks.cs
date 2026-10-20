@@ -6,6 +6,7 @@ internal static class WindowsMaintenancePackChecks
 {
     internal static async Task RunAsync()
     {
+        await RunSpoolerCancellationChecksAsync();
         var library = WindowsPrimitiveLibrary.Create();
         var pack = WindowsMaintenancePack.Build();
         var validation = RecipePackValidation.Validate(pack, library);
@@ -66,6 +67,177 @@ internal static class WindowsMaintenancePackChecks
             if (result.Outcome != RecipeRunOutcome.RepairAvailable || result.Action is not null) throw new Exception(recipe.Id + " did not stay inert: " + result.Outcome + " " + result.Detail);
         }
         Console.WriteLine("PASS: Windows maintenance pack (" + pack.Recipes.Count + " recipes) validates, every registered primitive is used, interpretation and option substitution fixtures pass, live reads were read-only and explicit recipes stayed inert.");
+    }
+
+    internal static async Task RunSpoolerCancellationChecksAsync()
+    {
+        using (var canceled = new CancellationTokenSource())
+        {
+            var fixture = new SpoolerFixture();
+            fixture.Command = (operation, _) =>
+            {
+                if (operation != "stop") return null;
+                fixture.Running = false;
+                canceled.Cancel();
+                return Task.FromResult(new ToolResult(0, "stop accepted", "", false));
+            };
+            var result = await fixture.ExecuteAsync(canceled.Token);
+            if (!fixture.Running || fixture.StartAttempts != 1 || fixture.RetainAttempts != 0 || result is not { Dispatched: true, Succeeded: false })
+                throw new Exception("Cancellation after an accepted stop must restore the Spooler without retaining files.");
+        }
+        using (var canceled = new CancellationTokenSource())
+        {
+            canceled.Cancel();
+            var fixture = new SpoolerFixture();
+            try { await fixture.ExecuteAsync(canceled.Token); throw new Exception("A precanceled clear was dispatched."); }
+            catch (OperationCanceledException) { }
+            if (fixture.StopAttempts != 0 || fixture.StartAttempts != 0 || fixture.RetainAttempts != 0)
+                throw new Exception("A precanceled clear touched the service or spool files.");
+        }
+        using (var canceled = new CancellationTokenSource())
+        {
+            var fixture = new SpoolerFixture();
+            fixture.Command = (operation, token) =>
+            {
+                if (operation != "stop") return null;
+                fixture.Running = false;
+                canceled.Cancel();
+                throw new OperationCanceledException(token);
+            };
+            var result = await fixture.ExecuteAsync(canceled.Token);
+            if (!fixture.Running || fixture.StartAttempts != 1 || fixture.RetainAttempts != 0 || result is not { Dispatched: true, Succeeded: false })
+                throw new Exception("A canceled stop with an uncertain outcome did not attempt restoration.");
+        }
+        var stalledStop = new SpoolerFixture { Command = (operation, _) => operation == "stop" ? NeverCompletes() : null };
+        var stalledStopResult = await stalledStop.ExecuteAsync();
+        if (stalledStop.StartAttempts != 1 || stalledStop.RetainAttempts != 0 || stalledStopResult is not { Dispatched: true, Succeeded: false, TimedOut: true })
+            throw new Exception("A stalled stop did not return bounded uncertainty and attempt restoration.");
+
+        var stalledObservation = new SpoolerFixture();
+        stalledObservation.Command = (operation, _) => operation == "query" && stalledObservation.StartAttempts == 0 ? NeverCompletes() : null;
+        var stalledObservationResult = await stalledObservation.ExecuteAsync();
+        if (!stalledObservation.Running || stalledObservation.StartAttempts != 1 || stalledObservation.RetainAttempts != 0 || stalledObservationResult is not { Succeeded: false, TimedOut: true })
+            throw new Exception("A stalled stopped-state observation retained files or skipped restoration.");
+
+        var wrongService = new SpoolerFixture();
+        wrongService.Command = (operation, _) => operation == "query" && wrongService.StartAttempts == 0
+            ? Task.FromResult(new ToolResult(0, "SERVICE_NAME: AnotherService\nSTATE : 1 STOPPED", "", false)) : null;
+        var wrongServiceResult = await wrongService.ExecuteAsync();
+        if (wrongService.RetainAttempts != 0 || wrongService.StartAttempts != 1 || wrongServiceResult.Succeeded)
+            throw new Exception("Another service's stopped state authorized spool file retention.");
+
+        var incompleteStop = new SpoolerFixture { Command = (operation, _) => operation == "stop"
+            ? Task.FromResult(new ToolResult(0, "stop result incomplete", "", false) { TimedOut = true }) : null };
+        var incompleteStopResult = await incompleteStop.ExecuteAsync();
+        if (incompleteStop.RetainAttempts != 0 || incompleteStop.StartAttempts != 1 || incompleteStopResult is not { Succeeded: false, TimedOut: true })
+            throw new Exception("An incomplete stop lost its timeout or authorized file retention.");
+
+        var rejectedStop = new SpoolerFixture { Command = (operation, _) => operation == "stop"
+            ? Task.FromResult(new ToolResult(5, "stop denied", "", false)) : null };
+        var rejectedStopResult = await rejectedStop.ExecuteAsync();
+        if (rejectedStop.StartAttempts != 0 || rejectedStop.RetainAttempts != 0 || rejectedStopResult is not { Dispatched: false, Succeeded: false })
+            throw new Exception("A rejected stop changed files or reported a dispatched service change.");
+
+        var retentionAndStartFailure = new SpoolerFixture
+        {
+            Retain = _ => Task.FromResult(new ActionResult(true, false, "retained partial spool copy", "retention fixture failure")),
+            Command = (operation, _) => operation == "start" ? Task.FromResult(new ToolResult(5, "start output", "startup fixture denied", false)) : null
+        };
+        var failedResult = await retentionAndStartFailure.ExecuteAsync();
+        if (failedResult.Succeeded || failedResult.Error is null || !failedResult.Error.Contains("retention fixture failure", StringComparison.Ordinal)
+            || !failedResult.Error.Contains("startup fixture denied", StringComparison.Ordinal) || !failedResult.Raw.Contains("retained partial spool copy", StringComparison.Ordinal))
+            throw new Exception("Retention and restoration failures were not both retained in the action result.");
+
+        var retentionThrow = new SpoolerFixture { Retain = _ => throw new IOException("retention fixture threw") };
+        var retentionThrowResult = await retentionThrow.ExecuteAsync();
+        if (!retentionThrow.Running || retentionThrow.StartAttempts != 1 || retentionThrowResult.Succeeded || !retentionThrowResult.Error!.Contains("retention fixture threw", StringComparison.Ordinal))
+            throw new Exception("A retention exception prevented restoration or lost its failure.");
+
+        var stalledRestoration = new SpoolerFixture { Command = (operation, _) => operation == "start" ? NeverCompletes() : null };
+        var stalledRestorationResult = await stalledRestoration.ExecuteAsync();
+        if (stalledRestoration.StartAttempts != 1 || stalledRestorationResult is not { Succeeded: false, TimedOut: true })
+            throw new Exception("A stalled restoration did not return a bounded failure.");
+
+        var startNotRunning = new SpoolerFixture { Command = (operation, _) => operation == "start" ? Task.FromResult(new ToolResult(0, "start accepted", "", false)) : null };
+        var startNotRunningResult = await startNotRunning.ExecuteAsync();
+        if (startNotRunningResult is not { Succeeded: false, TimedOut: true }) throw new Exception("An accepted start was reported as verified without a running Spooler.");
+
+        var incompleteRetention = new SpoolerFixture { Retain = _ => Task.FromResult(new ActionResult(true, true, "incomplete retention") { TimedOut = true }) };
+        var incompleteRetentionResult = await incompleteRetention.ExecuteAsync();
+        if (incompleteRetentionResult is not { Succeeded: false, TimedOut: true }) throw new Exception("Timed-out retention was reported successful.");
+
+        var success = new SpoolerFixture();
+        var successResult = await success.ExecuteAsync();
+        if (!success.Running || success.StartAttempts != 1 || success.RetainAttempts != 1 || successResult is not { Dispatched: true, Succeeded: true, TimedOut: false, Error: null }
+            || !successResult.Raw.Contains("spool files retained", StringComparison.Ordinal)) throw new Exception("Completed spool clearing did not retain its successful result.");
+        using (var canceled = new CancellationTokenSource())
+        {
+            var accepted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var stopResponse = new TaskCompletionSource<ToolResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+            bool observedStopped = false, prematureStart = false;
+            int pendingQueries = 0;
+            var fixture = new SpoolerFixture { Timeout = TimeSpan.FromSeconds(2) };
+            fixture.Command = (operation, _) =>
+            {
+                if (operation == "stop")
+                {
+                    fixture.Running = false;
+                    accepted.SetResult();
+                    return stopResponse.Task;
+                }
+                if (operation == "start" && !observedStopped)
+                {
+                    prematureStart = true;
+                    return Task.FromResult(new ToolResult(1061, "stop still pending", "", false));
+                }
+                if (operation == "query" && fixture.StartAttempts == 0)
+                {
+                    observedStopped = pendingQueries++ > 0;
+                    return Task.FromResult(new ToolResult(0, "SERVICE_NAME: Spooler\nSTATE : "
+                        + (observedStopped ? "1 STOPPED" : "3 STOP_PENDING"), "", false));
+                }
+                return null;
+            };
+            var operation = fixture.ExecuteAsync(canceled.Token);
+            await accepted.Task.WaitAsync(TimeSpan.FromSeconds(1));
+            canceled.Cancel();
+            await Task.Delay(100);
+            stopResponse.SetResult(new ToolResult(0, "stop accepted", "", false));
+            var result = await operation;
+            if (prematureStart || !observedStopped || !fixture.Running || fixture.StartAttempts != 1 || fixture.RetainAttempts != 0
+                || result is not { Dispatched: true, Succeeded: false })
+                throw new Exception("Canceling an in-flight accepted stop started the Spooler before its stopped state was observed.");
+        }
+        Console.WriteLine("PASS: 15 controlled spooler cases cover cancellation, uncertain and rejected stops, observation deadlines, retention failures, restoration failures and verified success. No native commands or spool file operations ran.");
+
+        static Task<ToolResult> NeverCompletes() => new TaskCompletionSource<ToolResult>().Task;
+    }
+
+    private sealed class SpoolerFixture
+    {
+        internal bool Running = true;
+        internal TimeSpan Timeout = TimeSpan.FromMilliseconds(80);
+        internal int StopAttempts, StartAttempts, RetainAttempts;
+        internal Func<string, CancellationToken, Task<ToolResult>?>? Command;
+        internal Func<CancellationToken, Task<ActionResult>>? Retain;
+
+        internal Task<ActionResult> ExecuteAsync(CancellationToken token = default) => new WindowsSpoolerClearAction(
+            (operation, _, commandToken) =>
+            {
+                commandToken.ThrowIfCancellationRequested();
+                if (operation == "stop") StopAttempts++;
+                if (operation == "start") StartAttempts++;
+                if (Command?.Invoke(operation, commandToken) is { } result) return result;
+                if (operation == "stop") Running = false;
+                if (operation == "start") Running = true;
+                return Task.FromResult(new ToolResult(0, operation == "query"
+                    ? "SERVICE_NAME: Spooler\nSTATE : " + (Running ? "4 RUNNING" : "1 STOPPED") : operation + " accepted", "", false));
+            }, (_, _, retentionToken) =>
+            {
+                retentionToken.ThrowIfCancellationRequested();
+                RetainAttempts++;
+                return Retain?.Invoke(retentionToken) ?? Task.FromResult(new ActionResult(true, true, "spool files retained"));
+            }).ExecuteAsync(new Dictionary<string, string>(), Timeout, null, token).WaitAsync(TimeSpan.FromSeconds(3));
     }
 
     private static void Verdict(RecipePack pack, string recipeId, PrimitiveResult result, ProbeVerdict expected, string what)

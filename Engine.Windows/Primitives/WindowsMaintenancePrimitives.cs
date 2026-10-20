@@ -85,6 +85,18 @@ public sealed class WindowsRetainFolderFilesAction : IActionPrimitive
 /// <summary>Stops the Print Spooler, retains every spool file under the local KillerBench data directory, and starts the spooler again. Queued jobs are lost from the queue but their files are kept.</summary>
 public sealed class WindowsSpoolerClearAction : IActionPrimitive
 {
+    private readonly Func<string, IProgress<string>?, CancellationToken, Task<ToolResult>> runCommand;
+    private readonly Func<TimeSpan, IProgress<string>?, CancellationToken, Task<ActionResult>> retainFiles;
+
+    public WindowsSpoolerClearAction(
+        Func<string, IProgress<string>?, CancellationToken, Task<ToolResult>>? runCommand = null,
+        Func<TimeSpan, IProgress<string>?, CancellationToken, Task<ActionResult>>? retainFiles = null)
+    {
+        this.runCommand = runCommand ?? ((operation, progress, token) => NativeTool.RunAsync("sc.exe", [operation, "Spooler"], progress: progress, token: token));
+        this.retainFiles = retainFiles ?? ((timeout, progress, token) => new WindowsRetainFolderFilesAction().ExecuteAsync(
+            new Dictionary<string, string> { ["folder"] = "spool-printers" }, timeout, progress, token));
+    }
+
     public string Name => "spooler.clear-spool";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [];
     public RecipeRisk Risk => RecipeRisk.Persistent;
@@ -93,23 +105,95 @@ public sealed class WindowsSpoolerClearAction : IActionPrimitive
     public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
     {
         if (!OperatingSystem.IsWindows()) return new ActionResult(false, false, "", "Spooler changes require Windows.");
-        var stop = await NativeTool.RunAsync("sc.exe", ["stop", "Spooler"], progress: progress, token: token).ConfigureAwait(false);
-        if (stop.ExitCode is not (0 or 1062)) return new ActionResult(false, false, stop.Output, "The spooler could not be stopped (sc exit " + stop.ExitCode + "); no spool file was touched.");
-        bool stopped = false;
-        for (int i = 0; i < 40 && !stopped; i++)
+        if (timeout <= TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(timeout));
+        token.ThrowIfCancellationRequested();
+        TimeSpan limit = timeout < TimeSpan.FromSeconds(20) ? timeout : TimeSpan.FromSeconds(20);
+        var evidence = new Dictionary<string, string>();
+        string? failure = null;
+        bool restore = false, started = false, timedOut = false;
+        ActionResult? retained = null;
+        string stage = "Stopping the Spooler";
+        try
         {
-            var query = await NativeTool.RunAsync("sc.exe", ["query", "Spooler"], token: token).ConfigureAwait(false);
-            stopped = ServiceRecovery.State(query) == 1;
-            if (!stopped) await Task.Delay(500, token).ConfigureAwait(false);
+            using var stopDeadline = new CancellationTokenSource(limit);
+            // Once dispatched, a canceled or incomplete stop may still have reached the service.
+            restore = true;
+            var stop = await CommandAsync("stop", progress, stopDeadline.Token).ConfigureAwait(false);
+            evidence["stop"] = Describe(stop);
+            timedOut |= stop.TimedOut;
+            if (stop.ExitCode is not (0 or 1062) && !stop.TimedOut && !stop.Truncated)
+            {
+                restore = false;
+                return new ActionResult(false, false, Raw(), "The Spooler stop was rejected; no spool file was touched.");
+            }
+            if (!Complete(stop)) throw new IOException("The Spooler stop returned incomplete evidence.");
+            stage = "Confirming the stopped Spooler";
+            using (var observation = new CancellationTokenSource(limit))
+                await ObserveAsync(1, "stopped-state", observation.Token).ConfigureAwait(false);
+
+            stage = "Retaining spool files";
+            token.ThrowIfCancellationRequested();
+            using var retentionDeadline = CancellationTokenSource.CreateLinkedTokenSource(token);
+            retentionDeadline.CancelAfter(limit);
+            retained = await retainFiles(timeout, progress, retentionDeadline.Token).WaitAsync(retentionDeadline.Token).ConfigureAwait(false);
+            evidence["retain"] = retained.Raw + (string.IsNullOrWhiteSpace(retained.Error) ? "" : "\n" + retained.Error);
+            timedOut |= retained.TimedOut;
+            if (!retained.Succeeded || retained.TimedOut) failure = "Spool file retention did not complete: " + (retained.Error ?? "no complete result was returned.");
         }
-        if (!stopped) return new ActionResult(true, false, stop.Output, "The spooler did not reach the stopped state; no spool file was touched. Start it again if it stays stopped.");
-        var retained = await new WindowsRetainFolderFilesAction().ExecuteAsync(new Dictionary<string, string> { ["folder"] = "spool-printers" }, timeout, progress, CancellationToken.None).ConfigureAwait(false);
-        var start = await NativeTool.RunAsync("sc.exe", ["start", "Spooler"], progress: progress, token: CancellationToken.None).ConfigureAwait(false);
-        bool started = start.ExitCode is 0 or 1056;
-        string raw = "stop: " + stop.ExitCode + "; retain: " + retained.Raw + "; start: " + start.ExitCode;
-        return new ActionResult(true, retained.Succeeded && started, raw,
-            !started ? "Spool files were retained but the spooler did not start (sc exit " + start.ExitCode + ")." : retained.Error);
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or OperationCanceledException or System.ComponentModel.Win32Exception)
+        {
+            timedOut |= error is OperationCanceledException && !token.IsCancellationRequested;
+            failure = stage + " failed: " + (error is OperationCanceledException
+                ? token.IsCancellationRequested ? "the operation was canceled; no further spool files were retained." : "the operation exceeded its time limit."
+                : error.Message);
+        }
+        finally
+        {
+            if (restore)
+            {
+                try
+                {
+                    // Restoration has its own deadline and outlives the caller's cancellation.
+                    using var restoration = new CancellationTokenSource(limit);
+                    var start = await CommandAsync("start", progress, restoration.Token).ConfigureAwait(false);
+                    evidence["start"] = Describe(start);
+                    timedOut |= start.TimedOut;
+                    if (!Complete(start) || start.ExitCode is not (0 or 1056)) throw new IOException("The start command failed or returned incomplete evidence: " + Describe(start));
+                    await ObserveAsync(4, "running-state", restoration.Token).ConfigureAwait(false);
+                    started = true;
+                }
+                catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or OperationCanceledException or System.ComponentModel.Win32Exception)
+                {
+                    timedOut |= error is OperationCanceledException;
+                    failure = (failure is null ? "" : failure + " ") + "Spooler restoration was not verified: "
+                        + (error is OperationCanceledException ? "the restoration exceeded its time limit." : error.Message);
+                }
+            }
+        }
+        return new ActionResult(true, retained is { Succeeded: true } && started && failure is null, Raw(), failure) { TimedOut = timedOut };
+
+        async Task<ToolResult> CommandAsync(string operation, IProgress<string>? output, CancellationToken commandToken)
+            => await runCommand(operation, output, commandToken).WaitAsync(commandToken).ConfigureAwait(false);
+
+        async Task ObserveAsync(int desired, string key, CancellationToken observationToken)
+        {
+            while (true)
+            {
+                var query = await CommandAsync("query", null, observationToken).ConfigureAwait(false);
+                evidence[key] = Describe(query);
+                timedOut |= query.TimedOut;
+                if (!Complete(query) || !ServiceRecovery.MatchesService(query, "Spooler")) throw new IOException("The exact Spooler state could not be confirmed.");
+                if (ServiceRecovery.State(query) == desired) return;
+                await Task.Delay(TimeSpan.FromMilliseconds(500), observationToken).ConfigureAwait(false);
+            }
+        }
+
+        string Raw() => string.Join("\n", evidence.Select(pair => pair.Key + ": " + pair.Value));
     }
+
+    private static bool Complete(ToolResult result) => !result.TimedOut && !result.Truncated && string.IsNullOrWhiteSpace(result.Error);
+    private static string Describe(ToolResult result) => "exit=" + result.ExitCode + "; timedOut=" + result.TimedOut + "; truncated=" + result.Truncated
+        + "\n" + result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
 }
 
 /// <summary>Reports the IPv6 or IPv4 MTU of one interface through Get-NetIPInterface. Value is the MTU in bytes.</summary>
