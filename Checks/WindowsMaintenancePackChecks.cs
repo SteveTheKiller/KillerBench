@@ -60,7 +60,7 @@ internal static class WindowsMaintenancePackChecks
         var inert = new PrimitiveLibrary("Windows");
         foreach (var probe in library.Probes) inert.AddProbe(new Fake(probe.Name, probe.Parameters));
         foreach (var action in library.Actions) inert.AddAction(new FakeAction(action.Name, action.Parameters, action.Risk, action.RequiresElevation));
-        var runner = new RecipeRunner(inert, new MemoryRecipeJournal());
+        var runner = new RecipeRunner(inert, new MemoryRecipeJournal(), new MemoryRecipeOperationStore());
         foreach (var recipe in pack.Recipes.Where(r => r.RequiresExplicitOptions))
         {
             var result = await runner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true, Elevated = true });
@@ -313,7 +313,7 @@ internal static class WindowsMaintenancePackChecks
                     library.AddAction(fixture.CreateAction());
                     journal = new MemoryRecipeJournal();
                     var recipe = WindowsMaintenancePack.Build().Recipes.Single(r => r.Id == "printing.spool-clear");
-                    var run = await new RecipeRunner(library, journal).RunAsync(recipe,
+                    var run = await new RecipeRunner(library, journal, new MemoryRecipeOperationStore()).RunAsync(recipe,
                         new RecipeRunOptions { AuthorizeRepair = true, Elevated = true, ExplicitOptionsConfirmed = true }, canceled.Token);
                     if (!run.ExecutionUncertain) failures.Add("Journaled partial retention was not reported uncertain.");
                     result = run.Action;

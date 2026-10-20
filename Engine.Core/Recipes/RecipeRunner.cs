@@ -34,10 +34,11 @@ public sealed record RecipeRunOptions
 /// Runs one declarative recipe: detect, then when authorized check preconditions, re-detect immediately before the change,
 /// journal, dispatch the action once, verify and report. It never retries and fails closed on incomplete evidence.
 /// </summary>
-public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journal)
+public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journal, IRecipeOperationStore? operationStore = null)
 {
     private readonly PrimitiveLibrary library = library ?? throw new ArgumentNullException(nameof(library));
     private readonly IRecipeJournal journal = journal ?? throw new ArgumentNullException(nameof(journal));
+    private readonly IRecipeOperationStore operationStore = operationStore ?? FileRecipeOperationStore.ForCurrentUser();
 
     public async Task<RecipeRunResult> RunAsync(RecipeDefinition recipe, RecipeRunOptions options, CancellationToken token = default)
     {
@@ -62,6 +63,8 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
         recipe = RecipeOptions.Apply(recipe, optionValues);
         ActionResult? dispatchedAction = null;
         bool dispatchAttempted = false;
+        IRecipeOperationLease? operation = null;
+        bool verifiedOperation = false;
 
         try
         {
@@ -69,6 +72,8 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
             var detect = await ProbeAsync("detect", recipe.Detect, recipe.InspectionTimeout, token).ConfigureAwait(false);
             probes.Add(detect);
             await RecordAsync(recipe, RecipeJournalStage.Detected, detect.Evaluation.Verdict + ": " + detect.Evaluation.Detail, detect.Result.Raw).ConfigureAwait(false);
+            if (recipe.Action is not null && await operationStore.IsPendingAsync(RecipeOperationIdentity.FromResolvedRecipe(recipe), token).ConfigureAwait(false))
+                return Result(RecipeRunOutcome.Unknown, "A prior operation for this recipe is unresolved. Current detection is read-only evidence and cannot establish that the earlier operation has stopped. No new repair was dispatched; operation-specific recovery review is required.", uncertain: true);
             switch (detect.Evaluation.Verdict)
             {
                 case ProbeVerdict.Clear:
@@ -91,6 +96,10 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
                 return Result(RecipeRunOutcome.Blocked, "Administrator access is required for this repair. No change was made.");
             var action = library.FindAction(recipe.Action.Primitive)
                 ?? throw new InvalidOperationException("Action primitive " + recipe.Action.Primitive + " is not available on " + library.Platform + ".");
+
+            operation = await operationStore.TryBeginAsync(RecipeOperationIdentity.FromResolvedRecipe(recipe), token).ConfigureAwait(false);
+            if (operation is null)
+                return Result(RecipeRunOutcome.Unknown, "A previous operation for this recipe is active or unresolved. No repair was dispatched. Read-only inspection does not clear this barrier; operation-specific recovery review is required.", uncertain: true);
 
             foreach (var precondition in recipe.Preconditions)
             {
@@ -124,6 +133,7 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
                 deadline.CancelAfter(recipe.Action.Timeout > recipe.ExecutionTimeout ? recipe.ExecutionTimeout : recipe.Action.Timeout);
                 try
                 {
+                    deadline.Token.ThrowIfCancellationRequested();
                     dispatchAttempted = true;
                     actionResult = await action.ExecuteAsync(recipe.Action.Parameters, recipe.Action.Timeout, options.Progress, deadline.Token).ConfigureAwait(false)
                         ?? throw new InvalidOperationException("The action primitive returned no result.");
@@ -156,6 +166,7 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
             {
                 if (!await RecordAfterDispatchAsync(RecipeJournalStage.Completed, "Repaired and verified within scope: " + recipe.VerificationScope, null).ConfigureAwait(false))
                     return Result(RecipeRunOutcome.Unknown, "The journal could not be saved after the action. Stop further repairs and inspect the current state before retrying.", actionResult, uncertain: true, journalFailure: true);
+                verifiedOperation = true;
                 return Result(RecipeRunOutcome.Repaired, "Verified: " + recipe.VerificationScope + ". " + recipe.Limitations, actionResult);
             }
             return Result(RecipeRunOutcome.NeedsAttention,
@@ -166,6 +177,18 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
         {
             bool uncertain = dispatchAttempted && dispatchedAction is not { Dispatched: false };
             return Result(RecipeRunOutcome.Canceled, "Canceled. Review the journal before retrying; a dispatched change may have completed.", dispatchedAction, uncertain);
+        }
+        finally
+        {
+            if (operation is not null)
+            {
+                try
+                {
+                    if (!dispatchAttempted || dispatchedAction is { Dispatched: false } || verifiedOperation)
+                        await operation.CompleteAsync(CancellationToken.None).ConfigureAwait(false);
+                }
+                finally { operation.Dispose(); }
+            }
         }
     }
 

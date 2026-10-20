@@ -47,13 +47,13 @@ public sealed record GoalRunOptions
 /// Drives a symptom toward resolution: confirm the symptom, walk its triage tree running recipes and probes, re-confirm after a
 /// verified repair, and report what was repaired, ruled out and left unresolved. Budgets bound every walk; the runner never loops a tree.
 /// </summary>
-public sealed class GoalRunner(SymptomCatalog catalog, IReadOnlyList<RecipePack> packs, PrimitiveLibrary library, IRecipeJournal journal)
+public sealed class GoalRunner(SymptomCatalog catalog, IReadOnlyList<RecipePack> packs, PrimitiveLibrary library, IRecipeJournal journal, IRecipeOperationStore? operationStore = null)
 {
     private readonly SymptomCatalog catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
     private readonly Dictionary<string, RecipeDefinition> recipes = (packs ?? throw new ArgumentNullException(nameof(packs)))
         .SelectMany(pack => pack.Recipes).GroupBy(recipe => recipe.Id, StringComparer.Ordinal).ToDictionary(group => group.Key, group => group.First(), StringComparer.Ordinal);
     private readonly PrimitiveLibrary library = library ?? throw new ArgumentNullException(nameof(library));
-    private readonly RecipeRunner recipeRunner = new(library ?? throw new ArgumentNullException(nameof(library)), journal ?? throw new ArgumentNullException(nameof(journal)));
+    private readonly RecipeRunner recipeRunner = new(library ?? throw new ArgumentNullException(nameof(library)), journal ?? throw new ArgumentNullException(nameof(journal)), operationStore);
 
     public async Task<GoalReport> RunAsync(string symptomId, GoalRunOptions options, CancellationToken token = default)
     {

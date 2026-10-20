@@ -80,7 +80,7 @@ internal static class WindowsServicePackChecks
             .AddAction(start);
         var journal = new MemoryRecipeJournal();
         var spooler = pack.Recipes.Single(recipe => recipe.Id == "printing.spooler");
-        var runner = new RecipeRunner(substituted, journal);
+        var runner = new RecipeRunner(substituted, journal, new MemoryRecipeOperationStore());
         var repaired = await runner.RunAsync(spooler, new RecipeRunOptions { AuthorizeRepair = true, Elevated = true });
         if (repaired.Outcome != RecipeRunOutcome.Repaired || start.Started.Count != 1 || start.Started[0] != "Spooler")
             throw new Exception("Generated Spooler recipe did not repair through the runner: " + repaired.Detail);

@@ -22,7 +22,7 @@ internal static class GoalOptionValidationChecks
         var catalog = new SymptomCatalog(1, "test.catalog", 1, "Test", "Test",
             [new Symptom("test.symptom", "Symptom", "Test", "Fixture") { TreeId = tree.Id, Confirm = Probe("confirm") }], [tree]);
         var runner = new GoalRunner(catalog, [new RecipePack(1, "test.pack", 1, "Test", "Test", [adapter, unrelated])],
-            new PrimitiveLibrary("Test").AddProbe(probe), new MemoryRecipeJournal());
+            new PrimitiveLibrary("Test").AddProbe(probe), new MemoryRecipeJournal(), new MemoryRecipeOperationStore());
 
         var rejected = await runner.RunAsync("test.symptom", Options("adpater", "Other Adapter"));
         if (rejected.Outcome != GoalOutcome.Blocked || rejected.Steps.Count != 0 || observed.Count != 0 || !rejected.Detail.Contains("adpater", StringComparison.Ordinal))
@@ -45,7 +45,7 @@ internal static class GoalOptionValidationChecks
         observed.Clear();
         var noTree = catalog with { Symptoms = [catalog.Symptoms[0] with { TreeId = null }] };
         var noTreeReport = await new GoalRunner(noTree, [new RecipePack(1, "test.pack", 1, "Test", "Test", [adapter])],
-            new PrimitiveLibrary("Test").AddProbe(probe), new MemoryRecipeJournal()).RunAsync("test.symptom", Options("adapter", "Other Adapter"));
+            new PrimitiveLibrary("Test").AddProbe(probe), new MemoryRecipeJournal(), new MemoryRecipeOperationStore()).RunAsync("test.symptom", Options("adapter", "Other Adapter"));
         if (noTreeReport.Outcome != GoalOutcome.Blocked || observed.Count != 0)
             throw new Exception("A symptom without reachable recipes accepted an unused target before confirmation.");
 

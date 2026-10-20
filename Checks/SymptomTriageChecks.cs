@@ -110,7 +110,7 @@ internal static class SymptomTriageChecks
             .AddProbe(new FakeProbe("service.check", name => states[name]))
             .AddProbe(new FakeProbe("service.running", name => runningNow.Contains(name) ? "Running" : "NotRunning"))
             .AddAction(new FakeAction(name => { runningNow.Add(name); states[name] = "Clear"; }));
-        var runner = new GoalRunner(catalog, [pack], live, new MemoryRecipeJournal());
+        var runner = new GoalRunner(catalog, [pack], live, new MemoryRecipeJournal(), new MemoryRecipeOperationStore());
         var unauthorized = await runner.RunAsync("test.symptom", new GoalRunOptions());
         if (unauthorized.Outcome != GoalOutcome.NeedsHuman || unauthorized.RuledOut.SequenceEqual(["test.alpha"]) == false || unauthorized.Unresolved.SequenceEqual(["test.beta"]) == false || runningNow.Count != 0)
             throw new Exception("Unauthorized triage did not stop at the authorize hand-off: " + unauthorized.Outcome + " " + unauthorized.Detail);
@@ -125,7 +125,7 @@ internal static class SymptomTriageChecks
         var noTriage = await runner.RunAsync("test.other", new GoalRunOptions());
         if (noTriage.Outcome != GoalOutcome.NoTriage || noTriage.Guidance != "No triage yet.") throw new Exception("Symptom without a tree did not report NoTriage.");
         var repairCap = new GoalRunner(catalog, [pack], new PrimitiveLibrary("Test")
-            .AddProbe(new FakeProbe("service.check", _ => "Repairable")).AddProbe(new FakeProbe("service.running", _ => "Running")).AddAction(new FakeAction(_ => { })), new MemoryRecipeJournal());
+            .AddProbe(new FakeProbe("service.check", _ => "Repairable")).AddProbe(new FakeProbe("service.running", _ => "Running")).AddAction(new FakeAction(_ => { })), new MemoryRecipeJournal(), new MemoryRecipeOperationStore());
         var capped = await repairCap.RunAsync("test.symptom", new GoalRunOptions { AuthorizeRepair = true, MaximumRepairs = 1 });
         if (capped.Repaired.Count != 1 || capped.Outcome != GoalOutcome.NeedsHuman) throw new Exception("Repair cap was not enforced: " + capped.Outcome + " repaired " + capped.Repaired.Count);
         int dispatchedBeforeJournalFailure = 0;
@@ -133,7 +133,7 @@ internal static class SymptomTriageChecks
             .AddProbe(new FakeProbe("service.check", _ => "Repairable"))
             .AddProbe(new FakeProbe("service.running", _ => "Running"))
             .AddAction(new FakeAction(_ => dispatchedBeforeJournalFailure++));
-        var journalFailureRunner = new GoalRunner(catalog, [pack], journalFailureLibrary, new DispatchedJournalFailure());
+        var journalFailureRunner = new GoalRunner(catalog, [pack], journalFailureLibrary, new DispatchedJournalFailure(), new MemoryRecipeOperationStore());
         var journalFailureReport = await journalFailureRunner.RunAsync("test.symptom", new GoalRunOptions { AuthorizeRepair = true });
         if (journalFailureReport.Outcome != GoalOutcome.Unresolved || dispatchedBeforeJournalFailure != 1 ||
             !journalFailureReport.Unresolved.SequenceEqual(["test.alpha"]) ||
@@ -144,7 +144,7 @@ internal static class SymptomTriageChecks
         var confirmed = catalog with { Symptoms = [catalog.Symptoms[0] with { Confirm = new ProbeSpec("service.check", new Dictionary<string, string> { ["name"] = "Symptom" }, StateExpect()) }, catalog.Symptoms[1]] };
         var confirmStates = new Dictionary<string, string> { ["Symptom"] = "Clear", ["Alpha"] = "Repairable", ["Beta"] = "Clear" };
         var confirmLibrary = new PrimitiveLibrary("Test").AddProbe(new FakeProbe("service.check", name => confirmStates[name])).AddProbe(new FakeProbe("service.running", _ => "Running")).AddAction(new FakeAction(name => confirmStates[name] = "Clear"));
-        var confirmRunner = new GoalRunner(confirmed, [pack], confirmLibrary, new MemoryRecipeJournal());
+        var confirmRunner = new GoalRunner(confirmed, [pack], confirmLibrary, new MemoryRecipeJournal(), new MemoryRecipeOperationStore());
         var absent = await confirmRunner.RunAsync("test.symptom", new GoalRunOptions { AuthorizeRepair = true });
         if (absent.Outcome != GoalOutcome.Resolved || absent.Steps.Count != 1) throw new Exception("Absent symptom still ran triage.");
         confirmStates["Symptom"] = "Repairable";
@@ -157,7 +157,7 @@ internal static class SymptomTriageChecks
             new TriageNode("no", TriageNodeKind.Terminal) { Terminal = TriageTerminal.RuledOut }]);
         var asking = new SymptomCatalog(1, "test.ask", 1, "Test", "Ask", [new Symptom("test.asked", "Asked", "Test", "Asks.") { TreeId = "test.ask" }], [askTree]);
         if (!SymptomCatalogValidation.Validate(asking, [pack], library).IsValid) throw new Exception("Ask catalog was rejected.");
-        var askRunner = new GoalRunner(asking, [pack], library, new MemoryRecipeJournal());
+        var askRunner = new GoalRunner(asking, [pack], library, new MemoryRecipeJournal(), new MemoryRecipeOperationStore());
         var unanswered = await askRunner.RunAsync("test.asked", new GoalRunOptions());
         if (unanswered.Outcome != GoalOutcome.NeedsHuman || unanswered.OpenQuestions.Count != 1) throw new Exception("Unanswered question was not surfaced.");
         var answered = await askRunner.RunAsync("test.asked", new GoalRunOptions { Answer = (_, _, _) => Task.FromResult<string?>("a") });
@@ -170,7 +170,7 @@ internal static class SymptomTriageChecks
             .AddProbe(new FakeProbe("service.check", _ => "Repairable"))
             .AddProbe(new FakeProbe("service.running", _ => "NotRunning"))
             .AddAction(new FakeAction(_ => canceledAfterRepair.Cancel()));
-        var cancelRunner = new GoalRunner(catalog, [pack], cancelLibrary, new MemoryRecipeJournal());
+        var cancelRunner = new GoalRunner(catalog, [pack], cancelLibrary, new MemoryRecipeJournal(), new MemoryRecipeOperationStore());
         var canceledReport = await cancelRunner.RunAsync("test.symptom", new GoalRunOptions { AuthorizeRepair = true }, canceledAfterRepair.Token);
         if (canceledReport.Outcome != GoalOutcome.Canceled || !canceledReport.Unresolved.Contains("test.alpha") ||
             canceledReport.Steps is not [{ Recipe: { Outcome: RecipeRunOutcome.Canceled, Action: { Dispatched: true }, ExecutionUncertain: true } }])

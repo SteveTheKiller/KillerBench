@@ -114,7 +114,7 @@ internal static class WindowsSystemPackChecks
             .AddProbe(new Fake("bcd.bootsequence", _ => new PrimitiveResult(true, null, "")))
             .AddProbe(new Fake("process.running", _ => new PrimitiveResult(true, "Running", "")))
             .AddAction(new FakeAction("memory-diagnostic.schedule", RecipeRisk.Persistent, true))
-            .AddAction(new FakeAction("explorer.restart", RecipeRisk.Reversible, false)), new MemoryRecipeJournal());
+            .AddAction(new FakeAction("explorer.restart", RecipeRisk.Reversible, false)), new MemoryRecipeJournal(), new MemoryRecipeOperationStore());
         foreach (var recipe in new[] { memory, pack.Recipes.Single(r => r.Id == "shell.explorer-restart") })
         {
             var result = await runner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true, Elevated = true });
@@ -137,7 +137,7 @@ internal static class WindowsSystemPackChecks
                 .AddProbe(new StoreProbe("registry.value", library.FindProbe("registry.value")!.Parameters, p =>
                     p["hive"] == "HKLM" ? new PrimitiveResult(true, managed ? "Updater.fpi" : null, managed ? "String: Updater.fpi" : "value absent") : new PrimitiveResult(true, updateMode, "String: " + updateMode)))
                 .AddAction(new StoreAction("registry.set-string", library.FindAction("registry.set-string")!.Parameters, p => { writes++; writtenKey = p["key"]; updateMode = p["value"]; return new ActionResult(true, true, "prior=String:2; after=String:0"); }));
-            var foxitRunner = new RecipeRunner(foxitLibrary, new MemoryRecipeJournal());
+            var foxitRunner = new RecipeRunner(foxitLibrary, new MemoryRecipeJournal(), new MemoryRecipeOperationStore());
             var options = new Dictionary<string, string> { ["product"] = "Foxit PDF Editor 12.0" };
             var gated = await foxitRunner.RunAsync(foxit, new RecipeRunOptions { AuthorizeRepair = true, Options = options });
             if (gated.Outcome != RecipeRunOutcome.RepairAvailable || writes != 0) throw new Exception("Foxit updater change dispatched without explicit confirmation.");
@@ -149,7 +149,7 @@ internal static class WindowsSystemPackChecks
         var guardLibrary = new PrimitiveLibrary("Windows")
             .AddProbe(new StoreProbe("registry.value", library.FindProbe("registry.value")!.Parameters, _ => new PrimitiveResult(true, "2", "String: 2")))
             .AddAction(new StoreAction("registry.set-string", library.FindAction("registry.set-string")!.Parameters, _ => throw new InvalidOperationException("A malformed Foxit product name reached the registry.")));
-        var badProduct = await new RecipeRunner(guardLibrary, new MemoryRecipeJournal()).RunAsync(foxit, new RecipeRunOptions { AuthorizeRepair = true, ExplicitOptionsConfirmed = true, Options = new Dictionary<string, string> { ["product"] = @"Foxit PDF Editor\..\x" } });
+        var badProduct = await new RecipeRunner(guardLibrary, new MemoryRecipeJournal(), new MemoryRecipeOperationStore()).RunAsync(foxit, new RecipeRunOptions { AuthorizeRepair = true, ExplicitOptionsConfirmed = true, Options = new Dictionary<string, string> { ["product"] = @"Foxit PDF Editor\..\x" } });
         if (badProduct.Outcome == RecipeRunOutcome.Repaired || badProduct.Action is not null) throw new Exception("A malformed Foxit product name reached the registry.");
         Console.WriteLine("PASS: Windows system pack (" + pack.Recipes.Count + " recipes): secure channel, Entra, Group Policy age and boot sequence interpretation fixtures; Foxit updater policy, option and explicit gates substituted; live dsregcmd and CPU sample were read-only; explicit-option recipes never dispatched.");
     }

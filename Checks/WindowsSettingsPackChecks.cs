@@ -111,7 +111,7 @@ internal static class WindowsSettingsPackChecks
             .AddAction(new FakeAction("tpm.initialize", [], RecipeRisk.Persistent, true, _ => throw new InvalidOperationException("TPM initialization must not run in substituted checks.")))
             .AddAction(new FakeAction("explorer.start", [], RecipeRisk.Reversible, false, _ => new ActionResult(true, true, "started")));
         if (!RecipePackValidation.Validate(pack, substituted).IsValid) throw new Exception("Settings pack did not validate against the substituted library.");
-        var runner = new RecipeRunner(substituted, new MemoryRecipeJournal());
+        var runner = new RecipeRunner(substituted, new MemoryRecipeJournal(), new MemoryRecipeOperationStore());
         var explicitOnly = await runner.RunAsync(fastStartup, new RecipeRunOptions { AuthorizeRepair = true, Elevated = true });
         if (explicitOnly.Outcome != RecipeRunOutcome.RepairAvailable || setDword.Calls != 0) throw new Exception("Explicit-option Fast Startup recipe dispatched without explicit options.");
         clearSafeboot.Calls = 0;
@@ -119,7 +119,7 @@ internal static class WindowsSettingsPackChecks
         if (cleared.Outcome != RecipeRunOutcome.NeedsAttention || !cleared.ExecutionUncertain || clearSafeboot.Calls != 1) throw new Exception("Safeboot verify with the flag still present was not reported as uncertain: " + cleared.Outcome);
         safeboot = "Minimal";
         var fixedRunner = new RecipeRunner(new PrimitiveLibrary("Windows").AddProbe(new FakeProbe("bcd.safeboot", [], _ => { var current = safeboot; return new PrimitiveResult(true, current, ""); }))
-            .AddAction(new FakeAction("bcd.safeboot-clear", [], RecipeRisk.Persistent, true, _ => { safeboot = null!; return new ActionResult(true, true, "ok"); })), new MemoryRecipeJournal());
+            .AddAction(new FakeAction("bcd.safeboot-clear", [], RecipeRisk.Persistent, true, _ => { safeboot = null!; return new ActionResult(true, true, "ok"); })), new MemoryRecipeJournal(), new MemoryRecipeOperationStore());
         var repaired = await fixedRunner.RunAsync(safebootRecipe, new RecipeRunOptions { AuthorizeRepair = true, Elevated = true });
         if (repaired.Outcome != RecipeRunOutcome.Repaired) throw new Exception("Safeboot clear was not verified: " + repaired.Detail);
         safeboot = "Minimal";
