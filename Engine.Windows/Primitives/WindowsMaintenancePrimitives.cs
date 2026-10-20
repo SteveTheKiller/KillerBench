@@ -155,11 +155,7 @@ public sealed class WindowsSpoolerClearAction : IActionPrimitive
                 {
                     // Restoration has its own deadline and outlives the caller's cancellation.
                     using var restoration = new CancellationTokenSource(limit);
-                    var start = await CommandAsync("start", progress, restoration.Token).ConfigureAwait(false);
-                    evidence["start"] = Describe(start);
-                    timedOut |= start.TimedOut;
-                    if (!Complete(start) || start.ExitCode is not (0 or 1056)) throw new IOException("The start command failed or returned incomplete evidence: " + Describe(start));
-                    await ObserveAsync(4, "running-state", restoration.Token).ConfigureAwait(false);
+                    await RestoreAsync(restoration.Token).ConfigureAwait(false);
                     started = true;
                 }
                 catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or OperationCanceledException or System.ComponentModel.Win32Exception)
@@ -177,14 +173,50 @@ public sealed class WindowsSpoolerClearAction : IActionPrimitive
 
         async Task ObserveAsync(int desired, string key, CancellationToken observationToken)
         {
+            int attempt = 0;
             while (true)
             {
                 var query = await CommandAsync("query", null, observationToken).ConfigureAwait(false);
-                evidence[key] = Describe(query);
+                evidence[key + "-" + ++attempt] = Describe(query);
                 timedOut |= query.TimedOut;
                 if (!Complete(query) || !ServiceRecovery.MatchesService(query, "Spooler")) throw new IOException("The exact Spooler state could not be confirmed.");
                 if (ServiceRecovery.State(query) == desired) return;
                 await Task.Delay(TimeSpan.FromMilliseconds(500), observationToken).ConfigureAwait(false);
+            }
+        }
+
+        async Task RestoreAsync(CancellationToken restorationToken)
+        {
+            var start = await StartAsync("start").ConfigureAwait(false);
+            bool correctiveAllowed = start.ExitCode is 1056 or 1061, corrected = false;
+            int attempt = 0;
+            while (true)
+            {
+                var query = await CommandAsync("query", null, restorationToken).ConfigureAwait(false);
+                evidence["running-state-" + ++attempt] = Describe(query);
+                timedOut |= query.TimedOut;
+                if (!Complete(query) || !ServiceRecovery.MatchesService(query, "Spooler")) throw new IOException("The exact Spooler state could not be confirmed.");
+                int? state = ServiceRecovery.State(query);
+                if (state == 4) return;
+                if (state == 3 && !corrected) correctiveAllowed = true;
+                if (state == 1 && correctiveAllowed && !corrected)
+                {
+                    // The accepted stop has now finished. Permit one start after STOPPED under
+                    // this same deadline, preserving the earlier response and every state query.
+                    corrected = true;
+                    await StartAsync("start-after-stopped").ConfigureAwait(false);
+                    continue;
+                }
+                await Task.Delay(TimeSpan.FromMilliseconds(500), restorationToken).ConfigureAwait(false);
+            }
+
+            async Task<ToolResult> StartAsync(string key)
+            {
+                var result = await CommandAsync("start", progress, restorationToken).ConfigureAwait(false);
+                evidence[key] = Describe(result);
+                timedOut |= result.TimedOut;
+                if (!Complete(result) || result.ExitCode is not (0 or 1056 or 1061)) throw new IOException("The start command failed or returned incomplete evidence: " + Describe(result));
+                return result;
             }
         }
 

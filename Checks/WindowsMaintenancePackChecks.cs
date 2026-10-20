@@ -160,7 +160,7 @@ internal static class WindowsMaintenancePackChecks
 
         var startNotRunning = new SpoolerFixture { Command = (operation, _) => operation == "start" ? Task.FromResult(new ToolResult(0, "start accepted", "", false)) : null };
         var startNotRunningResult = await startNotRunning.ExecuteAsync();
-        if (startNotRunningResult is not { Succeeded: false, TimedOut: true }) throw new Exception("An accepted start was reported as verified without a running Spooler.");
+        if (startNotRunning.StartAttempts != 1 || startNotRunningResult is not { Succeeded: false, TimedOut: true }) throw new Exception("An accepted start was reported as verified without a running Spooler, or retried without observing a pending stop.");
 
         var incompleteRetention = new SpoolerFixture { Retain = _ => Task.FromResult(new ActionResult(true, true, "incomplete retention") { TimedOut = true }) };
         var incompleteRetentionResult = await incompleteRetention.ExecuteAsync();
@@ -208,9 +208,64 @@ internal static class WindowsMaintenancePackChecks
                 || result is not { Dispatched: true, Succeeded: false })
                 throw new Exception("Canceling an in-flight accepted stop started the Spooler before its stopped state was observed.");
         }
+        await RunPendingStopRecoveryChecksAsync();
         Console.WriteLine("PASS: 15 controlled spooler cases cover cancellation, uncertain and rejected stops, observation deadlines, retention failures, restoration failures and verified success. No native commands or spool file operations ran.");
 
         static Task<ToolResult> NeverCompletes() => new TaskCompletionSource<ToolResult>().Task;
+    }
+
+    internal static async Task RunPendingStopRecoveryChecksAsync()
+    {
+        var failures = new List<string>();
+        foreach (bool observationTimeout in new[] { false, true })
+        foreach (int prematureExit in new[] { 1056, 1061 })
+        {
+            bool stopPending = true;
+            int recoveryQueries = 0;
+            var fixture = new SpoolerFixture { Timeout = TimeSpan.FromMilliseconds(800), Running = false };
+            fixture.Command = (operation, _) =>
+            {
+                if (operation == "stop") return Task.FromResult(new ToolResult(0, "stop accepted", "", false) { TimedOut = !observationTimeout });
+                if (operation == "start" && stopPending) return Task.FromResult(new ToolResult(prematureExit, "stop is pending", "", false));
+                if (operation == "query" && fixture.StartAttempts == 0 && observationTimeout)
+                    return new TaskCompletionSource<ToolResult>().Task;
+                if (operation == "query" && !fixture.Running)
+                {
+                    stopPending = recoveryQueries++ == 0;
+                    return Task.FromResult(new ToolResult(0, "SERVICE_NAME: Spooler\nSTATE : "
+                        + (stopPending ? "3 STOP_PENDING" : "1 STOPPED"), "", false));
+                }
+                return null;
+            };
+            var result = await fixture.ExecuteAsync();
+            if (!fixture.Running || fixture.StartAttempts != 2 || fixture.RetainAttempts != 0
+                || result is not { Dispatched: true, Succeeded: false, TimedOut: true }
+                || !result.Raw.Contains("4 RUNNING", StringComparison.Ordinal)
+                || !result.Raw.Contains("exit=" + prematureExit, StringComparison.Ordinal)
+                || !result.Raw.Contains("3 STOP_PENDING", StringComparison.Ordinal)
+                || !result.Raw.Contains("1 STOPPED", StringComparison.Ordinal)
+                || !result.Raw.Contains("start-after-stopped:", StringComparison.Ordinal))
+                failures.Add((observationTimeout ? "observation timeout" : "stop timeout") + "/" + prematureExit
+                    + ": starts=" + fixture.StartAttempts + ", running=" + fixture.Running + ", error=" + result.Error);
+        }
+        foreach (string mode in new[] { "disabled", "pending", "corrective" })
+        {
+            var fixture = new SpoolerFixture { Running = false };
+            fixture.Command = (operation, _) => operation switch
+            {
+                "stop" => Task.FromResult(new ToolResult(0, "stop outcome incomplete", "", false) { TimedOut = true }),
+                "start" => Task.FromResult(new ToolResult(mode == "disabled" ? 1058 : fixture.StartAttempts == 1 ? 1056 : 0, "start response", "", false)),
+                "query" => Task.FromResult(new ToolResult(0, "SERVICE_NAME: Spooler\nSTATE : "
+                    + (mode == "pending" ? "3 STOP_PENDING" : "1 STOPPED"), "", false)),
+                _ => null
+            };
+            var result = await fixture.ExecuteAsync();
+            if (fixture.StartAttempts != (mode == "corrective" ? 2 : 1) || fixture.RetainAttempts != 0
+                || result is not { Succeeded: false, TimedOut: true } || string.IsNullOrWhiteSpace(result.Error))
+                failures.Add(mode + ": disabled/pending restoration did not retain bounded uncertainty or the corrective-start cap.");
+        }
+        if (failures.Count != 0) throw new Exception("Pending accepted stops were not recovered inside the restoration budget: " + string.Join("; ", failures));
+        Console.WriteLine("PASS: four pending-stop timeout cases recover after 1056/1061 and retain each start/state result; three failure guards preserve disabled/pending uncertainty and the one-corrective-start cap.");
     }
 
     private sealed class SpoolerFixture
