@@ -81,18 +81,28 @@ public sealed class WindowsEntraStatusProbe : IProbePrimitive
 /// <summary>Hours since computer Group Policy was last applied, read from gpresult. Value is a number; unparseable or localized output stays incomplete.</summary>
 public sealed class WindowsGroupPolicyAgeProbe : IProbePrimitive
 {
+    private readonly Func<string, CancellationToken, Task<ToolResult>> runScript;
+    public WindowsGroupPolicyAgeProbe() : this((script, token) => NativeTool.RunAsync(PrintRecovery.Tool,
+        ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", script], token: token)) { }
+    public WindowsGroupPolicyAgeProbe(Func<string, CancellationToken, Task<ToolResult>> runScript)
+        => this.runScript = runScript ?? throw new ArgumentNullException(nameof(runScript));
     public string Name => "gpresult.hours-since-applied";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [];
     private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
         "$cs=Get-CimInstance Win32_ComputerSystem;if(-not $cs.PartOfDomain){'NotDomainJoined';exit 0};" +
         "$h=Get-CimInstance -Namespace root\\rsop\\computer -ClassName RSOP_ExtensionStatus -ErrorAction Stop|Sort-Object endTime -Descending|Select-Object -First 1;" +
-        "if(-not $h){'NeverApplied';exit 0};$end=[Management.ManagementDateTimeConverter]::ToDateTime($h.endTime);" +
-        "[string][math]::Round(((Get-Date)-$end).TotalHours,2)";
+        "if(-not $h){'NeverApplied';exit 0};" +
+        "if($h.endTime -is [datetime]){$end=$h.endTime}" +
+        "elseif($h.endTime -is [string]){$end=[Management.ManagementDateTimeConverter]::ToDateTime($h.endTime)}" +
+        "else{throw 'Group Policy endTime is missing or has an unsupported type.'};" +
+        "$hours=((Get-Date).ToUniversalTime()-$end.ToUniversalTime()).TotalHours;" +
+        "if($hours -lt 0){throw 'Group Policy endTime is in the future.'};" +
+        "([math]::Round($hours,2)).ToString([Globalization.CultureInfo]::InvariantCulture)";
 
     public async Task<PrimitiveResult> ObserveAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, CancellationToken token)
     {
         if (!OperatingSystem.IsWindows()) return PrimitiveResult.Unavailable("Group Policy state requires Windows.");
-        var result = await NativeTool.RunAsync(PrintRecovery.Tool, ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", Script], token: token).ConfigureAwait(false);
+        var result = await runScript(Script, token).ConfigureAwait(false);
         return Interpret(result);
     }
 
