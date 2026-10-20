@@ -362,7 +362,7 @@ def page_shell(file, title, description, active, style, aside, inner, script="",
     canonical = "https://killerbench.net/" + loc.sub + file
     alternates = "".join('<link rel="alternate" hreflang="%s" href="https://killerbench.net/%s%s">' % (c, Loc(c).sub, file) for c in AVAILABLE)
     alternates += '<link rel="alternate" hreflang="x-default" href="https://killerbench.net/%s">' % file
-    ui = "".join(' data-ui-%s="%s"' % (k, esc(loc.t(v))) for k, v in (("theme", "Theme"), ("choose-theme", "Choose theme"), ("accent", "Accent color"), ("accent-label", "accent:"), ("close", "Close"), ("no-results", "No matching pages."))) if loc.code != "en-US" else ""
+    ui = "".join(' data-ui-%s="%s"' % (k, esc(loc.t(v))) for k, v in (("theme", "Theme"), ("choose-theme", "Choose theme"), ("accent", "Accent color"), ("accent-label", "accent:"), ("close", "Close"), ("more", "More"), ("no-results", "No matching pages."))) if loc.code != "en-US" else ""
     note = VERSION_NOTE if loc.code == "en-US" else '%s <a href="https://killertools.net">killertools.net</a>' % esc(loc.t("In development · Part of")).replace("·", "&middot;")
     if loc.code != "en-US":
         style = style.replace("url('grain.png", "url('../grain.png")

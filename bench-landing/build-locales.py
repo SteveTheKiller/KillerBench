@@ -68,7 +68,7 @@ class Localized(HTMLParser):
             d['lang'] = self.locale
         if tag == 'body':
             d['data-brand-base'] = rel(self.locale, self.page, 'brand')
-            for key, value in {'theme': 'Theme', 'choose-theme': 'Choose theme', 'accent': 'Accent color', 'accent-label': 'accent:', 'close': 'Close', 'no-results': 'No matching pages.'}.items():
+            for key, value in {'theme': 'Theme', 'choose-theme': 'Choose theme', 'accent': 'Accent color', 'accent-label': 'accent:', 'close': 'Close', 'more': 'More', 'no-results': 'No matching pages.'}.items():
                 d['data-ui-' + key] = self.text(value)
         if tag == 'meta' and (d.get('name') == 'description' or d.get('property') in ('og:title', 'og:description')):
             d['content'] = self.text(d['content'])

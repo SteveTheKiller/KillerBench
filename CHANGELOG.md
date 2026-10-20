@@ -150,4 +150,5 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - On the website, text on accent-colored buttons, tabs and highlights switches to white or near-black for contrast, so it is never white on yellow.
 - Theme names and the repair GO button are translated in every language.
 - Instructions, reports and consent checkboxes name the Run diagnosis and Run repair buttons instead of GO.
+- The website's More button uses the selected language for its accessible name.
 

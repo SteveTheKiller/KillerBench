@@ -238,7 +238,7 @@
   btn.className = 'tb-more-toggle';
   btn.setAttribute('aria-haspopup', 'true');
   btn.setAttribute('aria-expanded', 'false');
-  btn.setAttribute('aria-label', 'More');
+  btn.setAttribute('aria-label', document.body.getAttribute('data-ui-more') || 'More');
   btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>';
   var menu = document.createElement('div');
   menu.className = 'lang-menu tb-more-menu';
