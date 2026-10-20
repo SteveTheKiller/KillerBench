@@ -54,14 +54,14 @@ public sealed class WindowsEntraStatusProbe : IProbePrimitive
     public static PrimitiveResult Interpret(ToolResult result)
     {
         ArgumentNullException.ThrowIfNull(result);
-        string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
-        if (result.Truncated) return new PrimitiveResult(false, null, raw, "dsregcmd output was truncated.") { Truncated = true, TimedOut = result.TimedOut };
-        if (result.TimedOut) return new PrimitiveResult(false, null, raw, "dsregcmd timed out.") { TimedOut = true };
+        if (result.Truncated) return new PrimitiveResult(false, null, "", "dsregcmd output was truncated.") { Truncated = true, TimedOut = result.TimedOut };
+        if (result.TimedOut) return new PrimitiveResult(false, null, "", "dsregcmd timed out.") { TimedOut = true };
         if (result.ExitCode != 0) return PrimitiveResult.Unavailable("dsregcmd exited with " + result.ExitCode + ".");
         string? joined = Field(result.Output, "AzureAdJoined");
         string? domain = Field(result.Output, "DomainJoined");
         if (joined is null || domain is null) return PrimitiveResult.Unavailable("dsregcmd output did not include the device state.");
         string? prt = Field(result.Output, "AzureAdPrt");
+        string raw = "AzureAdJoined: " + joined + "\nDomainJoined: " + domain + (prt is null ? "" : "\nAzureAdPrt: " + prt);
         string value = joined + "/" + (prt ?? "NONE");
         string detail = joined == "YES"
             ? (prt == "YES" ? "The device is joined to Microsoft Entra and the current user has a primary refresh token." :
