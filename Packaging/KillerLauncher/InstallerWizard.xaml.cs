@@ -128,7 +128,8 @@ namespace KillerLauncher
             }
             if (_existing == null && _page < 2) { _page++; RenderPage(); return; }
             string installDirectory;
-            try { installDirectory = Program.ValidateInstallDirectory(InstallFolder.Text); }
+            bool machine = _existing?.Machine ?? AllUsers.IsChecked == true;
+            try { installDirectory = Program.PrepareInstallDirectory(InstallFolder.Text, machine); }
             catch (Exception ex)
             {
                 _page = 1;
@@ -152,7 +153,6 @@ namespace KillerLauncher
                 Copy.Text = LauncherStrings.Get("InstallingCopy");
                 RuntimeStatus.Visibility = Visibility.Collapsed;
                 InstallProgress.Visibility = Visibility.Visible;
-                bool machine = _existing?.Machine ?? AllUsers.IsChecked == true;
                 bool desktop = _existing?.DesktopShortcut ?? DesktopShortcut.IsChecked == true;
                 Task<int> install = Task.Run(() => machine ? InstallForEveryone(desktop, installDirectory)
                     : Program.Install(false, desktop, installDirectory));

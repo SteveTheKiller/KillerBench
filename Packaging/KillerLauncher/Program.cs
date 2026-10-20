@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Windows.Forms;
 
@@ -160,6 +161,7 @@ namespace KillerLauncher
             string destination = !string.IsNullOrWhiteSpace(testRoot)
                 ? Path.GetFullPath(testRoot)
                 : ValidateInstallDirectory(destinationOverride ?? DefaultInstallDirectory(machine));
+            ValidateInstallOwnership(destination, machine);
             if (string.IsNullOrWhiteSpace(testRoot))
                 CloseInstalledCopies(machine
                     ? new[] { destination, UserInstallDirectory }
@@ -168,44 +170,38 @@ namespace KillerLauncher
             Directory.CreateDirectory(parent);
 
             string staging = destination + ".staging-" + Guid.NewGuid().ToString("N");
-            string backup = destination + ".previous-" + Guid.NewGuid().ToString("N");
-            bool movedExisting = false;
             try
             {
-                ExtractAndVerify(staging);
-
-                if (Directory.Exists(destination))
+                if (KillerFamily.Deployment.InstallerExitCodes.IsElevated())
                 {
-                    MoveDirectoryWithRetries(destination, backup);
-                    movedExisting = true;
+                    Directory.CreateDirectory(staging);
+                    KillerBench.Services.InstallationOwnership.ValidateElevatedPath(staging, true);
                 }
-                MoveDirectoryWithRetries(staging, destination);
-
-                int registrationExit = string.Equals(
-                    Environment.GetEnvironmentVariable(SkipRegistrationEnvironmentVariable), "1", StringComparison.Ordinal)
-                    ? 0
-                    : RunRegistration(destination, machine, desktop);
-                if (registrationExit != 0)
-                    throw new System.ComponentModel.Win32Exception(registrationExit,
-                        LauncherStrings.Format("RegistrationFailed", registrationExit));
-
-                // A machine-wide install supersedes the current account's per-user copy. This
-                // also covers unattended /silent installs that do not return through the portable
-                // app's InstallAndRelaunch cleanup path.
-                if (machine && string.IsNullOrWhiteSpace(testRoot))
-                    RunMaintenance(destination, "/remove-user-install");
-
-                if (movedExisting) DeleteDirectoryWithRetries(backup);
+                ExtractAndVerify(staging);
+                KillerBench.Services.InstallationOwnership.PublishPreparedDirectory(destination, staging,
+                    path =>
+                    {
+                        ValidateInstallOwnership(path, machine);
+                        if (KillerFamily.Deployment.InstallerExitCodes.IsElevated())
+                            KillerBench.Services.InstallationOwnership.ValidateElevatedPath(staging, true);
+                    }, () =>
+                    {
+                        if (KillerFamily.Deployment.InstallerExitCodes.IsElevated())
+                            KillerBench.Services.InstallationOwnership.ValidateElevatedPath(destination, true);
+                        int registrationExit = string.Equals(
+                            Environment.GetEnvironmentVariable(SkipRegistrationEnvironmentVariable), "1", StringComparison.Ordinal)
+                            ? 0 : RunRegistration(destination, machine, desktop);
+                        if (registrationExit != 0)
+                            throw new System.ComponentModel.Win32Exception(registrationExit,
+                                LauncherStrings.Format("RegistrationFailed", registrationExit));
+                        if (machine && string.IsNullOrWhiteSpace(testRoot))
+                            RunMaintenance(destination, "/remove-user-install");
+                    }, path => Console.WriteLine("Setup recovery directory retained: " + path), MoveDirectoryWithRetries);
                 return 0;
             }
             catch
             {
-                DeleteDirectoryWithRetries(staging);
-                if (movedExisting && Directory.Exists(backup))
-                {
-                    DeleteDirectoryWithRetries(destination);
-                    if (!Directory.Exists(destination)) MoveDirectoryWithRetries(backup, destination);
-                }
+                if (Directory.Exists(staging)) Console.Error.WriteLine("Setup staging directory retained: " + staging);
                 throw;
             }
         }
@@ -322,6 +318,43 @@ namespace KillerLauncher
                     StringComparison.OrdinalIgnoreCase))
                 throw new InvalidOperationException(LauncherStrings.Get("DriveRoot"));
             return path.TrimEnd(Path.DirectorySeparatorChar);
+        }
+
+        internal static string PrepareInstallDirectory(string directory, bool machine)
+        {
+            string destination = ValidateInstallDirectory(directory);
+            ValidateInstallOwnership(destination, machine);
+            return destination;
+        }
+
+        private static void ValidateInstallOwnership(string directory, bool machine)
+        {
+            if (KillerFamily.Deployment.InstallerExitCodes.IsElevated())
+                KillerBench.Services.InstallationOwnership.ValidateElevatedPath(directory, true);
+            using var payload = Assembly.GetExecutingAssembly().GetManifestResourceStream(PayloadResourceName)
+                ?? throw new InvalidDataException(LauncherStrings.Get("PayloadMissing"));
+            using var archive = new ZipArchive(payload, ZipArchiveMode.Read);
+            var entry = archive.GetEntry(ManifestName) ?? throw new InvalidDataException(LauncherStrings.Get("ManifestMissing"));
+            using var reader = new StreamReader(entry.Open(), Encoding.UTF8, true);
+            var trusted = ReadManifest(reader);
+            using var registration = (machine ? Microsoft.Win32.Registry.LocalMachine : Microsoft.Win32.Registry.CurrentUser)
+                .OpenSubKey(@"Software\KillerBench");
+            string? registered = registration?.GetValue("InstallPath") as string;
+            KillerBench.Services.InstallationOwnership.ValidateDestination(directory, trusted.Keys.ToArray(), registered, IsTrustedInstalledProduct);
+        }
+
+        private static bool IsTrustedInstalledProduct(string executable)
+        {
+            if (!File.Exists(executable) || !string.Equals(Path.GetFileName(executable), InnerExeName, StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(FileVersionInfo.GetVersionInfo(executable).ProductName, ProductName, StringComparison.Ordinal)) return false;
+#if ALLOW_UNSIGNED_INSTALL
+            return true;
+#else
+            if (!AuthenticodeTrust.IsValid(executable)) return false;
+            using var installed = new X509Certificate2(X509Certificate.CreateFromSignedFile(executable));
+            using var installer = new X509Certificate2(X509Certificate.CreateFromSignedFile(CurrentExecutablePath()));
+            return installed.SubjectName.RawData.SequenceEqual(installer.SubjectName.RawData);
+#endif
         }
 
         internal static string InstalledExecutable(string directory) =>
@@ -544,12 +577,6 @@ namespace KillerLauncher
                     System.Threading.Thread.Sleep(250);
                 }
             }
-        }
-
-        private static void DeleteDirectoryWithRetries(string directory)
-        {
-            if (!PortableDirectoryCleanup.TryDelete(directory))
-                throw new IOException(LauncherStrings.Format("CleanupFailed", directory));
         }
 
         private static bool IsTrustedForInstall(string path)

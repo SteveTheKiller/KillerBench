@@ -8,7 +8,7 @@ namespace KillerBench;
 
 // The installed half of the family setup. The verified launcher (Packaging\KillerLauncher) stages
 // the payload and then hands off here: /register-user and /register-machine write shortcuts and the
-// Installed Apps entry from the final installed path, /remove-user-install clears a per-user copy
+// Installed Apps entry from the final installed path, /remove-user-install clears a per-user registration
 // that a machine-wide install supersedes, and /uninstall and /uninstall-silent are what Installed
 // Apps and package managers call.
 public partial class App
@@ -51,8 +51,8 @@ public partial class App
         }
         if (HasArgument(e, "/remove-user-install"))
         {
-            RemoveInstalledCopy(machine: false, UserInstallDir);
-            Shutdown(0);
+            Shutdown(RemoveInstalledCopy(machine: false, UserInstallDir)
+                ? KillerFamily.Deployment.InstallerExitCodes.Success : KillerFamily.Deployment.InstallerExitCodes.Failure);
             return true;
         }
         return false;
@@ -67,8 +67,7 @@ public partial class App
         // The confirmation closes before the result notice opens, so closing the last window must
         // not end the app in between.
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
-        Uninstall(silent);
-        Shutdown(0);
+        Shutdown(Uninstall(silent));
         return true;
     }
 
@@ -107,88 +106,71 @@ public partial class App
         Services.CommandLinePath.Register(installDirectory, machine);
     }
 
-    private static void Uninstall(bool silent)
+    private static int Uninstall(bool silent)
     {
         string exePath = Path.GetFullPath(Environment.ProcessPath ?? string.Empty);
         string installDirectory = Path.GetDirectoryName(exePath) ?? string.Empty;
-        bool machine = installDirectory.StartsWith(MachineInstallDir, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(Registry.LocalMachine.OpenSubKey(RegistryKeyPath)?.GetValue("InstallPath") as string,
-                exePath, StringComparison.OrdinalIgnoreCase);
-        if (machine && RelaunchElevated(exePath, silent)) return;
+        Console.WriteLine("KillerBench application files will be kept. Location: " + installDirectory);
+        bool machine = InstalledCopy()?.Machine ?? false;
+        int? elevationResult = machine ? RelaunchElevated(exePath, silent) : null;
+        if (elevationResult.HasValue) return elevationResult.Value;
 
         if (!silent)
         {
             var confirm = new Controls.ConfirmDialog(
                 "Uninstall KillerBench?",
-                "Your reports and settings will be kept.",
+                "Registration and shortcuts will be removed. Application files, reports, and settings will be kept.",
                 "Uninstall",
                 "Cancel")
             { WindowStartupLocation = WindowStartupLocation.CenterScreen, ShowInTaskbar = true };
             confirm.ShowDialog();
-            if (!confirm.Confirmed) return;
+            if (!confirm.Confirmed) return KillerFamily.Deployment.InstallerExitCodes.Cancelled;
         }
 
         if (!CloseOtherCopies(installDirectory))
         {
+            Console.Error.WriteLine("KillerBench is still running. Registration and shortcut removal did not proceed.");
             if (!silent) ShowNotice("KillerBench is still running.\nClose it, then try uninstalling again.");
-            return;
+            return KillerFamily.Deployment.InstallerExitCodes.Busy;
         }
 
-        RemoveInstalledCopy(machine, installDirectory, deferDirectory: true);
-        if (!silent) ShowNotice("KillerBench has been uninstalled.");
+        bool removed = RemoveInstalledCopy(machine, installDirectory);
+        if (!silent) ShowNotice((removed ? "KillerBench registration and shortcuts were removed." : "KillerBench registration and shortcuts were not fully removed.") +
+            "\nApplication files were not removed. Location: " + installDirectory);
+        return removed ? KillerFamily.Deployment.InstallerExitCodes.Success : KillerFamily.Deployment.InstallerExitCodes.Failure;
     }
 
-    // Shortcuts, registry and files for one installed copy. The running uninstaller cannot delete
-    // its own folder, so that removal is deferred to a short batch file that runs after it exits.
-    private static void RemoveInstalledCopy(bool machine, string installDirectory, bool deferDirectory = false)
+    // Only the matching copy's registration and shortcuts are removed. Application files are retained.
+    private static bool RemoveInstalledCopy(bool machine, string installDirectory)
     {
-        Services.CommandLinePath.Unregister(installDirectory, machine);
-        try { File.Delete(Path.Combine(StartMenuDir(machine), AppName + ".lnk")); } catch { }
-        try { Directory.Delete(StartMenuDir(machine), recursive: false); } catch { }
-        try { File.Delete(DesktopShortcut(machine)); } catch { }
         RegistryKey root = machine ? Registry.LocalMachine : Registry.CurrentUser;
-        try { root.DeleteSubKeyTree(UninstallKeyPath, throwOnMissingSubKey: false); } catch { }
-        try
+        string? registered = null;
+        try { using var key = root.OpenSubKey(RegistryKeyPath); registered = key?.GetValue("InstallPath") as string; }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or System.Security.SecurityException)
+        { Console.Error.WriteLine("KillerBench registration could not be read: " + error.Message); }
+        bool complete = true;
+        bool removed = Services.InstallationOwnership.UnregisterPreservingFiles(installDirectory, registered, () =>
         {
-            using var key = root.OpenSubKey(RegistryKeyPath, writable: true);
-            key?.DeleteValue("Installed", throwOnMissingValue: false);
-            key?.DeleteValue("InstallPath", throwOnMissingValue: false);
-            key?.DeleteValue("Version", throwOnMissingValue: false);
-        }
-        catch { }
-
-        if (string.IsNullOrEmpty(installDirectory) || !Directory.Exists(installDirectory)) return;
-        if (!deferDirectory)
-        {
-            try { Directory.Delete(installDirectory, recursive: true); } catch { }
-            return;
-        }
-        // The batch waits for this process to exit (up to about two minutes), since the uninstaller
-        // may still be showing its result notice.
-        int pid = Environment.ProcessId;
-        string batch = Path.Combine(Path.GetTempPath(), "killerbench_uninstall.bat");
-        File.WriteAllText(batch,
-            "@echo off\r\n" +
-            "set n=0\r\n" +
-            ":wait\r\n" +
-            $"tasklist /fi \"PID eq {pid}\" | find \"{pid}\" >nul\r\n" +
-            "if errorlevel 1 goto gone\r\n" +
-            "set /a n+=1\r\n" +
-            "if %n% geq 120 goto gone\r\n" +
-            "ping -n 2 127.0.0.1 >nul\r\n" +
-            "goto wait\r\n" +
-            ":gone\r\n" +
-            "ping -n 2 127.0.0.1 >nul\r\n" +
-            $"rmdir /s /q \"{installDirectory}\"\r\n" +
-            "del \"%~f0\"\r\n");
-        Process.Start(new ProcessStartInfo("cmd.exe", $"/c \"{batch}\"")
-        {
-            WindowStyle = ProcessWindowStyle.Hidden,
-            UseShellExecute = true
+            Services.CommandLinePath.Unregister(installDirectory, machine);
+            try { File.Delete(Path.Combine(StartMenuDir(machine), AppName + ".lnk")); } catch { complete = false; }
+            try { Directory.Delete(StartMenuDir(machine), recursive: false); } catch { }
+            try { File.Delete(DesktopShortcut(machine)); } catch { complete = false; }
+            try { root.DeleteSubKeyTree(UninstallKeyPath, throwOnMissingSubKey: false); } catch { complete = false; }
+            try
+            {
+                using var key = root.OpenSubKey(RegistryKeyPath, writable: true);
+                key?.DeleteValue("Installed", throwOnMissingValue: false);
+                key?.DeleteValue("InstallPath", throwOnMissingValue: false);
+                key?.DeleteValue("Version", throwOnMissingValue: false);
+            }
+            catch { complete = false; }
         });
+        Console.WriteLine(removed && complete ? "KillerBench registration and shortcuts were removed." : "KillerBench registration and shortcuts were not fully removed.");
+        Console.WriteLine("KillerBench application files were not removed. Location: " + installDirectory);
+        return removed && complete;
     }
 
-    // Asks every other KillerBench running from the folder being removed to close normally, so a
+    // Asks every other KillerBench running from this installation to close normally, so a
     // repair in progress keeps its own prompts. Returns false when one is still open.
     private static bool CloseOtherCopies(string installDirectory)
     {
@@ -221,29 +203,34 @@ public partial class App
         }
     }
 
-    private static bool RelaunchElevated(string exePath, bool silent)
+    private static int? RelaunchElevated(string exePath, bool silent)
     {
         using var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
         if (new System.Security.Principal.WindowsPrincipal(identity)
                 .IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator))
-            return false;
+            return null;
         try
         {
-            Process.Start(new ProcessStartInfo(exePath, silent ? "/uninstall-silent" : "/uninstall")
+            using var child = Process.Start(new ProcessStartInfo(exePath, silent ? "/uninstall-silent" : "/uninstall")
             {
                 UseShellExecute = true,
                 Verb = "runas"
             });
+            if (child is null) return KillerFamily.Deployment.InstallerExitCodes.Failure;
+            child.WaitForExit();
+            return child.ExitCode;
         }
         catch (System.ComponentModel.Win32Exception ex) when (ex.NativeErrorCode == 1223)
         {
             // UAC was declined. Leave the installation untouched.
+            return KillerFamily.Deployment.InstallerExitCodes.Cancelled;
         }
         catch (Exception ex)
         {
             if (!silent) ShowNotice("Uninstall could not request administrator access.\n" + ex.Message);
+            Console.Error.WriteLine("Uninstall could not request administrator access: " + ex.Message);
+            return KillerFamily.Deployment.InstallerExitCodes.FromException(ex);
         }
-        return true;
     }
 
     private static void ShowNotice(string message)
