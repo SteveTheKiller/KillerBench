@@ -318,6 +318,7 @@ public sealed partial class WindowsWakeTimersProbe : IProbePrimitive
     {
         ArgumentNullException.ThrowIfNull(result);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
+        if (result.Truncated) return new PrimitiveResult(false, null, raw, "powercfg output was truncated.") { Truncated = true, TimedOut = result.TimedOut };
         if (result.TimedOut) return new PrimitiveResult(false, null, raw, "powercfg timed out.") { TimedOut = true };
         if (result.ExitCode != 0) return PrimitiveResult.Unavailable("powercfg exited with " + result.ExitCode + "; administrator access is required.");
         if (NoWakeTimersPattern().IsMatch(result.Output))

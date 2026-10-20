@@ -58,6 +58,7 @@ public sealed partial class WindowsDiskBusyProbe : IProbePrimitive
     {
         ArgumentNullException.ThrowIfNull(result);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
+        if (result.Truncated) return new PrimitiveResult(false, null, raw, "typeperf output was truncated.") { Truncated = true, TimedOut = result.TimedOut };
         if (result.TimedOut) return new PrimitiveResult(false, null, raw, "typeperf timed out.") { TimedOut = true };
         if (result.ExitCode != 0) return PrimitiveResult.Unavailable("typeperf exited with " + result.ExitCode + ".");
         var values = new List<double>();
@@ -96,6 +97,7 @@ public sealed partial class WindowsVssWritersProbe : IProbePrimitive
     {
         ArgumentNullException.ThrowIfNull(result);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
+        if (result.Truncated) return new PrimitiveResult(false, null, raw, "vssadmin output was truncated.") { Truncated = true, TimedOut = result.TimedOut };
         if (result.TimedOut) return new PrimitiveResult(false, null, raw, "vssadmin timed out.") { TimedOut = true };
         if (result.ExitCode != 0) return PrimitiveResult.Unavailable("vssadmin exited with " + result.ExitCode + "; administrator access is required.");
         var names = WriterNamePattern().Matches(result.Output);
@@ -141,6 +143,7 @@ public sealed partial class WindowsShadowStorageProbe : IProbePrimitive
     {
         ArgumentNullException.ThrowIfNull(result);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
+        if (result.Truncated) return new PrimitiveResult(false, null, raw, "vssadmin output was truncated.") { Truncated = true, TimedOut = result.TimedOut };
         if (result.TimedOut) return new PrimitiveResult(false, null, raw, "vssadmin timed out.") { TimedOut = true };
         if (result.ExitCode != 0) return PrimitiveResult.Unavailable("vssadmin exited with " + result.ExitCode + "; administrator access is required.");
         if (result.Output.Contains("No items found", StringComparison.OrdinalIgnoreCase))

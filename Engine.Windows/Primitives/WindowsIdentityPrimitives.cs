@@ -24,6 +24,7 @@ public sealed class WindowsSecureChannelProbe : IProbePrimitive
     {
         ArgumentNullException.ThrowIfNull(result);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
+        if (result.Truncated) return new PrimitiveResult(false, null, raw, "Secure channel output was truncated.") { Truncated = true, TimedOut = result.TimedOut };
         if (result.TimedOut) return new PrimitiveResult(false, null, raw, "Secure channel check timed out.") { TimedOut = true };
         string text = result.Output.Trim();
         if (result.ExitCode != 0 || text.StartsWith("Error", StringComparison.Ordinal)) return PrimitiveResult.Unavailable("Secure channel could not be tested: " + (text.Length > 0 ? text : result.Error.Trim()));
@@ -54,6 +55,7 @@ public sealed class WindowsEntraStatusProbe : IProbePrimitive
     {
         ArgumentNullException.ThrowIfNull(result);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
+        if (result.Truncated) return new PrimitiveResult(false, null, raw, "dsregcmd output was truncated.") { Truncated = true, TimedOut = result.TimedOut };
         if (result.TimedOut) return new PrimitiveResult(false, null, raw, "dsregcmd timed out.") { TimedOut = true };
         if (result.ExitCode != 0) return PrimitiveResult.Unavailable("dsregcmd exited with " + result.ExitCode + ".");
         string? joined = Field(result.Output, "AzureAdJoined");
@@ -98,6 +100,7 @@ public sealed class WindowsGroupPolicyAgeProbe : IProbePrimitive
     {
         ArgumentNullException.ThrowIfNull(result);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
+        if (result.Truncated) return new PrimitiveResult(false, null, raw, "Group Policy output was truncated.") { Truncated = true, TimedOut = result.TimedOut };
         if (result.TimedOut) return new PrimitiveResult(false, null, raw, "Group Policy state read timed out.") { TimedOut = true };
         string text = result.Output.Trim();
         if (result.ExitCode != 0) return PrimitiveResult.Unavailable("Group Policy state could not be read (exit " + result.ExitCode + "); administrator access is required for computer policy history.");

@@ -29,6 +29,11 @@ internal static class Program
                 NativeScenarioRestorationChecks.RunAsync().GetAwaiter().GetResult();
                 return 0;
             }
+            if (args is ["--only", "truncated-evidence"])
+            {
+                WindowsTruncatedEvidenceChecks.Run();
+                return 0;
+            }
             if (args is ["--only", "command-path"])
             {
                 CommandLinePathChecks.Run();
@@ -529,6 +534,7 @@ internal static class Program
             InstallerRuntimeChecks.Run();
             NativeScenarioRestorationChecks.RunAsync().GetAwaiter().GetResult();
             RecipePackChecks.RunAsync().GetAwaiter().GetResult();
+            WindowsTruncatedEvidenceChecks.Run();
             WindowsServicePackChecks.RunAsync().GetAwaiter().GetResult();
             WindowsSettingsPackChecks.RunAsync().GetAwaiter().GetResult();
             WindowsSystemPackChecks.RunAsync().GetAwaiter().GetResult();
