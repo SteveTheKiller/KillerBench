@@ -275,23 +275,55 @@ public sealed class WindowsInterfaceMtuProbe : IProbePrimitive
 /// <summary>Sets the MTU of one interface through Set-NetIPInterface with a persistent store.</summary>
 public sealed class WindowsInterfaceMtuSetAction : IActionPrimitive
 {
+    private readonly Func<string, CancellationToken, string[], Task<ToolResult>> runCommand;
+
+    public WindowsInterfaceMtuSetAction() : this(WindowsNetAdapterPrimitives.RunAsync) { }
+
+    public WindowsInterfaceMtuSetAction(Func<string, CancellationToken, string[], Task<ToolResult>> runCommand) =>
+        this.runCommand = runCommand ?? throw new ArgumentNullException(nameof(runCommand));
+
     public string Name => "netip.mtu-set";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } =
         [WindowsNetAdapterPrimitives.NameParameter, new("family", false, "IPv6 (default) or IPv4") { Pattern = "IPv6|IPv4" }, new("mtu", true, "MTU in bytes, 1280 through 9000") { Pattern = "12[8-9][0-9]|1[3-9][0-9]{2}|[2-8][0-9]{3}|9000" }];
     public RecipeRisk Risk => RecipeRisk.Persistent;
     public bool RequiresElevation => true;
     private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
-        "& { param([string]$name,[string]$family,[int]$mtu) Set-NetIPInterface -InterfaceAlias $name -AddressFamily $family -NlMtuBytes $mtu -PolicyStore PersistentStore -ErrorAction Stop; Set-NetIPInterface -InterfaceAlias $name -AddressFamily $family -NlMtuBytes $mtu -ErrorAction Stop; 'Set' }";
+        "& { param([string]$name,[string]$family,[int]$mtu,[string]$store) Set-NetIPInterface -InterfaceAlias $name -AddressFamily $family -NlMtuBytes $mtu -PolicyStore $store -ErrorAction Stop; 'Set' }";
 
     public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(parameters);
         if (!OperatingSystem.IsWindows()) return new ActionResult(false, false, "", "Interface changes require Windows.");
-        var result = await WindowsNetAdapterPrimitives.RunAsync(Script, token, parameters["name"], parameters.GetValueOrDefault("family") ?? "IPv6", parameters["mtu"]).ConfigureAwait(false);
-        string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
-        if (result.TimedOut) return new ActionResult(true, false, raw, "Set-NetIPInterface timed out.") { TimedOut = true };
-        if (result.ExitCode != 0) return new ActionResult(false, false, raw, "Set-NetIPInterface failed: " + result.Error.Trim());
-        return new ActionResult(true, result.Output.Trim() == "Set", raw);
+        string name = parameters["name"], family = parameters.GetValueOrDefault("family") ?? "IPv6", mtu = parameters["mtu"];
+        var evidence = new List<string>();
+        bool dispatched = false;
+        foreach (string store in new[] { "PersistentStore", "ActiveStore" })
+        {
+            if (token.IsCancellationRequested)
+                return new ActionResult(dispatched, false, string.Join("\n", evidence), "MTU changes were stopped before the next write; any dispatched phase requires reconciliation.");
+            evidence.Add(store + ": dispatch requested; completion unknown.");
+            dispatched = true;
+            ToolResult result;
+            try
+            {
+                result = await runCommand(Script, token, [name, family, mtu, store]).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                return new ActionResult(true, false, string.Join("\n", evidence), store + " was interrupted after dispatch; its completion is unknown.");
+            }
+            catch (Exception error) when (error is IOException or System.ComponentModel.Win32Exception or InvalidOperationException)
+            {
+                return new ActionResult(true, false, string.Join("\n", evidence), store + " completion is unknown: " + error.Message);
+            }
+            evidence.Add(result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error));
+            if (result.TimedOut)
+                return new ActionResult(true, false, string.Join("\n", evidence), store + " timed out; its completion is unknown.") { TimedOut = true };
+            if (result.ExitCode != 0 || result.Truncated || result.Output.Trim() != "Set")
+                return new ActionResult(true, false, string.Join("\n", evidence), store + " was not confirmed complete; reconcile native state before another write.");
+            evidence.Add(store + ": completed.");
+        }
+        return new ActionResult(true, true, string.Join("\n", evidence));
     }
 }
 
