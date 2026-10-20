@@ -10,7 +10,7 @@ public sealed record DuplicateFileReviewResult(string Root, int FilesExamined, b
 public static class DuplicateFileReview
 {
     public static async Task<DuplicateFileReviewResult> ScanAsync(string root, long minimumBytes = 1,
-        int maximumFiles = 10_000, CancellationToken token = default)
+        int maximumFiles = 10_000, CancellationToken token = default, IFileReviewDirectoryReader? directoryReader = null)
     {
         if (string.IsNullOrWhiteSpace(root)) throw new ArgumentException("Choose a folder to review.", nameof(root));
         ArgumentOutOfRangeException.ThrowIfNegative(minimumBytes);
@@ -24,12 +24,8 @@ public static class DuplicateFileReview
         bool complete = true;
         try
         {
-            foreach (string path in Directory.EnumerateFiles(fullRoot, "*", new EnumerationOptions
-            {
-                RecurseSubdirectories = true,
-                IgnoreInaccessible = true,
-                AttributesToSkip = FileAttributes.ReparsePoint
-            }))
+            foreach (string path in FileReviewDirectoryWalker.Files(fullRoot,
+                directoryReader ?? SystemFileReviewDirectoryReader.Instance, token, () => complete = false))
             {
                 token.ThrowIfCancellationRequested();
                 if (candidates.Count >= maximumFiles) { complete = false; break; }

@@ -7,7 +7,8 @@ public sealed record LargeFileReviewResult(string Root, int FilesExamined, bool 
 public static class LargeFileReview
 {
     public static Task<LargeFileReviewResult> ScanAsync(string root, long minimumBytes = 100 * 1024 * 1024,
-        int maximumFiles = 10_000, int resultLimit = 500, CancellationToken token = default) => Task.Run(() =>
+        int maximumFiles = 10_000, int resultLimit = 500, CancellationToken token = default,
+        IFileReviewDirectoryReader? directoryReader = null) => Task.Run(() =>
     {
         if (string.IsNullOrWhiteSpace(root)) throw new ArgumentException("Choose a folder to review.", nameof(root));
         ArgumentOutOfRangeException.ThrowIfLessThan(minimumBytes, 1);
@@ -22,10 +23,8 @@ public static class LargeFileReview
         bool complete = true;
         try
         {
-            foreach (string path in Directory.EnumerateFiles(fullRoot, "*", new EnumerationOptions
-            {
-                RecurseSubdirectories = true, IgnoreInaccessible = true, AttributesToSkip = FileAttributes.ReparsePoint
-            }))
+            foreach (string path in FileReviewDirectoryWalker.Files(fullRoot,
+                directoryReader ?? SystemFileReviewDirectoryReader.Instance, token, () => complete = false))
             {
                 token.ThrowIfCancellationRequested();
                 if (examined >= maximumFiles) { complete = false; break; }

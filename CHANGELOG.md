@@ -137,6 +137,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Fixed
 - Canceling spool-file cleanup still attempts to restart the Print Spooler and reports recovery failures.
+- Large-file and duplicate reviews keep accessible results and report incomplete coverage when a folder cannot be read.
 - Windows contrast themes now use system colors for text, icons, panels and selections, without decorative grain or shadows.
 - On the Light theme's Yellow and Orange accents, buttons, links, tabs and accent icons keep their color with a thin gray outline around accent text and icons, instead of turning near-black or brown.
 - Gray, menu and accent text reads at 4.5:1 contrast or better in every theme and accent, and the footer's version and copyright are slightly dimmed.
