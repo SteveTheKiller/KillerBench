@@ -1,4 +1,6 @@
 using System.Globalization;
+using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using KillerBench.Engine.Core;
 
@@ -10,8 +12,19 @@ public static class WindowsNetAdapterPrimitives
     public const string AdapterNamePattern = @"[A-Za-z0-9][A-Za-z0-9 ()#._-]{0,127}";
     public static readonly PrimitiveParameter NameParameter = new("name", true, "Exact adapter name as Get-NetAdapter reports it") { Pattern = AdapterNamePattern };
 
-    internal static Task<ToolResult> RunAsync(string script, CancellationToken token, params string[] arguments) =>
-        NativeTool.RunAsync(PrintRecovery.Tool, ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", script, .. arguments], token: token);
+    /// <summary>Runs a trusted PowerShell script with positional arguments transported as encoded data.</summary>
+    public static Task<ToolResult> RunAsync(string script, CancellationToken token, params string[] arguments)
+    {
+        ArgumentNullException.ThrowIfNull(script);
+        ArgumentNullException.ThrowIfNull(arguments);
+        if (arguments.Length != 0)
+        {
+            string payload = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(arguments)));
+            script = "$__kbPrimitiveArguments=([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('" + payload + "')) | ConvertFrom-Json);" +
+                script + " @__kbPrimitiveArguments";
+        }
+        return NativeTool.RunAsync(PrintRecovery.Tool, ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", script], token: token);
+    }
 
     internal static PrimitiveResult Lines(ToolResult result, string tool, Func<string[], PrimitiveResult> interpret)
     {
@@ -60,7 +73,7 @@ public sealed class WindowsAdapterAdminStatusProbe : IProbePrimitive
     public string Name => "netadapter.admin-status";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [WindowsNetAdapterPrimitives.NameParameter];
     private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
-        "& { param([string]$name) $a=@(Get-NetAdapter -Name $name -Physical -ErrorAction Stop); if($a.Count -ne 1){throw 'Exact physical adapter not found.'}; [string]$a[0].AdminStatus }";
+        "& { param([string]$name) $a=@(Get-NetAdapter -Name $name -Physical -ErrorAction Stop); if($a.Count -ne 1 -or $a[0].Name -ine $name){throw 'Exact physical adapter not found.'}; [string]$a[0].AdminStatus }";
 
     public async Task<PrimitiveResult> ObserveAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, CancellationToken token)
     {
@@ -81,7 +94,7 @@ public sealed class WindowsAdapterPowerSavingProbe : IProbePrimitive
     public string Name => "netadapter.power-saving";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [WindowsNetAdapterPrimitives.NameParameter];
     private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
-        "& { param([string]$name) $p=Get-NetAdapterPowerManagement -Name $name -ErrorAction Stop; [string]$p.AllowComputerToTurnOffDevice }";
+        "& { param([string]$name) $p=@(Get-NetAdapterPowerManagement -Name $name -ErrorAction Stop); if($p.Count -ne 1 -or $p[0].Name -ine $name){throw 'Exact adapter not found.'}; [string]$p[0].AllowComputerToTurnOffDevice }";
 
     public async Task<PrimitiveResult> ObserveAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, CancellationToken token)
     {
@@ -104,19 +117,24 @@ public sealed class WindowsAdapterPowerSavingProbe : IProbePrimitive
 /// <summary>Enables one physical adapter that is administratively disabled.</summary>
 public sealed class WindowsAdapterEnableAction : IActionPrimitive
 {
+    private readonly Func<string, CancellationToken, string[], Task<ToolResult>> runCommand;
+
+    public WindowsAdapterEnableAction(Func<string, CancellationToken, string[], Task<ToolResult>>? runCommand = null) =>
+        this.runCommand = runCommand ?? WindowsNetAdapterPrimitives.RunAsync;
+
     public string Name => "netadapter.enable";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [WindowsNetAdapterPrimitives.NameParameter];
     public RecipeRisk Risk => RecipeRisk.Reversible;
     public bool RequiresElevation => true;
     private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
-        "& { param([string]$name) $a=Get-NetAdapter -Name $name -Physical -ErrorAction Stop; if($a.Count -ne 1){throw 'Exact adapter not found.'}; " +
-        "if($a.AdminStatus -ne 'Down'){'AlreadyEnabled';exit 0}; Enable-NetAdapter -Name $name -Confirm:$false -ErrorAction Stop; 'Enabled' }";
+        "& { param([string]$name) $a=@(Get-NetAdapter -Name $name -Physical -ErrorAction Stop); if($a.Count -ne 1 -or $a[0].Name -ine $name){throw 'Exact adapter not found.'}; " +
+        "if($a[0].AdminStatus -ne 'Down'){'AlreadyEnabled';exit 0}; Enable-NetAdapter -InputObject $a[0] -Confirm:$false -ErrorAction Stop; 'Enabled' }";
 
     public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(parameters);
         if (!OperatingSystem.IsWindows()) return new ActionResult(false, false, "", "Adapter changes require Windows.");
-        var result = await WindowsNetAdapterPrimitives.RunAsync(Script, token, parameters["name"]).ConfigureAwait(false);
+        var result = await runCommand(Script, token, [parameters["name"]]).ConfigureAwait(false);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
         if (result.TimedOut) return new ActionResult(true, false, raw, "Enable-NetAdapter timed out.") { TimedOut = true };
         if (result.ExitCode != 0) return new ActionResult(false, false, raw, "Enable-NetAdapter failed: " + result.Error.Trim());
@@ -129,19 +147,24 @@ public sealed class WindowsAdapterEnableAction : IActionPrimitive
 /// <summary>Stops Windows from turning one adapter off to save power.</summary>
 public sealed class WindowsAdapterPowerSavingDisableAction : IActionPrimitive
 {
+    private readonly Func<string, CancellationToken, string[], Task<ToolResult>> runCommand;
+
+    public WindowsAdapterPowerSavingDisableAction(Func<string, CancellationToken, string[], Task<ToolResult>>? runCommand = null) =>
+        this.runCommand = runCommand ?? WindowsNetAdapterPrimitives.RunAsync;
+
     public string Name => "netadapter.power-saving-disable";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [WindowsNetAdapterPrimitives.NameParameter];
     public RecipeRisk Risk => RecipeRisk.Persistent;
     public bool RequiresElevation => true;
     private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
-        "& { param([string]$name) $p=Get-NetAdapterPowerManagement -Name $name -ErrorAction Stop; if($p.AllowComputerToTurnOffDevice -ne 'Enabled'){'AlreadyDisabled';exit 0}; " +
-        "Set-NetAdapterPowerManagement -Name $name -AllowComputerToTurnOffDevice Disabled -ErrorAction Stop; 'Disabled' }";
+        "& { param([string]$name) $p=@(Get-NetAdapterPowerManagement -Name $name -ErrorAction Stop); if($p.Count -ne 1 -or $p[0].Name -ine $name){throw 'Exact adapter not found.'}; if($p[0].AllowComputerToTurnOffDevice -ne 'Enabled'){'AlreadyDisabled';exit 0}; " +
+        "Set-NetAdapterPowerManagement -InputObject $p[0] -AllowComputerToTurnOffDevice Disabled -ErrorAction Stop; 'Disabled' }";
 
     public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(parameters);
         if (!OperatingSystem.IsWindows()) return new ActionResult(false, false, "", "Adapter changes require Windows.");
-        var result = await WindowsNetAdapterPrimitives.RunAsync(Script, token, parameters["name"]).ConfigureAwait(false);
+        var result = await runCommand(Script, token, [parameters["name"]]).ConfigureAwait(false);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
         if (result.TimedOut) return new ActionResult(true, false, raw, "Set-NetAdapterPowerManagement timed out.") { TimedOut = true };
         if (result.ExitCode != 0) return new ActionResult(false, false, raw, "Set-NetAdapterPowerManagement failed: " + result.Error.Trim());

@@ -6,6 +6,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Data protection and repair safeguards
 
+- PowerShell transports exact target arguments as data, and adapter changes bind to the validated adapter object.
 - Cleanup stops before aggregate removal when canceled or out of time, including the final Recycle Bin dispatch check.
 - Symptom triage rejects unknown option names before inspecting or changing a target.
 - Native service validation restores and verifies the original state after partial injection or cancellation, and stops when restoration is incomplete.

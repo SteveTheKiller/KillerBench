@@ -34,6 +34,11 @@ internal static class Program
                 WindowsTruncatedEvidenceChecks.Run();
                 return 0;
             }
+            if (args is ["--only", "powershell-binding"])
+            {
+                WindowsPowerShellBindingChecks.RunAsync().GetAwaiter().GetResult();
+                return 0;
+            }
             if (args is ["--only", "command-path"])
             {
                 CommandLinePathChecks.Run();
@@ -536,6 +541,7 @@ internal static class Program
             RecipePackChecks.RunAsync().GetAwaiter().GetResult();
             WindowsTruncatedEvidenceChecks.Run();
             WindowsServicePackChecks.RunAsync().GetAwaiter().GetResult();
+            WindowsPowerShellBindingChecks.RunAsync().GetAwaiter().GetResult();
             WindowsSettingsPackChecks.RunAsync().GetAwaiter().GetResult();
             WindowsSystemPackChecks.RunAsync().GetAwaiter().GetResult();
             WindowsMaintenancePackChecks.RunAsync().GetAwaiter().GetResult();
