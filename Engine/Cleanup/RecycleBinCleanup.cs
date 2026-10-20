@@ -22,15 +22,19 @@ public static partial class RecycleBinCleanup
             "The age setting does not apply to the Recycle Bin. Emptying permanently removes every currently reported item across its drives.") { AggregateAction = true };
     }
 
-    public static CleanupFileOutcome EmptyAndVerify(long expectedItems, long expectedBytes, int maximumItems)
+    public static CleanupFileOutcome EmptyAndVerify(long expectedItems, long expectedBytes, int maximumItems,
+        CancellationToken token = default)
     {
+        token.ThrowIfCancellationRequested();
         if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Recycle Bin cleanup requires Windows.");
         if (expectedItems is < 1 || expectedItems > maximumItems || expectedBytes < 0)
             return new(ShellRoot, "Skipped", "The retained Recycle Bin count is empty, invalid or above the selected safety limit.");
         var before = Inspect(maximumItems);
+        token.ThrowIfCancellationRequested();
         if (before.Partial || before.CandidateFiles != expectedItems || before.CandidateBytes != expectedBytes)
             return new(ShellRoot, "Skipped", "Recycle Bin contents changed or could not be verified. Nothing was emptied.");
         const uint noConfirmation = 0x00000001, noProgress = 0x00000002, noSound = 0x00000004;
+        token.ThrowIfCancellationRequested();
         int result = SHEmptyRecycleBinW(IntPtr.Zero, null, noConfirmation | noProgress | noSound);
         if (result < 0) return new(ShellRoot, "Unverified", "Windows rejected the request. HRESULT 0x" + result.ToString("X8") + ".");
         var after = Inspect(maximumItems);

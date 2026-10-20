@@ -14,6 +14,11 @@ internal static class Program
         WindowsEngine.Register();
         try
         {
+            if (args is ["--only", "aggregate-cancellation"])
+            {
+                AggregateCancellationChecks.RunAsync(Path.GetTempPath()).GetAwaiter().GetResult();
+                return 0;
+            }
             if (args is ["--only", "command-path"])
             {
                 CommandLinePathChecks.Run();
@@ -509,6 +514,7 @@ internal static class Program
         try
         {
             CheckEvidence(scratch).GetAwaiter().GetResult();
+            AggregateCancellationChecks.RunAsync(scratch).GetAwaiter().GetResult();
             InstallerRuntimeChecks.Run();
             RecipePackChecks.RunAsync().GetAwaiter().GetResult();
             WindowsServicePackChecks.RunAsync().GetAwaiter().GetResult();

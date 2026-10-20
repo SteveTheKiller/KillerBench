@@ -277,6 +277,7 @@ public static class CleanupPreview
         {
             progress?.Report("Inspecting the current shell Recycle Bin without opening item contents...");
             targets.Add(RecycleBinCleanup.Inspect(options.MaximumFilesPerTarget));
+            token.ThrowIfCancellationRequested();
         }
         return new(options, now, targets);
     }

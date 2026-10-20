@@ -21,6 +21,11 @@ public interface ICleanupRemovalHost
     CleanupFileOutcome Remove(string root, CleanupCandidate candidate, DateTime cutoffUtc);
     CleanupFileOutcome RemoveAggregate(CleanupEstimate target, int maximumItems) =>
         new(target.Root, "Skipped", "This provider does not support the selected aggregate cleanup target.");
+    CleanupFileOutcome RemoveAggregate(CleanupEstimate target, int maximumItems, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+        return RemoveAggregate(target, maximumItems);
+    }
 }
 
 public static class CleanupRemoval
@@ -35,7 +40,10 @@ public static class CleanupRemoval
         try
         {
             host ??= new WindowsCleanupRemovalHost();
-            var preview = host.Inspect(options, progress, token);
+            CleanupPreviewResult preview;
+            try { preview = host.Inspect(options, progress, token); }
+            catch (OperationCanceledException) when (token.IsCancellationRequested)
+            { preview = new(options, DateTimeOffset.UtcNow, []); }
             Directory.CreateDirectory(journalFolder);
             string journal = Path.Combine(journalFolder, "cleanup-" + Guid.NewGuid().ToString("N") + ".jsonl");
             using var stream = new FileStream(journal, FileMode.CreateNew, FileAccess.Write, FileShare.Read);
@@ -45,11 +53,14 @@ public static class CleanupRemoval
             bool partial = preview.Partial;
             string status = "Finished";
             var elapsed = System.Diagnostics.Stopwatch.StartNew();
+            using var deadline = CancellationTokenSource.CreateLinkedTokenSource(token);
+            deadline.CancelAfter(TimeSpan.FromMinutes(2));
             Record(new { Stage = "Started", Options = options, preview.CapturedUtc, preview.Partial });
             try
             {
                 foreach (var target in preview.Targets)
                 {
+                    deadline.Token.ThrowIfCancellationRequested();
                     if (target.AggregateAction)
                     {
                         Record(new { Stage = "Prepared", target.Root, target.CandidateFiles, target.CandidateBytes });
@@ -57,7 +68,7 @@ public static class CleanupRemoval
                             ? new(target.Root, "Skipped", "Aggregate target is incomplete or above the selected item limit.")
                             : target.CandidateFiles == 0
                                 ? new(target.Root, "Skipped", "Aggregate target is already empty.")
-                                : host.RemoveAggregate(target, options.MaximumFilesPerTarget);
+                                : host.RemoveAggregate(target, options.MaximumFilesPerTarget, deadline.Token);
                         outcomes.Add(aggregate);
                         Record(new { Stage = "Result", Outcome = aggregate });
                         progress?.Report(aggregate.Status + ": " + target.Target);
@@ -80,8 +91,10 @@ public static class CleanupRemoval
                     }
                     if (status == "Time limit reached") break;
                 }
+                deadline.Token.ThrowIfCancellationRequested();
             }
             catch (OperationCanceledException) when (token.IsCancellationRequested) { status = "Stopped"; partial = true; }
+            catch (OperationCanceledException) when (deadline.IsCancellationRequested) { status = "Time limit reached"; partial = true; }
             if (status == "Finished" && (partial || outcomes.Any(o => o.Status == "Unverified"))) status = "Needs review";
             var result = new CleanupRemovalResult(options, status, journal, outcomes, partial);
             Record(new { Stage = "Finished", Result = result });
@@ -152,8 +165,11 @@ public sealed partial class WindowsCleanupRemovalHost : ICleanupRemovalHost
     }
 
     public CleanupFileOutcome RemoveAggregate(CleanupEstimate target, int maximumItems) =>
+        RemoveAggregate(target, maximumItems, CancellationToken.None);
+
+    public CleanupFileOutcome RemoveAggregate(CleanupEstimate target, int maximumItems, CancellationToken token) =>
         target.AggregateAction && target.Target == RecycleBinCleanup.TargetName && target.Root == RecycleBinCleanup.ShellRoot
-            ? RecycleBinCleanup.EmptyAndVerify(target.CandidateFiles, target.CandidateBytes, maximumItems)
+            ? RecycleBinCleanup.EmptyAndVerify(target.CandidateFiles, target.CandidateBytes, maximumItems, token)
             : new(target.Root, "Skipped", "Unsupported aggregate cleanup target.");
 
     private static DateTime ToUtc(System.Runtime.InteropServices.ComTypes.FILETIME time) => DateTime.FromFileTimeUtc(((long)time.dwHighDateTime << 32) | (uint)time.dwLowDateTime);
