@@ -165,6 +165,8 @@ public sealed class GoalRunner(SymptomCatalog catalog, IReadOnlyList<RecipePack>
                             return Report(GoalOutcome.Unresolved, "The repair journal could not be saved. Stop further repairs and inspect the current state before retrying.");
                         if (outcome == RecipeRunOutcome.Canceled)
                             throw new OperationCanceledException(runToken);
+                        if (result.ExecutionUncertain)
+                            return Report(GoalOutcome.Unresolved, "A repair is active or its final state is uncertain. No further triage repairs were attempted. Review the pending operation and journal, and use operation-specific recovery before retrying.");
                         if (outcome == RecipeRunOutcome.RestartRequired)
                             return Report(GoalOutcome.RestartRequired, "A repair requires a restart. Run this symptom again after restarting to continue triage.");
                         if (outcome == RecipeRunOutcome.Repaired && symptom.Confirm is not null)
