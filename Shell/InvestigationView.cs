@@ -22,12 +22,23 @@ public partial class MainWindow
 
     private void RefreshFindings(InvestigationReport report)
     {
-        if (ReferenceEquals(shownReport, report)) return;
+        if (ReferenceEquals(shownReport, report) && lastReport is null && reportAvailable) return;
         shownReport = report;
         FindingCards.Children.Clear();
         FindingsSummary.Text = $"{report.Format}\n{report.ParsedLines:N0} parsed entries / {report.LinesAnalyzed:N0} inspected lines\n" +
             (report.Partial ? "Partial evidence or analysis.\n" : "") +
             (report.Findings.Count == 0 ? "No supported rule matched. This is not a health verdict." : $"{report.Findings.Count} findings. Recorded events only.");
+        bool importedReport = evidence is not null && !workflowSummaries.TryGetValue(evidence, out _) &&
+            !historicalWorkflows.TryGetValue(evidence, out _);
+        if (importedReport)
+        {
+            reportAvailable = true;
+            lastReport = null;
+            rawView = false;
+            ReportContent.Children.Clear();
+            ReportContent.Children.Add(Heading("Imported evidence report", 15));
+            ReportContent.Children.Add(Body(FindingsSummary.Text + "\n" + report.Limitation, 12, new Thickness(0, 0, 0, 12)));
+        }
         foreach (var finding in report.Findings)
         {
             var card = new StackPanel { Margin = new Thickness(0, 12, 0, 6) };
@@ -57,9 +68,11 @@ public partial class MainWindow
             }
             var source = new TextBox { Text = finding.ReferenceUrl, IsReadOnly = true, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 6, 0, 0) };
             card.Children.Add(source);
-            FindingCards.Children.Add(card);
+            if (importedReport) ReportContent.Children.Add(card);
+            else FindingCards.Children.Add(card);
             void AddText(string value) => card.Children.Add(new TextBlock { Text = value, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 5, 0, 0), FontSize = 11 });
         }
+        if (importedReport) SetOutputView();
     }
 
     private void ShowReference(int lineNumber)

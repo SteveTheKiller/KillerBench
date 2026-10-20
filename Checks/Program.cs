@@ -14,6 +14,8 @@ internal static class Program
         WindowsEngine.Register();
         try
         {
+            if (args is ["--isolated-import-reports"]) return ImportedReportUiChecks.Run();
+            if (args is ["--only", "import-reports"]) return IsolatedDesktop.Run("--isolated-import-reports");
             if (args is ["--only", "aggregate-cancellation"])
             {
                 AggregateCancellationChecks.RunAsync(Path.GetTempPath()).GetAwaiter().GetResult();
@@ -1678,10 +1680,11 @@ internal static class Program
             advanced.IsExpanded = false;
             ((Button)window.FindName("DemoButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             for (int attempt = 0; attempt < 30 && ((TextBlock)window.FindName("EvidenceTitle")).Text != "CBS.log"; attempt++) Pump();
-            Require(((StackPanel)window.FindName("FindingCards")).Children.Count == 2, "Demo import populates two findings");
+            Require(FindButtons((StackPanel)window.FindName("ReportContent")).Count(b => Equals(b.Content, "Show evidence")) == 2 &&
+                ((Border)window.FindName("ReportPane")).IsVisible, "Demo import visibly populates two findings");
             Require(((StackPanel)window.FindName("FindingsPanel")).Visibility == Visibility.Visible, "Findings opens after import");
             window.UpdateLayout();
-            var findingCards = (StackPanel)window.FindName("FindingCards");
+            var findingCards = (StackPanel)window.FindName("ReportContent");
             Require(FindButtons(findingCards).Count(b => Equals(b.Content, "Show evidence")) == 2, "One evidence action per finding");
             FindButtons(findingCards).Single(b => Equals(b.Tag, "KB-CBS-001")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(text.SelectedText.Contains("0x800f081f"), "Finding opens and selects original evidence line");
@@ -1698,7 +1701,7 @@ internal static class Program
             ((Button)window.FindName("OpenButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             for (int attempt = 0; attempt < 60 && ((TextBlock)window.FindName("EvidenceTitle")).Text != "installer-actions.log"; attempt++) Pump();
             Require(((TextBlock)window.FindName("EvidenceTitle")).Text == "installer-actions.log" &&
-                ((StackPanel)window.FindName("FindingCards")).Children.Count == 2, "MSI import populates action and main-engine findings");
+                FindButtons((StackPanel)window.FindName("ReportContent")).Count(b => Equals(b.Content, "Show evidence")) == 2, "MSI import populates action and main-engine findings");
             window.UpdateLayout();
             FindButtons(findingCards).Single(b => Equals(b.Tag, "KB-MSI-ACTION")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(text.SelectedText.Contains("InstallFiles. Return value 3.") && text.Text.Contains("Synthetic package context"),
@@ -1716,7 +1719,7 @@ internal static class Program
             for (int attempt = 0; attempt < 60 && ((TextBlock)window.FindName("EvidenceTitle")).Text != "Windows Update capture"; attempt++) Pump();
             Require(((TextBlock)window.FindName("EvidenceTitle")).Text == "Windows Update capture", "Saved capture opens through app workflow");
             Require(((Button)window.FindName("SaveCaptureButton")).IsEnabled, "Capture save available");
-            Require(((StackPanel)window.FindName("FindingCards")).Children.Count == 2, "Capture overview groups CBS and event findings");
+            Require(FindButtons((StackPanel)window.FindName("ReportContent")).Count(b => Equals(b.Content, "Show evidence")) == 2, "Capture overview groups CBS and event findings");
             FindButtons(findingCards).Single(b => Equals(b.Tag, "KB-CBS-001")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(text.SelectedText.Contains("0x800f081f"), "Capture finding selects the correct source line");
             ((ListBox)window.FindName("SourcesList")).SelectedIndex = ((ListBox)window.FindName("SourcesList")).Items.Count - 1;

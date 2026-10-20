@@ -106,13 +106,13 @@ public partial class MainWindow
         if (workflowSummaries.TryGetValue(selected, out var demoWorkflow) && demoWorkflow.Machine == DemoWorkflow.MachineName)
             ModeLabel.Text = Controls.LocalizedText.Get(App.ScreenshotMode ? "Str_Mode_DemoScreenshot" : "Str_Mode_DemoLive");
         SearchBox.Clear();
+        if (!workflowSummaries.TryGetValue(selected, out _)) ClearWorkflowReport();
         ShowEvidence();
         if (workflowSummaries.TryGetValue(selected, out var workflow))
         {
             if (workflowReportTitles.TryGetValue(selected, out var reportTitle)) RenderNamedWorkflowReport(workflow, reportTitle);
             else RenderWorkflowReport(workflow);
         }
-        else ClearWorkflowReport();
         if (SourceDetails.Visibility == Visibility.Visible) SetDetailsOpen(true);
     }
 

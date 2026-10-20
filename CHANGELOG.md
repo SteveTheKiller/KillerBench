@@ -13,8 +13,10 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Symptom triage rejects unknown option names before inspecting or changing a target.
 - Declarative repairs retain a durable unresolved-operation barrier, and symptom triage stops after uncertain execution.
 - WinHTTP proxy checks preserve failed registry reads as unknown instead of reporting direct access.
+- Group Policy history accepts CIM timestamps and rejects missing, malformed or future dates.
 - Native service validation restores and verifies the original state after partial injection or cancellation, and stops when restoration is incomplete.
 - Saved workflow JSON includes its historical-only scope notice.
+- Imported log findings open in the readable report with their original-line evidence actions; empty imports replace stale reports with an explicit no-match result.
 - Added the guarded repair model shared by the app, Engine and CLI: every repair is individually selected, rechecks fresh evidence and exact eligibility immediately before dispatch, writes a durable pending record, verifies the result, and reconciles an interrupted request on a later boot without repeating it.
 - Kept diagnosis and repair separate. Full system scan was read-only, saved reports and historical events could not authorize a change, and standard-user diagnostics started without an elevation prompt while repairs kept their administrator gates.
 - Kept missing, failed, timed-out, malformed, duplicate, contradictory and truncated evidence unknown, including native resource, identity, startup and wake-timer parsers. Incomplete evidence blocked dependent steps and repairs and never reported as healthy or verified. Independent checks continued when one provider failed.
