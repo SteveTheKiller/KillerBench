@@ -19,6 +19,11 @@ internal static class Program
                 AggregateCancellationChecks.RunAsync(Path.GetTempPath()).GetAwaiter().GetResult();
                 return 0;
             }
+            if (args is ["--only", "goal-options"])
+            {
+                GoalOptionValidationChecks.RunAsync().GetAwaiter().GetResult();
+                return 0;
+            }
             if (args is ["--only", "command-path"])
             {
                 CommandLinePathChecks.Run();
@@ -515,6 +520,7 @@ internal static class Program
         {
             CheckEvidence(scratch).GetAwaiter().GetResult();
             AggregateCancellationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            GoalOptionValidationChecks.RunAsync().GetAwaiter().GetResult();
             InstallerRuntimeChecks.Run();
             RecipePackChecks.RunAsync().GetAwaiter().GetResult();
             WindowsServicePackChecks.RunAsync().GetAwaiter().GetResult();

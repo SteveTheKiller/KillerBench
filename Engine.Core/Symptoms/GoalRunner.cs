@@ -73,6 +73,29 @@ public sealed class GoalRunner(SymptomCatalog catalog, IReadOnlyList<RecipePack>
             OpenQuestions = [.. open], Guidance = CombineGuidance(guidance, symptom.Guidance), Elapsed = watch.Elapsed
         };
 
+        if (options.RecipeOptions is { Count: > 0 })
+        {
+            var declared = new HashSet<string>(StringComparer.Ordinal);
+            if (symptom.TreeId is not null && catalog.FindTree(symptom.TreeId) is { } optionTree)
+            {
+                var optionNodes = optionTree.Nodes.ToDictionary(node => node.Id, StringComparer.Ordinal);
+                var pending = new Stack<string>();
+                var visited = new HashSet<string>(StringComparer.Ordinal);
+                pending.Push(optionTree.RootNodeId);
+                while (pending.TryPop(out string? id))
+                {
+                    if (!visited.Add(id) || !optionNodes.TryGetValue(id, out var node)) continue;
+                    if (node.Kind == TriageNodeKind.Recipe && recipes.TryGetValue(node.RecipeId ?? "", out var recipe))
+                        declared.UnionWith(recipe.Options.Select(option => option.Name));
+                    if (node.Kind != TriageNodeKind.Terminal)
+                        foreach (string next in node.Next.Values) pending.Push(next);
+                }
+            }
+            var unknown = options.RecipeOptions.Keys.Where(name => !declared.Contains(name)).Order(StringComparer.Ordinal).ToArray();
+            if (unknown.Length > 0)
+                return Report(GoalOutcome.Blocked, "Options not declared by any reachable recipe for this symptom: " + string.Join(", ", unknown) + ". Nothing was inspected or changed.");
+        }
+
         using var budget = CancellationTokenSource.CreateLinkedTokenSource(token);
         budget.CancelAfter(options.TimeBudget);
         var runToken = budget.Token;
