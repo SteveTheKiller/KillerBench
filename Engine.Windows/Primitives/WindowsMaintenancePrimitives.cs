@@ -48,6 +48,20 @@ public sealed class WindowsFileCountProbe : IProbePrimitive
 /// <summary>Moves every matching file in a known folder to a retained folder under the local KillerBench data directory. Nothing is deleted.</summary>
 public sealed class WindowsRetainFolderFilesAction : IActionPrimitive
 {
+    private readonly Func<string?, (string Path, string Filter)?> resolveFolder;
+    private readonly Func<string> retainRoot;
+    private readonly Action<string, string> moveFile;
+
+    public WindowsRetainFolderFilesAction(
+        Func<string?, (string Path, string Filter)?>? resolveFolder = null,
+        Func<string>? retainRoot = null,
+        Action<string, string>? moveFile = null)
+    {
+        this.resolveFolder = resolveFolder ?? WindowsMaintenanceFolders.Resolve;
+        this.retainRoot = retainRoot ?? (() => WindowsMaintenanceFolders.RetainRoot);
+        this.moveFile = moveFile ?? ((source, destination) => File.Move(source, destination, false));
+    }
+
     public string Name => "file.retain-folder";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [WindowsMaintenanceFolders.FolderParameter];
     public RecipeRisk Risk => RecipeRisk.Persistent;
@@ -58,9 +72,9 @@ public sealed class WindowsRetainFolderFilesAction : IActionPrimitive
         ArgumentNullException.ThrowIfNull(parameters);
         token.ThrowIfCancellationRequested();
         string tokenName = parameters.GetValueOrDefault("folder") ?? "";
-        if (WindowsMaintenanceFolders.Resolve(tokenName) is not { } target) return Task.FromResult(new ActionResult(false, false, "", "Unknown folder token."));
+        if (resolveFolder(tokenName) is not { } target) return Task.FromResult(new ActionResult(false, false, "", "Unknown folder token."));
         if (!Directory.Exists(target.Path)) return Task.FromResult(new ActionResult(false, true, "absent", "The folder does not exist; nothing to retain."));
-        string retained = Path.Combine(WindowsMaintenanceFolders.RetainRoot, tokenName + "-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture));
+        string retained = Path.Combine(retainRoot(), tokenName + "-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture));
         int moved = 0, failed = 0;
         try
         {
@@ -68,9 +82,15 @@ public sealed class WindowsRetainFolderFilesAction : IActionPrimitive
             foreach (string file in Directory.EnumerateFiles(target.Path, target.Filter, SearchOption.TopDirectoryOnly).Take(10000).ToArray())
             {
                 token.ThrowIfCancellationRequested();
-                try { File.Move(file, Path.Combine(retained, Path.GetFileName(file)), false); moved++; }
+                try { moveFile(file, Path.Combine(retained, Path.GetFileName(file))); moved++; }
                 catch (Exception error) when (error is IOException or UnauthorizedAccessException) { failed++; }
             }
+        }
+        catch (OperationCanceledException)
+        {
+            return Task.FromResult(new ActionResult(moved > 0, false,
+                "moved " + moved + ", failed " + failed + ", retained under " + retained,
+                "Retention was canceled; no further files were moved."));
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or System.Security.SecurityException)
         {
@@ -136,6 +156,8 @@ public sealed class WindowsSpoolerClearAction : IActionPrimitive
             using var retentionDeadline = CancellationTokenSource.CreateLinkedTokenSource(token);
             retentionDeadline.CancelAfter(limit);
             retained = await retainFiles(timeout, progress, retentionDeadline.Token).WaitAsync(retentionDeadline.Token).ConfigureAwait(false);
+            if (retentionDeadline.IsCancellationRequested && !token.IsCancellationRequested)
+                retained = retained with { TimedOut = true, Error = (retained.Error ?? "") + " The retention time limit expired." };
             evidence["retain"] = retained.Raw + (string.IsNullOrWhiteSpace(retained.Error) ? "" : "\n" + retained.Error);
             timedOut |= retained.TimedOut;
             if (!retained.Succeeded || retained.TimedOut) failure = "Spool file retention did not complete: " + (retained.Error ?? "no complete result was returned.");

@@ -52,7 +52,7 @@ internal static class WindowsMaintenancePackChecks
         var retainedRoot = WindowsMaintenanceFolders.RetainRoot;
         if (!retainedRoot.Contains("KillerBench", StringComparison.Ordinal)) throw new Exception("Retained root is outside the KillerBench data folder.");
 
-        // Retain primitive with a scratch folder mapping is not possible without a token, so prove the no-op path only.
+        // The unknown-token path remains inert with the production filesystem boundaries.
         var absent = await new WindowsRetainFolderFilesAction().ExecuteAsync(new Dictionary<string, string> { ["folder"] = "bogus" }, TimeSpan.FromSeconds(5), null, CancellationToken.None);
         if (absent.Dispatched) throw new Exception("Retain with an unknown token dispatched.");
 
@@ -209,6 +209,7 @@ internal static class WindowsMaintenancePackChecks
                 throw new Exception("Canceling an in-flight accepted stop started the Spooler before its stopped state was observed.");
         }
         await RunPendingStopRecoveryChecksAsync();
+        await RunPartialRetentionChecksAsync();
         Console.WriteLine("PASS: 15 controlled spooler cases cover cancellation, uncertain and rejected stops, observation deadlines, retention failures, restoration failures and verified success. No native commands or spool file operations ran.");
 
         static Task<ToolResult> NeverCompletes() => new TaskCompletionSource<ToolResult>().Task;
@@ -268,6 +269,81 @@ internal static class WindowsMaintenancePackChecks
         Console.WriteLine("PASS: four pending-stop timeout cases recover after 1056/1061 and retain each start/state result; three failure guards preserve disabled/pending uncertainty and the one-corrective-start cap.");
     }
 
+    internal static async Task RunPartialRetentionChecksAsync()
+    {
+        var failures = new List<string>();
+        foreach (string mode in new[] { "caller", "deadline", "journal", "journal-deadline", "zero" })
+        {
+            string root = Path.Combine(Path.GetTempPath(), "KillerBench-retain-" + Guid.NewGuid().ToString("N"));
+            string source = Path.Combine(root, "source"), retainedRoot = Path.Combine(root, "retained");
+            Directory.CreateDirectory(source);
+            File.WriteAllText(Path.Combine(source, "a.SHD"), "first owned bytes");
+            File.WriteAllText(Path.Combine(source, "b.SPL"), "second owned bytes");
+            using var canceled = new CancellationTokenSource();
+            string? movedSource = null, movedDestination = null;
+            int moves = 0;
+            var fixture = new SpoolerFixture();
+            fixture.Retain = retentionToken => new WindowsRetainFolderFilesAction(
+                folder =>
+                {
+                    if (mode == "zero") canceled.Cancel();
+                    return folder == "spool-printers" ? (source, "*") : null;
+                },
+                () => retainedRoot,
+                (from, to) =>
+                {
+                    File.Move(from, to, false);
+                    movedSource = from;
+                    movedDestination = to;
+                    moves++;
+                    if (mode is "deadline" or "journal-deadline")
+                    {
+                        if (!retentionToken.WaitHandle.WaitOne(TimeSpan.FromSeconds(mode == "journal-deadline" ? 22 : 2))) throw new Exception("The fixture retention deadline did not expire.");
+                    }
+                    else canceled.Cancel();
+                }).ExecuteAsync(new Dictionary<string, string> { ["folder"] = "spool-printers" }, fixture.Timeout, null, retentionToken);
+            try
+            {
+                ActionResult? result;
+                MemoryRecipeJournal? journal = null;
+                if (mode.StartsWith("journal", StringComparison.Ordinal))
+                {
+                    var library = new PrimitiveLibrary("Windows");
+                    library.AddProbe(new Fake("file.count", [WindowsMaintenanceFolders.FolderParameter]));
+                    library.AddAction(fixture.CreateAction());
+                    journal = new MemoryRecipeJournal();
+                    var recipe = WindowsMaintenancePack.Build().Recipes.Single(r => r.Id == "printing.spool-clear");
+                    var run = await new RecipeRunner(library, journal).RunAsync(recipe,
+                        new RecipeRunOptions { AuthorizeRepair = true, Elevated = true, ExplicitOptionsConfirmed = true }, canceled.Token);
+                    if (!run.ExecutionUncertain) failures.Add("Journaled partial retention was not reported uncertain.");
+                    result = run.Action;
+                }
+                else result = await fixture.ExecuteAsync(canceled.Token);
+
+                string retained = Directory.GetDirectories(retainedRoot).Single();
+                int expectedMoves = mode == "zero" ? 0 : 1;
+                if (moves != expectedMoves || Directory.GetFiles(source).Length != 2 - expectedMoves
+                    || Directory.GetFiles(retained).Length != expectedMoves
+                    || (expectedMoves > 0 && (movedSource is null || movedDestination is null || !File.Exists(movedDestination)
+                        || File.Exists(movedSource) || File.ReadAllText(movedDestination) != (Path.GetFileName(movedSource) == "a.SHD" ? "first owned bytes" : "second owned bytes")))
+                    || (expectedMoves == 0 && (File.ReadAllText(Path.Combine(source, "a.SHD")) != "first owned bytes"
+                        || File.ReadAllText(Path.Combine(source, "b.SPL")) != "second owned bytes")))
+                    failures.Add(mode + ": partial retained bytes or later source file were not preserved.");
+                if (!fixture.Running || fixture.StartAttempts != 1 || result is not { Dispatched: true, Succeeded: false }
+                    || result.TimedOut != mode.EndsWith("deadline", StringComparison.Ordinal) || string.IsNullOrWhiteSpace(result.Error)
+                    || !result.Raw.Contains("moved " + expectedMoves, StringComparison.Ordinal) || retained.Length == 0
+                    || !result.Raw.Contains(retained, StringComparison.Ordinal))
+                    failures.Add(mode + ": partial move count, retained path, cancellation/deadline result, or service restoration evidence was lost.");
+                if (journal != null && !journal.Entries.Any(entry => entry.Stage == RecipeJournalStage.Dispatched
+                    && entry.Raw?.Contains("moved 1", StringComparison.Ordinal) == true
+                    && entry.Raw.Contains(retained, StringComparison.Ordinal))) failures.Add("The dispatched journal lost partial retention evidence.");
+            }
+            finally { Directory.Delete(root, true); }
+        }
+        if (failures.Count != 0) throw new Exception(string.Join("; ", failures));
+        Console.WriteLine("PASS: actual retention preserves one moved file, later source bytes, path/count and cancellation/deadline evidence through the spooler result and recipe journal.");
+    }
+
     private sealed class SpoolerFixture
     {
         internal bool Running = true;
@@ -276,7 +352,7 @@ internal static class WindowsMaintenancePackChecks
         internal Func<string, CancellationToken, Task<ToolResult>?>? Command;
         internal Func<CancellationToken, Task<ActionResult>>? Retain;
 
-        internal Task<ActionResult> ExecuteAsync(CancellationToken token = default) => new WindowsSpoolerClearAction(
+        internal WindowsSpoolerClearAction CreateAction() => new WindowsSpoolerClearAction(
             (operation, _, commandToken) =>
             {
                 commandToken.ThrowIfCancellationRequested();
@@ -292,7 +368,10 @@ internal static class WindowsMaintenancePackChecks
                 retentionToken.ThrowIfCancellationRequested();
                 RetainAttempts++;
                 return Retain?.Invoke(retentionToken) ?? Task.FromResult(new ActionResult(true, true, "spool files retained"));
-            }).ExecuteAsync(new Dictionary<string, string>(), Timeout, null, token).WaitAsync(TimeSpan.FromSeconds(3));
+            });
+
+        internal Task<ActionResult> ExecuteAsync(CancellationToken token = default) => CreateAction()
+            .ExecuteAsync(new Dictionary<string, string>(), Timeout, null, token).WaitAsync(TimeSpan.FromSeconds(3));
     }
 
     private static void Verdict(RecipePack pack, string recipeId, PrimitiveResult result, ProbeVerdict expected, string what)
