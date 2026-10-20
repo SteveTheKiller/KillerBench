@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using System.Collections.Concurrent;
 
 namespace KillerBench.Engine.Updates;
 
@@ -29,6 +30,12 @@ public interface IThirdPartyUpdateExecutionHost
     Task<ThirdPartyUpdateResult> DiscoverAsync(CancellationToken token);
     Task<ToolResult> UpgradeAsync(ThirdPartyUpdateSelection selection, CancellationToken token);
     Task<string?> ReadInstalledVersionAsync(string id, string source, CancellationToken token);
+}
+
+/// <summary>Optionally seals an exact pending provider call before native startup. A false result leaves dispatch uncertain.</summary>
+public interface IThirdPartyUpdateStartControl
+{
+    bool TryCancelBeforeStart(CancellationToken operationToken);
 }
 
 public static class ThirdPartyUpdatePlanning
@@ -90,6 +97,7 @@ public static class ThirdPartyUpdateExecution
         var details = new List<string>();
         ThirdPartyUpdateOutcome? outcome = null;
         bool dispatched = false;
+        bool upgradeReturned = false;
         void ArchivePrepared()
         {
             if (dispatched || !File.Exists(pendingPath)) return;
@@ -127,7 +135,9 @@ public static class ThirdPartyUpdateExecution
             }
             Report(progress, $"Updating {selection.Id} to exact version {selection.TargetVersion}...");
             dispatched = true;
-            var tool = await ReadBounded(t => host.UpgradeAsync(selection, t), executionLimit, token, selection).ConfigureAwait(false);
+            var tool = await ReadBounded(t => host.UpgradeAsync(selection, t), executionLimit, token, selection,
+                host is IThirdPartyUpdateStartControl startControl ? startControl.TryCancelBeforeStart : null).ConfigureAwait(false);
+            upgradeReturned = true;
             Record(new { Stage = "ProviderResult", Result = tool });
             string? installed = await ReadBounded(t => host.ReadInstalledVersionAsync(selection.Id, selection.Source, t), TimeSpan.FromMinutes(5), token).ConfigureAwait(false);
             bool verified = tool.ExitCode == 0 && !tool.TimedOut && !tool.Truncated && string.IsNullOrWhiteSpace(tool.Error) &&
@@ -139,11 +149,25 @@ public static class ThirdPartyUpdateExecution
             if (verified) File.Delete(pendingPath);
             return Finish(verified ? "Completed" : "Needs review", []);
         }
+        catch (ToolStartCanceledException) when (!upgradeReturned)
+        {
+            dispatched = false;
+            ArchivePrepared();
+            details.Add("Operation stopped before the update executable could start. No application update was requested.");
+            return Finish(token.IsCancellationRequested ? "Stopped" : "Blocked", []);
+        }
         catch (OperationCanceledException) when (token.IsCancellationRequested)
         {
             ArchivePrepared();
             details.Add(dispatched ? "Operation stopped after provider dispatch. Verification is required before retrying." : "Operation stopped before provider dispatch.");
             return Finish("Stopped", []);
+        }
+        catch (ToolNotStartedException error) when (!upgradeReturned)
+        {
+            dispatched = false;
+            ArchivePrepared();
+            details.Add(error.Message);
+            return Finish("Blocked", []);
         }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or NotSupportedException or InvalidOperationException or TimeoutException or System.ComponentModel.Win32Exception or System.Security.SecurityException)
         {
@@ -193,14 +217,31 @@ public static class ThirdPartyUpdateExecution
         { return new(ThirdPartyUpdateRecoveryOutcome.InvalidRecord, "Pending evidence could not be safely reconciled: " + error.Message, pendingPath); }
     }
 
-    private static async Task<T> ReadBounded<T>(Func<CancellationToken, Task<T>> read, TimeSpan limit, CancellationToken token, ThirdPartyUpdateSelection? selection = null)
+    private static async Task<T> ReadBounded<T>(Func<CancellationToken, Task<T>> read, TimeSpan limit, CancellationToken token,
+        ThirdPartyUpdateSelection? selection = null, Func<CancellationToken, bool>? cancelBeforeStart = null)
     {
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(token);
         deadline.CancelAfter(limit);
+        Task<T>? task = null;
         try
         {
-            var task = read(deadline.Token) ?? throw new InvalidOperationException("Provider returned no task.");
+            task = read(deadline.Token) ?? throw new InvalidOperationException("Provider returned no task.");
             return await task.WaitAsync(deadline.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancelBeforeStart is not null)
+        {
+            if (cancelBeforeStart(deadline.Token)) throw new ToolStartCanceledException(token);
+            if (task is { IsCompleted: true })
+            {
+                // Preserve completed no-start proof if the wait's cancellation won the scheduling race.
+                try { await task.ConfigureAwait(false); }
+                catch (ToolStartCanceledException) { throw; }
+                catch (ToolNotStartedException) { throw; }
+                catch (Exception error) when (error is not OutOfMemoryException and not StackOverflowException) { }
+            }
+            if (!token.IsCancellationRequested && deadline.IsCancellationRequested)
+                throw new TimeoutException((selection is null ? "Prerequisite" : "Application update") + " timed out.");
+            throw;
         }
         catch (OperationCanceledException) when (!token.IsCancellationRequested && deadline.IsCancellationRequested)
         { throw new TimeoutException((selection is null ? "Prerequisite" : "Application update") + " timed out."); }
@@ -212,12 +253,73 @@ public static class ThirdPartyUpdateExecution
     }
 }
 
-public sealed class WindowsThirdPartyUpdateExecutionHost : IThirdPartyUpdateExecutionHost
+public sealed class WindowsThirdPartyUpdateExecutionHost : IThirdPartyUpdateExecutionHost, IThirdPartyUpdateStartControl
 {
+    private readonly Func<CancellationToken, Task<string>> resolveExecutable;
+    private readonly Func<string, string[], TimeSpan, Action?, CancellationToken, Task<ToolResult>> execute;
+    private readonly ConcurrentDictionary<CancellationToken, StartGate> starts = new();
+
+    public WindowsThirdPartyUpdateExecutionHost() : this(WinGetExecutableResolver.ResolveAsync, RunExecutableAsync) { }
+
+    public WindowsThirdPartyUpdateExecutionHost(Func<CancellationToken, Task<string>> resolveExecutable)
+        : this(resolveExecutable, RunExecutableAsync) { }
+
+    /// <summary>Injects system boundaries. The executor must invoke the supplied startup callback immediately before launching,
+    /// honor a callback exception by withholding launch, and finish all launch work before its task completes.</summary>
+    public WindowsThirdPartyUpdateExecutionHost(Func<CancellationToken, Task<string>> resolveExecutable,
+        Func<string, string[], TimeSpan, Action?, CancellationToken, Task<ToolResult>> execute)
+    {
+        this.resolveExecutable = resolveExecutable ?? throw new ArgumentNullException(nameof(resolveExecutable));
+        this.execute = execute ?? throw new ArgumentNullException(nameof(execute));
+    }
+
+    public Task<ToolResult> CheckProviderAsync(CancellationToken token = default) =>
+        ExecuteWinGetAsync(["--version"], TimeSpan.FromSeconds(30), token);
+
     public Task<ThirdPartyUpdateResult> DiscoverAsync(CancellationToken token) => ThirdPartyUpdateDiscovery.ReadAsync(token: token);
 
-    public Task<ToolResult> UpgradeAsync(ThirdPartyUpdateSelection selection, CancellationToken token)
-        => BoundedTool.RunAsync(UpgradeStep(selection), TimeSpan.FromHours(1), token: token);
+    public async Task<ToolResult> UpgradeAsync(ThirdPartyUpdateSelection selection, CancellationToken token)
+    {
+        var gate = new StartGate(token);
+        if (!starts.TryAdd(token, gate)) throw new InvalidOperationException("A provider call already owns this operation token.");
+        try { return await ExecuteWinGetAsync(UpgradeStep(selection).Arguments, TimeSpan.FromHours(1), token, gate.Claim).ConfigureAwait(false); }
+        finally { starts.TryRemove(new KeyValuePair<CancellationToken, StartGate>(token, gate)); }
+    }
+
+    public bool TryCancelBeforeStart(CancellationToken operationToken) =>
+        starts.TryGetValue(operationToken, out var gate) && gate.TryCancel();
+
+    private async Task<ToolResult> ExecuteWinGetAsync(string[] arguments, TimeSpan limit, CancellationToken token, Action? beforeStart = null)
+    {
+        string path;
+        try { path = await resolveExecutable(token).ConfigureAwait(false); token.ThrowIfCancellationRequested(); }
+        catch (OperationCanceledException error) { throw new ToolStartCanceledException(token, error); }
+        return await execute(path, arguments, limit, beforeStart, token).ConfigureAwait(false);
+    }
+
+    private static async Task<ToolResult> RunExecutableAsync(string path, string[] arguments, TimeSpan limit, Action? beforeStart, CancellationToken token)
+    {
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(token);
+        deadline.CancelAfter(limit);
+        try { return await NativeTool.RunExecutableAsync(path, arguments, token: deadline.Token, beforeStart: beforeStart).ConfigureAwait(false); }
+        catch (ToolStartCanceledException) { throw; }
+        catch (OperationCanceledException) when (!token.IsCancellationRequested)
+        { return new(-1, "", "The command exceeded its time limit. Its final state is unverified.", false) { TimedOut = true }; }
+    }
+
+    private sealed class StartGate(CancellationToken token)
+    {
+        private int state;
+        internal bool TryCancel()
+        {
+            int previous = Interlocked.CompareExchange(ref state, 2, 0);
+            return previous is 0 or 2;
+        }
+        internal void Claim()
+        {
+            if (Interlocked.CompareExchange(ref state, 1, 0) != 0) throw new ToolStartCanceledException(token);
+        }
+    }
 
     public async Task<string?> ReadInstalledVersionAsync(string id, string source, CancellationToken token)
     {

@@ -24,13 +24,27 @@ internal static class NativeTool
         IProgress<string>? progress, string? standardInput, CancellationToken token)
     {
         if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("This action requires Windows.");
-        var start = new ProcessStartInfo(ResolvePath(name))
+        string path = name.Equals("winget.exe", StringComparison.OrdinalIgnoreCase)
+            ? await WinGetExecutableResolver.ResolveAsync(token).ConfigureAwait(false) : ResolvePath(name);
+        return await RunExecutableAsync(path, arguments, unicode, progress, standardInput, token).ConfigureAwait(false);
+    }
+
+    internal static async Task<ToolResult> RunExecutableAsync(string path, string[] arguments, bool unicode = false,
+        IProgress<string>? progress = null, string? standardInput = null, CancellationToken token = default, Action? beforeStart = null)
+    {
+        if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("This action requires Windows.");
+        var start = new ProcessStartInfo(path)
         { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true,
             RedirectStandardInput = standardInput is not null };
         if (unicode) { start.StandardOutputEncoding = Encoding.Unicode; start.StandardErrorEncoding = Encoding.Unicode; }
         foreach (string argument in arguments) start.ArgumentList.Add(argument);
-        token.ThrowIfCancellationRequested();
-        using var process = Process.Start(start) ?? throw new IOException("Could not start " + name);
+        if (token.IsCancellationRequested) throw new ToolStartCanceledException(token);
+        beforeStart?.Invoke();
+        Process started;
+        try { started = Process.Start(start) ?? throw new ToolNotStartedException("The native executable did not start."); }
+        catch (Exception startupError) when (startupError is System.ComponentModel.Win32Exception or IOException or UnauthorizedAccessException or InvalidOperationException)
+        { throw new ToolNotStartedException("The native executable did not start.", startupError); }
+        using var process = started;
         using var stop = token.Register(() => { try { if (!process.HasExited) process.Kill(true); } catch (Exception e) when (e is InvalidOperationException or System.ComponentModel.Win32Exception) { } });
         if (standardInput is not null)
         {
@@ -63,5 +77,7 @@ internal static class NativeTool
 
     private static string ResolvePath(string name) => name.Equals("pwsh.exe", StringComparison.OrdinalIgnoreCase)
         ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "PowerShell", "7", "pwsh.exe")
+        : name.Equals("powershell.exe", StringComparison.OrdinalIgnoreCase)
+        ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "WindowsPowerShell", "v1.0", "powershell.exe")
         : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), name);
 }

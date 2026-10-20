@@ -12,6 +12,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Cleanup stops before aggregate removal when canceled or out of time, including the final Recycle Bin dispatch check.
 - Symptom triage rejects unknown option names before inspecting or changing a target.
 - Declarative repairs retain a durable unresolved-operation barrier, and symptom triage stops after uncertain execution.
+- App updates use the registered Microsoft-signed WinGet executable and clear prepared state only when startup was prevented or failed.
 - WinHTTP proxy checks preserve failed registry reads as unknown instead of reporting direct access.
 - Group Policy history accepts CIM timestamps and rejects missing, malformed or future dates.
 - Native service validation restores and verifies the original state after partial injection or cancellation, and stops when restoration is incomplete.
