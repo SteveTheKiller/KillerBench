@@ -10,9 +10,19 @@ public static class WindowsWinHttpProxy
     public const string KeyPath = @"HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\Connections";
     private const int MaxBytes = 16384;
 
-    /// <summary>Reads the value as a hex string, or Absent when Windows has never stored one.</summary>
-    internal const string ReadScript = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
-        "$v=(Get-ItemProperty -LiteralPath '" + KeyPath + "' -Name WinHttpSettings -ErrorAction SilentlyContinue).WinHttpSettings;" +
+    internal const string ReadValueScript = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
+        "$k=$null;try{$k=Get-Item -LiteralPath '" + KeyPath + "' -ErrorAction Stop}catch [System.Management.Automation.ItemNotFoundException]{};" +
+        "$v=$null;if($null -ne $k -and $k.GetValueNames() -contains 'WinHttpSettings'){" +
+        "$v=$k.GetValue('WinHttpSettings',$null,[Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames);" +
+        "if($v -isnot [byte[]] -or $v.Length -lt 16 -or $v.Length -gt 16384){throw 'Invalid WinHttpSettings value.'};" +
+        "$n=[BitConverter]::ToInt32($v,12);if($n -lt 0 -or $n -gt ($v.Length-16)){throw 'Invalid proxy length.'};" +
+        "$p=[Text.Encoding]::ASCII.GetString($v,16,$n);$next=16+$n;$b='';" +
+        "if($next -lt $v.Length){if(($v.Length-$next) -lt 4){throw 'Invalid bypass length.'};" +
+        "$m=[BitConverter]::ToInt32($v,$next);if($m -lt 0 -or $m -gt ($v.Length-$next-4)){throw 'Invalid bypass length.'};$b=[Text.Encoding]::ASCII.GetString($v,$next+4,$m)};" +
+        "if($p -match '[\\x00-\\x1f\\x7f]' -or $b -match '[\\x00-\\x1f\\x7f]' -or (([BitConverter]::ToInt32($v,8) -band 2) -ne 0 -and $n -eq 0)){throw 'Invalid proxy settings.'}};";
+
+    /// <summary>Reads the value as a hex string, or Absent after a confirmed missing key or value.</summary>
+    internal const string ReadScript = ReadValueScript +
         "if($null -eq $v){'Absent'}else{-join ($v|ForEach-Object{$_.ToString('x2')})}";
 
     /// <summary>Decodes the stored settings. Returns false when the bytes are not the documented layout.</summary>
@@ -52,13 +62,16 @@ public static class WindowsWinHttpProxy
 /// <summary>Reports the machine-wide WinHTTP proxy. Value is Direct or Proxy; Raw names the proxy server and the bypass entry count.</summary>
 public sealed class WindowsWinHttpProxyProbe : IProbePrimitive
 {
+    private readonly Func<string, CancellationToken, Task<ToolResult>> runScript;
+    public WindowsWinHttpProxyProbe(Func<string, CancellationToken, Task<ToolResult>>? runScript = null)
+        => this.runScript = runScript ?? ((script, token) => WindowsNetAdapterPrimitives.RunAsync(script, token));
     public string Name => "winhttp.proxy";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [];
 
     public async Task<PrimitiveResult> ObserveAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, CancellationToken token)
     {
         if (!OperatingSystem.IsWindows()) return PrimitiveResult.Unavailable("WinHTTP proxy inspection requires Windows.");
-        return Interpret(await WindowsNetAdapterPrimitives.RunAsync(WindowsWinHttpProxy.ReadScript, token).ConfigureAwait(false));
+        return Interpret(await runScript(WindowsWinHttpProxy.ReadScript, token).ConfigureAwait(false));
     }
 
     public static PrimitiveResult Interpret(ToolResult result) => WindowsNetAdapterPrimitives.Lines(result, "WinHttpSettings", lines =>
@@ -74,19 +87,21 @@ public sealed class WindowsWinHttpProxyProbe : IProbePrimitive
 /// <summary>Resets the machine-wide WinHTTP proxy to direct access. Browser and per-user proxy settings are not changed.</summary>
 public sealed class WindowsWinHttpProxyResetAction : IActionPrimitive
 {
+    private readonly Func<string, CancellationToken, Task<ToolResult>> runScript;
+    public WindowsWinHttpProxyResetAction(Func<string, CancellationToken, Task<ToolResult>>? runScript = null)
+        => this.runScript = runScript ?? ((script, token) => WindowsNetAdapterPrimitives.RunAsync(script, token));
     public string Name => "winhttp.proxy-reset";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [];
     public RecipeRisk Risk => RecipeRisk.Persistent;
     public bool RequiresElevation => true;
-    private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
-        "$v=(Get-ItemProperty -LiteralPath '" + WindowsWinHttpProxy.KeyPath + "' -Name WinHttpSettings -ErrorAction SilentlyContinue).WinHttpSettings;" +
-        "if($null -eq $v -or $v.Length -lt 12 -or ([BitConverter]::ToInt32($v,8) -band 2) -eq 0){'AlreadyDirect';exit 0};" +
+    private const string Script = WindowsWinHttpProxy.ReadValueScript +
+        "if($null -eq $v -or ([BitConverter]::ToInt32($v,8) -band 2) -eq 0){'AlreadyDirect';exit 0};" +
         "& (Join-Path $env:SystemRoot 'System32\\netsh.exe') winhttp reset proxy|Out-Null;if($LASTEXITCODE -ne 0){throw ('netsh exited with '+$LASTEXITCODE)};'Reset'";
 
     public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
     {
         if (!OperatingSystem.IsWindows()) return new ActionResult(false, false, "", "WinHTTP proxy changes require Windows.");
-        var result = await WindowsNetAdapterPrimitives.RunAsync(Script, token).ConfigureAwait(false);
+        var result = await runScript(Script, token).ConfigureAwait(false);
         return Interpret(result);
     }
 
