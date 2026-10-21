@@ -1626,10 +1626,14 @@ internal static class Program
             var languages = ((Button)window.FindName("LangButton")).ContextMenu;
             Capture(languages, Path.Combine(scratch, "language-menu.png"));
             var languageColumns = ((StackPanel)languages.Items[0]).Children.OfType<StackPanel>().ToArray();
+            var languageButtons = languageColumns.SelectMany(column => column.Children.OfType<RadioButton>()).ToArray();
+            var supportedLocales = Enum.GetValues<KillerBench.Services.Locale>();
             Require(languageColumns.Length == 2 &&
-                    languageColumns[0].Children.OfType<RadioButton>().Count() == 10 &&
-                    languageColumns[1].Children.OfType<RadioButton>().Count() == 9,
-                "All 19 languages visible in two columns");
+                    Math.Abs(languageColumns[0].Children.OfType<RadioButton>().Count() -
+                             languageColumns[1].Children.OfType<RadioButton>().Count()) <= 1 &&
+                    languageButtons.Length == supportedLocales.Length &&
+                    supportedLocales.All(locale => languageButtons.Count(button => Equals(button.Tag, locale)) == 1),
+                "Every supported language appears exactly once in two balanced columns");
             languages.IsOpen = false;
             foreach (var locale in Enum.GetValues<KillerBench.Services.Locale>())
             {
