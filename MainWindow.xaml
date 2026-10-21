@@ -481,12 +481,12 @@
             </StackPanel>
             <StackPanel x:Name="ProfileSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="{DynamicResource Str_Profile_MinimumAge}"/>
-              <Slider x:Name="ProfileAge" Minimum="1" Maximum="3650" Value="90" TickFrequency="1" IsSnapToTickEnabled="True" Width="240" HorizontalAlignment="Left"/>
+              <Slider x:Name="ProfileAge" AutomationProperties.Name="{DynamicResource Str_Profile_MinimumAge}" Minimum="1" Maximum="3650" Value="90" TickFrequency="1" IsSnapToTickEnabled="True" Width="240" HorizontalAlignment="Left"/>
               <TextBlock Text="{Binding ElementName=ProfileAge, Path=Value, StringFormat={}{0:0} days}"/>
               <CheckBox x:Name="ProfileDependencyCheck" Content="{DynamicResource Str_Profile_CheckDependencies}" IsChecked="True"/>
               <Expander x:Name="ProfileSelectionExpander" Header="{DynamicResource Str_Profile_SelectAfterReview}" Foreground="{DynamicResource TextBrush}">
                 <StackPanel>
-                  <ListBox x:Name="ProfileSelection" SelectionMode="Multiple" DisplayMemberPath="Path" MaxHeight="120" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}"/>
+                  <ListBox x:Name="ProfileSelection" AutomationProperties.Name="{DynamicResource Str_Profile_SelectAfterReview}" SelectionMode="Multiple" DisplayMemberPath="Path" MaxHeight="120" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}"/>
                   <Button Content="{DynamicResource Str_Profile_PreviewSelected}" Click="OnPreviewProfiles" HorizontalAlignment="Left"/>
                 </StackPanel>
               </Expander>

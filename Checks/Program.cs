@@ -1810,6 +1810,7 @@ internal static class Program
             Capture(window, Path.Combine(scratch, "workflows.png"));
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
             TaskDraftUiChecks.Run(window);
+            ShellHandoffUiChecks.Run(window);
             typeof(KillerBench.MainWindow).GetMethod("BeginWorkflowOutput", flags)!.Invoke(window, [WorkflowKind.SystemFiles, false]);
             typeof(KillerBench.MainWindow).GetMethod("AppendWorkflowOutput", flags)!.Invoke(window, ["Verification 42% complete"]);
             Require(text.Text.Contains("Verification 42% complete") && !text.Text.Contains("SYNTHETIC SAMPLE") &&

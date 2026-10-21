@@ -214,7 +214,7 @@ public partial class MainWindow
         try
         {
             var result = await operation(stop.Token);
-            workflowOutputActive = false;
+            // Registering the result appends the final lines and then closes the output session.
             if (result.ReportTitle is not null && result.ActionName is not null && result.Journal is not null && result.NextAction is not null)
             {
                 RegisterGuardedActionReport(WorkflowKind.BitLocker, result.ReportTitle, result.ActionName,
@@ -236,7 +236,6 @@ public partial class MainWindow
         {
             const string detail = "BitLocker operation ended without a verified outcome. Review the selected operation and saved journal before retrying.";
             AppendWorkflowOutput(detail);
-            workflowOutputActive = false;
             RegisterWorkflowResult(new WorkflowResult(WorkflowKind.BitLocker, Environment.MachineName, DateTimeOffset.UtcNow,
                 "BitLocker operation not completed", [new WorkflowCheck("BitLocker operation", CheckState.Unknown, detail)], [],
                 "Review the retained console output and any BitLocker operation journal before retrying."), "BitLocker operation");

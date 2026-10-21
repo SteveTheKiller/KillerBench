@@ -115,6 +115,11 @@ internal static class PickerDialogChecks
             {
                 Require(((ComboBox)dialog.FindName("FilterCombo")).SelectedIndex == 1,
                     "Save picker retains its selected filter");
+                Require(System.Windows.Automation.Peers.UIElementAutomationPeer.CreatePeerForElement((TextBox)dialog.FindName("FileNameBox"))!.GetName() ==
+                    (string)dialog.FindResource("Str_Dlg_FileName") &&
+                    System.Windows.Automation.Peers.UIElementAutomationPeer.CreatePeerForElement((ComboBox)dialog.FindName("FilterCombo"))!.GetName() ==
+                    (string)dialog.FindResource("Str_Dlg_FileType"),
+                    "Save picker file name and file type fields are named by their visible labels");
                 Capture(dialog, Path.Combine(scratch, "save-dark.png"));
                 dialog.Dispatcher.BeginInvoke(new Action(() =>
                 {

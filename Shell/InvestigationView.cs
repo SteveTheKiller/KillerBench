@@ -106,10 +106,10 @@ public partial class MainWindow
         }
     }
 
-    private async void OnExportReport(object sender, RoutedEventArgs e)
+    private WorkflowResult? ExportWorkflow(out ScheduledTaskInspectionReport? taskInspection, out WorkflowJournalSnapshot? historical)
     {
-        ScheduledTaskInspectionReport? taskInspection = null;
-        WorkflowJournalSnapshot? historical = null;
+        taskInspection = null;
+        historical = null;
         WorkflowResult? workflow = null;
         if (evidence is not null) taskInspectionReports.TryGetValue(evidence, out taskInspection);
         if (evidence is not null) historicalWorkflows.TryGetValue(evidence, out historical);
@@ -119,8 +119,12 @@ public partial class MainWindow
             try { workflow = historical.ReadWorkflow(); }
             catch (InvalidDataException) { }
         }
-        if (shownReport is null && taskInspection is null && historical is null && workflow is null) return;
-        var report = shownReport;
+        return workflow;
+    }
+
+    private Controls.FileDialog CreateExportPicker()
+    {
+        var workflow = ExportWorkflow(out _, out _);
         var picker = workflow is null
             ? new Controls.FileDialog(Controls.FileDialogMode.Save) { Filter = "JSON report|*.json", FileName = "KillerBench-report.json", Title = "Export evidence report" }
             : new Controls.FileDialog(Controls.FileDialogMode.Save)
@@ -130,6 +134,17 @@ public partial class MainWindow
                 AddExtension = true,
                 Title = "Export a structured workflow report"
             };
+        // While a new run streams, the retained selection is an earlier report; say which one.
+        if (workflowOutputActive && evidence is not null) picker.Title = "Export earlier report: " + evidence.Source;
+        return picker;
+    }
+
+    private async void OnExportReport(object sender, RoutedEventArgs e)
+    {
+        var workflow = ExportWorkflow(out var taskInspection, out var historical);
+        if (shownReport is null && taskInspection is null && historical is null && workflow is null) return;
+        var report = shownReport;
+        var picker = CreateExportPicker();
         if (picker.ShowDialog(this) != true) return;
         if (sources.Any(source => string.Equals(source.Source, Path.GetFullPath(picker.FileName), StringComparison.OrdinalIgnoreCase)) ||
             string.Equals(capturePath, Path.GetFullPath(picker.FileName), StringComparison.OrdinalIgnoreCase))
