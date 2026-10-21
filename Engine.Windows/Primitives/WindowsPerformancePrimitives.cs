@@ -75,11 +75,23 @@ public sealed partial class WindowsBcdBootSequenceProbe : IProbePrimitive
         if (result.ExitCode != 0) return PrimitiveResult.Unavailable("bcdedit exited with " + result.ExitCode + "; administrator access is usually required.");
         if (!BootManagerIdentifierPattern().IsMatch(result.Output))
             return PrimitiveResult.Unavailable("bcdedit output did not describe the {bootmgr} entry.");
-        var match = BootSequencePattern().Match(result.Output);
-        if (!match.Success) return new PrimitiveResult(true, null, raw) { Detail = "No one-time boot sequence is set." };
-        string value = match.Groups[1].Value.Trim();
+        var matches = BootSequencePattern().Matches(result.Output);
+        if (matches.Count == 0) return new PrimitiveResult(true, null, raw) { Detail = "No one-time boot sequence is set." };
+        if (matches.Count > 1) return new PrimitiveResult(false, null, raw, "bcdedit reported more than one bootsequence field.");
+        // bcdedit lists further sequence entries on indented continuation lines below the field.
+        var entries = new List<string> { matches[0].Groups[1].Value.Trim() };
+        string[] lines = result.Output.Replace("\r\n", "\n").Split('\n');
+        int line = Array.FindIndex(lines, text => text.StartsWith("bootsequence", StringComparison.Ordinal)) + 1;
+        for (; line < lines.Length && lines[line].Length > 0 && char.IsWhiteSpace(lines[line][0]) && lines[line].Trim().Length > 0; line++)
+            entries.Add(lines[line].Trim());
+        if (entries.Any(entry => !EntryPattern().IsMatch(entry)))
+            return new PrimitiveResult(false, null, raw, "bcdedit reported a boot sequence entry that is not an identifier.");
+        string value = string.Join(" ", entries);
         return new PrimitiveResult(true, value, raw) { Detail = "A one-time boot sequence is set: " + value + "." };
     }
+
+    [GeneratedRegex(@"^\{[^{}\s]+\}$", RegexOptions.CultureInvariant)]
+    private static partial Regex EntryPattern();
 }
 
 /// <summary>Schedules Windows Memory Diagnostic for the next boot through the BCD boot sequence.</summary>

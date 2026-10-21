@@ -48,6 +48,19 @@ internal static class WindowsSystemPackChecks
         Verdict(memory, WindowsBcdBootSequenceProbe.Interpret(new ToolResult(0, "identifier              {bootmgr}\r\ndefault                 {current}\r\n", "", false)), ProbeVerdict.Repairable, "memdiag not scheduled");
         Verdict(memory, WindowsBcdBootSequenceProbe.Interpret(new ToolResult(1, "", "denied", false)), ProbeVerdict.Unknown, "bootmgr denied");
         Verdict(memory, WindowsBcdBootSequenceProbe.Interpret(new ToolResult(0, "identifier              {current}\r\n", "", false)), ProbeVerdict.Unknown, "wrong entry");
+        const string other = "{11111111-1111-1111-1111-111111111111}";
+        const string another = "{22222222-2222-2222-2222-222222222222}";
+        string Sequence(params string[] entries) =>
+            "identifier              {bootmgr}\r\nbootsequence            " + string.Join("\r\n                        ", entries) + "\r\ntimeout                 30\r\n";
+        Verdict(memory, WindowsBcdBootSequenceProbe.Interpret(new ToolResult(0, Sequence("{memdiag}", other), "", false)), ProbeVerdict.Clear, "memdiag first of two");
+        Verdict(memory, WindowsBcdBootSequenceProbe.Interpret(new ToolResult(0, Sequence(other, "{memdiag}", another), "", false)), ProbeVerdict.Clear, "memdiag in the middle");
+        Verdict(memory, WindowsBcdBootSequenceProbe.Interpret(new ToolResult(0, Sequence(other, "{memdiag}"), "", false)), ProbeVerdict.Clear, "memdiag on a continuation line");
+        Verdict(memory, WindowsBcdBootSequenceProbe.Interpret(new ToolResult(0, Sequence(other, another), "", false)), ProbeVerdict.Repairable, "two entries without memdiag");
+        var ordered = WindowsBcdBootSequenceProbe.Interpret(new ToolResult(0, Sequence(other, "{memdiag}", another), "", false));
+        if (ordered.Value != other + " {memdiag} " + another)
+            throw new Exception("The boot sequence must keep every continuation entry in order, but was: " + ordered.Value);
+        Verdict(memory, WindowsBcdBootSequenceProbe.Interpret(new ToolResult(0, Sequence(other) + "bootsequence            {memdiag}\r\n", "", false)), ProbeVerdict.Unknown, "duplicate bootsequence field");
+        Verdict(memory, WindowsBcdBootSequenceProbe.Interpret(new ToolResult(0, Sequence(other, "not an entry"), "", false)), ProbeVerdict.Unknown, "malformed continuation entry");
 
         // CPU sample expectation.
         var cpu = pack.Recipes.Single(r => r.Id == "performance.high-cpu");
