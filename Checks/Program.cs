@@ -36,6 +36,13 @@ internal static class Program
                 NativeScenarioRestorationChecks.RunAsync().GetAwaiter().GetResult();
                 return 0;
             }
+            if (args is ["--only", "malformed-input"])
+            {
+                string scratch = Path.Combine(Path.GetTempPath(), "KillerBench-checks-" + Guid.NewGuid().ToString("N"));
+                try { MalformedInputChecks.RunAsync(scratch).GetAwaiter().GetResult(); }
+                finally { if (Directory.Exists(scratch)) Directory.Delete(scratch, true); }
+                return 0;
+            }
             if (args is ["--only", "truncated-evidence"])
             {
                 WindowsTruncatedEvidenceChecks.Run();
@@ -561,6 +568,7 @@ internal static class Program
             InstallationProtectionChecks.Run(scratch);
             NativeScenarioRestorationChecks.RunAsync().GetAwaiter().GetResult();
             RecipePackChecks.RunAsync().GetAwaiter().GetResult();
+            MalformedInputChecks.RunAsync(scratch).GetAwaiter().GetResult();
             WindowsTruncatedEvidenceChecks.Run();
             WindowsServicePackChecks.RunAsync().GetAwaiter().GetResult();
             WindowsPowerShellBindingChecks.RunAsync().GetAwaiter().GetResult();

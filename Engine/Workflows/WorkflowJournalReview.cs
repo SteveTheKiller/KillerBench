@@ -8,6 +8,17 @@ public sealed record WorkflowJournalSnapshot(string Source, string Machine, stri
     public static string Scope => "Historical file contents only. Outcomes are recorded claims, not current verification. No commands run and no retry is authorized.";
     [System.Text.Json.Serialization.JsonPropertyName("scope")]
     public string HistoricalScope => Scope;
+
+    /// <summary>Reads the recorded workflow, refusing damaged nested content before any report code touches it.</summary>
+    public WorkflowResult ReadWorkflow()
+    {
+        WorkflowResult? workflow;
+        try { workflow = Record.Deserialize<WorkflowResult>(Capture.JsonOptions); }
+        catch (JsonException error) { throw new InvalidDataException("Workflow record is invalid: " + error.Message, error); }
+        if (workflow is null) throw new InvalidDataException("Workflow record is empty.");
+        RecordIntegrity.Require(workflow, "workflow");
+        return workflow;
+    }
 }
 
 public static class WorkflowJournalReview

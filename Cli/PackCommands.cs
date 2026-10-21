@@ -36,8 +36,10 @@ internal static class PackCommands
                 catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException)
                 { Console.Error.WriteLine("Pack could not be loaded: " + error.Message); return 3; }
                 var validation = RecipePackValidation.Validate(pack, library);
-                Console.WriteLine(pack.Id + " revision " + pack.Revision + ": " + pack.Recipes.Count + " recipes, " +
-                    pack.Recipes.Count(recipe => recipe.DiagnosticOnly) + " diagnostic-only.");
+                // Summarize only the entries that exist; null entries are reported as validation issues below.
+                var recipes = (pack.Recipes ?? []).Where(recipe => recipe is not null).ToArray();
+                Console.WriteLine(pack.Id + " revision " + pack.Revision + ": " + recipes.Length + " recipes, " +
+                    recipes.Count(recipe => recipe.DiagnosticOnly) + " diagnostic-only.");
                 if (validation.IsValid) { Console.WriteLine("Valid against the " + library.Platform + " primitive library."); return 0; }
                 Report(validation);
                 return 3;

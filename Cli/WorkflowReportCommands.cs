@@ -31,8 +31,7 @@ internal static class WorkflowReportCommands
         try
         {
             var snapshot = await WorkflowJournalReview.ReadAsync(args[1]);
-            var workflow = snapshot.Record.Deserialize<WorkflowResult>(Capture.JsonOptions)
-                ?? throw new InvalidDataException("Workflow record is empty.");
+            var workflow = snapshot.ReadWorkflow();
             var scope = includeRepairs ? WorkflowReportScope.DiagnosticsAndRepairs : WorkflowReportScope.Diagnostics;
             string output = extension.Equals(".html", StringComparison.OrdinalIgnoreCase)
                 ? WorkflowReportExport.BuildHtml(workflow, scope, theme, accent)

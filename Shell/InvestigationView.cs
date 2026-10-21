@@ -116,8 +116,8 @@ public partial class MainWindow
         if (evidence is not null) workflowSummaries.TryGetValue(evidence, out workflow);
         if (workflow is null && historical is not null)
         {
-            try { workflow = System.Text.Json.JsonSerializer.Deserialize<WorkflowResult>(historical.Record.GetRawText(), Capture.JsonOptions); }
-            catch (System.Text.Json.JsonException) { }
+            try { workflow = historical.ReadWorkflow(); }
+            catch (InvalidDataException) { }
         }
         if (shownReport is null && taskInspection is null && historical is null && workflow is null) return;
         var report = shownReport;
