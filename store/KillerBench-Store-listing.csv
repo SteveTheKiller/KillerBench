@@ -1,5 +1,5 @@
-﻿Field,Type,English,Slovenian
-ProductName,Text,KillerBench,KillerBench
+﻿Field,Type,English,Bangla,Czech,German,Spanish,French,Hungarian,Italian,Japanese,Kazakh,Norwegian (Bokmål),Polish,Portuguese (Brazil),Russian,Turkish,Ukrainian,Vietnamese,Chinese (Simplified),Chinese (Traditional),Slovenian
+ProductName,Text,KillerBench,KillerBench,KillerBench,KillerBench,KillerBench,KillerBench,KillerBench,KillerBench,KillerBench,KillerBench,KillerBench,KillerBench,KillerBench,KillerBench,KillerBench,KillerBench,KillerBench,KillerBench,KillerBench,KillerBench
 Description,Text,"Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.
 
 Twelve sections, one habit
@@ -21,7 +21,385 @@ Check before retrying
 Journaled repairs record a pending request before dispatch. If a request is interrupted, recovery checks what happened without automatically repeating the change.
 
 No AI required
-Diagnostics and report analysis run locally without an AI service or KillerBench account. Actions you select, such as downloads or recovery-key backup to Entra ID, can contact their destination. The same Engine powers the desktop app and command line.","Izberite orodje, preglejte možnosti in pritisnite GO. Sledite dokazom v neobdelanem izpisu ali preglednem poročilu. Podprta popravila preverijo trenutne pogoje, zabeležijo zahtevo in preverijo rezultat.
+Diagnostics and report analysis run locally without an AI service or KillerBench account. Actions you select, such as downloads or recovery-key backup to Entra ID, can contact their destination. The same Engine powers the desktop app and command line.","একটি টুল বেছে নিন, তার বিকল্পগুলো পর্যালোচনা করুন এবং ""GO"" চাপুন। অপরিশোধিত আউটপুট বা পাঠযোগ্য প্রতিবেদনে প্রমাণ অনুসরণ করুন। সমর্থিত মেরামত বর্তমান পূর্বশর্ত যাচাই করে, অনুরোধ নথিভুক্ত করে এবং ফলাফল যাচাই করে।
+
+বারোটি বিভাগ, একটি অভ্যাস
+ডায়াগনস্টিক, মেরামত, আপডেট, ডিভাইস, নেটওয়ার্ক, অ্যাপ, রক্ষণাবেক্ষণ, নতুন কম্পিউটার প্রস্তুত করা, নিরাপত্তা, BitLocker, গোপনীয়তা ও স্টোরেজ। প্রতিটি টুল কিছু প্রস্তাব করার আগে তথ্য পড়ে, আর সম্পূর্ণ সিস্টেম স্ক্যান মনোযোগ প্রয়োজন এমন বিষয়গুলোকে অগ্রাধিকার অনুযায়ী সাজায়।
+
+শুধু প্রমাণিত সমস্যা ঠিক করুন
+শুধু সাম্প্রতিক প্রমাণ নির্দিষ্ট সমস্যার সঙ্গে মিললেই মেরামতের প্রস্তাব দেওয়া হয়। এতে আপনার নিশ্চিতকরণ প্রয়োজন, চালানোর ঠিক আগে সবকিছু আবার যাচাই করা হয় এবং যাচাইকৃত বলার আগে ফলাফল পুনরায় পড়া হয়।
+
+কোনো অস্বচ্ছ প্রক্রিয়া নেই
+ফলাফল সংশ্লিষ্ট ঘটনা, লগের লাইন বা সেটিংসের সঙ্গে যুক্ত থাকে। অসম্পূর্ণ প্রমাণকে কখনো সুস্থ অবস্থা হিসেবে দেখানো হয় না, আর অতীতের তথ্য অতীতের তথ্যই থাকে। প্রতিবেদন সরাসরি একটি টিকিটে রপ্তানি করুন।
+
+অনুমান ছাড়াই এনক্রিপশন
+সুরক্ষাকারী উপাদান পরীক্ষা করুন, পুনরুদ্ধার পাসওয়ার্ড ফাইল, Active Directory বা Entra ID-তে ব্যাকআপ করুন, Windows এবং ডেটা ড্রাইভ এনক্রিপ্ট করুন, স্বয়ংক্রিয় আনলক চালু করুন এবং TPM কখনো মুছে না দিয়ে প্রস্তুত করুন।
+
+ল্যাপটপকে নিজের মতো সাজান
+গোপনীয়তার সেটিংস, অ্যাপের অনুমতি এবং ক্লাউড অনুসন্ধান পর্যালোচনা ও পরিবর্তন করুন, তারপর Windows থেকে অপ্রয়োজনীয় উপাদান সরান। নীতি বা ডিভাইস ব্যবস্থাপনার নিয়ন্ত্রণে থাকা সেটিংস পরিবর্তন করা হয় না।
+
+আবার চেষ্টা করার আগে যাচাই করুন
+জার্নালভুক্ত মেরামত পাঠানোর আগে অপেক্ষমাণ অনুরোধ নথিভুক্ত করে। কোনো অনুরোধ বাধাপ্রাপ্ত হলে পুনরুদ্ধার ব্যবস্থা কী ঘটেছে তা যাচাই করে, পরিবর্তন স্বয়ংক্রিয়ভাবে পুনরাবৃত্তি করে না।
+
+AI প্রয়োজন নেই
+রোগনির্ণয় এবং প্রতিবেদন বিশ্লেষণ কোনো AI পরিষেবা বা KillerBench অ্যাকাউন্ট ছাড়াই স্থানীয়ভাবে চলে। আপনার নির্বাচিত কাজ, যেমন ডাউনলোড বা Entra ID-তে পুনরুদ্ধার কী ব্যাকআপ, তাদের গন্তব্যের সঙ্গে যোগাযোগ করতে পারে। একই Engine ডেস্কটপ অ্যাপ এবং কমান্ড লাইন চালায়।","Vyberte nástroj, zkontrolujte jeho možnosti a stiskněte „GO“. Sledujte důkazy v nezpracovaném výstupu nebo v čitelném přehledu. Podporované opravy kontrolují aktuální předpoklady, zaznamenávají požadavek a ověřují výsledek.
+
+Dvanáct sekcí, jeden návyk
+Diagnostika, opravy, aktualizace, zařízení, síť, aplikace, údržba, zprovoznění, zabezpečení, BitLocker, soukromí a úložiště. Každý nástroj nejprve čte, než něco nabídne. Úplná kontrola systému seřadí oblasti vyžadující pozornost.
+
+Opravujte jen prokázané problémy
+Oprava je nabídnuta jen tehdy, když čerstvé důkazy odpovídají přesnému problému. Vyžaduje vaše potvrzení, vše znovu kontroluje těsně před spuštěním a načte výsledek zpět, než jej označí jako ověřený.
+
+Žádné neprůhledné procesy
+Nálezy odkazují na příslušnou událost, řádek protokolu nebo nastavení. Neúplné důkazy se nikdy neoznačují za zdravý stav a historie zůstává historií. Exportujte přehled přímo do servisního požadavku.
+
+Šifrování bez hádání
+Zkontrolujte ochranné mechanismy, zálohujte obnovovací hesla do souboru, Active Directory nebo Entra ID, zašifrujte jednotky Windows i datové jednotky, zapněte automatické odemykání a připravte TPM, aniž byste jej kdy vymazali.
+
+Přizpůsobte si notebook
+Zkontrolujte a změňte nastavení soukromí, oprávnění aplikací a cloudové vyhledávání, potom ukliďte Windows. Nastavení spravovaná zásadami nebo správou zařízení zůstanou beze změny.
+
+Před opakováním zkontrolujte stav
+Opravy s deníkem zaznamenávají čekající požadavek před odesláním. Pokud je požadavek přerušen, obnova zkontroluje, co se stalo, bez automatického opakování změny.
+
+AI není potřeba
+Diagnostika a analýza přehledů probíhají místně bez služby AI nebo účtu KillerBench. Vybrané akce, například stahování či zálohování obnovovacího klíče do Entra ID, mohou komunikovat se svým cílem. Stejný Engine pohání desktopovou aplikaci i příkazový řádek.","Wählen Sie ein Werkzeug, prüfen Sie seine Optionen und drücken Sie „GO“. Verfolgen Sie die Belege in der Rohausgabe oder im lesbaren Bericht. Unterstützte Reparaturen prüfen aktuelle Voraussetzungen, protokollieren die Anfrage und verifizieren das Ergebnis.
+
+Zwölf Bereiche, eine Gewohnheit
+Diagnose, Reparatur, Updates, Geräte, Netzwerk, Apps, Wartung, Ersteinrichtung, Sicherheit, BitLocker, Datenschutz und Speicher. Jedes Werkzeug liest zuerst, bevor es etwas anbietet. Eine vollständige Systemprüfung priorisiert Bereiche mit Handlungsbedarf.
+
+Nur nachgewiesene Probleme beheben
+Eine Reparatur wird nur angeboten, wenn aktuelle Belege genau zum Problem passen. Sie benötigt Ihre Bestätigung, prüft unmittelbar vor der Ausführung erneut alle Voraussetzungen und liest das Ergebnis zurück, bevor sie es als verifiziert bezeichnet.
+
+Keine undurchsichtigen Abläufe
+Befunde verweisen auf das zugrunde liegende Ereignis, die Protokollzeile oder die Einstellung. Unvollständige Belege werden nie als fehlerfrei gemeldet, und historische Daten bleiben historisch. Exportieren Sie den Bericht direkt in ein Ticket.
+
+Verschlüsselung ohne Rätselraten
+Prüfen Sie Schutzmechanismen, sichern Sie Wiederherstellungskennwörter in einer Datei, in Active Directory oder Entra ID, verschlüsseln Sie Windows- und Datenlaufwerke, aktivieren Sie automatisches Entsperren und bereiten Sie ein TPM vor, ohne es jemals zu löschen.
+
+Machen Sie einen Laptop zu Ihrem eigenen
+Prüfen und ändern Sie Datenschutzeinstellungen, App-Berechtigungen und Cloudsuche und räumen Sie anschließend Windows auf. Einstellungen, die durch Richtlinien oder Geräteverwaltung gesteuert werden, bleiben unangetastet.
+
+Vor einem erneuten Versuch prüfen
+Reparaturen mit Journal protokollieren eine ausstehende Anfrage vor der Ausführung. Wird eine Anfrage unterbrochen, prüft die Wiederherstellung, was geschehen ist, ohne die Änderung automatisch zu wiederholen.
+
+Keine KI erforderlich
+Diagnose und Berichtsanalyse laufen lokal ohne KI-Dienst oder KillerBench-Konto. Ausgewählte Aktionen, etwa Downloads oder die Sicherung eines Wiederherstellungsschlüssels in Entra ID, können ihr Ziel kontaktieren. Dieselbe Engine betreibt Desktop-App und Befehlszeile.","Elige una herramienta, revisa sus opciones y pulsa «GO». Sigue las evidencias en la salida sin procesar o en el informe legible. Las reparaciones compatibles comprueban los requisitos actuales, registran la solicitud y verifican el resultado.
+
+Doce secciones, un hábito
+Diagnóstico, reparación, actualizaciones, dispositivos, red, aplicaciones, mantenimiento, puesta en marcha, seguridad, BitLocker, privacidad y almacenamiento. Cada herramienta lee antes de ofrecer nada, y el análisis completo del sistema ordena lo que necesita atención.
+
+Corrige solo lo demostrado
+Solo se ofrece una reparación cuando las evidencias recientes coinciden con el problema exacto. Requiere tu confirmación, vuelve a comprobar todo justo antes de ejecutarse y lee de nuevo el resultado antes de declararlo verificado.
+
+Sin cajas negras
+Los hallazgos enlazan al evento, la línea de registro o el ajuste que los explica. Las evidencias incompletas nunca se presentan como buen estado, y el historial sigue siendo historial. Exporta el informe directamente a un ticket.
+
+Cifrado sin conjeturas
+Inspecciona los protectores, guarda copias de las contraseñas de recuperación en un archivo, Active Directory o Entra ID, cifra unidades de Windows y de datos, activa el desbloqueo automático y prepara un TPM sin borrarlo nunca.
+
+Haz tuyo un portátil
+Revisa y cambia los ajustes de privacidad, los permisos de aplicaciones y la búsqueda en la nube, y después limpia Windows. Los ajustes controlados por directivas o administración de dispositivos se dejan intactos.
+
+Comprobar antes de reintentar
+Las reparaciones con diario registran una solicitud pendiente antes de enviarla. Si una solicitud se interrumpe, la recuperación comprueba qué ocurrió sin repetir automáticamente el cambio.
+
+No requiere IA
+Los diagnósticos y el análisis de informes se ejecutan localmente sin un servicio de IA ni una cuenta de KillerBench. Las acciones que selecciones, como las descargas o la copia de seguridad de claves de recuperación en Entra ID, pueden contactar con su destino. El mismo Engine impulsa la aplicación de escritorio y la línea de comandos.","Choisissez un outil, examinez ses options et appuyez sur « GO ». Suivez les preuves dans la sortie brute ou le rapport lisible. Les réparations prises en charge vérifient les prérequis actuels, enregistrent la demande et vérifient le résultat.
+
+Douze sections, une habitude
+Diagnostics, réparation, mises à jour, périphériques, réseau, applications, maintenance, mise en service, sécurité, BitLocker, confidentialité et stockage. Chaque outil lit avant de proposer quoi que ce soit, et l'analyse complète du système classe les points à examiner.
+
+Ne corriger que les problèmes prouvés
+Une réparation n'est proposée que si des preuves récentes correspondent exactement au problème. Elle exige votre confirmation, revérifie tout juste avant l'exécution et relit le résultat avant de le déclarer vérifié.
+
+Aucune boîte noire
+Les constats renvoient à l'événement, à la ligne de journal ou au paramètre qui les explique. Des preuves incomplètes ne sont jamais présentées comme un bon fonctionnement, et l'historique reste historique. Exportez directement le rapport dans un ticket.
+
+Chiffrer sans tâtonner
+Inspectez les protecteurs, sauvegardez les mots de passe de récupération dans un fichier, Active Directory ou Entra ID, chiffrez les lecteurs Windows et de données, activez le déverrouillage automatique et préparez un TPM sans jamais l'effacer.
+
+Personnalisez votre portable
+Examinez et modifiez les paramètres de confidentialité, les autorisations des applications et la recherche dans le cloud, puis nettoyez Windows. Les paramètres contrôlés par une stratégie ou la gestion des appareils restent inchangés.
+
+Vérifier avant de réessayer
+Les réparations journalisées enregistrent une demande en attente avant son envoi. Si une demande est interrompue, la reprise vérifie ce qui s'est passé sans répéter automatiquement le changement.
+
+Aucune IA requise
+Les diagnostics et l'analyse des rapports s'exécutent localement, sans service d'IA ni compte KillerBench. Les actions sélectionnées, comme les téléchargements ou la sauvegarde de clés de récupération dans Entra ID, peuvent contacter leur destination. La même Engine alimente l'application de bureau et la ligne de commande.","Válasszon eszközt, tekintse át a beállításait, majd nyomja meg a GO gombot. Kövesse a bizonyítékokat a nyers kimenetben vagy az olvasható jelentésben. A támogatott javítások ellenőrzik az aktuális előfeltételeket, rögzítik a kérést és ellenőrzik az eredményt.
+
+Tizenkét szakasz, egy szokás
+Diagnosztika, javítás, frissítések, eszközök, hálózat, alkalmazások, karbantartás, üzembe helyezés, biztonság, BitLocker, adatvédelem és tárolás. Minden eszköz előbb olvas, és csak utána ajánl bármit. A teljes rendszerellenőrzés rangsorolja a figyelmet igénylő területeket.
+
+Csak bizonyított hibákat javítson
+Javítás csak akkor érhető el, ha friss bizonyíték igazolja a pontos problémát. Az Ön megerősítését igényli, közvetlenül futtatás előtt mindent újra ellenőriz, majd visszaolvassa az eredményt, mielőtt ellenőrzöttnek jelölné.
+
+Nincsenek átláthatatlan folyamatok
+A megállapítások a mögöttük álló eseményre, naplósorra vagy beállításra hivatkoznak. A hiányos bizonyíték soha nem jelent egészséges állapotot, és a múltbeli adatok múltbeliek maradnak. Exportálja a jelentést közvetlenül egy hibajegybe.
+
+Titkosítás találgatás nélkül
+Vizsgálja meg a kulcsvédőket, mentse a helyreállítási jelszavakat fájlba, Active Directoryba vagy Entra ID-ba, titkosítsa a Windows- és adatmeghajtókat, kapcsolja be az automatikus feloldást, és készítse elő a TPM-et anélkül, hogy valaha törölné.
+
+Tegye sajátjává a laptopját
+Tekintse át és módosítsa az adatvédelmi beállításokat, alkalmazásengedélyeket és a felhőalapú keresést, majd tegye rendbe a Windowst. A házirend vagy eszközkezelés által vezérelt beállítások változatlanok maradnak.
+
+Ellenőrizzen újrapróbálás előtt
+A naplózott javítások elküldés előtt rögzítik a függőben lévő kérést. Megszakítás esetén a helyreállítás ellenőrzi, mi történt, és nem ismétli meg automatikusan a változtatást.
+
+Nincs szükség AI-ra
+A diagnosztika és a jelentéselemzés helyben fut, AI-szolgáltatás és KillerBench-fiók nélkül. A kiválasztott műveletek, például a letöltések vagy a helyreállítási kulcs mentése az Entra ID-ba, kapcsolatba léphetnek a céljukkal. Ugyanaz az Engine működteti az asztali alkalmazást és a parancssort.","Scegli uno strumento, controlla le opzioni e premi «GO». Segui le evidenze nell'output grezzo o nel rapporto leggibile. Le riparazioni supportate controllano i prerequisiti attuali, registrano la richiesta e verificano il risultato.
+
+Dodici sezioni, una sola abitudine
+Diagnostica, Riparazione, Aggiornamenti, Dispositivi, Rete, Applicazioni, Manutenzione, Configurazione iniziale, Sicurezza, BitLocker, Privacy e Archiviazione. Ogni strumento legge lo stato prima di proporre azioni e l'analisi completa del sistema ordina gli elementi da controllare.
+
+Correggi solo ciò che è dimostrato
+Una riparazione viene proposta solo quando evidenze aggiornate corrispondono al problema preciso. Richiede la tua conferma, ricontrolla le condizioni subito prima dell'esecuzione e verifica il risultato prima di indicarlo come verificato.
+
+Nessuna scatola nera
+I risultati rimandano all'evento, alla riga di registro o all'impostazione da cui derivano. Le evidenze incomplete non vengono mai indicate come stato sano e gli eventi storici restano tali. Esporta il rapporto direttamente in un ticket.
+
+Crittografia senza supposizioni
+Controlla i protettori, salva le password di ripristino in un file, in Active Directory o in Entra ID, crittografa le unità Windows e dati, attiva lo sblocco automatico e prepara un TPM senza mai cancellarlo.
+
+Rendi tuo il portatile
+Controlla e modifica le impostazioni della privacy, le autorizzazioni delle app e la ricerca nel cloud, poi riordina Windows. Le impostazioni gestite da criteri o dalla gestione dei dispositivi restano inalterate.
+
+Controlla prima di riprovare
+Le riparazioni registrate annotano la richiesta in sospeso prima dell'invio. Se una richiesta viene interrotta, il recupero controlla cosa è successo senza ripetere automaticamente la modifica.
+
+Non serve IA
+Diagnostica e analisi dei rapporti vengono eseguite localmente, senza servizi di IA o account KillerBench. Le azioni selezionate, come download o backup della chiave di ripristino su Entra ID, possono contattare la loro destinazione. Lo stesso Engine alimenta l'app desktop e la riga di comando.","ツールを選び、オプションを確認して [GO] を押します。生の出力や読みやすいレポートで証拠を確認できます。対応する修復は現在の前提条件を確認し、要求を記録して結果を検証します。
+
+12のセクション、1つの習慣
+診断、修復、更新、デバイス、ネットワーク、アプリ、メンテナンス、初期設定、セキュリティ、BitLocker、プライバシー、ストレージ。各ツールは提案前に状態を読み取り、システム全体のスキャンは対応が必要な項目を順に示します。
+
+確認できた問題だけを修復
+修復は最新の証拠が対象の問題と正確に一致した場合にのみ提示されます。確認を求め、実行直前に条件を再確認し、結果を読み取ってから検証済みと報告します。
+
+中身の見える診断
+検出結果から、根拠となるイベント、ログの行、設定を参照できます。不完全な証拠を正常と報告せず、過去の情報は過去の情報として扱います。レポートをチケットに直接エクスポートできます。
+
+推測に頼らない暗号化
+保護機能を調べ、回復パスワードをファイル、Active Directory、Entra IDにバックアップし、Windowsドライブとデータドライブを暗号化できます。自動ロック解除を有効にし、TPMをクリアせずに準備できます。
+
+ノートPCを自分仕様に
+プライバシー設定、アプリの権限、クラウド検索を確認・変更し、Windowsを整理できます。ポリシーやデバイス管理が所有する設定は変更しません。
+
+再試行の前に確認
+ジャーナルを使用する修復は、送信前に保留中の要求を記録します。要求が中断された場合、復旧処理は変更を自動で繰り返さず、何が起きたかを確認します。
+
+AIは不要
+診断とレポート分析はAIサービスやKillerBenchアカウントなしでローカルに実行されます。ダウンロードやEntra IDへの回復キーのバックアップなど、選択した操作は宛先に接続することがあります。同じEngineがデスクトップアプリとコマンドラインを動かします。","Құралды таңдап, параметрлерін қарап, «GO» түймесін басыңыз. Бастапқы шығыс деректеріндегі немесе оқуға ыңғайлы есептегі дәлелдерді қадағалаңыз. Қолдау көрсетілетін жөндеулер ағымдағы алғышарттарды тексереді, сұрауды тіркейді және нәтижені растайды.
+
+Он екі бөлім, бір дағды
+Диагностика, жөндеу, жаңартулар, құрылғылар, желі, қолданбалар, техникалық қызмет, бастапқы баптау, қауіпсіздік, BitLocker, құпиялық және сақтау. Әр құрал ұсыныс бермес бұрын күйді оқиды, ал жүйені толық сканерлеу назар аударуды қажет ететін мәселелерді реттейді.
+
+Расталған мәселелерді ғана түзетіңіз
+Жөндеу жаңа дәлелдер нақты мәселеге сәйкес келгенде ғана ұсынылады. Ол растауыңызды талап етеді, іске қосылар алдында шарттарды қайта тексереді және нәтиже расталды деп хабарламас бұрын күйін қайта оқиды.
+
+Жасырын тетіктер жоқ
+Қорытындылар олардың негізі болған оқиғаға, журнал жолына немесе параметрге сілтеме береді. Толық емес дәлелдер ешқашан сау күй ретінде көрсетілмейді, ал тарихи дерек тарихи дерек болып қалады. Есепті өтінімге тікелей экспорттаңыз.
+
+Болжамға сүйенбей шифрлау
+Қорғау тетіктерін тексеріңіз, қалпына келтіру құпиясөздерін файлға, Active Directory не Entra ID жүйесіне сақтық көшіріңіз, Windows және дерек дискілерін шифрлаңыз, автоматты құлыптан шығаруды қосыңыз және TPM модулін ешқашан тазаламай дайындаңыз.
+
+Ноутбукті өзіңізге бейімдеңіз
+Құпиялық параметрлерін, қолданба рұқсаттарын және бұлттағы іздеуді қарап, өзгертіңіз, содан кейін Windows жүйесін ретке келтіріңіз. Саясат немесе құрылғыны басқару иелігіндегі параметрлер өзгертілмейді.
+
+Қайталап көруден бұрын тексеріңіз
+Журналға жазылатын жөндеулер жіберілмес бұрын күтілген сұрауды тіркейді. Сұрау үзілсе, қалпына келтіру үдерісі өзгерісті автоматты түрде қайталамай, не болғанын тексереді.
+
+ЖИ қажет емес
+Диагностика мен есеп талдауы ЖИ қызметінсіз немесе KillerBench тіркелгісінсіз жергілікті компьютерде орындалады. Жүктеу немесе қалпына келтіру кілтін Entra ID жүйесіне сақтық көшіру сияқты таңдалған әрекеттер тиісті сыртқы мекенжайға қосылуы мүмкін. Бір Engine жұмыс үстелі қолданбасы мен пәрмен жолын қамтамасыз етеді.","Velg et verktøy, se gjennom alternativene og trykk «GO». Følg bevisene i råutdata eller den lesbare rapporten. Støttede reparasjoner kontrollerer gjeldende forutsetninger, registrerer forespørselen og verifiserer resultatet.
+
+Tolv seksjoner, én vane
+Diagnostikk, Reparasjon, Oppdateringer, Enheter, Nettverk, Apper, Vedlikehold, Klargjøring, Sikkerhet, BitLocker, Personvern og Lagring. Hvert verktøy leser tilstanden før det foreslår noe, og en full systemskanning rangerer det som trenger oppmerksomhet.
+
+Reparer bare det som er bekreftet
+En reparasjon tilbys bare når oppdaterte bevis samsvarer med det nøyaktige problemet. Den krever bekreftelse, kontrollerer forholdene på nytt rett før kjøring og leser tilbake resultatet før det merkes som verifisert.
+
+Ingen svarte bokser
+Funn lenker til hendelsen, logglinjen eller innstillingen bak dem. Ufullstendige bevis rapporteres aldri som en friskmelding, og historikk forblir historikk. Eksporter rapporten rett til en sak.
+
+Kryptering uten gjetting
+Undersøk beskyttelsesmekanismer, sikkerhetskopier gjenopprettingspassord til en fil, Active Directory eller Entra ID, krypter Windows- og datastasjoner, slå på automatisk opplåsing og klargjør en TPM uten å tømme den.
+
+Gjør den bærbare til din
+Se gjennom og endre personverninnstillinger, apptillatelser og skysøk, og rydd deretter opp i Windows. Innstillinger som styres av policy eller enhetsadministrasjon, blir ikke endret.
+
+Kontroller før du prøver igjen
+Journalførte reparasjoner registrerer en ventende forespørsel før utsending. Hvis en forespørsel avbrytes, kontrollerer gjenopprettingen hva som skjedde, uten å gjenta endringen automatisk.
+
+Ingen KI nødvendig
+Diagnostikk og rapportanalyse kjøres lokalt uten en KI-tjeneste eller KillerBench-konto. Valgte handlinger, som nedlastinger eller sikkerhetskopiering av gjenopprettingsnøkler til Entra ID, kan kontakte målet sitt. Den samme Engine driver skrivebordsappen og kommandolinjen.","Wybierz narzędzie, przejrzyj jego opcje i naciśnij „GO”. Sprawdź dowody w surowych danych wyjściowych lub czytelnym raporcie. Obsługiwane naprawy sprawdzają aktualne wymagania, zapisują żądanie i weryfikują wynik.
+
+Dwanaście sekcji, jeden nawyk
+Diagnostyka, Naprawa, Aktualizacje, Urządzenia, Sieć, Aplikacje, Konserwacja, Przygotowanie, Zabezpieczenia, BitLocker, Prywatność i Pamięć masowa. Każde narzędzie odczytuje stan przed zaproponowaniem działań, a pełne skanowanie systemu porządkuje elementy wymagające uwagi.
+
+Naprawiaj tylko potwierdzone problemy
+Naprawa jest proponowana tylko wtedy, gdy aktualne dowody odpowiadają dokładnie danemu problemowi. Wymaga potwierdzenia, ponownie sprawdza warunki tuż przed uruchomieniem i odczytuje stan po wykonaniu, zanim zgłosi wynik jako zweryfikowany.
+
+Bez czarnych skrzynek
+Ustalenia odsyłają do zdarzenia, wiersza dziennika lub ustawienia będącego ich podstawą. Niepełne dowody nigdy nie są zgłaszane jako prawidłowy stan, a historia pozostaje historią. Wyeksportuj raport bezpośrednio do zgłoszenia.
+
+Szyfrowanie bez zgadywania
+Sprawdzaj funkcje ochrony, zapisuj kopie haseł odzyskiwania w pliku, Active Directory lub Entra ID, szyfruj dyski Windows i dyski danych, włączaj automatyczne odblokowywanie i przygotowuj TPM bez jego czyszczenia.
+
+Dostosuj laptop do siebie
+Sprawdzaj i zmieniaj ustawienia prywatności, uprawnienia aplikacji i wyszukiwanie w chmurze, a następnie porządkuj Windows. Ustawienia należące do zasad lub zarządzania urządzeniami pozostają nietknięte.
+
+Sprawdź przed ponowną próbą
+Naprawy z dziennikiem zapisują oczekujące żądanie przed wysłaniem. Jeśli żądanie zostanie przerwane, odzyskiwanie sprawdza, co się wydarzyło, bez automatycznego powtarzania zmiany.
+
+AI nie jest wymagane
+Diagnostyka i analiza raportów działają lokalnie, bez usługi AI ani konta KillerBench. Wybrane działania, takie jak pobieranie lub kopia klucza odzyskiwania w Entra ID, mogą łączyć się ze swoim miejscem docelowym. Ten sam Engine obsługuje aplikację desktopową i wiersz poleceń.","Escolha uma ferramenta, revise as opções e pressione “GO”. Acompanhe as evidências na saída bruta ou no relatório legível. Os reparos compatíveis verificam os pré-requisitos atuais, registram a solicitação e verificam o resultado.
+
+Doze seções, um hábito
+Diagnósticos, Reparos, Atualizações, Dispositivos, Rede, Aplicativos, Manutenção, Preparação inicial, Segurança, BitLocker, Privacidade e Armazenamento. Cada ferramenta lê o estado antes de oferecer ações, e uma verificação completa do sistema ordena o que precisa de atenção.
+
+Corrija apenas o que foi comprovado
+Um reparo só é oferecido quando evidências atuais correspondem ao problema exato. Ele exige sua confirmação, verifica as condições novamente antes da execução e consulta o resultado antes de marcá-lo como verificado.
+
+Sem caixas-pretas
+As constatações levam ao evento, à linha do log ou à configuração que as fundamenta. Evidências incompletas nunca são apresentadas como um estado íntegro, e o histórico continua sendo histórico. Exporte o relatório diretamente para um chamado.
+
+Criptografia sem adivinhação
+Inspecione protetores, faça backup das senhas de recuperação em arquivo, no Active Directory ou no Entra ID, criptografe unidades do Windows e de dados, ative o desbloqueio automático e prepare um TPM sem nunca limpá-lo.
+
+Deixe o notebook do seu jeito
+Revise e altere as configurações de privacidade, permissões de aplicativos e busca na nuvem, depois organize o Windows. Configurações controladas por políticas ou pelo gerenciamento de dispositivos não são alteradas.
+
+Verifique antes de tentar novamente
+Reparos com diário registram uma solicitação pendente antes do envio. Se uma solicitação for interrompida, a recuperação verifica o que aconteceu sem repetir automaticamente a alteração.
+
+Não requer IA
+Os diagnósticos e a análise de relatórios são executados localmente, sem serviço de IA nem conta do KillerBench. Ações selecionadas, como downloads ou backup da chave de recuperação no Entra ID, podem contatar seu destino. O mesmo Engine alimenta o aplicativo de desktop e a linha de comando.","Выберите инструмент, проверьте параметры и нажмите «GO». Изучите данные в представлениях «Необработанный вывод» или «Читаемый отчёт». Поддерживаемые исправления проверяют текущие условия, регистрируют запрос и проверяют результат.
+
+Двенадцать разделов, одна привычка
+Диагностика, исправление, обновления, устройства, сеть, приложения, обслуживание, подготовка компьютера, безопасность, BitLocker, конфиденциальность и хранилище. Каждый инструмент сначала считывает данные и лишь затем что-либо предлагает. Полное сканирование системы определяет приоритеты проблем.
+
+Исправляйте только подтвержденные проблемы
+Исправление предлагается только тогда, когда свежие данные подтверждают конкретную проблему. Оно требует вашего подтверждения, повторно проверяет условия непосредственно перед запуском и считывает результат, прежде чем сообщить, что проверка пройдена.
+
+Никаких черных ящиков
+Обнаруженные состояния связаны с соответствующим событием, строкой журнала или настройкой. Неполные данные никогда не означают, что система исправна, а история остается историей. Экспортируйте отчет прямо в заявку.
+
+Шифрование без догадок
+Проверяйте средства защиты, сохраняйте пароли восстановления в файл, Active Directory или Entra ID, шифруйте Windows и диски с данными, включайте автоматическую разблокировку и подготавливайте TPM без его очистки.
+
+Настройте ноутбук под себя
+Проверяйте и меняйте параметры конфиденциальности, разрешения приложений и облачный поиск, затем удаляйте лишнее из Windows. Параметры, управляемые политиками или системой управления устройствами, не изменяются.
+
+Проверка перед повторной попыткой
+Перед запуском исправления запрос регистрируется в журнале как ожидающий выполнения. Если операция прервана, восстановление проверяет, что произошло, не повторяя изменение автоматически.
+
+ИИ не требуется
+Диагностика и анализ отчетов выполняются локально, без сервиса ИИ и учетной записи KillerBench. Выбранные действия, например загрузка файлов или резервное копирование ключей восстановления в Entra ID, могут обращаться к соответствующим сервисам. Один и тот же Engine используется в настольном приложении и командной строке.","Bir araç seçin, seçeneklerini inceleyin ve GO düğmesine basın. Ham çıktı veya Okunabilir rapor görünümündeki kanıtları izleyin. Desteklenen onarımlar güncel ön koşulları denetler, isteği kaydeder ve sonucu doğrular.
+
+On iki bölüm, tek alışkanlık
+Tanılama, Onarım, Güncellemeler, Aygıtlar, Ağ, Uygulamalar, Bakım, İlk kurulum, Güvenlik, BitLocker, Gizlilik ve Depolama. Her araç bir şey önermeden önce verileri okur; tam sistem taraması ise ilgilenilmesi gerekenleri önceliklendirir.
+
+Yalnızca doğrulanmış sorunları düzeltin
+Bir onarım ancak güncel kanıt tam olarak ilgili sorunu doğruladığında sunulur. Onayınızı gerektirir, çalışmadan hemen önce her şeyi yeniden kontrol eder ve Doğrulandı demeden önce sonucu tekrar okur.
+
+Kapalı kutular yok
+Bulgular, dayandıkları olaya, günlük satırına veya ayara bağlanır. Eksik kanıt hiçbir zaman sağlıklı sonuç olarak sunulmaz; geçmiş de geçmiş olarak kalır. Raporu doğrudan bir destek kaydına aktarın.
+
+Tahmine yer bırakmayan şifreleme
+Koruyucuları inceleyin, kurtarma parolalarını bir dosyaya, Active Directory'ye veya Entra ID'ye yedekleyin, Windows ve veri sürücülerini şifreleyin, otomatik kilit açmayı etkinleştirin ve TPM'yi hiçbir zaman temizlemeden hazırlayın.
+
+Dizüstü bilgisayarınızı size göre ayarlayın
+Gizlilik ayarlarını, uygulama izinlerini ve bulut aramasını inceleyip değiştirin, ardından Windows'u sadeleştirin. İlke veya aygıt yönetimi tarafından denetlenen ayarlara dokunulmaz.
+
+Yeniden denemeden önce kontrol
+Günlüğe alınan onarımlar, başlatılmadan önce bekleyen isteği kaydeder. İstek kesintiye uğrarsa kurtarma, değişikliği otomatik olarak tekrarlamadan ne olduğunu kontrol eder.
+
+Yapay zeka gerekmez
+Tanılama ve rapor analizi, bir yapay zeka hizmeti veya KillerBench hesabı olmadan yerel olarak çalışır. İndirme veya kurtarma anahtarını Entra ID'ye yedekleme gibi seçtiğiniz işlemler ilgili hedefle iletişim kurabilir. Aynı Engine, masaüstü uygulamasını ve komut satırını çalıştırır.","Виберіть інструмент, перегляньте його параметри й натисніть «GO». Вивчайте дані в поданнях «Вихідні дані» або «Зрозумілий звіт». Підтримувані виправлення перевіряють поточні передумови, реєструють запит і перевіряють результат.
+
+Дванадцять розділів, одна звичка
+Діагностика, виправлення, оновлення, пристрої, мережа, застосунки, обслуговування, підготовка комп'ютера, безпека, BitLocker, конфіденційність і сховище. Кожен інструмент спочатку зчитує дані, а вже потім щось пропонує. Повне сканування системи визначає пріоритети проблем.
+
+Виправляйте лише підтверджені проблеми
+Виправлення пропонується лише тоді, коли свіжі дані підтверджують конкретну проблему. Воно потребує вашого підтвердження, повторно перевіряє все безпосередньо перед запуском і зчитує результат, перш ніж повідомити, що перевірку пройдено.
+
+Жодних чорних скриньок
+Виявлені стани пов'язані з відповідною подією, рядком журналу чи налаштуванням. Неповні дані ніколи не означають, що система справна, а історія залишається історією. Експортуйте звіт просто до заявки.
+
+Шифрування без здогадок
+Перевіряйте засоби захисту, зберігайте паролі відновлення у файл, Active Directory чи Entra ID, шифруйте Windows і диски з даними, вмикайте автоматичне розблокування та готуйте TPM без його очищення.
+
+Налаштуйте ноутбук під себе
+Перевіряйте та змінюйте параметри конфіденційності, дозволи застосунків і хмарний пошук, а потім видаляйте зайве з Windows. Параметри, якими керують політики чи система керування пристроями, не змінюються.
+
+Перевірка перед повторною спробою
+Перед запуском виправлення запит реєструється в журналі як такий, що очікує виконання. Якщо операцію перервано, відновлення перевіряє, що сталося, не повторюючи зміну автоматично.
+
+ШІ не потрібен
+Діагностика й аналіз звітів виконуються локально, без служби ШІ чи облікового запису KillerBench. Вибрані дії, наприклад завантаження файлів або резервне копіювання ключів відновлення до Entra ID, можуть звертатися до відповідних служб. Один і той самий Engine використовується в настільному застосунку й командному рядку.","Chọn công cụ, xem lại các tùy chọn và nhấn GO. Theo dõi bằng chứng trong Đầu ra thô hoặc Báo cáo có thể đọc được. Các thao tác sửa chữa được hỗ trợ sẽ kiểm tra điều kiện hiện tại, ghi lại yêu cầu và xác minh kết quả.
+
+Mười hai phần, một thói quen
+Chẩn đoán, Sửa chữa, Cập nhật, Thiết bị, Mạng, Ứng dụng, Bảo trì, Thiết lập ban đầu, Bảo mật, BitLocker, Quyền riêng tư và Lưu trữ. Mỗi công cụ đều đọc dữ liệu trước khi đưa ra đề xuất; quét toàn bộ hệ thống sẽ xếp hạng những việc cần chú ý.
+
+Chỉ sửa những gì đã được xác nhận
+Chỉ đề xuất sửa chữa khi bằng chứng mới xác nhận đúng vấn đề. Thao tác cần bạn xác nhận, kiểm tra lại mọi điều kiện ngay trước khi chạy và đọc lại kết quả trước khi báo đã xác minh.
+
+Không có hộp đen
+Các phát hiện có liên kết đến sự kiện, dòng nhật ký hoặc cài đặt làm cơ sở. Bằng chứng chưa đầy đủ không bao giờ được báo là hệ thống hoạt động tốt; lịch sử vẫn là lịch sử. Xuất báo cáo trực tiếp vào phiếu hỗ trợ.
+
+Mã hóa không cần phỏng đoán
+Kiểm tra bộ bảo vệ, sao lưu mật khẩu khôi phục vào tệp, Active Directory hoặc Entra ID, mã hóa Windows và ổ dữ liệu, bật tự động mở khóa và chuẩn bị TPM mà không bao giờ xóa TPM.
+
+Biến máy tính xách tay thành của riêng bạn
+Xem lại và thay đổi cài đặt quyền riêng tư, quyền ứng dụng và tìm kiếm trên đám mây, sau đó dọn dẹp Windows. Các cài đặt do chính sách hoặc hệ thống quản lý thiết bị kiểm soát sẽ không bị thay đổi.
+
+Kiểm tra trước khi thử lại
+Thao tác sửa chữa ghi vào nhật ký yêu cầu đang chờ trước khi thực thi. Nếu yêu cầu bị gián đoạn, quy trình khôi phục kiểm tra điều gì đã xảy ra mà không tự động lặp lại thay đổi.
+
+Không cần AI
+Chẩn đoán và phân tích báo cáo chạy cục bộ, không cần dịch vụ AI hay tài khoản KillerBench. Những thao tác bạn chọn như tải xuống hoặc sao lưu khóa khôi phục vào Entra ID có thể kết nối với đích tương ứng. Cùng một Engine vận hành ứng dụng máy tính và dòng lệnh.","选择工具，检查选项，然后按“GO”。在“原始输出”或“可读报告”中查看证据。受支持的修复会检查当前前提条件、记录请求并验证结果。
+
+十二个分区，同一种习惯
+诊断、修复、更新、设备、网络、应用、维护、初始设置、安全、BitLocker、隐私和存储。每个工具都会先读取数据，再提供建议；全系统扫描则为需要关注的事项排定优先级。
+
+只修复已确认的问题
+只有新的证据准确对应具体问题时，才会提供修复。修复需要您确认，在运行前立即重新检查所有条件，并重新读取结果后才会报告已验证。
+
+没有黑箱
+每项发现都链接到相应的事件、日志行或设置。不完整的证据绝不会被报告为系统健康，历史记录仍是历史记录。将报告直接导出到工单。
+
+加密无需猜测
+检查保护器，将恢复密码备份到文件、Active Directory 或 Entra ID，加密 Windows 和数据驱动器，启用自动解锁，并准备 TPM，且绝不清除 TPM。
+
+让笔记本电脑更合您心意
+检查并更改隐私设置、应用权限和云搜索，然后精简 Windows。由策略或设备管理控制的设置会保持不变。
+
+重试前先检查
+使用日志的修复会在执行前记录待处理请求。如果请求中断，恢复流程会检查发生了什么，而不会自动重复变更。
+
+无需 AI
+诊断与报告分析在本地运行，无需 AI 服务或 KillerBench 账户。您选择的操作，例如下载或将恢复密钥备份到 Entra ID，可能连接到相应目标。同一个 Engine 为桌面应用和命令行提供支持。","選擇工具，檢查選項，然後按「GO」。在「原始輸出」或「可讀報告」中查看證據。支援的修復會檢查目前的必要條件、記錄要求並驗證結果。
+
+十二個區域，同一種習慣
+診斷、修復、更新、裝置、網路、應用程式、維護、初始設定、安全性、BitLocker、隱私和儲存空間。每個工具都會先讀取資料，再提供建議；全系統掃描則為需要關注的事項排定優先順序。
+
+只修復已確認的問題
+只有新的證據準確對應具體問題時，才會提供修復。修復需要您確認，在執行前立即重新檢查所有條件，並重新讀取結果後才會報告已驗證。
+
+沒有黑箱
+每項發現都連結至相應的事件、記錄行或設定。不完整的證據絕不會被報告為系統健康，歷史記錄仍是歷史記錄。將報告直接匯出至服務單。
+
+加密無需猜測
+檢查保護裝置，將復原密碼備份至檔案、Active Directory 或 Entra ID，加密 Windows 與資料磁碟機，啟用自動解除鎖定，並準備 TPM，且絕不清除 TPM。
+
+讓筆記型電腦更合您心意
+檢查並變更隱私設定、應用程式權限與雲端搜尋，然後精簡 Windows。由原則或裝置管理控制的設定會保持不變。
+
+重試前先檢查
+使用日誌的修復會在執行前記錄待處理要求。如果要求中斷，復原流程會檢查發生了什麼，而不會自動重複變更。
+
+無需 AI
+診斷與報告分析在本機執行，無需 AI 服務或 KillerBench 帳戶。您選擇的操作，例如下載或將復原金鑰備份到 Entra ID，可能連線至相應目標。同一個 Engine 為桌面應用程式與命令列提供支援。","Izberite orodje, preglejte možnosti in pritisnite GO. Sledite dokazom v neobdelanem izpisu ali preglednem poročilu. Podprta popravila preverijo trenutne pogoje, zabeležijo zahtevo in preverijo rezultat.
 
 Dvanajst razdelkov, ena navada
 Diagnostika, Popravilo, Posodobitve, Naprave, Omrežje, Aplikacije, Vzdrževanje, Začetna priprava, Varnost, BitLocker, Zasebnost in Shramba. Vsako orodje najprej prebere stanje, preden kaj ponudi, celoten pregled sistema pa razvrsti področja, ki zahtevajo pozornost.
@@ -43,71 +421,71 @@ Popravila z dnevnikom pred izvedbo zabeležijo čakajočo zahtevo. Če je zahtev
 
 Umetna inteligenca ni potrebna
 Diagnostika in analiza poročil potekata lokalno brez storitve umetne inteligence ali računa KillerBench. Izbrana dejanja, kot so prenosi ali varnostno kopiranje obnovitvenega ključa v Entra ID, lahko vzpostavijo povezavo s ciljem. Isti pogon poganja namizno aplikacijo in ukazno vrstico."
-WhatsNew,Text,,
-ProductFeatures1,Text,"Twelve sections, one habit","Dvanajst razdelkov, ena navada"
-ProductFeatures2,Text,Fix only what is proven,Popravite samo dokazano
-ProductFeatures3,Text,No black boxes,Pregledno delovanje
-ProductFeatures4,Text,Encryption without guesswork,Šifriranje brez ugibanja
-ProductFeatures5,Text,Make a laptop yours,Prilagodite si prenosnik
-ProductFeatures6,Text,Check before retrying,Preverite pred ponovnim poskusom
-ProductFeatures7,Text,No AI required,Umetna inteligenca ni potrebna
-ProductFeatures8,Text,,
-ProductFeatures9,Text,,
-ProductFeatures10,Text,,
-ProductFeatures11,Text,,
-ProductFeatures12,Text,,
-ProductFeatures13,Text,,
-ProductFeatures14,Text,,
-ProductFeatures15,Text,,
-ProductFeatures16,Text,,
-ProductFeatures17,Text,,
-ProductFeatures18,Text,,
-ProductFeatures19,Text,,
-ProductFeatures20,Text,,
-ShortDescription,Text,"Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.","Izberite orodje, preglejte možnosti in pritisnite GO. Sledite dokazom v neobdelanem izpisu ali preglednem poročilu. Podprta popravila preverijo trenutne pogoje, zabeležijo zahtevo in preverijo rezultat."
-SearchTerms1,Text,Windows diagnostics,diagnostika Windows
-SearchTerms2,Text,Windows repair,popravilo Windows
-SearchTerms3,Text,disk encryption,šifriranje diska
-SearchTerms4,Text,privacy settings,nastavitve zasebnosti
-SearchTerms5,Text,system maintenance,vzdrževanje sistema
-SearchTerms6,Text,IT tools,orodja IT
-SearchTerms7,Text,troubleshooting,odpravljanje težav
-Applicable license terms,Text,GNU General Public License v3.0 (GPLv3). Source code: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). Izvorna koda: https://github.com/SteveTheKiller/KillerBench
-Copyright,Text,© 2026 Steve the Killer,© 2026 Steve the Killer
-DevelopedBy,Text,Steve the Killer,Steve the Killer
-RequirementsMinimum1,Text,Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64)
-RequirementsMinimum2,Text,,
-RequirementsMinimum3,Text,,
-RequirementsMinimum4,Text,,
-RequirementsMinimum5,Text,,
-RequirementsMinimum6,Text,,
-RequirementsMinimum7,Text,,
-RequirementsMinimum8,Text,,
-RequirementsMinimum9,Text,,
-RequirementsMinimum10,Text,,
-RequirementsMinimum11,Text,,
-RequirementsRecommended1,Text,,
-RequirementsRecommended2,Text,,
-RequirementsRecommended3,Text,,
-RequirementsRecommended4,Text,,
-RequirementsRecommended5,Text,,
-RequirementsRecommended6,Text,,
-RequirementsRecommended7,Text,,
-RequirementsRecommended8,Text,,
-RequirementsRecommended9,Text,,
-RequirementsRecommended10,Text,,
-RequirementsRecommended11,Text,,
-StoreLogos1,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,StoreLogo-1080.png,StoreLogo-1080.png
-StoreLogos2,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,,
-Screenshots1,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/01.png,screenshots/01.png
-Screenshots2,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/02.png,screenshots/02.png
-Screenshots3,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/03.png,screenshots/03.png
-Screenshots4,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/04.png,screenshots/04.png
-Screenshots5,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/05.png,screenshots/05.png
-Screenshots6,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/06.png,screenshots/06.png
-Screenshots7,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/07.png,screenshots/07.png
-Screenshots8,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/08.png,screenshots/08.png
-Screenshots9,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/09.png,screenshots/09.png
-Screenshots10,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/10.png,screenshots/10.png
-HeroArts,Text,,
-Trailers,Text,,
+WhatsNew,Text,,,,,,,,,,,,,,,,,,,,
+ProductFeatures1,Text,"Twelve sections, one habit","বারোটি বিভাগ, একটি অভ্যাস","Dvanáct sekcí, jeden návyk","Zwölf Bereiche, eine Gewohnheit","Doce secciones, un hábito","Douze sections, une habitude","Tizenkét szakasz, egy szokás","Dodici sezioni, una sola abitudine",12のセクション、1つの習慣,"Он екі бөлім, бір дағды","Tolv seksjoner, én vane","Dwanaście sekcji, jeden nawyk","Doze seções, um hábito","Двенадцать разделов, одна привычка","On iki bölüm, tek alışkanlık","Дванадцять розділів, одна звичка","Mười hai phần, một thói quen",十二个分区，同一种习惯,十二個區域，同一種習慣,"Dvanajst razdelkov, ena navada"
+ProductFeatures2,Text,Fix only what is proven,শুধু প্রমাণিত সমস্যা ঠিক করুন,Opravujte jen prokázané problémy,Nur nachgewiesene Probleme beheben,Corrige solo lo demostrado,Ne corriger que les problèmes prouvés,Csak bizonyított hibákat javítson,Correggi solo ciò che è dimostrato,確認できた問題だけを修復,Расталған мәселелерді ғана түзетіңіз,Reparer bare det som er bekreftet,Naprawiaj tylko potwierdzone problemy,Corrija apenas o que foi comprovado,Исправляйте только подтвержденные проблемы,Yalnızca doğrulanmış sorunları düzeltin,Виправляйте лише підтверджені проблеми,Chỉ sửa những gì đã được xác nhận,只修复已确认的问题,只修復已確認的問題,Popravite samo dokazano
+ProductFeatures3,Text,No black boxes,কোনো অস্বচ্ছ প্রক্রিয়া নেই,Žádné neprůhledné procesy,Keine undurchsichtigen Abläufe,Sin cajas negras,Aucune boîte noire,Nincsenek átláthatatlan folyamatok,Nessuna scatola nera,中身の見える診断,Жасырын тетіктер жоқ,Ingen svarte bokser,Bez czarnych skrzynek,Sem caixas-pretas,Никаких черных ящиков,Kapalı kutular yok,Жодних чорних скриньок,Không có hộp đen,没有黑箱,沒有黑箱,Pregledno delovanje
+ProductFeatures4,Text,Encryption without guesswork,অনুমান ছাড়াই এনক্রিপশন,Šifrování bez hádání,Verschlüsselung ohne Rätselraten,Cifrado sin conjeturas,Chiffrer sans tâtonner,Titkosítás találgatás nélkül,Crittografia senza supposizioni,推測に頼らない暗号化,Болжамға сүйенбей шифрлау,Kryptering uten gjetting,Szyfrowanie bez zgadywania,Criptografia sem adivinhação,Шифрование без догадок,Tahmine yer bırakmayan şifreleme,Шифрування без здогадок,Mã hóa không cần phỏng đoán,加密无需猜测,加密無需猜測,Šifriranje brez ugibanja
+ProductFeatures5,Text,Make a laptop yours,ল্যাপটপকে নিজের মতো সাজান,Přizpůsobte si notebook,Machen Sie einen Laptop zu Ihrem eigenen,Haz tuyo un portátil,Personnalisez votre portable,Tegye sajátjává a laptopját,Rendi tuo il portatile,ノートPCを自分仕様に,Ноутбукті өзіңізге бейімдеңіз,Gjør den bærbare til din,Dostosuj laptop do siebie,Deixe o notebook do seu jeito,Настройте ноутбук под себя,Dizüstü bilgisayarınızı size göre ayarlayın,Налаштуйте ноутбук під себе,Biến máy tính xách tay thành của riêng bạn,让笔记本电脑更合您心意,讓筆記型電腦更合您心意,Prilagodite si prenosnik
+ProductFeatures6,Text,Check before retrying,আবার চেষ্টা করার আগে যাচাই করুন,Před opakováním zkontrolujte stav,Vor einem erneuten Versuch prüfen,Comprobar antes de reintentar,Vérifier avant de réessayer,Ellenőrizzen újrapróbálás előtt,Controlla prima di riprovare,再試行の前に確認,Қайталап көруден бұрын тексеріңіз,Kontroller før du prøver igjen,Sprawdź przed ponowną próbą,Verifique antes de tentar novamente,Проверка перед повторной попыткой,Yeniden denemeden önce kontrol,Перевірка перед повторною спробою,Kiểm tra trước khi thử lại,重试前先检查,重試前先檢查,Preverite pred ponovnim poskusom
+ProductFeatures7,Text,No AI required,AI প্রয়োজন নেই,AI není potřeba,Keine KI erforderlich,No requiere IA,Aucune IA requise,Nincs szükség AI-ra,Non serve IA,AIは不要,ЖИ қажет емес,Ingen KI nødvendig,AI nie jest wymagane,Não requer IA,ИИ не требуется,Yapay zeka gerekmez,ШІ не потрібен,Không cần AI,无需 AI,無需 AI,Umetna inteligenca ni potrebna
+ProductFeatures8,Text,,,,,,,,,,,,,,,,,,,,
+ProductFeatures9,Text,,,,,,,,,,,,,,,,,,,,
+ProductFeatures10,Text,,,,,,,,,,,,,,,,,,,,
+ProductFeatures11,Text,,,,,,,,,,,,,,,,,,,,
+ProductFeatures12,Text,,,,,,,,,,,,,,,,,,,,
+ProductFeatures13,Text,,,,,,,,,,,,,,,,,,,,
+ProductFeatures14,Text,,,,,,,,,,,,,,,,,,,,
+ProductFeatures15,Text,,,,,,,,,,,,,,,,,,,,
+ProductFeatures16,Text,,,,,,,,,,,,,,,,,,,,
+ProductFeatures17,Text,,,,,,,,,,,,,,,,,,,,
+ProductFeatures18,Text,,,,,,,,,,,,,,,,,,,,
+ProductFeatures19,Text,,,,,,,,,,,,,,,,,,,,
+ProductFeatures20,Text,,,,,,,,,,,,,,,,,,,,
+ShortDescription,Text,"Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.","একটি টুল বেছে নিন, তার বিকল্পগুলো পর্যালোচনা করুন এবং ""GO"" চাপুন। অপরিশোধিত আউটপুট বা পাঠযোগ্য প্রতিবেদনে প্রমাণ অনুসরণ করুন। সমর্থিত মেরামত বর্তমান পূর্বশর্ত যাচাই করে, অনুরোধ নথিভুক্ত করে এবং ফলাফল যাচাই করে।","Vyberte nástroj, zkontrolujte jeho možnosti a stiskněte „GO“. Sledujte důkazy v nezpracovaném výstupu nebo v čitelném přehledu. Podporované opravy kontrolují aktuální předpoklady, zaznamenávají požadavek a ověřují výsledek.","Wählen Sie ein Werkzeug, prüfen Sie seine Optionen und drücken Sie „GO“. Verfolgen Sie die Belege in der Rohausgabe oder im lesbaren Bericht. Unterstützte Reparaturen prüfen aktuelle Voraussetzungen, protokollieren die Anfrage und verifizieren das Ergebnis.","Elige una herramienta, revisa sus opciones y pulsa «GO». Sigue las evidencias en la salida sin procesar o en el informe legible. Las reparaciones compatibles comprueban los requisitos actuales, registran la solicitud y verifican el resultado.","Choisissez un outil, examinez ses options et appuyez sur « GO ». Suivez les preuves dans la sortie brute ou le rapport lisible. Les réparations prises en charge vérifient les prérequis actuels, enregistrent la demande et vérifient le résultat.","Válasszon eszközt, tekintse át a beállításait, majd nyomja meg a GO gombot. Kövesse a bizonyítékokat a nyers kimenetben vagy az olvasható jelentésben. A támogatott javítások ellenőrzik az aktuális előfeltételeket, rögzítik a kérést és ellenőrzik az eredményt.","Scegli uno strumento, controlla le opzioni e premi «GO». Segui le evidenze nell'output grezzo o nel rapporto leggibile. Le riparazioni supportate controllano i prerequisiti attuali, registrano la richiesta e verificano il risultato.",ツールを選び、オプションを確認して [GO] を押します。生の出力や読みやすいレポートで証拠を確認できます。対応する修復は現在の前提条件を確認し、要求を記録して結果を検証します。,"Құралды таңдап, параметрлерін қарап, «GO» түймесін басыңыз. Бастапқы шығыс деректеріндегі немесе оқуға ыңғайлы есептегі дәлелдерді қадағалаңыз. Қолдау көрсетілетін жөндеулер ағымдағы алғышарттарды тексереді, сұрауды тіркейді және нәтижені растайды.","Velg et verktøy, se gjennom alternativene og trykk «GO». Følg bevisene i råutdata eller den lesbare rapporten. Støttede reparasjoner kontrollerer gjeldende forutsetninger, registrerer forespørselen og verifiserer resultatet.","Wybierz narzędzie, przejrzyj jego opcje i naciśnij „GO”. Sprawdź dowody w surowych danych wyjściowych lub czytelnym raporcie. Obsługiwane naprawy sprawdzają aktualne wymagania, zapisują żądanie i weryfikują wynik.","Escolha uma ferramenta, revise as opções e pressione “GO”. Acompanhe as evidências na saída bruta ou no relatório legível. Os reparos compatíveis verificam os pré-requisitos atuais, registram a solicitação e verificam o resultado.","Выберите инструмент, проверьте параметры и нажмите «GO». Изучите данные в представлениях «Необработанный вывод» или «Читаемый отчёт». Поддерживаемые исправления проверяют текущие условия, регистрируют запрос и проверяют результат.","Bir araç seçin, seçeneklerini inceleyin ve GO düğmesine basın. Ham çıktı veya Okunabilir rapor görünümündeki kanıtları izleyin. Desteklenen onarımlar güncel ön koşulları denetler, isteği kaydeder ve sonucu doğrular.","Виберіть інструмент, перегляньте його параметри й натисніть «GO». Вивчайте дані в поданнях «Вихідні дані» або «Зрозумілий звіт». Підтримувані виправлення перевіряють поточні передумови, реєструють запит і перевіряють результат.","Chọn công cụ, xem lại các tùy chọn và nhấn GO. Theo dõi bằng chứng trong Đầu ra thô hoặc Báo cáo có thể đọc được. Các thao tác sửa chữa được hỗ trợ sẽ kiểm tra điều kiện hiện tại, ghi lại yêu cầu và xác minh kết quả.",选择工具，检查选项，然后按“GO”。在“原始输出”或“可读报告”中查看证据。受支持的修复会检查当前前提条件、记录请求并验证结果。,選擇工具，檢查選項，然後按「GO」。在「原始輸出」或「可讀報告」中查看證據。支援的修復會檢查目前的必要條件、記錄要求並驗證結果。,"Izberite orodje, preglejte možnosti in pritisnite GO. Sledite dokazom v neobdelanem izpisu ali preglednem poročilu. Podprta popravila preverijo trenutne pogoje, zabeležijo zahtevo in preverijo rezultat."
+SearchTerms1,Text,Windows diagnostics,Windows ডায়াগনস্টিকস,diagnostika Windows,Windows-Diagnose,diagnóstico de Windows,diagnostic Windows,Windows-diagnosztika,diagnostica Windows,Windows診断,Windows диагностикасы,Windows-diagnostikk,diagnostyka Windows,diagnóstico do Windows,диагностика Windows,Windows tanılama,діагностика Windows,chẩn đoán Windows,Windows诊断,Windows診斷,diagnostika Windows
+SearchTerms2,Text,Windows repair,Windows মেরামত,oprava Windows,Windows-Reparatur,reparación de Windows,réparation Windows,Windows-javítás,riparazione Windows,Windows修復,Windows жөндеу,Windows-reparasjon,naprawa Windows,reparo do Windows,восстановление Windows,Windows onarımı,відновлення Windows,sửa Windows,Windows修复,Windows修復,popravilo Windows
+SearchTerms3,Text,disk encryption,ডিস্ক এনক্রিপশন,šifrování disku,Festplattenverschlüsselung,cifrado de disco,chiffrement du disque,lemeztitkosítás,crittografia disco,ディスク暗号化,дискіні шифрлау,diskkryptering,szyfrowanie dysku,criptografia de disco,шифрование диска,disk şifreleme,шифрування диска,mã hóa đĩa,磁盘加密,磁碟加密,šifriranje diska
+SearchTerms4,Text,privacy settings,গোপনীয়তার সেটিংস,nastavení soukromí,Datenschutzeinstellungen,ajustes de privacidad,paramètres de confidentialité,adatvédelmi beállítások,impostazioni privacy,プライバシー設定,құпиялылық баптаулары,personverninnstillinger,ustawienia prywatności,configurações de privacidade,настройки конфиденциальности,gizlilik ayarları,налаштування приватності,cài đặt riêng tư,隐私设置,隱私設定,nastavitve zasebnosti
+SearchTerms5,Text,system maintenance,সিস্টেম রক্ষণাবেক্ষণ,údržba systému,Systemwartung,mantenimiento del sistema,maintenance du système,rendszerkarbantartás,manutenzione sistema,システムメンテナンス,жүйеге қызмет көрсету,systemvedlikehold,konserwacja systemu,manutenção do sistema,обслуживание системы,sistem bakımı,обслуговування системи,bảo trì hệ thống,系统维护,系統維護,vzdrževanje sistema
+SearchTerms6,Text,IT tools,আইটি টুল,IT nástroje,IT-Werkzeuge,herramientas de TI,outils informatiques,IT-eszközök,strumenti IT,ITツール,IT құралдары,IT-verktøy,narzędzia IT,ferramentas de TI,инструменты ИТ,BT araçları,інструменти ІТ,công cụ CNTT,IT工具,IT工具,orodja IT
+SearchTerms7,Text,troubleshooting,সমস্যা সমাধান,řešení problémů,Problembehandlung,solución de problemas,dépannage,hibaelhárítás,risoluzione problemi,トラブルシューティング,ақауларды жою,feilsøking,rozwiązywanie problemów,solução de problemas,устранение неполадок,sorun giderme,усунення несправностей,khắc phục lỗi,故障排除,疑難排解,odpravljanje težav
+Applicable license terms,Text,GNU General Public License v3.0 (GPLv3). Source code: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). সোর্স কোড: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). Zdrojový kód: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). Quellcode: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). Código fuente: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). Code source: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). Forráskód: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). Codice sorgente: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). ソースコード: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). Бастапқы код: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). Kildekode: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). Kod źródłowy: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). Código-fonte: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). Исходный код: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). Kaynak kodu: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). Вихідний код: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). Mã nguồn: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). 源代码: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). 原始碼: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). Izvorna koda: https://github.com/SteveTheKiller/KillerBench
+Copyright,Text,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer,© 2026 Steve the Killer
+DevelopedBy,Text,Steve the Killer,Steve the Killer,Steve the Killer,Steve the Killer,Steve the Killer,Steve the Killer,Steve the Killer,Steve the Killer,Steve the Killer,Steve the Killer,Steve the Killer,Steve the Killer,Steve the Killer,Steve the Killer,Steve the Killer,Steve the Killer,Steve the Killer,Steve the Killer,Steve the Killer,Steve the Killer
+RequirementsMinimum1,Text,Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64)
+RequirementsMinimum2,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsMinimum3,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsMinimum4,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsMinimum5,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsMinimum6,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsMinimum7,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsMinimum8,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsMinimum9,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsMinimum10,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsMinimum11,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsRecommended1,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsRecommended2,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsRecommended3,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsRecommended4,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsRecommended5,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsRecommended6,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsRecommended7,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsRecommended8,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsRecommended9,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsRecommended10,Text,,,,,,,,,,,,,,,,,,,,
+RequirementsRecommended11,Text,,,,,,,,,,,,,,,,,,,,
+StoreLogos1,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png,StoreLogo-1080.png
+StoreLogos2,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,,,,,,,,,,,,,,,,,,,,
+Screenshots1,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/01.png,screenshots/01.png,screenshots/01.png,screenshots/01.png,screenshots/01.png,screenshots/01.png,screenshots/01.png,screenshots/01.png,screenshots/01.png,screenshots/01.png,screenshots/01.png,screenshots/01.png,screenshots/01.png,screenshots/01.png,screenshots/01.png,screenshots/01.png,screenshots/01.png,screenshots/01.png,screenshots/01.png,screenshots/01.png
+Screenshots2,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/02.png,screenshots/02.png,screenshots/02.png,screenshots/02.png,screenshots/02.png,screenshots/02.png,screenshots/02.png,screenshots/02.png,screenshots/02.png,screenshots/02.png,screenshots/02.png,screenshots/02.png,screenshots/02.png,screenshots/02.png,screenshots/02.png,screenshots/02.png,screenshots/02.png,screenshots/02.png,screenshots/02.png,screenshots/02.png
+Screenshots3,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/03.png,screenshots/03.png,screenshots/03.png,screenshots/03.png,screenshots/03.png,screenshots/03.png,screenshots/03.png,screenshots/03.png,screenshots/03.png,screenshots/03.png,screenshots/03.png,screenshots/03.png,screenshots/03.png,screenshots/03.png,screenshots/03.png,screenshots/03.png,screenshots/03.png,screenshots/03.png,screenshots/03.png,screenshots/03.png
+Screenshots4,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/04.png,screenshots/04.png,screenshots/04.png,screenshots/04.png,screenshots/04.png,screenshots/04.png,screenshots/04.png,screenshots/04.png,screenshots/04.png,screenshots/04.png,screenshots/04.png,screenshots/04.png,screenshots/04.png,screenshots/04.png,screenshots/04.png,screenshots/04.png,screenshots/04.png,screenshots/04.png,screenshots/04.png,screenshots/04.png
+Screenshots5,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/05.png,screenshots/05.png,screenshots/05.png,screenshots/05.png,screenshots/05.png,screenshots/05.png,screenshots/05.png,screenshots/05.png,screenshots/05.png,screenshots/05.png,screenshots/05.png,screenshots/05.png,screenshots/05.png,screenshots/05.png,screenshots/05.png,screenshots/05.png,screenshots/05.png,screenshots/05.png,screenshots/05.png,screenshots/05.png
+Screenshots6,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/06.png,screenshots/06.png,screenshots/06.png,screenshots/06.png,screenshots/06.png,screenshots/06.png,screenshots/06.png,screenshots/06.png,screenshots/06.png,screenshots/06.png,screenshots/06.png,screenshots/06.png,screenshots/06.png,screenshots/06.png,screenshots/06.png,screenshots/06.png,screenshots/06.png,screenshots/06.png,screenshots/06.png,screenshots/06.png
+Screenshots7,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/07.png,screenshots/07.png,screenshots/07.png,screenshots/07.png,screenshots/07.png,screenshots/07.png,screenshots/07.png,screenshots/07.png,screenshots/07.png,screenshots/07.png,screenshots/07.png,screenshots/07.png,screenshots/07.png,screenshots/07.png,screenshots/07.png,screenshots/07.png,screenshots/07.png,screenshots/07.png,screenshots/07.png,screenshots/07.png
+Screenshots8,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/08.png,screenshots/08.png,screenshots/08.png,screenshots/08.png,screenshots/08.png,screenshots/08.png,screenshots/08.png,screenshots/08.png,screenshots/08.png,screenshots/08.png,screenshots/08.png,screenshots/08.png,screenshots/08.png,screenshots/08.png,screenshots/08.png,screenshots/08.png,screenshots/08.png,screenshots/08.png,screenshots/08.png,screenshots/08.png
+Screenshots9,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/09.png,screenshots/09.png,screenshots/09.png,screenshots/09.png,screenshots/09.png,screenshots/09.png,screenshots/09.png,screenshots/09.png,screenshots/09.png,screenshots/09.png,screenshots/09.png,screenshots/09.png,screenshots/09.png,screenshots/09.png,screenshots/09.png,screenshots/09.png,screenshots/09.png,screenshots/09.png,screenshots/09.png,screenshots/09.png
+Screenshots10,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/10.png,screenshots/10.png,screenshots/10.png,screenshots/10.png,screenshots/10.png,screenshots/10.png,screenshots/10.png,screenshots/10.png,screenshots/10.png,screenshots/10.png,screenshots/10.png,screenshots/10.png,screenshots/10.png,screenshots/10.png,screenshots/10.png,screenshots/10.png,screenshots/10.png,screenshots/10.png,screenshots/10.png,screenshots/10.png
+HeroArts,Text,,,,,,,,,,,,,,,,,,,,
+Trailers,Text,,,,,,,,,,,,,,,,,,,,
