@@ -116,6 +116,8 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Desktop, accessibility and localization
 
+- Buttons, menus, tooltips and shortcuts use the embedded interface font, including separate windows. Grain has crisper specks and fades midtones across app and website themes without dimming bright highlights.
+
 - Icon-only buttons give screen readers the name from their tooltip, icon glyphs stay out of what screen readers read, the tool list is named after its category, every part of each scroll bar has a name, and controls reached with the keyboard show a thin one-pixel dotted focus ring in the theme accent. Keyboard focus moves into the shortcuts and About cards when they open, stays there until they close, and then returns. Tab skips hidden links. Empty text and the hidden parts of scroll bars no longer read as items on screen. Each group of option buttons is one Tab stop that lands on the selected option, and the arrow keys move between its options. File-picker rows announce folder and file names.
 - Primary, outline and secondary buttons sit raised on a soft shadow that lifts on hover and sets down when pressed. 98SE keeps its flat beveled buttons.
 
@@ -125,7 +127,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Added category icons and a slimmer default sidebar whose buttons share the available height, keep a readable minimum with scrolling, and place icons above labels when the buttons are tall.
 - Added KillerMCP Options to the About card. Agent repairs through KillerMCP stayed off until turned on there, disruptive repairs needed a separate setting and desktop approval, and a locked state after an uncertain result could be cleared from the same place.
 - Added 13 family themes with yellow and magenta accents on the neutral and 98SE themes. New installs and the website started on Dark with the yellow accent.
-- Added a Film Grain switch to the theme menu and Alt+Shift+G to toggle it, listed on the shortcut views' new Alt+Shift layer. It was on by default, and turning it off removed the grain texture from every surface. The grain is soft, in many shades, with some specks leaning toward a color opposite the theme accent.
+- Added a Film Grain switch to the theme menu and Alt+Shift+G to toggle it, listed on the shortcut views' new Alt+Shift layer. It is on by default, and turning it off removes the grain texture from every surface.
 - Added the Windows 11 snap layouts menu to the maximize button.
 - Gave the About card, the confirmation dialog and the file picker the family close button: an X that turns red on hover without filling, and the classic caption X on 98SE.
 - Set the wordmarks in Punktype and Lacquer, page, sidebar and dialog headings in Lacquer, and the interface text and footers in Killer Sans, in place of the typewriter font in the app and on the website.
@@ -140,7 +142,6 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Centered website logos with space above and below at every screen size and standardized Lacquer headers and documentation text.
 - Menu separators draw their divider line instead of leaving an empty gap.
 - Used the family outline button for the run diagnosis, open log and update scan buttons instead of a solid dark block.
-- Set context menus in Killer Sans UI like the rest of the interface instead of Segoe UI.
 
 ### Documentation, packaging and validation
 
