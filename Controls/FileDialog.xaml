@@ -54,7 +54,7 @@
             </Border.Effect>
         </Border>
 
-        <kui:PickerBorder x:Name="RootBorder" Opacity="0" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
+        <kui:PickerBorder x:Name="RootBorder" Tag="{DynamicResource UseDialogCaption}" Opacity="0" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1"
                 Background="{DynamicResource BackgroundBrush}"
                 CornerRadius="{DynamicResource PanelCornerRadius}" Margin="{DynamicResource DialogHaloMargin}">
             <Grid>
@@ -155,7 +155,7 @@
                      focus border. The chevron overlays the box's right edge (the box pads 28 to
                      clear it) and drops the recent-locations list, like Explorer's address bar. -->
                 <Grid Grid.Column="1">
-                    <TextBox x:Name="PathBox" Height="28" Style="{StaticResource DarkTextBox}"
+                    <TextBox x:Name="PathBox" Style="{StaticResource DialogPickerTextBox}"
                              FontFamily="{DynamicResource UiFont}" FontSize="12" Padding="8,0,28,0"
                              VerticalContentAlignment="Center" KeyDown="PathBox_KeyDown"/>
                     <Button x:Name="RecentsBtn" Content="&#xE70D;" Click="RecentsBtn_Click"
@@ -519,8 +519,8 @@
 
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource Str_Dlg_FileName}" VerticalAlignment="Center"
                            Margin="0,0,10,0" Foreground="{DynamicResource MutedTextBrush}" FontFamily="{DynamicResource UiFont}" FontSize="11"/>
-                <TextBox x:Name="FileNameBox" Grid.Row="0" Grid.Column="1" Height="28"
-                         Style="{StaticResource DarkTextBox}"
+                <TextBox x:Name="FileNameBox" Grid.Row="0" Grid.Column="1"
+                         Style="{StaticResource DialogPickerTextBox}"
                          FontFamily="{DynamicResource UiFont}" FontSize="12" Padding="8,0"
                          VerticalContentAlignment="Center" KeyDown="FileNameBox_KeyDown"/>
 
@@ -553,11 +553,21 @@
         <!-- Raised edge, as SIBLINGS of the card sharing its halo margin so they land on its outer
              edge rather than inside its 1px border. Transparent and zero-thickness in every theme
              except the beveled ones, where they are the card's edge. -->
-        <Border Margin="{DynamicResource DialogHaloMargin}" IsHitTestVisible="False"
-                BorderBrush="{DynamicResource BevelLightBrush}"
-                BorderThickness="{DynamicResource BevelLightThickness}"/>
-        <Border Margin="{DynamicResource DialogHaloMargin}" IsHitTestVisible="False"
-                BorderBrush="{DynamicResource BevelDarkBrush}"
-                BorderThickness="{DynamicResource BevelDarkThickness}"/>
+        <Grid Margin="{DynamicResource DialogHaloMargin}" IsHitTestVisible="False">
+            <Border IsHitTestVisible="False"
+                    Margin="{DynamicResource FrameInnerMargin}"
+                    BorderBrush="{DynamicResource FrameInnerLightBrush}"
+                    BorderThickness="{DynamicResource FrameInnerLightThickness}"/>
+            <Border IsHitTestVisible="False"
+                    Margin="{DynamicResource FrameInnerMargin}"
+                    BorderBrush="{DynamicResource FrameInnerDarkBrush}"
+                    BorderThickness="{DynamicResource FrameInnerDarkThickness}"/>
+            <Border IsHitTestVisible="False"
+                    BorderBrush="{DynamicResource FrameOuterLightBrush}"
+                    BorderThickness="{DynamicResource FrameOuterLightThickness}"/>
+            <Border IsHitTestVisible="False"
+                    BorderBrush="{DynamicResource FrameOuterDarkBrush}"
+                    BorderThickness="{DynamicResource FrameOuterDarkThickness}"/>
+        </Grid>
     </Grid>
 </Window>
