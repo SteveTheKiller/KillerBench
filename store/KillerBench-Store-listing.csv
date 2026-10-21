@@ -1,5 +1,5 @@
-﻿Field,Type,English
-ProductName,Text,KillerBench
+﻿Field,Type,English,Slovenian
+ProductName,Text,KillerBench,KillerBench
 Description,Text,"Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.
 
 Twelve sections, one habit
@@ -21,72 +21,93 @@ Check before retrying
 Journaled repairs record a pending request before dispatch. If a request is interrupted, recovery checks what happened without automatically repeating the change.
 
 No AI required
-Diagnostics and report analysis run locally without an AI service or KillerBench account. Actions you select, such as downloads or recovery-key backup to Entra ID, can contact their destination. The same Engine powers the desktop app and command line."
-WhatsNew,Text,
-ProductFeatures1,Text,"Twelve sections, one habit"
-ProductFeatures2,Text,Fix only what is proven
-ProductFeatures3,Text,No black boxes
-ProductFeatures4,Text,Encryption without guesswork
-ProductFeatures5,Text,Make a laptop yours
-ProductFeatures6,Text,Check before retrying
-ProductFeatures7,Text,No AI required
-ProductFeatures8,Text,
-ProductFeatures9,Text,
-ProductFeatures10,Text,
-ProductFeatures11,Text,
-ProductFeatures12,Text,
-ProductFeatures13,Text,
-ProductFeatures14,Text,
-ProductFeatures15,Text,
-ProductFeatures16,Text,
-ProductFeatures17,Text,
-ProductFeatures18,Text,
-ProductFeatures19,Text,
-ProductFeatures20,Text,
-ShortDescription,Text,"Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result."
-SearchTerms1,Text,Windows diagnostics
-SearchTerms2,Text,Windows repair
-SearchTerms3,Text,disk encryption
-SearchTerms4,Text,privacy settings
-SearchTerms5,Text,system maintenance
-SearchTerms6,Text,IT tools
-SearchTerms7,Text,troubleshooting
-Applicable license terms,Text,GNU General Public License v3.0 (GPLv3). Source code: https://github.com/SteveTheKiller/KillerBench
-Copyright,Text,© 2026 Steve the Killer
-DevelopedBy,Text,Steve the Killer
-RequirementsMinimum1,Text,Microsoft .NET 10 Desktop Runtime (x64)
-RequirementsMinimum2,Text,
-RequirementsMinimum3,Text,
-RequirementsMinimum4,Text,
-RequirementsMinimum5,Text,
-RequirementsMinimum6,Text,
-RequirementsMinimum7,Text,
-RequirementsMinimum8,Text,
-RequirementsMinimum9,Text,
-RequirementsMinimum10,Text,
-RequirementsMinimum11,Text,
-RequirementsRecommended1,Text,
-RequirementsRecommended2,Text,
-RequirementsRecommended3,Text,
-RequirementsRecommended4,Text,
-RequirementsRecommended5,Text,
-RequirementsRecommended6,Text,
-RequirementsRecommended7,Text,
-RequirementsRecommended8,Text,
-RequirementsRecommended9,Text,
-RequirementsRecommended10,Text,
-RequirementsRecommended11,Text,
-StoreLogos1,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,StoreLogo-1080.png
-StoreLogos2,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,
-Screenshots1,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/01.png
-Screenshots2,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/02.png
-Screenshots3,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/03.png
-Screenshots4,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/04.png
-Screenshots5,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/05.png
-Screenshots6,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/06.png
-Screenshots7,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/07.png
-Screenshots8,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/08.png
-Screenshots9,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/09.png
-Screenshots10,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/10.png
-HeroArts,Text,
-Trailers,Text,
+Diagnostics and report analysis run locally without an AI service or KillerBench account. Actions you select, such as downloads or recovery-key backup to Entra ID, can contact their destination. The same Engine powers the desktop app and command line.","Izberite orodje, preglejte možnosti in pritisnite GO. Sledite dokazom v neobdelanem izpisu ali preglednem poročilu. Podprta popravila preverijo trenutne pogoje, zabeležijo zahtevo in preverijo rezultat.
+
+Dvanajst razdelkov, ena navada
+Diagnostika, Popravilo, Posodobitve, Naprave, Omrežje, Aplikacije, Vzdrževanje, Začetna priprava, Varnost, BitLocker, Zasebnost in Shramba. Vsako orodje najprej prebere stanje, preden kaj ponudi, celoten pregled sistema pa razvrsti področja, ki zahtevajo pozornost.
+
+Popravite samo dokazano
+Popravilo je ponujeno le, ko se sveži dokazi ujemajo s točno težavo. Zahteva vašo potrditev, tik pred izvedbo vse znova preveri in prebere rezultat, preden ga označi kot preverjenega.
+
+Pregledno delovanje
+Ugotovitve vodijo do dogodka, vrstice dnevnika ali nastavitve, iz katere izhajajo. Nepopolni dokazi nikoli ne pomenijo brezhibnega stanja, zgodovina pa ostane zgodovina. Izvozite poročilo neposredno v zahtevek za podporo.
+
+Šifriranje brez ugibanja
+Preglejte zaščitnike, varnostno kopirajte obnovitvena gesla v datoteko, Active Directory ali Entra ID, šifrirajte sistemske in podatkovne pogone, omogočite samodejno odklepanje in pripravite TPM, ne da bi ga kdaj počistili.
+
+Prilagodite si prenosnik
+Preglejte in spremenite nastavitve zasebnosti, dovoljenja aplikacij in iskanje v oblaku, nato odstranite navlako iz sistema Windows. Nastavitve, ki jih nadzorujejo pravilniki ali upravljanje naprav, ostanejo nespremenjene.
+
+Preverite pred ponovnim poskusom
+Popravila z dnevnikom pred izvedbo zabeležijo čakajočo zahtevo. Če je zahteva prekinjena, obnovitev preveri, kaj se je zgodilo, brez samodejnega ponavljanja spremembe.
+
+Umetna inteligenca ni potrebna
+Diagnostika in analiza poročil potekata lokalno brez storitve umetne inteligence ali računa KillerBench. Izbrana dejanja, kot so prenosi ali varnostno kopiranje obnovitvenega ključa v Entra ID, lahko vzpostavijo povezavo s ciljem. Isti pogon poganja namizno aplikacijo in ukazno vrstico."
+WhatsNew,Text,,
+ProductFeatures1,Text,"Twelve sections, one habit","Dvanajst razdelkov, ena navada"
+ProductFeatures2,Text,Fix only what is proven,Popravite samo dokazano
+ProductFeatures3,Text,No black boxes,Pregledno delovanje
+ProductFeatures4,Text,Encryption without guesswork,Šifriranje brez ugibanja
+ProductFeatures5,Text,Make a laptop yours,Prilagodite si prenosnik
+ProductFeatures6,Text,Check before retrying,Preverite pred ponovnim poskusom
+ProductFeatures7,Text,No AI required,Umetna inteligenca ni potrebna
+ProductFeatures8,Text,,
+ProductFeatures9,Text,,
+ProductFeatures10,Text,,
+ProductFeatures11,Text,,
+ProductFeatures12,Text,,
+ProductFeatures13,Text,,
+ProductFeatures14,Text,,
+ProductFeatures15,Text,,
+ProductFeatures16,Text,,
+ProductFeatures17,Text,,
+ProductFeatures18,Text,,
+ProductFeatures19,Text,,
+ProductFeatures20,Text,,
+ShortDescription,Text,"Choose a tool, review its options, and press GO. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.","Izberite orodje, preglejte možnosti in pritisnite GO. Sledite dokazom v neobdelanem izpisu ali preglednem poročilu. Podprta popravila preverijo trenutne pogoje, zabeležijo zahtevo in preverijo rezultat."
+SearchTerms1,Text,Windows diagnostics,diagnostika Windows
+SearchTerms2,Text,Windows repair,popravilo Windows
+SearchTerms3,Text,disk encryption,šifriranje diska
+SearchTerms4,Text,privacy settings,nastavitve zasebnosti
+SearchTerms5,Text,system maintenance,vzdrževanje sistema
+SearchTerms6,Text,IT tools,orodja IT
+SearchTerms7,Text,troubleshooting,odpravljanje težav
+Applicable license terms,Text,GNU General Public License v3.0 (GPLv3). Source code: https://github.com/SteveTheKiller/KillerBench,GNU General Public License v3.0 (GPLv3). Izvorna koda: https://github.com/SteveTheKiller/KillerBench
+Copyright,Text,© 2026 Steve the Killer,© 2026 Steve the Killer
+DevelopedBy,Text,Steve the Killer,Steve the Killer
+RequirementsMinimum1,Text,Microsoft .NET 10 Desktop Runtime (x64),Microsoft .NET 10 Desktop Runtime (x64)
+RequirementsMinimum2,Text,,
+RequirementsMinimum3,Text,,
+RequirementsMinimum4,Text,,
+RequirementsMinimum5,Text,,
+RequirementsMinimum6,Text,,
+RequirementsMinimum7,Text,,
+RequirementsMinimum8,Text,,
+RequirementsMinimum9,Text,,
+RequirementsMinimum10,Text,,
+RequirementsMinimum11,Text,,
+RequirementsRecommended1,Text,,
+RequirementsRecommended2,Text,,
+RequirementsRecommended3,Text,,
+RequirementsRecommended4,Text,,
+RequirementsRecommended5,Text,,
+RequirementsRecommended6,Text,,
+RequirementsRecommended7,Text,,
+RequirementsRecommended8,Text,,
+RequirementsRecommended9,Text,,
+RequirementsRecommended10,Text,,
+RequirementsRecommended11,Text,,
+StoreLogos1,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,StoreLogo-1080.png,StoreLogo-1080.png
+StoreLogos2,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,,
+Screenshots1,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/01.png,screenshots/01.png
+Screenshots2,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/02.png,screenshots/02.png
+Screenshots3,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/03.png,screenshots/03.png
+Screenshots4,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/04.png,screenshots/04.png
+Screenshots5,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/05.png,screenshots/05.png
+Screenshots6,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/06.png,screenshots/06.png
+Screenshots7,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/07.png,screenshots/07.png
+Screenshots8,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/08.png,screenshots/08.png
+Screenshots9,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/09.png,screenshots/09.png
+Screenshots10,Provide the file name only if it is in the same folder. Provide relative path to image starting with the subfolder name otherwise,screenshots/10.png,screenshots/10.png
+HeroArts,Text,,
+Trailers,Text,,
