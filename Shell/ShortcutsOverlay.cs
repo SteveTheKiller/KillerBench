@@ -90,7 +90,7 @@ public partial class MainWindow
         {
             var group = ShortcutBindings.Where(binding => binding.Category == category).ToArray();
             if (group.Length == 0) continue;
-            var heading = new TextBlock { Text = Resource("Str_Shortcuts_Group" + category), FontFamily = new FontFamily("Consolas"), FontSize = 11, FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, ShortcutListHost.Children.Count == 0 ? 0 : 12, 0, 6) };
+            var heading = new TextBlock { Text = Resource("Str_Shortcuts_Group" + category), FontSize = 11, FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, ShortcutListHost.Children.Count == 0 ? 0 : 12, 0, 6) };
             heading.SetResourceReference(TextBlock.ForegroundProperty, "KsCat" + category);
             ShortcutListHost.Children.Add(heading);
             foreach (ShortcutBinding binding in group)
@@ -98,7 +98,7 @@ public partial class MainWindow
                 var row = new Grid { Margin = new Thickness(0, 0, 0, 7) };
                 row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
                 row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                var keys = new TextBlock { Text = binding.Keys, FontFamily = new FontFamily("Consolas"), FontSize = 12 };
+                var keys = new TextBlock { Text = binding.Keys, FontSize = 12 };
                 keys.SetResourceReference(TextBlock.ForegroundProperty, "PrimaryBrush");
                 var label = new TextBlock { Text = Label(binding), FontSize = 12, TextWrapping = TextWrapping.Wrap };
                 label.SetResourceReference(TextBlock.ForegroundProperty, "MutedTextBrush");
@@ -124,7 +124,7 @@ public partial class MainWindow
                 if (key.Id.Length == 0) { host.Children.Add(new Border { Width = KeyboardUnit * key.Width }); continue; }
                 lit.TryGetValue(key.Id, out ShortcutBinding binding);
                 bool bound = binding.Keys is not null;
-                var text = new TextBlock { Text = bound ? key.Cap + "\n" + Label(binding) : key.Cap, TextAlignment = TextAlignment.Center, TextWrapping = TextWrapping.Wrap, FontFamily = new FontFamily("Consolas"), FontSize = bound ? 8.5 : 10.5, VerticalAlignment = VerticalAlignment.Center };
+                var text = new TextBlock { Text = bound ? key.Cap + "\n" + Label(binding) : key.Cap, TextAlignment = TextAlignment.Center, TextWrapping = TextWrapping.Wrap, FontSize = bound ? 8.5 : 10.5, VerticalAlignment = VerticalAlignment.Center };
                 text.SetResourceReference(TextBlock.ForegroundProperty, bound ? "KsCat" + binding.Category : "DimTextBrush");
                 var cap = new Border { Width = KeyboardUnit * key.Width - 4, Height = 46, Margin = new Thickness(0, 0, 4, 0), CornerRadius = new CornerRadius(4), BorderThickness = new Thickness(1), ToolTip = bound ? binding.Keys + ": " + Label(binding) : null };
                 cap.SetResourceReference(Border.BackgroundProperty, "SurfaceBrush");
