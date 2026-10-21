@@ -18,7 +18,7 @@
         <GradientStop Offset="0.55" Color="#1f000000"/>
         <GradientStop Offset="1.0" Color="#82000000"/>
     </LinearGradientBrush>
-    <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#1e1e1e" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#141414" po:Freeze="True"/>
     <SolidColorBrush x:Key="CardBorderBrush" Color="#2e2e2e" po:Freeze="True"/>
     <SolidColorBrush x:Key="PrimaryBrush"    Color="#22bb56" po:Freeze="True"/>
     <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#22bb56" po:Freeze="True"/>
