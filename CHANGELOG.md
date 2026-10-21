@@ -68,6 +68,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Driver references filter by exact hardware ID and declared OS support. Knowledge packs support schema validation, revision comparison and contextual search in the app, Engine and CLI.
 
 ### Desktop, accessibility and localization
+- Light's background, sidebar and footer are a slightly darker gray (#d4d4d4), and fields a touch lighter, so content stands apart from the chrome.
 
 - The three-pane workbench combines a resizable section sidebar and icon rail, tool options, readable reports, raw output and an activity log.
 - Screen readers receive names for controls and file-picker rows. Keyboard users get visible focus, arrow-key navigation within option groups, and focus that enters and returns from the About and shortcuts cards.
