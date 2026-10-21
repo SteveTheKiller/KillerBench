@@ -16,7 +16,7 @@ from urllib.parse import unquote, urlsplit
 ROOT = Path(__file__).resolve().parent
 HELP = 'welcome setup first-run workspace safety fix-windows-update repair-system-files free-disk-space check-a-drive fix-network fix-printing encrypt-with-bitlocker investigate-crashes make-windows-private set-up-new-pc use-the-cli diagnostics repair updates devices network apps maintenance onboarding security bitlocker privacy storage reports cli troubleshooting'.split()
 ENGINE = 'index getting-started workflows evidence repairs cli api architecture knowledge-packs'.split()
-LOCALES = 'en-US bn cs-CZ de-DE es fr-FR hu-HU it-IT ja-JP kk-KZ nb-NO pl-PL pt-BR ru-RU tr-TR uk-UA vi-VN zh-CN zh-TW'.split()
+LOCALES = 'en-US bn cs-CZ de-DE es fr-FR hu-HU it-IT ja-JP kk-KZ nb-NO pl-PL pt-BR ru-RU sl-SI tr-TR uk-UA vi-VN zh-CN zh-TW'.split()
 EXCLUDED = {'templates', 'locales', 'docs', '__pycache__'}
 
 
@@ -66,11 +66,11 @@ def validate_license(path):
 
 def validate(root, clean=False):
     root = root.resolve()
-    required = ['index.html', 'mcp.html', '404.html', '_headers', 'license.txt']
+    required = ['index.html', 'mcp.html', 'sl-SI/mcp.html', '404.html', '_headers', 'license.txt']
     validate_license(root/'license.txt')
     required += ['help.html', 'technical.html', 'about.html'] + ['engine/'+p+'.html' for p in ENGINE]
     for locale in LOCALES[1:]:
-        required += [locale+'/'+p for p in ('index.html', 'engine/index.html', 'docs-search-index.js')]
+        required += [locale+'/'+p for p in ('index.html', 'engine/index.html', 'help.html', 'technical.html', 'about.html', 'docs-search-index.js')]
     for route in required:
         if not (root/route).is_file():
             raise ValueError('Missing public route or asset: '+route)

@@ -25,7 +25,7 @@ Araç seçeneklerinin altındaki etkinlik günlüğü, KillerBench'in bu oturumd
 
 ## Temalar, diller ve kısayollar
 
-Kenar çubuğu ile araç seçenekleri arasındaki şeritte tema seçici, dil seçici, kısayol listesi ve etkinlik günlüğü düğmesi bulunur. KillerBench'te 13 tema ve 19 dil vardır.
+Kenar çubuğu ile araç seçenekleri arasındaki şeritte tema seçici, dil seçici, kısayol listesi ve etkinlik günlüğü düğmesi bulunur. KillerBench'te 13 tema ve 20 dil vardır.
 
 Füme cam konsol ve okunabilir raporlar etkin temayı izler. Onaylar ve Aç, Kaydet ve Klasör iletişim kutuları, 98SE teması dahil aynı aile stilini kullanır. Bu görünümü tüm iş akışı boyunca kullanmak için bir iletişim kutusunu açmadan önce temayı seçin.
 

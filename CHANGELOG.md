@@ -131,7 +131,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Added the Windows 11 snap layouts menu to the maximize button.
 - Gave the About card, the confirmation dialog and the file picker the family close button: an X that turns red on hover without filling, and the classic caption X on 98SE.
 - Set the wordmarks in Punktype and Lacquer, page, sidebar and dialog headings in Lacquer, and the interface text and footers in Killer Sans, in place of the typewriter font in the app and on the website.
-- Added localization in 19 languages, including Vietnamese, Ukrainian, Norwegian (Bokmål) and Brazilian Portuguese, with a two-column language menu.
+- Added localization in 20 languages, including Slovenian, across the app, installer and two-column language menu.
 - Section names, tool titles and descriptions, option choices, status lines and the Readable report followed the selected language.
 - Added the family List and Keyboard shortcut views from one binding table, linked to the online guide, with F12 for About.
 - Used KillerUI-style confirmations and Open, Save and Folder dialogs throughout the app.
@@ -151,7 +151,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Added the installer, portable and Microsoft Store packages. The installer checks for the .NET 10 Desktop Runtime, including the x64 runtime on Arm64 Windows, while the portable and Microsoft Store packages carry their own runtime.
 - Added update checks on startup and from the About card. A newer release was offered with an Always check on startup box, a Check for updates on startup checkbox at the top of the About card turned the check back on, and an accepted update was checked against the release checksum and signature before it replaced the installed or portable copy.
 - Added the killerbench.net landing site with a searchable user guide, the Engine developer guide and KillerMCP setup.
-- Expanded the website Help and Technical pages with a page for every section, step-by-step guides, a command reference and a glossary, translated into all 19 languages.
+- Expanded the website Help and Technical pages with a page for every section, step-by-step guides, a command reference and a glossary, translated into all 20 languages.
 - Added twelve demo-mode screenshots to the website's home page, each opening full size with a caption, and ten of them to the Microsoft Store listing.
 - Added deterministic VM validation plans, a gated native fault-injection runner and themed coverage reports.
 - Added the symptom coverage matrix with consistency checks.

@@ -18,7 +18,7 @@ Full how-tos live in the [Help guide](https://killerbench.net/help.html), and th
 - Privacy controls for app permissions, advertising, clipboard, cloud search and suggestions, with policy checks and exact undo
 - Readable reports beside the raw evidence, with HTML and text export and the next safe step first
 - `killerbench-cli` runs the same Engine from PowerShell, RMM and KillerMCP, with JSON output, previews by default and distinct exit codes
-- Thirteen themes and nineteen languages, with the family About card, shortcut list and keyboard map
+- Thirteen themes and twenty languages, with the family About card, shortcut list and keyboard map
 - Diagnostics and report analysis run locally, with no account and no AI service
 
 ## Requirements

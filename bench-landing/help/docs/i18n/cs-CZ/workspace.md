@@ -25,7 +25,7 @@ Protokol činnosti pod možnostmi nástroje zaznamenává, co KillerBench v tét
 
 ## Motivy, jazyky a klávesové zkratky
 
-Lišta mezi bočním panelem a možnostmi nástroje obsahuje výběr motivu, výběr jazyka, seznam klávesových zkratek a přepínač protokolu činnosti. KillerBench má 13 motivů a 19 jazyků.
+Lišta mezi bočním panelem a možnostmi nástroje obsahuje výběr motivu, výběr jazyka, seznam klávesových zkratek a přepínač protokolu činnosti. KillerBench má 13 motivů a 20 jazyků.
 
 Konzole z kouřového skla a čitelné zprávy se řídí aktivním motivem. Potvrzení a dialogy Otevřít, Uložit a Složka používají stejný styl rodiny, včetně motivu 98SE. Motiv vyberte před otevřením dialogu, aby měl stejný vzhled celý postup.
 

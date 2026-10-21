@@ -15,7 +15,7 @@ KillerBench to natywna aplikacja dla systemu Windows. Aplikacja komputerowa, wie
 | Raporty | Surowe wyjście, Czytelny raport, HTML, tekst i JSON |
 | Dane referencyjne | Wersjonowane pakiety wiedzy z kodami błędów, identyfikatorami sprzętu, producentami i odnośnikami pomocy technicznej |
 | Pakowanie | Instalator: zależny od platformy, wymaga .NET Desktop Runtime 10 dla Windows x64. Wersja przenośna: samodzielna, bez instalacji środowiska uruchomieniowego |
-| Wygląd | 13 motywów rodziny i 19 języków |
+| Wygląd | 13 motywów rodziny i 20 języków |
 
 ## Instalacja, foldery i dane
 
@@ -131,7 +131,7 @@ Proces może się zatrzymać, gdy system Windows już otrzymał żądanie, ale w
 | Szkice zaplanowanych zadań | Limit czasu wykonania od 1 do 4 320 minut |
 | Własne źródła czasu | Do ośmiu serwerów NTP |
 | Eksport aktywności | Do 150 zachowanych wpisów |
-| Języki i motywy | 19 języków, 13 motywów z wariantami akcentu |
+| Języki i motywy | 20 języków, 13 motywów z wariantami akcentu |
 
 ## Czego nie zrobi
 
@@ -193,7 +193,7 @@ Tylko osoba przy tym komputerze może podnieść poziom. Po niepewnym wyniku nap
 
 ## Lokalizacja
 
-Interfejs jest dostępny w 19 językach: angielskim, bengalskim, czeskim, niemieckim, hiszpańskim, francuskim, węgierskim, włoskim, japońskim, kazachskim, norweskim, polskim, portugalskim (Brazylia), rosyjskim, tureckim, ukraińskim, wietnamskim oraz chińskim uproszczonym i tradycyjnym. Zmiana języka działa natychmiast, w tym dla nazw sekcji i procesów, tekstu powitalnego i otwartego czytelnego raportu. Brakujący tekst jest wyświetlany po angielsku.
+Interfejs jest dostępny w 20 językach: angielskim, bengalskim, czeskim, niemieckim, hiszpańskim, francuskim, węgierskim, włoskim, japońskim, kazachskim, norweskim, polskim, portugalskim (Brazylia), rosyjskim, słoweńskim, tureckim, ukraińskim, wietnamskim oraz chińskim uproszczonym i tradycyjnym. Zmiana języka działa natychmiast, w tym dla nazw sekcji i procesów, tekstu powitalnego i otwartego czytelnego raportu. Brakujący tekst jest wyświetlany po angielsku.
 
 Dowody, ustalenia Engine, dzienniki i Surowe wyjście pozostają po angielsku, tak samo jak dziennik systemu Windows, więc raport wygląda tak samo na każdym komputerze i można w nim wyszukiwać dokładny tekst.
 

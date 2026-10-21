@@ -25,7 +25,7 @@ Das Aktivitätsprotokoll unter den Werkzeugoptionen hält fest, was KillerBench 
 
 ## Designs, Sprachen und Tastenkürzel
 
-Die Leiste zwischen Seitenleiste und Werkzeugoptionen enthält die Designauswahl, die Sprachauswahl, die Liste der Tastenkürzel und den Schalter für das Aktivitätsprotokoll. KillerBench bietet 13 Designs und 19 Sprachen.
+Die Leiste zwischen Seitenleiste und Werkzeugoptionen enthält die Designauswahl, die Sprachauswahl, die Liste der Tastenkürzel und den Schalter für das Aktivitätsprotokoll. KillerBench bietet 13 Designs und 20 Sprachen.
 
 Die Rauchglas-Konsole und die lesbaren Berichte folgen dem aktiven Design. Bestätigungen sowie die Dialoge zum Öffnen, Speichern und Auswählen von Ordnern verwenden dasselbe Familiendesign, auch im Design 98SE. Wählen Sie das Design, bevor Sie einen Dialog öffnen, damit der gesamte Ablauf dieses Aussehen verwendet.
 

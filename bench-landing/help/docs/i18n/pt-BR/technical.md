@@ -15,7 +15,7 @@ O KillerBench é um aplicativo nativo do Windows. O aplicativo de desktop, a lin
 | Relatórios | Saída bruta, Relatório legível, HTML, texto e JSON |
 | Dados de referência | Pacotes de conhecimento versionados para códigos de erro, identificadores de hardware, fabricantes e referências de suporte |
 | Empacotamento | Instalador: dependente de framework, exige o .NET Desktop Runtime 10 para Windows x64. Portátil: autocontido, sem instalação de runtime |
-| Aparência | 13 temas da família e 19 idiomas |
+| Aparência | 13 temas da família e 20 idiomas |
 
 ## Instalação, pastas e dados
 
@@ -131,7 +131,7 @@ Um processo pode parar depois que o Windows recebe uma solicitação, mas antes 
 | Rascunhos de tarefas agendadas | Limite de execução de 1 a 4.320 minutos |
 | Origens de hora personalizadas | Até oito pares NTP |
 | Exportação de atividades | Até 150 entradas guardadas |
-| Idiomas e temas | 19 idiomas, 13 temas com variações de destaque |
+| Idiomas e temas | 20 idiomas, 13 temas com variações de destaque |
 
 ## O que ele não fará
 
@@ -193,7 +193,7 @@ Só uma pessoa diante deste computador pode aumentar o nível. Após um resultad
 
 ## Localização
 
-A interface está disponível em 19 idiomas: inglês, bengali, tcheco, alemão, espanhol, francês, húngaro, italiano, japonês, cazaque, norueguês, polonês, português (Brasil), russo, turco, ucraniano, vietnamita, e chinês simplificado e tradicional. A troca de idioma é aplicada na hora, incluindo os nomes das seções e dos fluxos de trabalho, o texto de boas-vindas e um relatório legível aberto. Qualquer texto ausente é exibido em inglês.
+A interface está disponível em 20 idiomas: inglês, bengali, tcheco, alemão, espanhol, francês, húngaro, italiano, japonês, cazaque, norueguês, polonês, português (Brasil), russo, esloveno, turco, ucraniano, vietnamita, e chinês simplificado e tradicional. A troca de idioma é aplicada na hora, incluindo os nomes das seções e dos fluxos de trabalho, o texto de boas-vindas e um relatório legível aberto. Qualquer texto ausente é exibido em inglês.
 
 Evidências, constatações do Engine, diários e a Saída bruta continuam em inglês, como um log do Windows, para que um relatório seja lido do mesmo jeito em qualquer computador e possa ser pesquisado por texto exato.
 

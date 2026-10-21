@@ -25,7 +25,7 @@ Az eszköz beállításai alatti tevékenységnapló rögzíti, mit végzett a K
 
 ## Témák, nyelvek és billentyűparancsok
 
-Az oldalsáv és az eszközbeállítások közötti sávban található a témaválasztó, a nyelvválasztó, a billentyűparancsok listája és a tevékenységnapló kapcsolója. A KillerBench 13 témát és 19 nyelvet kínál.
+Az oldalsáv és az eszközbeállítások közötti sávban található a témaválasztó, a nyelvválasztó, a billentyűparancsok listája és a tevékenységnapló kapcsolója. A KillerBench 13 témát és 20 nyelvet kínál.
 
 A füstüveg hatású konzol és az olvasható jelentések az aktív témát követik. A megerősítések, valamint a Megnyitás, Mentés és Mappa párbeszédpanelek ugyanazt a családi stílust használják, a 98SE témát is beleértve. Párbeszédpanel megnyitása előtt válassza ki a témát, hogy a teljes folyamat során az a megjelenés legyen érvényben.
 

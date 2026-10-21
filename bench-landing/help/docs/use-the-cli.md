@@ -14,7 +14,7 @@ Use the command line when you want KillerBench evidence in a script, an RMM job 
 killerbench-cli full-scan --report C:\Reports\scan.html --json
 ```
 
-`full-scan` is read-only unless you add `--auto-repair`. `--report` writes the same themed report the app exports. Use `--scope` to check only some areas, and `common-check` for combined JSON without a workflow journal.
+`full-scan` is diagnostic-only and rejects `--auto-repair`. Use a focused repair workflow when a specific action is needed. `--report` writes the same themed report the app exports. Use `--scope` to check only some areas, and `common-check` for combined JSON without a workflow journal.
 
 ## Read exit codes
 

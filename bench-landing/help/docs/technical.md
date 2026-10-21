@@ -15,7 +15,7 @@ KillerBench is a native Windows app. The desktop app, the command line and the E
 | Reports | Raw output, Readable report, HTML, text and JSON |
 | Reference data | Versioned knowledge packs for error codes, hardware identifiers, vendors and support references |
 | Packaging | Installer: framework-dependent, needs .NET Desktop Runtime 10 for Windows x64. Portable: self-contained, no runtime install |
-| Appearance | 13 family themes and 19 languages |
+| Appearance | 13 family themes and 20 languages |
 
 ## Install, folders and data
 
@@ -131,7 +131,7 @@ A process can stop after Windows receives a request but before verification fini
 | Scheduled task drafts | Execution limit of 1 to 4,320 minutes |
 | Custom time sources | Up to eight NTP peers |
 | Activity export | Up to 150 retained entries |
-| Languages and themes | 19 languages, 13 themes with accent variants |
+| Languages and themes | 20 languages, 13 themes with accent variants |
 
 ## What it will not do
 
@@ -193,7 +193,7 @@ Only a person at this computer can raise the level. After an uncertain repair re
 
 ## Localization
 
-The interface is available in 19 languages: English, Bengali, Czech, German, Spanish, French, Hungarian, Italian, Japanese, Kazakh, Norwegian, Polish, Portuguese (Brazil), Russian, Turkish, Ukrainian, Vietnamese, and Simplified and Traditional Chinese. A language change applies immediately, including the section and workflow names, the welcome text and an open readable report. Any missing text falls back to English.
+The interface is available in 20 languages: English, Bengali, Czech, German, Spanish, French, Hungarian, Italian, Japanese, Kazakh, Norwegian, Polish, Portuguese (Brazil), Russian, Slovenian, Turkish, Ukrainian, Vietnamese, and Simplified and Traditional Chinese. A language change applies immediately, including the section and workflow names, the welcome text and an open readable report. Any missing text falls back to English.
 
 Evidence, Engine findings, journals and Raw output stay in English, the same as a Windows log, so a report reads the same on every machine and can be searched for exact text.
 

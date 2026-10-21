@@ -25,7 +25,7 @@ Dziennik aktywności pod opcjami narzędzia rejestruje, co KillerBench zrobił w
 
 ## Motywy, języki i skróty
 
-Szyna między paskiem bocznym a opcjami narzędzia zawiera wybór motywu, wybór języka, listę skrótów i przełącznik dziennika aktywności. KillerBench ma 13 motywów i 19 języków.
+Szyna między paskiem bocznym a opcjami narzędzia zawiera wybór motywu, wybór języka, listę skrótów i przełącznik dziennika aktywności. KillerBench ma 13 motywów i 20 języków.
 
 Konsola z przydymionego szkła i czytelne raporty używają aktywnego motywu. Potwierdzenia oraz okna dialogowe Otwórz, Zapisz i Folder korzystają z tego samego stylu rodziny, w tym z motywu 98SE. Wybierz motyw przed otwarciem okna dialogowego, aby zachować ten wygląd w całym procesie.
 

@@ -15,7 +15,7 @@ A KillerBench natív Windows-alkalmazás. Az asztali alkalmazás, a parancssor �
 | Jelentések | Nyers kimenet, Olvasható jelentés, HTML, szöveg és JSON |
 | Referenciaadatok | Verziózott tudáscsomagok hibakódokhoz, hardverazonosítókhoz, gyártókhoz és támogatási hivatkozásokhoz |
 | Csomagolás | Telepítő: keretrendszerfüggő, a .NET Desktop Runtime 10 for Windows x64 szükséges hozzá. Hordozható: önálló, futtatókörnyezet telepítése nélkül |
-| Megjelenés | 13 családi téma és 19 nyelv |
+| Megjelenés | 13 családi téma és 20 nyelv |
 
 ## Telepítés, mappák és adatok
 
@@ -131,7 +131,7 @@ Egy folyamat leállhat azután, hogy a Windows megkapta a kérést, de mielőtt 
 | Ütemezett feladatok vázlatai | 1 és 4 320 perc közötti végrehajtási korlát |
 | Egyéni időforrások | Legfeljebb nyolc NTP-társ |
 | Tevékenység exportálása | Legfeljebb 150 megőrzött bejegyzés |
-| Nyelvek és témák | 19 nyelv, 13 téma kiemelőszín-változatokkal |
+| Nyelvek és témák | 20 nyelv, 13 téma kiemelőszín-változatokkal |
 
 ## Amit nem tesz meg
 
@@ -193,7 +193,7 @@ A szintet csak a számítógép előtt ülő személy emelheti. Bizonytalan jav�
 
 ## Honosítás
 
-A felület 19 nyelven érhető el: angol, bengáli, cseh, német, spanyol, francia, magyar, olasz, japán, kazah, norvég, lengyel, portugál (Brazília), orosz, török, ukrán, vietnami, valamint egyszerűsített és hagyományos kínai. A nyelvváltás azonnal érvényes, beleértve a szakasz- és folyamatneveket, az üdvözlőszöveget és a megnyitott olvasható jelentést. A hiányzó szöveg angolul jelenik meg.
+A felület 20 nyelven érhető el: angol, bengáli, cseh, német, spanyol, francia, magyar, olasz, japán, kazah, norvég, lengyel, portugál (Brazília), orosz, szlovén, török, ukrán, vietnami, valamint egyszerűsített és hagyományos kínai. A nyelvváltás azonnal érvényes, beleértve a szakasz- és folyamatneveket, az üdvözlőszöveget és a megnyitott olvasható jelentést. A hiányzó szöveg angolul jelenik meg.
 
 A bizonyítékok, az Engine megállapításai, a naplók és a Nyers kimenet angolul maradnak, akárcsak egy Windows-napló, így a jelentés minden gépen ugyanúgy olvasható, és pontos szövegre kereshető.
 

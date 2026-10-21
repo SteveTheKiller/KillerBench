@@ -14,24 +14,28 @@
   var rail = document.createElement('div');
   var tabs = [];
   var index = 0;
+  var slovenian = /^sl(?:-|$)/i.test(document.documentElement.lang);
+  var labels = slovenian
+    ? ['vrtiljak', 'Funkcije izdelka', 'Prejšnja funkcija', 'Naslednja funkcija', 'Izberite funkcijo', 'Funkcija ', 'diapozitiv']
+    : ['carousel', 'Product features', 'Previous feature', 'Next feature', 'Choose a feature', 'Feature ', 'slide'];
 
   carousel.className = 'feature-carousel';
-  carousel.setAttribute('aria-roledescription', 'carousel');
-  carousel.setAttribute('aria-label', 'Product features');
+  carousel.setAttribute('aria-roledescription', labels[0]);
+  carousel.setAttribute('aria-label', labels[1]);
   controls.className = 'feature-carousel-controls';
   previous.className = 'feature-carousel-arrow';
   previous.type = 'button';
-  previous.setAttribute('aria-label', 'Previous feature');
+  previous.setAttribute('aria-label', labels[2]);
   previous.innerHTML = '&#8592;';
   count.className = 'feature-carousel-count';
   count.setAttribute('aria-hidden', 'true');
   next.className = 'feature-carousel-arrow';
   next.type = 'button';
-  next.setAttribute('aria-label', 'Next feature');
+  next.setAttribute('aria-label', labels[3]);
   next.innerHTML = '&#8594;';
   rail.className = 'feature-carousel-rail';
   rail.setAttribute('role', 'tablist');
-  rail.setAttribute('aria-label', 'Choose a feature');
+  rail.setAttribute('aria-label', labels[4]);
 
   grid.parentNode.insertBefore(carousel, grid);
   controls.appendChild(previous);
@@ -44,11 +48,11 @@
 
   cards.forEach(function (card, cardIndex) {
     var heading = card.querySelector('h3');
-    var label = heading ? heading.textContent.trim() : 'Feature ' + (cardIndex + 1);
+    var label = heading ? heading.textContent.trim() : labels[5] + (cardIndex + 1);
     var tab = document.createElement('button');
     card.id = 'feature-slide-' + cardIndex;
     card.setAttribute('role', 'tabpanel');
-    card.setAttribute('aria-roledescription', 'slide');
+    card.setAttribute('aria-roledescription', labels[6]);
     card.setAttribute('aria-labelledby', 'feature-tab-' + cardIndex);
     tab.className = 'feature-carousel-tab';
     tab.type = 'button';

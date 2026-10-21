@@ -15,7 +15,7 @@ KillerBench ist eine native Windows-App. Die Desktop-App, die Befehlszeile und d
 | Berichte | Rohausgabe, Lesbarer Bericht, HTML, Text und JSON |
 | Referenzdaten | Versionierte Wissenspakete für Fehlercodes, Hardwarekennungen, Hersteller und Supportverweise |
 | Paketierung | Installationsprogramm: framework-abhängig, benötigt die .NET Desktop Runtime 10 für Windows x64. Portabel: eigenständig, keine Laufzeitinstallation |
-| Erscheinungsbild | 13 Familiendesigns und 19 Sprachen |
+| Erscheinungsbild | 13 Familiendesigns und 20 Sprachen |
 
 ## Installation, Ordner und Daten
 
@@ -131,7 +131,7 @@ Ein Prozess kann anhalten, nachdem Windows eine Anfrage erhalten hat, aber bevor
 | Entwürfe geplanter Aufgaben | Ausführungsgrenze von 1 bis 4.320 Minuten |
 | Eigene Zeitquellen | Bis zu acht NTP-Peers |
 | Aktivitätsexport | Bis zu 150 aufbewahrte Einträge |
-| Sprachen und Designs | 19 Sprachen, 13 Designs mit Akzentvarianten |
+| Sprachen und Designs | 20 Sprachen, 13 Designs mit Akzentvarianten |
 
 ## Was KillerBench nicht tut
 
@@ -193,7 +193,7 @@ Nur eine Person an diesem Computer kann die Stufe anheben. Nach einem unsicheren
 
 ## Lokalisierung
 
-Die Oberfläche ist in 19 Sprachen verfügbar: Englisch, Bengalisch, Tschechisch, Deutsch, Spanisch, Französisch, Ungarisch, Italienisch, Japanisch, Kasachisch, Norwegisch, Polnisch, Portugiesisch (Brasilien), Russisch, Türkisch, Ukrainisch, Vietnamesisch sowie vereinfachtes und traditionelles Chinesisch. Ein Sprachwechsel wirkt sofort, auch für die Namen von Bereichen und Workflows, den Begrüßungstext und einen geöffneten lesbaren Bericht. Fehlender Text fällt auf Englisch zurück.
+Die Oberfläche ist in 20 Sprachen verfügbar: Englisch, Bengalisch, Tschechisch, Deutsch, Spanisch, Französisch, Ungarisch, Italienisch, Japanisch, Kasachisch, Norwegisch, Polnisch, Portugiesisch (Brasilien), Russisch, Slowenisch, Türkisch, Ukrainisch, Vietnamesisch sowie vereinfachtes und traditionelles Chinesisch. Ein Sprachwechsel wirkt sofort, auch für die Namen von Bereichen und Workflows, den Begrüßungstext und einen geöffneten lesbaren Bericht. Fehlender Text fällt auf Englisch zurück.
 
 Nachweise, Befunde der Engine, Journale und die Rohausgabe bleiben auf Englisch, genau wie ein Windows-Protokoll, damit ein Bericht auf jedem Computer gleich lautet und nach genauem Text durchsucht werden kann.
 

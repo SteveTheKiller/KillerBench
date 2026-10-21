@@ -25,7 +25,7 @@ The activity log under the tool options records what KillerBench did in this ses
 
 ## Themes, languages and shortcuts
 
-The rail between the sidebar and the tool options holds the theme picker, the language picker, the shortcut list and the activity log toggle. KillerBench has 13 themes and 19 languages.
+The rail between the sidebar and the tool options holds the theme picker, the language picker, the shortcut list and the activity log toggle. KillerBench has 13 themes and 20 languages.
 
 The smoked-glass console and readable reports follow the active theme. Confirmations and Open, Save, and Folder dialogs use the same family styling, including the 98SE theme. Choose the theme before opening a dialog to use that appearance throughout the workflow.
 

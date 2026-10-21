@@ -15,7 +15,7 @@ KillerBench est une application Windows native. L'application de bureau, la lign
 | Rapports | Sortie brute, Rapport lisible, HTML, texte et JSON |
 | Données de référence | Packs de connaissances versionnés pour les codes d'erreur, les identifiants matériels, les fabricants et les références d'assistance |
 | Empaquetage | Programme d'installation : dépend du framework, nécessite .NET Desktop Runtime 10 pour Windows x64. Portable : autonome, sans installation de runtime |
-| Apparence | 13 thèmes de la famille et 19 langues |
+| Apparence | 13 thèmes de la famille et 20 langues |
 
 ## Installation, dossiers et données
 
@@ -131,7 +131,7 @@ Un processus peut s'arrêter après que Windows a reçu une demande, mais avant 
 | Brouillons de tâches planifiées | Limite d'exécution de 1 à 4 320 minutes |
 | Sources de temps personnalisées | Jusqu'à huit homologues NTP |
 | Exportation de l'activité | Jusqu'à 150 entrées conservées |
-| Langues et thèmes | 19 langues, 13 thèmes avec variantes d'accent |
+| Langues et thèmes | 20 langues, 13 thèmes avec variantes d'accent |
 
 ## Ce qu'il ne fera pas
 
@@ -193,7 +193,7 @@ Seule une personne présente devant cet ordinateur peut relever le niveau. Aprè
 
 ## Localisation
 
-L'interface est disponible en 19 langues : anglais, bengali, tchèque, allemand, espagnol, français, hongrois, italien, japonais, kazakh, norvégien, polonais, portugais (Brésil), russe, turc, ukrainien, vietnamien, et chinois simplifié et traditionnel. Un changement de langue s'applique immédiatement, y compris aux noms des sections et des flux de travail, au texte d'accueil et à un rapport lisible ouvert. Tout texte manquant s'affiche en anglais.
+L'interface est disponible en 20 langues : anglais, bengali, tchèque, allemand, espagnol, français, hongrois, italien, japonais, kazakh, norvégien, polonais, portugais (Brésil), russe, slovène, turc, ukrainien, vietnamien, et chinois simplifié et traditionnel. Un changement de langue s'applique immédiatement, y compris aux noms des sections et des flux de travail, au texte d'accueil et à un rapport lisible ouvert. Tout texte manquant s'affiche en anglais.
 
 Les preuves, les constats de l'Engine, les journaux et la Sortie brute restent en anglais, comme un journal Windows, afin qu'un rapport se lise de la même façon sur chaque ordinateur et qu'on puisse y rechercher un texte exact.
 

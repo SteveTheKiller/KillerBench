@@ -25,7 +25,7 @@ O log de atividades, abaixo das opções da ferramenta, registra o que o KillerB
 
 ## Temas, idiomas e atalhos
 
-O trilho entre a barra lateral e as opções da ferramenta contém o seletor de tema, o seletor de idioma, a lista de atalhos e o botão do log de atividades. O KillerBench tem 13 temas e 19 idiomas.
+O trilho entre a barra lateral e as opções da ferramenta contém o seletor de tema, o seletor de idioma, a lista de atalhos e o botão do log de atividades. O KillerBench tem 13 temas e 20 idiomas.
 
 O console de vidro fumê e os relatórios legíveis seguem o tema ativo. As confirmações e as caixas de diálogo Abrir, Salvar e Pasta usam o mesmo estilo da família, inclusive o tema 98SE. Escolha o tema antes de abrir uma caixa de diálogo para manter essa aparência em todo o fluxo.
 

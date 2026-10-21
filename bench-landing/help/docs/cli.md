@@ -320,7 +320,7 @@ Run `killerbench-cli` with no arguments to print this list on your own machine.
 - `delete-notifications`: Read-only NTFS and ReFS delete-notification configuration; JSON; no optimization or setting change.
 - `diagnostic-scopes [--all]`: List 11 recommended outcome groups, or all 49 read-only areas; no collection.
 - `full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Focused diagnostic journal; no repairs.
-- `full-scan [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json]`: All diagnostic areas; no repair unless `--auto-repair` is explicit.
+- `full-scan [--recipes ID[,ID]] [--report OUTPUT.html|OUTPUT.txt] [--json]`: All diagnostic areas; diagnostic-only, no repairs.
 - `gateway-check`: Bounded ICMP checks of exact configured default next hops; no address scan.
 - `infrastructure-service-events`: Read one bounded exact connectivity, remote-management, notification and core service failure snapshot.
 - `investigate-batch FILE [FILE ...]`: Up to 12 files; JSON Lines; exit 3 for failed or partial imports.

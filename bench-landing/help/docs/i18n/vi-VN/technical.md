@@ -15,7 +15,7 @@ KillerBench là ứng dụng Windows gốc. Ứng dụng máy tính, dòng lện
 | Báo cáo | Đầu ra thô, Báo cáo dễ đọc, HTML, văn bản và JSON |
 | Dữ liệu tham chiếu | Gói tri thức có phiên bản cho mã lỗi, mã định danh phần cứng, nhà cung cấp và tài liệu hỗ trợ |
 | Đóng gói | Trình cài đặt: phụ thuộc framework, cần .NET Desktop Runtime 10 for Windows x64. Bản di động: độc lập, không cần cài môi trường chạy |
-| Giao diện hiển thị | 13 chủ đề của bộ công cụ và 19 ngôn ngữ |
+| Giao diện hiển thị | 13 chủ đề của bộ công cụ và 20 ngôn ngữ |
 
 ## Cài đặt, thư mục và dữ liệu
 
@@ -131,7 +131,7 @@ Một tiến trình có thể dừng sau khi Windows nhận yêu cầu nhưng tr
 | Bản nháp tác vụ đã lên lịch | Giới hạn thực thi từ 1 đến 4.320 phút |
 | Nguồn thời gian tùy chỉnh | Tối đa tám máy NTP ngang hàng |
 | Xuất hoạt động | Tối đa 150 mục được giữ lại |
-| Ngôn ngữ và chủ đề | 19 ngôn ngữ, 13 chủ đề với các biến thể màu nhấn |
+| Ngôn ngữ và chủ đề | 20 ngôn ngữ, 13 chủ đề với các biến thể màu nhấn |
 
 ## Những gì công cụ sẽ không làm
 
@@ -193,7 +193,7 @@ Chỉ người đang ngồi tại máy tính này mới có thể nâng mức. S
 
 ## Bản địa hóa
 
-Giao diện có sẵn bằng 19 ngôn ngữ: tiếng Anh, tiếng Bengal, tiếng Séc, tiếng Đức, tiếng Tây Ban Nha, tiếng Pháp, tiếng Hungary, tiếng Ý, tiếng Nhật, tiếng Kazakh, tiếng Na Uy, tiếng Ba Lan, tiếng Bồ Đào Nha (Brazil), tiếng Nga, tiếng Thổ Nhĩ Kỳ, tiếng Ukraina, tiếng Việt, cùng tiếng Trung giản thể và phồn thể. Việc đổi ngôn ngữ có hiệu lực ngay, bao gồm tên mục và tên quy trình, văn bản chào mừng và báo cáo dễ đọc đang mở. Văn bản còn thiếu sẽ hiển thị bằng tiếng Anh.
+Giao diện có sẵn bằng 20 ngôn ngữ: tiếng Anh, tiếng Bengal, tiếng Séc, tiếng Đức, tiếng Tây Ban Nha, tiếng Pháp, tiếng Hungary, tiếng Ý, tiếng Nhật, tiếng Kazakh, tiếng Na Uy, tiếng Ba Lan, tiếng Bồ Đào Nha (Brazil), tiếng Nga, tiếng Slovenia, tiếng Thổ Nhĩ Kỳ, tiếng Ukraina, tiếng Việt, cùng tiếng Trung giản thể và phồn thể. Việc đổi ngôn ngữ có hiệu lực ngay, bao gồm tên mục và tên quy trình, văn bản chào mừng và báo cáo dễ đọc đang mở. Văn bản còn thiếu sẽ hiển thị bằng tiếng Anh.
 
 Bằng chứng, kết luận của Engine, nhật ký và Đầu ra thô vẫn bằng tiếng Anh, giống như nhật ký Windows, nên một báo cáo đọc như nhau trên mọi máy và có thể tìm kiếm chính xác văn bản.
 

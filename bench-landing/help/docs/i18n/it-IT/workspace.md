@@ -25,7 +25,7 @@ Il registro attività, sotto le opzioni dello strumento, annota ciò che KillerB
 
 ## Temi, lingue e scorciatoie
 
-La barra tra la barra laterale e le opzioni dello strumento contiene il selettore del tema, il selettore della lingua, l'elenco delle scorciatoie e il pulsante del registro attività. KillerBench ha 13 temi e 19 lingue.
+La barra tra la barra laterale e le opzioni dello strumento contiene il selettore del tema, il selettore della lingua, l'elenco delle scorciatoie e il pulsante del registro attività. KillerBench ha 13 temi e 20 lingue.
 
 La console in vetro fumé e i rapporti leggibili seguono il tema attivo. Le conferme e le finestre di dialogo Apri, Salva e Cartella usano lo stesso stile della famiglia, compreso il tema 98SE. Scegli il tema prima di aprire una finestra di dialogo per mantenere quell'aspetto in tutto il flusso.
 

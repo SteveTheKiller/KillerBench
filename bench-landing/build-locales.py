@@ -1,4 +1,4 @@
-"""Generate the three localized entry pages and validate their local links."""
+"""Generate localized entry and MCP pages and validate their local links."""
 import html
 import json
 import posixpath
@@ -9,8 +9,9 @@ from pathlib import Path
 from urllib.parse import urlsplit, unquote
 
 ROOT = Path(__file__).resolve().parent
-LOCALES = ['en-US', 'bn', 'cs-CZ', 'de-DE', 'es', 'fr-FR', 'hu-HU', 'it-IT', 'ja-JP', 'kk-KZ', 'nb-NO', 'pl-PL', 'pt-BR', 'ru-RU', 'tr-TR', 'uk-UA', 'vi-VN', 'zh-CN', 'zh-TW']
+LOCALES = ['en-US', 'bn', 'cs-CZ', 'de-DE', 'es', 'fr-FR', 'hu-HU', 'it-IT', 'ja-JP', 'kk-KZ', 'nb-NO', 'pl-PL', 'pt-BR', 'ru-RU', 'sl-SI', 'tr-TR', 'uk-UA', 'vi-VN', 'zh-CN', 'zh-TW']
 PAGES = ['index.html', 'engine/index.html']
+MCP_LOCALES = ['en-US', 'sl-SI']
 # Help, Technical and About are rendered per locale by build-docs.py from translated Markdown.
 DOC_PAGES = ['help.html', 'technical.html', 'about.html']
 
@@ -53,7 +54,7 @@ class Localized(HTMLParser):
         if target.is_dir():
             target = target / 'index.html'
         relative = target.relative_to(ROOT).as_posix()
-        if relative in PAGES or (relative in DOC_PAGES and self.locale in doc_locales()):
+        if relative in PAGES or (relative in DOC_PAGES and self.locale in doc_locales()) or (relative == 'mcp.html' and self.locale in MCP_LOCALES):
             result = rel(self.locale, self.page, out_path(self.locale, relative))
         else:
             result = rel(self.locale, self.page, relative)
@@ -70,6 +71,9 @@ class Localized(HTMLParser):
             d['data-brand-base'] = rel(self.locale, self.page, 'brand')
             for key, value in {'theme': 'Theme', 'choose-theme': 'Choose theme', 'accent': 'Accent color', 'accent-label': 'accent:', 'close': 'Close', 'more': 'More', 'no-results': 'No matching pages.'}.items():
                 d['data-ui-' + key] = self.text(value)
+            if self.page == 'mcp.html':
+                for key, value in {'mcp-version': 'Version', 'mcp-installer': 'Windows installer', 'mcp-available': 'available'}.items():
+                    d['data-ui-' + key] = self.text(value)
         if tag == 'meta' and (d.get('name') == 'description' or d.get('property') in ('og:title', 'og:description')):
             d['content'] = self.text(d['content'])
         if tag == 'meta' and d.get('property') == 'og:url':
@@ -124,6 +128,23 @@ def runpy_docs():
     import runpy
     return runpy.run_path(str(ROOT / 'build-docs.py'))
 
+def build_mcp(available):
+    source = (ROOT / 'templates/mcp.en.html').read_text(encoding='utf-8')
+    keys = Localized(source, 'mcp.html', 'en-US', {}, {}, True).keys
+    languages = {locale: available[locale] for locale in MCP_LOCALES}
+    for locale in MCP_LOCALES:
+        catalog = {}
+        if locale != 'en-US':
+            extra = json.loads((ROOT / 'locales' / (locale + '-mcp.json')).read_text(encoding='utf-8'))['strings']
+            catalog = dict(available[locale]['strings'], **extra)
+            if set(keys) - set(catalog):
+                raise ValueError(locale + ': missing MCP translations: ' + str(sorted(set(keys) - set(catalog))))
+            if any(not isinstance(catalog[key], str) or not catalog[key].strip() or any(chr(code) in catalog[key] for code in (0x2013, 0x2014)) for key in keys):
+                raise ValueError(locale + ': invalid MCP translation')
+        result = Localized(source, 'mcp.html', locale, catalog, languages)
+        write(ROOT / out_path(locale, 'mcp.html'), ''.join(result.out).rstrip() + '\n')
+    print('Built MCP pages for ' + str(len(MCP_LOCALES)) + ' translated routes; ' + str(len(keys)) + ' text keys.')
+
 def build():
     sources = {p: (ROOT / ('templates/index.en.html' if p == 'index.html' else p)).read_text(encoding='utf-8') for p in PAGES}
     english = {}
@@ -164,6 +185,7 @@ def build():
             details = [dict(p, u='../' + p['u']) for p in details if p['u'] not in PAGES and not (localized_docs and p['u'] in DOC_PAGES)]
             details = localized_docs + details
             write(ROOT / locale / 'docs-search-index.js', 'window.KillerBenchSearch=' + json.dumps(localized_search + details, ensure_ascii=False, separators=(',', ':')) + ';\n')
+    build_mcp(available)
     print('Built localized entry pages for ' + str(len(available)) + ' locales; English catalog has ' + str(len(english)) + ' keys.')
 
 def check():
@@ -177,12 +199,12 @@ def check():
         catalog = json.loads((ROOT / 'locales' / (locale + '.json')).read_text(encoding='utf-8'))['strings']
         assert set(catalog) == set(english), locale
         assert all(isinstance(value, str) and value.strip() and not any(chr(code) in value for code in (0x2013, 0x2014)) for value in catalog.values()), locale
-        for page in PAGES:
+        for page in PAGES + (['mcp.html'] if locale in MCP_LOCALES else []):
             path = ROOT / (locale if locale != 'en-US' else '') / page
             source = path.read_text(encoding='utf-8')
             assert '<html lang="' + locale + '"' in source, path
             assert '<link rel="canonical" href="https://killerbench.net' + route(locale, page) + '"' in source, path
-            for target in locales:
+            for target in (MCP_LOCALES if page == 'mcp.html' else locales):
                 assert '<link rel="alternate" hreflang="' + target + '" href="https://killerbench.net' + route(target, page) + '"' in source, (path, target)
             assert source.count('id="languageToggle"') == 1, path
             for entry in PAGES:

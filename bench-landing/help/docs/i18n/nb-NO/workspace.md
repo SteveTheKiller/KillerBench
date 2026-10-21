@@ -25,7 +25,7 @@ Aktivitetsloggen under verktøyalternativene registrerer hva KillerBench har gjo
 
 ## Temaer, språk og hurtigtaster
 
-Skinnen mellom sidefeltet og verktøyalternativene inneholder temavelgeren, språkvelgeren, listen over hurtigtaster og knappen for aktivitetsloggen. KillerBench har 13 temaer og 19 språk.
+Skinnen mellom sidefeltet og verktøyalternativene inneholder temavelgeren, språkvelgeren, listen over hurtigtaster og knappen for aktivitetsloggen. KillerBench har 13 temaer og 20 språk.
 
 Røykglasskonsollen og de lesbare rapportene følger det aktive temaet. Bekreftelser og dialogboksene Åpne, Lagre og Mappe bruker samme familiestil, også i 98SE-temaet. Velg tema før du åpner en dialogboks, så beholder du utseendet gjennom hele flyten.
 

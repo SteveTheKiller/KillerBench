@@ -83,7 +83,7 @@ def esc(value):
 # heading structure as English in help/docs/i18n/<locale>/, plus ui.json for page chrome. The
 # folder sits under docs/, so it is never part of the public export.
 I18N = ROOT / "help" / "docs" / "i18n"
-LOCALE_ORDER = ["en-US", "bn", "cs-CZ", "de-DE", "es", "fr-FR", "hu-HU", "it-IT", "ja-JP", "kk-KZ", "nb-NO", "pl-PL", "pt-BR", "ru-RU", "tr-TR", "uk-UA", "vi-VN", "zh-CN", "zh-TW"]
+LOCALE_ORDER = ["en-US", "bn", "cs-CZ", "de-DE", "es", "fr-FR", "hu-HU", "it-IT", "ja-JP", "kk-KZ", "nb-NO", "pl-PL", "pt-BR", "ru-RU", "sl-SI", "tr-TR", "uk-UA", "vi-VN", "zh-CN", "zh-TW"]
 DOC_PAGES = ("help.html", "technical.html", "about.html")
 LOCAL_ROUTES = set(DOC_PAGES) | {"index.html", "engine/index.html"}
 DOC_LOCALES = [c for c in LOCALE_ORDER[1:] if (I18N / c / "ui.json").is_file()]
@@ -116,7 +116,7 @@ class Loc:
         def fix(match):
             ref = match.group(2)
             url = urlsplit(html.unescape(ref))
-            if url.scheme or url.netloc or ref.startswith("#") or not url.path or url.path in LOCAL_ROUTES:
+            if url.scheme or url.netloc or ref.startswith("#") or not url.path or url.path in LOCAL_ROUTES or (url.path == "mcp.html" and self.code == "sl-SI"):
                 return match.group(0)
             return '%s="../%s"' % (match.group(1), ref)
         return re.sub(r'(href|src)="([^"]*)"', fix, markup)
@@ -252,7 +252,7 @@ def topbar(prefix, active, loc=EN, pages=None):
     accents = "".join('<button class="acc" data-accent="%s" style="background:%s;color:%s" title="%s"></button>' % (n, c, c, esc(t(n.capitalize()))) for n, c in ACCENTS)
     return ('<header class="topbar"><a class="tb-home" href="%sindex.html" title="KillerBench"><img class="tb-icon" src="%sapp-icon.png" alt="KillerBench" width="44" height="44"><img class="wm-logo tb-wm" src="%sbrand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>'
             '<a class="tb-mcp-link" href="%smcp.html" aria-label="KillerMCP"><img src="%smcp.png" alt="" aria-hidden="true"><span class="tb-mcp-wordmark"><span>Killer</span><span class="tb-mcp-accent">MCP</span></span></a>'
-            '<span class="tb-spacer"></span><nav class="tb-nav">' % (pages, prefix, prefix, prefix, prefix) + nav + '</nav>'
+            '<span class="tb-spacer"></span><nav class="tb-nav">' % (pages, prefix, prefix, pages if loc.code == "sl-SI" else prefix, prefix) + nav + '</nav>'
             '<div class="tgrp" role="group" aria-label="%s">' % esc(t("Theme")) + themes + '</div>'
             '<div class="acc-fly accent-switch" id="accentSwitch"><button class="acc-toggle" id="accentToggle" aria-haspopup="true" aria-expanded="false" title="%s"></button>' % esc(t("Accent color")) +
             '<div class="acc-pop" id="accentPop" hidden role="group" aria-label="%s"><span class="acc-pop-label">%s</span>' % (esc(t("Accent color")), esc(t("accent:"))) + accents + '</div></div></header>')

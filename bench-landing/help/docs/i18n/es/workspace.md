@@ -25,7 +25,7 @@ El registro de actividad, bajo las opciones de la herramienta, anota lo que Kill
 
 ## Temas, idiomas y atajos
 
-El riel entre la barra lateral y las opciones de la herramienta contiene el selector de tema, el selector de idioma, la lista de atajos y el botón del registro de actividad. KillerBench tiene 13 temas y 19 idiomas.
+El riel entre la barra lateral y las opciones de la herramienta contiene el selector de tema, el selector de idioma, la lista de atajos y el botón del registro de actividad. KillerBench tiene 13 temas y 20 idiomas.
 
 La consola de cristal ahumado y los informes legibles siguen el tema activo. Las confirmaciones y los cuadros de diálogo Abrir, Guardar y Carpeta usan el mismo estilo de la familia, incluido el tema 98SE. Elige el tema antes de abrir un cuadro de diálogo para usar ese aspecto durante todo el flujo.
 

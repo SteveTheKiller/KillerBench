@@ -15,7 +15,7 @@ KillerBench er en native Windows-app. Skrivebordsappen, kommandolinjen og Engine
 | Rapporter | Rå utdata, Lesbar rapport, HTML, tekst og JSON |
 | Referansedata | Versjonerte kunnskapspakker for feilkoder, maskinvareidentifikatorer, leverandører og støttereferanser |
 | Pakking | Installasjonsprogram: rammeverksavhengig, krever .NET Desktop Runtime 10 for Windows x64. Bærbar: selvstendig, ingen installasjon av kjøretid |
-| Utseende | 13 familietemaer og 19 språk |
+| Utseende | 13 familietemaer og 20 språk |
 
 ## Installasjon, mapper og data
 
@@ -131,7 +131,7 @@ En prosess kan stoppe etter at Windows har mottatt en forespørsel, men før ver
 | Utkast til planlagte oppgaver | Kjøregrense på 1 til 4 320 minutter |
 | Egendefinerte tidskilder | Opptil åtte NTP-likemenn |
 | Eksport av aktivitet | Opptil 150 bevarte oppføringer |
-| Språk og temaer | 19 språk, 13 temaer med aksentvarianter |
+| Språk og temaer | 20 språk, 13 temaer med aksentvarianter |
 
 ## Hva den ikke gjør
 
@@ -193,7 +193,7 @@ Bare en person ved denne datamaskinen kan heve nivået. Etter et usikkert repara
 
 ## Lokalisering
 
-Grensesnittet er tilgjengelig på 19 språk: engelsk, bengali, tsjekkisk, tysk, spansk, fransk, ungarsk, italiensk, japansk, kasakhisk, norsk, polsk, portugisisk (Brasil), russisk, tyrkisk, ukrainsk, vietnamesisk og forenklet og tradisjonell kinesisk. Et språkbytte gjelder umiddelbart, også for navnene på seksjoner og arbeidsflyter, velkomstteksten og en åpen lesbar rapport. Tekst som mangler, vises på engelsk.
+Grensesnittet er tilgjengelig på 20 språk: engelsk, bengali, tsjekkisk, tysk, spansk, fransk, ungarsk, italiensk, japansk, kasakhisk, norsk, polsk, portugisisk (Brasil), russisk, slovensk, tyrkisk, ukrainsk, vietnamesisk og forenklet og tradisjonell kinesisk. Et språkbytte gjelder umiddelbart, også for navnene på seksjoner og arbeidsflyter, velkomstteksten og en åpen lesbar rapport. Tekst som mangler, vises på engelsk.
 
 Bevis, Engine-funn, journaler og Rå utdata forblir på engelsk, som en Windows-logg, så en rapport leses likt på alle maskiner og kan søkes i etter nøyaktig tekst.
 

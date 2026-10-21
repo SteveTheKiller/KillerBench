@@ -15,7 +15,7 @@ KillerBench es una app nativa de Windows. La app de escritorio, la línea de com
 | Informes | Salida sin procesar, Informe legible, HTML, texto y JSON |
 | Datos de referencia | Paquetes de conocimiento con versión para códigos de error, identificadores de hardware, fabricantes y referencias de soporte |
 | Empaquetado | Instalador: dependiente del framework, necesita .NET Desktop Runtime 10 para Windows x64. Portátil: autocontenido, sin instalar runtime |
-| Apariencia | 13 temas de la familia y 19 idiomas |
+| Apariencia | 13 temas de la familia y 20 idiomas |
 
 ## Instalación, carpetas y datos
 
@@ -131,7 +131,7 @@ Un proceso puede detenerse después de que Windows reciba una solicitud y antes 
 | Borradores de tareas programadas | Límite de ejecución de 1 a 4320 minutos |
 | Orígenes de hora personalizados | Hasta ocho pares NTP |
 | Exportación de actividad | Hasta 150 entradas conservadas |
-| Idiomas y temas | 19 idiomas, 13 temas con variantes de acento |
+| Idiomas y temas | 20 idiomas, 13 temas con variantes de acento |
 
 ## Lo que no hará
 
@@ -193,7 +193,7 @@ Solo una persona delante de este equipo puede subir el nivel. Tras un resultado 
 
 ## Localización
 
-La interfaz está disponible en 19 idiomas: inglés, bengalí, checo, alemán, español, francés, húngaro, italiano, japonés, kazajo, noruego, polaco, portugués (Brasil), ruso, turco, ucraniano, vietnamita, y chino simplificado y tradicional. Un cambio de idioma se aplica al instante, incluidos los nombres de las secciones y de los flujos de trabajo, el texto de bienvenida y un informe legible abierto. Cualquier texto que falte se muestra en inglés.
+La interfaz está disponible en 20 idiomas: inglés, bengalí, checo, alemán, español, francés, húngaro, italiano, japonés, kazajo, noruego, polaco, portugués (Brasil), ruso, esloveno, turco, ucraniano, vietnamita, y chino simplificado y tradicional. Un cambio de idioma se aplica al instante, incluidos los nombres de las secciones y de los flujos de trabajo, el texto de bienvenida y un informe legible abierto. Cualquier texto que falte se muestra en inglés.
 
 Las evidencias, los hallazgos de Engine, los diarios y la Salida sin procesar siguen en inglés, igual que un registro de Windows, para que un informe se lea igual en cualquier equipo y se pueda buscar texto exacto.
 

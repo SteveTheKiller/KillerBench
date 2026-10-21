@@ -15,7 +15,7 @@ KillerBench è un'app nativa di Windows. L'app desktop, la riga di comando e l'E
 | Rapporti | Output grezzo, Rapporto leggibile, HTML, testo e JSON |
 | Dati di riferimento | Pacchetti di conoscenze con versione per codici di errore, identificatori hardware, produttori e riferimenti di supporto |
 | Pacchetti | Programma di installazione: dipendente dal framework, richiede .NET Desktop Runtime 10 per Windows x64. Portatile: autonomo, nessuna installazione del runtime |
-| Aspetto | 13 temi della famiglia e 19 lingue |
+| Aspetto | 13 temi della famiglia e 20 lingue |
 
 ## Installazione, cartelle e dati
 
@@ -131,7 +131,7 @@ Un processo può fermarsi dopo che Windows ha ricevuto una richiesta ma prima ch
 | Bozze di attività pianificate | Limite di esecuzione da 1 a 4.320 minuti |
 | Origini dell'ora personalizzate | Fino a otto peer NTP |
 | Esportazione attività | Fino a 150 voci conservate |
-| Lingue e temi | 19 lingue, 13 temi con varianti di accento |
+| Lingue e temi | 20 lingue, 13 temi con varianti di accento |
 
 ## Cosa non farà
 
@@ -193,7 +193,7 @@ Solo una persona davanti a questo computer può alzare il livello. Dopo un esito
 
 ## Localizzazione
 
-L'interfaccia è disponibile in 19 lingue: inglese, bengalese, ceco, tedesco, spagnolo, francese, ungherese, italiano, giapponese, kazako, norvegese, polacco, portoghese (Brasile), russo, turco, ucraino, vietnamita e cinese semplificato e tradizionale. Un cambio di lingua si applica subito, compresi i nomi delle sezioni e dei flussi di lavoro, il testo di benvenuto e un rapporto leggibile aperto. Qualsiasi testo mancante viene mostrato in inglese.
+L'interfaccia è disponibile in 20 lingue: inglese, bengalese, ceco, tedesco, spagnolo, francese, ungherese, italiano, giapponese, kazako, norvegese, polacco, portoghese (Brasile), russo, sloveno, turco, ucraino, vietnamita e cinese semplificato e tradizionale. Un cambio di lingua si applica subito, compresi i nomi delle sezioni e dei flussi di lavoro, il testo di benvenuto e un rapporto leggibile aperto. Qualsiasi testo mancante viene mostrato in inglese.
 
 Evidenze, rilevamenti dell'Engine, giornali e Output grezzo restano in inglese, come un log di Windows, così un rapporto si legge allo stesso modo su ogni computer e si può cercare un testo esatto.
 

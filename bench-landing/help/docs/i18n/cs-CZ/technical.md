@@ -15,7 +15,7 @@ KillerBench je nativní aplikace pro Windows. Desktopová aplikace, příkazový
 | Zprávy | Surový výstup, Čitelná zpráva, HTML, text a JSON |
 | Referenční data | Verzované balíčky znalostí s kódy chyb, identifikátory hardwaru, výrobci a odkazy na podporu |
 | Balení | Instalační program: závislý na rozhraní, vyžaduje .NET Desktop Runtime 10 pro Windows x64. Přenosná edice: samostatná, bez instalace modulu runtime |
-| Vzhled | 13 motivů rodiny a 19 jazyků |
+| Vzhled | 13 motivů rodiny a 20 jazyků |
 
 ## Instalace, složky a data
 
@@ -131,7 +131,7 @@ Proces se může zastavit poté, co Windows požadavek přijme, ale dříve, ne�
 | Koncepty naplánovaných úloh | Limit doby spuštění 1 až 4 320 minut |
 | Vlastní zdroje času | Až osm partnerů NTP |
 | Export činnosti | Až 150 uchovaných položek |
-| Jazyky a motivy | 19 jazyků, 13 motivů s variantami zvýraznění |
+| Jazyky a motivy | 20 jazyků, 13 motivů s variantami zvýraznění |
 
 ## Co neudělá
 
@@ -193,7 +193,7 @@ KillerBench neobsahuje agenta AI. [KillerMCP](../mcp.html) k němu může připo
 
 ## Lokalizace
 
-Rozhraní je k dispozici v 19 jazycích: angličtině, bengálštině, češtině, němčině, španělštině, francouzštině, maďarštině, italštině, japonštině, kazaštině, norštině, polštině, portugalštině (Brazílie), ruštině, turečtině, ukrajinštině, vietnamštině a zjednodušené a tradiční čínštině. Změna jazyka se projeví okamžitě, včetně názvů sekcí a postupů, uvítacího textu a otevřené čitelné zprávy. Chybějící text se zobrazí anglicky.
+Rozhraní je k dispozici v 20 jazycích: angličtině, bengálštině, češtině, němčině, španělštině, francouzštině, maďarštině, italštině, japonštině, kazaštině, norštině, polštině, portugalštině (Brazílie), ruštině, slovinštině, turečtině, ukrajinštině, vietnamštině a zjednodušené a tradiční čínštině. Změna jazyka se projeví okamžitě, včetně názvů sekcí a postupů, uvítacího textu a otevřené čitelné zprávy. Chybějící text se zobrazí anglicky.
 
 Důkazy, nálezy Engine, deníky a Surový výstup zůstávají v angličtině, stejně jako protokol Windows, takže zpráva vypadá na každém počítači stejně a lze v ní vyhledávat přesný text.
 

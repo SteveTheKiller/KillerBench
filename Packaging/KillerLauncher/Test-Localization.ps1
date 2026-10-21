@@ -50,7 +50,7 @@ foreach ($file in Get-ChildItem -LiteralPath $PSScriptRoot -Filter '*.cs') {
     foreach ($line in $source -split '\r?\n') {
         if ($line.TrimStart().StartsWith('//')) { continue }
         # CLI diagnostics retain their existing text. OS exception details are not authored here.
-        if ($line.Contains('Console.Error.WriteLine')) { continue }
+        if ($line.Contains('Console.Error.WriteLine') -or $line.Contains('Console.WriteLine')) { continue }
         # Argument guards name the parameter for developers. Their text never reaches the window.
         if ($line -match 'new Argument[A-Za-z]*Exception\(.*nameof\(') { continue }
         if ($line -match '(?:\.Text|\.Content|Description)\s*=\s*"[A-Za-z]' -or

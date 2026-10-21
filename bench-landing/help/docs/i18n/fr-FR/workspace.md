@@ -25,7 +25,7 @@ Le journal d'activité, sous les options de l'outil, consigne ce que KillerBench
 
 ## Thèmes, langues et raccourcis
 
-Le rail situé entre la barre latérale et les options de l'outil contient le sélecteur de thème, le sélecteur de langue, la liste des raccourcis et le bouton du journal d'activité. KillerBench propose 13 thèmes et 19 langues.
+Le rail situé entre la barre latérale et les options de l'outil contient le sélecteur de thème, le sélecteur de langue, la liste des raccourcis et le bouton du journal d'activité. KillerBench propose 13 thèmes et 20 langues.
 
 La console en verre fumé et les rapports lisibles suivent le thème actif. Les confirmations et les boîtes de dialogue Ouvrir, Enregistrer et Dossier utilisent le même style de la famille, y compris le thème 98SE. Choisissez le thème avant d'ouvrir une boîte de dialogue pour conserver cette apparence tout au long du flux.
 

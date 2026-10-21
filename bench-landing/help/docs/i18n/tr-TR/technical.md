@@ -15,7 +15,7 @@ KillerBench yerel bir Windows uygulamasıdır. Masaüstü uygulaması, komut sat
 | Raporlar | Ham çıktı, Okunabilir rapor, HTML, metin ve JSON |
 | Başvuru verileri | Hata kodları, donanım tanımlayıcıları, satıcılar ve destek başvuruları için sürümlü bilgi paketleri |
 | Paketleme | Yükleyici: çerçeveye bağımlı, .NET Desktop Runtime 10 for Windows x64 gerektirir. Taşınabilir: kendi içinde, çalışma zamanı yüklemesi gerektirmez |
-| Görünüm | 13 aile teması ve 19 dil |
+| Görünüm | 13 aile teması ve 20 dil |
 
 ## Yükleme, klasörler ve veriler
 
@@ -131,7 +131,7 @@ Bir işlem, Windows isteği aldıktan sonra ancak doğrulama bitmeden durabilir.
 | Zamanlanmış görev taslakları | 1 ile 4.320 dakika arası yürütme sınırı |
 | Özel saat kaynakları | En fazla sekiz NTP eşi |
 | Etkinlik dışa aktarma | Saklanan en fazla 150 girdi |
-| Diller ve temalar | 19 dil, vurgu çeşitleriyle 13 tema |
+| Diller ve temalar | 20 dil, vurgu çeşitleriyle 13 tema |
 
 ## Yapmayacakları
 
@@ -193,7 +193,7 @@ Düzeyi yalnızca bu bilgisayarın başındaki bir kişi yükseltebilir. Belirsi
 
 ## Yerelleştirme
 
-Arayüz 19 dilde kullanılabilir: İngilizce, Bengalce, Çekçe, Almanca, İspanyolca, Fransızca, Macarca, İtalyanca, Japonca, Kazakça, Norveççe, Lehçe, Portekizce (Brezilya), Rusça, Türkçe, Ukraynaca, Vietnamca ve Basitleştirilmiş ve Geleneksel Çince. Dil değişikliği; bölüm ve iş akışı adları, karşılama metni ve açık bir okunabilir rapor dahil hemen uygulanır. Eksik metinler İngilizce gösterilir.
+Arayüz 20 dilde kullanılabilir: İngilizce, Bengalce, Çekçe, Almanca, İspanyolca, Fransızca, Macarca, İtalyanca, Japonca, Kazakça, Norveççe, Lehçe, Portekizce (Brezilya), Rusça, Slovence, Türkçe, Ukraynaca, Vietnamca ve Basitleştirilmiş ve Geleneksel Çince. Dil değişikliği; bölüm ve iş akışı adları, karşılama metni ve açık bir okunabilir rapor dahil hemen uygulanır. Eksik metinler İngilizce gösterilir.
 
 Kanıtlar, Engine bulguları, günlükler ve Ham çıktı, bir Windows günlüğü gibi İngilizce kalır; böylece bir rapor her makinede aynı okunur ve tam metin için aranabilir.
 

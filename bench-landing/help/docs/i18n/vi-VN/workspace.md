@@ -25,7 +25,7 @@ Nhật ký hoạt động bên dưới tùy chọn công cụ ghi lại những 
 
 ## Chủ đề, ngôn ngữ và phím tắt
 
-Dải giữa thanh bên và tùy chọn công cụ chứa bộ chọn chủ đề, bộ chọn ngôn ngữ, danh sách phím tắt và nút bật tắt nhật ký hoạt động. KillerBench có 13 chủ đề và 19 ngôn ngữ.
+Dải giữa thanh bên và tùy chọn công cụ chứa bộ chọn chủ đề, bộ chọn ngôn ngữ, danh sách phím tắt và nút bật tắt nhật ký hoạt động. KillerBench có 13 chủ đề và 20 ngôn ngữ.
 
 Bảng điều khiển kính mờ và báo cáo dễ đọc theo chủ đề đang hoạt động. Hộp xác nhận và các hộp thoại Mở, Lưu và Thư mục dùng cùng kiểu dáng của bộ công cụ, kể cả chủ đề 98SE. Hãy chọn chủ đề trước khi mở hộp thoại để dùng giao diện đó trong suốt quy trình.
 
