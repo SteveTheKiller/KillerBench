@@ -30,7 +30,7 @@
     <SolidColorBrush x:Key="InstallBtnBg"   Color="#1ea54c" po:Freeze="True"/>
     <SolidColorBrush x:Key="MenuBorderBrush" Color="#633030" po:Freeze="True"/>
     <SolidColorBrush x:Key="DropBorder"     Color="#39191c" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PaneBorderBrush" Color="#633030" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PaneBorderBrush" Color="#542929" po:Freeze="True"/>
     <SolidColorBrush x:Key="AppBorderBrush"  Color="#401d1d" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowSelectedBrush"    Color="#44f8c99e" po:Freeze="True"/>
     <SolidColorBrush x:Key="OutlinePressedBrush" Color="#44ffffff" po:Freeze="True"/>
