@@ -4,11 +4,11 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     
-    <SolidColorBrush x:Key="SurfaceBrush"    Color="#f4f4f4" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PaneBrush"       Color="#e8e8e8" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SurfaceBrush"    Color="#e6e6e6" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PaneBrush"       Color="#e0e0e0" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowHoverBrush"   Color="#b2b2b2" po:Freeze="True"/>
     <SolidColorBrush x:Key="MenuHoverBrush"  Color="#b2b2b2" po:Freeze="True"/>
-    <SolidColorBrush x:Key="BackgroundBrush" Color="#d4d4d4" po:Freeze="True"/>
+    <SolidColorBrush x:Key="BackgroundBrush" Color="#cccccc" po:Freeze="True"/>
     <SolidColorBrush x:Key="BgRecentPanel"  Color="#d4d4d4" po:Freeze="True"/>
     <SolidColorBrush x:Key="BgFlyout"       Color="#cacaca" po:Freeze="True"/>
     <SolidColorBrush x:Key="AnnotationBarBrush" Color="#cacaca" po:Freeze="True"/>
@@ -20,7 +20,7 @@
         <GradientStop Offset="0.55" Color="#12000000"/>
         <GradientStop Offset="1.0" Color="#3c000000"/>
     </LinearGradientBrush>
-    <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#ffffff" po:Freeze="True"/>
+    <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#d6d6d6" po:Freeze="True"/>
     <SolidColorBrush x:Key="CardBorderBrush" Color="#c0c0c0" po:Freeze="True"/>
     <SolidColorBrush x:Key="PrimaryBrush"    Color="#1b5e20" po:Freeze="True"/>
     <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#1b5e20" po:Freeze="True"/>
@@ -54,12 +54,12 @@
     <SolidColorBrush x:Key="ScrollThumbBrush"      Color="#8818843d" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#1b5e20" po:Freeze="True"/>
     
-    <SolidColorBrush x:Key="TableHeaderBrush" Color="#f0f0f0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TableHeaderBrush" Color="#d6d6d6" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowAltBrush"      Color="#14000000" po:Freeze="True"/>
     <SolidColorBrush x:Key="InputBorderBrush" Color="#c0c0c0" po:Freeze="True"/>
     <SolidColorBrush x:Key="InputHoverBrush"  Color="#8a8a8a" po:Freeze="True"/>
     <SolidColorBrush x:Key="TreeLineBrush"    Color="#c2c2c2" po:Freeze="True"/>
-    <SolidColorBrush x:Key="SliderTrack"    Color="#b0b0b0" po:Freeze="True"/>
+    <SolidColorBrush x:Key="SliderTrack"    Color="#8c8c8c" po:Freeze="True"/>
     <SolidColorBrush x:Key="RadioAccent"    Color="#1b5e20" po:Freeze="True"/>
     <SolidColorBrush x:Key="BgOverlay"      Color="#99000000" po:Freeze="True"/>
     <sys:Double x:Key="GrainOpacity" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.4</sys:Double>
@@ -107,7 +107,7 @@
     <sys:Double x:Key="PaneShadowOpacity" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.6</sys:Double>
     <SolidColorBrush x:Key="TitleBarBrush" Color="#FFDCDCDC" po:Freeze="True"/>
     <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#FFB2B2B2" po:Freeze="True"/>
-    <SolidColorBrush x:Key="FooterBackgroundBrush" Color="#FFD4D4D4" po:Freeze="True"/>
+    <SolidColorBrush x:Key="FooterBackgroundBrush" Color="#FFCCCCCC" po:Freeze="True"/>
     <SolidColorBrush x:Key="MenuSeparatorBrush" Color="#FFC0C0C0" po:Freeze="True"/>
     <SolidColorBrush x:Key="FileDialogPaneBrush" Color="#b8b8b8" po:Freeze="True"/>
 </ResourceDictionary>
