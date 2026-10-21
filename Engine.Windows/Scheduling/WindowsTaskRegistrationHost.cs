@@ -109,7 +109,7 @@ public sealed class WindowsTaskRegistrationHost(DateOnly startDate) : ITaskRegis
             "$taskName=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('" + name + "')); " +
             "$scheduler=New-Object -ComObject Schedule.Service; $scheduler.Connect(); $folderExists=$true; $exists=$false; " +
             "try {$folder=$scheduler.GetFolder($folderName)} catch {$folderExists=$false}; " +
-            "if($folderExists){try {$null=$folder.GetTask($taskName); $exists=$true} catch [Runtime.InteropServices.COMException] {if($_.Exception.HResult -ne -2147024894){throw}}}; " +
+            "if($folderExists){try {$null=$folder.GetTask($taskName); $exists=$true} catch [Runtime.InteropServices.COMException], [IO.FileNotFoundException] {if($_.Exception.HResult -ne -2147024894){throw}}}; " +
             "[pscustomobject]@{folderExists=$folderExists;targetExists=$exists}|ConvertTo-Json -Compress";
         return await BoundedTool.RunAsync(new(PrintRecovery.Tool,
             ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", script], true),
