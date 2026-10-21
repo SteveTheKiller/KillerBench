@@ -5,6 +5,7 @@ internal static class TaskXmlChecks
 {
     internal static void Run()
     {
+        CheckSchemaDefaultOmissions();
         var draft = new ScheduledTaskPlan(new("\\KillerBench\\", "Review & inspect"),
             new("C:\\Tools\\check.exe", "--name \"A&B\"", "C:\\Tools"),
             new(TaskScheduleKind.Startup), new(ScheduledTaskAccountKind.LocalSystem, "S-1-5-18", true), TimeSpan.FromMinutes(15));
@@ -68,6 +69,69 @@ internal static class TaskXmlChecks
         Require(!ScheduledTaskXml.MatchesRequested(baseline, "<!DOCTYPE Task [<!ENTITY x 'y'>]>" + baseline), "DTD input is rejected");
         Console.WriteLine($"Task XML rejected {transitions.Count} local transition types and a foreign time zone.");
         Console.WriteLine("PASS: disabled task XML schedules, strict semantic read-back, literal values, accounts and execution limits; no registration.");
+    }
+    internal static void CheckSchemaDefaultOmissions()
+    {
+        var draft = new ScheduledTaskPlan(new("\\KillerBench\\", "Native defaults"),
+            new("C:\\Tools\\check.exe", "--check"), new(TaskScheduleKind.Startup),
+            new(ScheduledTaskAccountKind.LocalSystem, "S-1-5-18", true), TimeSpan.FromMinutes(1));
+        XNamespace ns = ScheduledTaskXml.Namespace;
+        foreach (var schedule in new[] { new TaskScheduleOptions(TaskScheduleKind.Startup), new(TaskScheduleKind.Daily, new(9, 30)) })
+        {
+            string requested = ScheduledTaskXml.Serialize(draft with { Schedule = schedule,
+                TimeZoneId = schedule.Kind == TaskScheduleKind.Startup ? null : TimeZoneInfo.Local.Id }, new(2026, 9, 14));
+            XElement Omitted(bool setting = true, bool trigger = true)
+            {
+                var root = XElement.Parse(requested);
+                if (setting) root.Element(ns + "Settings")!.Element(ns + "StartWhenAvailable")!.Remove();
+                if (trigger) root.Element(ns + "Triggers")!.Elements().Single().Element(ns + "Enabled")!.Remove();
+                return root;
+            }
+            foreach (var (setting, trigger) in new[] { (true, false), (false, true), (true, true) })
+                Require(ScheduledTaskXml.MatchesRequested(requested, Omitted(setting, trigger).ToString()),
+                    "Windows may omit documented false StartWhenAvailable and true trigger Enabled defaults: " + schedule.Kind);
+
+            void Rejected(string detail, Action<XElement> change)
+            {
+                var root = Omitted();
+                change(root);
+                Require(!ScheduledTaskXml.MatchesRequested(requested, root.ToString()), detail);
+            }
+            Rejected("Missing disabled task state is rejected because its schema default is true",
+                root => root.Element(ns + "Settings")!.Element(ns + "Enabled")!.Remove());
+            Rejected("Explicitly disabled trigger differs from the requested enabled trigger",
+                root => root.Element(ns + "Triggers")!.Elements().Single().Add(new XElement(ns + "Enabled", false)));
+            Rejected("Explicit StartWhenAvailable true differs from requested false",
+                root => root.Element(ns + "Settings")!.Add(new XElement(ns + "StartWhenAvailable", true)));
+            Rejected("Missing requested identity remains rejected", root => root.Descendants(ns + "URI").Single().Remove());
+            Rejected("Changed requested identity remains rejected", root => root.Descendants(ns + "URI").Single().Value = "\\Other\\Task");
+            Rejected("Duplicate requested identity remains rejected", root => root.Element(ns + "RegistrationInfo")!.Add(new XElement(root.Descendants(ns + "URI").Single())));
+            Rejected("Missing action remains rejected", root => root.Element(ns + "Actions")!.Remove());
+            Rejected("Missing action command remains rejected", root => root.Descendants(ns + "Command").Single().Remove());
+            Rejected("Changed action command remains rejected", root => root.Descendants(ns + "Command").Single().Value = "C:\\Other\\check.exe");
+            Rejected("Duplicate action remains rejected", root => root.Element(ns + "Actions")!.Add(new XElement(root.Descendants(ns + "Exec").Single())));
+            Rejected("Missing principal remains rejected", root => root.Element(ns + "Principals")!.Remove());
+            Rejected("Missing principal account remains rejected", root => root.Descendants(ns + "UserId").Single().Remove());
+            Rejected("Changed principal account remains rejected", root => root.Descendants(ns + "UserId").Single().Value = "S-1-5-19");
+            Rejected("Duplicate principal remains rejected", root => root.Element(ns + "Principals")!.Add(new XElement(root.Descendants(ns + "Principal").Single())));
+            Rejected("Missing trigger remains rejected", root => root.Element(ns + "Triggers")!.Remove());
+            Rejected("Missing settings remain rejected", root => root.Element(ns + "Settings")!.Remove());
+            Rejected("Missing demand-start prohibition remains rejected", root => root.Element(ns + "Settings")!.Element(ns + "AllowStartOnDemand")!.Remove());
+            Rejected("Missing execution limit remains rejected", root => root.Element(ns + "Settings")!.Element(ns + "ExecutionTimeLimit")!.Remove());
+            Rejected("Duplicate StartWhenAvailable remains rejected", root => root.Element(ns + "Settings")!.Add(new XElement(ns + "StartWhenAvailable", false), new XElement(ns + "StartWhenAvailable", false)));
+            Rejected("Duplicate trigger Enabled remains rejected", root => root.Element(ns + "Triggers")!.Elements().Single().Add(new XElement(ns + "Enabled", true), new XElement(ns + "Enabled", true)));
+            if (schedule.Kind != TaskScheduleKind.Startup)
+                Rejected("Missing calendar boundary remains rejected", root => root.Descendants(ns + "StartBoundary").Single().Remove());
+            var requestedNondefault = XElement.Parse(requested);
+            requestedNondefault.Element(ns + "Settings")!.Element(ns + "StartWhenAvailable")!.Value = "true";
+            Require(!ScheduledTaskXml.MatchesRequested(requestedNondefault.ToString(), Omitted().ToString()),
+                "Omitted StartWhenAvailable cannot satisfy a requested nondefault true value");
+            requestedNondefault = XElement.Parse(requested);
+            requestedNondefault.Element(ns + "Triggers")!.Elements().Single().Element(ns + "Enabled")!.Value = "false";
+            Require(!ScheduledTaskXml.MatchesRequested(requestedNondefault.ToString(), Omitted().ToString()),
+                "Omitted trigger Enabled cannot satisfy a requested nondefault false value");
+        }
+        Console.WriteLine("PASS: only documented task XML default omissions match; disabled state and other semantic gates remain strict.");
     }
     private static void Require(bool value, string detail) { if (!value) throw new Exception(detail); }
     private static void ValidateNativeDefinition(string xml)

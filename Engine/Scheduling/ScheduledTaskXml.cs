@@ -106,6 +106,7 @@ public static class ScheduledTaskXml
         {
             var expected = group.ToArray();
             var actual = actualChildren.Where(element => element.Name == group.Key).ToArray();
+            if (actual.Length == 0 && expected.Length == 1 && IsOmittedDefault(requested, expected[0])) continue;
             if (actual.Length != expected.Length) return false;
             for (int i = 0; i < expected.Length; i++)
                 if (!MatchesElement(expected[i], actual[i])) return false;
@@ -115,5 +116,17 @@ public static class ScheduledTaskXml
             return XmlConvert.ToDateTime(requested.Value, XmlDateTimeSerializationMode.Unspecified) ==
                 XmlConvert.ToDateTime(observed.Value, XmlDateTimeSerializationMode.Unspecified);
         return string.Equals(requested.Value, observed.Value, StringComparison.Ordinal);
+    }
+
+    private static bool IsOmittedDefault(XElement parent, XElement child)
+    {
+        // Only these emitted schema defaults may disappear. Disabled task Enabled remains required.
+        XNamespace ns = Namespace;
+        if (child.HasAttributes || child.HasElements) return false;
+        if (parent.Name == ns + "Settings" && parent.Parent?.Name == ns + "Task")
+            return child.Name == ns + "StartWhenAvailable" && child.Value == "false";
+        return (parent.Name == ns + "BootTrigger" || parent.Name == ns + "CalendarTrigger") &&
+            parent.Parent?.Name == ns + "Triggers" && parent.Parent?.Parent?.Name == ns + "Task" &&
+            child.Name == ns + "Enabled" && child.Value == "true";
     }
 }

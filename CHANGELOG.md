@@ -24,7 +24,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - WinHTTP proxy checks preserve failed registry reads as unknown instead of reporting direct access.
 - Group Policy history accepts CIM timestamps and rejects missing, malformed or future dates.
 - Native service validation restores and verifies the original state after partial injection or cancellation, and stops when restoration is incomplete.
-- Task registration distinguishes a missing target from failed scheduler inspection.
+- Task registration distinguishes missing targets from failed inspection and verifies definitions when Windows omits documented XML defaults.
 - Saved workflow JSON includes its historical-only scope notice.
 - Imported log findings open in the readable report with their original-line evidence actions; empty imports replace stale reports with an explicit no-match result.
 - Added the guarded repair model shared by the app, Engine and CLI: every repair is individually selected, rechecks fresh evidence and exact eligibility immediately before dispatch, writes a durable pending record, verifies the result, and reconciles an interrupted request on a later boot without repeating it.
