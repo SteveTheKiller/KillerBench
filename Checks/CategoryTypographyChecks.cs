@@ -29,7 +29,7 @@ internal static class CategoryTypographyChecks
                 window.UpdateLayout();
                 var uiFont = (FontFamily)window.FindResource("UiFont");
                 var expected = theme == Theme.Retro98 ? new FontFamily("Microsoft Sans Serif") :
-                    new FontFamily(new Uri("pack://application:,,,/"), UiStack);
+                    new FontFamily(new Uri("pack://application:,,,/KillerBench;component/"), UiStack);
                 Require(uiFont.Equals(expected), $"{theme} retains the approved UI face and fallback stack");
                 RenderedTypographyChecks.VerifySubtitle(window);
                 for (int index = 0; index < categories.Items.Count; index++)

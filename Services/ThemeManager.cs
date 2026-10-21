@@ -12,7 +12,7 @@ namespace KillerBench.Services
     public static class ThemeManager
     {
         /// <summary>Killer Sans UI (Killer Sans scaled to Segoe UI proportions) with the Segoe fallback stack.</summary>
-        internal static readonly System.Windows.Media.FontFamily KillerSansUiStack = new(new Uri("pack://application:,,,/"), "./Fonts/#Killer Sans UI, Segoe UI, Microsoft JhengHei UI, Nirmala UI");
+        internal static readonly System.Windows.Media.FontFamily KillerSansUiStack = new(new Uri("pack://application:,,,/KillerBench;component/"), "./Fonts/#Killer Sans UI, Segoe UI, Microsoft JhengHei UI, Nirmala UI");
         internal static readonly System.Windows.Media.FontFamily LacquerHeadingStack = new(new Uri("pack://application:,,,/"), "./Fonts/#Lacquer, ./Fonts/#Killer Sans UI, Segoe UI, Microsoft JhengHei UI, Nirmala UI");
         internal static readonly System.Windows.Media.FontFamily KillerSansFont = new(new Uri("pack://application:,,,/"), "./Fonts/#Killer Sans");
         public static Func<string, string?> GetSetting { get; set; } = _ => null;
@@ -156,7 +156,9 @@ namespace KillerBench.Services
             SetIfAbsent(d, "FooterPadding", new Thickness(16, 0, 16, 0));
 
             SetIfAbsent(d, "SidebarPaneBrush", Transparent());
-            if (!d.Contains("ContentPaneBrush")) d["ContentPaneBrush"] = d["PaneBrush"];
+            // Main content panes use the family content color (the file dialog pane) unless a theme states its own.
+            if (!d.Contains("ContentPaneBrush"))
+                d["ContentPaneBrush"] = d.Contains("FileDialogPaneBrush") ? d["FileDialogPaneBrush"] : d["PaneBrush"];
 
             if (!d.Contains("OutlineRestBrush") && d.Contains("OutlineBtnBrush"))
                 d["OutlineRestBrush"] = d["OutlineBtnBrush"];

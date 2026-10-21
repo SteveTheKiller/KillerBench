@@ -105,6 +105,7 @@
 
     
     <Style x:Key="PrimaryButton" TargetType="Button">
+        <Setter Property="FontFamily" Value="{DynamicResource UiFont}"/>
         <Setter Property="Background" Value="{DynamicResource PrimaryFillBrush}"/>
         <Setter Property="Foreground" Value="{DynamicResource OnPrimaryBrush}"/>
         <Setter Property="FontSize" Value="14"/>
@@ -194,6 +195,7 @@
     </Style>
 
     <Style x:Key="OutlineButton" TargetType="Button">
+        <Setter Property="FontFamily" Value="{DynamicResource UiFont}"/>
         
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{DynamicResource OutlineBtnBrush}"/>
@@ -258,6 +260,7 @@
 
     
     <Style x:Key="SurfaceButton" TargetType="Button">
+        <Setter Property="FontFamily" Value="{DynamicResource UiFont}"/>
         <Setter Property="Background" Value="{DynamicResource PaneBrush}"/>
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
         <Setter Property="FontSize" Value="13"/>
@@ -536,11 +539,11 @@
                     <Border x:Name="bd" Background="Transparent" CornerRadius="{DynamicResource SmallCornerRadius}"
                             Margin="-8,0,2,0" Padding="10,4,10,4">
                         <DockPanel LastChildFill="True" Background="Transparent">
-                            <!-- One pixel down (0,1,8,-1) so the indicator centers on the label's capital height; Killer Sans sits low in its line box. The row height does not change. -->
-                            <Grid Width="16" Height="16" VerticalAlignment="Center" Margin="0,1,8,-1" DockPanel.Dock="Left">
+                            <!-- Centered on the label's capitals for whatever font the theme uses (Controls/CapCenterMargin.cs). A fixed nudge only fits one face. -->
+                            <Grid Width="16" Height="16" VerticalAlignment="Center" DockPanel.Dock="Left"><Grid.Margin><MultiBinding Converter="{x:Static kl:CapCenterMargin.Instance}" ConverterParameter="0,0,8,0"><Binding RelativeSource="{RelativeSource TemplatedParent}" Path="FontFamily"/><Binding RelativeSource="{RelativeSource TemplatedParent}" Path="FontSize"/></MultiBinding></Grid.Margin>
                                 <Ellipse x:Name="ring" Width="14" Height="14" Stroke="{DynamicResource DimTextBrush}"
                                          StrokeThickness="1.5" Fill="Transparent"/>
-                                <Ellipse x:Name="dot" Width="7" Height="7" Fill="{DynamicResource PrimaryBrush}"
+                                <Ellipse x:Name="dot" Width="6" Height="6" Fill="{DynamicResource PrimaryBrush}"
                                          Visibility="Collapsed"/>
                             </Grid>
                             <ContentPresenter VerticalAlignment="Center"/>
@@ -589,8 +592,8 @@
                     <Border x:Name="bd" Background="Transparent" CornerRadius="{DynamicResource SmallCornerRadius}"
                             Margin="-8,0,2,0" Padding="10,4,10,4">
                         <DockPanel LastChildFill="True" Background="Transparent">
-                            <!-- One pixel down (0,1,8,-1) so the indicator centers on the label's capital height; Killer Sans sits low in its line box. The row height does not change. -->
-                            <Grid Width="16" Height="16" VerticalAlignment="Center" Margin="0,1,8,-1" DockPanel.Dock="Left">
+                            <!-- Centered on the label's capitals for whatever font the theme uses (Controls/CapCenterMargin.cs). A fixed nudge only fits one face. -->
+                            <Grid Width="16" Height="16" VerticalAlignment="Center" DockPanel.Dock="Left"><Grid.Margin><MultiBinding Converter="{x:Static kl:CapCenterMargin.Instance}" ConverterParameter="0,0,8,0"><Binding RelativeSource="{RelativeSource TemplatedParent}" Path="FontFamily"/><Binding RelativeSource="{RelativeSource TemplatedParent}" Path="FontSize"/></MultiBinding></Grid.Margin>
                                 <Border CornerRadius="{DynamicResource ControlCornerRadius}" x:Name="ring" Width="14" Height="14" BorderBrush="{DynamicResource DimTextBrush}"
                                          BorderThickness="1" Background="Transparent"/>
                                 <Grid Width="14" Height="14" IsHitTestVisible="False"><Border IsHitTestVisible="False" BorderBrush="{DynamicResource PaneBevelDarkBrush}" BorderThickness="{DynamicResource PaneBevelLightThickness}"/><Border IsHitTestVisible="False" BorderBrush="{DynamicResource PaneBevelLightBrush}" BorderThickness="{DynamicResource PaneBevelDarkThickness}"/><Border IsHitTestVisible="False" Margin="{DynamicResource PaneBevelInnerMargin}" BorderBrush="{DynamicResource PaneBevelDark2Brush}" BorderThickness="{DynamicResource PaneBevel2LightThickness}"/><Border IsHitTestVisible="False" Margin="{DynamicResource PaneBevelInnerMargin}" BorderBrush="{DynamicResource PaneBevelLight2Brush}" BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/></Grid>
