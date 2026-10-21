@@ -4,8 +4,12 @@ namespace KillerBench.Engine.Storage;
 
 public sealed record DuplicateFile(string Path, long Length, string Sha256);
 public sealed record DuplicateFileGroup(long Length, string Sha256, IReadOnlyList<DuplicateFile> Files);
+/// <summary>FilesExamined counts every file visited and is what the file cap bounds; CandidateFiles counts those large enough to compare.</summary>
 public sealed record DuplicateFileReviewResult(string Root, int FilesExamined, bool Complete,
-    IReadOnlyList<DuplicateFileGroup> Groups, string Detail);
+    IReadOnlyList<DuplicateFileGroup> Groups, string Detail)
+{
+    public int CandidateFiles { get; init; }
+}
 
 public static class DuplicateFileReview
 {
@@ -21,6 +25,7 @@ public static class DuplicateFileReview
         if (!Directory.Exists(fullRoot)) throw new DirectoryNotFoundException("The selected folder does not exist.");
 
         var candidates = new List<FileInfo>();
+        int examined = 0;
         bool complete = true;
         try
         {
@@ -28,7 +33,8 @@ public static class DuplicateFileReview
                 directoryReader ?? SystemFileReviewDirectoryReader.Instance, token, () => complete = false))
             {
                 token.ThrowIfCancellationRequested();
-                if (candidates.Count >= maximumFiles) { complete = false; break; }
+                if (examined >= maximumFiles) { complete = false; break; }
+                examined++;
                 try
                 {
                     var file = new FileInfo(path);
@@ -65,6 +71,6 @@ public static class DuplicateFileReview
         string detail = complete
             ? "Exact SHA-256 duplicate review completed. Nothing was changed."
             : "Duplicate review is incomplete because a file limit or inaccessible content was encountered. Nothing was changed.";
-        return new(fullRoot, candidates.Count, complete, groups.AsReadOnly(), detail);
+        return new(fullRoot, examined, complete, groups.AsReadOnly(), detail) { CandidateFiles = candidates.Count };
     }
 }

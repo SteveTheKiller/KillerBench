@@ -33,7 +33,7 @@ internal static class DuplicateFileCommands
 
     private static string FormatReport(DuplicateFileReviewResult result)
     {
-        var lines = new List<string> { "DUPLICATE FILE REVIEW", "Files examined: " + result.FilesExamined, "Coverage: " + (result.Complete ? "Complete" : "Incomplete"), "Duplicate groups: " + result.Groups.Count, "" };
+        var lines = new List<string> { "DUPLICATE FILE REVIEW", "Files examined: " + result.FilesExamined, "Files large enough to compare: " + result.CandidateFiles, "Coverage: " + (result.Complete ? "Complete" : "Incomplete"), "Duplicate groups: " + result.Groups.Count, "" };
         foreach (var group in result.Groups)
         {
             lines.Add("Group: " + group.Files.Count + " matching files, " + group.Length + " bytes each.");

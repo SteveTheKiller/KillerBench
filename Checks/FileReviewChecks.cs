@@ -21,6 +21,12 @@ internal static class FileReviewChecks
                 "Duplicate review hashes matching files without deleting any file");
             duplicates = await DuplicateFileReview.ScanAsync(root, maximumFiles: 2);
             Require(!duplicates.Complete, "Duplicate review reports its file cap as incomplete coverage");
+            duplicates = await DuplicateFileReview.ScanAsync(root, minimumBytes: 100, maximumFiles: 1);
+            Require(!duplicates.Complete && duplicates.FilesExamined == 1 && duplicates.CandidateFiles == 0,
+                "The duplicate file cap must bound files visited, not only files above the size filter");
+            duplicates = await DuplicateFileReview.ScanAsync(root, minimumBytes: 5);
+            Require(duplicates.Complete && duplicates.FilesExamined == 3 && duplicates.CandidateFiles == 1,
+                "Duplicate review reports files visited separately from files large enough to compare");
 
             LargeFileReviewResult large = await LargeFileReview.ScanAsync(root, minimumBytes: 4, resultLimit: 1);
             Require(!large.Complete && large.Files.Count == 1 && File.Exists(first) && File.Exists(second) && File.Exists(unique),

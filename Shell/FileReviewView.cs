@@ -39,7 +39,7 @@ public partial class MainWindow
             {
                 DuplicateFileReviewResult result = await DuplicateFileReview.ScanAsync(folder, token: stop.Token);
                 complete = result.Complete;
-                var text = new StringBuilder("DUPLICATE FILE REVIEW\nFolder: " + result.Root + "\nFiles examined: " + result.FilesExamined + "\nDuplicate groups: " + result.Groups.Count + "\n\n");
+                var text = new StringBuilder("DUPLICATE FILE REVIEW\nFolder: " + result.Root + "\nFiles examined: " + result.FilesExamined + "\nFiles large enough to compare: " + result.CandidateFiles + "\nDuplicate groups: " + result.Groups.Count + "\n\n");
                 foreach (DuplicateFileGroup group in result.Groups)
                     text.AppendLine(group.Files.Count + " files | " + group.Length + " bytes | " + group.Sha256).AppendJoin('\n', group.Files.Select(file => "  " + file.Path)).AppendLine();
                 summary = text.AppendLine().Append(result.Detail).ToString();
