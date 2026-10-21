@@ -29,6 +29,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Update="LICENSE.txt" CopyToPublishDirectory="PreserveNewest" />
+    <!-- The fonts are embedded in the executable, so their license notices travel beside it. -->
+    <None Include="Fonts\KillerSans-OFL.txt;Fonts\Lacquer-OFL.txt;Fonts\Punktype-LICENSE.txt" Link="%(Filename)%(Extension)" CopyToPublishDirectory="PreserveNewest" />
     <Resource Include="Fonts\*.ttf" />
     <Resource Include="Assets\AppIcon.png" />
     <Resource Include="Assets\AppIcon.ico" />

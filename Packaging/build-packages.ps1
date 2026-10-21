@@ -79,6 +79,9 @@ $results = foreach ($kind in $kinds) {
             [IO.File]::Delete($symbol)
         }
         [IO.File]::Copy((Join-Path $projectDir 'LICENSE.txt'), (Join-Path $payloadDir 'LICENSE.txt'), $true)
+        foreach ($notice in @('KillerSans-OFL.txt', 'Lacquer-OFL.txt', 'Punktype-LICENSE.txt')) {
+            if (-not [IO.File]::Exists((Join-Path $payloadDir $notice))) { throw "The $kind payload is missing the font notice $notice." }
+        }
     } elseif (-not [IO.File]::Exists((Join-Path $payloadDir 'KillerBench.exe'))) {
         throw "RepackOnly requested but the prepared $kind payload is missing."
     }
