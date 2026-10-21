@@ -156,9 +156,7 @@ namespace KillerBench.Services
             SetIfAbsent(d, "FooterPadding", new Thickness(16, 0, 16, 0));
 
             SetIfAbsent(d, "SidebarPaneBrush", Transparent());
-            // Main content panes use the family content color (the file dialog pane) unless a theme states its own.
-            if (!d.Contains("ContentPaneBrush"))
-                d["ContentPaneBrush"] = d.Contains("FileDialogPaneBrush") ? d["FileDialogPaneBrush"] : d["PaneBrush"];
+            if (!d.Contains("ContentPaneBrush")) d["ContentPaneBrush"] = d["PaneBrush"];
 
             if (!d.Contains("OutlineRestBrush") && d.Contains("OutlineBtnBrush"))
                 d["OutlineRestBrush"] = d["OutlineBtnBrush"];
