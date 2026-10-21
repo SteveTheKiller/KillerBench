@@ -66,7 +66,6 @@ Let's get you set up.</string>
     <string key="ManifestInvalid">The payload manifest is invalid.</string>
     <string key="DuplicatePath">The payload manifest contains a duplicate path.</string>
     <string key="UnsafePathDetail">The payload contains an unsafe path: {0}</string>
-    <string key="CleanupFailed">The temporary installation directory could not be removed: {0}</string>
   </locale>
   <locale name="bn">
     <string key="SetupTitle">KillerBench সেটআপ</string>
@@ -134,7 +133,6 @@ Let's get you set up.</string>
     <string key="ManifestInvalid">ইনস্টলেশনের ফাইলগুলোর ম্যানিফেস্ট অবৈধ।</string>
     <string key="DuplicatePath">ইনস্টলেশনের ফাইলগুলোর ম্যানিফেস্টে একটি সদৃশ পাথ রয়েছে।</string>
     <string key="UnsafePathDetail">ইনস্টলেশনের ফাইলগুলোতে একটি অনিরাপদ পাথ রয়েছে: {0}</string>
-    <string key="CleanupFailed">অস্থায়ী ইনস্টলেশনের ফোল্ডার সরানো যায়নি: {0}</string>
   </locale>
   <locale name="cs-CZ">
     <string key="SetupTitle">Instalace KillerBench</string>
@@ -202,7 +200,6 @@ Pojďme vše nastavit.</string>
     <string key="ManifestInvalid">Manifest instalačních souborů je neplatný.</string>
     <string key="DuplicatePath">Manifest instalačních souborů obsahuje duplicitní cestu.</string>
     <string key="UnsafePathDetail">Instalační soubory obsahují nebezpečnou cestu: {0}</string>
-    <string key="CleanupFailed">Dočasnou instalační složku se nepodařilo odstranit: {0}</string>
   </locale>
   <locale name="de-DE">
     <string key="SetupTitle">KillerBench-Setup</string>
@@ -270,7 +267,6 @@ Richten wir alles ein.</string>
     <string key="ManifestInvalid">Das Manifest der Installationsdateien ist ungültig.</string>
     <string key="DuplicatePath">Das Manifest der Installationsdateien enthält einen doppelten Pfad.</string>
     <string key="UnsafePathDetail">Die Installationsdateien enthalten einen unsicheren Pfad: {0}</string>
-    <string key="CleanupFailed">Der temporäre Installationsordner konnte nicht entfernt werden: {0}</string>
   </locale>
   <locale name="es">
     <string key="SetupTitle">Instalación de KillerBench</string>
@@ -338,7 +334,6 @@ Vamos a configurarlo.</string>
     <string key="ManifestInvalid">El manifiesto de los archivos de instalación no es válido.</string>
     <string key="DuplicatePath">El manifiesto de los archivos de instalación contiene una ruta duplicada.</string>
     <string key="UnsafePathDetail">Los archivos de instalación contienen una ruta no segura: {0}</string>
-    <string key="CleanupFailed">No se pudo eliminar la carpeta de instalación temporal: {0}</string>
   </locale>
   <locale name="fr-FR">
     <string key="SetupTitle">Installation de KillerBench</string>
@@ -406,7 +401,6 @@ Commençons l'installation.</string>
     <string key="ManifestInvalid">Le manifeste des fichiers d'installation n'est pas valide.</string>
     <string key="DuplicatePath">Le manifeste des fichiers d'installation contient un chemin en double.</string>
     <string key="UnsafePathDetail">Les fichiers d'installation contiennent un chemin non sécurisé : {0}</string>
-    <string key="CleanupFailed">Le dossier d'installation temporaire n'a pas pu être supprimé : {0}</string>
   </locale>
   <locale name="hu-HU">
     <string key="SetupTitle">KillerBench telepítő</string>
@@ -474,7 +468,6 @@ Kezdjük a beállítást.</string>
     <string key="ManifestInvalid">A telepítési fájlok jegyzéke érvénytelen.</string>
     <string key="DuplicatePath">A telepítési fájlok jegyzéke ismétlődő elérési utat tartalmaz.</string>
     <string key="UnsafePathDetail">A telepítési fájlok nem biztonságos elérési utat tartalmaznak: {0}</string>
-    <string key="CleanupFailed">Az ideiglenes telepítési mappa nem távolítható el: {0}</string>
   </locale>
   <locale name="it-IT">
     <string key="SetupTitle">Installazione di KillerBench</string>
@@ -542,7 +535,6 @@ Procediamo con la configurazione.</string>
     <string key="ManifestInvalid">Il file manifest dei file di installazione non è valido.</string>
     <string key="DuplicatePath">Il file manifest dei file di installazione contiene un percorso duplicato.</string>
     <string key="UnsafePathDetail">I file di installazione contengono un percorso non sicuro: '{0}'</string>
-    <string key="CleanupFailed">Impossibile rimuovere la cartella installazione temporanea: '{0}'</string>
   </locale>
   <locale name="ja-JP">
     <string key="SetupTitle">KillerBench セットアップ</string>
@@ -610,7 +602,6 @@ Procediamo con la configurazione.</string>
     <string key="ManifestInvalid">インストールファイルのマニフェストが無効です。</string>
     <string key="DuplicatePath">インストールファイルのマニフェストに重複するパスが含まれています。</string>
     <string key="UnsafePathDetail">インストールファイルに安全でないパスが含まれています: {0}</string>
-    <string key="CleanupFailed">一時インストールフォルダーを削除できませんでした: {0}</string>
   </locale>
   <locale name="kk-KZ">
     <string key="SetupTitle">KillerBench орнату</string>
@@ -678,7 +669,6 @@ Procediamo con la configurazione.</string>
     <string key="ManifestInvalid">Орнату файлдарының манифесі жарамсыз.</string>
     <string key="DuplicatePath">Орнату файлдарының манифесінде қайталанатын жол бар.</string>
     <string key="UnsafePathDetail">Орнату файлдарында қауіпсіз емес жол бар: {0}</string>
-    <string key="CleanupFailed">Уақытша орнату қалтасын жою мүмкін болмады: {0}</string>
   </locale>
   <locale name="nb-NO">
     <string key="SetupTitle">KillerBench-installasjon</string>
@@ -746,7 +736,6 @@ La oss få deg i gang.</string>
     <string key="ManifestInvalid">Innholdsmanifestet er ugyldig.</string>
     <string key="DuplicatePath">Innholdsmanifestet inneholder en duplisert sti.</string>
     <string key="UnsafePathDetail">Innholdet inneholder en usikker sti: {0}</string>
-    <string key="CleanupFailed">Den midlertidige installasjonsmappen kunne ikke fjernes: {0}</string>
   </locale>
   <locale name="pl-PL">
     <string key="SetupTitle">Instalator KillerBench</string>
@@ -814,7 +803,6 @@ Rozpocznijmy konfigurację.</string>
     <string key="ManifestInvalid">Manifest plików instalacyjnych jest nieprawidłowy.</string>
     <string key="DuplicatePath">Manifest plików instalacyjnych zawiera powtórzoną ścieżkę.</string>
     <string key="UnsafePathDetail">Pliki instalacyjne zawierają niebezpieczną ścieżkę: {0}</string>
-    <string key="CleanupFailed">Nie można usunąć tymczasowego folderu instalacji: {0}</string>
   </locale>
   <locale name="pt-BR">
     <string key="SetupTitle">Instalação do KillerBench</string>
@@ -882,7 +870,6 @@ Vamos configurar tudo.</string>
     <string key="ManifestInvalid">O manifesto do conteúdo é inválido.</string>
     <string key="DuplicatePath">O manifesto do conteúdo contém um caminho duplicado.</string>
     <string key="UnsafePathDetail">O conteúdo contém um caminho inseguro: {0}</string>
-    <string key="CleanupFailed">Não foi possível remover o diretório temporário de instalação: {0}</string>
   </locale>
   <locale name="ru-RU">
     <string key="SetupTitle">Установка KillerBench</string>
@@ -950,7 +937,6 @@ Vamos configurar tudo.</string>
     <string key="ManifestInvalid">Манифест установочных файлов недействителен.</string>
     <string key="DuplicatePath">Манифест установочных файлов содержит повторяющийся путь.</string>
     <string key="UnsafePathDetail">Установочные файлы содержат небезопасный путь: {0}</string>
-    <string key="CleanupFailed">Не удалось удалить временную папку установки: {0}</string>
   </locale>
   <locale name="tr-TR">
     <string key="SetupTitle">KillerBench Kurulumu</string>
@@ -1018,7 +1004,6 @@ Kuruluma başlayalım.</string>
     <string key="ManifestInvalid">Kurulum dosyalarının bildirimi geçersiz.</string>
     <string key="DuplicatePath">Kurulum dosyalarının bildirimi yinelenen bir yol içeriyor.</string>
     <string key="UnsafePathDetail">Kurulum dosyaları güvenli olmayan bir yol içeriyor: {0}</string>
-    <string key="CleanupFailed">Geçici kurulum klasörü kaldırılamadı: {0}</string>
   </locale>
   <locale name="vi-VN">
     <string key="SetupTitle">Thiết lập KillerBench</string>
@@ -1086,7 +1071,6 @@ Hãy bắt đầu thiết lập.</string>
     <string key="ManifestInvalid">Manifest của gói ứng dụng không hợp lệ.</string>
     <string key="DuplicatePath">Manifest của gói ứng dụng chứa đường dẫn trùng lặp.</string>
     <string key="UnsafePathDetail">Gói ứng dụng chứa đường dẫn không an toàn: {0}</string>
-    <string key="CleanupFailed">Không thể xóa thư mục cài đặt tạm thời: {0}</string>
   </locale>
   <locale name="uk-UA">
     <string key="SetupTitle">Встановлення KillerBench</string>
@@ -1154,7 +1138,6 @@ Hãy bắt đầu thiết lập.</string>
     <string key="ManifestInvalid">Маніфест пакета неправильний.</string>
     <string key="DuplicatePath">Маніфест пакета містить дубльований шлях.</string>
     <string key="UnsafePathDetail">Пакет містить небезпечний шлях: {0}</string>
-    <string key="CleanupFailed">Не вдалося видалити тимчасову папку встановлення: {0}</string>
   </locale>
   <locale name="zh-CN">
     <string key="SetupTitle">KillerBench 安装程序</string>
@@ -1222,7 +1205,6 @@ Hãy bắt đầu thiết lập.</string>
     <string key="ManifestInvalid">安装文件清单无效。</string>
     <string key="DuplicatePath">安装文件清单包含重复路径。</string>
     <string key="UnsafePathDetail">安装文件包含不安全的路径：{0}</string>
-    <string key="CleanupFailed">无法删除临时安装文件夹：{0}</string>
   </locale>
   <locale name="zh-TW">
     <string key="SetupTitle">KillerBench 安裝程式</string>
@@ -1290,7 +1272,6 @@ Hãy bắt đầu thiết lập.</string>
     <string key="ManifestInvalid">安裝檔案資訊清單無效。</string>
     <string key="DuplicatePath">安裝檔案資訊清單包含重複路徑。</string>
     <string key="UnsafePathDetail">安裝檔案包含不安全的路徑：{0}</string>
-    <string key="CleanupFailed">無法刪除暫存安裝資料夾：{0}</string>
   </locale>
   <locale name="sl-SI">
     <string key="SetupTitle">Namestitev KillerBench</string>
@@ -1355,6 +1336,5 @@ Hãy bắt đầu thiết lập.</string>
     <string key="ManifestInvalid">Manifest datotek aplikacije ni veljaven.</string>
     <string key="DuplicatePath">Manifest datotek aplikacije vsebuje podvojeno pot.</string>
     <string key="UnsafePathDetail">Datoteke aplikacije vsebujejo nevarno pot: {0}</string>
-    <string key="CleanupFailed">Začasne namestitvene mape ni bilo mogoče odstraniti: {0}</string>
   </locale>
 </translations>
