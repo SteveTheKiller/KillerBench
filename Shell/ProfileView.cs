@@ -34,6 +34,7 @@ public partial class MainWindow
         if (destination.Length == 0) { Report("Type a new local NTFS backup folder that does not exist."); return; }
         using var stop = new CancellationTokenSource();
         BeginProfileBackupOperation(stop, "PROFILE BACKUP / COPY AND VERIFY");
+        repairRunning = true;
         try
         {
             int days = (int)ProfileAge.Value;
@@ -72,7 +73,11 @@ public partial class MainWindow
                 "Confirm the destination and profile evidence, then try the backup again.");
             SetScanLight("incomplete", "Profile backup unavailable.");
         }
-        finally { EndProfileBackupOperation(); }
+        finally
+        {
+            repairRunning = false;
+            EndProfileBackupOperation();
+        }
     }
 
     private async void OnRecoverProfileBackup(object sender, RoutedEventArgs e)

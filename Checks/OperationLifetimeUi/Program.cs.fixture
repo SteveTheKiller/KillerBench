@@ -1,0 +1,118 @@
+using System.Diagnostics;
+using System.Reflection;
+using System.Text.Json;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
+
+internal static class FixtureEntry
+{
+    [STAThread]
+    private static int Main(string[] args)
+    {
+        if (args is not ["--lifetime-child"]) return IsolatedDesktop.Run("--lifetime-child");
+        IsolatedDesktop.Verify();
+        var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+        SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(app.Dispatcher));
+        foreach (string resource in new[] { "Themes/Black.xaml", "Controls/Controls.xaml", "Themes/Instrument.xaml", "Strings/en-US.xaml" })
+            app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/KillerBench;component/" + resource, UriKind.Relative) });
+        KillerBench.Services.ThemeManager.Initialize();
+        int failed = 0;
+        try
+        {
+            foreach (string kind in new[] { "profile", "task" })
+                foreach (string action in new[] { "success", "failure", "stop", "close" })
+                {
+                    try { Run(kind, action); }
+                    catch (Exception error) { failed++; Console.WriteLine("FAIL " + kind + "/" + action + ": " + error.Message); }
+                }
+            return failed == 0 ? 0 : 1;
+        }
+        finally { app.Shutdown(); }
+    }
+
+    private static void Run(string kind, string action)
+    {
+        Harmless.ActiveBoundary.Reset(action == "failure");
+        var window = new KillerBench.MainWindow { ShowActivated = false, ShowInTaskbar = false, WindowStartupLocation = WindowStartupLocation.Manual };
+        bool closed = false;
+        window.Closed += (_, _) => closed = true;
+        var problems = new List<string>();
+        void Require(bool condition, string message) { if (!condition) problems.Add(message); }
+        try
+        {
+            window.Show();
+            window.Left = SystemParameters.VirtualScreenLeft - window.Width - 200;
+            ((ComboBox)window.FindName("MainWorkflow")).SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == (kind == "profile" ? WorkflowKind.Profiles : WorkflowKind.ScheduledTasks));
+            if (kind == "profile")
+            {
+                var profile = new ProfileSnapshot("S-1-5-21-1-2-3-1001", @"C:\Fixture\Profile", false, false, DateTimeOffset.UtcNow.AddDays(-200), false);
+                // Reuse the profile fixture's inventory setup without invoking private methods.
+                typeof(KillerBench.MainWindow).GetField("profileInventory", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(window, new ProfileInventoryResult([profile], true));
+                var selection = (ListBox)window.FindName("ProfileSelection");
+                selection.ItemsSource = new[] { profile }; selection.SelectedItem = profile;
+                ((Slider)window.FindName("ProfileAge")).Value = 137;
+                ((TextBox)window.FindName("ProfileBackupPath")).Text = @"C:\Fixture\NeverCreatedBackup";
+            }
+            else
+            {
+                ((TextBox)window.FindName("TaskDraftName")).Text = "HarmlessLifetimeFixture";
+                ((TextBox)window.FindName("TaskDraftExecutable")).Text = @"C:\Fixture\NeverExecuted.exe";
+                ((TextBox)window.FindName("TaskDraftUser")).Text = @"EXAMPLE\Fixture";
+                ((TextBox)window.FindName("TaskDraftStartDate")).Text = "2026-10-20";
+                ((CheckBox)window.FindName("TaskRegistrationConsent")).IsChecked = true;
+            }
+            var start = (Button)window.FindName(kind == "profile" ? "CopyProfileBackupButton" : "TaskRegistrationButton");
+            start.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            PumpUntil(() => Harmless.ActiveBoundary.Entered.Task.IsCompleted, "operation entry");
+            var host = (KillerBench.Features.About.IAboutHost)window;
+            Require(host.HoldUpdateForRepair(), "Active mutation did not hold an update.");
+            if (action == "stop") ((Button)window.FindName("CancelButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            if (action == "close") window.Close();
+            Pump();
+            if (action is "stop" or "close")
+            {
+                Require(Harmless.ActiveBoundary.Token.IsCancellationRequested, "Stop/Close did not request cancellation.");
+                Require(!closed, "Window closed before the active boundary completed.");
+                Require(host.HoldUpdateForRepair(), "Cancellation released the update hold before completion.");
+                Require(!((Button)window.FindName("CancelButton")).IsEnabled, "Stop remained enabled after cancellation.");
+            }
+            Require(!Harmless.ActiveBoundary.Finished, "Boundary finished before release.");
+            Harmless.ActiveBoundary.Release.TrySetResult();
+            PumpUntil(() => Harmless.ActiveBoundary.Finished, "boundary release");
+            PumpUntil(() => !host.HoldUpdateForRepair(), "guard cleanup");
+            Pump();
+            Require(!((Button)window.FindName("CancelButton")).IsEnabled, "Stop remained enabled after completion.");
+            if (action == "close") Require(closed, "Deferred Close was not completed after the boundary ended.");
+            else
+            {
+                Require(!closed, "Operation closed a window without a Close request.");
+                Require(start.IsEnabled, "Action controls were not restored after completion.");
+                window.Close();
+                Require(closed, "Guard cleanup did not permit a subsequent Close.");
+            }
+            if (problems.Count != 0) throw new Exception(string.Join(" ", problems));
+            Console.WriteLine(JsonSerializer.Serialize(new { result = "PASS", kind, action, cancellation = action is "stop" or "close", closed }));
+        }
+        finally
+        {
+            Harmless.ActiveBoundary.Release.TrySetResult();
+            PumpUntil(() => Harmless.ActiveBoundary.Finished || !Harmless.ActiveBoundary.Entered.Task.IsCompleted, "fixture cleanup");
+            Pump();
+            if (!closed) window.Close();
+        }
+    }
+
+    private static void PumpUntil(Func<bool> condition, string stage)
+    {
+        var watch = Stopwatch.StartNew();
+        while (!condition() && watch.Elapsed < TimeSpan.FromSeconds(15)) { Pump(); Thread.Sleep(5); }
+        if (!condition()) throw new Exception("Timed out: " + stage);
+    }
+    private static void Pump()
+    {
+        var frame = new DispatcherFrame();
+        Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(() => frame.Continue = false));
+        Dispatcher.PushFrame(frame);
+    }
+}

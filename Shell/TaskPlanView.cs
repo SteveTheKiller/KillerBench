@@ -168,6 +168,7 @@ public partial class MainWindow
             string journalFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "KillerBench", "TaskRegistration");
             readCancellation = stop;
+            repairRunning = execute;
             SetCaptureBusy(true);
             BeginWorkflowOutput(WorkflowKind.ScheduledTasks);
             AppendWorkflowOutput(execute
@@ -199,7 +200,14 @@ public partial class MainWindow
             FormatException or OverflowException or NotSupportedException or InvalidOperationException or
             System.ComponentModel.Win32Exception)
         { Report("Cannot register task draft: " + error.Message); }
-        finally { workflowOutputActive = false; readCancellation = null; SetCaptureBusy(false); }
+        finally
+        {
+            workflowOutputActive = false;
+            readCancellation = null;
+            repairRunning = false;
+            SetCaptureBusy(false);
+            if (closeAfterOperation) Close();
+        }
     }
 
     private async void OnRecoverTaskRegistration(object sender, RoutedEventArgs e)

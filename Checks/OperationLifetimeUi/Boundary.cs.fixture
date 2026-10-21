@@ -1,0 +1,45 @@
+global using ProfileBackupExecution = Harmless.BackupBoundary;
+global using TaskRegistration = Harmless.TaskBoundary;
+
+namespace Harmless;
+
+internal static class ActiveBoundary
+{
+    internal static TaskCompletionSource Entered = NewGate(), Release = NewGate();
+    internal static CancellationToken Token;
+    internal static bool Finished, Fail;
+    private static TaskCompletionSource NewGate() => new(TaskCreationOptions.RunContinuationsAsynchronously);
+    internal static void Reset(bool fail) { Entered = NewGate(); Release = NewGate(); Token = default; Finished = false; Fail = fail; }
+    internal static async Task Wait(CancellationToken token)
+    {
+        Token = token;
+        Entered.TrySetResult();
+        await Release.Task.ConfigureAwait(false);
+        Finished = true;
+        token.ThrowIfCancellationRequested();
+        if (Fail) throw new System.IO.IOException("Harmless execution failure.");
+    }
+}
+
+internal static class BackupBoundary
+{
+    public static async Task<ProfileBackupExecutionResult> RunAsync(ProfileSnapshot target, int minimumDays,
+        string destinationPath, string folder, IProfileBackupHost host, IProgress<string>? progress = null,
+        TimeSpan? operationLimit = null, CancellationToken token = default)
+    {
+        await ActiveBoundary.Wait(token);
+        return new("Verified", "synthetic-no-file", new ProfileBackupVerification(null, true, "Harmless operation completed."));
+    }
+}
+
+internal static class TaskBoundary
+{
+    public static async Task<TaskRegistrationResult> RunAsync(ScheduledTaskPlan draft, ITaskRegistrationHost host,
+        bool execute = false, ITaskRegistrationJournal? journal = null, TimeSpan? timeout = null,
+        IProgress<string>? progress = null, CancellationToken token = default)
+    {
+        if (!execute) throw new Exception("Fixture must exercise explicit registration consent.");
+        await ActiveBoundary.Wait(token);
+        return new("Registered", true, "Harmless operation completed.", []);
+    }
+}

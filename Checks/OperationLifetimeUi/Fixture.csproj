@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RepositoryRoot>$(MSBuildThisFileDirectory)..\..\</RepositoryRoot>
+    <OutputType>Exe</OutputType><TargetFramework>net10.0-windows</TargetFramework><UseWPF>true</UseWPF><UseAppHost>false</UseAppHost>
+    <AssemblyName>KillerBench</AssemblyName><StartupObject>FixtureEntry</StartupObject><AllowUnsafeBlocks>true</AllowUnsafeBlocks><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
+    <EnableDefaultItems>false</EnableDefaultItems><EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(RepositoryRoot)**/*.cs" Exclude="$(RepositoryRoot)**/bin/**/*.cs;$(RepositoryRoot)**/obj/**/*.cs;$(RepositoryRoot)Engine/**/*.cs;$(RepositoryRoot)Engine.Core/**/*.cs;$(RepositoryRoot)Engine.Windows/**/*.cs;$(RepositoryRoot)Cli/**/*.cs;$(RepositoryRoot)Checks/**/*.cs;$(RepositoryRoot)Tools/**/*.cs;$(RepositoryRoot)Packaging/**/*.cs" />
+    <Compile Include="$(RepositoryRoot)Checks/IsolatedDesktop.cs" />
+    <Compile Include="Program.cs.fixture;Boundary.cs.fixture" />
+    <ApplicationDefinition Include="$(RepositoryRoot)App.xaml" Link="App.xaml" />
+    <Page Include="$(RepositoryRoot)**/*.xaml" Exclude="$(RepositoryRoot)App.xaml;$(RepositoryRoot)**/bin/**/*.xaml;$(RepositoryRoot)**/obj/**/*.xaml;$(RepositoryRoot)Packaging/**/*.xaml" Link="%(RecursiveDir)%(Filename)%(Extension)" />
+    <Resource Include="$(RepositoryRoot)Fonts/*.ttf" Link="Fonts/%(Filename)%(Extension)" />
+    <Resource Include="$(RepositoryRoot)Assets/AppIcon.ico;$(RepositoryRoot)Assets/AppIcon.png" Link="Assets/%(Filename)%(Extension)" />
+    <ProjectReference Include="$(RepositoryRoot)Engine/KillerBench.Engine.csproj" />
+    <ProjectReference Include="$(RepositoryRoot)Engine.Core/KillerBench.Engine.Core.csproj" />
+    <ProjectReference Include="$(RepositoryRoot)Engine.Windows/KillerBench.Engine.Windows.csproj" />
+    <ProjectReference Include="$(RepositoryRoot)Cli/KillerBench.Cli.csproj" />
+  </ItemGroup>
+</Project>
