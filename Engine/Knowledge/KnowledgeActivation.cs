@@ -76,7 +76,9 @@ public static class KnowledgeActivation
         using var document = JsonDocument.Parse(pointerBytes, new JsonDocumentOptions { MaxDepth = 4 });
         RejectDuplicateFields(document.RootElement);
         var pointer = document.RootElement.Deserialize<ActiveKnowledgePointer>(Json) ?? throw new InvalidDataException("Active knowledge pointer is missing.");
-        if (pointer.PackId != expectedPackId || pointer.Revision < minimumRevision || pointer.ActivatedUtc == default ||
+        // JSON can omit or null any field, so check presence before reading the strings.
+        if (pointer.FileName is null || pointer.PayloadSha256 is null ||
+            pointer.PackId != expectedPackId || pointer.Revision < minimumRevision || pointer.ActivatedUtc == default ||
             pointer.FileName != Path.GetFileName(pointer.FileName) || !pointer.FileName.StartsWith("pack-", StringComparison.Ordinal) ||
             pointer.PayloadSha256.Length != 64 || pointer.PayloadSha256.Any(character => !Uri.IsHexDigit(character)))
             throw new InvalidDataException("Active knowledge pointer is invalid.");

@@ -44,6 +44,23 @@ internal static class KnowledgeActivationChecks
         await File.WriteAllTextAsync(Path.Combine(corruptRoot, "active.json"), "{\"PackId\":\"fixture-active\",\"PackId\":\"other\"}");
         await Reject(async () => { await KnowledgeActivation.LoadActiveAsync(corruptRoot, publicKey, "fixture-active"); }, "Ambiguous active pointer accepted");
 
+        string partialRoot = Path.Combine(scratch, "knowledge-partial-pointer");
+        await KnowledgeActivation.ActivateAsync(partialRoot, Sign(1), publicKey, "fixture-active");
+        string partialPointer = Path.Combine(partialRoot, "active.json");
+        var validPointer = System.Text.Json.Nodes.JsonNode.Parse(await File.ReadAllTextAsync(partialPointer))!.AsObject();
+        foreach (string field in new[] { "FileName", "PayloadSha256" })
+        {
+            var missing = validPointer.DeepClone().AsObject();
+            missing.Remove(field);
+            await File.WriteAllTextAsync(partialPointer, missing.ToJsonString());
+            await Reject(async () => { await KnowledgeActivation.LoadActiveAsync(partialRoot, publicKey, "fixture-active"); }, "Pointer without " + field + " accepted");
+            var nulled = validPointer.DeepClone().AsObject();
+            nulled[field] = null;
+            await File.WriteAllTextAsync(partialPointer, nulled.ToJsonString());
+            await Reject(async () => { await KnowledgeActivation.LoadActiveAsync(partialRoot, publicKey, "fixture-active"); }, "Pointer with null " + field + " accepted");
+        }
+        Require(Directory.EnumerateFiles(partialRoot, "pack-*.kbpack").Any(), "A malformed pointer must leave the retained verified version in place");
+
         string corruptDataRoot = Path.Combine(scratch, "knowledge-corrupt-data");
         var corruptData = await KnowledgeActivation.ActivateAsync(corruptDataRoot, Sign(1), publicKey, "fixture-active");
         byte[] corruptBytes = await File.ReadAllBytesAsync(corruptData.DataPath);
