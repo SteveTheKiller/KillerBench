@@ -20,6 +20,12 @@ Store one JSON record per executed scenario and validate it with `killerbench-cl
 
 Use `killerbench-cli validation-report OUTPUT.html RECORD.json [...]` for a searchable coverage matrix or choose `.txt` for a portable text report. The HTML report includes all 13 Killer Tools themes, status filtering and every installed scenario. It keeps missing evidence separate from Passed, Failed, Blocked and Inconclusive records. Report generation reads validated records only and performs no machine inspection or repair.
 
+## Remediation boundary acceptance
+
+October 20 acceptance also passed native retention beneath owned ordinary and protected folders, including junctions, root replacement, destination redirection and source symbolic-link changes. These cases used owned synthetic data, including the `spool-printers` action token. They did not touch the configured Windows spool folder. Both children exited 0 and authenticated checkpoint restoration matched the original fingerprints.
+
+The unchanged production-default IPv4 MTU action passed both persistent and active writes on the selected adapter, changing 1500 to 1400. The production probe returned 1400 and the exact adapter's registry MTU became DWORD 1400. The child exited 0 with complete output and empty stderr. Fresh offline checkpoint restoration authenticated the complete original native fingerprint. Reboot persistence, connectivity and native adverse interruption remain open. Trusted registered App Installer discovery also returned WinGet `v1.29.380` through a harmless version request, with identical native state before and after. No package upgrade ran. The [remediation evidence](../KillerHarness/validation/killerbench-remediation-20261020.md) records source hashes, process results, restoration and limits.
+
 ## Test layers
 
 Use deterministic Engine fixtures for individual states, generated pairwise cases for interactions, disposable VMs for Windows integration and physical machines only for hardware behavior that virtualization cannot represent. Demo mode is for interface and presentation review. It is not repair validation.
@@ -326,7 +332,7 @@ One development-machine read-only cache inventory completed with six Download fi
 
 One development-machine `servicing-logs` run inspected five of nine selected locations. CBS, the newest plain-text CBS archive, DISM and Panther setupact.log were informational; Panther setuperr.log retained one historical Setup finding. Four optional upgrade or rollback locations were absent. The command executed no repair and changed no source. This confirms one ordinary native collection only; it does not complete the encoding, access, rotation, privacy or representative-failure scenarios above.
 
-No native mutation results recorded yet. Add scenario evidence only after execution, including failures and limitations. A successful build or substituted-provider check cannot complete a row.
+No native profile-removal result is recorded here. Add scenario evidence only after execution, including failures and limitations. A successful build or substituted-provider check cannot complete a row. Other bounded native results are listed above.
 ## Peripheral readiness correlations
 
 Exercise all nine supported peripheral workflows with no devices, healthy devices, absent devices, nonzero Device Manager codes, missing and duplicated driver evidence, stopped enabled services, disabled services, service recovery, recent exact service failures, inaccessible providers and evidence changing between collection stages. Compare each conclusion with Device Manager, the Services console and matching Service Control Manager events. Confirm incomplete evidence takes precedence, historical service failures alone remain context, and a verified service start does not claim physical operation. Confirm each workflow retains its feature-specific boundary for radio and pairing, capture and transfer, card authentication, biometric sign-in, human input, portable-device access, text recognition and display enhancement. No device, driver, permission, policy, credential or user data may change. Fixture correlation and read-only workflow dispatch are verified. Native complete, adverse and repaired combinations remain disposable-VM work.
