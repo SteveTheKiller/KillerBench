@@ -128,7 +128,7 @@ public sealed class WindowsAdapterEnableAction : IActionPrimitive
     public bool RequiresElevation => true;
     private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
         "& { param([string]$name) $a=@(Get-NetAdapter -Name $name -Physical -ErrorAction Stop); if($a.Count -ne 1 -or $a[0].Name -ine $name){throw 'Exact adapter not found.'}; " +
-        "if($a[0].AdminStatus -ne 'Down'){'AlreadyEnabled';exit 0}; Enable-NetAdapter -InputObject $a[0] -Confirm:$false -ErrorAction Stop; 'Enabled' }";
+        "if($a[0].AdminStatus -ne 'Down'){'AlreadyEnabled';exit 0}; " + MutationBoundary.Script + "Enable-NetAdapter -InputObject $a[0] -Confirm:$false -ErrorAction Stop; 'Enabled' }";
 
     public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
     {
@@ -137,8 +137,8 @@ public sealed class WindowsAdapterEnableAction : IActionPrimitive
         var result = await runCommand(Script, token, [parameters["name"]]).ConfigureAwait(false);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
         if (result.TimedOut) return new ActionResult(true, false, raw, "Enable-NetAdapter timed out.") { TimedOut = true };
-        if (result.ExitCode != 0) return new ActionResult(false, false, raw, "Enable-NetAdapter failed: " + result.Error.Trim());
-        string text = result.Output.Trim();
+        if (result.ExitCode != 0) return MutationBoundary.Failed(result, raw, "Enable-NetAdapter failed: " + result.Error.Trim());
+        string text = MutationBoundary.Output(result);
         return text == "AlreadyEnabled" ? new ActionResult(false, true, raw, "The adapter was already enabled; nothing changed.")
             : new ActionResult(true, text == "Enabled", raw, text == "Enabled" ? null : "Unexpected output.");
     }
@@ -158,7 +158,7 @@ public sealed class WindowsAdapterPowerSavingDisableAction : IActionPrimitive
     public bool RequiresElevation => true;
     private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
         "& { param([string]$name) $p=@(Get-NetAdapterPowerManagement -Name $name -ErrorAction Stop); if($p.Count -ne 1 -or $p[0].Name -ine $name){throw 'Exact adapter not found.'}; if($p[0].AllowComputerToTurnOffDevice -ne 'Enabled'){'AlreadyDisabled';exit 0}; " +
-        "Set-NetAdapterPowerManagement -InputObject $p[0] -AllowComputerToTurnOffDevice Disabled -ErrorAction Stop; 'Disabled' }";
+        MutationBoundary.Script + "Set-NetAdapterPowerManagement -InputObject $p[0] -AllowComputerToTurnOffDevice Disabled -ErrorAction Stop; 'Disabled' }";
 
     public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
     {
@@ -167,8 +167,8 @@ public sealed class WindowsAdapterPowerSavingDisableAction : IActionPrimitive
         var result = await runCommand(Script, token, [parameters["name"]]).ConfigureAwait(false);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
         if (result.TimedOut) return new ActionResult(true, false, raw, "Set-NetAdapterPowerManagement timed out.") { TimedOut = true };
-        if (result.ExitCode != 0) return new ActionResult(false, false, raw, "Set-NetAdapterPowerManagement failed: " + result.Error.Trim());
-        string text = result.Output.Trim();
+        if (result.ExitCode != 0) return MutationBoundary.Failed(result, raw, "Set-NetAdapterPowerManagement failed: " + result.Error.Trim());
+        string text = MutationBoundary.Output(result);
         return text == "AlreadyDisabled" ? new ActionResult(false, true, raw, "Power saving was already disabled; nothing changed.")
             : new ActionResult(true, text == "Disabled", raw, text == "Disabled" ? null : "Unexpected output.");
     }

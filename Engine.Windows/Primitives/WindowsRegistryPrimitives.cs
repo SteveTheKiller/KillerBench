@@ -7,6 +7,15 @@ namespace KillerBench.Engine.Windows.Primitives;
 /// <summary>Bounded registry primitives. Keys are limited to HKLM and HKCU relative paths without traversal; values are read and written one at a time with the prior value retained in the action's raw evidence.</summary>
 public static class WindowsRegistryPrimitives
 {
+    /// <summary>
+    /// A write that returned, or failed with an I/O error mid-write, may have changed the value, so it stays dispatched and uncertain.
+    /// Only a refusal before the write (access denied, or a failure before SetValue) is reported as no change.
+    /// </summary>
+    public static ActionResult WriteFailed(bool attempted, bool written, Exception exception) =>
+        written || (attempted && exception is IOException)
+            ? new(true, false, "", "The registry write was sent but could not be confirmed: " + exception.Message + " Check the current value before retrying.")
+            : new(false, false, "", "Registry value could not be written: " + exception.Message);
+
     public const string KeyPattern = @"[A-Za-z0-9_][A-Za-z0-9_\\ .{}()-]{0,255}";
     public const string NamePattern = @"[A-Za-z0-9_ .(){}-]{1,255}";
 
@@ -140,13 +149,16 @@ public sealed class WindowsRegistrySetDwordAction : IActionPrimitive
         {
             if (key is null) return Task.FromResult(new ActionResult(false, false, "", "The registry key does not exist; this primitive does not create keys."));
             string name = parameters["name"];
+            bool attempted = false, wrote = false;
             try
             {
                 object? prior = key.GetValue(name, null, RegistryValueOptions.DoNotExpandEnvironmentNames);
                 string priorText = prior is null ? "absent" : key.GetValueKind(name) + ":" + WindowsRegistryPrimitives.Render(prior, key.GetValueKind(name));
                 if (prior is int existing && unchecked((uint)existing) == requested)
                     return Task.FromResult(new ActionResult(false, true, "prior=" + priorText, "The value already matches; nothing was written."));
+                attempted = true;
                 key.SetValue(name, unchecked((int)requested), RegistryValueKind.DWord);
+                wrote = true;
                 object? after = key.GetValue(name, null);
                 bool verified = after is int written && unchecked((uint)written) == requested;
                 return Task.FromResult(new ActionResult(true, verified, "prior=" + priorText + "; after=" + WindowsRegistryPrimitives.Render(after, RegistryValueKind.DWord),
@@ -154,7 +166,7 @@ public sealed class WindowsRegistrySetDwordAction : IActionPrimitive
             }
             catch (Exception exception) when (exception is System.Security.SecurityException or UnauthorizedAccessException or IOException)
             {
-                return Task.FromResult(new ActionResult(false, false, "", "Registry value could not be written: " + exception.Message));
+                return Task.FromResult(WindowsRegistryPrimitives.WriteFailed(attempted, wrote, exception));
             }
         }
     }
@@ -184,6 +196,7 @@ public sealed class WindowsRegistrySetStringAction : IActionPrimitive
         {
             if (key is null) return Task.FromResult(new ActionResult(false, false, "", "The registry key does not exist; this primitive does not create keys."));
             string name = parameters["name"];
+            bool attempted = false, wrote = false;
             try
             {
                 object? prior = key.GetValue(name, null, RegistryValueOptions.DoNotExpandEnvironmentNames);
@@ -193,7 +206,9 @@ public sealed class WindowsRegistrySetStringAction : IActionPrimitive
                     return Task.FromResult(new ActionResult(false, false, "prior=" + priorText, "The existing value is " + priorKind + ", not String; it was left unchanged."));
                 if (prior is string existing && string.Equals(existing, requested, StringComparison.Ordinal))
                     return Task.FromResult(new ActionResult(false, true, "prior=" + priorText, "The value already matches; nothing was written."));
+                attempted = true;
                 key.SetValue(name, requested, RegistryValueKind.String);
+                wrote = true;
                 object? after = key.GetValue(name, null, RegistryValueOptions.DoNotExpandEnvironmentNames);
                 bool verified = after is string written && string.Equals(written, requested, StringComparison.Ordinal) && key.GetValueKind(name) == RegistryValueKind.String;
                 return Task.FromResult(new ActionResult(true, verified, "prior=" + priorText + "; after=String:" + WindowsRegistryPrimitives.Render(after, RegistryValueKind.String),
@@ -201,7 +216,7 @@ public sealed class WindowsRegistrySetStringAction : IActionPrimitive
             }
             catch (Exception exception) when (exception is System.Security.SecurityException or UnauthorizedAccessException or IOException)
             {
-                return Task.FromResult(new ActionResult(false, false, "", "Registry value could not be written: " + exception.Message));
+                return Task.FromResult(WindowsRegistryPrimitives.WriteFailed(attempted, wrote, exception));
             }
         }
     }

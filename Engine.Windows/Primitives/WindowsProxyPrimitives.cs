@@ -96,7 +96,7 @@ public sealed class WindowsWinHttpProxyResetAction : IActionPrimitive
     public bool RequiresElevation => true;
     private const string Script = WindowsWinHttpProxy.ReadValueScript +
         "if($null -eq $v -or ([BitConverter]::ToInt32($v,8) -band 2) -eq 0){'AlreadyDirect';exit 0};" +
-        "& (Join-Path $env:SystemRoot 'System32\\netsh.exe') winhttp reset proxy|Out-Null;if($LASTEXITCODE -ne 0){throw ('netsh exited with '+$LASTEXITCODE)};'Reset'";
+        MutationBoundary.Script + "& (Join-Path $env:SystemRoot 'System32\\netsh.exe') winhttp reset proxy|Out-Null;if($LASTEXITCODE -ne 0){throw ('netsh exited with '+$LASTEXITCODE)};'Reset'";
 
     public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
     {
@@ -110,8 +110,8 @@ public sealed class WindowsWinHttpProxyResetAction : IActionPrimitive
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
         if (result.TimedOut) return new ActionResult(true, false, raw, "WinHTTP proxy reset timed out.") { TimedOut = true };
         if (result.Truncated) return new ActionResult(true, false, raw, "WinHTTP proxy reset output was truncated.");
-        if (result.ExitCode != 0) return new ActionResult(false, false, raw, "WinHTTP proxy reset failed: " + result.Error.Trim());
-        string text = result.Output.Trim();
+        if (result.ExitCode != 0) return MutationBoundary.Failed(result, raw, "WinHTTP proxy reset failed: " + result.Error.Trim());
+        string text = MutationBoundary.Output(result);
         return text == "AlreadyDirect" ? new ActionResult(false, true, raw, "WinHTTP already used direct access; nothing changed.")
             : new ActionResult(true, text == "Reset", raw, text == "Reset" ? null : "Unexpected output.");
     }

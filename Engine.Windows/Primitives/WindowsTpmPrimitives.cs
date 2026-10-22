@@ -39,7 +39,7 @@ public sealed class WindowsTpmInitializeAction : IActionPrimitive
     public bool RequiresElevation => true;
     private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
         "$t=Get-Tpm -ErrorAction Stop;if(-not $t.TpmPresent){'Absent';exit 0};if($t.TpmReady){'AlreadyReady';exit 0};" +
-        "$r=Initialize-Tpm -ErrorAction Stop;[string]$r.TpmReady+'|'+[string]$r.RestartRequired+'|'+[string]$r.ShutdownRequired+'|'+[string]$r.ClearRequired+'|'+[string]$r.PhysicalPresenceRequired";
+        MutationBoundary.Script + "$r=Initialize-Tpm -ErrorAction Stop;[string]$r.TpmReady+'|'+[string]$r.RestartRequired+'|'+[string]$r.ShutdownRequired+'|'+[string]$r.ClearRequired+'|'+[string]$r.PhysicalPresenceRequired";
 
     public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
     {
@@ -52,8 +52,8 @@ public sealed class WindowsTpmInitializeAction : IActionPrimitive
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
         if (result.TimedOut) return new ActionResult(true, false, raw, "Initialize-Tpm timed out.") { TimedOut = true };
         if (result.Truncated) return new ActionResult(true, false, raw, "Initialize-Tpm output was truncated.");
-        if (result.ExitCode != 0) return new ActionResult(false, false, raw, "Initialize-Tpm failed: " + result.Error.Trim());
-        string text = result.Output.Trim();
+        if (result.ExitCode != 0) return MutationBoundary.Failed(result, raw, "Initialize-Tpm failed: " + result.Error.Trim());
+        string text = MutationBoundary.Output(result);
         if (text == "AlreadyReady") return new ActionResult(false, true, raw, "The TPM was already ready; nothing changed.");
         if (text == "Absent") return new ActionResult(false, false, raw, "No TPM is visible to Windows. Turn it on in the firmware settings.");
         var parts = text.Split('|');

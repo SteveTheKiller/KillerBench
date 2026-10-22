@@ -108,7 +108,7 @@ public sealed class WindowsAssignDriveLetterAction : IActionPrimitive
     public bool RequiresElevation => true;
     private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
         "& { param([int]$disk,[int]$partition,[string]$letter) $p=Get-Partition -DiskNumber $disk -PartitionNumber $partition -ErrorAction Stop; if($p.DriveLetter){'AlreadyLettered';exit 0}; " +
-        "if(Get-Volume -DriveLetter $letter -ErrorAction SilentlyContinue){throw 'Drive letter is in use.'}; Set-Partition -DiskNumber $disk -PartitionNumber $partition -NewDriveLetter $letter -ErrorAction Stop; 'Assigned' }";
+        "if(Get-Volume -DriveLetter $letter -ErrorAction SilentlyContinue){throw 'Drive letter is in use.'}; " + MutationBoundary.Script + "Set-Partition -DiskNumber $disk -PartitionNumber $partition -NewDriveLetter $letter -ErrorAction Stop; 'Assigned' }";
 
     public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
     {
@@ -117,8 +117,8 @@ public sealed class WindowsAssignDriveLetterAction : IActionPrimitive
         var result = await WindowsNetAdapterPrimitives.RunAsync(Script, token, parameters["disk"], parameters["partition"], parameters["letter"].ToUpperInvariant()).ConfigureAwait(false);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
         if (result.TimedOut) return new ActionResult(true, false, raw, "Set-Partition timed out.") { TimedOut = true };
-        if (result.ExitCode != 0) return new ActionResult(false, false, raw, "Set-Partition failed: " + result.Error.Trim());
-        string text = result.Output.Trim();
+        if (result.ExitCode != 0) return MutationBoundary.Failed(result, raw, "Set-Partition failed: " + result.Error.Trim());
+        string text = MutationBoundary.Output(result);
         return text == "AlreadyLettered" ? new ActionResult(false, true, raw, "The partition already has a drive letter; nothing changed.")
             : new ActionResult(true, text == "Assigned", raw, text == "Assigned" ? null : "Unexpected output.");
     }
@@ -160,7 +160,7 @@ public sealed class WindowsAppxReregisterAction : IActionPrimitive
     private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
         "& { param([string]$name) $p=@(Get-AppxPackage -Package $name -ErrorAction Stop); if($p.Count -ne 1){throw 'Exact package not found for this account.'}; " +
         "$m=Join-Path $p[0].InstallLocation 'AppxManifest.xml'; if(-not (Test-Path $m)){throw 'AppxManifest.xml is missing from the install location.'}; " +
-        "Add-AppxPackage -DisableDevelopmentMode -Register $m -ErrorAction Stop; 'Registered' }";
+        MutationBoundary.Script + "Add-AppxPackage -DisableDevelopmentMode -Register $m -ErrorAction Stop; 'Registered' }";
 
     public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
     {
@@ -169,7 +169,7 @@ public sealed class WindowsAppxReregisterAction : IActionPrimitive
         var result = await WindowsNetAdapterPrimitives.RunAsync(Script, token, parameters["package"]).ConfigureAwait(false);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
         if (result.TimedOut) return new ActionResult(true, false, raw, "Add-AppxPackage timed out.") { TimedOut = true };
-        if (result.ExitCode != 0) return new ActionResult(false, false, raw, "Add-AppxPackage failed: " + result.Error.Trim());
-        return new ActionResult(true, result.Output.Trim() == "Registered", raw);
+        if (result.ExitCode != 0) return MutationBoundary.Failed(result, raw, "Add-AppxPackage failed: " + result.Error.Trim());
+        return new ActionResult(true, MutationBoundary.Output(result) == "Registered", raw);
     }
 }
