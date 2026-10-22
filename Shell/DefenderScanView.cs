@@ -54,11 +54,15 @@ public partial class MainWindow
         _ => throw new InvalidOperationException("Select Quick or Full scan.")
     };
 
+    private Func<IDefenderScanHost> createDefenderScanHost = () => new WindowsDefenderScanHost();
+
     private async Task RunDefenderScanAsync(bool execute)
     {
         if (readCancellation is not null) return;
         using var stop = new CancellationTokenSource(TimeSpan.FromMinutes(2));
         readCancellation = stop;
+        // A confirmed request holds close and self-update until its immediate outcome is recorded; the scan itself may continue in Defender.
+        repairRunning = execute;
         SetCaptureBusy(true);
         ModeLabel.Text = execute ? "DEFENDER SCAN / STARTING" : "DEFENDER SCAN / PREVIEW";
         BeginWorkflowOutput(WorkflowKind.Defender);
@@ -68,7 +72,7 @@ public partial class MainWindow
         {
             string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "KillerBench", "Repairs", "DefenderScan");
-            var host = new WindowsDefenderScanHost();
+            var host = createDefenderScanHost();
             DefenderScanResult result = execute
                 ? await DefenderScanExecution.ExecuteAsync(folder, type, true, host, stop.Token)
                 : await DefenderScanExecution.PreviewAsync(type, host, stop.Token);
@@ -102,6 +106,7 @@ public partial class MainWindow
         finally
         {
             readCancellation = null;
+            repairRunning = false;
             workflowOutputActive = false;
             SourcesList.IsEnabled = true;
             SearchBox.IsEnabled = true;

@@ -50,6 +50,29 @@ internal static class ShellHandoffUiChecks
         Require(!afterRun.Title.Contains("earlier", StringComparison.OrdinalIgnoreCase),
             "After the new run completes, Export uses the new result");
         Console.WriteLine("PASS: final BitLocker output reaches Raw output, export names its source during a live run, and profile controls have accessible names.");
+
+        var hold = typeof(KillerBench.MainWindow).GetMethods(Flags).Single(method => method.Name.EndsWith("HoldUpdateForRepair", StringComparison.Ordinal));
+        var defender = new DelayedDefenderHost();
+        typeof(KillerBench.MainWindow).GetField("createDefenderScanHost", Flags)!.SetValue(window, (Func<KillerBench.Engine.Security.IDefenderScanHost>)(() => defender));
+        Get<ComboBox>("DefenderScanChoice").SelectedIndex = 1;
+        var scan = (Task)typeof(KillerBench.MainWindow).GetMethod("RunDefenderScanAsync", Flags)!.Invoke(window, [true])!;
+        Require(!scan.IsCompleted && (bool)hold.Invoke(window, [])!, "A confirmed Defender request holds close and self-update while it is being prepared");
+        defender.Protection.SetException(new InvalidOperationException("Fixture provider ended the request."));
+        while (!scan.IsCompleted) System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Background);
+        scan.GetAwaiter().GetResult();
+        Require(!(bool)hold.Invoke(window, [])!, "The Defender hold ends once the request has an outcome");
+        Console.WriteLine("PASS: a confirmed Defender request holds close and self-update until its immediate outcome is recorded.");
+    }
+
+    private sealed class DelayedDefenderHost : KillerBench.Engine.Security.IDefenderScanHost
+    {
+        internal readonly TaskCompletionSource<WorkflowCheck> Protection = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public bool IsAdministrator() => true;
+        public bool RebootPending() => false;
+        public Task<WorkflowCheck> ReadProtectionAsync(CancellationToken token) => Protection.Task;
+        public Task<WorkflowCheck> ReadHistoryAsync(CancellationToken token) => throw new InvalidOperationException("Not reached.");
+        public Task<KillerBench.Engine.Infrastructure.ToolResult> StartAsync(KillerBench.Engine.Security.DefenderScanType type, CancellationToken token) =>
+            throw new InvalidOperationException("No Defender scan is started by this check.");
     }
 
     private static void RunBitLocker(KillerBench.MainWindow window, string marker, bool guarded)
