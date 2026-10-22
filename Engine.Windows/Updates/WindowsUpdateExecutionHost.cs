@@ -36,6 +36,19 @@ public sealed class WindowsUpdateExecutionHost : IUpdateExecutionHost, IUpdateRe
         return Interpret(result, selection);
     }
 
+    // The same restart indicators RestartDiagnostics reads: servicing, Windows Update, pending file renames, a pending computer rename and the update executable flag.
+    private const string RestartPendingFunction =
+        "function PropertyValue($o,$n){ if($null -ne $o -and $o.PSObject.Properties[$n]){$o.$n} }; " +
+        "function RestartPending { $sm=Get-ItemProperty 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager' -ErrorAction SilentlyContinue; " +
+        "$active=Get-ItemProperty 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\ComputerName\\ActiveComputerName' -ErrorAction SilentlyContinue; " +
+        "$configured=Get-ItemProperty 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\ComputerName\\ComputerName' -ErrorAction SilentlyContinue; " +
+        "$updates=Get-ItemProperty 'HKLM:\\SOFTWARE\\Microsoft\\Updates' -ErrorAction SilentlyContinue; " +
+        "(Test-Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Component Based Servicing\\RebootPending') -or " +
+        "(Test-Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\RebootRequired') -or " +
+        "(@(PropertyValue $sm 'PendingFileRenameOperations' | Where-Object { $_ }).Count -gt 0) -or " +
+        "([string](PropertyValue $active 'ComputerName') -ne [string](PropertyValue $configured 'ComputerName')) -or " +
+        "([int](PropertyValue $updates 'UpdateExeVolatile') -ne 0) }; ";
+
     public static RepairStep InstallationStep(UpdateSearchOptions search, UpdateSelection selection, UpdateInstallOptions options)
     {
         search.Criteria();
@@ -53,6 +66,10 @@ public sealed class WindowsUpdateExecutionHost : IUpdateExecutionHost, IUpdateRe
             "$c=New-Object -ComObject Microsoft.Update.UpdateColl; [void]$c.Add($u); " +
             "$installer=$s.CreateUpdateInstaller(); if($installer.IsBusy -or $installer.RebootRequiredBeforeInstallation){throw 'Installer is busy or needs a restart'}; " +
             "if(!$u.IsDownloaded){$d=$s.CreateUpdateDownloader(); $d.Updates=$c; $dr=$d.Download(); if([int]$dr.ResultCode -ne 2 -or [int]$dr.GetUpdateResult(0).ResultCode -ne 2 -or !$u.IsDownloaded){throw 'Download did not complete'}}; " +
+            // A download can take long enough for another installation or a pending restart to appear. Recheck right before Install.
+            RestartPendingFunction +
+            "$changed=if($installer.IsBusy){'another installation is running'}elseif($installer.RebootRequiredBeforeInstallation -or (RestartPending)){'a restart is now pending'}else{$null}; " +
+            "if($changed){[pscustomobject]@{blocked=$changed}|ConvertTo-Json -Compress; exit 0}; " +
             "$installer.Updates=$c; $installer.AllowSourcePrompts=$false; $installer.ForceQuiet=$true; $ir=$installer.Install(); $one=$ir.GetUpdateResult(0); " +
             "$v=$searcher.Search(\"IsInstalled=1 and " + identity + "\"); $verified=([int]$v.ResultCode -eq 2 -and $v.Updates.Count -eq 1); " +
             "[pscustomobject]@{id=$u.Identity.UpdateID; revision=$u.Identity.RevisionNumber; code=[int]$ir.ResultCode; itemCode=[int]$one.ResultCode; hresult=[int]$one.HResult; restart=[bool]($ir.RebootRequired -or $one.RebootRequired); verified=[bool]$verified} | ConvertTo-Json -Compress";
@@ -67,6 +84,10 @@ public sealed class WindowsUpdateExecutionHost : IUpdateExecutionHost, IUpdateRe
         {
             using var document = JsonDocument.Parse(result.Output);
             var r = document.RootElement;
+            if (r.ValueKind == JsonValueKind.Object && r.TryGetProperty("blocked", out var blocked) && r.EnumerateObject().Count() == 1 &&
+                blocked.GetString() is { Length: > 0 and <= 200 } reason)
+                return new(selection, false, false, "Installation was not started: " + reason + " after the update downloaded. Restart or wait, then search again.")
+                    { InstallDispatched = false };
             if (!Guid.TryParse(r.GetProperty("id").GetString(), out var id) || id != selection.Id || r.GetProperty("revision").GetInt32() != selection.Revision) return Unknown();
             bool restart = r.GetProperty("restart").GetBoolean();
             bool installed = r.GetProperty("code").GetInt32() == 2 && r.GetProperty("itemCode").GetInt32() == 2 &&

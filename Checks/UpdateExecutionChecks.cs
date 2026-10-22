@@ -174,6 +174,12 @@ internal static class UpdateExecutionChecks
             Require(File.ReadAllText(result.JournalPath).Contains("Finished"), "Failure journals include a final outcome: " + failure);
             Require(result.Outcomes.All(o => !o.Installed), "Failure never becomes installed: " + failure);
         }
+        string blockedFolder = Path.Combine(scratch, "update-preinstall-blocked");
+        host = new Fixture { Failure = "preinstall-blocked", Folder = blockedFolder };
+        result = await UpdateExecution.RunAsync(new(), [selection], new(), blockedFolder, host);
+        Require(result.Status == "Blocked" && result.GetExitCode() != 0 && !File.Exists(Path.Combine(blockedFolder, "pending.json")) &&
+            result.Details.Any(detail => detail.Contains("not started", StringComparison.Ordinal)),
+            "A readiness change caught before Install is a blocker with no pending installation");
         string hungFolder = Path.Combine(scratch, "update-hung-provider");
         host = new Fixture { Failure = "never-completes" };
         result = await UpdateExecution.RunBoundedAsync(new(), [selection], new(), hungFolder, host, TimeSpan.FromMilliseconds(25));
@@ -258,6 +264,8 @@ internal static class UpdateExecutionChecks
             if (Failure == "provider-canceled") throw new OperationCanceledException("Fixture provider stopped");
             if (Failure == "user-canceled") { Stop!.Cancel(); throw new OperationCanceledException(token); }
             if (Failure == "wrong-identity") selection = selection with { Revision = selection.Revision + 1 };
+            if (Failure == "preinstall-blocked")
+                return Task.FromResult(new UpdateExecutionOutcome(selection, false, false, "Installation was not started: fixture readiness changed") { InstallDispatched = false });
             return Task.FromResult(new UpdateExecutionOutcome(selection, Failure != "unverified", Restart, "Fixture verification"));
         }
     }

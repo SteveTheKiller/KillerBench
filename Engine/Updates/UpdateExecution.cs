@@ -2,7 +2,11 @@ using System.Text.Json;
 
 namespace KillerBench.Engine.Updates;
 
-public sealed record UpdateExecutionOutcome(UpdateSelection Selection, bool Installed, bool RestartRequired, string Detail);
+public sealed record UpdateExecutionOutcome(UpdateSelection Selection, bool Installed, bool RestartRequired, string Detail)
+{
+    /// <summary>False only when the provider proved it stopped before asking Windows to install, such as readiness changing during download.</summary>
+    public bool InstallDispatched { get; init; } = true;
+}
 public sealed record UpdateExecutionResult(string Status, string JournalPath, IReadOnlyList<UpdateExecutionOutcome> Outcomes)
 {
     public IReadOnlyList<string> Details { get; init; } = [];
@@ -151,6 +155,13 @@ public static class UpdateExecution
                 outcomes.Add(outcome);
                 Record(new { Stage = "Result", Outcome = outcome });
                 Report(progress, $"Update {target.Id}: {outcome.Detail}" + (outcome.RestartRequired ? " A restart is required." : ""));
+                if (!outcome.InstallDispatched && !outcome.Installed)
+                {
+                    details.Add(outcome.Detail);
+                    ArchivePrepared();
+                    status = "Blocked";
+                    break;
+                }
                 if (!outcome.Installed) { status = "Needs review"; break; }
                 if (outcome.RestartRequired) { status = "Restart required"; break; }
                 File.Delete(pending);

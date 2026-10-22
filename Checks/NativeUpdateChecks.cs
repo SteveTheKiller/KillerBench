@@ -6,7 +6,9 @@ internal static class NativeUpdateChecks
     {
         var selection = new UpdateSelection(Guid.Parse("74ba239e-08d2-45bd-b285-b0d35610ca60"), 1);
         const string fixture = """
-            $script:installed=$false; $script:downloaded=$false;
+            $script:installed=$false; $script:downloaded=$false; $script:rebootKey=$false;
+            function Test-Path { param($Path) $script:rebootKey -and $Path -like '*Component Based Servicing\RebootPending' };
+            function Get-ItemProperty { param($Path,$ErrorAction) $null };
             $script:u=[pscustomobject]@{Identity=[pscustomobject]@{UpdateID='74ba239e-08d2-45bd-b285-b0d35610ca60';RevisionNumber=1};EulaAccepted=$true;IsBeta=$false;IsDownloaded=$false;Categories=@();InstallationBehavior=[pscustomobject]@{CanRequestUserInput=$false;Impact=0;RebootBehavior=0}};
             $script:coll=[pscustomobject]@{Count=1}; $script:coll | Add-Member ScriptMethod Item {param($i) if($i -ne 0){throw 'BAD_INDEX'}; $script:u};
             $script:coll | Add-Member ScriptMethod Add {param($u) if($u -ne $script:u){throw 'BAD_TARGET'}; 0};
@@ -55,6 +57,24 @@ internal static class NativeUpdateChecks
             if (!allowed && (result.ExitCode == 0 || !result.Error.Contains("Feature upgrade confirmation")))
                 throw new Exception("Native feature-upgrade gate did not require separate confirmation");
         }
+        foreach (var (change, why) in new[]
+        {
+            ("$script:installer.RebootRequiredBeforeInstallation=$true", "the installer requiring a restart"),
+            ("$script:installer.IsBusy=$true", "another installation starting"),
+            ("$script:rebootKey=$true", "a servicing restart becoming pending")
+        })
+        {
+            var step = WindowsUpdateExecutionHost.InstallationStep(new(), selection, new());
+            var args = step.Arguments.ToArray();
+            // Readiness changes while the selected update downloads.
+            args[^1] = fixture + "$script:d | Add-Member -Force ScriptMethod Download {$script:downloaded=$true; $script:u.IsDownloaded=$true; " + change + "; $script:dr}; " + args[^1];
+            using var stop = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+            var result = await DefenderRecovery.ExecuteAsync(step with { Arguments = args }, token: stop.Token);
+            var outcome = WindowsUpdateExecutionHost.Interpret(result, selection);
+            if (outcome.Installed || outcome.InstallDispatched || !outcome.Detail.Contains("not started", StringComparison.Ordinal) || result.Output.Contains("UNSAFE_INSTALL"))
+                throw new Exception("Installation must not start after " + why + " during download: " + outcome + " " + result.Output + result.Error);
+        }
         Console.WriteLine("PASS: native update command sequence, license gate and separate feature-upgrade confirmation with substituted COM objects only.");
+        Console.WriteLine("PASS: readiness is rechecked after download and a change stops installation before Install with a distinct pre-install blocker.");
     }
 }
