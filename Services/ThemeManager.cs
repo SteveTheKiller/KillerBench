@@ -115,7 +115,7 @@ namespace KillerBench.Services
             // 98SE keeps its classic light-gray hover face instead of filling with the accent.
             newDict["OutlineHoverFillBrush"] = theme == Theme.Retro98 && newDict.Contains("OutlineHoverBrush")
                 ? newDict["OutlineHoverBrush"]
-                : ButtonFill(newDict["OutlineBtnBrush"], theme == Theme.Retro98);
+                : ButtonFill(newDict.Contains("OutlineHoverFillBaseBrush") ? newDict["OutlineHoverFillBaseBrush"] : newDict["OutlineBtnBrush"], theme == Theme.Retro98);
 
             var merged = Application.Current.Resources.MergedDictionaries;
             if (merged.Count > 0) merged[0] = newDict;
