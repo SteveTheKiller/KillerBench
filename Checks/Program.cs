@@ -566,6 +566,7 @@ internal static class Program
             WindowsRetentionScopeChecks.RunAsync().GetAwaiter().GetResult();
             GoalOptionValidationChecks.RunAsync().GetAwaiter().GetResult();
             InstallerRuntimeChecks.Run();
+            UpdateHelperChecks.Run(scratch);
             InstallationOwnershipChecks.Run(scratch);
             InstallationProtectionChecks.Run(scratch);
             NativeScenarioRestorationChecks.RunAsync().GetAwaiter().GetResult();

@@ -53,9 +53,9 @@ internal static class UpdateService
         return download;
     }
 
-    /// <summary>Writes the update script and starts it. Throws if it cannot be started, including
-    /// when the user declines the UAC prompt, so the caller only shuts down once it is running. The
-    /// installer records the new version itself, so unlike an exe swap there is no registry to fix.</summary>
+    /// <summary>Starts the update helper. Throws if it cannot be started, including when the user
+    /// declines the UAC prompt, so the caller only shuts down once it is running. The installer
+    /// records the new version itself, so unlike an exe swap there is no registry to fix.</summary>
     internal static void StartSwap(string download)
     {
         UpdateTarget target = FindTarget()
@@ -63,60 +63,27 @@ internal static class UpdateService
         int pid = Environment.ProcessId;
         string replaced = target.Launcher ?? target.Executable;
         // A machine-wide install or a portable copy in a protected folder is not writable by a normal
-        // user, so the script runs elevated there. It relaunches through explorer.exe so the app comes
+        // user, so the helper runs elevated there. It relaunches through explorer.exe so the app comes
         // back at the user's normal integrity level.
         bool elevate = target.Machine || !CanWriteTo(Path.GetDirectoryName(replaced)!);
-        string explorer = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
-        string relaunch = elevate ? $"start \"\" \"{Bat(explorer)}\" \"{Bat(replaced)}\"" : $"start \"\" \"{Bat(replaced)}\"";
-        string system = Environment.GetFolderPath(Environment.SpecialFolder.System);
-        string tasklist = Bat(Path.Combine(system, "tasklist.exe"));
-        string find = Bat(Path.Combine(system, "find.exe"));
-        string ping = Bat(Path.Combine(system, "ping.exe"));
-
-        var script = new StringBuilder()
-            .AppendLine("@echo off")
-            .AppendLine("setlocal DisableDelayedExpansion")
-            .AppendLine(":waitapp")
-            .AppendLine($"\"{tasklist}\" /fi \"PID eq {pid}\" 2>nul | \"{find}\" \"{pid}\" >nul")
-            .AppendLine($"if not errorlevel 1 ( \"{ping}\" -n 2 127.0.0.1 >nul & goto waitapp )");
+        // The whole helper travels in the process command line, so nothing the user account can
+        // write is read after a consented elevated helper starts.
+        string script;
         if (target.Launcher is not null)
-        {
-            if (target.LauncherPid > 0)
-                script.AppendLine(":waitlauncher")
-                      .AppendLine($"\"{tasklist}\" /fi \"PID eq {target.LauncherPid}\" 2>nul | \"{find}\" \"{target.LauncherPid}\" >nul")
-                      .AppendLine($"if not errorlevel 1 ( \"{ping}\" -n 2 127.0.0.1 >nul & goto waitlauncher )");
-            script.AppendLine(UpdateImagePublication.Command(download, target.Launcher, elevate,
-                      ReleasesUrl, AppInfo.DisplayName) + " >\"%~dpn0.helper.log\" 2>&1")
-                  .AppendLine("if errorlevel 1 goto failed")
-                  .AppendLine("goto cleanup");
-        }
+            script = UpdateHelperLaunch.WaitFor(pid, target.LauncherPid) +
+                UpdateImagePublication.Script(download, target.Launcher, elevate, ReleasesUrl, AppInfo.DisplayName);
         else
         {
-            // Base64 keeps the folder intact through the batch file whatever characters it holds.
             string folder = Convert.ToBase64String(Encoding.UTF8.GetBytes(target.InstallDirectory!));
-            script.AppendLine($"start /wait \"\" \"{Bat(download)}\" {(target.Machine ? "/silent" : "/install-user")} /install-dir64:{folder}")
-                  .AppendLine("if errorlevel 1 goto failed");
+            // An elevated helper stages under Program Files, where only administrators can write.
+            string stageRoot = elevate
+                ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), AppInfo.DisplayName + " Update")
+                : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppInfo.DisplayName, "UpdateStage");
+            script = UpdateHelperLaunch.WaitFor(pid) + UpdateHelperLaunch.Installer(download,
+                UpdateImagePublication.VerifiedHash(download), AppInfo.SignerName,
+                (target.Machine ? "/silent" : "/install-user") + " /install-dir64:" + folder, elevate, replaced, stageRoot, ReleasesUrl);
         }
-        script.AppendLine(relaunch)
-              .AppendLine("goto cleanup")
-              .AppendLine(":failed")
-              .AppendLine($"start \"\" \"{ReleasesUrl}\"")
-              .AppendLine(":cleanup");
-        if (target.Launcher is null) script.AppendLine($"del \"{Bat(download)}\" >nul 2>&1");
-        script.AppendLine("del \"%~f0\" >nul 2>&1");
-        string batch = Path.Combine(Path.GetTempPath(), $"killerbench_update_{Guid.NewGuid():N}.bat");
-        File.WriteAllText(batch, script.ToString());
-
-        var start = new ProcessStartInfo(
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "cmd.exe"),
-            $"/d /v:off /c \"{Path.GetFileName(batch)}\"")
-        {
-            WindowStyle = ProcessWindowStyle.Hidden,
-            WorkingDirectory = Path.GetTempPath(),
-            UseShellExecute = true
-        };
-        if (elevate) start.Verb = "runas";
-        if (Process.Start(start) is null)
+        if (Process.Start(UpdateHelperLaunch.StartInfo(script, elevate)) is null)
             throw new IOException("The update helper did not start. Download retained at: " + download);
     }
 
@@ -142,9 +109,6 @@ internal static class UpdateService
             ? null
             : new UpdateTarget(SelfUpdate.InstallerAsset, executable, null, 0, installed.Value.Machine, installed.Value.Directory);
     }
-
-    /// <summary>A literal percent sign in a batch file must be doubled.</summary>
-    private static string Bat(string value) => value.Replace("%", "%%", StringComparison.Ordinal);
 
     private static bool CanWriteTo(string folder)
     {
