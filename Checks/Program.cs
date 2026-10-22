@@ -554,6 +554,7 @@ internal static class Program
             AggregateCancellationChecks.RunAsync(scratch).GetAwaiter().GetResult();
             RecipeOperationChecks.RunAsync().GetAwaiter().GetResult();
             RecipeOperationChecks.RunFileAsync(scratch).GetAwaiter().GetResult();
+            RestartRecoveryChecks.RunAsync(scratch).GetAwaiter().GetResult();
             GoalUncertaintyChecks.RunAsync().GetAwaiter().GetResult();
             WindowsMtuDispatchChecks.RunAsync().GetAwaiter().GetResult();
             MutationDispatchChecks.RunAsync().GetAwaiter().GetResult();

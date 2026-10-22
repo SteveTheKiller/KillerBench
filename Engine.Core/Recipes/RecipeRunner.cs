@@ -28,6 +28,8 @@ public sealed record RecipeRunOptions
     public IReadOnlyDictionary<string, string>? Options { get; init; }
     /// <summary>Confirms a recipe that declares RequiresExplicitOptions. Without it such a recipe only reports RepairAvailable.</summary>
     public bool ExplicitOptionsConfirmed { get; init; }
+    /// <summary>When the current boot began. Defaults to the system uptime; fixtures supply a fixed value.</summary>
+    public Func<DateTimeOffset>? BootTimeUtc { get; init; }
 }
 
 /// <summary>
@@ -73,7 +75,22 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
             probes.Add(detect);
             await RecordAsync(recipe, RecipeJournalStage.Detected, detect.Evaluation.Verdict + ": " + detect.Evaluation.Detail, detect.Result.Raw).ConfigureAwait(false);
             if (recipe.Action is not null && await operationStore.IsPendingAsync(RecipeOperationIdentity.FromResolvedRecipe(recipe), token).ConfigureAwait(false))
-                return Result(RecipeRunOutcome.Unknown, "A prior operation for this recipe is unresolved. Current detection is read-only evidence and cannot establish that the earlier operation has stopped. No new repair was dispatched; operation-specific recovery review is required.", uncertain: true);
+            {
+                using var restart = await operationStore.TryOpenRestartRecoveryAsync(RecipeOperationIdentity.FromResolvedRecipe(recipe), token).ConfigureAwait(false);
+                if (restart is null)
+                    return Result(RecipeRunOutcome.Unknown, "A prior operation for this recipe is unresolved. Current detection is read-only evidence and cannot establish that the earlier operation has stopped. No new repair was dispatched; operation-specific recovery review is required.", uncertain: true);
+                // Uptime-derived boot times drift by well under a second within one boot.
+                if (BootTime(options) - restart.RestartRequiredBootUtc < TimeSpan.FromSeconds(30))
+                    return Result(RecipeRunOutcome.Unknown, "The earlier repair is waiting for a restart. Restart Windows, then run this again; KillerBench verifies it without repeating it.", uncertain: true);
+                var afterRestart = await ProbeAsync("verify", recipe.Verify ?? recipe.Detect, recipe.InspectionTimeout, token).ConfigureAwait(false);
+                probes.Add(afterRestart);
+                if (afterRestart.Evaluation.Verdict is not (ProbeVerdict.Clear or ProbeVerdict.Information))
+                    return Result(RecipeRunOutcome.NeedsAttention, "Windows restarted, but verification did not confirm the earlier repair: " + afterRestart.Evaluation.Detail +
+                        " The action was not repeated and the record stays open; review before retrying.", uncertain: true);
+                await RecordAsync(recipe, RecipeJournalStage.Verified, "Verified after the restart without repeating the action: " + afterRestart.Evaluation.Detail, afterRestart.Result.Raw).ConfigureAwait(false);
+                await restart.CompleteAsync(token).ConfigureAwait(false);
+                return Result(RecipeRunOutcome.Repaired, "Verified after the restart: " + recipe.VerificationScope + ". The action was not repeated. " + recipe.Limitations);
+            }
             switch (detect.Evaluation.Verdict)
             {
                 case ProbeVerdict.Clear:
@@ -155,7 +172,15 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
             if (!actionResult.Succeeded)
                 return Result(RecipeRunOutcome.Unknown, "The repair reported a failure; its final state is uncertain. Review the current state before retrying: " + (actionResult.Error ?? "no failure detail was provided."), actionResult, uncertain: true);
             if (actionResult.RestartRequired)
-                return Result(RecipeRunOutcome.RestartRequired, "The repair requires a restart before it can be verified.", actionResult);
+            {
+                // The barrier stays; recording the boot is what lets a run after the restart verify instead of staying blocked.
+                try { await operation.RecordRestartRequiredAsync(BootTime(options), CancellationToken.None).ConfigureAwait(false); }
+                catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+                {
+                    return Result(RecipeRunOutcome.RestartRequired, "The repair requires a restart, but its recovery record could not be updated. Restart Windows, then review this repair before running it again.", actionResult);
+                }
+                return Result(RecipeRunOutcome.RestartRequired, "The repair requires a restart before it can be verified. Restart Windows, then run this again; KillerBench verifies it without repeating it.", actionResult);
+            }
 
             token.ThrowIfCancellationRequested();
             var verify = await ProbeAsync("verify", recipe.Verify ?? recipe.Detect, recipe.InspectionTimeout, token).ConfigureAwait(false);
@@ -191,6 +216,9 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
             }
         }
     }
+
+    private static DateTimeOffset BootTime(RecipeRunOptions options) =>
+        options.BootTimeUtc?.Invoke() ?? DateTimeOffset.UtcNow - TimeSpan.FromMilliseconds(Environment.TickCount64);
 
     private async Task<ProbeOutcome> ProbeAsync(string role, ProbeSpec probe, TimeSpan timeout, CancellationToken token)
     {
