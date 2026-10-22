@@ -69,16 +69,20 @@
                                 <ContextMenu.ItemContainerStyle>
                                     <Style TargetType="MenuItem" BasedOn="{StaticResource PanelMenuItem}"/>
                                 </ContextMenu.ItemContainerStyle>
-                                <Grid Margin="12,10,3,10">
+                                <!-- Hover rows sit 4px in from both menu edges: 12 left less the
+                                     row's -8, and 2 right plus the row's own 2. The theme column
+                                     fills the menu (*) so the hover reaches across when the menu
+                                     is wider than the list. -->
+                                <Grid Margin="12,10,2,10">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
-                                
+
                                 <StackPanel x:Name="ThemeSubmenu" MinWidth="150" Grid.Column="0">
                                     <RadioButton x:Name="ThemeDarkRadio"
                                                  Content="{DynamicResource Str_Theme_Dark}"
