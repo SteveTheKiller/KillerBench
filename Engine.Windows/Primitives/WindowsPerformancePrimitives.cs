@@ -105,7 +105,8 @@ public sealed class WindowsMemoryDiagnosticScheduleAction : IActionPrimitive
     public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
     {
         if (!OperatingSystem.IsWindows()) return new ActionResult(false, false, "", "BCD access requires Windows.");
-        var result = await NativeTool.RunAsync("bcdedit.exe", ["/bootsequence", "{memdiag}"], progress: progress, token: token).ConfigureAwait(false);
+        // /addfirst keeps any one-time boot entry already queued instead of replacing it.
+        var result = await NativeTool.RunAsync("bcdedit.exe", ["/bootsequence", "{memdiag}", "/addfirst"], progress: progress, token: token).ConfigureAwait(false);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
         if (result.TimedOut) return new ActionResult(true, false, raw, "bcdedit timed out.") { TimedOut = true };
         bool ok = result.ExitCode == 0;
