@@ -233,10 +233,6 @@
 - `orca-cache-reset-recover`: Перевіряє перерване збереження кешу, не повторюючи переміщення.
 - `orca-review --mode New|Classic|Both [--all-users] (--clear-caches|--reset-profile-settings|--reset-authentication|--delete-ost|--remove-add-ins|--reinstall-new-outlook) [--json]`: Лише огляд; без змін Outlook.
 - `startup-apps`: Огляд реєстрацій автозапуску й завдань під час завантаження чи входу; без вимкнення.
-- `third-party-update ID SOURCE VERSION [--accept-agreements] [--execute]`: Попередній перегляд за замовчуванням; лише одна точна версія.
-- `third-party-update-recover`: Перевіряє очікувану точну версію, не повторюючи оновлення.
-- `third-party-updates`: Виявлення оновлень застосунків через Microsoft.WinGet.Client лише для читання; без змін застосунків.
-
 ## Система
 
 - `bluetooth-company PACK_PATH DECIMAL_OR_0xHEX_ID`: Пошук точного локального призначення Bluetooth SIG; без мережних запитів.

@@ -175,6 +175,8 @@ internal static class WorkflowCommands
         { Console.Error.WriteLine("Application inventory is read-only. No uninstall is supported."); return 2; }
         if (definition?.Kind == WorkflowKind.BrowserExtensions && args.Contains("--auto-repair"))
         { Console.Error.WriteLine("Browser extension review is read-only. No extension removal is supported."); return 2; }
+        if (!ReleaseFeatures.ThirdPartyUpdates && args.Contains("--third-party"))
+        { Console.Error.WriteLine(ReleaseFeatures.ThirdPartyUpdatesNotice); return 2; }
         if (definition?.Kind == WorkflowKind.CommonProblems && args.Contains("--auto-repair"))
         { Console.Error.WriteLine("Full system scan is diagnostic-only. Choose a focused repair workflow to make changes."); return 2; }
         if (definition is null || args.Skip(2).Any(a => a is not ("--auto-repair" or "--json") &&

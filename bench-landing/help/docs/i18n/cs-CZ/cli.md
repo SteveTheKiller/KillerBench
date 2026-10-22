@@ -233,10 +233,6 @@ Spuštěním `killerbench-cli` bez argumentů vypíšete tento seznam na vlastn�
 - `orca-cache-reset-recover`: Ověří přerušené uchování mezipaměti bez opakování přesunu.
 - `orca-review --mode New|Classic|Both [--all-users] (--clear-caches|--reset-profile-settings|--reset-authentication|--delete-ost|--remove-add-ins|--reinstall-new-outlook) [--json]`: Pouze kontrola; bez změn Outlooku.
 - `startup-apps`: Kontrola registrací při spuštění a úloh při spuštění systému nebo přihlášení; bez zakázání.
-- `third-party-update ID SOURCE VERSION [--accept-agreements] [--execute]`: Ve výchozím stavu náhled; pouze jedna přesná verze.
-- `third-party-update-recover`: Ověří čekající přesnou verzi bez opakování aktualizace.
-- `third-party-updates`: Zjišťování aktualizací aplikací přes Microsoft.WinGet.Client pouze pro čtení; bez změn aplikací.
-
 ## Systém
 
 - `bluetooth-company PACK_PATH DECIMAL_OR_0xHEX_ID`: Přesné místní vyhledání přiřazení Bluetooth SIG; bez síťového požadavku.

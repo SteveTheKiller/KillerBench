@@ -233,10 +233,6 @@ Futtassa a `killerbench-cli` parancsot argumentumok nélkül, ha ezt a listát a
 - `orca-cache-reset-recover`: Egy megszakított gyorsítótár-megőrzés ellenőrzése az áthelyezés megismétlése nélkül.
 - `orca-review --mode New|Classic|Both [--all-users] (--clear-caches|--reset-profile-settings|--reset-authentication|--delete-ost|--remove-add-ins|--reinstall-new-outlook) [--json]`: Csak áttekintés; nincs Outlook-módosítás.
 - `startup-apps`: Indítási regisztrációk, valamint rendszerindítási és bejelentkezési feladatok áttekintése; nincs letiltás.
-- `third-party-update ID SOURCE VERSION [--accept-agreements] [--execute]`: Alapértelmezés szerint előnézet; csak egy pontos verzió.
-- `third-party-update-recover`: Egy függő pontos verzió ellenőrzése a frissítés újrapróbálása nélkül.
-- `third-party-updates`: Alkalmazásfrissítések felderítése a Microsoft.WinGet.Client segítségével, csak olvasva; nincs alkalmazásmódosítás.
-
 ## Rendszer
 
 - `bluetooth-company PACK_PATH DECIMAL_OR_0xHEX_ID`: Pontos helyi Bluetooth SIG-hozzárendelés-keresés; nincs hálózati kérés.

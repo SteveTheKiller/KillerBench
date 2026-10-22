@@ -16,6 +16,11 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        if (!Engine.ReleaseFeatures.ThirdPartyUpdates)
+        {
+            UpdateThirdParty.Visibility = Visibility.Collapsed;
+            ThirdPartyUpdateSection.Visibility = Visibility.Collapsed;
+        }
         new KillerFamily.Accessibility.OverlayFocus(this).Track(ShortcutsOverlay, AboutOverlay);
         about = new Features.About.AboutController(this);   // Features\About
         var titleFrames = System.Windows.Media.Imaging.BitmapDecoder.Create(

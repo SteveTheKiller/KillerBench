@@ -178,6 +178,8 @@ public static class WorkflowOptionValidation
     {
         bool windowsDiscovery = values.GetValueOrDefault("software") == "true" || values.GetValueOrDefault("drivers") == "true";
         bool thirdPartyDiscovery = values.GetValueOrDefault("thirdPartyApplications") == "true";
+        if (thirdPartyDiscovery && !ReleaseFeatures.ThirdPartyUpdates)
+            errors.Add(new("thirdPartyApplications", ReleaseFeatures.ThirdPartyUpdatesNotice));
         if (!windowsDiscovery && !thirdPartyDiscovery)
             errors.Add(new("software", "Select software, drivers or third-party applications before discovery."));
         if (!windowsDiscovery && values.GetValueOrDefault("source") != nameof(UpdateSearchSource.Configured))

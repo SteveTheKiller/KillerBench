@@ -233,10 +233,6 @@
 - `orca-cache-reset-recover`: 驗證中斷的快取保留，而不重複移動。
 - `orca-review --mode New|Classic|Both [--all-users] (--clear-caches|--reset-profile-settings|--reset-authentication|--delete-ost|--remove-add-ins|--reinstall-new-outlook) [--json]`: 僅檢視；不更改 Outlook。
 - `startup-apps`: 檢視啟動註冊以及啟動或登入工作；不禁用。
-- `third-party-update ID SOURCE VERSION [--accept-agreements] [--execute]`: 預設預覽；僅限一個確切的版本。
-- `third-party-update-recover`: 驗證待處理的確切版本，而不重試更新。
-- `third-party-updates`: 唯讀的 Microsoft.WinGet.Client 應用程式更新發現；不更改應用程式。
-
 ## 系統
 
 - `bluetooth-company PACK_PATH DECIMAL_OR_0xHEX_ID`: 本機確切查詢 Bluetooth SIG 分配；不發出網路請求。

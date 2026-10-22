@@ -137,7 +137,11 @@ public static class CommandEngine
         if (args.Length > 0 && args[0] is "bits-retry" or "bits-retry-recover") return await BitsRetryCommands.RunAsync(args);
         if (args.Length > 0 && args[0] is "app-packages" or "app-package-review" or "provisioned-packages" or "installed-apps") return await AppPackageCommands.RunAsync(args);
         if (args.Length > 0 && args[0] == "update-search") return await UpdateSearchCommands.RunAsync(args);
-        if (args.Length > 0 && args[0] is "third-party-updates" or "third-party-update" or "third-party-update-recover") return await ThirdPartyUpdateCommands.RunAsync(args);
+        if (args.Length > 0 && args[0] is "third-party-updates" or "third-party-update" or "third-party-update-recover")
+        {
+            if (!ReleaseFeatures.ThirdPartyUpdates) { Console.Error.WriteLine(ReleaseFeatures.ThirdPartyUpdatesNotice); return 2; }
+            return await ThirdPartyUpdateCommands.RunAsync(args);
+        }
         if (args.Length > 0 && args[0] is "update-store-reset" or "update-store-reset-recover") return await UpdateDataStoreCommands.RunAsync(args);
         if (args.Length > 0 && args[0] is "search-index-rebuild" or "search-index-rebuild-recover") return await SearchIndexCommands.RunAsync(args);
         if (args.Length > 0 && args[0] is "previous-windows" or "previous-windows-recover") return await PreviousWindowsCommands.RunAsync(args);
@@ -249,9 +253,12 @@ public static class CommandEngine
             Console.WriteLine("killerbench bits-retry JOB_GUID [--execute] (preview by default; explicit exact-job retry, no application-completion claim)");
             Console.WriteLine("killerbench bits-retry-recover JOB_GUID (two read-only snapshots; archives stable outcomes without another retry)");
             Console.WriteLine("killerbench update-search [--drivers] [--no-software] [--filter TITLE] [--downloaded-only] [--classification GUID] [--product GUID] (JSON discovery and matches; no installation)");
-            Console.WriteLine("killerbench third-party-updates (read-only Microsoft.WinGet.Client application update discovery; no application changes)");
-            Console.WriteLine("killerbench third-party-update ID SOURCE VERSION [--accept-agreements] [--execute] (preview by default; one exact version only)");
-            Console.WriteLine("killerbench third-party-update-recover (verify a pending exact version without retrying the update)");
+            if (ReleaseFeatures.ThirdPartyUpdates)
+            {
+                Console.WriteLine("killerbench third-party-updates (read-only Microsoft.WinGet.Client application update discovery; no application changes)");
+                Console.WriteLine("killerbench third-party-update ID SOURCE VERSION [--accept-agreements] [--execute] (preview by default; one exact version only)");
+                Console.WriteLine("killerbench third-party-update-recover (verify a pending exact version without retrying the update)");
+            }
             Console.WriteLine("killerbench update-store-reset [--source Configured|WindowsUpdate|MicrosoftUpdate] [--drivers] [--no-software] [--execute] (fresh-search gated; preview by default; retains the old store)");
             Console.WriteLine("killerbench update-store-reset-recover (reconcile a prepared store reset without repeating it)");
             Console.WriteLine("killerbench search-index-rebuild [--execute] (preview by default; retains the prior index and verifies fresh state)");

@@ -233,10 +233,6 @@
 - `orca-cache-reset-recover`: স্থানান্তর পুনরাবৃত্তি না করে বাধাপ্রাপ্ত ক্যাশ সংরক্ষণ যাচাই করে।
 - `orca-review --mode New|Classic|Both [--all-users] (--clear-caches|--reset-profile-settings|--reset-authentication|--delete-ost|--remove-add-ins|--reinstall-new-outlook) [--json]`: কেবল পর্যালোচনা; কোনো Outlook পরিবর্তন নেই।
 - `startup-apps`: স্টার্টআপ নিবন্ধন এবং বুট বা লগঅন টাস্কের পর্যালোচনা; কোনো নিষ্ক্রিয়করণ নেই।
-- `third-party-update ID SOURCE VERSION [--accept-agreements] [--execute]`: ডিফল্টভাবে প্রিভিউ; কেবল একটি সঠিক সংস্করণ।
-- `third-party-update-recover`: আপডেট পুনঃচেষ্টা না করে একটি মুলতুবি সঠিক সংস্করণ যাচাই করে।
-- `third-party-updates`: শুধু-পড়া Microsoft.WinGet.Client অ্যাপ্লিকেশন আপডেট অনুসন্ধান; কোনো অ্যাপ্লিকেশন পরিবর্তন নেই।
-
 ## সিস্টেম
 
 - `bluetooth-company PACK_PATH DECIMAL_OR_0xHEX_ID`: সঠিক স্থানীয় Bluetooth SIG বরাদ্দের অনুসন্ধান; কোনো নেটওয়ার্ক অনুরোধ নেই।

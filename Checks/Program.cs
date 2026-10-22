@@ -569,6 +569,7 @@ internal static class Program
             NativeScenarioRestorationChecks.RunAsync().GetAwaiter().GetResult();
             RecipePackChecks.RunAsync().GetAwaiter().GetResult();
             MalformedInputChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            ReleaseFeatureChecks.RunAsync().GetAwaiter().GetResult();
             WindowsTruncatedEvidenceChecks.Run();
             WindowsServicePackChecks.RunAsync().GetAwaiter().GetResult();
             WindowsPowerShellBindingChecks.RunAsync().GetAwaiter().GetResult();

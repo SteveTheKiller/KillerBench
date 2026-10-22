@@ -233,10 +233,6 @@ Kjør `killerbench-cli` uten argumenter for å skrive ut denne listen på din eg
 - `orca-cache-reset-recover`: Verifiserer avbrutt oppbevaring av hurtigbuffer uten å gjenta en flytting.
 - `orca-review --mode New|Classic|Both [--all-users] (--clear-caches|--reset-profile-settings|--reset-authentication|--delete-ost|--remove-add-ins|--reinstall-new-outlook) [--json]`: Bare gjennomgang; ingen endringer i Outlook.
 - `startup-apps`: Gjennomgang av oppstartsregistreringer og oppgaver ved oppstart eller pålogging; ingen deaktivering.
-- `third-party-update ID SOURCE VERSION [--accept-agreements] [--execute]`: Forhåndsvisning som standard; bare én nøyaktig versjon.
-- `third-party-update-recover`: Verifiserer en ventende nøyaktig versjon uten å prøve oppdateringen på nytt.
-- `third-party-updates`: Skrivebeskyttet søk etter appoppdateringer med Microsoft.WinGet.Client; ingen endringer i programmer.
-
 ## System
 
 - `bluetooth-company PACK_PATH DECIMAL_OR_0xHEX_ID`: Nøyaktig lokalt oppslag av Bluetooth SIG-tildelinger; ingen nettverksforespørsel.

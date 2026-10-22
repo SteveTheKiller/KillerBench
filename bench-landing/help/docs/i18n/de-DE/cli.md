@@ -233,10 +233,6 @@ Führen Sie `killerbench-cli` ohne Argumente aus, um diese Liste auf Ihrem eigen
 - `orca-cache-reset-recover`: Überprüft eine unterbrochene Cacheaufbewahrung, ohne eine Verschiebung zu wiederholen.
 - `orca-review --mode New|Classic|Both [--all-users] (--clear-caches|--reset-profile-settings|--reset-authentication|--delete-ost|--remove-add-ins|--reinstall-new-outlook) [--json]`: Nur Prüfung; keine Änderungen an Outlook.
 - `startup-apps`: Prüfung von Autostartregistrierungen sowie Aufgaben beim Start oder bei der Anmeldung; keine Deaktivierung.
-- `third-party-update ID SOURCE VERSION [--accept-agreements] [--execute]`: Standardmäßig Vorschau; nur genau eine Version.
-- `third-party-update-recover`: Überprüft eine ausstehende genaue Version, ohne das Update erneut zu versuchen.
-- `third-party-updates`: Schreibgeschützte Suche nach Anwendungsupdates über Microsoft.WinGet.Client; keine Änderungen an Anwendungen.
-
 ## System
 
 - `bluetooth-company PACK_PATH DECIMAL_OR_0xHEX_ID`: Genaue lokale Suche einer Bluetooth-SIG-Zuweisung; keine Netzwerkanfrage.

@@ -233,10 +233,6 @@
 - `orca-cache-reset-recover`: Үзілген кэшті сақтауды жылжытуды қайталамай растайды.
 - `orca-review --mode New|Classic|Both [--all-users] (--clear-caches|--reset-profile-settings|--reset-authentication|--delete-ost|--remove-add-ins|--reinstall-new-outlook) [--json]`: Тек қарап шығу; Outlook өзгертілмейді.
 - `startup-apps`: Автоіске қосу тіркеулерін және жүктелу немесе кіру тапсырмаларын қарап шығу; өшірусіз.
-- `third-party-update ID SOURCE VERSION [--accept-agreements] [--execute]`: Әдепкі бойынша алдын ала қарау; тек бір нақты нұсқа.
-- `third-party-update-recover`: Күтудегі нақты нұсқаны жаңартуды қайталамай растайды.
-- `third-party-updates`: Microsoft.WinGet.Client арқылы қолданба жаңартуларын табу, тек оқу; қолданбалар өзгертілмейді.
-
 ## Жүйе
 
 - `bluetooth-company PACK_PATH DECIMAL_OR_0xHEX_ID`: Bluetooth SIG тағайындауын нақты жергілікті іздеу; желі сұрауынсыз.

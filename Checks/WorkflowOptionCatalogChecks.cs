@@ -220,7 +220,7 @@ internal static class WorkflowOptionCatalogChecks
         ]).IsValid && WorkflowOptionValidation.Validate("updates",
         [
             KeyValuePair.Create("software", "false"), KeyValuePair.Create("thirdPartyApplications", "true")
-        ]).IsValid && !WorkflowOptionValidation.Validate("updates",
+        ]).IsValid == ReleaseFeatures.ThirdPartyUpdates && !WorkflowOptionValidation.Validate("updates",
         [
             KeyValuePair.Create("software", "false"), KeyValuePair.Create("thirdPartyApplications", "true"),
             KeyValuePair.Create("source", nameof(UpdateSearchSource.MicrosoftUpdate))

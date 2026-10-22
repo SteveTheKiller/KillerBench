@@ -233,10 +233,6 @@ Bu listeyi kendi makinenizde yazdırmak için `killerbench-cli` komutunu bağım
 - `orca-cache-reset-recover`: Kesintiye uğrayan önbellek saklamayı taşımayı yinelemeden doğrular.
 - `orca-review --mode New|Classic|Both [--all-users] (--clear-caches|--reset-profile-settings|--reset-authentication|--delete-ost|--remove-add-ins|--reinstall-new-outlook) [--json]`: Yalnızca inceleme; Outlook değişikliği yok.
 - `startup-apps`: Başlangıç kayıtları ile önyükleme veya oturum açma görevi incelemesi; devre dışı bırakma yok.
-- `third-party-update ID SOURCE VERSION [--accept-agreements] [--execute]`: Varsayılan olarak önizleme; yalnızca tek bir tam sürüm.
-- `third-party-update-recover`: Bekleyen tam sürümü güncelleştirmeyi yeniden denemeden doğrular.
-- `third-party-updates`: Salt okunur Microsoft.WinGet.Client uygulama güncelleştirmesi bulma; uygulama değişikliği yok.
-
 ## Sistem
 
 - `bluetooth-company PACK_PATH DECIMAL_OR_0xHEX_ID`: Tam yerel Bluetooth SIG atama araması; ağ isteği yok.

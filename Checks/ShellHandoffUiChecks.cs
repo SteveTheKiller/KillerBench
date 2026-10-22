@@ -20,6 +20,10 @@ internal static class ShellHandoffUiChecks
         Require(NameOf(Get<ListBox>("ProfileSelection")) == Resource("Str_Profile_SelectAfterReview"),
             "The profile selection list is named by its visible heading");
 
+        Require(Get<CheckBox>("UpdateThirdParty").Visibility == Visibility.Collapsed &&
+            Get<Expander>("ThirdPartyUpdateSection").Visibility == Visibility.Collapsed,
+            "Third-party application updates are hidden until 1.1");
+
         foreach (bool guarded in new[] { false, true })
         {
             string marker = "Final BitLocker fixture line " + (guarded ? "guarded" : "ordinary");

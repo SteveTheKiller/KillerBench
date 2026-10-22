@@ -233,10 +233,6 @@ Chạy `killerbench-cli` không kèm đối số để in danh sách này trên 
 - `orca-cache-reset-recover`: Xác minh việc giữ lại bộ nhớ đệm bị gián đoạn mà không lặp lại việc di chuyển.
 - `orca-review --mode New|Classic|Both [--all-users] (--clear-caches|--reset-profile-settings|--reset-authentication|--delete-ost|--remove-add-ins|--reinstall-new-outlook) [--json]`: Chỉ xem lại; không thay đổi Outlook.
 - `startup-apps`: Xem lại đăng ký khởi động và tác vụ khi khởi động hoặc đăng nhập; không vô hiệu hóa.
-- `third-party-update ID SOURCE VERSION [--accept-agreements] [--execute]`: Xem trước theo mặc định; chỉ đúng một phiên bản.
-- `third-party-update-recover`: Xác minh một phiên bản chính xác đang chờ mà không thử lại bản cập nhật.
-- `third-party-updates`: Tìm bản cập nhật ứng dụng bằng Microsoft.WinGet.Client chỉ đọc; không thay đổi ứng dụng.
-
 ## Hệ thống
 
 - `bluetooth-company PACK_PATH DECIMAL_OR_0xHEX_ID`: Tra cứu cục bộ chính xác mã gán Bluetooth SIG; không gửi yêu cầu mạng.

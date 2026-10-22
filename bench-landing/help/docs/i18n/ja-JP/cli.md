@@ -233,10 +233,6 @@
 - `orca-cache-reset-recover`: 中断されたキャッシュの保持を、移動を繰り返さずに検証します。
 - `orca-review --mode New|Classic|Both [--all-users] (--clear-caches|--reset-profile-settings|--reset-authentication|--delete-ost|--remove-add-ins|--reinstall-new-outlook) [--json]`: 確認のみ。Outlook の変更なし。
 - `startup-apps`: スタートアップの登録と、起動時またはログオン時のタスクの確認。無効化なし。
-- `third-party-update ID SOURCE VERSION [--accept-agreements] [--execute]`: 既定でプレビュー。正確な 1 つのバージョンのみ。
-- `third-party-update-recover`: 保留中の正確なバージョンを、更新を再試行せずに検証します。
-- `third-party-updates`: Microsoft.WinGet.Client によるアプリケーション更新の検索、読み取り専用。アプリケーションの変更なし。
-
 ## システム
 
 - `bluetooth-company PACK_PATH DECIMAL_OR_0xHEX_ID`: ローカルでの Bluetooth SIG 割り当ての正確な検索。ネットワーク要求なし。

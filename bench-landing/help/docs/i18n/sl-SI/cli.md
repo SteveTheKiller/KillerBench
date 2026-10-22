@@ -233,10 +233,6 @@ Zaženite `killerbench-cli` brez argumentov, da ta seznam izpišete v svojem ra�
 - `orca-cache-reset-recover`: Preveri prekinjeno ohranitev predpomnilnika brez ponovnega premika.
 - `orca-review --mode New|Classic|Both [--all-users] (--clear-caches|--reset-profile-settings|--reset-authentication|--delete-ost|--remove-add-ins|--reinstall-new-outlook) [--json]`: Samo pregled; brez sprememb Outlooka.
 - `startup-apps`: Pregled zagonskih registracij in opravil ob zagonu ali prijavi; brez onemogočanja.
-- `third-party-update ID SOURCE VERSION [--accept-agreements] [--execute]`: Privzeto predogled; le ena točno določena različica.
-- `third-party-update-recover`: Preveri čakajočo točno določeno različico brez ponovnega poskusa posodobitve.
-- `third-party-updates`: Odkrivanje posodobitev aplikacij Microsoft.WinGet.Client samo za branje; brez sprememb aplikacij.
-
 ## System
 
 - `bluetooth-company PACK_PATH DECIMAL_OR_0xHEX_ID`: Točno lokalno iskanje dodelitve Bluetooth SIG; brez omrežne zahteve.

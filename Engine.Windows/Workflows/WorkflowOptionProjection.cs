@@ -39,7 +39,7 @@ public static class WorkflowOptionProjection
             IncludeProvisionedPackages = Boolean(values, "includeProvisioned"),
             CleanupOptions = CleanupSelection(values),
             UpdateOptions = UpdateSelection(values),
-            IncludeThirdPartyUpdates = Boolean(values, "thirdPartyApplications"),
+            IncludeThirdPartyUpdates = ReleaseFeatures.ThirdPartyUpdates && Boolean(values, "thirdPartyApplications"),
             PrivacyOptions = PrivacySelection(values),
             BitLockerOptions = BitLockerSelection(values),
             BitLockerRecoveryProtector = GuidValue(values, "protectorId"),
