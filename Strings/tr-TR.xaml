@@ -90,6 +90,7 @@
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Etkinlik günlüğünü aç/kapat</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Kanıt aç</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">KillerBench hakkında</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">Tüm uygulamayı yakınlaştır (erişilebilirlik)</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">Katmanı kapat veya okumayı durdur</sys:String>
   <sys:String x:Key="Str_Theme_Blood">Kan</sys:String>
   <sys:String x:Key="Str_Theme_Greed">Hırs</sys:String>

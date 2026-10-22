@@ -174,10 +174,31 @@ public partial class MainWindow
     private void OnClose(object sender, RoutedEventArgs e) => Close();
     private void OnAppScale(object sender, MouseWheelEventArgs e)
     {
-        ApplyAppScale(appScale + Math.Sign(e.Delta) * 0.02);
+        SetAppScale(appScale + Math.Sign(e.Delta) * 0.02);
+        e.Handled = true;
+    }
+
+    /// <summary>The family's whole-app zoom chord: Ctrl+Shift+Plus and Minus step by 5 percent, Ctrl+Shift+0 resets.</summary>
+    private bool HandleZoomKey(Key key, ModifierKeys modifiers)
+    {
+        if (modifiers != (ModifierKeys.Control | ModifierKeys.Shift)) return false;
+        double? target = key switch
+        {
+            Key.OemPlus or Key.Add => appScale + 0.05,
+            Key.OemMinus or Key.Subtract => appScale - 0.05,
+            Key.D0 or Key.NumPad0 => 1,
+            _ => null
+        };
+        if (target is null) return false;
+        SetAppScale(target.Value);
+        return true;
+    }
+
+    private void SetAppScale(double scale)
+    {
+        ApplyAppScale(scale);
         Preferences.Set("AppScale", appScale.ToString(CultureInfo.InvariantCulture));
         StatusLabel.Text = $"Interface zoom: {appScale:P0}";
-        e.Handled = true;
     }
     private void ApplyAppScale(double scale)
     {

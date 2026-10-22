@@ -67,6 +67,7 @@
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Otwórz dowody</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">Skróty klawiaturowe</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">O KillerBench</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">Powiększ całą aplikację (dostępność)</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">Zamknij nakładkę lub zatrzymaj odczyt</sys:String>
   <sys:String x:Key="Str_Content_Close">Zamknij</sys:String>
   <sys:String x:Key="Str_Theme_Dark">Ciemny</sys:String>

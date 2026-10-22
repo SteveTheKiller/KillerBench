@@ -66,6 +66,7 @@
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Abrir evidências</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">Atalhos de teclado</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">Sobre o KillerBench</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">Ampliar todo o aplicativo (acessibilidade)</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">Fechar a sobreposição ou parar a leitura</sys:String>
   <sys:String x:Key="Str_Content_Close">Fechar</sys:String>
   <sys:String x:Key="Str_Theme_Dark">Escuro</sys:String>

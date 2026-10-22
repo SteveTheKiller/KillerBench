@@ -92,6 +92,7 @@
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Aktivitätsprotokoll umschalten</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Nachweis öffnen</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">Über KillerBench</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">Die ganze App zoomen (Barrierefreiheit)</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">Overlay schließen oder Lesen stoppen</sys:String>
   <sys:String x:Key="Str_Theme_Ectoplasm">Ektoplasma</sys:String>
   <sys:String x:Key="Str_Theme_Decay">Verfall</sys:String>

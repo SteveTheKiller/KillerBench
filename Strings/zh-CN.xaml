@@ -91,6 +91,7 @@
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">切换活动日志</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">打开证据</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">关于 KillerBench</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">缩放整个应用（无障碍）</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">关闭覆盖层或停止阅读</sys:String>
   <sys:String x:Key="Str_Theme_Cyanotic">发绀</sys:String>
   <sys:String x:Key="Str_Theme_Ectoplasm">灵质</sys:String>

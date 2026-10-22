@@ -66,6 +66,7 @@
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Odpri dokaze</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">Bližnjice na tipkovnici</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">O aplikaciji KillerBench</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">Povečaj celotno aplikacijo (dostopnost)</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">Zapri prekrivno podokno ali ustavi branje</sys:String>
   <sys:String x:Key="Str_Content_Close">Zapri</sys:String>
   <sys:String x:Key="Str_Theme_Dark">Temna</sys:String>

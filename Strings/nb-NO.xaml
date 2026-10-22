@@ -66,6 +66,7 @@
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Åpne bevis</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">Hurtigtaster</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">Om KillerBench</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">Zoom hele appen (tilgjengelighet)</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">Lukk overlegget eller stopp lesingen</sys:String>
   <sys:String x:Key="Str_Content_Close">Lukk</sys:String>
   <sys:String x:Key="Str_Theme_Dark">Mørk</sys:String>

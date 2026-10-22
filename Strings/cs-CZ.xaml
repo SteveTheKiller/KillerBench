@@ -90,6 +90,7 @@
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Přepnout protokol činnosti</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Otevřít důkaz</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">O KillerBench</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">Přiblížit celou aplikaci (přístupnost)</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">Zavřít překryv nebo ukončit čtení</sys:String>
   <sys:String x:Key="Str_Theme_Greed">Chamtivost</sys:String>
   <sys:String x:Key="Str_Theme_Cyanotic">Cyanotický</sys:String>

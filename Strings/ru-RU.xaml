@@ -86,6 +86,7 @@
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Переключить журнал активности</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Открыть доказательства</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">О программе KillerBench</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">Увеличьте масштаб всего приложения (специальные возможности)</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">Закрыть наложение или прекратить чтение</sys:String>
   <sys:String x:Key="Str_Content_Close">Закрыть</sys:String>
   <sys:String x:Key="Str_Theme_Dark">Тёмная</sys:String>

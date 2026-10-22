@@ -92,6 +92,7 @@
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">証拠を開く</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">キーボードショートカット</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">KillerBenchについて</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">アプリ全体をズーム (アクセシビリティ)</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">オーバーレイを閉じるか、読み取りを停止する</sys:String>
   <sys:String x:Key="Str_Theme_Ectoplasm">エクトプラズム</sys:String>
   <sys:String x:Key="Str_Theme_Decay">ディケイ</sys:String>

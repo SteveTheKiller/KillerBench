@@ -89,6 +89,7 @@
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">切換活動記錄</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">開啟證據</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">關於 KillerBench</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">縮放整個應用程式（無障礙）</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">關閉覆蓋或停止閱讀</sys:String>
   <sys:String x:Key="Str_Theme_Blood">血紅</sys:String>
   <sys:String x:Key="Str_Theme_Greed">貪婪綠</sys:String>

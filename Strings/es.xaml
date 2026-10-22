@@ -92,6 +92,7 @@
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Alternar registro de actividad</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Abrir evidencia</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">Acerca de KillerBench</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">Zoom de toda la aplicación (accesibilidad)</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">Cerrar superposición o detener lectura</sys:String>
   <sys:String x:Key="Str_Theme_Ectoplasm">Ectoplasma</sys:String>
   <sys:String x:Key="Str_Theme_Decay">Descomposición</sys:String>

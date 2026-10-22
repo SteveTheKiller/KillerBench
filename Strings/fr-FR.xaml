@@ -282,6 +282,7 @@
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Afficher ou masquer le journal d&apos;activité</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Ouvrir une preuve</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">À propos de KillerBench</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">Zoomer toute l'application (accessibilité)</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">Fermer le panneau ou arrêter la lecture</sys:String>
   <sys:String x:Key="Str_Theme_Blood">Sang</sys:String>
   <sys:String x:Key="Str_Theme_Greed">Avarice</sys:String>

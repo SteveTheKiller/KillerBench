@@ -66,6 +66,7 @@
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Відкрити дані</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">Сполучення клавіш</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">Про KillerBench</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">Масштаб усього застосунку (доступність)</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">Закрити накладку або зупинити читання</sys:String>
   <sys:String x:Key="Str_Content_Close">Закрити</sys:String>
   <sys:String x:Key="Str_Theme_Dark">Темна</sys:String>

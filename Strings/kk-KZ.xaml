@@ -67,6 +67,7 @@
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Дәлелді ашу</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">Пернетақта тіркесімдері</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">KillerBench туралы</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">Бүкіл қолданбаны үлкейту (қолжетімділік)</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">Қабаттасуды жабу немесе оқуды тоқтату</sys:String>
   <sys:String x:Key="Str_Content_Close">Жабу</sys:String>
   <sys:String x:Key="Str_Theme_Dark">Қараңғы</sys:String>

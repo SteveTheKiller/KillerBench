@@ -67,6 +67,7 @@
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Bizonyíték megnyitása</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">Billentyűparancsok</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">A KillerBench névjegye</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">Az egész alkalmazás nagyítása (kisegítő lehetőségek)</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">Átfedés bezárása vagy olvasás leállítása</sys:String>
   <sys:String x:Key="Str_Content_Close">Bezárás</sys:String>
   <sys:String x:Key="Str_Theme_Dark">Sötét</sys:String>

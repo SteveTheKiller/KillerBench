@@ -277,6 +277,7 @@ public partial class MainWindow : Window
     {
         if (App.ScreenshotMode) { e.Handled = true; return; }
         if (HandleShellKey(e)) return;
+        if (HandleZoomKey(e.Key, Keyboard.Modifiers)) { e.Handled = true; return; }   // Shell/Workbench.cs
         // Alt+Shift+G, the family Film Grain chord. Alt chords arrive as Key.System.
         if (e.Key == Key.System && e.SystemKey == Key.G && Keyboard.Modifiers == (ModifierKeys.Alt | ModifierKeys.Shift))
         {

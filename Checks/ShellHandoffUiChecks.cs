@@ -51,6 +51,24 @@ internal static class ShellHandoffUiChecks
             "After the new run completes, Export uses the new result");
         Console.WriteLine("PASS: final BitLocker output reaches Raw output, export names its source during a live run, and profile controls have accessible names.");
 
+        var zoomKey = typeof(KillerBench.MainWindow).GetMethod("HandleZoomKey", Flags)
+            ?? throw new Exception("Interface zoom needs a keyboard handler.");
+        var scaleField = typeof(KillerBench.MainWindow).GetField("appScale", Flags)!;
+        var preference = typeof(KillerBench.MainWindow).Assembly.GetType("KillerBench.Services.Preferences")!.GetMethod("Get", BindingFlags.Static | BindingFlags.NonPublic)!;
+        const System.Windows.Input.ModifierKeys chord = System.Windows.Input.ModifierKeys.Control | System.Windows.Input.ModifierKeys.Shift;
+        double Zoom(System.Windows.Input.Key key, System.Windows.Input.ModifierKeys modifiers = chord)
+        {
+            Require((bool)zoomKey.Invoke(window, [key, modifiers])!, "Zoom key " + modifiers + "+" + key + " is handled");
+            return (double)scaleField.GetValue(window)!;
+        }
+        Require(Zoom(System.Windows.Input.Key.D0) == 1 && Zoom(System.Windows.Input.Key.OemPlus) == 1.05 && Zoom(System.Windows.Input.Key.Add) == 1.1 &&
+            Zoom(System.Windows.Input.Key.OemMinus) == 1.05 && (string?)preference.Invoke(null, ["AppScale"]) == "1.05" &&
+            Zoom(System.Windows.Input.Key.Subtract) == 1 && Zoom(System.Windows.Input.Key.OemPlus) == 1.05 && Zoom(System.Windows.Input.Key.NumPad0) == 1,
+            "Ctrl+Shift+Plus, Minus and 0 step and reset the whole-app zoom and save it");
+        Require(!(bool)zoomKey.Invoke(window, [System.Windows.Input.Key.OemPlus, System.Windows.Input.ModifierKeys.Control])!,
+            "Ctrl alone does not change the interface zoom");
+        Console.WriteLine("PASS: interface zoom is keyboard-operable with Ctrl+Shift+Plus, Minus and 0, and persists.");
+
         var hold = typeof(KillerBench.MainWindow).GetMethods(Flags).Single(method => method.Name.EndsWith("HoldUpdateForRepair", StringComparison.Ordinal));
         var defender = new DelayedDefenderHost();
         typeof(KillerBench.MainWindow).GetField("createDefenderScanHost", Flags)!.SetValue(window, (Func<KillerBench.Engine.Security.IDefenderScanHost>)(() => defender));

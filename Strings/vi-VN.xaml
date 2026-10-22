@@ -66,6 +66,7 @@
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Mở bằng chứng</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">Phím tắt</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">Về KillerBench</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">Thu phóng toàn bộ ứng dụng (trợ năng)</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">Đóng lớp phủ hoặc ngừng đọc</sys:String>
   <sys:String x:Key="Str_Content_Close">Đóng</sys:String>
   <sys:String x:Key="Str_Theme_Dark">Tối</sys:String>

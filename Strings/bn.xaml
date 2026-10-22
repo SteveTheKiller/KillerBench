@@ -88,6 +88,7 @@
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">কার্যক্রম লগ টগল করুন</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">প্রমাণ খুলুন</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">KillerBench সম্পর্কে</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">পুরো অ্যাপ জুম করুন (অ্যাক্সেসযোগ্যতা)</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">ওভারলে বন্ধ করুন বা পড়া বন্ধ করুন</sys:String>
   <sys:String x:Key="Str_Content_Close">বন্ধ</sys:String>
   <sys:String x:Key="Str_Theme_Dark">গাঢ়</sys:String>

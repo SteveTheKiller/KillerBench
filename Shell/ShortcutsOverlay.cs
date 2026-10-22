@@ -24,6 +24,7 @@ public partial class MainWindow
         new("F2", "Str_Shortcuts_ToggleSources", ShortcutCategory.View, false, "F2"),
         new("F3", "Str_Shortcuts_ToggleActivity", ShortcutCategory.View, false, "F3"),
         new("Alt+Shift+G", "Str_Theme_FilmGrain", ShortcutCategory.View, false, "G"),
+        new("Ctrl+Shift+Plus / Minus / 0", "Str_Shortcuts_AppZoom", ShortcutCategory.View, true),
         new("Ctrl+O", "Str_Shortcuts_OpenEvidence", ShortcutCategory.File, true, "O"),
         new("F1", "Str_Shortcuts_Show", ShortcutCategory.Help, false, "F1"),
         new("F12", "Str_Shortcuts_About", ShortcutCategory.Help, false, "F12"),

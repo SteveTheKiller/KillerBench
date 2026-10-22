@@ -88,6 +88,7 @@
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Mostra o nascondi log attività</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Apri prova</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">Informazioni su KillerBench</sys:String>
+  <sys:String x:Key="Str_Shortcuts_AppZoom">Zoom dell'intera app (accessibilità)</sys:String>
   <sys:String x:Key="Str_Shortcuts_CloseOrStop">Chiudi overlay o arresta lettura</sys:String>
   <sys:String x:Key="Str_Theme_Ectoplasm">Ectoplasma</sys:String>
   <sys:String x:Key="Str_Theme_Decay">Decadenza</sys:String>
