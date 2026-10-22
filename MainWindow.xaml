@@ -583,7 +583,7 @@
                 </StackPanel>
               </Expander>
               <Button Content="{DynamicResource Str_Update_CheckInterrupted}" Click="OnRecoverUpdates" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Update_CheckInterruptedTip}"/>
-              <Expander Header="{DynamicResource Str_Update_SelectThirdParty}" Foreground="{DynamicResource TextBrush}" Margin="0,6,0,0">
+              <Expander x:Name="ThirdPartyUpdateSection" Header="{DynamicResource Str_Update_SelectThirdParty}" Foreground="{DynamicResource TextBrush}" Margin="0,6,0,0">
                 <StackPanel>
                   <TextBlock x:Name="ThirdPartyUpdateCount" Text="{DynamicResource Str_Update_ThirdPartyPrompt}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
                   <ListBox x:Name="ThirdPartyUpdateList" SelectionChanged="OnThirdPartyUpdateSelectionChanged" SelectionMode="Single" DisplayMemberPath="Name" MaxHeight="120" MinHeight="40" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" AutomationProperties.Name="Third-party application update candidates"/>
