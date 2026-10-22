@@ -20,6 +20,21 @@ internal static class WorkflowReportExportChecks
             Recipes = [new("windows.system-files", 1, RecipeOutcome.Repaired, problem, repair, "Repair completed and verified.")]
         };
 
+        // A detection that its recipe repaired and verified is before-state evidence, not a current problem.
+        var fixedOnly = result with { Checks = [problem, new("Restart", CheckState.Clear, "No restart is pending.")], Repairs = [repair], Status = "Repairs verified in checked scopes" };
+        string fixedHtml = WorkflowReportExport.BuildHtml(fixedOnly, WorkflowReportScope.Diagnostics);
+        string fixedText = WorkflowReportExport.BuildText(fixedOnly, WorkflowReportScope.Diagnostics);
+        string fixedProblems = fixedText.Split("PROBLEMS AND REVIEW ITEMS")[1].Split("REPAIRED AND VERIFIED")[0];
+        Require(fixedHtml.Contains("<strong>0</strong>Problems") && fixedHtml.Contains("<h2>Repaired and verified</h2>") && fixedHtml.Contains("Found before repair") &&
+            fixedHtml.Split("System &lt;files&gt;").Length == 2 && fixedText.Contains("REPAIRED AND VERIFIED") &&
+            fixedProblems.Contains("No problem was established") && !fixedProblems.Contains("System <files>") &&
+            !fixedText.Split("REPAIRED AND VERIFIED")[1].Split("COMPLETED CHECKS")[0].Contains("Suggested action"),
+            "A verified recipe repair is kept as before-state evidence with zero current problems and no repeat repair suggestion");
+        var unverified = fixedOnly with { Recipes = [fixedOnly.Recipes[0] with { Repair = skipped }], Repairs = [skipped] };
+        string unverifiedText = WorkflowReportExport.BuildText(unverified, WorkflowReportScope.Diagnostics);
+        Require(unverifiedText.Split("PROBLEMS AND REVIEW ITEMS")[1].Split("COMPLETED CHECKS")[0].Contains("System <files>") &&
+            !unverifiedText.Contains("REPAIRED AND VERIFIED"), "An unverified repair stays a review item");
+
         Require(WorkflowReport.NextAction(result) == "Review the unresolved findings below. No broader repair has been selected automatically." &&
             WorkflowReport.Format(result).Contains("NEXT: " + WorkflowReport.NextAction(result)),
             "Report next action uses the same decision without rebuilding formatted output.");

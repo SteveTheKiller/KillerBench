@@ -35,7 +35,8 @@ public static class WorkflowReportExport
         var summary = result.Summary;
         string nextAction = WorkflowReport.NextAction(result);
         var verdicts = result.Checks.Where(IsReadinessVerdict).ToArray();
-        var detailedChecks = result.Checks.Where(check => !IsReadinessVerdict(check)).ToArray();
+        var fixedChecks = result.Checks.Where(check => VerifiedBeforeState(result, check)).ToArray();
+        var detailedChecks = result.Checks.Where(check => !IsReadinessVerdict(check)).Except(fixedChecks).ToArray();
         var problemChecks = detailedChecks.Where(c => c.EffectiveState is CheckState.Repairable or CheckState.Attention or CheckState.Unknown)
             .OrderBy(check => ReviewPriority(check.EffectiveState)).ThenBy(check => check.Name, StringComparer.Ordinal).ToArray();
         var otherChecks = detailedChecks.Except(problemChecks).ToArray();
@@ -64,6 +65,14 @@ public static class WorkflowReportExport
         if (problemChecks.Length == 0) sb.AppendLine("<p>No problem was established in the completed checks. Review incomplete coverage before treating the computer as healthy.</p>");
         foreach (var check in problemChecks) CheckCard(sb, check);
         sb.AppendLine("</section>");
+        if (fixedChecks.Length > 0)
+        {
+            sb.AppendLine("<section class='panel'><h2>Repaired and verified</h2>");
+            foreach (var check in fixedChecks)
+                sb.Append("<article class='item'><h3>").Append(E(check.Name)).Append("</h3><span class='badge'>Repair verified</span><div class='label'>Found before repair</div><div class='text'>")
+                    .Append(E(check.Detail)).AppendLine("</div></article>");
+            sb.AppendLine("</section>");
+        }
         if (scope == WorkflowReportScope.DiagnosticsAndRepairs)
         {
             sb.AppendLine("<section class='panel'><h2>Actions and results</h2>");
@@ -102,11 +111,18 @@ public static class WorkflowReportExport
             foreach (var verdict in verdicts) TextVerdict(sb, verdict);
         }
         sb.AppendLine().AppendLine("PROBLEMS AND REVIEW ITEMS");
-        var detailedChecks = result.Checks.Where(check => !IsReadinessVerdict(check)).ToArray();
+        var fixedChecks = result.Checks.Where(check => VerifiedBeforeState(result, check)).ToArray();
+        var detailedChecks = result.Checks.Where(check => !IsReadinessVerdict(check)).Except(fixedChecks).ToArray();
         var problems = detailedChecks.Where(c => c.EffectiveState is CheckState.Repairable or CheckState.Attention or CheckState.Unknown)
             .OrderBy(check => ReviewPriority(check.EffectiveState)).ThenBy(check => check.Name, StringComparer.Ordinal).ToArray();
         if (problems.Length == 0) sb.AppendLine("No problem was established in the completed checks.");
         foreach (var check in problems) TextCheck(sb, check);
+        if (fixedChecks.Length > 0)
+        {
+            sb.AppendLine().AppendLine("REPAIRED AND VERIFIED");
+            foreach (var check in fixedChecks)
+                sb.AppendLine().AppendLine(check.Name + " [Repair verified]").AppendLine("Found before repair: " + check.Detail);
+        }
         if (scope == WorkflowReportScope.DiagnosticsAndRepairs)
         {
             sb.AppendLine().AppendLine("ACTIONS AND RESULTS");
@@ -164,6 +180,10 @@ public static class WorkflowReportExport
         .Append("</div><div class='label'>Next</div><div class='text'>").Append(E(action.NextAction)).AppendLine("</div></article>");
     private static void TextCheck(StringBuilder sb, WorkflowCheck check) => sb.AppendLine().AppendLine(check.Name + " [" + Humanize(check.EffectiveState.ToString()) + "]").AppendLine(check.Detail).AppendLine("Suggested action: " + (check.Repair is null ? "Review the evidence and stated limits." : Repairs.Plan(check.Repair.Value).Effects));
     private static void TextVerdict(StringBuilder sb, WorkflowCheck check) => sb.AppendLine().AppendLine(check.Name + " [" + Humanize(check.EffectiveState.ToString()) + "]").AppendLine(check.Detail);
+    // Same rule WorkflowSummary uses to count a verified repair, so the report's problem count and its summary agree.
+    private static bool VerifiedBeforeState(WorkflowResult result, WorkflowCheck check) => result.Recipes.Any(recipe =>
+        !recipe.ExecutionUncertain && recipe.EffectiveOutcome == RecipeOutcome.Repaired && recipe.Repair is not null &&
+        recipe.Check?.Repair == recipe.Repair.Kind && Repairs.IsVerified(recipe.Repair) && (Equals(recipe.Check, check) || recipe.RecipeId == check.Name));
     private static bool IsReadinessVerdict(WorkflowCheck check) => check.Repair is null && check.Name.EndsWith(" readiness verdict", StringComparison.Ordinal);
     private static int ReviewPriority(CheckState state) => state switch
     {
