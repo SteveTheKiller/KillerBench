@@ -99,6 +99,7 @@ namespace KillerBench.Services
             var newDict = new ResourceDictionary { Source = uri };
 
             var accent = AccentFor(theme);
+            bool accentOwnsMenuHover = false;
             if (HasAccents(theme) && accent != Accent.Green)
             {
                 string family = theme == Theme.Retro98 ? "98SE" : theme == Theme.Light ? "Light" : theme == Theme.Black ? "Black" : "Dark";
@@ -108,6 +109,7 @@ namespace KillerBench.Services
                     {
                         Source = new Uri($"pack://application:,,,/KillerBench;component/Themes/Accents/{family}/{accent}.xaml")
                     };
+                    accentOwnsMenuHover = accentDict.Contains("MenuHoverBrush");
                     foreach (object key in accentDict.Keys)
                         newDict[key] = accentDict[key];
                     if (!accentDict.Contains("AccentLogo") && accentDict.Contains("HeaderLineBrush"))
@@ -116,7 +118,7 @@ namespace KillerBench.Services
                 catch { /* overlay file not present - base theme stands */ }
             }
 
-            if (theme == Theme.Retro98)
+            if (theme == Theme.Retro98 && !accentOwnsMenuHover)
                 newDict["MenuHoverBrush"] = newDict["PrimaryBrush"];
 
             ApplyDerivedTokens(newDict);
