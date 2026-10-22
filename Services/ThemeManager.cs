@@ -11,6 +11,13 @@ namespace KillerBench.Services
 
     public static class ThemeManager
     {
+        private static System.Windows.Media.SolidColorBrush Frozen(System.Windows.Media.Color color)
+        {
+            var brush = new System.Windows.Media.SolidColorBrush(color);
+            brush.Freeze();
+            return brush;
+        }
+
         /// <summary>Killer Sans UI (Killer Sans scaled to Segoe UI proportions) with the Segoe fallback stack.</summary>
         internal static readonly System.Windows.Media.FontFamily KillerSansUiStack = new(new Uri("pack://application:,,,/KillerBench;component/"), "./Fonts/#Killer Sans UI, Segoe UI, Microsoft JhengHei UI, Nirmala UI");
         internal static readonly System.Windows.Media.FontFamily LacquerHeadingStack = new(new Uri("pack://application:,,,/"), "./Fonts/#Lacquer, ./Fonts/#Killer Sans UI, Segoe UI, Microsoft JhengHei UI, Nirmala UI");
@@ -168,6 +175,15 @@ namespace KillerBench.Services
                 d["RadioHoverFgBrush"] = d["PrimaryBrush"];
             if (!d.Contains("ComboHighlightTextBrush"))
                 d["ComboHighlightTextBrush"] = d["PrimaryBrush"];
+            // A hovered menu or list item takes the accent for its text, nudged lighter or darker
+            // only as far as it takes to read at 4.5:1 on that theme's hover fill. 98SE keeps its
+            // Win98 highlight text.
+            d["MenuHoverTextBrush"] =
+                d.Contains("UseDialogCaption") && d["UseDialogCaption"] is true
+                    || d["PrimaryBrush"] is not System.Windows.Media.SolidColorBrush hoverAccent
+                    || d["MenuHoverBrush"] is not System.Windows.Media.SolidColorBrush hoverFill
+                ? d["ComboHighlightTextBrush"]
+                : Frozen(ColorContrast.ReadableOn(hoverAccent.Color, hoverFill.Color, 4.5));
             if (!d.Contains("OutlineHoverTextBrush"))
                 d["OutlineHoverTextBrush"] = d["OnPrimaryBrush"];
 

@@ -93,4 +93,4 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 - Wordmarks and headings are raised with a subtle bevel in their own color instead of a dark outline; wordmarks keep their drop shadow. The Dark theme's red accent is the brand red again instead of a pink tint.
 - Theme menu hover rows reach the right edge with the same inset as the left.
-
+- Hovered menu and list items show their text in the theme accent, lightened or darkened only as far as needed to stay readable on the hover fill.
