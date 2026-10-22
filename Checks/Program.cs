@@ -834,6 +834,7 @@ internal static class Program
             InstalledHotfixChecks.Run();
             UpdateExecutionContextChecks.Run();
             UpdateApplicabilityChecks.Run();
+            WindowsFeatureVersionChecks.Run();
             UpdateFailureFollowupChecks.RunAsync().GetAwaiter().GetResult();
             UpdateDataStoreResetChecks.RunAsync(scratch).GetAwaiter().GetResult();
             ServicingPackageChecks.Run();

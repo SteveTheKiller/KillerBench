@@ -716,6 +716,7 @@ public static class CommonDiagnostics
         [
             UpdateExecutionContextDiagnostics.Check(),
             UpdateApplicabilityDiagnostics.Check(),
+            WindowsFeatureVersionDiagnostics.Check(),
             UpdatePolicyDiagnostics.Check(),
             FeatureUpdatePolicyDiagnostics.Check(),
             UpdatePolicySurfaceDiagnostics.Check(),

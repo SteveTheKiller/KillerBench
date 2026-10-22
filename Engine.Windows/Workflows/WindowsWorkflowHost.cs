@@ -746,6 +746,7 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             checks.AddRange(crashChecks);
             var vitalChecks = await VitalsDiagnostics.CheckAsync(token).ConfigureAwait(false);
             checks.AddRange(vitalChecks);
+            checks.Add(WindowsFeatureVersionDiagnostics.Check());
             Progress?.Report("Reading recent Windows Memory Diagnostic results...");
             var memoryDiagnostic = await MemoryDiagnosticResults.CheckAsync(token).ConfigureAwait(false);
             checks.Add(memoryDiagnostic);
@@ -1525,6 +1526,8 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
             checks.Add(UpdatePolicyDiagnostics.Check());
             Progress?.Report("Reading managed feature update targeting and safeguard policy...");
             checks.Add(FeatureUpdatePolicyDiagnostics.Check());
+            Progress?.Report("Comparing the installed Windows feature version with the newest release...");
+            checks.Add(WindowsFeatureVersionDiagnostics.Check());
             Progress?.Report("Identifying Windows Update policy configuration surfaces...");
             checks.Add(UpdatePolicySurfaceDiagnostics.Check());
             Progress?.Report("Reading managed update deadlines and notification behavior...");
