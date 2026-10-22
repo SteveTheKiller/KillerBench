@@ -32,6 +32,7 @@ public static class WindowsPrimitiveLibrary
         .AddProbe(new WindowsProblemDevicesProbe())
         .AddProbe(new WindowsDeviceStatusProbe())
         .AddProbe(new WindowsUnletteredVolumesProbe())
+        .AddProbe(new WindowsPartitionLetterProbe())
         .AddProbe(new WindowsAppxStatusProbe())
         .AddProbe(new WindowsWinHttpProxyProbe())
         .AddProbe(new WindowsTpmStatusProbe())

@@ -72,49 +72,107 @@ public sealed class WindowsDeviceRestartAction : IActionPrimitive
     }
 }
 
-/// <summary>Counts formatted volumes without a drive letter. Value is the count; Raw lists disk, partition, size and file system.</summary>
+/// <summary>
+/// PowerShell helpers shared by drive-letter diagnosis, assignment and verification so every step applies the same
+/// data-volume eligibility and identifies a partition by a fingerprint of its UniqueId, which survives disk renumbering.
+/// </summary>
+internal static class PartitionScript
+{
+    internal const string Functions =
+        "function Eligible($q){ $q.Type -in 'Basic','IFS' -and -not $q.IsHidden -and -not $q.IsSystem -and $q.Size -gt 100MB -and [bool](($q|Get-Volume -ErrorAction SilentlyContinue).FileSystem) };" +
+        "function Fingerprint([string]$id){ $h=[Security.Cryptography.SHA256]::Create().ComputeHash([Text.Encoding]::UTF8.GetBytes($id)); -join ($h[0..5]|ForEach-Object{$_.ToString('X2')}) };" +
+        "function Selected([int]$disk,[int]$partition,[string]$fingerprint){ $p=@(Get-Partition -DiskNumber $disk -PartitionNumber $partition -ErrorAction Stop); " +
+        "if($p.Count -ne 1){throw 'Exact partition not found.'}; if((Fingerprint $p[0].UniqueId) -ne $fingerprint){throw 'This disk and partition number now names a different partition than the evidence. Inspect again.'}; $p[0] };";
+
+    internal static readonly PrimitiveParameter Disk = new("disk", true, "Disk number") { Pattern = "[0-9]{1,3}" };
+    internal static readonly PrimitiveParameter Partition = new("partition", true, "Partition number") { Pattern = "[0-9]{1,3}" };
+    internal static readonly PrimitiveParameter PartitionFingerprint = new("fingerprint", true, "Partition fingerprint from the unlettered volumes evidence") { Pattern = "[0-9A-F]{12}" };
+}
+
+/// <summary>Counts formatted volumes without a drive letter. Value is the count; Raw lists disk, partition, size, file system and partition fingerprint.</summary>
 public sealed partial class WindowsUnletteredVolumesProbe : IProbePrimitive
 {
-    [GeneratedRegex(@"^\d+\|\d+\|[0-9.]+\|[A-Za-z0-9]+$")]
+    [GeneratedRegex(@"^\d+\|\d+\|[0-9.]+\|[A-Za-z0-9]+\|[0-9A-F]{12}$")]
     private static partial Regex VolumeLinePattern();
+
+    private readonly Func<string, CancellationToken, string[], Task<ToolResult>> runCommand;
+
+    public WindowsUnletteredVolumesProbe(Func<string, CancellationToken, string[], Task<ToolResult>>? runCommand = null) =>
+        this.runCommand = runCommand ?? WindowsNetAdapterPrimitives.RunAsync;
 
     public string Name => "volume.unlettered";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [];
-    private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
-        "Get-Partition -ErrorAction Stop|Where-Object{-not $_.DriveLetter -and $_.Type -in 'Basic','IFS' -and -not $_.IsHidden -and -not $_.IsSystem -and $_.Size -gt 100MB}|ForEach-Object{" +
-        "$v=$_|Get-Volume -ErrorAction SilentlyContinue; if($v -and $v.FileSystem){$_.DiskNumber.ToString()+'|'+$_.PartitionNumber.ToString()+'|'+[math]::Round($_.Size/1GB,1).ToString([Globalization.CultureInfo]::InvariantCulture)+'|'+$v.FileSystem}}";
+    private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" + PartitionScript.Functions +
+        "Get-Partition -ErrorAction Stop|Where-Object{-not $_.DriveLetter -and (Eligible $_)}|ForEach-Object{" +
+        "$v=$_|Get-Volume -ErrorAction SilentlyContinue; $_.DiskNumber.ToString()+'|'+$_.PartitionNumber.ToString()+'|'+[math]::Round($_.Size/1GB,1).ToString([Globalization.CultureInfo]::InvariantCulture)+'|'+$v.FileSystem+'|'+(Fingerprint $_.UniqueId)}";
 
     public async Task<PrimitiveResult> ObserveAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, CancellationToken token)
     {
         if (!OperatingSystem.IsWindows()) return PrimitiveResult.Unavailable("Volume inspection requires Windows.");
-        return Interpret(await WindowsNetAdapterPrimitives.RunAsync(Script, token).ConfigureAwait(false));
+        return Interpret(await runCommand(Script, token, []).ConfigureAwait(false));
     }
 
     public static PrimitiveResult Interpret(ToolResult result) => WindowsNetAdapterPrimitives.Lines(result, "Get-Partition", lines =>
     {
         foreach (string line in lines) if (!VolumeLinePattern().IsMatch(line)) return PrimitiveResult.Unavailable("Volume inventory line was not recognized.");
         return new PrimitiveResult(true, lines.Length.ToString(CultureInfo.InvariantCulture), string.Join("\n", lines))
-        { Detail = lines.Length == 0 ? "Every formatted data volume has a drive letter." : lines.Length + " formatted volume(s) have no drive letter; the evidence lists disk and partition numbers." };
+        { Detail = lines.Length == 0 ? "Every formatted data volume has a drive letter." : lines.Length + " formatted volume(s) have no drive letter; the evidence lists disk, partition, size, file system and the partition fingerprint." };
     });
 }
 
-/// <summary>Assigns a free drive letter to one partition identified by disk and partition number.</summary>
+/// <summary>Reports the drive letter of one exact eligible data partition. Value is the letter, or none when it has no letter.</summary>
+public sealed class WindowsPartitionLetterProbe : IProbePrimitive
+{
+    private readonly Func<string, CancellationToken, string[], Task<ToolResult>> runCommand;
+
+    public WindowsPartitionLetterProbe(Func<string, CancellationToken, string[], Task<ToolResult>>? runCommand = null) =>
+        this.runCommand = runCommand ?? WindowsNetAdapterPrimitives.RunAsync;
+
+    public string Name => "volume.partition-letter";
+    public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [PartitionScript.Disk, PartitionScript.Partition, PartitionScript.PartitionFingerprint];
+    private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" + PartitionScript.Functions +
+        "& { param([int]$disk,[int]$partition,[string]$fingerprint) $p=Selected $disk $partition $fingerprint; " +
+        "if($p.DriveLetter){[string]$p.DriveLetter}elseif(Eligible $p){'none'}else{throw 'The partition is not a formatted data volume.'} }";
+
+    public async Task<PrimitiveResult> ObserveAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, CancellationToken token)
+    {
+        ArgumentNullException.ThrowIfNull(parameters);
+        if (!OperatingSystem.IsWindows()) return PrimitiveResult.Unavailable("Volume inspection requires Windows.");
+        return Interpret(await runCommand(Script, token, [parameters["disk"], parameters["partition"], parameters["fingerprint"]]).ConfigureAwait(false));
+    }
+
+    public static PrimitiveResult Interpret(ToolResult result) => WindowsNetAdapterPrimitives.Lines(result, "Get-Partition", lines =>
+        lines.Length == 1 && (lines[0] == "none" || lines[0] is [>= 'A' and <= 'Z'])
+            ? new PrimitiveResult(true, lines[0], lines[0])
+                { Detail = lines[0] == "none" ? "The selected partition has no drive letter." : "The selected partition has drive letter " + lines[0] + "." }
+            : PrimitiveResult.Unavailable("Partition letter output was not recognized."));
+}
+
+/// <summary>Assigns a free drive letter to one exact eligible data partition named by disk, partition number and fingerprint.</summary>
 public sealed class WindowsAssignDriveLetterAction : IActionPrimitive
 {
+    private readonly Func<string, CancellationToken, string[], Task<ToolResult>> runCommand;
+
+    public WindowsAssignDriveLetterAction(Func<string, CancellationToken, string[], Task<ToolResult>>? runCommand = null) =>
+        this.runCommand = runCommand ?? WindowsNetAdapterPrimitives.RunAsync;
+
     public string Name => "volume.assign-letter";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } =
-        [new("disk", true, "Disk number") { Pattern = "[0-9]{1,3}" }, new("partition", true, "Partition number") { Pattern = "[0-9]{1,3}" }, new("letter", true, "Drive letter D through Z") { Pattern = "[D-Zd-z]" }];
+        [PartitionScript.Disk, PartitionScript.Partition, PartitionScript.PartitionFingerprint, new("letter", true, "Drive letter D through Z") { Pattern = "[D-Z]" }];
     public RecipeRisk Risk => RecipeRisk.Reversible;
     public bool RequiresElevation => true;
-    private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
-        "& { param([int]$disk,[int]$partition,[string]$letter) $p=Get-Partition -DiskNumber $disk -PartitionNumber $partition -ErrorAction Stop; if($p.DriveLetter){'AlreadyLettered';exit 0}; " +
-        "if(Get-Volume -DriveLetter $letter -ErrorAction SilentlyContinue){throw 'Drive letter is in use.'}; " + MutationBoundary.Script + "Set-Partition -DiskNumber $disk -PartitionNumber $partition -NewDriveLetter $letter -ErrorAction Stop; 'Assigned' }";
+    private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" + PartitionScript.Functions +
+        "& { param([int]$disk,[int]$partition,[string]$fingerprint,[string]$letter) $p=Selected $disk $partition $fingerprint; if($p.DriveLetter){'AlreadyLettered';exit 0}; " +
+        "if(-not (Eligible $p)){throw 'The partition is not a formatted data volume.'}; " +
+        "if(Get-Volume -DriveLetter $letter -ErrorAction SilentlyContinue){throw 'Drive letter is in use.'}; " + MutationBoundary.Script +
+        "Set-Partition -DiskNumber $disk -PartitionNumber $partition -NewDriveLetter $letter -ErrorAction Stop; " +
+        "$a=Selected $disk $partition $fingerprint; if([string]$a.DriveLetter -eq $letter){'Assigned'}else{'Unconfirmed'} }";
 
     public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(parameters);
         if (!OperatingSystem.IsWindows()) return new ActionResult(false, false, "", "Volume changes require Windows.");
-        var result = await WindowsNetAdapterPrimitives.RunAsync(Script, token, parameters["disk"], parameters["partition"], parameters["letter"].ToUpperInvariant()).ConfigureAwait(false);
+        var result = await runCommand(Script, token, [parameters["disk"], parameters["partition"], parameters["fingerprint"], parameters["letter"]]).ConfigureAwait(false);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
         if (result.TimedOut) return new ActionResult(true, false, raw, "Set-Partition timed out.") { TimedOut = true };
         if (result.ExitCode != 0) return MutationBoundary.Failed(result, raw, "Set-Partition failed: " + result.Error.Trim());

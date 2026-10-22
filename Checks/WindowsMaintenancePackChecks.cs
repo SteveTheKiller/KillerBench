@@ -30,7 +30,7 @@ internal static class WindowsMaintenancePackChecks
         Verdict(pack, "devices.problem-devices", WindowsProblemDevicesProbe.Interpret(new ToolResult(0, "USB\\VID_1234&PID_5678\\ABC|USB|Error|Unknown USB Device\r\n", "", false)), ProbeVerdict.Attention, "problem device");
         Verdict(pack, "devices.problem-devices", WindowsProblemDevicesProbe.Interpret(new ToolResult(0, "garbage\r\n", "", false)), ProbeVerdict.Unknown, "device garbage");
         Verdict(pack, "storage.unlettered-volumes", WindowsUnletteredVolumesProbe.Interpret(new ToolResult(0, "", "", false)), ProbeVerdict.Clear, "all lettered");
-        Verdict(pack, "storage.unlettered-volumes", WindowsUnletteredVolumesProbe.Interpret(new ToolResult(0, "2|1|931.5|NTFS\r\n", "", false)), ProbeVerdict.Attention, "unlettered volume");
+        Verdict(pack, "storage.unlettered-volumes", WindowsUnletteredVolumesProbe.Interpret(new ToolResult(0, "2|1|931.5|NTFS|0A1B2C3D4E5F\r\n", "", false)), ProbeVerdict.Attention, "unlettered volume");
         Verdict(pack, "storage.unlettered-volumes", WindowsUnletteredVolumesProbe.Interpret(new ToolResult(0, "x|y\r\n", "", false)), ProbeVerdict.Unknown, "volume garbage");
         var status = WindowsDeviceStatusProbe.Interpret(new ToolResult(0, "OK\r\n", "", false));
         if (status is not { Complete: true, Value: "OK" }) throw new Exception("Device status OK was not read.");

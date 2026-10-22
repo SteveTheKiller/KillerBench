@@ -73,7 +73,7 @@ Symptom ids are lower-case dotted identifiers and match `WindowsSymptomCatalog` 
 | storage.spaces-degraded | Storage Spaces pool or virtual disk unhealthy | Storage Spaces workflow | None automatic | n/a | diag |
 | storage.storage-service-down | Storage Service stopped | Service check | Service start (storage.service) | Service running | pack |
 | storage.optimize-service-down | Optimize Drives service stopped | Service check | Service start (storage.optimize-drives-service) | Service running | pack |
-| storage.usb-drive-not-mounting | Missing drive letter, offline disk, unformatted partition | volume.unlettered (storage.unlettered-volumes recipe), Plug and Play and Storage services | Set-Partition -NewDriveLetter (storage.assign-letter, explicit with disk, partition and letter options) | No unlettered data volume remains | pack |
+| storage.usb-drive-not-mounting | Missing drive letter, offline disk, unformatted partition | volume.unlettered (storage.unlettered-volumes recipe), Plug and Play and Storage services | Set-Partition -NewDriveLetter (storage.assign-letter, explicit with disk, partition, fingerprint and letter options) | The fingerprinted partition shows the requested letter | pack |
 | storage.recycle-bin-corrupt | $Recycle.Bin damaged | Cleanup workflow recycle bin | Empty current shell recycle bin (explicit) | Folder state | workflow |
 | storage.storage-sense-policy | Managed Storage Sense settings | Storage Sense policy diagnostics | None automatic | n/a | diag |
 

@@ -557,6 +557,7 @@ internal static class Program
             GoalUncertaintyChecks.RunAsync().GetAwaiter().GetResult();
             WindowsMtuDispatchChecks.RunAsync().GetAwaiter().GetResult();
             MutationDispatchChecks.RunAsync().GetAwaiter().GetResult();
+            DriveLetterTargetChecks.RunAsync().GetAwaiter().GetResult();
             WindowsProxyReadChecks.RunAsync().GetAwaiter().GetResult();
             WindowsEntraPrivacyChecks.RunAsync(scratch).GetAwaiter().GetResult();
             WindowsGroupPolicyDateChecks.RunAsync().GetAwaiter().GetResult();

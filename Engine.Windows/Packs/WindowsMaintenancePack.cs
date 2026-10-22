@@ -8,6 +8,8 @@ public static class WindowsMaintenancePack
     public const string PackId = "windows.maintenance";
 
     private static readonly IReadOnlyDictionary<string, string> None = new Dictionary<string, string>();
+    private static readonly IReadOnlyDictionary<string, string> SelectedPartition = new Dictionary<string, string>
+        { ["disk"] = "${disk}", ["partition"] = "${partition}", ["fingerprint"] = "${fingerprint}" };
     private const string ProcedureNote = "This is a procedure rather than a diagnosed fault; it runs only when explicitly confirmed.";
 
     public static RecipePack Build() => new(RecipePack.CurrentSchemaVersion, PackId, 1, WindowsPrimitiveLibrary.Platform, "Windows maintenance procedures and targeted repairs",
@@ -109,26 +111,32 @@ public static class WindowsMaintenancePack
             Limitations = "Recovery, EFI and hidden partitions are excluded on purpose; an unformatted disk is not listed."
         },
         new RecipeDefinition("storage.assign-letter", 1, "Assign a drive letter", "Storage",
-            "The exact partition reports a drive letter afterwards; file access is untested",
-            new ProbeSpec("volume.unlettered", None, new ExpectSpec(
+            "The exact partition reports the requested drive letter afterwards; file access is untested",
+            new ProbeSpec("volume.partition-letter", SelectedPartition, new ExpectSpec(
             [
-                new ExpectClause("equals", "0", ProbeVerdict.Clear) { Detail = "Every formatted data volume already has a letter." },
-                new ExpectClause("any", "", ProbeVerdict.Repairable) { Detail = "A formatted volume lacks a letter. " + ProcedureNote }
-            ])) { Name = "Unlettered volumes" })
+                new ExpectClause("equals", "none", ProbeVerdict.Repairable) { Detail = "The selected formatted volume lacks a letter. " + ProcedureNote },
+                new ExpectClause("any", "", ProbeVerdict.Clear) { Detail = "The selected partition already has a drive letter." }
+            ])) { Name = "Selected partition letter" })
         {
             Symptoms = ["storage.usb-drive-not-mounting"],
             Options =
             [
                 new RecipeOption("disk", "Disk number from the unlettered volumes evidence") { Pattern = "[0-9]{1,3}" },
                 new RecipeOption("partition", "Partition number from the unlettered volumes evidence") { Pattern = "[0-9]{1,3}" },
-                new RecipeOption("letter", "Free drive letter D through Z") { Pattern = "[D-Zd-z]" }
+                new RecipeOption("fingerprint", "Partition fingerprint from the unlettered volumes evidence") { Pattern = "[0-9A-F]{12}" },
+                new RecipeOption("letter", "Free drive letter D through Z, uppercase") { Pattern = "[D-Z]" }
             ],
-            Action = new ActionSpec("volume.assign-letter", new Dictionary<string, string> { ["disk"] = "${disk}", ["partition"] = "${partition}", ["letter"] = "${letter}" })
-                { Timeout = TimeSpan.FromSeconds(30), Effects = "Runs Set-Partition -NewDriveLetter for the exact disk and partition. A letter already in use is refused." },
+            Action = new ActionSpec("volume.assign-letter", new Dictionary<string, string> { ["disk"] = "${disk}", ["partition"] = "${partition}", ["fingerprint"] = "${fingerprint}", ["letter"] = "${letter}" })
+                { Timeout = TimeSpan.FromSeconds(30), Effects = "Rechecks that the disk and partition still name the fingerprinted formatted data volume, then runs Set-Partition -NewDriveLetter on it. A letter already in use is refused." },
+            Verify = new ProbeSpec("volume.partition-letter", SelectedPartition, new ExpectSpec(
+            [
+                new ExpectClause("equals", "${letter}", ProbeVerdict.Clear) { Detail = "The selected partition now has the requested letter." },
+                new ExpectClause("any", "", ProbeVerdict.Attention) { Detail = "The selected partition does not show the requested letter." }
+            ])) { Name = "Selected partition letter" },
             Risk = RecipeRisk.Reversible,
             RequiresElevation = true,
             RequiresExplicitOptions = true,
-            Limitations = "Verification only confirms no unlettered data volume remains; a second unlettered volume reports Attention."
+            Limitations = "Only the fingerprinted partition is judged and changed; other unlettered volumes are left alone."
         },
         new RecipeDefinition("apps.package-reregister", 1, "Re-register an installed app package", "Applications",
             "The exact package reports Ok for the current account afterwards; app behavior is untested",
