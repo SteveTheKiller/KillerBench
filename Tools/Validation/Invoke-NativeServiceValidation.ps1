@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
     Runs the fault-injection scenarios for every service-pack recipe on a disposable Windows VM and builds the coverage report.
-    Created by Steve the Killer | Updated: 2026-09-18
+    Created by Steve the Killer | Updated: 2026-10-21
 
 .DESCRIPTION
     Only run this on a disposable machine with a snapshot to revert to. It stops, disables and restarts real Windows services.
@@ -48,10 +48,14 @@ if ($scenarios.Count -eq 0) { throw 'The validation plan contains no scenarios f
 $injectableKinds = @('Healthy', 'Preview', 'Ineligible', 'VerifiedExecution', 'Cancellation')
 
 $summary = @()
+$stoppedAt = $null
 foreach ($id in $recipes) {
     Write-Host ("=== " + $id)
     & $Cli validate-native $id all $runOutput --disposable $DisposableMachine 2>&1 | ForEach-Object { Write-Host $_ }
-    $summary += [pscustomobject]@{ Recipe = $id; ExitCode = $LASTEXITCODE }
+    $exitCode = $LASTEXITCODE
+    $summary += [pscustomobject]@{ Recipe = $id; ExitCode = $exitCode }
+    # A nonzero exit can mean restoration was not proven. Never fault-inject again on an unreconciled machine.
+    if ($exitCode -ne 0) { $stoppedAt = $id; break }
 }
 $records = @(Get-ChildItem $runOutput -Filter '*.json' | Where-Object { $_.Name -ne 'windows.services.json' } | ForEach-Object { $_.FullName })
 if ($records.Count -eq 0) { throw "No scenario records were written to $runOutput." }
@@ -59,6 +63,10 @@ $report = Join-Path $runOutput 'native-validation-report.html'
 & $Cli validation-report $report @records | ForEach-Object { Write-Host $_ }
 $reportExitCode = $LASTEXITCODE
 $summary | Format-Table -AutoSize
+if ($stoppedAt) {
+    $partial = if ($reportExitCode -eq 0 -and (Test-Path $report)) { " Partial report: $report." } else { " The partial report could not be written." }
+    throw "Stopped after $stoppedAt exited with code $(($summary | Select-Object -Last 1).ExitCode); no further scenarios ran. Revert the VM snapshot before validating again. Evidence: $runOutput.$partial"
+}
 if ($reportExitCode -ne 0) { throw "Validation report failed with exit code $reportExitCode." }
 if (-not (Test-Path $report)) { throw "Validation report was not written to $report." }
 Write-Host ("Report: " + $report)
