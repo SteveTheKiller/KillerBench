@@ -157,6 +157,19 @@ class BrokenReferenceTests(unittest.TestCase):
         self.assertEqual(Page(body).ids, ['storage', 'storage-2', 'storage-3', 'storage-4'])
         self.assertEqual([(h[0], h[2]) for h in headings], [('storage-2', 2), ('storage-3', 3), ('storage-4', 2)])
 
+    def test_command_list_with_pipes_is_not_a_table(self):
+        import runpy
+        render = runpy.run_path(str(ROOT/'build-docs.py'))['render']
+        body, _, _ = render('- `<analyze|investigate> <text-log-path> [--json]`: Analyze local text evidence.\n'
+                            '- `adapter-bindings`: Read-only core protocol binding summary.\n'
+                            '- `adapter-statistics`: Read-only adapter counters.\n')
+        self.assertNotIn('<table>', body)
+        self.assertEqual(body.count('<li'), 3)
+        self.assertIn('id="cmd-adapter-bindings"', body)
+        table, _, _ = render('| Name | Value |\n| :--- | ---: |\n| a | 1 |\n')
+        self.assertIn('<table>', table)
+        self.assertIn('<td>a</td><td>1</td>', table)
+
     def test_nested_and_extensionless_routes(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)

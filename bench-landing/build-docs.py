@@ -188,7 +188,11 @@ def render(markdown):
             out.append('<h%d id="%s">%s</h%d>' % (level, anchor, inline(text), level))
             i += 1
             continue
-        if "|" in line and i + 1 < len(lines) and re.match(r"^\s*\|?\s*:?-+", lines[i + 1]):
+        # A table needs a full delimiter row (only pipes, dashes, colons and spaces) with one cell per header
+        # cell, so a list item followed by another list item is never read as a table.
+        if ("|" in line and i + 1 < len(lines) and "|" in lines[i + 1]
+                and re.match(r"^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?\s*$", lines[i + 1])
+                and len(cells(line)) == len(cells(lines[i + 1]))):
             flush()
             head, rows = cells(line), []
             i += 2
