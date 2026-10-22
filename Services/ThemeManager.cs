@@ -116,6 +116,9 @@ namespace KillerBench.Services
                 catch { /* overlay file not present - base theme stands */ }
             }
 
+            if (theme == Theme.Retro98)
+                newDict["MenuHoverBrush"] = newDict["PrimaryBrush"];
+
             ApplyDerivedTokens(newDict);
             // A palette can fill buttons with a deeper shade than its accent text (PrimaryFillBaseBrush).
             newDict["PrimaryFillBrush"] = ButtonFill(newDict.Contains("PrimaryFillBaseBrush") ? newDict["PrimaryFillBaseBrush"] : newDict["PrimaryBrush"], theme == Theme.Retro98);
@@ -175,6 +178,7 @@ namespace KillerBench.Services
                 d["RadioHoverFgBrush"] = d["PrimaryBrush"];
             if (!d.Contains("ComboHighlightTextBrush"))
                 d["ComboHighlightTextBrush"] = d["PrimaryBrush"];
+
             // A hovered menu or list item takes the accent for its text, nudged lighter or darker
             // only as far as it takes to read at 4.5:1 on that theme's hover fill. 98SE keeps its
             // Win98 highlight text.
