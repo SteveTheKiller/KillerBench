@@ -368,8 +368,6 @@ def page_shell(file, title, description, active, style, aside, inner, script="",
     alternates += '<link rel="alternate" hreflang="x-default" href="https://killerbench.net/%s">' % file
     ui = "".join(' data-ui-%s="%s"' % (k, esc(loc.t(v))) for k, v in (("theme", "Theme"), ("choose-theme", "Choose theme"), ("accent", "Accent color"), ("accent-label", "accent:"), ("close", "Close"), ("more", "More"), ("no-results", "No matching pages."))) if loc.code != "en-US" else ""
     note = VERSION_NOTE if loc.code == "en-US" else '%s <a href="https://killertools.net">killertools.net</a>' % esc(loc.t("In development · Part of")).replace("·", "&middot;")
-    if loc.code != "en-US":
-        style = style.replace("url('grain.png", "url('../grain.png")
     return ('<!doctype html>\n<html lang="%s" data-theme="dark"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width,initial-scale=1">'
             '<meta name="description" content="%s"><link rel="canonical" href="%s">%s'
@@ -523,7 +521,7 @@ def build_help(loc=EN, write=True):
         ".content-inner{max-width:880px;margin:0 auto;padding:0 28px 56px}"
         ".help-cat{font-family:var(--kt-font-section);font-size:18px;font-weight:normal;letter-spacing:.5px;color:var(--accent);margin:30px 2px 12px;padding-top:6px;scroll-margin-top:20px;text-shadow:0 2px 5px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.5)}"
         "html[data-theme=\"light\"] .help-cat{text-shadow:none}"
-        ".acc-item{border:1px solid var(--dragline);border-radius:8px;margin-bottom:10px;background:var(--modal) url('grain.png') repeat;background-size:256px 256px;overflow:hidden;scroll-margin-top:16px}"
+        ".acc-item{border:1px solid var(--dragline);border-radius:8px;margin-bottom:10px;background:var(--modal) var(--grain-img) repeat;background-size:256px 256px;overflow:hidden;scroll-margin-top:16px}"
         ".acc-head{width:100%;text-align:left;background:none;border:0;color:var(--text);font:inherit;font-size:15px;font-weight:600;padding:15px 18px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px}"
         ".acc-head:hover{color:var(--accent)}.acc-head .chev{color:var(--muted);transition:transform .25s ease;flex-shrink:0;font-size:13px}"
         ".acc-item.open .acc-head{color:var(--accent)}.acc-item.open .acc-head .chev{transform:rotate(90deg);color:var(--accent)}"
@@ -582,7 +580,7 @@ def build_technical(loc=EN, write=True):
     style = OUTLINE_CSS + (
         ".content-inner{max-width:1440px;margin:0 auto;padding:0 28px 56px}"
         ".tech-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}.tech-column{display:grid;gap:18px;min-width:0}"
-        ".tech-sec{min-width:0;margin:0;padding:20px 22px;border:1px solid var(--pane-border);border-top:2px solid var(--sel,var(--accent));border-radius:10px;background:var(--modal) url('grain.png?v=2') repeat;background-size:256px 256px;color:var(--muted);font-size:14px;line-height:1.65}"
+        ".tech-sec{min-width:0;margin:0;padding:20px 22px;border:1px solid var(--pane-border);border-top:2px solid var(--sel,var(--accent));border-radius:10px;background:var(--modal) var(--grain-img) repeat;background-size:256px 256px;color:var(--muted);font-size:14px;line-height:1.65}"
         ".tech-sec,.tech-sec h3{scroll-margin-top:20px}.tech-sec h2{font-family:var(--kt-font-card-title);font-weight:normal;font-size:21px;color:var(--accent);margin:0 0 10px}"
         ".tech-sec h3{font-size:15px;font-weight:600;color:var(--text);margin:16px 0 6px}.tech-sec p{margin:0 0 10px}.tech-sec b,.tech-sec strong{color:var(--text)}"
         ".tech-sec ul,.tech-sec ol{margin:6px 0 12px;padding-left:22px}.tech-sec li{margin:3px 0}.tech-sec table{width:100%;margin:8px 0 12px}.tech-sec a{color:var(--accent)}"

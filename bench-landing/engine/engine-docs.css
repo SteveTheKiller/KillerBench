@@ -11,9 +11,9 @@
 .page-outline a{padding:4px 6px;border-left:1px solid var(--pane-border);border-radius:0;color:var(--muted);font-size:11px}
 .page-outline a.sub{padding-left:16px;font-size:10.5px}
 .engine-doc-wrap{max-width:980px;margin:0 auto;padding:24px 34px 48px}
-.engine-doc-hero{display:flex;align-items:center;gap:18px;margin:0 0 18px;padding:18px 20px;background:var(--modal) url('../grain.png') repeat;border:1px solid var(--pane-border);border-top:2px solid var(--tab-edge);border-radius:6px;box-shadow:0 10px 26px rgba(0,0,0,.24)}
+.engine-doc-hero{display:flex;align-items:center;gap:18px;margin:0 0 18px;padding:18px 20px;background:var(--modal) var(--grain-img) repeat;border:1px solid var(--pane-border);border-top:2px solid var(--tab-edge);border-radius:6px;box-shadow:0 10px 26px rgba(0,0,0,.24)}
 .engine-doc-hero .wm-logo{width:min(360px,80vw);height:auto}
-.engine-doc{background:var(--modal) url('../grain.png') repeat;border:1px solid var(--pane-border);border-top:2px solid var(--tab-edge);border-radius:6px;padding:28px 34px;box-shadow:0 12px 30px rgba(0,0,0,.28);line-height:1.65;color:var(--text2)}
+.engine-doc{background:var(--modal) var(--grain-img) repeat;border:1px solid var(--pane-border);border-top:2px solid var(--tab-edge);border-radius:6px;padding:28px 34px;box-shadow:0 12px 30px rgba(0,0,0,.28);line-height:1.65;color:var(--text2)}
 .engine-doc h1,.engine-doc h2,.engine-doc h3{font-family:var(--kt-font-card-title);font-weight:normal;color:var(--accent);line-height:1.25}
 .engine-doc h1{margin:0 0 14px;font-size:29px}
 .engine-doc h2{margin:32px 0 10px;padding-top:5px;font-size:20px;border-top:1px solid var(--pane-border)}
@@ -31,7 +31,7 @@
 .engine-doc th{background:color-mix(in srgb,var(--accent) 12%,var(--panel));color:var(--text)}
 .engine-doc tbody tr:nth-child(even){background:color-mix(in srgb,var(--panel) 72%,transparent)}
 .doc-pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
-.doc-pager a{display:flex;flex-direction:column;gap:3px;padding:12px 14px;background:var(--modal) url('../grain.png') repeat;border:1px solid var(--pane-border);border-radius:6px}
+.doc-pager a{display:flex;flex-direction:column;gap:3px;padding:12px 14px;background:var(--modal) var(--grain-img) repeat;border:1px solid var(--pane-border);border-radius:6px}
 .doc-pager a:last-child{text-align:right;align-items:flex-end}
 .doc-pager small{color:var(--muted);font:10px Consolas,monospace;text-transform:uppercase;letter-spacing:.8px}
 .doc-error{padding:18px;border:1px solid #a63f3f;border-radius:6px;background:rgba(166,63,63,.12)}

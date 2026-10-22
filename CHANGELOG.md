@@ -88,7 +88,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Setup creates Start menu, desktop and Installed Apps entries. Unelevated silent installs use the current account, and concurrent installs or a running app return specific error codes for deployment tools.
 - Startup and manual update checks offer newer releases with checksum and signature verification. Automatic checks can be controlled from About.
 - The killerbench.net website includes a searchable user guide, section walkthroughs, command reference, glossary, Engine developer guide and KillerMCP setup, with documentation in 20 languages.
-- The website includes captioned screenshots, keyboard references and links to other Killer Tools apps, with responsive navigation, localized accessible labels and theme-aware text contrast.
+- The website includes captioned screenshots, keyboard references and links to other Killer Tools apps, with responsive navigation, localized accessible labels and theme-aware text contrast. Its theme menu can turn Film Grain off (Alt+Shift+G).
 - Validation resources include disposable-VM plans, guarded fault injection, symptom coverage checks, isolated UI tests and synthetic demonstrations. Release preflight checks packaged executable versions, signatures and checksums.
 
 ### Changed
