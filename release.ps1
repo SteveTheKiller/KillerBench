@@ -48,6 +48,10 @@
 .PARAMETER ArtifactDirectory
     Optional artifact folder for -ArtifactPreflightOnly. Normal releases use the fixed release folder.
 
+.PARAMETER SourceDeltaOnly
+    Check that -ReleaseCommit differs from -BuildCommit only by the README source-link change in
+    -SourceRepository, then return. Used by Checks\Test-ReleaseSourceDelta.ps1.
+
 .EXAMPLE
     .\release.ps1 -DryRun -SkipSign
 .EXAMPLE
@@ -62,7 +66,11 @@ param(
     [switch]$DryRun,
     [switch]$PublishOnly,
     [switch]$ArtifactPreflightOnly,
-    [string]$ArtifactDirectory = ""
+    [string]$ArtifactDirectory = "",
+    [switch]$SourceDeltaOnly,
+    [string]$SourceRepository = "",
+    [string]$BuildCommit = "",
+    [string]$ReleaseCommit = ""
 )
 
 $ErrorActionPreference = 'Stop'
@@ -90,6 +98,11 @@ if ($ArtifactDirectory) {
     if (-not $ArtifactPreflightOnly) { throw "-ArtifactDirectory is only available with -ArtifactPreflightOnly." }
     $releaseDir = [IO.Path]::GetFullPath($ArtifactDirectory)
 }
+if (($SourceRepository -or $BuildCommit -or $ReleaseCommit) -and -not $SourceDeltaOnly) {
+    throw "-SourceRepository, -BuildCommit and -ReleaseCommit are only available with -SourceDeltaOnly."
+}
+# Records the commit the signed binaries were built from, so publication can prove the archive matches them.
+$provenancePath = Join-Path $releaseDir 'build-provenance.json'
 $desktopExe  = Join-Path $releaseDir "KillerBench.exe"
 $portableExe = Join-Path $releaseDir "KillerBench-Portable.exe"
 # The Microsoft Store installer carries its own .NET runtime; the Store downloads it through killerbench.net/store.
@@ -199,6 +212,26 @@ function Find-Python {
         if ($cmd) { return $cmd.Source }
     }
     throw "Python 3 was not found. It is needed for check-license.py."
+}
+
+# The binaries are built from one commit. The tagged source archive may differ from it only by the
+# README source-link commit this script makes; anything else means the archive is not the built source.
+function Assert-ReleaseSourceDelta([string]$Repository, [string]$Built, [string]$Released) {
+    if ($Built -notmatch '^[0-9a-f]{40}$' -or $Released -notmatch '^[0-9a-f]{40}$') { throw "Build or release commit is not a full commit id. Rebuild the release." }
+    if ($Built -eq $Released) { return }
+    & git -C $Repository merge-base --is-ancestor $Built $Released
+    if ($LASTEXITCODE -ne 0) { throw "Release commit $Released does not descend from the built commit $Built. Rebuild the release artifacts." }
+    $changed = @(& git -C $Repository diff --name-only $Built $Released)
+    if ($LASTEXITCODE -ne 0) { throw "Could not compare the built and release commits. Rebuild the release artifacts." }
+    if ($changed.Count -ne 1 -or $changed[0] -ne 'README.md') {
+        throw "Product source changed after the build ($($changed -join ', ')). Rebuild the release artifacts from $Released."
+    }
+}
+
+if ($SourceDeltaOnly) {
+    Assert-ReleaseSourceDelta $SourceRepository $BuildCommit $ReleaseCommit
+    Write-Host 'PASS: release source matches the built source.'
+    return
 }
 
 if ($ArtifactPreflightOnly) {
@@ -479,10 +512,22 @@ Write-Host "`n==> CLI startup smoke test..." -ForegroundColor Cyan
 $cliHelp = @(& $cliExe --help 2>&1)
 if ($LASTEXITCODE -ne 0) { throw "killerbench-cli --help failed with exit code $LASTEXITCODE." }
 Write-Host "    killerbench-cli --help returned $($cliHelp.Count) lines" -ForegroundColor Green
+$buildCommit = $releaseCommit
+[IO.File]::WriteAllText($provenancePath, (ConvertTo-Json -Compress @{
+    Version = $Version; BuildCommit = $buildCommit; Artifacts = (Get-ReleaseArtifactHashes $releaseExecutablePaths)
+}))
 
 } else {
     Write-Host "`n==> PublishOnly: skipping build and sign, using existing artifacts." -ForegroundColor Yellow
     Assert-ExistingReleaseArtifacts $releaseExecutablePaths $expectedFileVersion
+    if (-not [IO.File]::Exists($provenancePath)) { throw "Build provenance is missing. Run a full release build before publishing." }
+    $provenance = Get-Content -LiteralPath $provenancePath -Raw | ConvertFrom-Json
+    if ($provenance.Version -ne $Version) { throw "Build provenance is for $($provenance.Version), not $Version. Run a full release build." }
+    $currentHashes = Get-ReleaseArtifactHashes $releaseExecutablePaths
+    foreach ($name in $currentHashes.Keys) {
+        if ($provenance.Artifacts.$name -ne $currentHashes[$name]) { throw "$name changed after it was built and recorded. Run a full release build." }
+    }
+    $buildCommit = [string]$provenance.BuildCommit
     $srcZipPath = Join-Path $releaseDir "KillerBench-$Version-src.zip"
     $actualThumb = "(existing signature)"
     $actualCN    = "(existing signature)"
@@ -508,6 +553,7 @@ try {
     }
     $defaultBranch = Assert-CleanSyncedBranch
     $releaseCommit = (git rev-parse HEAD).Trim()
+    Assert-ReleaseSourceDelta $PSScriptRoot $buildCommit $releaseCommit
 
     Write-Host "`n==> Checking the source archive against $releaseCommit..." -ForegroundColor Cyan
     $srcZipPath = Join-Path $releaseDir "KillerBench-$Version-src.zip"
