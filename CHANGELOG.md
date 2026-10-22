@@ -87,3 +87,8 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - The killerbench.net website includes a searchable user guide, section walkthroughs, command reference, glossary, Engine developer guide and KillerMCP setup, with documentation in 20 languages.
 - The website includes captioned screenshots, keyboard references and links to other Killer Tools apps, with responsive navigation, localized accessible labels and theme-aware text contrast.
 - Validation resources include disposable-VM plans, guarded fault injection, symptom coverage checks, isolated UI tests and synthetic demonstrations. Release preflight checks packaged executable versions, signatures and checksums.
+
+### Changed
+
+- Wordmarks and headings are raised with a subtle bevel in their own color instead of a dark outline; wordmarks keep their drop shadow. The Dark theme's red accent is the brand red again instead of a pink tint.
+

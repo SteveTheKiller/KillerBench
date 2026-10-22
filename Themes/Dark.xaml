@@ -19,7 +19,7 @@
         <GradientStop Offset="1.0" Color="#82000000"/>
     </LinearGradientBrush>
     <SolidColorBrush x:Key="MenuBackgroundBrush" Color="#141414" po:Freeze="True"/>
-    <SolidColorBrush x:Key="CardBorderBrush" Color="#2e2e2e" po:Freeze="True"/>
+    <SolidColorBrush x:Key="CardBorderBrush" Color="#4a4a4a" po:Freeze="True"/>
     <SolidColorBrush x:Key="PrimaryBrush"    Color="#22bb56" po:Freeze="True"/>
     <SolidColorBrush x:Key="PrimaryHoverBrush"   Color="#22bb56" po:Freeze="True"/>
     <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#22bb56" po:Freeze="True"/>
@@ -32,7 +32,7 @@
     <SolidColorBrush x:Key="InstallBtnBg"   Color="#1ea54c" po:Freeze="True"/>
     <SolidColorBrush x:Key="MenuBorderBrush" Color="#404040" po:Freeze="True"/>
     <SolidColorBrush x:Key="DropBorder"     Color="#303030" po:Freeze="True"/>
-    <SolidColorBrush x:Key="PaneBorderBrush" Color="#3f3f3f" po:Freeze="True"/>
+    <SolidColorBrush x:Key="PaneBorderBrush" Color="#555555" po:Freeze="True"/>
     
     <SolidColorBrush x:Key="AppBorderBrush" Color="#3f3f3f" po:Freeze="True"/>
     
