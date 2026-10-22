@@ -68,6 +68,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Driver references filter by exact hardware ID and declared OS support. Knowledge packs support schema validation, revision comparison and contextual search in the app, Engine and CLI.
 
 ### Desktop, accessibility and localization
+- In 98SE, long paths in the file dialog no longer run under the recent-locations arrow.
 - Light is shades of gray with nothing white: the background, sidebar and footer are the darkest gray (#cccccc), menus and bars a step lighter, then panes, then fields.
 
 - The three-pane workbench combines a resizable section sidebar and icon rail, tool options, readable reports, raw output and an activity log.
