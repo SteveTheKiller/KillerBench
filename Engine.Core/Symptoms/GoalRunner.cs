@@ -2,7 +2,11 @@ using System.Diagnostics;
 
 namespace KillerBench.Engine.Core.Symptoms;
 
-public enum GoalOutcome { Resolved, Unresolved, RuledOut, NeedsHuman, OutOfScope, Blocked, BudgetExhausted, RestartRequired, Canceled, NoTriage }
+/// <summary>
+/// Resolved means the symptom itself was confirmed absent. RepairedUnconfirmed means a component repair verified but
+/// nothing confirmed the original symptom is gone, so the job stays open until someone checks it.
+/// </summary>
+public enum GoalOutcome { Resolved, Unresolved, RuledOut, NeedsHuman, OutOfScope, Blocked, BudgetExhausted, RestartRequired, Canceled, NoTriage, RepairedUnconfirmed }
 
 /// <summary>One step the runner took while walking a triage tree.</summary>
 public sealed record GoalStep(int Index, string NodeId, TriageNodeKind Kind, string Summary)
@@ -25,6 +29,16 @@ public sealed record GoalReport(string SymptomId, string SymptomTitle, GoalOutco
     public IReadOnlyList<TriageQuestion> OpenQuestions { get; init; } = [];
     public string Guidance { get; init; } = "";
     public TimeSpan Elapsed { get; init; }
+
+    /// <summary>0 only when the symptom was confirmed absent or every cause was ruled out; 5 for a repair the symptom has not confirmed.</summary>
+    public int GetExitCode() => Outcome switch
+    {
+        GoalOutcome.Resolved or GoalOutcome.RuledOut => 0,
+        GoalOutcome.Canceled => 130,
+        GoalOutcome.RestartRequired => 4,
+        GoalOutcome.RepairedUnconfirmed => 5,
+        _ => 3
+    };
 }
 
 public sealed record GoalRunOptions
@@ -128,10 +142,10 @@ public sealed class GoalRunner(SymptomCatalog catalog, IReadOnlyList<RecipePack>
                     {
                         steps.Add(new(index, node.Id, node.Kind, "Reached " + node.Terminal + ". " + node.Guidance));
                         if (repaired.Count > 0 && unresolved.Count == 0 && symptom.Confirm is null && node.Terminal is TriageTerminal.NeedsHuman or TriageTerminal.RuledOut)
-                            return Report(GoalOutcome.Resolved, "Verified repairs: " + string.Join(", ", repaired) + ". The symptom itself was not independently confirmed; retry the original task.", node.Guidance);
+                            return Report(GoalOutcome.RepairedUnconfirmed, Unconfirmed(repaired), node.Guidance);
                         return node.Terminal switch
                         {
-                            TriageTerminal.Resolved => await ConfirmResolvedAsync(symptom, Report, steps, runToken).ConfigureAwait(false),
+                            TriageTerminal.Resolved => await ConfirmResolvedAsync(symptom, repaired, Report, steps, runToken).ConfigureAwait(false),
                             TriageTerminal.RuledOut => Report(GoalOutcome.RuledOut, "Every automated cause in this tree was ruled out.", node.Guidance),
                             TriageTerminal.OutOfScope => Report(GoalOutcome.OutOfScope, "This path is outside what KillerBench can change.", node.Guidance),
                             _ => Report(GoalOutcome.NeedsHuman, "Triage needs a person to continue.", node.Guidance)
@@ -233,9 +247,15 @@ public sealed class GoalRunner(SymptomCatalog catalog, IReadOnlyList<RecipePack>
     private static string? Branch(TriageNode node, string key) =>
         node.Next.TryGetValue(key, out string? next) ? next : node.Next.TryGetValue("default", out string? fallback) ? fallback : null;
 
-    private async Task<GoalReport> ConfirmResolvedAsync(Symptom symptom, Func<GoalOutcome, string, string?, GoalReport> report, List<GoalStep> steps, CancellationToken token)
+    private static string Unconfirmed(IReadOnlyCollection<string> repaired) =>
+        "Verified repairs: " + string.Join(", ", repaired) + ". The original symptom has not been confirmed fixed; check it with the user before closing the job.";
+
+    private async Task<GoalReport> ConfirmResolvedAsync(Symptom symptom, IReadOnlyCollection<string> repaired, Func<GoalOutcome, string, string?, GoalReport> report, List<GoalStep> steps, CancellationToken token)
     {
-        if (symptom.Confirm is null) return report(GoalOutcome.Resolved, "Triage reached a resolved outcome.", null);
+        if (symptom.Confirm is null)
+            return repaired.Count > 0
+                ? report(GoalOutcome.RepairedUnconfirmed, Unconfirmed(repaired), null)
+                : report(GoalOutcome.Resolved, "Triage reached a resolved outcome.", null);
         var recheck = await ProbeAsync(symptom.Confirm, token).ConfigureAwait(false);
         steps.Add(new(steps.Count + 1, "confirm", TriageNodeKind.Probe, "Symptom recheck: " + recheck.Evaluation.Verdict + ". " + recheck.Evaluation.Detail) { Probe = recheck });
         return recheck.Evaluation.Verdict is ProbeVerdict.Clear or ProbeVerdict.Information

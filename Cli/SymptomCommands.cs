@@ -70,13 +70,7 @@ internal static class SymptomCommands
                     if (!string.IsNullOrWhiteSpace(report.Guidance)) Console.WriteLine("Next: " + report.Guidance);
                     Console.WriteLine("Journal: " + journal.Path);
                 }
-                return report.Outcome switch
-                {
-                    GoalOutcome.Resolved or GoalOutcome.RuledOut => 0,
-                    GoalOutcome.Canceled => 130,
-                    GoalOutcome.RestartRequired => 4,
-                    _ => 3
-                };
+                return report.GetExitCode();
             }
             default:
                 Console.Error.WriteLine(Usage);

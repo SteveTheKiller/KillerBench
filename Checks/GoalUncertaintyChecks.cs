@@ -57,7 +57,7 @@ internal static class GoalUncertaintyChecks
             var result = await walk.RunAsync("fixture.symptom", new GoalRunOptions { AuthorizeRepair = true }, stop.Token);
             if (scenario == "clear")
             {
-                if (result.Outcome != GoalOutcome.Resolved || !actions.SequenceEqual(["second"]) ||
+                if (result.Outcome != GoalOutcome.RepairedUnconfirmed || !actions.SequenceEqual(["second"]) ||
                     !result.RuledOut.SequenceEqual([first.Id]) || !result.Repaired.SequenceEqual([second.Id]))
                     throw new Exception("A conclusive clear result no longer permits the next repair.");
             }

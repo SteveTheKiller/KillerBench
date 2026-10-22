@@ -116,8 +116,12 @@ internal static class SymptomTriageChecks
             throw new Exception("Unauthorized triage did not stop at the authorize hand-off: " + unauthorized.Outcome + " " + unauthorized.Detail);
         if (unauthorized.Guidance != "Authorize repairs. Call someone.") throw new Exception("Terminal and symptom guidance were not combined: " + unauthorized.Guidance);
         var resolved = await runner.RunAsync("test.symptom", new GoalRunOptions { AuthorizeRepair = true });
-        if (resolved.Outcome != GoalOutcome.Resolved || !resolved.Repaired.SequenceEqual(["test.beta"]) || !resolved.RuledOut.SequenceEqual(["test.alpha"]) || resolved.Steps.Count != 3)
-            throw new Exception("Authorized triage did not resolve: " + resolved.Outcome + " " + resolved.Detail);
+        // Without a symptom confirmation probe, a verified component repair is not a resolved symptom.
+        if (resolved.Outcome != GoalOutcome.RepairedUnconfirmed || !resolved.Repaired.SequenceEqual(["test.beta"]) || !resolved.RuledOut.SequenceEqual(["test.alpha"]) || resolved.Steps.Count != 3)
+            throw new Exception("Authorized triage must report a repaired but unconfirmed symptom: " + resolved.Outcome + " " + resolved.Detail);
+        if (resolved.GetExitCode() != 5 || resolved with { Outcome = GoalOutcome.Resolved } is not { } confirmedFix || confirmedFix.GetExitCode() != 0 ||
+            (resolved with { Outcome = GoalOutcome.RestartRequired }).GetExitCode() != 4)
+            throw new Exception("Only a confirmed symptom exits 0; a repaired but unconfirmed symptom exits 5, distinct from restart required (4).");
         var again = await runner.RunAsync("test.symptom", new GoalRunOptions { AuthorizeRepair = true });
         if (again.Outcome != GoalOutcome.NeedsHuman || again.RuledOut.Count != 2 || again.Repaired.Count != 0) throw new Exception("All-clear walk did not hand off with everything ruled out.");
         var budget = await runner.RunAsync("test.symptom", new GoalRunOptions { AuthorizeRepair = true, MaximumSteps = 1 });
