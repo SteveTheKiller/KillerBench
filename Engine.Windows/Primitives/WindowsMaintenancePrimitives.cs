@@ -120,12 +120,15 @@ public sealed class WindowsRetainFolderFilesAction : IActionPrimitive
         {
             using var source = MaintenanceDirectoryScope.Open(sourceAnchor(tokenName, target.Path), target.Path);
             if (!source.Exists) return Task.FromResult(new ActionResult(false, true, "absent", "The folder does not exist; nothing to retain."));
+            string[] files = source.EnumerateFiles(target.Filter).Take(10001).ToArray();
+            if (files.Length > 10000)
+                return Task.FromResult(new ActionResult(false, false, "more than 10000 matching files; moved 0", "The retention limit was exceeded; the source was left unchanged."));
             string retainBase = retainRoot();
             using var destination = MaintenanceDirectoryScope.Open(destinationAnchor(retainBase), retainBase, create: true, createDirectory);
             string leaf = tokenName + "-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture) + "-" + Guid.NewGuid().ToString("N");
             retained = Path.Combine(retainBase, leaf);
             destination.Descend(leaf, create: true);
-            foreach (string file in source.EnumerateFiles(target.Filter).Take(10000).ToArray())
+            foreach (string file in files)
             {
                 token.ThrowIfCancellationRequested();
                 try
@@ -142,6 +145,10 @@ public sealed class WindowsRetainFolderFilesAction : IActionPrimitive
                     if (failures.Count < 10) failures.Add(moveFile is null && dispatchMove is null ? error.Message : "A file was unavailable or could not be retained.");
                 }
             }
+            token.ThrowIfCancellationRequested();
+            if (source.EnumerateFiles(target.Filter).Any())
+                return Task.FromResult(new ActionResult(moved > 0, false, "moved " + moved + ", failed " + failed + ", retained under " + retained,
+                    "Matching files remain in the source; retention is incomplete. Inspect source and retained files before retrying."));
         }
         catch (OperationCanceledException)
         {
