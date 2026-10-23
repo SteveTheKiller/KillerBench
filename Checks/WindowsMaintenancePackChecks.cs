@@ -6,6 +6,8 @@ internal static class WindowsMaintenancePackChecks
 {
     internal static async Task RunAsync()
     {
+        await WindowsReviewRegressionChecks.RetentionLimitsAsync();
+        await WindowsReviewRegressionChecks.DeviceRestartAsync();
         await RunSpoolerCancellationChecksAsync();
         var library = WindowsPrimitiveLibrary.Create();
         var pack = WindowsMaintenancePack.Build();

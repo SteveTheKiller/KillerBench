@@ -5,6 +5,7 @@ internal static class WindowsSystemPackChecks
 {
     internal static async Task RunAsync()
     {
+        await WindowsReviewRegressionChecks.PhysicalMemoryAsync();
         var library = WindowsPrimitiveLibrary.Create();
         var pack = WindowsSystemPack.Build();
         var explorerRestart = pack.Recipes.Single(recipe => recipe.Id == "shell.explorer-restart");
@@ -75,7 +76,9 @@ internal static class WindowsSystemPackChecks
         Verdict(disk, WindowsDiskBusyProbe.Interpret(new ToolResult(0, "no samples here", "", false)), ProbeVerdict.Unknown, "typeperf no samples");
         var writers = pack.Recipes.Single(r => r.Id == "backup.vss-writers");
         const string vssWriters = "Writer name: 'System Writer'\r\n   Writer Id: {e8132975-6f93-4464-a53e-1050253ae220}\r\n   State: [1] Stable\r\n   Last error: No error\r\n\r\nWriter name: 'Registry Writer'\r\n   State: [5] Waiting for completion\r\n";
-        Verdict(writers, WindowsVssWritersProbe.Interpret(new ToolResult(0, vssWriters, "", false)), ProbeVerdict.Clear, "writers stable");
+        WindowsReviewRegressionChecks.VssStates();
+        await WindowsReviewRegressionChecks.VssSamplingAsync();
+        Verdict(writers, WindowsVssWritersProbe.Interpret(new ToolResult(0, vssWriters, "", false)), ProbeVerdict.Information, "writers active");
         Verdict(writers, WindowsVssWritersProbe.Interpret(new ToolResult(0, vssWriters.Replace("[5] Waiting for completion", "[8] Failed"), "", false)), ProbeVerdict.Attention, "writer failed");
         Verdict(writers, WindowsVssWritersProbe.Interpret(new ToolResult(0, "Writer name: 'Orphan'\r\n", "", false)), ProbeVerdict.Unknown, "writer without state");
         Verdict(writers, WindowsVssWritersProbe.Interpret(new ToolResult(1, "", "denied", false)), ProbeVerdict.Unknown, "vssadmin denied");

@@ -110,9 +110,13 @@ public sealed partial class WindowsDiskBusyProbe : IProbePrimitive
     }
 }
 
-/// <summary>Counts VSS writers that are not in a stable state. Value is the count; Raw lists writer names and states.</summary>
+/// <summary>Counts failed VSS writers, distinguishing normal backup transitions and unknown states.</summary>
 public sealed partial class WindowsVssWritersProbe : IProbePrimitive
 {
+    private readonly Func<CancellationToken, Task<ToolResult>> runCommand;
+    public WindowsVssWritersProbe(Func<CancellationToken, Task<ToolResult>>? runCommand = null) =>
+        this.runCommand = runCommand ?? (token => NativeTool.RunAsync("vssadmin.exe", ["list", "writers"], token: token));
+
     [GeneratedRegex(@"(?m)^Writer name:\s*'([^']+)'", RegexOptions.CultureInvariant)]
     private static partial Regex WriterNamePattern();
 
@@ -125,8 +129,25 @@ public sealed partial class WindowsVssWritersProbe : IProbePrimitive
     public async Task<PrimitiveResult> ObserveAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, CancellationToken token)
     {
         if (!OperatingSystem.IsWindows()) return PrimitiveResult.Unavailable("VSS inspection requires Windows.");
-        var result = await NativeTool.RunAsync("vssadmin.exe", ["list", "writers"], token: token).ConfigureAwait(false);
-        return Interpret(result);
+        if (timeout <= TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(timeout));
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(token);
+        deadline.CancelAfter(timeout);
+        var evidence = new List<string>();
+        try
+        {
+            for (int sample = 0; ; sample++)
+            {
+                var observed = Interpret(await runCommand(deadline.Token).WaitAsync(deadline.Token).ConfigureAwait(false));
+                evidence.Add(observed.Raw);
+                if (!observed.Complete || observed.Value != "InProgress" || sample == 2)
+                    return observed with { Raw = string.Join("\n", evidence) };
+                await Task.Delay(TimeSpan.FromMilliseconds(250), deadline.Token).ConfigureAwait(false);
+            }
+        }
+        catch (OperationCanceledException) when (!token.IsCancellationRequested)
+        {
+            return new PrimitiveResult(false, null, string.Join("\n", evidence), "VSS observation exceeded its time limit; writer state is unavailable.") { TimedOut = true };
+        }
     }
 
     public static PrimitiveResult Interpret(ToolResult result)
@@ -139,17 +160,20 @@ public sealed partial class WindowsVssWritersProbe : IProbePrimitive
         var names = WriterNamePattern().Matches(result.Output);
         var states = WriterStatePattern().Matches(result.Output);
         if (names.Count == 0 || names.Count != states.Count) return PrimitiveResult.Unavailable("vssadmin output did not pair every writer with a state.");
-        int unstable = 0;
+        int failed = 0, active = 0;
         var summary = new StringBuilder();
         for (int i = 0; i < names.Count; i++)
         {
-            string state = states[i].Groups[1].Value;
-            bool stable = state == "1" || state == "5";
-            if (!stable) unstable++;
+            if (!int.TryParse(states[i].Groups[1].Value, out int state) || state is < 1 or > 15)
+                return new PrimitiveResult(false, null, raw, "A VSS writer reported an unknown state; backup health is unavailable.");
+            if (state >= 6) failed++;
+            else if (state >= 2) active++;
             summary.Append(names[i].Groups[1].Value).Append(": ").Append(states[i].Groups[2].Value).Append('\n');
         }
-        return new PrimitiveResult(true, unstable.ToString(CultureInfo.InvariantCulture), summary.ToString())
-        { Detail = unstable == 0 ? "All " + names.Count + " VSS writers are stable." : unstable + " of " + names.Count + " VSS writers are not stable; backups that use them will fail until their owning service restarts." };
+        return new PrimitiveResult(true, failed > 0 ? failed.ToString(CultureInfo.InvariantCulture) : active > 0 ? "InProgress" : "0", summary.ToString())
+        { Detail = failed > 0 ? failed + " of " + names.Count + " VSS writers report a documented failure. Review the backup and writer event logs before taking action."
+            : active > 0 ? active + " VSS writer(s) are participating in backup activity. Allow the backup to finish and check again."
+            : "All " + names.Count + " VSS writers are stable." };
     }
 }
 

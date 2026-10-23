@@ -27,6 +27,7 @@ internal static class WindowsServicePackChecks
 
     internal static async Task RunAsync()
     {
+        await WindowsReviewRegressionChecks.ServiceDispatchAsync();
         var sources = WindowsServicePack.SourceRecipes;
         if (sources.Count < 60) throw new Exception("Expected the catalog to hold at least 60 plain service-start recipes; found " + sources.Count + ".");
         if (sources.Any(recipe => recipe.DiagnosticOnly || recipe.RequiresExplicitOptions)) throw new Exception("A diagnostic-only or option-dependent recipe entered the service pack.");

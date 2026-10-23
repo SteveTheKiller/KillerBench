@@ -5,6 +5,7 @@ internal static class WindowsPowerShellBindingChecks
 {
     internal static async Task RunAsync()
     {
+        await WindowsReviewRegressionChecks.AppxIdentityAsync();
         string[] identities = ["Ethernet", "Ethernet 2", "Ethernet (Lab)", "Ethernet #2", @"PCI\VEN_1234&DEV_5678\1", "Adapter';throw 'CODE_EXECUTED", "Adapter$(throw 'CODE_EXECUTED')"];
         foreach (string identity in identities)
         {

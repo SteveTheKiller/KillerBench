@@ -108,7 +108,8 @@ public static class WindowsSystemPack
             new ProbeSpec("vss.unstable-writers", None, new ExpectSpec(
             [
                 new ExpectClause("equals", "0", ProbeVerdict.Clear),
-                new ExpectClause("any", "", ProbeVerdict.Attention) { Detail = "One or more VSS writers are not stable. Restarting the service that owns each failed writer usually clears it; the writer list in the evidence names them." }
+                new ExpectClause("equals", "InProgress", ProbeVerdict.Information) { Detail = "VSS writers are participating in backup activity. Allow the backup to finish and check again; do not interrupt its services." },
+                new ExpectClause("any", "", ProbeVerdict.Attention) { Detail = "One or more VSS writers report a documented failure. Review backup status and writer event logs before recovery; wait for active backups to finish before changing services." }
             ])) { Name = "VSS writers" })
         {
             Symptoms = ["backup.vss-writer-failed"],
