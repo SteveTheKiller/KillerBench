@@ -30,6 +30,7 @@ public partial class MainWindow
         ReviewLargeFilesButton.IsEnabled = false;
         CancelButton.IsEnabled = true;
         BeginWorkflowOutput(WorkflowKind.Storage);
+        SetScanLight("running", "Reviewing the selected folder. No files are changed.");
         AppendWorkflowOutput(duplicates ? "Reviewing duplicate files without changing them..." : "Reviewing large files without changing them...");
         try
         {
@@ -38,6 +39,7 @@ public partial class MainWindow
             if (duplicates)
             {
                 DuplicateFileReviewResult result = await DuplicateFileReview.ScanAsync(folder, token: stop.Token);
+                stop.Token.ThrowIfCancellationRequested();
                 complete = result.Complete;
                 var text = new StringBuilder("DUPLICATE FILE REVIEW\nFolder: " + result.Root + "\nFiles examined: " + result.FilesExamined + "\nFiles large enough to compare: " + result.CandidateFiles + "\nDuplicate groups: " + result.Groups.Count + "\n\n");
                 foreach (DuplicateFileGroup group in result.Groups)
@@ -49,6 +51,7 @@ public partial class MainWindow
             else
             {
                 LargeFileReviewResult result = await LargeFileReview.ScanAsync(folder, token: stop.Token);
+                stop.Token.ThrowIfCancellationRequested();
                 complete = result.Complete;
                 var text = new StringBuilder("LARGE FILE REVIEW\nFolder: " + result.Root + "\nFiles examined: " + result.FilesExamined + "\nLarge files: " + result.Files.Count + "\n\n");
                 foreach (LargeFile file in result.Files) text.AppendLine(file.Length + " bytes | " + file.LastWriteTimeUtc.ToString("O") + " | " + file.Path);
@@ -57,19 +60,33 @@ public partial class MainWindow
                     result.FilesExamined, "Large files", result.Files.Count);
             }
         }
-        catch (OperationCanceledException) { AppendWorkflowOutput("Folder review stopped. No files changed."); }
+        catch (OperationCanceledException)
+        { CompleteStoppedFileReview(duplicates, folder, "canceled", "Folder review stopped before a complete result was available."); }
         catch (Exception error) when (error is ArgumentException or DirectoryNotFoundException or IOException or UnauthorizedAccessException)
-        { AppendWorkflowOutput("Folder review unavailable: " + error.Message); }
+        { CompleteStoppedFileReview(duplicates, folder, "unavailable", error.Message); }
         finally
         {
             readCancellation = null;
-            workflowOutputActive = false;
-            SourcesList.IsEnabled = true;
-            SearchBox.IsEnabled = true;
+            CompleteWorkflowOutput();
             ReviewDuplicatesButton.IsEnabled = true;
             ReviewLargeFilesButton.IsEnabled = true;
             CancelButton.IsEnabled = false;
         }
+    }
+
+    private void CompleteStoppedFileReview(bool duplicates, string folder, string outcome, string detail)
+    {
+        string title = duplicates ? "Duplicate file review" : "Large file review";
+        string status = title + " " + outcome + ". Coverage is incomplete. No files changed.";
+        AppendWorkflowOutput(status + "\nFolder: " + folder + "\n" + detail);
+        RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Storage, Environment.MachineName, DateTimeOffset.UtcNow,
+            status,
+            [new WorkflowCheck("Selected folder", CheckState.Information, folder),
+             new WorkflowCheck("Files examined", CheckState.Unknown, "No completed file count is available for this attempt."),
+             new WorkflowCheck("Review coverage", CheckState.Unknown, detail + " This attempt does not establish that every file was examined.")],
+            [], "Read-only file review. No journal was written."), title);
+        Report(status);
+        SetScanLight("incomplete", status);
     }
 
     private void CompleteFileReview(string title, bool complete, string rawOutput, int filesExamined,
