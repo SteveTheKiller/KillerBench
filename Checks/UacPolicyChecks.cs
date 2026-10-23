@@ -37,7 +37,7 @@ internal static class UacPolicyChecks
                 "Incomplete or unrecognized UAC evidence fails closed");
         }
 
-        string source = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "Engine", "Security", "UacPolicyDiagnostics.cs"));
+        string source = File.ReadAllText(CheckSource.Find(Path.Combine("Engine", "Security", "UacPolicyDiagnostics.cs")));
         Require(!source.Contains("SetValue", StringComparison.Ordinal) && !source.Contains("DeleteValue", StringComparison.Ordinal) &&
             !source.Contains("CreateSubKey", StringComparison.Ordinal), "UAC collector contains no registry mutation");
         foreach (string excluded in new[] { "WindowsIdentity.GetCurrent", "CredRead", "CredentialCache", "GetTokenInformation", "ProcessStartInfo" })

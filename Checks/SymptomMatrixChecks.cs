@@ -49,11 +49,12 @@ internal static partial class SymptomMatrixChecks
 
     private static string? Find(string name)
     {
-        for (var directory = new DirectoryInfo(AppContext.BaseDirectory); directory is not null; directory = directory.Parent)
-        {
-            string candidate = Path.Combine(directory.FullName, name);
-            if (File.Exists(candidate)) return candidate;
-        }
+        foreach (string start in new[] { Directory.GetCurrentDirectory(), AppContext.BaseDirectory })
+            for (var directory = new DirectoryInfo(start); directory is not null; directory = directory.Parent)
+            {
+                string candidate = Path.Combine(directory.FullName, name);
+                if (File.Exists(candidate)) return candidate;
+            }
         return null;
     }
 }

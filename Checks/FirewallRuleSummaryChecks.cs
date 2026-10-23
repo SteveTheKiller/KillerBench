@@ -38,7 +38,7 @@ internal static class FirewallRuleSummaryChecks
             Require(FirewallRuleSummaryDiagnostics.Interpret(evidence).State == CheckState.Unknown,
                 "Failed, truncated or timed-out collection remains unknown");
 
-        string source = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "Engine", "Network", "FirewallRuleSummaryDiagnostics.cs"));
+        string source = File.ReadAllText(CheckSource.Find(Path.Combine("Engine", "Network", "FirewallRuleSummaryDiagnostics.cs")));
         foreach (string excluded in new[] { "DisplayName", "DisplayGroup", "Program", "LocalPort", "RemotePort", "LocalAddress", "RemoteAddress", "Owner", "Package" })
             Require(!source.Contains("Select-Object " + excluded, StringComparison.Ordinal), "Native query excludes " + excluded);
         Require(!source.Contains("Set-NetFirewall", StringComparison.OrdinalIgnoreCase) &&
