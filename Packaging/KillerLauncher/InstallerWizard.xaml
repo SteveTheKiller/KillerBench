@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:icons="clr-namespace:KillerLauncher"
         xmlns:local="clr-namespace:KillerLauncher"
+        xmlns:accessibility="clr-namespace:KillerFamily.Accessibility"
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         Title="{local:Loc SetupTitle}" Width="650" MinHeight="390" SizeToContent="Height"
         WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize"
@@ -111,7 +112,7 @@
             <Grid.ColumnDefinitions><ColumnDefinition Width="152"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
             <Border x:Name="FrameGrain" Grid.ColumnSpan="2" CornerRadius="7" IsHitTestVisible="False" Opacity="0.24"/>
 
-            <Border Grid.Column="0" Background="#1c1c1c" CornerRadius="7,0,0,7">
+            <Border x:Name="SidebarCard" Grid.Column="0" Background="#1c1c1c" CornerRadius="7,0,0,7">
                 <Grid>
                     <Border x:Name="SidebarGrain" CornerRadius="7,0,0,7" IsHitTestVisible="False" Opacity="0.24"/>
                     <Grid Margin="22,16,14,16">
@@ -204,8 +205,11 @@
                 </Border>
             </Grid>
 
-            <Grid x:Name="NoticeOverlay" Grid.ColumnSpan="2" Panel.ZIndex="20" Visibility="Collapsed"
-                  Background="#B8000000">
+            <accessibility:ModalOverlayPanel x:Name="NoticeOverlay" Grid.ColumnSpan="2" Panel.ZIndex="20" Visibility="Collapsed"
+                  Background="#B8000000" FocusManager.IsFocusScope="True"
+                  DismissRequested="NoticeOk_Click"
+                  AutomationProperties.Name="{Binding Text, ElementName=NoticeHeading}"
+                  AutomationProperties.HelpText="{Binding Text, ElementName=NoticeMessage}">
                 <Border Width="390" MinHeight="150" Padding="22,18,22,16" HorizontalAlignment="Center"
                         VerticalAlignment="Center" Background="#303030" BorderBrush="#515151"
                         BorderThickness="1" CornerRadius="6">
@@ -228,7 +232,7 @@
                                 HorizontalAlignment="Right" IsDefault="True" Click="NoticeOk_Click"/>
                     </Grid>
                 </Border>
-            </Grid>
+            </accessibility:ModalOverlayPanel>
         </Grid>
     </Border>
 </Window>
