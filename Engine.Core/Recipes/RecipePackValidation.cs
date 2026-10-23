@@ -68,15 +68,18 @@ public static class RecipePackValidation
                 if (!RecipeOptions.IsValidName(option.Name)) Issue(id, "Option name '" + option.Name + "' must be a short lower-case identifier.");
                 else if (!optionNames.Add(option.Name)) Issue(id, "Duplicate option '" + option.Name + "'.");
                 if (string.IsNullOrWhiteSpace(option.Description)) Issue(id, "Option '" + option.Name + "' needs a description.");
+                bool validDefault = option.Default is null || (option.Default.Length <= 512 && !option.Default.Any(char.IsControl));
+                if (!validDefault) Issue(id, "Option '" + option.Name + "' has a default that is too long or contains control characters.");
                 if (option.Pattern is not null)
                 {
                     try
                     {
                         _ = new Regex(option.Pattern, RegexOptions.None, TimeSpan.FromMilliseconds(100));
-                        if (option.Default is not null && !Regex.IsMatch(option.Default, "^(?:" + option.Pattern + ")$", RegexOptions.None, TimeSpan.FromMilliseconds(100)))
+                        if (validDefault && option.Default is not null && !Regex.IsMatch(option.Default, "^(?:" + option.Pattern + ")$", RegexOptions.None, TimeSpan.FromMilliseconds(100)))
                             Issue(id, "Option '" + option.Name + "' has a default that does not match its pattern.");
                     }
                     catch (ArgumentException) { Issue(id, "Option '" + option.Name + "' has an invalid pattern."); }
+                    catch (RegexMatchTimeoutException) { Issue(id, "Option '" + option.Name + "' pattern exceeded its validation time limit."); }
                 }
             }
             foreach (string reference in RecipeOptions.References(recipe))

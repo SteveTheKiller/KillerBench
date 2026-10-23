@@ -57,6 +57,7 @@ internal static class RecipePackChecks
 
     internal static async Task RunAsync()
     {
+        ValidationBounds();
         // Validation without a library.
         var valid = RecipePackValidation.Validate(Pack(ServiceRecipe()));
         if (!valid.IsValid) throw new Exception("Valid pack reported issues: " + string.Join("; ", valid.Issues.Select(i => i.Message)));
@@ -131,6 +132,34 @@ internal static class RecipePackChecks
         // Runner: clear, unauthorized, blocked, recheck cleared, repaired, unverified, not dispatched, timeout, canceled, elevation.
         await RunnerAsync();
         Console.WriteLine("PASS: recipe pack schema, validation, strict JSON, expectation evaluation and runner paths; fixtures only.");
+    }
+
+    internal static void ValidationBounds()
+    {
+        var recipe = ServiceRecipe(withAction: false) with
+        {
+            Options = [new RecipeOption("target", "Target to inspect") { Default = new string('a', 513), Pattern = "a+" }]
+        };
+        var result = RecipePackValidation.Validate(Pack(recipe));
+        if (result.IsValid || !result.Issues.Any(issue => issue.Message.Contains("default", StringComparison.OrdinalIgnoreCase)))
+            throw new Exception("An option default beyond the runtime length bound was accepted by pack validation.");
+        recipe = recipe with { Options = [recipe.Options[0] with { Default = new string('a', 64) + "!", Pattern = "(a+)+" }] };
+        result = RecipePackValidation.Validate(Pack(recipe));
+        if (result.IsValid || !result.Issues.Any(issue => issue.Message.Contains("time", StringComparison.OrdinalIgnoreCase)))
+            throw new Exception("An expensive valid option pattern must produce a controlled pack validation issue.");
+        recipe = recipe with { Options = [recipe.Options[0] with { Default = null }] };
+        var problems = RecipeOptions.Resolve(recipe, new Dictionary<string, string> { ["target"] = new string('a', 64) + "!" }, out var values);
+        if (!problems.Any(problem => problem.Contains("time", StringComparison.OrdinalIgnoreCase)) || values.Count != 0)
+            throw new Exception("An expensive caller-supplied option must remain unresolved with a controlled problem.");
+        foreach (int length in new[] { 511, 512, 513 })
+        {
+            recipe = recipe with { Options = [recipe.Options[0] with { Default = new string('a', length), Pattern = "a+" }] };
+            result = RecipePackValidation.Validate(Pack(recipe));
+            if (result.IsValid != (length <= 512)) throw new Exception("Pack default length boundary was incorrect.");
+            problems = RecipeOptions.Resolve(recipe, null, out values);
+            if ((problems.Count == 0) != (length <= 512)) throw new Exception("Runtime option length boundary was incorrect.");
+        }
+        Console.WriteLine("PASS: pack and runtime options retain controlled timeout issues and default length bounds.");
     }
 
     private static async Task OptionsAsync(PrimitiveLibrary library)

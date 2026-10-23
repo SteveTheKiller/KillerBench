@@ -43,8 +43,13 @@ public static partial class RecipeOptions
                 continue;
             }
             if (value.Length > 512 || value.Any(char.IsControl)) { problems.Add("Option '" + option.Name + "' is too long or contains control characters."); continue; }
-            if (option.Pattern is not null && !Regex.IsMatch(value, "^(?:" + option.Pattern + ")$", RegexOptions.None, TimeSpan.FromMilliseconds(100)))
-            { problems.Add("Option '" + option.Name + "' does not match its allowed pattern."); continue; }
+            try
+            {
+                if (option.Pattern is not null && !Regex.IsMatch(value, "^(?:" + option.Pattern + ")$", RegexOptions.None, TimeSpan.FromMilliseconds(100)))
+                { problems.Add("Option '" + option.Name + "' does not match its allowed pattern."); continue; }
+            }
+            catch (RegexMatchTimeoutException)
+            { problems.Add("Option '" + option.Name + "' pattern exceeded its validation time limit."); continue; }
             resolved[option.Name] = value;
         }
         if (supplied is not null)
