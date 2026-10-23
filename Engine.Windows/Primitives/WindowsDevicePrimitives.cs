@@ -182,9 +182,20 @@ public sealed class WindowsAssignDriveLetterAction : IActionPrimitive
     }
 }
 
+internal static class AppxSelection
+{
+    internal const string Functions =
+        "function ExactCurrentPackage([string]$fullName){ $found=@(Get-AppxPackage -PackageTypeFilter All -ErrorAction Stop|Where-Object{[string]$_.PackageFullName -ceq $fullName});" +
+        "if($found.Count -ne 1){throw 'Exact current-account package registration is unavailable.'}; $found[0] };";
+}
+
 /// <summary>Reports the status of one installed app package for the current account. Value is the package status such as Ok.</summary>
 public sealed partial class WindowsAppxStatusProbe : IProbePrimitive
 {
+    private readonly Func<string, CancellationToken, string[], Task<ToolResult>> runCommand;
+    public WindowsAppxStatusProbe(Func<string, CancellationToken, string[], Task<ToolResult>>? runCommand = null) =>
+        this.runCommand = runCommand ?? WindowsNetAdapterPrimitives.RunAsync;
+
     [GeneratedRegex("^[A-Za-z, ]+$")]
     private static partial Regex PackageStatusPattern();
 
@@ -192,14 +203,14 @@ public sealed partial class WindowsAppxStatusProbe : IProbePrimitive
     public static readonly PrimitiveParameter FullNameParameter = new("package", true, "Exact package full name from Get-AppxPackage") { Pattern = FullNamePattern };
     public string Name => "appx.status";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [FullNameParameter];
-    private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
-        "& { param([string]$name) $p=@(Get-AppxPackage -Package $name -ErrorAction Stop); if($p.Count -ne 1){throw 'Exact package not found for this account.'}; [string]$p[0].Status }";
+    private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" + AppxSelection.Functions +
+        "& { param([string]$name) $p=ExactCurrentPackage $name; [string]$p.Status }";
 
     public async Task<PrimitiveResult> ObserveAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(parameters);
         if (!OperatingSystem.IsWindows()) return PrimitiveResult.Unavailable("Package inspection requires Windows.");
-        return Interpret(await WindowsNetAdapterPrimitives.RunAsync(Script, token, parameters["package"]).ConfigureAwait(false));
+        return Interpret(await runCommand(Script, token, [parameters["package"]]).ConfigureAwait(false));
     }
 
     public static PrimitiveResult Interpret(ToolResult result) => WindowsNetAdapterPrimitives.Lines(result, "Get-AppxPackage", lines =>
@@ -211,20 +222,25 @@ public sealed partial class WindowsAppxStatusProbe : IProbePrimitive
 /// <summary>Re-registers one installed app package for the current account from its existing install location.</summary>
 public sealed class WindowsAppxReregisterAction : IActionPrimitive
 {
+    private readonly Func<string, CancellationToken, string[], Task<ToolResult>> runCommand;
+    public WindowsAppxReregisterAction(Func<string, CancellationToken, string[], Task<ToolResult>>? runCommand = null) =>
+        this.runCommand = runCommand ?? WindowsNetAdapterPrimitives.RunAsync;
+
     public string Name => "appx.reregister";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [WindowsAppxStatusProbe.FullNameParameter];
     public RecipeRisk Risk => RecipeRisk.Persistent;
     public bool RequiresElevation => false;
-    private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
-        "& { param([string]$name) $p=@(Get-AppxPackage -Package $name -ErrorAction Stop); if($p.Count -ne 1){throw 'Exact package not found for this account.'}; " +
-        "$m=Join-Path $p[0].InstallLocation 'AppxManifest.xml'; if(-not (Test-Path $m)){throw 'AppxManifest.xml is missing from the install location.'}; " +
+    private const string Script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" + AppxSelection.Functions +
+        "& { param([string]$name) $p=ExactCurrentPackage $name; " +
+        "$m=Join-Path $p.InstallLocation 'AppxManifest.xml'; if(-not (Test-Path $m)){throw 'AppxManifest.xml is missing from the install location.'}; " +
+        "$current=ExactCurrentPackage $name; if([string]$current.InstallLocation -cne [string]$p.InstallLocation){throw 'Selected package registration changed.'}; " +
         MutationBoundary.Script + "Add-AppxPackage -DisableDevelopmentMode -Register $m -ErrorAction Stop; 'Registered' }";
 
     public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(parameters);
         if (!OperatingSystem.IsWindows()) return new ActionResult(false, false, "", "Package changes require Windows.");
-        var result = await WindowsNetAdapterPrimitives.RunAsync(Script, token, parameters["package"]).ConfigureAwait(false);
+        var result = await runCommand(Script, token, [parameters["package"]]).ConfigureAwait(false);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
         if (result.TimedOut) return new ActionResult(true, false, raw, "Add-AppxPackage timed out.") { TimedOut = true };
         if (result.ExitCode != 0) return MutationBoundary.Failed(result, raw, "Add-AppxPackage failed: " + result.Error.Trim());

@@ -2,6 +2,11 @@ namespace KillerBench.Engine.Windows.Automation;
 
 public sealed class WindowsMacePackageRemovalHost : IMacePackageRemovalHost
 {
+    private readonly Func<string, CancellationToken, string[], Task<ToolResult>> runCommand;
+    public WindowsMacePackageRemovalHost(Func<string, CancellationToken, string[], Task<ToolResult>>? runCommand = null) =>
+        this.runCommand = runCommand ?? ((script, token, arguments) => BoundedTool.RunAsync(new RepairStep(PrintRecovery.Tool,
+            ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", script, .. arguments], false), TimeSpan.FromMinutes(2), token: token));
+
     public Task<MaceRemovalReview> ReviewAsync(MaceReviewOptions options, CancellationToken token) =>
         MacePlanning.ReviewCurrentAsync(options, token: token);
 
@@ -11,15 +16,12 @@ public sealed class WindowsMacePackageRemovalHost : IMacePackageRemovalHost
         if (!OperatingSystem.IsWindows())
             throw new PlatformNotSupportedException("App package removal requires Windows.");
 
-        const string script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" +
+        const string script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';" + AppxSelection.Functions +
             "& { param([string]$packageFullName) " +
-            "$package=@(Get-AppxPackage -Package $packageFullName -ErrorAction Stop);" +
-            "if($package.Count-ne 1){throw 'Exact current-account package registration is unavailable.'};" +
-            "if([string]$package[0].PackageFullName -cne $packageFullName){throw 'Exact package identity changed.'};" +
+            "$package=ExactCurrentPackage $packageFullName;" +
+            "$current=ExactCurrentPackage $packageFullName; if([string]$current.InstallLocation -cne [string]$package.InstallLocation){throw 'Selected package registration changed.'};" +
             "Remove-AppxPackage -Package $packageFullName -ErrorAction Stop|Out-Null }";
-        return BoundedTool.RunAsync(new RepairStep(PrintRecovery.Tool,
-            ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", script, packageFullName], false),
-            TimeSpan.FromMinutes(2), token: token);
+        return runCommand(script, token, [packageFullName]);
     }
 
     private static void ValidatePackageFullName(string value)
