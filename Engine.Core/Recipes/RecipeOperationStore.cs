@@ -28,13 +28,14 @@ public interface IRecipeOperationLease : IDisposable
     Task CompleteAsync(CancellationToken token = default);
     /// <summary>Records that the dispatched action reported success but needs a restart, and the boot it ran in.
     /// Only a record written this way can later be verified after a newer boot.</summary>
-    Task RecordRestartRequiredAsync(DateTimeOffset bootUtc, CancellationToken token = default);
+    Task RecordRestartRequiredAsync(string? bootIdentity, IReadOnlyDictionary<string, string> recoveryParameters, CancellationToken token = default);
 }
 
 /// <summary>Exclusive hold on a pending restart-required record. Completing it archives the record.</summary>
 public interface IRecipeRestartRecovery : IDisposable
 {
-    DateTimeOffset RestartRequiredBootUtc { get; }
+    string RestartRequiredBootIdentity { get; }
+    IReadOnlyDictionary<string, string> RecoveryParameters { get; }
     Task CompleteAsync(CancellationToken token = default);
 }
 
@@ -52,7 +53,10 @@ public interface IRecipeOperationStore
 /// <summary>Explicitly selected non-durable barrier for fixtures. Process exit loses its recovery state.</summary>
 public sealed class MemoryRecipeOperationStore : IRecipeOperationStore
 {
-    private sealed record Pending(RecipeOperationIdentity Identity, DateTimeOffset? RestartRequiredBootUtc);
+    private sealed record Pending(RecipeOperationIdentity Identity, string? RestartRequiredBootIdentity)
+    {
+        public IReadOnlyDictionary<string, string> RecoveryParameters { get; init; } = new Dictionary<string, string>();
+    }
     private readonly ConcurrentDictionary<string, Pending> pending = new(StringComparer.Ordinal);
     private readonly ConcurrentDictionary<string, byte> held = new(StringComparer.Ordinal);
 
@@ -71,9 +75,9 @@ public sealed class MemoryRecipeOperationStore : IRecipeOperationStore
     public Task<IRecipeRestartRecovery?> TryOpenRestartRecoveryAsync(RecipeOperationIdentity identity, CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
-        if (!pending.TryGetValue(identity.Key, out var record) || record.RestartRequiredBootUtc is not { } boot || !held.TryAdd(identity.Key, 0))
+        if (!pending.TryGetValue(identity.Key, out var record) || record.Identity != identity || string.IsNullOrWhiteSpace(record.RestartRequiredBootIdentity) || !held.TryAdd(identity.Key, 0))
             return Task.FromResult<IRecipeRestartRecovery?>(null);
-        return Task.FromResult<IRecipeRestartRecovery?>(new Recovery(this, identity.Key, boot));
+        return Task.FromResult<IRecipeRestartRecovery?>(new Recovery(this, identity.Key, record.RestartRequiredBootIdentity, record.RecoveryParameters));
     }
 
     private sealed class Lease(MemoryRecipeOperationStore owner, string key) : IRecipeOperationLease
@@ -86,20 +90,21 @@ public sealed class MemoryRecipeOperationStore : IRecipeOperationStore
             owner.pending.TryRemove(key, out _);
             return Task.CompletedTask;
         }
-        public Task RecordRestartRequiredAsync(DateTimeOffset bootUtc, CancellationToken token = default)
+        public Task RecordRestartRequiredAsync(string? bootIdentity, IReadOnlyDictionary<string, string> recoveryParameters, CancellationToken token = default)
         {
             token.ThrowIfCancellationRequested();
             if (Volatile.Read(ref closed) != 0) throw new InvalidOperationException("The operation lease is already closed.");
-            owner.pending[key] = owner.pending[key] with { RestartRequiredBootUtc = bootUtc };
+            owner.pending[key] = owner.pending[key] with { RestartRequiredBootIdentity = bootIdentity, RecoveryParameters = new Dictionary<string, string>(recoveryParameters) };
             return Task.CompletedTask;
         }
         public void Dispose() => Interlocked.Exchange(ref closed, 1);
     }
 
-    private sealed class Recovery(MemoryRecipeOperationStore owner, string key, DateTimeOffset boot) : IRecipeRestartRecovery
+    private sealed class Recovery(MemoryRecipeOperationStore owner, string key, string boot, IReadOnlyDictionary<string, string> parameters) : IRecipeRestartRecovery
     {
         private int closed;
-        public DateTimeOffset RestartRequiredBootUtc => boot;
+        public string RestartRequiredBootIdentity => boot;
+        public IReadOnlyDictionary<string, string> RecoveryParameters => parameters;
         public Task CompleteAsync(CancellationToken token = default)
         {
             token.ThrowIfCancellationRequested();
@@ -162,20 +167,26 @@ public sealed class FileRecipeOperationStore(string directory) : IRecipeOperatio
             using var document = JsonDocument.Parse(await File.ReadAllBytesAsync(pending, token).ConfigureAwait(false));
             var record = document.RootElement;
             // Anything other than a complete restart record for this exact identity stays pending.
-            if (record.ValueKind != JsonValueKind.Object || !record.TryGetProperty("Schema", out var schema) || schema.ValueKind != JsonValueKind.Number || schema.GetInt32() != 1 ||
+            if (record.ValueKind != JsonValueKind.Object || !record.TryGetProperty("Schema", out var schema) || schema.ValueKind != JsonValueKind.Number || schema.GetInt32() != 2 ||
                 !record.TryGetProperty("Identity", out var stored) || stored.Deserialize<RecipeOperationIdentity>() is not { } storedIdentity || storedIdentity != identity ||
-                !record.TryGetProperty("RestartRequiredBootUtc", out var bootValue) || bootValue.ValueKind != JsonValueKind.String || !bootValue.TryGetDateTimeOffset(out var boot))
+                !record.TryGetProperty("RestartRequiredBootIdentity", out var bootValue) || bootValue.ValueKind != JsonValueKind.String ||
+                string.IsNullOrWhiteSpace(bootValue.GetString()) || bootValue.GetString()!.Length > 256)
             { gate.Dispose(); return null; }
-            return new Recovery(gate, pending, boot);
+            var parameters = record.TryGetProperty("RecoveryParameters", out var data)
+                ? data.Deserialize<Dictionary<string, string>>() : new Dictionary<string, string>();
+            if (parameters is null || parameters.Count > 32 || parameters.Any(pair => pair.Key.Length > 64 || pair.Value is null || pair.Value.Length > 256))
+            { gate.Dispose(); return null; }
+            return new Recovery(gate, pending, bootValue.GetString()!, parameters);
         }
         catch (Exception error) when (error is JsonException or IOException or UnauthorizedAccessException or InvalidOperationException or FormatException)
         { gate.Dispose(); return null; }
     }
 
-    private sealed class Recovery(FileStream gate, string pending, DateTimeOffset boot) : IRecipeRestartRecovery
+    private sealed class Recovery(FileStream gate, string pending, string boot, IReadOnlyDictionary<string, string> parameters) : IRecipeRestartRecovery
     {
         private int closed;
-        public DateTimeOffset RestartRequiredBootUtc => boot;
+        public string RestartRequiredBootIdentity => boot;
+        public IReadOnlyDictionary<string, string> RecoveryParameters => parameters;
         public Task CompleteAsync(CancellationToken token = default)
         {
             token.ThrowIfCancellationRequested();
@@ -210,14 +221,14 @@ public sealed class FileRecipeOperationStore(string directory) : IRecipeOperatio
             File.Move(pending, pending + "." + Guid.NewGuid().ToString("N") + ".completed");
             return Task.CompletedTask;
         }
-        public async Task RecordRestartRequiredAsync(DateTimeOffset bootUtc, CancellationToken token = default)
+        public async Task RecordRestartRequiredAsync(string? bootIdentity, IReadOnlyDictionary<string, string> recoveryParameters, CancellationToken token = default)
         {
             token.ThrowIfCancellationRequested();
             if (Volatile.Read(ref closed) != 0) throw new InvalidOperationException("The operation lease is already closed.");
             string staged = pending + "." + Guid.NewGuid().ToString("N") + ".tmp";
             await using (var stream = new FileStream(staged, FileMode.CreateNew, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous | FileOptions.WriteThrough))
             {
-                byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(new { Schema = 1, Identity = identity, PreparedUtc = prepared, RestartRequiredBootUtc = bootUtc });
+                byte[] bytes = JsonSerializer.SerializeToUtf8Bytes(new { Schema = 2, Identity = identity, PreparedUtc = prepared, RestartRequiredBootIdentity = bootIdentity, RecoveryParameters = recoveryParameters });
                 await stream.WriteAsync(bytes, token).ConfigureAwait(false);
                 stream.Flush(true);
             }

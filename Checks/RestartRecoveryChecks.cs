@@ -11,6 +11,11 @@ internal static class RestartRecoveryChecks
 {
     internal static async Task RunAsync(string scratch)
     {
+        if (OperatingSystem.IsWindows())
+        {
+            string? firstIdentity = WindowsBootIdentity.Read();
+            Require(firstIdentity is not null && firstIdentity == WindowsBootIdentity.Read(), "The read-only Windows boot identifier must be available and stable within one boot.");
+        }
         string root = Path.Combine(scratch, "restart-recovery-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(root);
         var boot = new DateTimeOffset(2026, 10, 21, 8, 0, 0, TimeSpan.Zero);
@@ -22,10 +27,11 @@ internal static class RestartRecoveryChecks
         int dispatches = 0;
         ActionResult Outcome() => new(true, true, "") { RestartRequired = true };
         Func<ActionResult> action = Outcome;
+        string? bootIdentity = "boot-one";
         var library = new PrimitiveLibrary("Fixture").AddProbe(new StateProbe(() => state)).AddAction(new CountingAction(() => { dispatches++; return action(); }));
         Task<RecipeRunResult> Run(DateTimeOffset bootTime, bool authorize = true) =>
             new RecipeRunner(library, new MemoryRecipeJournal(), new FileRecipeOperationStore(root))
-                .RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = authorize, BootTimeUtc = () => bootTime });
+                .RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = authorize, BootTimeUtc = () => bootTime, BootIdentity = () => bootIdentity });
         var identity = RecipeOperationIdentity.FromResolvedRecipe(recipe);
 
         var first = await Run(boot);
@@ -35,6 +41,15 @@ internal static class RestartRecoveryChecks
         var sameBoot = await Run(boot);
         Require(sameBoot.Outcome == RecipeRunOutcome.Unknown && dispatches == 1 && sameBoot.Detail.Contains("Restart Windows", StringComparison.Ordinal) &&
             await new FileRecipeOperationStore(root).IsPendingAsync(identity), "Before a restart the barrier stays and says to restart: " + sameBoot.Detail);
+        var clockShift = await Run(boot.AddSeconds(60));
+        Require(clockShift.Outcome == RecipeRunOutcome.Unknown && await new FileRecipeOperationStore(root).IsPendingAsync(identity),
+            "A same-boot wall-clock correction must not verify a restart-required repair: " + clockShift.Outcome);
+        var backward = await Run(boot.AddHours(-2));
+        Require(backward.Outcome == RecipeRunOutcome.Unknown, "A backward clock correction must not count as a restart.");
+        bootIdentity = null;
+        var unavailable = await Run(later);
+        Require(unavailable.Outcome == RecipeRunOutcome.Unknown, "Unavailable identity must retain recovery uncertainty.");
+        bootIdentity = "boot-two";
         state = "repairable";
         var notFixed = await Run(later);
         Require(notFixed.Outcome != RecipeRunOutcome.Repaired && dispatches == 1 && await new FileRecipeOperationStore(root).IsPendingAsync(identity),

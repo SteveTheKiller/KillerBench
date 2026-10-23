@@ -13,6 +13,8 @@ public sealed record PrimitiveResult(bool Complete, string? Value, string Raw, s
 /// <summary>Result of a machine-changing primitive.</summary>
 public sealed record ActionResult(bool Dispatched, bool Succeeded, string Raw, string? Error = null)
 {
+    /// <summary>Small nonsecret observation watermarks used only for operation-specific restart verification.</summary>
+    public IReadOnlyDictionary<string, string> RecoveryParameters { get; init; } = new Dictionary<string, string>();
     public bool RestartRequired { get; init; }
     public bool TimedOut { get; init; }
 }
@@ -55,6 +57,8 @@ public sealed class PrimitiveLibrary
     }
 
     public string Platform { get; }
+    /// <summary>Stable platform boot identity. Null means automatic restart reconciliation is unavailable.</summary>
+    public Func<string?>? BootIdentity { get; init; }
     public IReadOnlyCollection<IProbePrimitive> Probes => probes.Values;
     public IReadOnlyCollection<IActionPrimitive> Actions => actions.Values;
 

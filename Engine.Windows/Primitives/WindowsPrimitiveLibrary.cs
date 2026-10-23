@@ -7,7 +7,7 @@ public static class WindowsPrimitiveLibrary
 {
     public const string Platform = "Windows";
 
-    public static PrimitiveLibrary Create() => new PrimitiveLibrary(Platform)
+    public static PrimitiveLibrary Create() => new PrimitiveLibrary(Platform) { BootIdentity = WindowsBootIdentity.Read }
         .AddProbe(new WindowsServiceCheckProbe())
         .AddProbe(new WindowsServiceRunningProbe())
         .AddProbe(new WindowsRegistryValueProbe())

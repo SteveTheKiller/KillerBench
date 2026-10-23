@@ -40,6 +40,8 @@ public sealed record RecipeDefinition(
     public ActionSpec? Action { get; init; }
     /// <summary>Probe evaluated after the action. Null falls back to Detect.</summary>
     public ProbeSpec? Verify { get; init; }
+    /// <summary>Operation-specific verification after a different boot. Receives persisted observation watermarks.</summary>
+    public ProbeSpec? RestartVerify { get; init; }
     /// <summary>Action that undoes the repair when a real undo exists. Null means no rollback is claimed.</summary>
     public ActionSpec? Rollback { get; init; }
     public RecipeRisk Risk { get; init; } = RecipeRisk.ReadOnly;
