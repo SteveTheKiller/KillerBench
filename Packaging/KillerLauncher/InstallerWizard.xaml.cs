@@ -13,6 +13,8 @@ namespace KillerLauncher
     {
         private int _page;
         private bool _installed;
+        private bool _installing;
+        private int _exitCode = KillerFamily.Deployment.InstallerExitCodes.Cancelled;
         private bool _closeAfterNotice;
         private string _installedDirectory = string.Empty;
         private readonly Program.InstalledCopy? _existing;
@@ -20,6 +22,7 @@ namespace KillerLauncher
         private InstallerWizard()
         {
             InitializeComponent();
+            Closing += (_, e) => { if (_installing) e.Cancel = true; };
             TaskbarIdentity.Track(this);
             SetupVersionLabel.Text = typeof(InstallerWizard).Assembly.GetName().Version!.ToString(3);
             _existing = Program.FindInstalledCopy();
@@ -41,10 +44,12 @@ namespace KillerLauncher
         {
             var application = new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
             var wizard = new InstallerWizard();
-            bool? result = wizard.ShowDialog();
+            wizard.ShowDialog();
             application.Shutdown();
-            return result == true ? KillerFamily.Deployment.InstallerExitCodes.Success : KillerFamily.Deployment.InstallerExitCodes.Cancelled;
+            return wizard.ExitCode;
         }
+
+        internal int ExitCode => _exitCode;
 
         internal static int ShowFailure(string message, int exitCode = KillerFamily.Deployment.InstallerExitCodes.Failure)
         {
@@ -120,6 +125,7 @@ namespace KillerLauncher
 
         private async void Next_Click(object sender, RoutedEventArgs e)
         {
+            if (_installing) return;
             if (_installed)
             {
                 Process.Start(new ProcessStartInfo(Program.InstalledExecutable(_installedDirectory)) { UseShellExecute = true });
@@ -148,7 +154,7 @@ namespace KillerLauncher
             }
             try
             {
-                NextButton.IsEnabled = BackButton.IsEnabled = CancelButton.IsEnabled = false;
+                SetInstalling(true);
                 Heading.Text = LauncherStrings.Get("Installing");
                 Copy.Text = LauncherStrings.Get("InstallingCopy");
                 RuntimeStatus.Visibility = Visibility.Collapsed;
@@ -158,20 +164,34 @@ namespace KillerLauncher
                     : Program.Install(false, desktop, installDirectory));
                 await Task.WhenAll(install, Task.Delay(2000));
                 int result = install.Result;
-                if (result != 0) throw new InvalidOperationException(LauncherStrings.Format("SetupReturned", result));
+                _exitCode = result;
+                if (result != 0)
+                {
+                    InstallProgress.Visibility = Visibility.Collapsed;
+                    RenderPage();
+                    ShowNotice(LauncherStrings.Get("InstallFailed"), LauncherStrings.Format("SetupReturned", result), NoticeKind.Error);
+                    return;
+                }
                 _installedDirectory = installDirectory;
                 _installed = true;
-                NextButton.IsEnabled = true;
                 InstallProgress.Visibility = Visibility.Collapsed;
                 RenderPage();
             }
             catch (Exception ex)
             {
-                NextButton.IsEnabled = BackButton.IsEnabled = CancelButton.IsEnabled = true;
+                _exitCode = KillerFamily.Deployment.InstallerExitCodes.FromException(ex);
                 InstallProgress.Visibility = Visibility.Collapsed;
                 RenderPage();
                 ShowNotice(LauncherStrings.Get("InstallFailed"), ex.Message, NoticeKind.Error);
             }
+            finally { SetInstalling(false); }
+        }
+
+        private void SetInstalling(bool value)
+        {
+            _installing = value;
+            NextButton.IsEnabled = CancelButton.IsEnabled = CloseButton.IsEnabled = UninstallButton.IsEnabled = Options.IsEnabled = !value;
+            BackButton.IsEnabled = !value && _page > 0 && !_installed;
         }
 
         private enum NoticeKind { Information, Warning, Error }
@@ -211,6 +231,7 @@ namespace KillerLauncher
 
         private void Scope_Checked(object sender, RoutedEventArgs e)
         {
+            if (_installing) return;
             if (InstallFolder == null) return;
             string user = Program.DefaultInstallDirectory(false);
             string machine = Program.DefaultInstallDirectory(true);
@@ -222,6 +243,7 @@ namespace KillerLauncher
 
         private void Browse_Click(object sender, RoutedEventArgs e)
         {
+            if (_installing) return;
             using var dialog = new System.Windows.Forms.FolderBrowserDialog
             {
                 Description = LauncherStrings.Get("ChooseFolder"),
@@ -233,17 +255,20 @@ namespace KillerLauncher
                 InstallFolder.Text = dialog.SelectedPath;
         }
 
-        private void Back_Click(object sender, RoutedEventArgs e) { if (_page > 0) { _page--; RenderPage(); } }
+        private void Back_Click(object sender, RoutedEventArgs e) { if (!_installing && _page > 0) { _page--; RenderPage(); } }
         private void Uninstall_Click(object sender, RoutedEventArgs e)
         {
-            if (_existing == null) return;
+            if (_installing || _existing == null) return;
             Process.Start(new ProcessStartInfo(_existing.Executable, "/uninstall") { UseShellExecute = true });
+            _exitCode = KillerFamily.Deployment.InstallerExitCodes.Success;
             DialogResult = true;
         }
-        private void Cancel_Click(object sender, RoutedEventArgs e) { DialogResult = false; }
+        private void Cancel_Click(object sender, RoutedEventArgs e) { if (!_installing) DialogResult = false; }
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) { if (e.LeftButton == MouseButtonState.Pressed) DragMove(); }
-        private void Website_Click(object sender, RoutedEventArgs e) =>
-            Process.Start(new ProcessStartInfo("https://thekiller.net") { UseShellExecute = true });
+        private void Website_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_installing) Process.Start(new ProcessStartInfo("https://thekiller.net") { UseShellExecute = true });
+        }
 
         internal static ImageBrush CreateGrain()
         {
