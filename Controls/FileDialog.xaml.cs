@@ -109,6 +109,7 @@ namespace KillerBench.Controls
         {
             _mode = mode;
             InitializeComponent();
+            Closed += (_, _) => CloseDirectoryListing();
             var titleFrames = BitmapDecoder.Create(
                 new Uri("pack://application:,,,/KillerBench;component/Assets/AppIcon.ico"),
                 BitmapCreateOptions.None, BitmapCacheOption.OnLoad).Frames;
@@ -537,55 +538,7 @@ namespace KillerBench.Controls
 
         // ── Navigation ───────────────────────────────────────────────────────────
 
-        private void NavigateTo(string dir)
-        {
-            if (string.IsNullOrWhiteSpace(dir) || !Directory.Exists(dir)) return;
-
-            _navigating = true;
-            _currentDir  = dir;
-            PathBox.Text = dir;
-            _raw.Clear();
-
-            try
-            {
-                // The toggle gates two things together: attribute Hidden/System AND leading-dot
-                // names - the Unix convention is all over a Windows home folder (.gradle, .ssh)
-                // and those carry no Hidden attribute. Same gate in the folder tree (FolderTree.cs).
-                foreach (var sub in Directory.EnumerateDirectories(dir))
-                {
-                    DirectoryInfo info;
-                    try { info = new DirectoryInfo(sub); } catch { continue; }
-                    if (!_showHidden)
-                    {
-                        if ((info.Attributes & (FileAttributes.Hidden | FileAttributes.System)) != 0) continue;
-                        if (info.Name.StartsWith('.')) continue;
-                    }
-                    _raw.Add(new PickerEntry(info.Name, sub, true, 0, SafeTime(() => info.LastWriteTime)));
-                }
-                if (_mode != FileDialogMode.Folder)
-                foreach (var file in Directory.EnumerateFiles(dir))
-                {
-                    FileInfo fi;
-                    try { fi = new FileInfo(file); } catch { continue; }
-                    if (!_showHidden)
-                    {
-                        if ((fi.Attributes & (FileAttributes.Hidden | FileAttributes.System)) != 0) continue;
-                        if (fi.Name.StartsWith('.')) continue;
-                    }
-                    _raw.Add(new PickerEntry(fi.Name, file, false, SafeLen(fi), SafeTime(() => fi.LastWriteTime)));
-                }
-            }
-            catch { /* unauthorized / unreadable - show what we have */ }
-
-            ApplySort();
-            UpButton.IsEnabled = Directory.GetParent(dir) != null;
-            UpdateInfoSummary();
-            SyncPlacesSelection();
-            _navigating = false;
-
-            RecordRecent(dir);
-            _ = RevealInTree(dir);
-        }
+        private void NavigateTo(string dir) => DirectoryListingTask = NavigateDirectoryAsync(dir);
 
         private static DateTime SafeTime(Func<DateTime> get)
         {
@@ -951,7 +904,7 @@ namespace KillerBench.Controls
         {
             if (e.Key != Key.Enter) return;
             var typed = PathBox.Text?.Trim();
-            if (!string.IsNullOrEmpty(typed) && Directory.Exists(typed)) NavigateTo(typed!);
+            if (!string.IsNullOrEmpty(typed)) NavigateTo(typed!);
             e.Handled = true;
         }
 
@@ -990,6 +943,7 @@ namespace KillerBench.Controls
             var leaf    = Path.GetFileName(_currentDir.TrimEnd('\\'));
             SelName.Text = leaf.Length == 0 ? _currentDir : leaf;
             SelMeta.Text = string.Format(Loc("Str_Sum_Counts"), folders, shown);
+            if (!IsDirectoryListingComplete && !string.IsNullOrWhiteSpace(_listingError)) SelMeta.Text += " | " + _listingError;
         }
 
         // ── View modes ───────────────────────────────────────────────────────────
@@ -1096,7 +1050,9 @@ namespace KillerBench.Controls
         /// Rebuilds Entries from _raw: filter applied, folders always before files, then the
         /// active sort key. Folders-first is not a sort key - it is the frame the sort runs in.
         /// </summary>
-        private void ApplySort()
+        private void ApplySort() => _ = ApplySortAsync();
+
+        private async Task ApplySortAsync()
         {
             var visible = _raw.Where(PassesFilter);
 
@@ -1110,8 +1066,7 @@ namespace KillerBench.Controls
                               : visible.OrderBy(x => !x.IsFolder).ThenByDescending(x => x.Name, StringComparer.OrdinalIgnoreCase),
             };
 
-            Entries.Clear();
-            foreach (var e in ordered) Entries.Add(e);
+            if (!await PublishListingRowsAsync(ordered.ToArray())) return;
 
             NameArrow.Text = _sortKey == 0 ? (_sortAsc ? ArrowUp : ArrowDown) : "";
             SizeArrow.Text = _sortKey == 1 ? (_sortAsc ? ArrowUp : ArrowDown) : "";
@@ -1131,6 +1086,7 @@ namespace KillerBench.Controls
         /// </summary>
         private void Accept()
         {
+            if (IsDirectoryListingBusy || !IsDirectoryListingAvailable) return;
             if (_mode == FileDialogMode.Folder)
             {
                 string folder = FileList.SelectedItem is PickerEntry { IsFolder: true } selected
