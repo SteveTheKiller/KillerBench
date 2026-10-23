@@ -27,6 +27,7 @@
     <SolidColorBrush x:Key="HeaderLineBrush" Color="#e8485a" po:Freeze="True"/>
     <SolidColorBrush x:Key="SelectionAccent" Color="#cc1a2b" po:Freeze="True"/>
     <SolidColorBrush x:Key="AccentLogo"     Color="#f8c99e" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TabActiveRingBrush"     Color="#f8c99e" po:Freeze="True"/>
     <SolidColorBrush x:Key="InstallBtnBg"   Color="#1ea54c" po:Freeze="True"/>
     <SolidColorBrush x:Key="MenuBorderBrush" Color="#633030" po:Freeze="True"/>
     <SolidColorBrush x:Key="DropBorder"     Color="#39191c" po:Freeze="True"/>

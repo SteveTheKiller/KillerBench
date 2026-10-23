@@ -54,7 +54,7 @@
     <SolidColorBrush x:Key="ScrollThumbBrush"      Color="#8800ff66" po:Freeze="True"/>
     <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#00ff66" po:Freeze="True"/>
     
-    <SolidColorBrush x:Key="TableHeaderBrush" Color="#000000" po:Freeze="True"/>
+    <SolidColorBrush x:Key="TableHeaderBrush" Color="#0a0a0a" po:Freeze="True"/>
     <SolidColorBrush x:Key="RowAltBrush"      Color="#18FFFFFF" po:Freeze="True"/>
     <SolidColorBrush x:Key="InputBorderBrush" Color="#1c1c1c" po:Freeze="True"/>
     <SolidColorBrush x:Key="InputHoverBrush"  Color="#aaaaaa" po:Freeze="True"/>

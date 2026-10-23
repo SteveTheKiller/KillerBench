@@ -69,6 +69,8 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Desktop, accessibility and localization
 
+- Black table headers match the content surface.
+
 - About can hide shortcut hints in menus and tooltips without disabling keyboard shortcuts.
 - In 98SE, menu hover fill follows the selected accent.
 - In 98SE, long paths in the file dialog no longer run under the recent-locations arrow.
