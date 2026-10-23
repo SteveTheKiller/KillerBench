@@ -58,6 +58,39 @@ internal static class FileReviewChecks
             Require(large.Complete && large.Files.Count == 5 && large.Files.All(file => file.Path != excluded)
                 && duplicates.Complete && duplicates.FilesExamined == 5 && duplicates.Groups.Count == 1,
                 "File reviews recover complete coverage and keep controlled reparse directories excluded");
+
+            var forest = new EmptyForestReader();
+            duplicates = await DuplicateFileReview.ScanAsync(root, maximumFiles: 1, directoryReader: forest);
+            Require(!duplicates.Complete && duplicates.FilesExamined == 0 && forest.DirectoriesRead < 10_001,
+                "Duplicate review bounds empty-directory traversal and preserves incomplete coverage");
+            forest = new EmptyForestReader();
+            large = await LargeFileReview.ScanAsync(root, maximumFiles: 1, directoryReader: forest);
+            Require(!large.Complete && large.FilesExamined == 0 && forest.DirectoriesRead < 10_001,
+                "Large-file review bounds empty-directory traversal and preserves incomplete coverage");
+            foreach (int count in new[] { 1, 2, 3 })
+            {
+                var limits = new FileReviewTraversalLimits { MaximumPendingDirectories = 2 };
+                duplicates = await DuplicateFileReview.ScanAsync(root, directoryReader: new EmptyForestReader(count), traversalLimits: limits);
+                Require(duplicates.Complete == (count <= 2), "Pending directory budget distinguishes below, at and above its bound");
+                limits = new FileReviewTraversalLimits { MaximumDirectories = 3 };
+                large = await LargeFileReview.ScanAsync(root, directoryReader: new EmptyForestReader(count), traversalLimits: limits);
+                Require(large.Complete == (count <= 2), "Visited directory budget includes the root and distinguishes exact coverage");
+                limits = new FileReviewTraversalLimits { MaximumDepth = 2 };
+                large = await LargeFileReview.ScanAsync(root, directoryReader: new ChainDirectoryReader(root, count), traversalLimits: limits);
+                Require(large.Complete == (count <= 2), "Depth budget distinguishes below, at and above its bound");
+            }
+            large = await LargeFileReview.ScanAsync(root, directoryReader: new SlowDirectoryReader(),
+                traversalLimits: new FileReviewTraversalLimits { MaximumDuration = TimeSpan.FromMilliseconds(1) });
+            Require(!large.Complete && large.Detail.Contains("elapsed-time", StringComparison.Ordinal), "Elapsed-time budget retains incomplete coverage after a slow provider returns");
+            using (var duringTraversal = new CancellationTokenSource())
+            {
+                try
+                {
+                    await DuplicateFileReview.ScanAsync(root, directoryReader: new CancelingDirectoryReader(duringTraversal), token: duringTraversal.Token);
+                    throw new Exception("Cancellation during directory traversal was ignored.");
+                }
+                catch (OperationCanceledException) { }
+            }
             using var canceled = new CancellationTokenSource();
             canceled.Cancel();
             try { await LargeFileReview.ScanAsync(root, token: canceled.Token, directoryReader: reader); throw new Exception("Large-file cancellation was ignored."); }
@@ -67,6 +100,48 @@ internal static class FileReviewChecks
             Console.WriteLine("PASS: public file-review scans report denied descendants, preserve accessible siblings, recover on retry, retain limits/cancellation/reparse exclusions, and change no reviewed file.");
         }
         finally { Directory.Delete(root, true); }
+    }
+
+    private sealed class SlowDirectoryReader : IFileReviewDirectoryReader
+    {
+        public IEnumerable<string> EnumerateFiles(string directory, EnumerationOptions options) => [];
+        public IEnumerable<string> EnumerateDirectories(string directory, EnumerationOptions options)
+        {
+            Thread.Sleep(20);
+            return [];
+        }
+    }
+
+    private sealed class CancelingDirectoryReader(CancellationTokenSource cancellation) : IFileReviewDirectoryReader
+    {
+        public IEnumerable<string> EnumerateFiles(string directory, EnumerationOptions options) => [];
+        public IEnumerable<string> EnumerateDirectories(string directory, EnumerationOptions options)
+        {
+            cancellation.Cancel();
+            yield return Path.Combine(directory, "child");
+        }
+    }
+
+    private sealed class ChainDirectoryReader(string root, int depth) : IFileReviewDirectoryReader
+    {
+        public IEnumerable<string> EnumerateFiles(string directory, EnumerationOptions options) => [];
+        public IEnumerable<string> EnumerateDirectories(string directory, EnumerationOptions options)
+        {
+            string relative = Path.GetRelativePath(root, directory);
+            int currentDepth = relative == "." ? 0 : relative.Split(Path.DirectorySeparatorChar).Length;
+            return currentDepth < depth ? [Path.Combine(directory, "child")] : [];
+        }
+    }
+
+    private sealed class EmptyForestReader(int children = 10_000) : IFileReviewDirectoryReader
+    {
+        internal int DirectoriesRead;
+        public IEnumerable<string> EnumerateFiles(string directory, EnumerationOptions options) => [];
+        public IEnumerable<string> EnumerateDirectories(string directory, EnumerationOptions options)
+        {
+            if (++DirectoriesRead != 1) yield break;
+            for (int index = 0; index < children; index++) yield return Path.Combine(directory, index.ToString());
+        }
     }
 
     private sealed class DenyingDirectoryReader(string denied) : IFileReviewDirectoryReader

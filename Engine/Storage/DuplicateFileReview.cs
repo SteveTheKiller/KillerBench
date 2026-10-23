@@ -14,7 +14,8 @@ public sealed record DuplicateFileReviewResult(string Root, int FilesExamined, b
 public static class DuplicateFileReview
 {
     public static async Task<DuplicateFileReviewResult> ScanAsync(string root, long minimumBytes = 1,
-        int maximumFiles = 10_000, CancellationToken token = default, IFileReviewDirectoryReader? directoryReader = null)
+        int maximumFiles = 10_000, CancellationToken token = default, IFileReviewDirectoryReader? directoryReader = null,
+        FileReviewTraversalLimits? traversalLimits = null)
     {
         if (string.IsNullOrWhiteSpace(root)) throw new ArgumentException("Choose a folder to review.", nameof(root));
         ArgumentOutOfRangeException.ThrowIfNegative(minimumBytes);
@@ -30,7 +31,7 @@ public static class DuplicateFileReview
         try
         {
             foreach (string path in FileReviewDirectoryWalker.Files(fullRoot,
-                directoryReader ?? SystemFileReviewDirectoryReader.Instance, token, () => complete = false))
+                directoryReader ?? SystemFileReviewDirectoryReader.Instance, token, () => complete = false, traversalLimits ?? new FileReviewTraversalLimits()))
             {
                 token.ThrowIfCancellationRequested();
                 if (examined >= maximumFiles) { complete = false; break; }
@@ -70,7 +71,7 @@ public static class DuplicateFileReview
         }
         string detail = complete
             ? "Exact SHA-256 duplicate review completed. Nothing was changed."
-            : "Duplicate review is incomplete because a file limit or inaccessible content was encountered. Nothing was changed.";
-        return new(fullRoot, examined, complete, groups.AsReadOnly(), detail) { CandidateFiles = candidates.Count };
+            : "Duplicate review is incomplete because a file, directory, depth, pending-directory or elapsed-time limit, or inaccessible content, was encountered. Some content was omitted. Nothing was changed.";
+        return new DuplicateFileReviewResult(fullRoot, examined, complete, groups.AsReadOnly(), detail) { CandidateFiles = candidates.Count };
     }
 }

@@ -8,7 +8,7 @@ public static class LargeFileReview
 {
     public static Task<LargeFileReviewResult> ScanAsync(string root, long minimumBytes = 100 * 1024 * 1024,
         int maximumFiles = 10_000, int resultLimit = 500, CancellationToken token = default,
-        IFileReviewDirectoryReader? directoryReader = null) => Task.Run(() =>
+        IFileReviewDirectoryReader? directoryReader = null, FileReviewTraversalLimits? traversalLimits = null) => Task.Run(() =>
     {
         if (string.IsNullOrWhiteSpace(root)) throw new ArgumentException("Choose a folder to review.", nameof(root));
         ArgumentOutOfRangeException.ThrowIfLessThan(minimumBytes, 1);
@@ -24,7 +24,7 @@ public static class LargeFileReview
         try
         {
             foreach (string path in FileReviewDirectoryWalker.Files(fullRoot,
-                directoryReader ?? SystemFileReviewDirectoryReader.Instance, token, () => complete = false))
+                directoryReader ?? SystemFileReviewDirectoryReader.Instance, token, () => complete = false, traversalLimits ?? new FileReviewTraversalLimits()))
             {
                 token.ThrowIfCancellationRequested();
                 if (examined >= maximumFiles) { complete = false; break; }
@@ -43,7 +43,7 @@ public static class LargeFileReview
         catch (UnauthorizedAccessException) { complete = false; }
         var retained = results.OrderByDescending(file => file.Length).ThenBy(file => file.Path, StringComparer.OrdinalIgnoreCase).Take(resultLimit).ToArray();
         if (results.Count > resultLimit) complete = false;
-        string detail = complete ? "Large-file review completed. Nothing was changed." : "Large-file review is incomplete because a limit or inaccessible content was encountered. Nothing was changed.";
+        string detail = complete ? "Large-file review completed. Nothing was changed." : "Large-file review is incomplete because a file, result, directory, depth, pending-directory or elapsed-time limit, or inaccessible content, was encountered. Some content was omitted. Nothing was changed.";
         return new LargeFileReviewResult(fullRoot, examined, complete, Array.AsReadOnly(retained), detail);
     }, token);
 }
