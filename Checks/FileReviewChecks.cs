@@ -67,6 +67,24 @@ internal static class FileReviewChecks
             large = await LargeFileReview.ScanAsync(root, maximumFiles: 1, directoryReader: forest);
             Require(!large.Complete && large.FilesExamined == 0 && forest.DirectoriesRead < 10_001,
                 "Large-file review bounds empty-directory traversal and preserves incomplete coverage");
+            using (var blocking = new BlockingDirectoryReader())
+            using (var returned = new ManualResetEventSlim())
+            {
+                Task<DuplicateFileReviewResult>? scan = null;
+                var caller = new Thread(() =>
+                {
+                    scan = DuplicateFileReview.ScanAsync(root, directoryReader: blocking);
+                    returned.Set();
+                });
+                caller.Start();
+                bool entered = blocking.Entered.Wait(TimeSpan.FromSeconds(5));
+                bool responsive = entered && returned.Wait(TimeSpan.FromSeconds(2));
+                blocking.Release.Set();
+                caller.Join();
+                if (scan is not null) duplicates = await scan;
+                Require(responsive && duplicates.Complete,
+                    "Duplicate traversal returns control to its caller while filesystem enumeration is blocked");
+            }
             foreach (int count in new[] { 1, 2, 3 })
             {
                 var limits = new FileReviewTraversalLimits { MaximumPendingDirectories = 2 };
@@ -100,6 +118,20 @@ internal static class FileReviewChecks
             Console.WriteLine("PASS: public file-review scans report denied descendants, preserve accessible siblings, recover on retry, retain limits/cancellation/reparse exclusions, and change no reviewed file.");
         }
         finally { Directory.Delete(root, true); }
+    }
+
+    private sealed class BlockingDirectoryReader : IFileReviewDirectoryReader, IDisposable
+    {
+        internal readonly ManualResetEventSlim Entered = new();
+        internal readonly ManualResetEventSlim Release = new();
+        public IEnumerable<string> EnumerateFiles(string directory, EnumerationOptions options) => [];
+        public IEnumerable<string> EnumerateDirectories(string directory, EnumerationOptions options)
+        {
+            Entered.Set();
+            Release.Wait(TimeSpan.FromSeconds(10));
+            return [];
+        }
+        public void Dispose() { Entered.Dispose(); Release.Dispose(); }
     }
 
     private sealed class SlowDirectoryReader : IFileReviewDirectoryReader

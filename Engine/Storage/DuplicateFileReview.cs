@@ -13,9 +13,9 @@ public sealed record DuplicateFileReviewResult(string Root, int FilesExamined, b
 
 public static class DuplicateFileReview
 {
-    public static async Task<DuplicateFileReviewResult> ScanAsync(string root, long minimumBytes = 1,
+    public static Task<DuplicateFileReviewResult> ScanAsync(string root, long minimumBytes = 1,
         int maximumFiles = 10_000, CancellationToken token = default, IFileReviewDirectoryReader? directoryReader = null,
-        FileReviewTraversalLimits? traversalLimits = null)
+        FileReviewTraversalLimits? traversalLimits = null) => Task.Run(async () =>
     {
         if (string.IsNullOrWhiteSpace(root)) throw new ArgumentException("Choose a folder to review.", nameof(root));
         ArgumentOutOfRangeException.ThrowIfNegative(minimumBytes);
@@ -73,5 +73,5 @@ public static class DuplicateFileReview
             ? "Exact SHA-256 duplicate review completed. Nothing was changed."
             : "Duplicate review is incomplete because a file, directory, depth, pending-directory or elapsed-time limit, or inaccessible content, was encountered. Some content was omitted. Nothing was changed.";
         return new DuplicateFileReviewResult(fullRoot, examined, complete, groups.AsReadOnly(), detail) { CandidateFiles = candidates.Count };
-    }
+    }, token);
 }
