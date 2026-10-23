@@ -1028,7 +1028,7 @@
           <Grid>
             <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
             <Button Content="{DynamicResource AboutCloseGlyph}" Style="{StaticResource OverlayCloseButton}" Click="OnAboutClose" HorizontalAlignment="Right" VerticalAlignment="Top" Panel.ZIndex="2" Width="{DynamicResource AboutCloseWidth}" Height="{DynamicResource AboutCloseHeight}" Margin="{DynamicResource AboutCloseMargin}"/>
-            <StackPanel Margin="18,10,18,18">
+            <StackPanel Margin="8,10,8,18">
               <Grid Margin="0,4,0,14" Width="{Binding ActualWidth, ElementName=AboutInfoGrid}">
                 <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                 <icons:AppIcon Source="pack://application:,,,/Assets/AppIcon.ico" Width="58" Height="58" Margin="0,0,15,0" RenderOptions.BitmapScalingMode="NearestNeighbor">
