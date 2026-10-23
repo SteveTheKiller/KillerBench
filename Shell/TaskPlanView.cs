@@ -62,6 +62,24 @@ public partial class MainWindow
                 : "Preview registration";
     }
 
+    private void InitializeTaskDraftConsent()
+    {
+        TaskDraftExpander.AddHandler(System.Windows.Controls.Primitives.TextBoxBase.TextChangedEvent,
+            new System.Windows.Controls.TextChangedEventHandler(OnTaskDraftInputChanged), true);
+        TaskDraftExpander.AddHandler(System.Windows.Controls.Primitives.Selector.SelectionChangedEvent,
+            new System.Windows.Controls.SelectionChangedEventHandler(OnTaskDraftInputChanged), true);
+        TaskDraftExpander.AddHandler(System.Windows.Controls.Primitives.ToggleButton.CheckedEvent,
+            new RoutedEventHandler(OnTaskDraftInputChanged), true);
+        TaskDraftExpander.AddHandler(System.Windows.Controls.Primitives.ToggleButton.UncheckedEvent,
+            new RoutedEventHandler(OnTaskDraftInputChanged), true);
+    }
+
+    private void OnTaskDraftInputChanged(object sender, RoutedEventArgs e)
+    {
+        if (!ReferenceEquals(e.OriginalSource, TaskRegistrationConsent))
+            TaskRegistrationConsent.IsChecked = false;
+    }
+
     private ScheduledTaskPlan ReadTaskDraftForm()
     {
             var kind = (TaskScheduleKind)TaskDraftSchedule.SelectedIndex;
@@ -203,6 +221,7 @@ public partial class MainWindow
         { Report("Cannot register task draft: " + error.Message); }
         finally
         {
+            TaskRegistrationConsent.IsChecked = false;
             workflowOutputActive = false;
             readCancellation = null;
             repairRunning = false;
@@ -250,7 +269,12 @@ public partial class MainWindow
             FormatException or OverflowException or NotSupportedException or InvalidOperationException or
             System.ComponentModel.Win32Exception or System.Security.SecurityException)
         { Report("Cannot recover task registration: " + error.Message); }
-        finally { workflowOutputActive = false; readCancellation = null; SetCaptureBusy(false); }
+        finally
+        {
+            TaskRegistrationConsent.IsChecked = false;
+            readCancellation = null;
+            SetCaptureBusy(false);
+        }
     }
 
     private async Task InspectTaskDraftAsync(ScheduledTaskPlan plan, CancellationToken token)
