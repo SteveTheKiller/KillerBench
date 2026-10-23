@@ -107,7 +107,7 @@ public static class InstallationOwnership
     }
 
     public static void ValidateDestination(string directory, IReadOnlyCollection<string> trustedPayloadFiles,
-        string? registeredExecutable, Func<string, bool> isTrustedProduct)
+        string? registeredExecutable, Func<string, bool> isTrustedProduct, IReadOnlyCollection<string>? trustedPriorManifestHashes = null)
     {
         if (directory == null) throw new ArgumentNullException(nameof(directory));
         if (trustedPayloadFiles == null) throw new ArgumentNullException(nameof(trustedPayloadFiles));
@@ -126,8 +126,28 @@ public static class InstallationOwnership
         string manifest = Path.Combine(root, "payload.manifest");
         if (!File.Exists(manifest) || (File.GetAttributes(manifest) & FileAttributes.ReparsePoint) != 0 || new FileInfo(manifest).Length > 4 * 1024 * 1024)
             Refuse("The existing payload inventory is unavailable.");
+        // Read one held image. The authenticated digest and parsed entries must describe the same bytes.
+        byte[] manifestBytes;
+        using (var input = new FileStream(manifest, FileMode.Open, FileAccess.Read, FileShare.Read))
+        {
+            if (input.Length > 4 * 1024 * 1024) Refuse("The existing payload inventory exceeds its size limit.");
+            manifestBytes = new byte[(int)input.Length];
+            int offset = 0;
+            while (offset < manifestBytes.Length)
+            {
+                int read = input.Read(manifestBytes, offset, manifestBytes.Length - offset);
+                if (read == 0) Refuse("The existing payload inventory is incomplete.");
+                offset += read;
+            }
+        }
+        string inventoryDigest;
+        using (var hash = SHA256.Create()) inventoryDigest = BitConverter.ToString(hash.ComputeHash(manifestBytes)).Replace("-", "");
+        bool authenticatedPrior = trustedPriorManifestHashes != null && trustedPriorManifestHashes.Any(digest =>
+            string.Equals(digest, inventoryDigest, StringComparison.OrdinalIgnoreCase));
         var owned = new Dictionary<string, Tuple<string, long>>(StringComparer.OrdinalIgnoreCase);
-        foreach (string line in File.ReadAllLines(manifest))
+        using var manifestReader = new StreamReader(new MemoryStream(manifestBytes), System.Text.Encoding.UTF8, true);
+        string? line;
+        while ((line = manifestReader.ReadLine()) != null)
         {
             if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#", StringComparison.Ordinal)) continue;
             string[] parts = line.Split(new[] { '\t' }, 3);
@@ -136,7 +156,7 @@ public static class InstallationOwnership
                 !long.TryParse(parts[1], NumberStyles.None, CultureInfo.InvariantCulture, out size) || size < 0)
                 throw new InvalidOperationException("The existing payload inventory is invalid. Its files were preserved.");
             string name = Normalize(parts[2]);
-            if (!allowed.Contains(name) || owned.ContainsKey(name)) Refuse("The existing inventory claims an unknown or duplicate payload path.");
+            if ((!allowed.Contains(name) && !authenticatedPrior) || owned.ContainsKey(name)) Refuse("The existing inventory claims an unknown or duplicate payload path.");
             owned.Add(name, Tuple.Create(parts[0], size));
         }
         if (!owned.ContainsKey("KillerBench.exe")) Refuse("The existing inventory does not own the product executable.");

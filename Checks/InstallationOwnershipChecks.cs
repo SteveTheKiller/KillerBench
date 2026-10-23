@@ -28,6 +28,18 @@ internal static class InstallationOwnershipChecks
         string inventory = Entry(exe, "KillerBench.exe");
         File.WriteAllText(Path.Combine(owned, "payload.manifest"), inventory);
         InstallationOwnership.ValidateDestination(owned, ["KillerBench.exe"], exe, _ => true);
+        string removed = Path.Combine(owned, "old-component.dll");
+        File.WriteAllText(removed, "Verified prior payload component removed from the new package");
+        File.WriteAllText(Path.Combine(owned, "payload.manifest"), inventory + Entry(removed, "old-component.dll"));
+        string priorDigest = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(Path.Combine(owned, "payload.manifest"))));
+        InstallationOwnership.ValidateDestination(owned, ["KillerBench.exe"], exe, _ => true, [priorDigest]);
+        File.AppendAllText(Path.Combine(owned, "payload.manifest"), Entry(removed, "claimed-user-file.txt"));
+        refused = false;
+        try { InstallationOwnership.ValidateDestination(owned, ["KillerBench.exe"], exe, _ => true, [priorDigest]); }
+        catch (InvalidOperationException) { refused = true; }
+        if (!refused || !File.Exists(removed)) throw new Exception("A forged prior inventory was accepted or previous payload was lost.");
+        File.Delete(removed);
+        File.WriteAllText(Path.Combine(owned, "payload.manifest"), inventory);
         foreach (string invalid in new[] { "wrong-registration", "untrusted", "changed-payload", "unknown-file", "forged-inventory" })
         {
             string extra = Path.Combine(owned, "keep.txt");

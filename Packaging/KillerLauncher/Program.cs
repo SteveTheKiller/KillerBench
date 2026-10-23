@@ -367,7 +367,25 @@ namespace KillerLauncher
             using var registration = (machine ? Microsoft.Win32.Registry.LocalMachine : Microsoft.Win32.Registry.CurrentUser)
                 .OpenSubKey(@"Software\KillerBench");
             string? registered = registration?.GetValue("InstallPath") as string;
-            KillerBench.Services.InstallationOwnership.ValidateDestination(directory, trusted.Keys.ToArray(), registered, IsTrustedInstalledProduct);
+            KillerBench.Services.InstallationOwnership.ValidateDestination(directory, trusted.Keys.ToArray(), registered, IsTrustedInstalledProduct, TrustedPriorManifestHashes());
+        }
+
+        private static IReadOnlyCollection<string> TrustedPriorManifestHashes()
+        {
+            using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("KillerLauncher.PayloadHistory.txt")
+                ?? throw new InvalidDataException("The trusted payload history is unavailable.");
+            using var reader = new StreamReader(stream, Encoding.UTF8, true);
+            var hashes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            string? line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#", StringComparison.Ordinal)) continue;
+                string[] fields = line.Split('\t');
+                if (fields.Length != 3 || fields[0].Length != 64 || !fields[0].All(Uri.IsHexDigit) || string.IsNullOrWhiteSpace(fields[1]) || string.IsNullOrWhiteSpace(fields[2]))
+                    throw new InvalidDataException("The trusted payload history is invalid.");
+                hashes.Add(fields[0]);
+            }
+            return hashes;
         }
 
         private static bool IsTrustedInstalledProduct(string executable)

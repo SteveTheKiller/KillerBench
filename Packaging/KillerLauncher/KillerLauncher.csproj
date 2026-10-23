@@ -32,6 +32,7 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Xml" />
     <EmbeddedResource Include="Strings.xml" LogicalName="KillerLauncher.Strings.xml" />
+    <EmbeddedResource Include="..\PayloadHistory.txt" LogicalName="KillerLauncher.PayloadHistory.txt" />
   </ItemGroup>
 
   <ItemGroup Condition="Exists('$(PayloadZip)')">

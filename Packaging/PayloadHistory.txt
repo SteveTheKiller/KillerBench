@@ -1,0 +1,7 @@
+# Trusted prior-release payload inventories. This file is embedded in the signed launcher.
+# Before a later release, extract payload.manifest from each verified prior released
+# installer and Store package, confirm its source and publisher, and add its exact
+# SHA-256, version and package kind as three tab-separated fields. Preserve exact
+# manifest bytes. Never import a manifest from an installed writable directory.
+# Keep historical entries so renamed or removed payload files remain recognizable.
+# 1.0.0 has no previous public release inventories yet. No synthetic digest belongs here.
