@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using KillerBench.Engine.Core;
@@ -9,14 +10,37 @@ namespace KillerBench.Engine.Windows.Primitives;
 /// <summary>Reports the process with the largest working set as a percentage of physical memory. Raw lists the top five by image name only.</summary>
 public sealed class WindowsTopMemoryProbe : IProbePrimitive
 {
+    private readonly Func<long> physicalMemory;
+    private readonly Func<IReadOnlyDictionary<string, long>> processWorkingSets;
+    public WindowsTopMemoryProbe(Func<long>? physicalMemory = null, Func<IReadOnlyDictionary<string, long>>? processWorkingSets = null)
+    {
+        this.physicalMemory = physicalMemory ?? ReadPhysicalMemory;
+        this.processWorkingSets = processWorkingSets ?? ReadProcessWorkingSets;
+    }
+
     public string Name => "process.top-memory";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [];
 
     public Task<PrimitiveResult> ObserveAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
-        long total = GC.GetGCMemoryInfo().TotalAvailableMemoryBytes;
+        long total;
+        try { total = physicalMemory(); }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or System.ComponentModel.Win32Exception)
+        { return Task.FromResult(PrimitiveResult.Unavailable("Physical memory size is unavailable: " + error.Message)); }
         if (total <= 0) return Task.FromResult(PrimitiveResult.Unavailable("Physical memory size is unavailable."));
+        var usage = processWorkingSets();
+        if (usage.Count == 0) return Task.FromResult(PrimitiveResult.Unavailable("No process working set could be read."));
+        var top = usage.OrderByDescending(pair => pair.Value).Take(5).ToArray();
+        var raw = new StringBuilder();
+        foreach (var pair in top) raw.Append(pair.Key).Append(' ').Append((pair.Value / 1048576.0).ToString("0", CultureInfo.InvariantCulture)).Append(" MB\n");
+        double percent = top[0].Value * 100.0 / total;
+        return Task.FromResult(new PrimitiveResult(true, percent.ToString("0.0", CultureInfo.InvariantCulture), raw.ToString())
+        { Detail = "Largest working set: " + top[0].Key + " at " + (top[0].Value / 1048576.0).ToString("0", CultureInfo.InvariantCulture) + " MB (" + percent.ToString("0.0", CultureInfo.InvariantCulture) + "% of physical memory)." });
+    }
+
+    private static IReadOnlyDictionary<string, long> ReadProcessWorkingSets()
+    {
         var usage = new Dictionary<string, long>(StringComparer.OrdinalIgnoreCase);
         foreach (var process in Process.GetProcesses())
         {
@@ -26,14 +50,26 @@ public sealed class WindowsTopMemoryProbe : IProbePrimitive
                 catch (Exception error) when (error is InvalidOperationException or System.ComponentModel.Win32Exception or NotSupportedException) { }
             }
         }
-        if (usage.Count == 0) return Task.FromResult(PrimitiveResult.Unavailable("No process working set could be read."));
-        var top = usage.OrderByDescending(pair => pair.Value).Take(5).ToArray();
-        var raw = new StringBuilder();
-        foreach (var pair in top) raw.Append(pair.Key).Append(' ').Append((pair.Value / 1048576.0).ToString("0", CultureInfo.InvariantCulture)).Append(" MB\n");
-        double percent = top[0].Value * 100.0 / total;
-        return Task.FromResult(new PrimitiveResult(true, percent.ToString("0.0", CultureInfo.InvariantCulture), raw.ToString())
-        { Detail = "Largest working set: " + top[0].Key + " at " + (top[0].Value / 1048576.0).ToString("0", CultureInfo.InvariantCulture) + " MB (" + percent.ToString("0.0", CultureInfo.InvariantCulture) + "% of physical memory)." });
+        return usage;
     }
+
+    private static long ReadPhysicalMemory()
+    {
+        if (!OperatingSystem.IsWindows()) return 0;
+        var status = new MemoryStatus { Length = (uint)Marshal.SizeOf<MemoryStatus>() };
+        return GlobalMemoryStatusEx(ref status) && status.TotalPhysical <= long.MaxValue ? (long)status.TotalPhysical : 0;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MemoryStatus
+    {
+        public uint Length, Load;
+        public ulong TotalPhysical, AvailablePhysical, TotalPageFile, AvailablePageFile, TotalVirtual, AvailableVirtual, AvailableExtendedVirtual;
+    }
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GlobalMemoryStatusEx(ref MemoryStatus status);
 }
 
 /// <summary>Samples total physical disk busy time through typeperf. Value is the average percent over the sample.</summary>
