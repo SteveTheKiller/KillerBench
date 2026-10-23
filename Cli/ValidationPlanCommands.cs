@@ -3,19 +3,19 @@ using KillerBench.Engine;
 
 internal static class ValidationPlanCommands
 {
-    private static readonly string[] SupportedTargets = ["Windows 10", "Windows 11", "Supported Windows Server when the recipe applies"];
+    private static readonly string[] SupportedTargets = ["Windows 11; the native acceptance matrix is evidence coverage, not a product support limit"];
 
 
     internal static int Run(string[] args)
     {
-        IReadOnlyList<NativeRecipeValidationPlan> plans;
+        IReadOnlyList<RepairCapability> plans;
         if (args.Length == 1)
         {
-            plans = NativeValidationCatalog.All;
+            plans = WindowsRepairCapabilities.All;
         }
         else if (args is ["validation-plan", "--recipe", var recipeId])
         {
-            var plan = NativeValidationCatalog.Find(recipeId);
+            var plan = WindowsRepairCapabilities.Find(recipeId);
             if (plan is null)
             {
                 Console.Error.WriteLine("Unknown recipe ID. Use 'recipes' to list installed definitions.");
@@ -25,7 +25,8 @@ internal static class ValidationPlanCommands
         }
         else if (args is ["validation-plan", "--workflow", var workflowKey] && WorkflowCatalog.Find(workflowKey) is { } workflow)
         {
-            plans = NativeValidationCatalog.ForWorkflow(workflow.Kind);
+            var ids = RecipeCatalog.ForWorkflow(workflow.Kind).Select(recipe => recipe.Id).ToHashSet(StringComparer.Ordinal);
+            plans = WindowsRepairCapabilities.All.Where(capability => ids.Contains(capability.Id)).ToArray();
         }
         else
         {
@@ -35,7 +36,7 @@ internal static class ValidationPlanCommands
 
         Console.WriteLine(JsonSerializer.Serialize(new
         {
-            schemaVersion = 1,
+            schemaVersion = 2,
             generatedFromInstalledCatalog = true,
             executionPerformed = false,
             supportedTargets = SupportedTargets,

@@ -837,4 +837,11 @@
   <sys:String x:Key="Str_Language_Changed">Język: {0}.</sys:String>
   <sys:String x:Key="Str_Output_WorkflowCoverage">{0} | sprawdzenia: {1} | wykonane naprawy: {2} | pasujące wiersze raportu: {3}. Dotyczy tylko sprawdzonych zakresów.</sys:String>
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. Dotyczy tylko sprawdzonych zakresów.</sys:String>
+  <sys:String x:Key="Str_NativeLab_Name">Stan weryfikacji funkcji w laboratorium natywnym</sys:String>
+  <sys:String x:Key="Str_NativeLab_Format">Laboratorium natywne: {0}</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Jeszcze nie zweryfikowano w laboratorium natywnym</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Jeszcze nie zweryfikowano: dowody natywne są nieaktualne</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Jeszcze nie zweryfikowano: dowody natywne są niepełne lub test nie powiódł się</sys:String>
+  <sys:String x:Key="Str_NativeLab_LabVerified">Zweryfikowano w laboratorium dla zapisanych scenariuszy</sys:String>
+  <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Tylko diagnostyka; naprawa nie jest uruchamiana</sys:String>
 </ResourceDictionary>

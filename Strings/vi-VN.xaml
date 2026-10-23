@@ -836,4 +836,11 @@
   <sys:String x:Key="Str_Language_Changed">Ngôn ngữ: {0}.</sys:String>
   <sys:String x:Key="Str_Output_WorkflowCoverage">{0} | {1} kiểm tra | {2} sửa chữa đã chạy | {3} dòng báo cáo khớp. Chỉ áp dụng cho các phạm vi đã kiểm tra.</sys:String>
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. Chỉ áp dụng cho các phạm vi đã kiểm tra.</sys:String>
+  <sys:String x:Key="Str_NativeLab_Name">Trạng thái xác minh chức năng trong phòng thử nghiệm gốc</sys:String>
+  <sys:String x:Key="Str_NativeLab_Format">Phòng thử nghiệm gốc: {0}</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Chưa được xác minh trong phòng thử nghiệm gốc</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Chưa được xác minh: bằng chứng gốc đã cũ</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Chưa được xác minh: bằng chứng gốc chưa đầy đủ hoặc thử nghiệm thất bại</sys:String>
+  <sys:String x:Key="Str_NativeLab_LabVerified">Đã xác minh trong phòng thử nghiệm cho các kịch bản đã ghi</sys:String>
+  <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Chỉ chẩn đoán; không thực hiện sửa chữa</sys:String>
 </ResourceDictionary>

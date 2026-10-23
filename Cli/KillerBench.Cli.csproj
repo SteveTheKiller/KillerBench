@@ -14,4 +14,12 @@
     <ProjectReference Include="../Engine/KillerBench.Engine.csproj" />
     <ProjectReference Include="../Engine.Windows/KillerBench.Engine.Windows.csproj" />
   </ItemGroup>
+  <Target Name="EmbedSharedImplementationImages" BeforeTargets="AssignTargetPaths" DependsOnTargets="ResolveReferences">
+    <ItemGroup>
+      <EmbeddedResource Include="@(ReferenceCopyLocalPaths)"
+        Condition="'%(Filename)' == 'KillerBench.Engine' Or '%(Filename)' == 'KillerBench.Engine.Core' Or '%(Filename)' == 'KillerBench.Engine.Windows'">
+        <LogicalName>KillerBench.SharedImplementation.%(Filename)%(Extension)</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
 </Project>

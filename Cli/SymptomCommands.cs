@@ -15,13 +15,13 @@ internal static class SymptomCommands
         {
             case "list" when args.Length == 2:
                 foreach (var symptom in catalog.Symptoms.OrderBy(symptom => symptom.Area, StringComparer.Ordinal).ThenBy(symptom => symptom.Id, StringComparer.Ordinal))
-                    Console.WriteLine(symptom.Id + "\t" + symptom.Area + "\t" + symptom.Title + (symptom.TreeId is null ? "\t(guidance only)" : ""));
+                    Console.WriteLine(symptom.Id + "\t" + symptom.Area + "\t" + symptom.Title + (symptom.TreeId is null ? "\t(guidance only)" : "") + "\t" + Labels(symptom.Id));
                 return 0;
             case "search" when args.Length >= 3:
             {
                 var matches = catalog.Search(string.Join(' ', args.Skip(2)));
                 if (matches.Count == 0) { Console.WriteLine("No matching symptom. Use symptom list."); return 3; }
-                foreach (var symptom in matches) Console.WriteLine(symptom.Id + "\t" + symptom.Title);
+                foreach (var symptom in matches) Console.WriteLine(symptom.Id + "\t" + symptom.Title + "\t" + Labels(symptom.Id));
                 return 0;
             }
             case "run" when args.Length >= 3:
@@ -41,6 +41,8 @@ internal static class SymptomCommands
                 }
                 if (explicitOptions && !repair) { Console.Error.WriteLine("--explicit requires --repair."); return 2; }
                 if (catalog.FindSymptom(id) is null) { Console.Error.WriteLine("Unknown symptom '" + id + "'. Use symptom list or symptom search."); return 2; }
+                var capabilities = ForSymptom(id);
+                CapabilityOutput.WriteLabels(capabilities);
                 using var stop = new CancellationTokenSource();
                 Console.CancelKeyPress += (_, e) => { e.Cancel = true; stop.Cancel(); };
                 string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Triage");
@@ -56,7 +58,7 @@ internal static class SymptomCommands
                     ExplicitOptionsConfirmed = explicitOptions
                 };
                 var report = await runner.RunAsync(id, options, stop.Token).ConfigureAwait(false);
-                if (json) { Console.WriteLine(JsonSerializer.Serialize(report, RecipePackJson.Options)); }
+                if (json) { Console.WriteLine(CapabilityOutput.WithStatus(report, capabilities, RecipePackJson.Options)); }
                 else
                 {
                     Console.WriteLine(report.SymptomTitle + ": " + report.Outcome);
@@ -77,6 +79,15 @@ internal static class SymptomCommands
                 return 2;
         }
     }
+
+    private static IReadOnlyList<RepairCapability> ForSymptom(string id)
+    {
+        var ids = WindowsPacks.All().SelectMany(pack => pack.Recipes).Where(recipe => recipe.Symptoms.Contains(id, StringComparer.Ordinal))
+            .Select(recipe => recipe.Id).ToHashSet(StringComparer.Ordinal);
+        return WindowsRepairCapabilities.All.Where(capability => ids.Contains(capability.Id)).ToArray();
+    }
+
+    private static string Labels(string id) => string.Join("; ", ForSymptom(id).Select(capability => capability.Id + ": " + capability.Label));
 
     private static bool IsElevated()
     {

@@ -12,6 +12,8 @@ public partial class MainWindow
 
     private void RegisterWorkflowResult(WorkflowResult result, string? reportTitle = null, bool demo = false)
     {
+        if (!demo && result.Checks.Count > 0)
+            result = result with { Checks = [.. result.Checks, new WorkflowCheck("Native lab capability status", CheckState.Information, NativeCapabilityDetails(result.Kind))] };
         string summary = WorkflowReport.Format(result);
         AppendWorkflowOutput("Workflow completed: " + result.Status + ". Read the Report view for findings and next actions.");
         string source = demo
@@ -41,6 +43,9 @@ public partial class MainWindow
         string detail, string journal, bool verified, string verifiedNextAction, bool requiresRestart = false,
         string? restartNextAction = null)
     {
+        string nativeStatus = NativeCapabilityDetails(kind);
+        detail += "\n\n" + nativeStatus;
+        output += "\n\n" + nativeStatus;
         AppendWorkflowOutput(output);
         string status = requiresRestart ? "Restart required" : verified ? "Verified" : "Review required";
         var action = new WorkflowAction(actionName, status, detail,
@@ -249,6 +254,7 @@ public partial class MainWindow
         bool repairRequested = MainAutoRepair?.IsChecked == true;
         MainGo.SetResourceReference(System.Windows.Controls.ContentControl.ContentProperty, repairRequested ? "Str_Main_RunRepair" : "Str_Main_RunDiagnosis");
         MainGo.SetResourceReference(System.Windows.FrameworkElement.ToolTipProperty, repairRequested ? "Str_Main_RunRepairTip" : "Str_Main_RunDiagnosisTip");
+        RefreshNativeCapabilityStatus();
     }
 
     private void OnSystemRestoreOptionChanged(object sender, System.Windows.RoutedEventArgs e)
@@ -325,6 +331,7 @@ public partial class MainWindow
         EvidenceBox.Text = demo
             ? $"{demoTitle} / SYNTHETIC DEMO\nMACHINE: {DemoWorkflow.MachineName}\n\nPreparing fabricated evidence...\n"
             : $"{kind} / RUNNING\nTHIS PC: {Environment.MachineName}\n\nStarting live checks...\n";
+        if (!demo) EvidenceBox.Text += NativeCapabilityDetails(kind) + "\n\n";
         CoverageLabel.Text = Controls.LocalizedText.Get(demo ? "Str_Output_DemoCoverage" : "Str_Output_LiveCoverage");
         // Live work streams in Raw output; the readable report takes over when the result is registered.
         ShowRawOutput();

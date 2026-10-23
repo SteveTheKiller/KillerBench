@@ -837,4 +837,11 @@
   <sys:String x:Key="Str_Language_Changed">ভাষা: {0}।</sys:String>
   <sys:String x:Key="Str_Output_WorkflowCoverage">{0} | {1}টি পরীক্ষা | {2}টি মেরামত চালানো হয়েছে | রিপোর্টের {3}টি মিলে যাওয়া লাইন। শুধু পরীক্ষিত পরিসরে প্রযোজ্য।</sys:String>
   <sys:String x:Key="Str_Output_CheckedScopes">{0}। শুধু পরীক্ষিত পরিসরে প্রযোজ্য।</sys:String>
+  <sys:String x:Key="Str_NativeLab_Name">নেটিভ ল্যাবে সক্ষমতা যাচাইয়ের অবস্থা</sys:String>
+  <sys:String x:Key="Str_NativeLab_Format">নেটিভ ল্যাব: {0}</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">নেটিভ ল্যাবে এখনো যাচাই করা হয়নি</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">এখনো যাচাই করা হয়নি: নেটিভ প্রমাণ পুরোনো</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">এখনো যাচাই করা হয়নি: নেটিভ প্রমাণ অসম্পূর্ণ বা ব্যর্থ</sys:String>
+  <sys:String x:Key="Str_NativeLab_LabVerified">নথিভুক্ত পরিস্থিতিগুলো ল্যাবে যাচাই করা হয়েছে</sys:String>
+  <sys:String x:Key="Str_NativeLab_DiagnosticOnly">শুধু রোগনির্ণয়; কোনো মেরামত চালানো হয় না</sys:String>
 </ResourceDictionary>

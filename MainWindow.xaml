@@ -843,6 +843,7 @@
               <TextBlock Text="{DynamicResource Str_ComputerName_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
             </StackPanel>
             <CheckBox x:Name="MainAutoRepair" Content="{DynamicResource Str_Main_AutoRepair}" Margin="0,8,0,8" Checked="OnMainAutoRepairChanged" Unchecked="OnMainAutoRepairChanged"/>
+            <TextBlock x:Name="NativeCapabilityStatus" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,0,0,8" AutomationProperties.Name="{DynamicResource Str_NativeLab_Name}"/>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
               <Button x:Name="MainGo" Content="{DynamicResource Str_Main_RunDiagnosis}" Style="{StaticResource OutlineButton}" Click="OnMainGo" Width="128" Margin="0,0,8,0" ToolTip="{DynamicResource Str_Main_RunDiagnosisTip}"/>
               <Button x:Name="CancelButton" Content="{DynamicResource Str_Main_Stop}" Click="OnCancel" IsEnabled="False" ToolTip="{DynamicResource Str_Main_StopTip}" Width="72"/>

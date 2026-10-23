@@ -837,4 +837,11 @@
   <sys:String x:Key="Str_Language_Changed">Dil: {0}.</sys:String>
   <sys:String x:Key="Str_Output_WorkflowCoverage">{0} | {1} denetim | {2} onarım çalıştırıldı | {3} eşleşen rapor satırı. Yalnızca denetlenen kapsamlar için geçerlidir.</sys:String>
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. Yalnızca denetlenen kapsamlar için geçerlidir.</sys:String>
+  <sys:String x:Key="Str_NativeLab_Name">Yerel laboratuvar yetenek doğrulama durumu</sys:String>
+  <sys:String x:Key="Str_NativeLab_Format">Yerel laboratuvar: {0}</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Yerel laboratuvarda henüz doğrulanmadı</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Henüz doğrulanmadı: yerel kanıtlar güncel değil</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Henüz doğrulanmadı: yerel kanıtlar eksik veya test başarısız</sys:String>
+  <sys:String x:Key="Str_NativeLab_LabVerified">Kaydedilen senaryolar için laboratuvarda doğrulandı</sys:String>
+  <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Yalnızca tanılama; onarım başlatılmaz</sys:String>
 </ResourceDictionary>

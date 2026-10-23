@@ -836,4 +836,11 @@
   <sys:String x:Key="Str_Language_Changed">Мова: {0}.</sys:String>
   <sys:String x:Key="Str_Output_WorkflowCoverage">{0} | перевірок: {1} | виконано виправлень: {2} | відповідних рядків звіту: {3}. Стосується лише перевірених областей.</sys:String>
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. Стосується лише перевірених областей.</sys:String>
+  <sys:String x:Key="Str_NativeLab_Name">Стан перевірки функцій у нативній лабораторії</sys:String>
+  <sys:String x:Key="Str_NativeLab_Format">Нативна лабораторія: {0}</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Ще не перевірено в нативній лабораторії</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Ще не перевірено: нативні дані застаріли</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Ще не перевірено: нативні дані неповні або тест не пройдено</sys:String>
+  <sys:String x:Key="Str_NativeLab_LabVerified">Перевірено в лабораторії для записаних сценаріїв</sys:String>
+  <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Лише діагностика; виправлення не запускається</sys:String>
 </ResourceDictionary>

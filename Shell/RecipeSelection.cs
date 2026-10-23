@@ -74,7 +74,8 @@ public partial class MainWindow
             var reviewed = CustomizeRecipes.IsChecked == true ? plan : RecipeCatalog.ForWorkflow(WorkflowKind.CommonProblems);
             RecipeEffectsSummary.Text = reviewed.Count == 0 ? "No recipe checks selected." :
                 "These checks do not run repairs. Use a focused repair workflow after reviewing current findings. Included prerequisites are listed too.\n\n" +
-                string.Join("\n\n", reviewed.Select(recipe => recipe.Title + "\n" + recipe.Effects + "\nVerifies: " + recipe.VerificationScope));
+                string.Join("\n\n", reviewed.Select(recipe => recipe.Title + "\n" + recipe.Effects + "\nVerifies: " + recipe.VerificationScope +
+                    "\n" + NativeCapabilityLabel(recipe.Id)));
         }
     }
 

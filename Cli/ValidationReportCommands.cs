@@ -39,12 +39,12 @@ internal static class ValidationReportCommands
                 var info = new FileInfo(input);
                 if (!info.Exists || info.Length is 0 or > NativeValidationEvidence.MaximumBytes)
                     throw new InvalidDataException("Each native validation record must be an existing file from 1 byte through 1 MiB.");
-                records.Add(NativeValidationEvidence.Read(await File.ReadAllBytesAsync(info.FullName)));
+                records.Add(RepairCapabilityInventory.ReadRecord(info.FullName, WindowsRepairCapabilities.All));
             }
-            var coverage = NativeValidationEvidence.Summarize(records);
+            var capabilities = WindowsRepairCapabilities.FromRecords(inputs);
             string report = extension.Equals(".html", StringComparison.OrdinalIgnoreCase)
-                ? NativeValidationReport.BuildHtml(coverage, theme, accent)
-                : NativeValidationReport.BuildText(coverage);
+                ? NativeValidationReport.BuildHtml(capabilities, theme, accent)
+                : NativeValidationReport.BuildText(capabilities);
             await File.WriteAllTextAsync(output, report);
             Console.WriteLine(Path.GetFullPath(output));
             return 0;

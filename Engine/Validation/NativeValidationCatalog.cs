@@ -152,7 +152,7 @@ public static class NativeValidationCatalog
         new(recipe.Id + "." + ScenarioSuffix(kind), kind, title, expectedOutcome, allowsNativeMutation,
             Array.AsReadOnly(requiredArtifacts));
 
-    private static string ScenarioSuffix(NativeValidationScenarioKind kind) => kind switch
+    internal static string ScenarioSuffix(NativeValidationScenarioKind kind) => kind switch
     {
         NativeValidationScenarioKind.Healthy => "healthy",
         NativeValidationScenarioKind.IncompleteEvidence => "incomplete-evidence",

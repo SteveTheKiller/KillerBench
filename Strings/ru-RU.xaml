@@ -837,4 +837,11 @@
   <sys:String x:Key="Str_Language_Changed">Язык: {0}.</sys:String>
   <sys:String x:Key="Str_Output_WorkflowCoverage">{0} | проверок: {1} | выполнено исправлений: {2} | совпадающих строк отчёта: {3}. Относится только к проверенным областям.</sys:String>
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. Относится только к проверенным областям.</sys:String>
+  <sys:String x:Key="Str_NativeLab_Name">Состояние проверки функций в нативной лаборатории</sys:String>
+  <sys:String x:Key="Str_NativeLab_Format">Нативная лаборатория: {0}</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Еще не проверено в нативной лаборатории</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Еще не проверено: нативные данные устарели</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Еще не проверено: нативные данные неполны или тест не пройден</sys:String>
+  <sys:String x:Key="Str_NativeLab_LabVerified">Проверено в лаборатории для записанных сценариев</sys:String>
+  <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Только диагностика; исправление не запускается</sys:String>
 </ResourceDictionary>

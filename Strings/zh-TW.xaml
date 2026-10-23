@@ -837,4 +837,11 @@
   <sys:String x:Key="Str_Language_Changed">語言：{0}。</sys:String>
   <sys:String x:Key="Str_Output_WorkflowCoverage">{0} | {1} 項檢查 | 已執行 {2} 項修復 | {3} 行符合的報告內容。僅適用於已檢查的範圍。</sys:String>
   <sys:String x:Key="Str_Output_CheckedScopes">{0}。僅適用於已檢查的範圍。</sys:String>
+  <sys:String x:Key="Str_NativeLab_Name">原生實驗室功能驗證狀態</sys:String>
+  <sys:String x:Key="Str_NativeLab_Format">原生實驗室：{0}</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">尚未在原生實驗室中驗證</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">尚未驗證：原生驗證記錄已過期</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">尚未驗證：原生驗證記錄不完整或測試失敗</sys:String>
+  <sys:String x:Key="Str_NativeLab_LabVerified">已在實驗室中驗證所記錄的情境</sys:String>
+  <sys:String x:Key="Str_NativeLab_DiagnosticOnly">僅診斷；不執行修復</sys:String>
 </ResourceDictionary>

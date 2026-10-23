@@ -73,6 +73,8 @@ public static class CommandEngine
     public static async Task<int> RunAsync(string[] args)
     {
         WindowsEngine.Register();
+        if (args.Length > 0 && args[0] is not ("workflow" or "symptom" or "pack"))
+            CapabilityOutput.WriteLabels(WindowsRepairCapabilities.ForCommand(args));
         if (args.Length > 0 && args[0] == "pack") return await PackCommands.RunAsync(args);
         if (args.Length > 0 && args[0] == "symptom") return await SymptomCommands.RunAsync(args);
         if (args.Length > 0 && args[0] == "validate-native") return await ValidateNativeCommands.RunAsync(args);
@@ -223,7 +225,12 @@ public static class CommandEngine
                 Console.Error.WriteLine("Usage: recipes [WORKFLOW] (definitions only; no scan or repair)");
                 return 2;
             }
-            Console.WriteLine(JsonSerializer.Serialize(workflow is null ? RecipeCatalog.All : RecipeCatalog.ForWorkflow(workflow.Kind), Capture.JsonOptions));
+            var recipes = workflow is null ? RecipeCatalog.All : RecipeCatalog.ForWorkflow(workflow.Kind);
+            var nodes = JsonSerializer.SerializeToNode(recipes, Capture.JsonOptions)!.AsArray();
+            foreach (var node in nodes)
+                if (node is not null && WindowsRepairCapabilities.Find(node["id"]!.GetValue<string>()) is { } capability)
+                    node["nativeCapability"] = JsonSerializer.SerializeToNode(capability, Capture.JsonOptions);
+            Console.WriteLine(nodes.ToJsonString(Capture.JsonOptions));
             return 0;
         }
         if (args.Length > 0 && args[0] == "workflow") return await WorkflowCommands.RunAsync(args);

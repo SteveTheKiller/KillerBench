@@ -837,4 +837,11 @@
   <sys:String x:Key="Str_Language_Changed">Nyelv: {0}.</sys:String>
   <sys:String x:Key="Str_Output_WorkflowCoverage">{0} | {1} ellenőrzés | {2} lefuttatott javítás | {3} egyező jelentéssor. Csak az ellenőrzött területekre vonatkozik.</sys:String>
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. Csak az ellenőrzött területekre vonatkozik.</sys:String>
+  <sys:String x:Key="Str_NativeLab_Name">A natív laboratóriumi ellenőrzés állapota</sys:String>
+  <sys:String x:Key="Str_NativeLab_Format">Natív labor: {0}</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Még nincs ellenőrizve a natív laborban</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Még nincs ellenőrizve: a natív bizonyíték elavult</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Még nincs ellenőrizve: a natív bizonyíték hiányos vagy a teszt sikertelen</sys:String>
+  <sys:String x:Key="Str_NativeLab_LabVerified">A rögzített forgatókönyvekre laborban ellenőrizve</sys:String>
+  <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Csak diagnosztika; nem indul javítás</sys:String>
 </ResourceDictionary>

@@ -837,4 +837,11 @@
   <sys:String x:Key="Str_Language_Changed">Тіл: {0}.</sys:String>
   <sys:String x:Key="Str_Output_WorkflowCoverage">{0} | {1} тексеру | {2} жөндеу орындалды | есептің сәйкес {3} жолы. Тек тексерілген аумақтарға қатысты.</sys:String>
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. Тек тексерілген аумақтарға қатысты.</sys:String>
+  <sys:String x:Key="Str_NativeLab_Name">Нативті зертханада мүмкіндіктерді тексеру күйі</sys:String>
+  <sys:String x:Key="Str_NativeLab_Format">Нативті зертхана: {0}</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Нативті зертханада әлі тексерілмеген</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Әлі тексерілмеген: нативті тексеру деректері ескірген</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Әлі тексерілмеген: нативті деректер толық емес немесе сынақ сәтсіз аяқталды</sys:String>
+  <sys:String x:Key="Str_NativeLab_LabVerified">Жазылған сценарийлер зертханада тексерілген</sys:String>
+  <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Тек диагностика; жөндеу іске қосылмайды</sys:String>
 </ResourceDictionary>

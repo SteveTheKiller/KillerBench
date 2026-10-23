@@ -16,7 +16,7 @@ public partial class MainWindow
         workflowMode = true;
         RepairChoice.Items.Clear();
         foreach (var workflow in WorkflowCatalog.All)
-            RepairChoice.Items.Add(new ComboBoxItem { Content = Controls.LocalizedText.Workflow(workflow.Kind), Tag = workflow.Kind });
+            RepairChoice.Items.Add(new ComboBoxItem { Content = Controls.LocalizedText.Workflow(workflow.Kind), Tag = workflow.Kind, ToolTip = NativeCapabilityDetails(workflow.Kind) });
         RepairChoice.SelectedIndex = 0;
         RepairConsent.SetResourceReference(ContentProperty, "Str_Main_AutoRepair");
         System.Windows.Data.BindingOperations.ClearBinding(RepairRun, IsEnabledProperty);
@@ -29,8 +29,10 @@ public partial class MainWindow
         workflowMode = false;
         RepairChoice.Items.Clear();
         var componentStore = new ComboBoxItem();
+        componentStore.ToolTip = NativeCapabilityLabel("command.repair-dism");
         componentStore.SetResourceReference(ContentProperty, "Str_Repair_ComponentStore");
         var systemFiles = new ComboBoxItem();
+        systemFiles.ToolTip = NativeCapabilityLabel("command.repair-sfc");
         systemFiles.SetResourceReference(ContentProperty, "Str_Repair_SystemFiles");
         RepairChoice.Items.Add(componentStore);
         RepairChoice.Items.Add(systemFiles);
@@ -44,7 +46,7 @@ public partial class MainWindow
         DisplaySettings.Visibility = Visibility.Collapsed;
         FindingsPanel.Visibility = Visibility.Collapsed;
         RepairPanel.Visibility = Visibility.Visible;
-        RepairPreview.Text = Repairs.Preview(RepairChoice.SelectedIndex == 1 ? RepairKind.SystemFiles : RepairKind.ComponentStore);
+        RepairPreview.Text = FocusedRepairPreview(RepairChoice.SelectedIndex == 1 ? RepairKind.SystemFiles : RepairKind.ComponentStore);
         SetDetailsOpen(true);
     }
     private void OnRepairChoice(object sender, SelectionChangedEventArgs e)
@@ -55,12 +57,12 @@ public partial class MainWindow
             if (RepairChoice.SelectedItem is not ComboBoxItem { Tag: WorkflowKind kind }) return;
             if (kind is WorkflowKind.Cleanup or WorkflowKind.Defender or WorkflowKind.AvailableUpdates)
                 MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(workflow => workflow.Kind == kind);
-            RepairPreview.Text = Workflows.Preview(kind);
+            RepairPreview.Text = Workflows.Preview(kind) + "\n\n" + NativeCapabilityDetails(kind);
             RepairConsent.IsChecked = false;
             RepairConsent.IsEnabled = Workflows.SupportsRepair(kind);
             return;
         }
-        RepairPreview.Text = Repairs.Preview(RepairChoice.SelectedIndex == 1 ? RepairKind.SystemFiles : RepairKind.ComponentStore);
+        RepairPreview.Text = FocusedRepairPreview(RepairChoice.SelectedIndex == 1 ? RepairKind.SystemFiles : RepairKind.ComponentStore);
         RepairConsent.IsChecked = false;
         RepairConsent.IsEnabled = true;
     }
@@ -88,7 +90,7 @@ public partial class MainWindow
                 new WindowsWorkflowHost(), progress, stop.Token));
             if (execution.Repair is null)
             {
-                RepairPreview.Text = Repairs.Preview(kind) + "\n\nFRESH EVIDENCE: " + execution.Eligibility.Detail +
+                RepairPreview.Text = FocusedRepairPreview(kind) + "\n\nFRESH EVIDENCE: " + execution.Eligibility.Detail +
                     "\n\nRESULT: No repair was run.";
                 AppendWorkflowOutput(RepairPreview.Text);
                 RegisterWorkflowResult(new WorkflowResult(workflowKind, Environment.MachineName, DateTimeOffset.UtcNow,
@@ -101,7 +103,7 @@ public partial class MainWindow
                 return;
             }
             var result = execution.Repair;
-            RepairPreview.Text = Repairs.Preview(kind) + "\n\nFRESH EVIDENCE: " + execution.Eligibility.Detail +
+            RepairPreview.Text = FocusedRepairPreview(kind) + "\n\nFRESH EVIDENCE: " + execution.Eligibility.Detail +
                 "\n\nRESULT: " + result.Status + "\nJournal: " + result.JournalPath;
             string output = RepairPreview.Text + "\n\n" + string.Join("\n", result.Steps.Select(s => s.Step.Tool + "\n" + s.Result.Output + "\n" + s.Result.Error));
             bool verified = Repairs.IsVerified(result);

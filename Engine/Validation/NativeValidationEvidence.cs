@@ -27,7 +27,13 @@ public sealed record NativeValidationRecord(
     string KillerBenchVersion,
     DateTimeOffset RecordedUtc,
     IReadOnlyList<NativeValidationArtifact> Artifacts,
-    string Notes);
+    string Notes)
+{
+    public string? ImplementationKey { get; init; }
+    public string? ImplementationSha256 { get; init; }
+    public string? DefinitionSha256 { get; init; }
+    public string? ArtifactDirectory { get; init; }
+}
 
 public sealed record NativeValidationCoverage(
     int InstalledRecipes,

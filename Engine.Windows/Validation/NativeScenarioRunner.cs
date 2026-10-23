@@ -23,9 +23,18 @@ public sealed class NativeScenarioRunner
     public const string DisposableVariable = "KILLERBENCH_DISPOSABLE";
     public const string DisposableValue = "yes-this-machine-is-disposable";
 
-    private readonly PrimitiveLibrary library = WindowsPrimitiveLibrary.Create();
+    private readonly PrimitiveLibrary library;
+    private readonly INativeScenarioHost host;
     private readonly Dictionary<string, RecipeDefinition> recipes =
         WindowsPacks.All().SelectMany(pack => pack.Recipes).ToDictionary(recipe => recipe.Id, StringComparer.Ordinal);
+
+    public NativeScenarioRunner() : this(WindowsPrimitiveLibrary.Create(), new WindowsScenarioHost()) { }
+
+    public NativeScenarioRunner(PrimitiveLibrary library, INativeScenarioHost host)
+    {
+        this.library = library ?? throw new ArgumentNullException(nameof(library));
+        this.host = host ?? throw new ArgumentNullException(nameof(host));
+    }
 
     public static bool IsDisposable(string? declaredMachine) =>
         OperatingSystem.IsWindows() &&
@@ -49,7 +58,7 @@ public sealed class NativeScenarioRunner
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(recipeId);
         ArgumentException.ThrowIfNullOrWhiteSpace(outputFolder);
-        if (!IsDisposable(declaredMachine))
+        if (!host.IsWindows || !MatchesDisposableIdentity(declaredMachine, host.MachineName, host.DisposableMarker))
             throw new InvalidOperationException("Refusing to inject faults: the declared machine must equal this machine's name and " + DisposableVariable + " must be set to " + DisposableValue + ".");
         var plan = NativeValidationCatalog.Find(recipeId) ?? throw new ArgumentException("Unknown recipe '" + recipeId + "'.", nameof(recipeId));
         if (!recipes.TryGetValue(recipeId, out var recipe)) throw new ArgumentException("Recipe '" + recipeId + "' is not in a built-in pack; only pack recipes can be injected.", nameof(recipeId));
@@ -79,7 +88,8 @@ public sealed class NativeScenarioRunner
         var artifacts = new Dictionary<string, string>(StringComparer.Ordinal);
         var notes = new StringBuilder();
         NativeValidationOutcome outcome;
-        var before = await SnapshotAsync(service, token).ConfigureAwait(false);
+        INativeScenarioService serviceBoundary = host.Service(service);
+        var before = await serviceBoundary.SnapshotAsync(token).ConfigureAwait(false);
         artifacts["before snapshot"] = await WriteAsync(folder, "before-snapshot.txt", before.Text, token).ConfigureAwait(false);
         artifacts["machine snapshot"] = artifacts["before snapshot"];
         string journalPath = Path.Combine(folder, "workflow-journal.jsonl");
@@ -87,7 +97,7 @@ public sealed class NativeScenarioRunner
         var progressLines = new StringBuilder();
         var capture = new Progress<string>(line => { progressLines.AppendLine(line); progress?.Report(line); });
         var runner = new RecipeRunner(library, journal);
-        var injection = new NativeServiceScenario(new ServiceBoundary(service), before);
+        var injection = new NativeServiceScenario(serviceBoundary, before);
         bool restored = true;
         try
         {
@@ -103,6 +113,9 @@ public sealed class NativeScenarioRunner
                     if (before.State != 4) { outcome = NativeValidationOutcome.Blocked; notes.Append("The service was not running before the scenario, so a healthy baseline could not be observed."); break; }
                     var result = await runner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true, Elevated = true, Progress = capture }, token).ConfigureAwait(false);
                     artifacts["provider evidence"] = await WriteAsync(folder, "provider-evidence.txt", Evidence(result), token).ConfigureAwait(false);
+                    artifacts["native result"] = artifacts["provider evidence"];
+                    var after = await serviceBoundary.SnapshotAsync(token).ConfigureAwait(false);
+                    artifacts["after snapshot"] = await WriteAsync(folder, "after-snapshot.txt", after.Text, token).ConfigureAwait(false);
                     outcome = result.Outcome == RecipeRunOutcome.Clear && result.Action is null ? NativeValidationOutcome.Passed : NativeValidationOutcome.Failed;
                     notes.Append("Healthy service produced ").Append(result.Outcome).Append(" with no action. ").Append(result.Detail);
                     break;
@@ -113,7 +126,9 @@ public sealed class NativeScenarioRunner
                     if (!injected) { outcome = NativeValidationOutcome.Blocked; notes.Append("The service could not be stopped to inject the fault."); break; }
                     var result = await runner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = false, Elevated = true, Progress = capture }, token).ConfigureAwait(false);
                     artifacts["preview output"] = await WriteAsync(folder, "preview-output.txt", Evidence(result), token).ConfigureAwait(false);
-                    var after = await SnapshotAsync(service, token).ConfigureAwait(false);
+                    artifacts["native result"] = artifacts["preview output"];
+                    var after = await serviceBoundary.SnapshotAsync(token).ConfigureAwait(false);
+                    artifacts["after snapshot"] = await WriteAsync(folder, "after-snapshot.txt", after.Text, token).ConfigureAwait(false);
                     outcome = result.Outcome == RecipeRunOutcome.RepairAvailable && result.Action is null && after.State == 1 ? NativeValidationOutcome.Passed : NativeValidationOutcome.Failed;
                     notes.Append("Stopped service produced ").Append(result.Outcome).Append("; service state afterwards ").Append(after.State).Append(". ").Append(result.Detail);
                     break;
@@ -123,8 +138,10 @@ public sealed class NativeScenarioRunner
                     bool injected = await injection.StopAsync(token).ConfigureAwait(false) && await injection.DisableAsync(token).ConfigureAwait(false);
                     if (!injected) { outcome = NativeValidationOutcome.Blocked; notes.Append("The service could not be stopped and disabled to inject the fault."); break; }
                     var result = await runner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true, Elevated = true, Progress = capture }, token).ConfigureAwait(false);
-                    var after = await SnapshotAsync(service, token).ConfigureAwait(false);
+                    var after = await serviceBoundary.SnapshotAsync(token).ConfigureAwait(false);
                     artifacts["final eligibility snapshot"] = await WriteAsync(folder, "final-eligibility-snapshot.txt", after.Text + "\n\n" + Evidence(result), token).ConfigureAwait(false);
+                    artifacts["native result"] = await WriteAsync(folder, "native-result.txt", Evidence(result), token).ConfigureAwait(false);
+                    artifacts["after snapshot"] = await WriteAsync(folder, "after-snapshot.txt", after.Text, token).ConfigureAwait(false);
                     outcome = result.Action is null && result.Outcome is RecipeRunOutcome.NeedsAttention or RecipeRunOutcome.Unknown && after.State == 1 ? NativeValidationOutcome.Passed : NativeValidationOutcome.Failed;
                     notes.Append("Disabled service produced ").Append(result.Outcome).Append(" with ").Append(result.Action is null ? "no dispatch" : "a dispatch").Append(". ").Append(result.Detail);
                     break;
@@ -134,7 +151,7 @@ public sealed class NativeScenarioRunner
                     bool injected = await injection.StopAsync(token).ConfigureAwait(false);
                     if (!injected) { outcome = NativeValidationOutcome.Blocked; notes.Append("The service could not be stopped to inject the fault."); break; }
                     var result = await runner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true, Elevated = true, Progress = capture }, token).ConfigureAwait(false);
-                    var after = await SnapshotAsync(service, token).ConfigureAwait(false);
+                    var after = await serviceBoundary.SnapshotAsync(token).ConfigureAwait(false);
                     artifacts["prepared record"] = await WriteAsync(folder, "prepared-record.txt", PreparedEntries(journalPath), token).ConfigureAwait(false);
                     artifacts["native result"] = await WriteAsync(folder, "native-result.txt", result.Action is null ? "no action" : JsonSerializer.Serialize(result.Action, RecipePackJson.Options), token).ConfigureAwait(false);
                     artifacts["after snapshot"] = await WriteAsync(folder, "after-snapshot.txt", after.Text, token).ConfigureAwait(false);
@@ -149,7 +166,9 @@ public sealed class NativeScenarioRunner
                     using var canceled = new CancellationTokenSource();
                     canceled.Cancel();
                     var result = await runner.RunAsync(recipe, new RecipeRunOptions { AuthorizeRepair = true, Elevated = true, Progress = capture }, canceled.Token).ConfigureAwait(false);
-                    var after = await SnapshotAsync(service, token).ConfigureAwait(false);
+                    var after = await serviceBoundary.SnapshotAsync(token).ConfigureAwait(false);
+                    artifacts["native result"] = await WriteAsync(folder, "native-result.txt", Evidence(result), token).ConfigureAwait(false);
+                    artifacts["after snapshot"] = await WriteAsync(folder, "after-snapshot.txt", after.Text, token).ConfigureAwait(false);
                     outcome = result.Outcome == RecipeRunOutcome.Canceled && result.Action is null && after.State == 1 ? NativeValidationOutcome.Passed : NativeValidationOutcome.Failed;
                     notes.Append("Pre-canceled run produced ").Append(result.Outcome).Append("; service state afterwards ").Append(after.State).Append('.');
                     break;
@@ -174,27 +193,61 @@ public sealed class NativeScenarioRunner
         // Evidence and restoration must survive cancellation of the scenario itself.
         token = CancellationToken.None;
         artifacts["restoration stages"] = await WriteAsync(folder, "restoration-stages.txt", string.Join("\n", injection.Stages), token).ConfigureAwait(false);
+        artifacts["restoration evidence"] = await WriteAsync(folder, "restoration-evidence.txt", "RestorationSucceeded=" + restored + "\n" + string.Join("\n", injection.Stages), token).ConfigureAwait(false);
         artifacts["progress log"] = await WriteAsync(folder, "progress-log.txt", progressLines.ToString(), token).ConfigureAwait(false);
         if (!File.Exists(journalPath)) await File.WriteAllTextAsync(journalPath, "", token).ConfigureAwait(false);
         artifacts["workflow journal"] = "workflow-journal.jsonl";
-        foreach (string required in scenario.RequiredArtifacts)
-            if (!artifacts.ContainsKey(required))
-                artifacts[required] = await WriteAsync(folder, required.Replace(' ', '-') + ".txt", "Not produced: " + notes, token).ConfigureAwait(false);
 
-        var record = new NativeValidationRecord(NativeValidationEvidence.SchemaVersion, scenario.Id, plan.RecipeId, plan.RecipeVersion, outcome,
-            await NativeWindowsProductMetadata.ReadAsync(token).ConfigureAwait(false),
-            Read(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "DisplayVersion") ?? Environment.OSVersion.Version.ToString(),
-            (Read(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentBuild") ?? Environment.OSVersion.Version.Build.ToString()) + "." + (Read(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "UBR") ?? "0"),
-            RuntimeInformation.OSArchitecture.ToString(),
+        var machine = await host.ReadMachineAsync(token).ConfigureAwait(false);
+        var record = new NativeValidationRecord(NativeValidationEvidence.SchemaVersion, scenario.Id, plan.RecipeId, recipe.Version, outcome,
+            machine.Product, machine.Version, machine.Build, machine.Architecture,
             typeof(WindowsEngine).Assembly.GetName().Version?.ToString(3) ?? "0.0.0",
             DateTimeOffset.UtcNow,
             [.. artifacts.Select(pair => new NativeValidationArtifact(pair.Key, pair.Value, Sha256(Path.Combine(folder, pair.Value))))],
             notes.Length > 2000 ? notes.ToString(0, 2000) : notes.ToString());
+        record = BindRetainedEvidence(record, folder);
+        outcome = record.Outcome;
         string json = JsonSerializer.Serialize(record, Capture.JsonOptions);
-        NativeValidationEvidence.Read(Encoding.UTF8.GetBytes(json));
         string recordPath = Path.Combine(outputFolder, scenario.Id + ".json");
         await File.WriteAllTextAsync(recordPath, json, token).ConfigureAwait(false);
+        RepairCapabilityInventory.ReadRecord(recordPath, WindowsRepairCapabilities.All);
         return new NativeScenarioResult(scenario.Id, outcome, recordPath, folder, record.Notes) { RestorationSucceeded = restored };
+    }
+
+    /// <summary>Binds a native pack scenario to its exact implementation and refuses a pass without retained required artifacts.</summary>
+    public static NativeValidationRecord BindRetainedEvidence(NativeValidationRecord record, string artifactDirectory)
+    {
+        ArgumentNullException.ThrowIfNull(record);
+        ArgumentException.ThrowIfNullOrWhiteSpace(artifactDirectory);
+        var capability = WindowsRepairCapabilities.Find(record.RecipeId)
+            ?? throw new ArgumentException("Unknown native repair capability.", nameof(record));
+        var implementation = capability.Implementations.Single(item => item.Key.StartsWith("pack/", StringComparison.Ordinal));
+        var scenario = implementation.Scenarios.Single(item => item.Id == record.ScenarioId);
+        bool complete = scenario.RequiredArtifacts.All(kind => record.Artifacts.Count(artifact => artifact.Kind == kind) == 1);
+        foreach (var artifact in record.Artifacts)
+        {
+            if (string.IsNullOrWhiteSpace(artifact.Name) || Path.GetFileName(artifact.Name) != artifact.Name)
+            { complete = false; continue; }
+            string path = Path.Combine(artifactDirectory, artifact.Name);
+            try
+            {
+                if (!File.Exists(path) || (File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0 ||
+                    !Sha256(path).Equals(artifact.Sha256, StringComparison.OrdinalIgnoreCase)) complete = false;
+            }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException or System.Security.SecurityException)
+            { complete = false; }
+        }
+        string notes = !complete ? "Required retained native artifacts are missing or changed. " + record.Notes : record.Notes;
+        return record with
+        {
+            RecipeVersion = implementation.Version,
+            ImplementationKey = implementation.Key,
+            DefinitionSha256 = implementation.DefinitionSha256,
+            ImplementationSha256 = implementation.ImplementationSha256,
+            ArtifactDirectory = Path.GetFileName(Path.TrimEndingDirectorySeparator(Path.GetFullPath(artifactDirectory))),
+            Outcome = !complete && record.Outcome == NativeValidationOutcome.Passed ? NativeValidationOutcome.Inconclusive : record.Outcome,
+            Notes = notes[..Math.Min(2000, notes.Length)]
+        };
     }
 
     private static async Task<NativeServiceSnapshot> SnapshotAsync(string service, CancellationToken token)
@@ -232,6 +285,19 @@ public sealed class NativeScenarioRunner
         return result.ExitCode == 0;
     }
 
+    private sealed class WindowsScenarioHost : INativeScenarioHost
+    {
+        public bool IsWindows => OperatingSystem.IsWindows();
+        public string MachineName => Environment.MachineName;
+        public string? DisposableMarker => Environment.GetEnvironmentVariable(DisposableVariable);
+        public INativeScenarioService Service(string name) => new ServiceBoundary(name);
+        public async Task<NativeScenarioMachine> ReadMachineAsync(CancellationToken token) => new(
+            await NativeWindowsProductMetadata.ReadAsync(token).ConfigureAwait(false),
+            Read(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "DisplayVersion") ?? Environment.OSVersion.Version.ToString(),
+            (Read(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CurrentBuild") ?? Environment.OSVersion.Version.Build.ToString()) + "." +
+                (Read(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "UBR") ?? "0"), RuntimeInformation.OSArchitecture.ToString());
+    }
+
     private sealed class ServiceBoundary(string service) : INativeScenarioService
     {
         public Task<NativeServiceSnapshot> SnapshotAsync(CancellationToken token) => NativeScenarioRunner.SnapshotAsync(service, token);
@@ -252,7 +318,9 @@ public sealed class NativeScenarioRunner
     }
 
     private static string Evidence(RecipeRunResult result) =>
-        JsonSerializer.Serialize(new { result.RecipeId, result.Outcome, result.Detail, result.ExecutionUncertain, Probes = result.Probes.Select(probe => new { probe.Role, probe.Evaluation.Verdict, probe.Evaluation.Detail, probe.Result.Raw }) }, RecipePackJson.Options);
+        JsonSerializer.Serialize(new { result.RecipeId, result.Outcome, result.Detail, result.ExecutionUncertain,
+            Dispatched = result.Action?.Dispatched ?? false, result.Action,
+            Probes = result.Probes.Select(probe => new { probe.Role, probe.Evaluation.Verdict, probe.Evaluation.Detail, probe.Result.Raw }) }, RecipePackJson.Options);
 
     private static string PreparedEntries(string journalPath) =>
         File.Exists(journalPath) ? string.Join("\n", File.ReadLines(journalPath).Where(line => line.Contains("\"Prepared\"", StringComparison.Ordinal) || line.Contains("\"Dispatched\"", StringComparison.Ordinal))) : "";

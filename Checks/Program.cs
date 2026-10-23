@@ -14,6 +14,29 @@ internal static class Program
         WindowsEngine.Register();
         try
         {
+            if (args is ["--only", "desktop-state"]) return DesktopOperationStateChecks.Run(args);
+            if (args is ["--only", "capability-desktop"]) return CapabilityDesktopChecks.Run();
+            if (args is ["--only", "picker-no-window"]) return FilePickerListingChecks.Run();
+            if (args is ["--only", "repair-capabilities"])
+            {
+                RepairCapabilityChecks.RunAsync(Path.GetTempPath()).GetAwaiter().GetResult();
+                return 0;
+            }
+            if (args is ["--only", "portable-publication"])
+            {
+                PortablePublicationChecks.Run(Path.GetTempPath());
+                return 0;
+            }
+            if (args is ["--only", "memory-recovery"])
+            {
+                MemoryDiagnosticRecoveryChecks.RunAsync(Path.GetTempPath()).GetAwaiter().GetResult();
+                return 0;
+            }
+            if (args is ["--only", "restart-recovery"])
+            {
+                RestartRecoveryChecks.RunAsync(Path.GetTempPath()).GetAwaiter().GetResult();
+                return 0;
+            }
             if (RecipeOperationChecks.TryRunChildAsync(args).GetAwaiter().GetResult()) return 0;
             if (args is ["--isolated-import-reports"]) return ImportedReportUiChecks.Run();
             if (args is ["--only", "import-reports"]) return IsolatedDesktop.Run("--isolated-import-reports");
@@ -555,6 +578,8 @@ internal static class Program
             RecipeOperationChecks.RunAsync().GetAwaiter().GetResult();
             RecipeOperationChecks.RunFileAsync(scratch).GetAwaiter().GetResult();
             RestartRecoveryChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            MemoryDiagnosticRecoveryChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            RepairCapabilityChecks.RunAsync(scratch).GetAwaiter().GetResult();
             GoalUncertaintyChecks.RunAsync().GetAwaiter().GetResult();
             WindowsMtuDispatchChecks.RunAsync().GetAwaiter().GetResult();
             MutationDispatchChecks.RunAsync().GetAwaiter().GetResult();
@@ -568,6 +593,7 @@ internal static class Program
             GoalOptionValidationChecks.RunAsync().GetAwaiter().GetResult();
             InstallerRuntimeChecks.Run();
             UpdateHelperChecks.Run(scratch);
+            PortablePublicationChecks.Run(scratch);
             InstallationOwnershipChecks.Run(scratch);
             InstallationProtectionChecks.Run(scratch);
             NativeScenarioRestorationChecks.RunAsync().GetAwaiter().GetResult();

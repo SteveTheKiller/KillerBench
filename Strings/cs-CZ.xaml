@@ -837,4 +837,11 @@
   <sys:String x:Key="Str_Language_Changed">Jazyk: {0}.</sys:String>
   <sys:String x:Key="Str_Output_WorkflowCoverage">{0} | kontroly: {1} | spuštěné opravy: {2} | odpovídající řádky přehledu: {3}. Platí jen pro zkontrolované oblasti.</sys:String>
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. Platí jen pro zkontrolované oblasti.</sys:String>
+  <sys:String x:Key="Str_NativeLab_Name">Stav ověření funkcí v nativní laboratoři</sys:String>
+  <sys:String x:Key="Str_NativeLab_Format">Nativní laboratoř: {0}</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Zatím neověřeno v nativní laboratoři</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Zatím neověřeno: nativní podklady jsou zastaralé</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Zatím neověřeno: nativní podklady jsou neúplné nebo test selhal</sys:String>
+  <sys:String x:Key="Str_NativeLab_LabVerified">Ověřeno v laboratoři pro zaznamenané scénáře</sys:String>
+  <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Pouze diagnostika; oprava se nespouští</sys:String>
 </ResourceDictionary>

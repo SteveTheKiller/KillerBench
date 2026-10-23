@@ -183,6 +183,10 @@ internal static class WorkflowCommands
             !(definition.Kind == WorkflowKind.Defender && a is "--skip-tpm" or "--skip-secure-boot" or "--skip-virtualization") &&
             !(definition.Kind == WorkflowKind.AvailableUpdates && a is "--drivers" or "--no-software" or "--third-party")))
         { Console.Error.WriteLine("Usage: workflow <" + WorkflowCatalog.CommandChoices + "> [--auto-repair] [--json]. Defender also accepts --skip-tpm, --skip-secure-boot and --skip-virtualization."); return 2; }
+        var capabilityIds = (selectedRecipes is null ? RecipeCatalog.ForWorkflow(definition.Kind) : RecipeCatalog.SelectForWorkflow(definition.Kind, selectedRecipes))
+            .Select(recipe => recipe.Id).ToHashSet(StringComparer.Ordinal);
+        var capabilities = WindowsRepairCapabilities.All.Where(capability => capabilityIds.Contains(capability.Id)).ToArray();
+        CapabilityOutput.WriteLabels(capabilities);
         using var stop = new CancellationTokenSource();
         ConsoleCancelEventHandler onCancel = (_, e) => { e.Cancel = true; stop.Cancel(); };
         Console.CancelKeyPress += onCancel;
@@ -197,7 +201,7 @@ internal static class WorkflowCommands
                 progress, new WindowsWorkflowHost
                 { BitsAllUsers = bitsAllUsers, ApplicationScope = applicationScope, IncludeProvisionedPackages = includeProvisioned, PackageScope = packageScope, NetworkEndpoint = networkEndpoint, NetworkLookupHost = networkLookupHost, MsiProductCode = msiProductCode, StorageVolume = storageVolume, ProposedComputerName = proposedName, SecurityOptions = new(!args.Contains("--skip-tpm"), !args.Contains("--skip-secure-boot"), !args.Contains("--skip-virtualization")), UpdateOptions = updateOptions, IncludeThirdPartyUpdates = args.Contains("--third-party"), Progress = progress }, selectedRecipes, diagnosticScopes, token: stop.Token);
             if (reportPath is not null) await ExportReportAsync(result, reportPath, args.Contains("--auto-repair")).ConfigureAwait(false);
-            Console.WriteLine(args.Contains("--json") ? JsonSerializer.Serialize(result, Capture.JsonOptions) :
+            Console.WriteLine(args.Contains("--json") ? CapabilityOutput.WithStatus(result, capabilities) :
                 WorkflowReport.Format(result, commandLine: true));
             return result.GetExitCode();
         }

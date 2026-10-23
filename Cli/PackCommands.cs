@@ -13,7 +13,11 @@ internal static class PackCommands
         {
             case "list" when args.Length == 2:
                 foreach (var pack in BuiltIn())
+                {
                     Console.WriteLine(pack.Id + "\t" + pack.Recipes.Count + " recipes\t" + pack.Title);
+                    foreach (var recipe in pack.Recipes.Where(recipe => !recipe.DiagnosticOnly))
+                        Console.WriteLine("  " + recipe.Id + " v" + recipe.Version + "\t" + WindowsRepairCapabilities.LabelFor(recipe.Id));
+                }
                 Console.WriteLine("Primitives: " + string.Join(", ", library.Probes.Select(p => p.Name).Concat(library.Actions.Select(a => a.Name)).Order(StringComparer.Ordinal)));
                 return 0;
             case "export" when args.Length == 4:

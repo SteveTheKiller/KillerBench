@@ -836,4 +836,11 @@
   <sys:String x:Key="Str_Language_Changed">Språk: {0}.</sys:String>
   <sys:String x:Key="Str_Output_WorkflowCoverage">{0} | {1} kontroller | {2} reparasjoner kjørt | {3} samsvarende rapportlinjer. Gjelder bare de kontrollerte områdene.</sys:String>
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. Gjelder bare de kontrollerte områdene.</sys:String>
+  <sys:String x:Key="Str_NativeLab_Name">Status for funksjonskontroll i det native testmiljøet</sys:String>
+  <sys:String x:Key="Str_NativeLab_Format">Nativt testmiljø: {0}</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Ennå ikke kontrollert i det native testmiljøet</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Ennå ikke kontrollert: native testbevis er utdaterte</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Ennå ikke kontrollert: native testbevis er ufullstendige eller testen mislyktes</sys:String>
+  <sys:String x:Key="Str_NativeLab_LabVerified">Kontrollert i testmiljøet for de registrerte scenarioene</sys:String>
+  <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Bare diagnostikk; ingen reparasjon utføres</sys:String>
 </ResourceDictionary>

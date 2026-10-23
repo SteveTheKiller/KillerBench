@@ -837,4 +837,11 @@
   <sys:String x:Key="Str_Language_Changed">言語: {0}。</sys:String>
   <sys:String x:Key="Str_Output_WorkflowCoverage">{0} | チェック {1} 件 | 実行した修復 {2} 件 | 一致するレポート行 {3} 行。確認した範囲にのみ適用されます。</sys:String>
   <sys:String x:Key="Str_Output_CheckedScopes">{0}。確認した範囲にのみ適用されます。</sys:String>
+  <sys:String x:Key="Str_NativeLab_Name">ネイティブラボでの機能検証状況</sys:String>
+  <sys:String x:Key="Str_NativeLab_Format">ネイティブラボ: {0}</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">ネイティブラボでは未検証</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">未検証: ネイティブ環境の検証記録が古くなっています</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">未検証: ネイティブ環境の検証記録が不完全、またはテストが失敗しています</sys:String>
+  <sys:String x:Key="Str_NativeLab_LabVerified">記録されたシナリオについてラボで検証済み</sys:String>
+  <sys:String x:Key="Str_NativeLab_DiagnosticOnly">診断のみ。修復は実行されません</sys:String>
 </ResourceDictionary>

@@ -82,6 +82,55 @@ public static class NativeValidationReport
         return sb.ToString();
     }
 
+    public static string BuildText(IReadOnlyList<RepairCapability> capabilities)
+    {
+        ArgumentNullException.ThrowIfNull(capabilities);
+        var text = new StringBuilder("KILLERBENCH NATIVE CAPABILITY COVERAGE\n\n");
+        text.AppendLine("Capabilities: " + capabilities.Count).AppendLine("Implementations: " + capabilities.Sum(item => item.Implementations.Count))
+            .AppendLine("Lab verified capabilities: " + capabilities.Count(item => item.Status == NativeCapabilityStatus.LabVerified))
+            .AppendLine("Legacy, declarative and explicit entry points share this inventory. Missing, stale, failed or incomplete evidence is not a pass.");
+        foreach (var capability in capabilities)
+        {
+            text.AppendLine().AppendLine(capability.Id + ": " + capability.Label);
+            foreach (var implementation in capability.Implementations)
+                text.AppendLine(implementation.Key + " v" + implementation.Version + ": " + implementation.Label)
+                    .AppendLine("Definition SHA-256: " + implementation.DefinitionSha256)
+                    .AppendLine("Implementation SHA-256: " + implementation.ImplementationSha256)
+                    .AppendLine("Scope: " + implementation.VerificationScope)
+                    .AppendLine("Required scenarios: " + string.Join(", ", implementation.Scenarios.Select(item => item.Id)))
+                    .AppendLine("Retained records: " + string.Join(", ", implementation.EvidenceReferences));
+        }
+        return text.ToString();
+    }
+
+    public static string BuildHtml(IReadOnlyList<RepairCapability> capabilities, string themeKey = "dark", string accentKey = "orange")
+    {
+        ArgumentNullException.ThrowIfNull(capabilities);
+        string theme = WorkflowReportExport.NormalizeTheme(themeKey);
+        string accent = WorkflowReportExport.NormalizeAccent(accentKey);
+        var palette = Palettes.Single(item => item.Key == theme);
+        string accentColor = accent switch { "red" => "#DD504B", "green" => "#1EA54C", "teal" => "#1FB8A8", "blue" => "#50AEE8", "purple" => "#B982E3", _ => "#E8962C" };
+        var text = new StringBuilder("<!DOCTYPE html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>KillerBench native capability coverage</title><style>");
+        text.Append("body{margin:24px;background:").Append(palette.Background).Append(";color:").Append(palette.Text)
+            .Append(";font:14px/1.5 'Segoe UI',sans-serif}main{max-width:1280px;margin:auto}h1,h2{font-family:Consolas,monospace}section{padding:16px;margin:16px 0;border:1px solid ")
+            .Append(palette.Border).Append(";background:").Append(palette.Pane).Append(";border-radius:9px}pre{white-space:pre-wrap;overflow-wrap:anywhere}p{overflow-wrap:anywhere}")
+            .Append("h1,h2{color:").Append(theme is "dark" or "light" or "black" or "se98" ? accentColor : palette.Accent).Append("}")
+            .Append("</style></head><body data-theme='").Append(E(theme)).Append("' data-accent='").Append(E(accent))
+            .Append("'><main><h1>KillerBench native capability coverage</h1><p>Legacy, declarative and explicit repair entry points share this inventory. Missing, stale, failed or incomplete evidence is not a pass. A lab label proves only the listed scenarios for the exact implementation hashes.</p>");
+        foreach (var capability in capabilities)
+        {
+            text.Append("<section><h2>").Append(E(capability.Title)).Append("</h2><p>").Append(E(capability.Id)).Append(": ").Append(E(capability.Label)).Append("</p>");
+            foreach (var implementation in capability.Implementations)
+                text.Append("<h3>").Append(E(implementation.Key)).Append(" v").Append(implementation.Version).Append("</h3><p>").Append(E(implementation.Label))
+                    .Append("</p><p>Scope: ").Append(E(implementation.VerificationScope)).Append("</p><p>Definition SHA-256: ").Append(E(implementation.DefinitionSha256))
+                    .Append("<br>Implementation SHA-256: ").Append(E(implementation.ImplementationSha256)).Append("</p><details><summary>Required scenarios and retained records</summary><pre>")
+                    .Append(E(string.Join("\n", implementation.Scenarios.Select(item => item.Id)))).Append("</pre><p>")
+                    .Append(E(string.Join(", ", implementation.EvidenceReferences))).Append("</p></details>");
+            text.Append("</section>");
+        }
+        return text.Append("</main></body></html>").ToString();
+    }
+
     private static void Metric(StringBuilder sb, string label, int value) => sb.Append("<div class='metric'><strong>").Append(value).Append("</strong>").Append(E(label)).Append("</div>");
     private static string E(string? value) => WebUtility.HtmlEncode(value ?? string.Empty);
     private static string DotColor(string background) => background.StartsWith("linear", StringComparison.Ordinal) ? background.Split('#')[1][..6].Insert(0, "#") : background;
