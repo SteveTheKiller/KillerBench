@@ -92,6 +92,10 @@ public sealed class WindowsServiceRunningProbe : IProbePrimitive
 /// <summary>Starts one supported service through the Engine's guarded start path, which rechecks eligibility and executable registration immediately before dispatch.</summary>
 public sealed class WindowsServiceStartAction : IActionPrimitive
 {
+    private readonly Func<RepairStep, IProgress<string>?, CancellationToken, Task<ToolResult>> execute;
+    public WindowsServiceStartAction(Func<RepairStep, IProgress<string>?, CancellationToken, Task<ToolResult>>? execute = null) =>
+        this.execute = execute ?? ServiceRecovery.ExecuteAsync;
+
     public string Name => "service.start";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [WindowsServicePrimitives.NameParameter];
     public RecipeRisk Risk => RecipeRisk.Reversible;
@@ -106,16 +110,18 @@ public sealed class WindowsServiceStartAction : IActionPrimitive
         if (!OperatingSystem.IsWindows()) return new ActionResult(false, false, "", "Service start requires Windows.");
         try
         {
-            var result = await ServiceRecovery.ExecuteAsync(new RepairStep("sc.exe", ["start", service], false), progress, token).ConfigureAwait(false);
+            var result = await execute(new RepairStep("sc.exe", ["start", service], false), progress, token).ConfigureAwait(false);
             string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
             if (result.TimedOut) return new ActionResult(true, false, raw, "Service start timed out; state is unverified.") { TimedOut = true };
             return new ActionResult(true, result.ExitCode == 0, raw, result.ExitCode == 0 ? null : "sc.exe start exited with " + result.ExitCode + ".");
         }
         catch (RepairStepSkippedException skipped) { return new ActionResult(false, true, skipped.Evidence.Output, skipped.Message); }
         catch (RepairDispatchDeferredException deferred) { return new ActionResult(false, false, "", deferred.Message); }
+        catch (ToolNotStartedException error) { return new ActionResult(false, false, "", "Service command did not start: " + error.Message); }
+        catch (ToolStartCanceledException) { return new ActionResult(false, false, "", "Service command was canceled before process creation."); }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or System.Security.SecurityException or System.ComponentModel.Win32Exception)
         {
-            return new ActionResult(false, false, "", "Service start could not be dispatched: " + error.Message);
+            return new ActionResult(true, false, "", "Service start completion is unknown after possible dispatch: " + error.Message);
         }
     }
 }
