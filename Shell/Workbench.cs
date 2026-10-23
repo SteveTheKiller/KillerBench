@@ -16,6 +16,8 @@ namespace KillerBench;
 public partial class MainWindow
 {
     private readonly List<TextEvidence> sources = [];
+    private sealed record WorkflowSourceIdentity(Guid Id);
+    private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, WorkflowSourceIdentity> workflowSourceIdentities = [];
     private readonly Queue<SessionActivityEntry> activity = new();
     private bool shellReady;
     private bool sourcesOpen = true;
@@ -76,7 +78,11 @@ public partial class MainWindow
 
     private void RegisterSource(TextEvidence item)
     {
-        int old = sources.FindIndex(s => s.Source == item.Source);
+        WorkflowSourceIdentity? identity = workflowSummaries.TryGetValue(item, out _)
+            ? workflowSourceIdentities.GetValue(item, _ => new(Guid.NewGuid())) : null;
+        int old = sources.FindIndex(source => identity is not null
+            ? workflowSourceIdentities.TryGetValue(source, out var previous) && previous.Id == identity.Id
+            : source.Source == item.Source && !workflowSourceIdentities.TryGetValue(source, out _));
         if (old >= 0) { sources.RemoveAt(old); SourcesList.Items.RemoveAt(old); }
         if (sources.Count >= (capture is null ? 12 : Capture.MaximumSources + 1))
         {
@@ -90,7 +96,7 @@ public partial class MainWindow
         SourcesList.Items.Add(new ListBoxItem
         {
             Content = new TextBlock { Text = item.Source == "Synthetic demonstration" ? "Sample evidence" : Path.GetFileName(item.Source), TextTrimming = TextTrimming.CharacterEllipsis },
-            ToolTip = item.Source, Tag = item
+            ToolTip = identity is null ? item.Source : item.Source + "\nResult ID: " + identity.Id, Tag = item
         });
         SourcesList.SelectedIndex = sources.Count - 1;
         SessionLabel.Text = $"{sources.Count} source{(sources.Count == 1 ? "" : "s")}";
