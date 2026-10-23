@@ -55,6 +55,10 @@ public sealed partial class WindowsDeviceStatusProbe : IProbePrimitive
 /// <summary>Restarts one device through pnputil, which re-enumerates it and reloads its driver.</summary>
 public sealed class WindowsDeviceRestartAction : IActionPrimitive
 {
+    private readonly Func<string[], IProgress<string>?, CancellationToken, Task<ToolResult>> runCommand;
+    public WindowsDeviceRestartAction(Func<string[], IProgress<string>?, CancellationToken, Task<ToolResult>>? runCommand = null) =>
+        this.runCommand = runCommand ?? ((arguments, progress, token) => NativeTool.RunAsync("pnputil.exe", arguments, progress: progress, token: token));
+
     public string Name => "pnp.restart-device";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [WindowsDeviceStatusProbe.InstanceParameter];
     public RecipeRisk Risk => RecipeRisk.Reversible;
@@ -64,11 +68,11 @@ public sealed class WindowsDeviceRestartAction : IActionPrimitive
     {
         ArgumentNullException.ThrowIfNull(parameters);
         if (!OperatingSystem.IsWindows()) return new ActionResult(false, false, "", "Device changes require Windows.");
-        var result = await NativeTool.RunAsync("pnputil.exe", ["/restart-device", parameters["instance"]], progress: progress, token: token).ConfigureAwait(false);
+        var result = await runCommand(["/restart-device", parameters["instance"]], progress, token).ConfigureAwait(false);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
         if (result.TimedOut) return new ActionResult(true, false, raw, "pnputil timed out.") { TimedOut = true };
-        bool ok = result.ExitCode == 0;
-        return new ActionResult(true, ok, raw, ok ? null : "pnputil exited with " + result.ExitCode + ".") { RestartRequired = result.ExitCode == 3010 };
+        bool ok = result.ExitCode is 0 or 3010 && !result.Truncated && string.IsNullOrWhiteSpace(result.Error);
+        return new ActionResult(true, ok, raw, ok ? null : result.Truncated ? "pnputil output was truncated; device state is unverified." : "pnputil exited with " + result.ExitCode + ".") { RestartRequired = ok && result.ExitCode == 3010 };
     }
 }
 
