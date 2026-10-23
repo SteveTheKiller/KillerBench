@@ -60,4 +60,3 @@ Be prepared to revise an approved contribution after review. Contributions must 
 ## Project-specific guidance
 
 Diagnostics and repairs have different safety requirements. Report what was observed separately from what was changed, and verify repair and recovery behavior in a disposable environment.
-
