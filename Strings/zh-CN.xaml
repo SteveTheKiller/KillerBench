@@ -518,6 +518,7 @@
   <sys:String x:Key="Str_About_KillerMcpLocked">{0} 之后，KillerMCP 修复已被锁定。</sys:String>
   <sys:String x:Key="Str_About_KillerMcpClearLock">解除锁定</sys:String>
   <sys:String x:Key="Str_About_StartupUpdateCheck">启动时检查更新</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">在菜单中显示快捷键</sys:String>
   <sys:String x:Key="Str_About_StartupUpdateHeading">{0} {1} 已发布</sys:String>
   <sys:String x:Key="Str_About_StartupUpdateDetail">是否立即下载并安装？应用将关闭并自动重新打开。</sys:String>
   <sys:String x:Key="Str_About_UpdateNow">更新</sys:String>

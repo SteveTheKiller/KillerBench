@@ -515,6 +515,7 @@
   <sys:String x:Key="Str_About_KillerMcpLocked">Os reparos do KillerMCP estão bloqueados após {0}.</sys:String>
   <sys:String x:Key="Str_About_KillerMcpClearLock">Remover bloqueio</sys:String>
   <sys:String x:Key="Str_About_StartupUpdateCheck">Verificar atualizações ao iniciar</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">Mostrar atalhos nos menus</sys:String>
   <sys:String x:Key="Str_About_StartupUpdateHeading">O {0} {1} está disponível</sys:String>
   <sys:String x:Key="Str_About_StartupUpdateDetail">Deseja baixá-lo e instalá-lo agora? O aplicativo será fechado e reaberto automaticamente.</sys:String>
   <sys:String x:Key="Str_About_UpdateNow">Atualizar</sys:String>

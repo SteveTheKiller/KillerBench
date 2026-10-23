@@ -34,6 +34,7 @@ public partial class App : Application
         Services.Preferences.Load();
         Services.ThemeManager.GetSetting = Services.Preferences.Get;
         Services.ThemeManager.SetSetting = Services.Preferences.Set;
+        KillerFamily.Layout.ShortcutHints.Initialize(Services.Preferences.Get, Services.Preferences.Set);
         Services.ThemeManager.Initialize();
         Services.FilmGrain.Initialize();
         Services.LocaleManager.GetSetting = Services.Preferences.Get;

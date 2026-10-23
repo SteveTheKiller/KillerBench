@@ -69,6 +69,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Desktop, accessibility and localization
 
+- About can hide shortcut hints in menus and tooltips without disabling keyboard shortcuts.
 - In 98SE, menu hover fill follows the selected accent.
 - In 98SE, long paths in the file dialog no longer run under the recent-locations arrow.
 - Light is shades of gray with nothing white: the background, sidebar and footer are the darkest gray (#cccccc), menus and bars a step lighter, then panes, then fields.

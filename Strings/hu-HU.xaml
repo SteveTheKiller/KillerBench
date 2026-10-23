@@ -516,6 +516,7 @@
   <sys:String x:Key="Str_About_KillerMcpLocked">A KillerMCP-javítások zárolva vannak ez után: {0}.</sys:String>
   <sys:String x:Key="Str_About_KillerMcpClearLock">Zárolás feloldása</sys:String>
   <sys:String x:Key="Str_About_StartupUpdateCheck">Frissítések keresése indításkor</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">Billentyűparancsok megjelenítése a menükben</sys:String>
   <sys:String x:Key="Str_About_StartupUpdateHeading">Elérhető a {0} {1}</sys:String>
   <sys:String x:Key="Str_About_StartupUpdateDetail">Szeretné most letölteni és telepíteni? Az alkalmazás bezárul, és automatikusan újra megnyílik.</sys:String>
   <sys:String x:Key="Str_About_UpdateNow">Frissítés</sys:String>

@@ -515,6 +515,7 @@
   <sys:String x:Key="Str_About_KillerMcpLocked">Popravila KillerMCP so zaklenjena po {0}.</sys:String>
   <sys:String x:Key="Str_About_KillerMcpClearLock">Odstrani zaklep</sys:String>
   <sys:String x:Key="Str_About_StartupUpdateCheck">Ob zagonu preveri posodobitve</sys:String>
+    <sys:String x:Key="Str_About_ShowShortcutsInMenus">Prikaži bližnjice v menijih</sys:String>
   <sys:String x:Key="Str_About_StartupUpdateHeading">Na voljo je {0} {1}</sys:String>
   <sys:String x:Key="Str_About_StartupUpdateDetail">Želite posodobitev prenesti in namestiti zdaj? Aplikacija se bo samodejno zaprla in znova odprla.</sys:String>
   <sys:String x:Key="Str_About_UpdateNow">Posodobi</sys:String>
