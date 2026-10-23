@@ -104,9 +104,12 @@ The plan command repeats current Microsoft app removal inventory and safeguard c
 dotnet run --project Cli\KillerBench.Cli.csproj -- validation-plan
 dotnet run --project Cli\KillerBench.Cli.csproj -- validation-plan --workflow update
 dotnet run --project Cli\KillerBench.Cli.csproj -- validation-plan --recipe windows.system-files
+dotnet run --project Cli\KillerBench.Cli.csproj -- validation-plan --recipe hardware.memory-diagnostic
 ```
 
-The command returns deterministic JSON scenario requirements for the installed recipe catalog. It runs no diagnostics or repairs. The output is a disposable-VM test plan, not evidence that a native scenario passed.
+The command returns schema 2 JSON requirements for legacy workflows, declarative packs and explicit repair commands. A shared recipe ID retains separate implementation identities instead of counting overlapping catalogs as unrelated repairs. Each implementation includes its definition and binary fingerprints, scenario requirements and native evidence status. It runs no diagnostics or repairs. The output is a disposable-VM test plan, not evidence that a native scenario passed.
+
+The binary fingerprint covers the exact Engine, Engine.Core and Engine.Windows images. The single-file CLI retains embedded copies of those images so the same shared engine build has the same identity in desktop and CLI hosts. Frontend guards, physical interaction and signed distribution acceptance remain separate release checks.
 
 Validate records returned from disposable VMs and summarize current-version coverage:
 
@@ -115,7 +118,7 @@ dotnet run --project Cli\KillerBench.Cli.csproj -- validation-record RECORD.json
 dotnet run --project Cli\KillerBench.Cli.csproj -- validation-coverage RECORD.json MORE-RECORDS.json
 ```
 
-Records must match the installed recipe version and scenario ID and contain every required artifact label and SHA-256 digest. Coverage keeps Passed, Failed, Blocked, Inconclusive and missing scenarios separate. These commands read the record files only.
+Records must match the recipe version, implementation identity, definition fingerprint, binary fingerprint and scenario ID. They must retain every required artifact with a filename and matching SHA-256 digest. Historical records without exact implementation binding stay stale. Missing artifacts, failed restoration and incomplete scenario coverage cannot establish a verified repair. Coverage keeps Passed, Failed, Blocked, Inconclusive and missing scenarios separate. These commands only read local evidence files and retained artifacts.
 
 Generate a readable local coverage report from the same validated records:
 
