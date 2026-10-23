@@ -102,6 +102,7 @@ public partial class MainWindow
         }
         catch (Exception error) when (error is ArgumentException or FormatException or OverflowException)
         { Report("Check task options: " + error.Message); }
+        finally { CompleteWorkflowOutput(); }
     }
 
     private async void OnSaveTaskDraft(object sender, RoutedEventArgs e)

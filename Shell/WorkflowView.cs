@@ -23,11 +23,18 @@ public partial class MainWindow
             : "Live workflow results. See the workflow journal for decisions and repair verification." });
         workflowSummaries.Add(text, result);
         if (!string.IsNullOrWhiteSpace(reportTitle)) workflowReportTitles.Add(text, reportTitle);
-        workflowOutputActive = false;
+        CompleteWorkflowOutput();
         RegisterSource(text);
         RepairPreview.Text = summary;
         RenderNamedWorkflowReport(result, reportTitle);
         SetOutputView();
+    }
+
+    private void CompleteWorkflowOutput()
+    {
+        workflowOutputActive = false;
+        SourcesList.IsEnabled = true;
+        SearchBox.IsEnabled = true;
     }
 
     private void RegisterGuardedActionReport(WorkflowKind kind, string reportTitle, string actionName, string output,
