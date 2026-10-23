@@ -38,6 +38,34 @@ internal static class BrowserExtensionReviewChecks
             Require(result.Complete && result.Extensions.SequenceEqual([new("Firefox", "fixture.default-release", "fixture@example.invalid")]),
                 "Firefox review retains extension identities without browser content or settings");
 
+            foreach (BrowserExtensionLayout layout in Enum.GetValues<BrowserExtensionLayout>())
+            {
+                string capped = Path.Combine(root, "global-cap-" + layout);
+                for (int profile = 0; profile < 4; profile++) WriteProfile(profile);
+                result = BrowserExtensionReview.Read([new("Fixture", capped, layout)]);
+                Require(result.Complete && result.Extensions.Count == 1024, "Exactly the global extension cap remains complete when all profiles were visited");
+                WriteProfile(4);
+                result = BrowserExtensionReview.Read([new("Fixture", capped, layout)]);
+                Require(!result.Complete && result.Extensions.Count == 1024,
+                    "Unvisited profiles at the global extension cap must retain incomplete coverage for " + layout);
+
+                void WriteProfile(int profile)
+                {
+                    string path = Path.Combine(capped, "Profile " + profile);
+                    if (layout == BrowserExtensionLayout.Chromium)
+                        for (int extension = 0; extension < 256; extension++)
+                            Directory.CreateDirectory(Path.Combine(path, "Extensions", ExtensionId(extension)));
+                    else
+                    {
+                        Directory.CreateDirectory(path);
+                        File.WriteAllText(Path.Combine(path, "extensions.json"), System.Text.Json.JsonSerializer.Serialize(new
+                        {
+                            addons = Enumerable.Range(0, 256).Select(extension => new { id = "fixture" + extension + "@example.invalid" })
+                        }));
+                    }
+                }
+            }
+
             try { _ = BrowserExtensionReview.Read([]); throw new Exception("An empty browser root list was accepted."); }
             catch (ArgumentException) { }
             Console.WriteLine("PASS: browser extension review retains Chromium and Firefox identities, bounded coverage and no browser changes.");

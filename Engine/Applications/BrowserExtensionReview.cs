@@ -39,12 +39,13 @@ public static class BrowserExtensionReview
                 int profileCount = 0;
                 foreach (string profile in profiles.OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
                 {
+                    token.ThrowIfCancellationRequested();
+                    if (found.Count >= 1024) { complete = false; break; }
                     if (profileCount++ >= 16) { complete = false; break; }
                     if ((File.GetAttributes(profile) & FileAttributes.ReparsePoint) != 0) { complete = false; continue; }
                     if (root.Layout == BrowserExtensionLayout.Firefox)
                     {
                         ReadFirefoxProfile(root.Browser, profile, found, ref complete, token);
-                        if (found.Count >= 1024) break;
                         continue;
                     }
                     string extensions = Path.Combine(profile, "Extensions");
@@ -60,12 +61,12 @@ public static class BrowserExtensionReview
                         if (found.Count >= 1024) { complete = false; break; }
                         found.Add(new(root.Browser, Path.GetFileName(profile), value));
                     }
-                    if (found.Count >= 1024) break;
                 }
             }
             catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException) { complete = false; }
         }
         return new([.. found.OrderBy(item => item.Browser).ThenBy(item => item.Profile).ThenBy(item => item.ExtensionId)], complete,
+            (complete ? "" : "Coverage is incomplete because profiles or identities exceeded review limits or content was inaccessible or invalid. ") +
             "Read-only browser extension identity review. Browser history, credentials, extension settings, manifest content, commands and policy values were excluded. Presence does not prove enablement, trust, ownership or safe removal. No browser or policy changed.");
     }
 
