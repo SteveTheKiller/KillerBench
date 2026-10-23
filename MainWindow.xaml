@@ -1062,23 +1062,30 @@
                 </Border>
               </Grid>
               <!-- The startup update check is the first of the card's options; the update button appears only when a newer release exists. -->
-              <StackPanel Margin="0,12,0,0" Width="{Binding ActualWidth, ElementName=AboutInfoGrid}">
+              <Grid Margin="0,12,0,0" Width="{Binding ActualWidth, ElementName=AboutInfoGrid}">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="12"/>
+                  <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
                 <CheckBox x:Name="AboutStartupUpdateCheck" FontSize="11" Click="OnAboutStartupUpdateCheck"><TextBlock Text="{DynamicResource Str_About_StartupUpdateCheck}" TextWrapping="Wrap"/></CheckBox>
-                <CheckBox x:Name="AboutShowShortcutsInMenus" FontSize="11" Margin="0,6,0,0"
-                          IsChecked="{Binding Source={x:Static kl:ShortcutHints.Current}, Path=Enabled, Mode=TwoWay}">
-                  <TextBlock Text="{DynamicResource Str_About_ShowShortcutsInMenus}" TextWrapping="Wrap"/>
-                </CheckBox>
                 <Button x:Name="AboutUpdateButton" Visibility="Collapsed" Margin="0,12,0,0" HorizontalAlignment="Left" Style="{StaticResource OutlineButton}" Padding="14,7" Click="OnAboutUpdate">
                   <TextBlock x:Name="AboutUpdateText" FontSize="12" FontWeight="SemiBold" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
                 </Button>
               </StackPanel>
-              <StackPanel Margin="0,14,0,0" Width="{Binding ActualWidth, ElementName=AboutInfoGrid}">
-                <TextBlock Text="{DynamicResource Str_About_KillerMcp}" Foreground="{DynamicResource TextBrush}" FontFamily="{DynamicResource UiFont}" FontSize="13" FontWeight="SemiBold"/>
+              <StackPanel Grid.Column="2">
+                <CheckBox x:Name="AboutShowShortcutsInMenus" FontSize="11"
+                          IsChecked="{Binding Source={x:Static kl:ShortcutHints.Current}, Path=Enabled, Mode=TwoWay}">
+                  <TextBlock Text="{DynamicResource Str_About_ShowShortcutsInMenus}" TextWrapping="Wrap"/>
+                </CheckBox>
+                <TextBlock Text="{DynamicResource Str_About_KillerMcp}" Foreground="{DynamicResource TextBrush}" FontFamily="{DynamicResource UiFont}" FontSize="13" FontWeight="SemiBold" Margin="0,14,0,0" TextWrapping="Wrap"/>
                 <TextBlock Text="{DynamicResource Str_About_KillerMcpNote}" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,2,0,7"/>
                 <CheckBox x:Name="AgentSafeRepairsCheck" FontSize="11" Click="OnAgentRepairsChanged"><TextBlock Text="{DynamicResource Str_About_KillerMcpSafe}" TextWrapping="Wrap"/></CheckBox>
                 <CheckBox x:Name="AgentDisruptiveRepairsCheck" FontSize="11" Margin="0,6,0,0" Click="OnAgentRepairsChanged"><TextBlock Text="{DynamicResource Str_About_KillerMcpDisruptive}" TextWrapping="Wrap"/></CheckBox>
                 <TextBlock x:Name="AgentRepairLockBlock" Visibility="Collapsed" FontSize="11" TextWrapping="Wrap" Margin="0,8,0,0" Foreground="{DynamicResource MutedTextBrush}"><Run x:Name="AgentRepairLockRun"/><Run Text=" "/><Hyperlink Click="OnAgentRepairClearLock" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None"><Run Text="{DynamicResource Str_About_KillerMcpClearLock}"/></Hyperlink></TextBlock>
               </StackPanel>
+              </Grid>
             </StackPanel>
           </Grid>
         </Border>
