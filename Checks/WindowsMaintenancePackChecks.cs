@@ -17,7 +17,7 @@ internal static class WindowsMaintenancePackChecks
 
         // Every registered primitive is referenced by at least one built-in pack.
         var referenced = WindowsPacks.All().SelectMany(p => p.Recipes).SelectMany(r =>
-            new[] { r.Detect.Primitive, r.Verify?.Primitive, r.Action?.Primitive, r.Rollback?.Primitive }.Concat(r.Preconditions.Select(x => x.Primitive))).Where(name => name is not null).ToHashSet(StringComparer.Ordinal);
+            new[] { r.Detect.Primitive, r.Verify?.Primitive, r.RestartVerify?.Primitive, r.Action?.Primitive, r.Rollback?.Primitive }.Concat(r.Preconditions.Select(x => x.Primitive))).Where(name => name is not null).ToHashSet(StringComparer.Ordinal);
         var unused = library.Probes.Select(p => p.Name).Concat(library.Actions.Select(a => a.Name)).Where(name => !referenced.Contains(name)).ToArray();
         if (unused.Length > 0) throw new Exception("Registered primitives without a pack recipe: " + string.Join(", ", unused));
 

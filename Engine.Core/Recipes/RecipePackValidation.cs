@@ -53,6 +53,7 @@ public static class RecipePackValidation
                 if (recipe.Preconditions![i] is null) Issue(id, "Precondition " + i + " is null.");
                 else ValidateProbe(id, "precondition " + i, recipe.Preconditions[i], library, Issue);
             if (recipe.Verify is not null) ValidateProbe(id, "verify", recipe.Verify, library, Issue);
+            if (recipe.RestartVerify is not null) ValidateProbe(id, "restart verification", recipe.RestartVerify, library, Issue);
             if (recipe.Action is not null) ValidateAction(id, "action", recipe.Action, recipe, library, Issue);
             if (recipe.Rollback is not null)
             {

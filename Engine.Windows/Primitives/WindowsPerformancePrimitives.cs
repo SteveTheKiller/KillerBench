@@ -97,6 +97,14 @@ public sealed partial class WindowsBcdBootSequenceProbe : IProbePrimitive
 /// <summary>Schedules Windows Memory Diagnostic for the next boot through the BCD boot sequence.</summary>
 public sealed class WindowsMemoryDiagnosticScheduleAction : IActionPrimitive
 {
+    private readonly Func<CancellationToken, Task<long?>> watermark;
+    private readonly Func<IProgress<string>?, CancellationToken, Task<ToolResult>> schedule;
+    public WindowsMemoryDiagnosticScheduleAction(Func<CancellationToken, Task<long?>>? watermark = null,
+        Func<IProgress<string>?, CancellationToken, Task<ToolResult>>? schedule = null)
+    {
+        this.watermark = watermark ?? WindowsMemoryDiagnosticResultProbe.LatestSystemRecordIdAsync;
+        this.schedule = schedule ?? ((progress, token) => NativeTool.RunAsync("bcdedit.exe", ["/bootsequence", "{memdiag}", "/addfirst"], progress: progress, token: token));
+    }
     public string Name => "memory-diagnostic.schedule";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [];
     public RecipeRisk Risk => RecipeRisk.Persistent;
@@ -105,12 +113,18 @@ public sealed class WindowsMemoryDiagnosticScheduleAction : IActionPrimitive
     public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
     {
         if (!OperatingSystem.IsWindows()) return new ActionResult(false, false, "", "BCD access requires Windows.");
+        long? baseline = await watermark(token).ConfigureAwait(false);
         // /addfirst keeps any one-time boot entry already queued instead of replacing it.
-        var result = await NativeTool.RunAsync("bcdedit.exe", ["/bootsequence", "{memdiag}", "/addfirst"], progress: progress, token: token).ConfigureAwait(false);
+        var result = await schedule(progress, token).ConfigureAwait(false);
         string raw = result.Output + (string.IsNullOrWhiteSpace(result.Error) ? "" : "\n" + result.Error);
         if (result.TimedOut) return new ActionResult(true, false, raw, "bcdedit timed out.") { TimedOut = true };
+        if (result.Truncated) return new ActionResult(true, false, raw, "bcdedit evidence was truncated; scheduling requires recovery review.");
         bool ok = result.ExitCode == 0;
-        return new ActionResult(true, ok, raw, ok ? null : "bcdedit exited with " + result.ExitCode + ".") { RestartRequired = ok };
+        return new ActionResult(true, ok, raw, ok ? null : "bcdedit exited with " + result.ExitCode + ".")
+        {
+            RestartRequired = ok,
+            RecoveryParameters = baseline is { } recordId ? new Dictionary<string, string> { ["afterRecordId"] = recordId.ToString(CultureInfo.InvariantCulture) } : new Dictionary<string, string>()
+        };
     }
 }
 

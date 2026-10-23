@@ -21,7 +21,7 @@ public static partial class RecipeOptions
         foreach (var parameters in AllParameters(recipe))
             foreach (string value in parameters.Values)
                 foreach (Match match in Reference().Matches(value ?? "")) names.Add(match.Groups[1].Value);
-        foreach (var probe in new[] { recipe.Detect, recipe.Verify }.Concat(recipe.Preconditions ?? []))
+        foreach (var probe in new[] { recipe.Detect, recipe.Verify, recipe.RestartVerify }.Concat(recipe.Preconditions ?? []))
             foreach (var clause in probe?.Expect?.Clauses ?? [])
                 foreach (Match match in Reference().Matches(clause?.Value ?? "")) names.Add(match.Groups[1].Value);
         return names;
@@ -72,6 +72,7 @@ public static partial class RecipeOptions
             Detect = Substitute(recipe.Detect, values),
             Preconditions = [.. recipe.Preconditions.Select(probe => Substitute(probe, values))],
             Verify = recipe.Verify is null ? null : Substitute(recipe.Verify, values),
+            RestartVerify = recipe.RestartVerify is null ? null : Substitute(recipe.RestartVerify, values),
             Action = recipe.Action is null ? null : Substitute(recipe.Action, values),
             Rollback = recipe.Rollback is null ? null : Substitute(recipe.Rollback, values)
         };
@@ -98,6 +99,7 @@ public static partial class RecipeOptions
         if (recipe.Detect?.Parameters is not null) yield return recipe.Detect.Parameters;
         foreach (var probe in recipe.Preconditions ?? []) if (probe?.Parameters is not null) yield return probe.Parameters;
         if (recipe.Verify?.Parameters is not null) yield return recipe.Verify.Parameters;
+        if (recipe.RestartVerify?.Parameters is not null) yield return recipe.RestartVerify.Parameters;
         if (recipe.Action?.Parameters is not null) yield return recipe.Action.Parameters;
         if (recipe.Rollback?.Parameters is not null) yield return recipe.Rollback.Parameters;
     }

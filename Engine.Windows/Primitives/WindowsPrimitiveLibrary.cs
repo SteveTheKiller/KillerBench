@@ -14,6 +14,7 @@ public static class WindowsPrimitiveLibrary
         .AddProbe(new WindowsRegistrySubkeysProbe())
         .AddProbe(new WindowsBcdSafebootProbe())
         .AddProbe(new WindowsBcdBootSequenceProbe())
+        .AddProbe(new WindowsMemoryDiagnosticResultProbe())
         .AddProbe(new WindowsProcessRunningProbe())
         .AddProbe(new WindowsTopCpuProbe())
         .AddProbe(new WindowsTopMemoryProbe())

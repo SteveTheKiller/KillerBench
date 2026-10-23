@@ -66,7 +66,7 @@ public static class WindowsSystemPack
             Limitations = "A short sample can miss intermittent spikes and cannot tell a legitimate workload from a runaway one."
         },
         new RecipeDefinition("hardware.memory-diagnostic", 1, "Schedule Windows Memory Diagnostic", "Hardware",
-            "The BCD boot sequence names {memdiag} after the change; the test itself runs at the next restart",
+            "The scheduled Windows Memory Diagnostic produced a later completion event",
             new ProbeSpec("bcd.bootsequence", None, new ExpectSpec(
             [
                 new ExpectClause("contains", "{memdiag}", ProbeVerdict.Clear) { Detail = "Windows Memory Diagnostic is already scheduled for the next restart." },
@@ -79,7 +79,8 @@ public static class WindowsSystemPack
             RequiresElevation = true,
             RequiresExplicitOptions = true,
             MayRequireRestart = true,
-            Limitations = "The test result is not read back by this recipe."
+            RestartVerify = new ProbeSpec("memory-diagnostic.result", None, ExpectSpec.ClearWhenEquals("completed", ProbeVerdict.Unknown)),
+            Limitations = "Completion verifies the scheduled test ran. It does not repair faulty memory; review the completion result and hardware separately."
         },
         new RecipeDefinition("performance.high-memory", 1, "One process holds most of the memory", "Performance",
             "Largest working set as a share of physical memory; the process is named, not judged",
