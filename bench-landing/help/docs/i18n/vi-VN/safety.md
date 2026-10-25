@@ -31,4 +31,4 @@ Chẩn đoán và phân tích báo cáo chạy cục bộ. Một thao tác bạn
 
 ## Tình trạng phát triển
 
-Phạm vi sửa chữa vẫn đang mở rộng. Một bản dựng thành công hay một kiểm tra mô phỏng không chứng minh hành vi sửa chữa trên máy thật. Tệp `VM-VALIDATION.md` của kho mã theo dõi các kịch bản trên máy Windows dùng một lần và phần xác thực còn lại.
+Phạm vi sửa chữa vẫn đang mở rộng. Một bản dựng thành công hay một kiểm tra mô phỏng không chứng minh hành vi sửa chữa trên máy thật.

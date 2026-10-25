@@ -31,4 +31,4 @@ Tanılama ve rapor analizi yerel olarak çalışır. Seçtiğiniz bir işlem, ya
 
 ## Geliştirme durumu
 
-Onarım kapsamı hâlâ genişlemektedir. Başarılı bir derleme veya benzetimli bir denetim, yerel onarım davranışını kanıtlamaz. Deponun `VM-VALIDATION.md` dosyası, tek kullanımlık Windows makinesi senaryolarını ve kalan doğrulamaları izler.
+Onarım kapsamı hâlâ genişlemektedir. Başarılı bir derleme veya benzetimli bir denetim, yerel onarım davranışını kanıtlamaz.

@@ -31,4 +31,4 @@ Diagnostics and report analysis run locally. An action you select can contact an
 
 ## Development status
 
-Repair coverage is still expanding. A successful build or simulated check does not establish native repair behavior. The repository's `VM-VALIDATION.md` tracks disposable-Windows-machine scenarios and remaining validation.
+Repair coverage is still expanding. A successful build or simulated check does not establish native repair behavior.

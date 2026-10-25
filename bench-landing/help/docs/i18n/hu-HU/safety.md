@@ -31,4 +31,4 @@ A diagnosztika és a jelentéselemzés helyben fut. Az Ön által kiválasztott 
 
 ## Fejlesztési állapot
 
-A javítások köre még bővül. Egy sikeres build vagy szimulált ellenőrzés nem igazolja a javítás natív viselkedését. A tárház `VM-VALIDATION.md` fájlja követi az eldobható Windows-gépeken futtatott forgatókönyveket és a hátralévő ellenőrzéseket.
+A javítások köre még bővül. Egy sikeres build vagy szimulált ellenőrzés nem igazolja a javítás natív viselkedését.

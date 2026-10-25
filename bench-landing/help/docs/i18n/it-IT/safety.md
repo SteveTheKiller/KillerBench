@@ -31,4 +31,4 @@ Diagnosi e analisi dei rapporti vengono eseguite in locale. Un'azione che selezi
 
 ## Stato dello sviluppo
 
-La copertura delle riparazioni è ancora in espansione. Una build riuscita o un controllo simulato non dimostrano il comportamento nativo di una riparazione. Il file `VM-VALIDATION.md` del repository tiene traccia degli scenari su macchine Windows usa e getta e della convalida rimanente.
+La copertura delle riparazioni è ancora in espansione. Una build riuscita o un controllo simulato non dimostrano il comportamento nativo di una riparazione.

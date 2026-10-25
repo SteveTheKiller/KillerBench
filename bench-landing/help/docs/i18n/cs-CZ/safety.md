@@ -31,4 +31,4 @@ Diagnostika a analýza zpráv probíhají místně. Akce, kterou vyberete, můž
 
 ## Stav vývoje
 
-Rozsah oprav se stále rozšiřuje. Úspěšné sestavení nebo simulovaná kontrola neprokazuje nativní chování oprav. Soubor `VM-VALIDATION.md` v úložišti sleduje scénáře na jednorázových počítačích s Windows a zbývající ověřování.
+Rozsah oprav se stále rozšiřuje. Úspěšné sestavení nebo simulovaná kontrola neprokazuje nativní chování oprav.

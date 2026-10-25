@@ -31,4 +31,4 @@ Diagnostyka i analiza raportów działają lokalnie. Wybrana akcja może łączy
 
 ## Stan rozwoju
 
-Zakres napraw wciąż się poszerza. Udana kompilacja lub symulowana kontrola nie potwierdza natywnego działania naprawy. Plik `VM-VALIDATION.md` w repozytorium śledzi scenariusze na jednorazowych maszynach z systemem Windows i pozostałą weryfikację.
+Zakres napraw wciąż się poszerza. Udana kompilacja lub symulowana kontrola nie potwierdza natywnego działania naprawy.

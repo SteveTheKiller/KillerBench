@@ -20,7 +20,7 @@ A finding is tied to the evidence that produced it. Historical events stay histo
 
 Most Engine operations are read-only. Repair support is deliberately narrower than diagnostic coverage. A repair must have a supported recipe, fresh eligibility evidence, explicit host authorization, a durable preparation record, a bounded native action, and post-action verification.
 
-The full system scan is diagnostic-only, including when a focused workflow has automatic repair enabled. Saved captures and historical events never authorize a repair. Native repair validation remains scoped to the retained disposable-Windows-machine evidence recorded in the repository's `VM-VALIDATION.md`.
+The full system scan is diagnostic-only, including when a focused workflow has automatic repair enabled. Saved captures and historical events never authorize a repair. Native repair validation requires retained evidence from disposable Windows machines.
 
 ## Desktop host
 

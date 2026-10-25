@@ -31,4 +31,4 @@ Diagnose und Berichtsanalyse laufen lokal. Eine Aktion, die Sie auswählen, kann
 
 ## Entwicklungsstand
 
-Die Reparaturabdeckung wächst noch. Ein erfolgreicher Build oder eine simulierte Prüfung belegt kein natives Reparaturverhalten. Die Datei `VM-VALIDATION.md` im Repository verfolgt Szenarien auf wegwerfbaren Windows-Maschinen und die noch ausstehende Validierung.
+Die Reparaturabdeckung wächst noch. Ein erfolgreicher Build oder eine simulierte Prüfung belegt kein natives Reparaturverhalten.

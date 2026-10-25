@@ -31,4 +31,4 @@ Los diagnósticos y el análisis de informes se ejecutan en local. Una acción q
 
 ## Estado de desarrollo
 
-La cobertura de reparaciones sigue creciendo. Una compilación correcta o una comprobación simulada no demuestra el comportamiento nativo de una reparación. El archivo `VM-VALIDATION.md` del repositorio registra los escenarios en máquinas Windows desechables y la validación pendiente.
+La cobertura de reparaciones sigue creciendo. Una compilación correcta o una comprobación simulada no demuestra el comportamiento nativo de una reparación.

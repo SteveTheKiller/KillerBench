@@ -31,4 +31,4 @@ Les diagnostics et l'analyse des rapports s'exécutent en local. Une action que 
 
 ## État du développement
 
-La couverture des réparations continue de s'étendre. Une compilation réussie ou une vérification simulée ne prouve pas le comportement natif d'une réparation. Le fichier `VM-VALIDATION.md` du dépôt suit les scénarios sur des machines Windows jetables et la validation restante.
+La couverture des réparations continue de s'étendre. Une compilation réussie ou une vérification simulée ne prouve pas le comportement natif d'une réparation.

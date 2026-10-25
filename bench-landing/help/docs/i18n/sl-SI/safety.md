@@ -31,4 +31,4 @@ Diagnostika in analiza poročil potekata lokalno. Izbrano dejanje lahko vzpostav
 
 ## Stanje razvoja
 
-Obseg popravil se še širi. Uspešna gradnja ali simulirani preizkus ne dokazuje delovanja popravil v dejanskem sistemu. Datoteka `VM-VALIDATION.md` v repozitoriju sledi scenarijem na začasnih računalnikih Windows in preostalemu preverjanju.
+Obseg popravil se še širi. Uspešna gradnja ali simulirani preizkus ne dokazuje delovanja popravil v dejanskem sistemu.

@@ -78,7 +78,7 @@ These mappings begin with the source descriptions. Inspect each complete impleme
 
 ## Completion criteria
 
-Native scenarios and evidence requirements are tracked in [VM validation](VM-VALIDATION.md). That queue separates implemented command paths from unverified recovery and unfinished providers.
+Native validation tracks implemented command paths separately from unverified recovery and unfinished providers. A successful build or simulated check does not establish native repair behavior.
 
 Windows Firewall profile recovery is available outside the legacy script mapping. Engine, desktop and CLI can explicitly enable selected Domain, Private or Public profiles only when each is confirmed disabled and not controlled by the corresponding machine policy value. The flow uses administrator and two-snapshot gates, one bounded local persistent-store command, exact active-state verification and no-repeat recovery. It does not alter rules, default actions, logging or policy. Tests substitute providers; native policy precedence and connectivity effects remain VM validation work.
 

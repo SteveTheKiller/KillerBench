@@ -31,4 +31,4 @@ Diagnostikk og rapportanalyse kjører lokalt. En handling du velger, kan kontakt
 
 ## Utviklingsstatus
 
-Reparasjonsdekningen utvides fortsatt. En vellykket bygging eller simulert kontroll beviser ikke hvordan en reparasjon oppfører seg på en ekte maskin. Filen `VM-VALIDATION.md` i repositoriet følger scenarioer på engangsmaskiner med Windows og gjenstående validering.
+Reparasjonsdekningen utvides fortsatt. En vellykket bygging eller simulert kontroll beviser ikke hvordan en reparasjon oppfører seg på en ekte maskin.

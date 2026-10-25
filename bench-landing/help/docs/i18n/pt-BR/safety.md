@@ -31,4 +31,4 @@ Diagnósticos e análise de relatórios são executados localmente. Uma ação q
 
 ## Status do desenvolvimento
 
-A cobertura de reparos ainda está crescendo. Uma compilação bem-sucedida ou uma verificação simulada não comprova o comportamento nativo de um reparo. O arquivo `VM-VALIDATION.md` do repositório acompanha os cenários em máquinas Windows descartáveis e a validação restante.
+A cobertura de reparos ainda está crescendo. Uma compilação bem-sucedida ou uma verificação simulada não comprova o comportamento nativo de um reparo.
