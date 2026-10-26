@@ -62,7 +62,7 @@
     <SolidColorBrush x:Key="SliderTrack"    Color="#8c8c8c" po:Freeze="True"/>
     <SolidColorBrush x:Key="RadioAccent"    Color="#1b5e20" po:Freeze="True"/>
     <SolidColorBrush x:Key="BgOverlay"      Color="#99000000" po:Freeze="True"/>
-    <sys:Double x:Key="GrainOpacity" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.4</sys:Double>
+    <sys:Double x:Key="GrainOpacity" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">0.30</sys:Double>
     
     <sys:Double x:Key="IconShadowOpacity">0.35</sys:Double>
     
