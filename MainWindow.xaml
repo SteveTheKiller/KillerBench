@@ -40,7 +40,7 @@
       </StackPanel>
     </Grid>
     <Grid x:Name="ZoomViewport" Grid.Row="1" ClipToBounds="True">
-    <Grid x:Name="ScaleHost" Margin="4,4,4,0">
+    <kl:UnclippedGrid x:Name="ScaleHost" Margin="4,4,4,0">
       <Grid.ColumnDefinitions><ColumnDefinition Width="{Binding ActualWidth, ElementName=LeftPanel}"/><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
       <Grid.RowDefinitions><RowDefinition Height="*"/></Grid.RowDefinitions>
       <Grid x:Name="SidebarRail" Grid.Column="1" Panel.ZIndex="1">
@@ -201,7 +201,7 @@
         </StackPanel>
       </Grid>
       <Thumb x:Name="SidebarGrip" Grid.Column="1" Style="{StaticResource SidebarResizeGrip}" HorizontalAlignment="Left" Margin="0,34,0,0" DragStarted="OnSidebarGripStarted" DragDelta="OnSidebarGripDelta" DragCompleted="OnSidebarGripCompleted"/>
-      <Grid Grid.ColumnSpan="3" x:Name="ContentPane" UseLayoutRounding="True">
+      <kl:UnclippedGrid Grid.ColumnSpan="3" x:Name="ContentPane" UseLayoutRounding="True">
         <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="24"/><ColumnDefinition Width="2*" MinWidth="300"/><ColumnDefinition Width="3*"/></Grid.ColumnDefinitions>
         <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
         <Border x:Name="LeftPanel" Width="160" Grid.RowSpan="2" Background="{DynamicResource SidebarPaneBrush}" Margin="0" ClipToBounds="True">
@@ -257,7 +257,7 @@
       </ListBox>
         </DockPanel></Border></Grid>
 </Border>
-        <Grid x:Name="ConsoleBank" Grid.Column="2">
+        <kl:UnclippedGrid x:Name="ConsoleBank" Grid.Column="2">
           <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
           <Grid.RowDefinitions><RowDefinition Height="*"/></Grid.RowDefinitions>
         <Border x:Name="ToolCard" Grid.Row="0" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Margin="0">
@@ -953,7 +953,7 @@
             </ScrollViewer>
           </Border></Grid>
 </Border>
-        </Grid>
+        </kl:UnclippedGrid>
         <Border x:Name="TerminalPanel" Grid.Column="3" Grid.RowSpan="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Margin="8,0,0,0" ClipToBounds="True">
 <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
 <Border Padding="14">
@@ -1007,8 +1007,8 @@
           </DockPanel>
         </Border></Grid>
 </Border>
-      </Grid>
-    </Grid>
+      </kl:UnclippedGrid>
+    </kl:UnclippedGrid>
     </Grid>
     <Border Grid.Row="2" Background="{DynamicResource FooterBackgroundBrush}" Panel.ZIndex="-1"/>
     <Grid Grid.Row="2">
