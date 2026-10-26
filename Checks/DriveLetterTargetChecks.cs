@@ -19,8 +19,9 @@ internal static class DriveLetterTargetChecks
         "[pscustomobject]@{DiskNumber=3;PartitionNumber=1;DriveLetter=[char]0;Type='Recovery';IsHidden=$false;IsSystem=$false;Size=900MB;UniqueId='disk3-part1';FS='NTFS'});" +
         "function Get-Partition { param($DiskNumber,$PartitionNumber,$ErrorAction) if($null -eq $DiskNumber){$parts}else{@($parts|Where-Object{$_.DiskNumber -eq $DiskNumber -and $_.PartitionNumber -eq $PartitionNumber})} };" +
         "function Get-Volume { param([Parameter(ValueFromPipeline=$true)]$InputObject,$DriveLetter) process { if($DriveLetter){ if($DriveLetter -eq 'E'){[pscustomobject]@{FileSystem='NTFS'}} } elseif($InputObject -and $InputObject.FS){[pscustomobject]@{FileSystem=$InputObject.FS}} } };" +
-        "function Set-Partition { param($DiskNumber,$PartitionNumber,$NewDriveLetter,$ErrorAction) [Console]::Error.WriteLine('MUTATION_REACHED'); " +
-        "($parts|Where-Object{$_.DiskNumber -eq $DiskNumber -and $_.PartitionNumber -eq $PartitionNumber}).DriveLetter=[char]$NewDriveLetter };";
+        "function Set-Partition { param($DiskNumber,$PartitionNumber,$InputObject,$NewDriveLetter,$ErrorAction) [Console]::Error.WriteLine('MUTATION_REACHED'); " +
+        "$target=@(if($InputObject){$parts|Where-Object{$_.UniqueId -ceq $InputObject.UniqueId}}else{$parts|Where-Object{$_.DiskNumber -eq $DiskNumber -and $_.PartitionNumber -eq $PartitionNumber}}); " +
+        "if($target.Count -ne 1){throw 'The selected partition no longer exists.'};$target[0].DriveLetter=[char]$NewDriveLetter };";
 
     internal static async Task RunAsync()
     {
@@ -51,6 +52,8 @@ internal static class DriveLetterTargetChecks
         var assigned = await Assign("2", "1", first, "F");
         Require(assigned is { Dispatched: true, Succeeded: true }, "The exact eligible partition is assigned: " + assigned);
 
+        await RefuseReplacementAsync(first);
+
         var recipe = WindowsMaintenancePack.Build().Recipes.Single(candidate => candidate.Id == "storage.assign-letter");
         var options = new Dictionary<string, string> { ["disk"] = "2", ["partition"] = "1", ["fingerprint"] = first, ["letter"] = "F" };
         Require(RecipeOptions.Resolve(recipe, options, out var resolvedOptions).Count == 0, "The assign recipe takes disk, partition, fingerprint and letter");
@@ -70,6 +73,25 @@ internal static class DriveLetterTargetChecks
     }
 
     private static string Fingerprint(string uniqueId) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(uniqueId)))[..12];
+
+    private static async Task RefuseReplacementAsync(string fingerprint)
+    {
+        const string replacementFixture = Fixture +
+            "function Get-Volume { param([Parameter(ValueFromPipeline=$true)]$InputObject,$DriveLetter) process { " +
+            "if($DriveLetter){ $parts[0]=[pscustomobject]@{DiskNumber=2;PartitionNumber=1;DriveLetter=[char]0;Type='Basic';IsHidden=$false;IsSystem=$false;Size=200MB;UniqueId='replacement';FS='NTFS'}; " +
+            "[Console]::Error.WriteLine('KB-REPLACEMENT-READY') } elseif($InputObject -and $InputObject.FS){[pscustomobject]@{FileSystem=$InputObject.FS}} } };" +
+            "function Set-Partition { param($DiskNumber,$PartitionNumber,$InputObject,$NewDriveLetter,$ErrorAction) " +
+            "$target=@(if($InputObject){$parts|Where-Object{$_.UniqueId -ceq $InputObject.UniqueId}}else{$parts|Where-Object{$_.DiskNumber -eq $DiskNumber -and $_.PartitionNumber -eq $PartitionNumber}}); " +
+            "if($target.Count -ne 1){throw 'The selected partition no longer exists.'};$target[0].DriveLetter=[char]$NewDriveLetter; " +
+            "if($target[0].UniqueId -ceq 'replacement'){[Console]::Error.WriteLine('KB-REPLACEMENT-CHANGED')} };";
+        static Task<ToolResult> ReplaceAtDispatch(string script, CancellationToken token, string[] arguments) =>
+            WindowsNetAdapterPrimitives.RunAsync(replacementFixture + script, token, arguments);
+        var result = await new WindowsAssignDriveLetterAction(ReplaceAtDispatch).ExecuteAsync(new Dictionary<string, string>
+        { ["disk"] = "2", ["partition"] = "1", ["fingerprint"] = fingerprint, ["letter"] = "F" }, TimeSpan.FromSeconds(30), null, CancellationToken.None);
+        Require(result.Raw.Contains("KB-REPLACEMENT-READY", StringComparison.Ordinal), "Replacement must occur after the initial target check: " + result);
+        Require(!result.Succeeded && !result.Raw.Contains("KB-REPLACEMENT-CHANGED", StringComparison.Ordinal),
+            "A replacement reusing the selected numeric slot must receive no drive-letter write: " + result);
+    }
 
     private static void Require(bool condition, string message)
     {

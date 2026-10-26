@@ -169,7 +169,7 @@ public sealed class WindowsAssignDriveLetterAction : IActionPrimitive
         "& { param([int]$disk,[int]$partition,[string]$fingerprint,[string]$letter) $p=Selected $disk $partition $fingerprint; if($p.DriveLetter){'AlreadyLettered';exit 0}; " +
         "if(-not (Eligible $p)){throw 'The partition is not a formatted data volume.'}; " +
         "if(Get-Volume -DriveLetter $letter -ErrorAction SilentlyContinue){throw 'Drive letter is in use.'}; " + MutationBoundary.Script +
-        "Set-Partition -DiskNumber $disk -PartitionNumber $partition -NewDriveLetter $letter -ErrorAction Stop; " +
+        "Set-Partition -InputObject $p -NewDriveLetter $letter -ErrorAction Stop; " +
         "$a=Selected $disk $partition $fingerprint; if([string]$a.DriveLetter -eq $letter){'Assigned'}else{'Unconfirmed'} }";
 
     public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
