@@ -108,6 +108,7 @@ internal static class Program
             if (args is ["--isolated-dialog-smoke"]) return RunDialogSmoke();
             if (args is ["--isolated-demo-screenshots"]) return DemoScreenshotChecks.Run();
             if (args is ["--only", "menu-separators"]) return RunMenuSeparatorChecks();
+            if (args is ["--only", "theme-dump"]) return ThemeDumpChecks.Run();
             if (args is ["--only", "workflow-report-export"])
             {
                 WorkflowReportExportChecks.Run();
