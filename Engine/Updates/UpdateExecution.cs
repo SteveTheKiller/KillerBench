@@ -60,13 +60,21 @@ public static class UpdateExecution
         string pending = Path.Combine(journalFolder, "pending.json");
         if (File.Exists(pending)) throw new InvalidOperationException("A prior update operation needs reconciliation before another installation can start.");
         string journal = Path.Combine(journalFolder, "updates-" + Guid.NewGuid().ToString("N") + ".jsonl");
-        using var stream = new FileStream(journal, FileMode.CreateNew, FileAccess.Write, FileShare.Read);
+        // Unbuffered, so a failed write leaves nothing for disposal to retry and throw.
+        using var stream = new FileStream(journal, FileMode.CreateNew, FileAccess.Write, FileShare.Read, 1);
         var outcomes = new List<UpdateExecutionOutcome>();
         var details = new List<string>();
         void Record(object value)
         {
             byte[] bytes = System.Text.Encoding.UTF8.GetBytes(JsonSerializer.Serialize(value) + "\n");
             stream.Write(bytes); stream.Flush(true);
+        }
+        // Outcome records must not replace the returned result; pending.json keeps the operation reconcilable.
+        void TryRecord(object value)
+        {
+            try { Record(value); }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException or NotSupportedException)
+            { details.Add("The update journal could not be written: " + error.Message); }
         }
         string status = "Completed";
         bool preparedWithoutDispatch = false;
@@ -179,7 +187,7 @@ public static class UpdateExecution
             if (!installationDispatched) ArchivePrepared();
             status = installationDispatched ? "Needs review" : "Blocked";
             details.Add(installationDispatched ? "Update provider stopped before verification: " + e.Message : "Final update eligibility stopped before installation dispatch. No update request was sent.");
-            Record(new { Stage = "Error", Detail = details[^1] });
+            TryRecord(new { Stage = "Error", Detail = details[^1] });
         }
         catch (Exception e) when (e is IOException or InvalidDataException or UnauthorizedAccessException or NotSupportedException or
             System.Security.SecurityException or System.ComponentModel.Win32Exception or InvalidOperationException or ArgumentException or TimeoutException)
@@ -188,10 +196,10 @@ public static class UpdateExecution
             if (finalEligibilityFailure) ArchivePrepared();
             status = finalEligibilityFailure ? "Blocked" : "Needs review";
             details.Add(e.Message);
-            Record(new { Stage = "Error", Detail = e.Message });
+            TryRecord(new { Stage = "Error", Detail = e.Message });
         }
         var result = new UpdateExecutionResult(status, journal, outcomes.AsReadOnly()) { Details = details.AsReadOnly(), SelectedCount = targets.Length };
-        Record(new { Stage = "Finished", Result = result });
+        TryRecord(new { Stage = "Finished", Result = result });
         return result;
     }
 

@@ -180,6 +180,15 @@ internal static class UpdateExecutionChecks
         Require(result.Status == "Blocked" && result.GetExitCode() != 0 && !File.Exists(Path.Combine(blockedFolder, "pending.json")) &&
             result.Details.Any(detail => detail.Contains("not started", StringComparison.Ordinal)),
             "A readiness change caught before Install is a blocker with no pending installation");
+        string unwritableFolder = Path.Combine(scratch, "update-journal-unwritable");
+        var unwritable = new Fixture { Failure = "journal-locked", Folder = unwritableFolder };
+        UpdateExecutionResult? unwritableResult = null;
+        try { unwritableResult = await UpdateExecution.RunAsync(new(), [selection], new(), unwritableFolder, unwritable); }
+        catch (IOException) { }
+        finally { unwritable.JournalLock?.Dispose(); }
+        Require(unwritable.Calls == 1 && unwritableResult is { Status: "Needs review" } &&
+            File.Exists(Path.Combine(unwritableFolder, "pending.json")),
+            "A journal write failure after dispatch returns Needs review and keeps the pending record");
         string hungFolder = Path.Combine(scratch, "update-hung-provider");
         host = new Fixture { Failure = "never-completes" };
         result = await UpdateExecution.RunBoundedAsync(new(), [selection], new(), hungFolder, host, TimeSpan.FromMilliseconds(25));
@@ -227,6 +236,7 @@ internal static class UpdateExecutionChecks
         internal string? Failure;
         internal string? Folder;
         internal CancellationTokenSource? Stop;
+        internal FileStream? JournalLock;
         internal UpdateSearchOptions? InstallationSource;
         private int readinessReads;
         private int searchReads;
@@ -255,6 +265,13 @@ internal static class UpdateExecutionChecks
                 using var journal = new FileStream(Directory.GetFiles(Folder, "*.jsonl").Single(), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 using var reader = new StreamReader(journal);
                 Require(reader.ReadToEnd().Contains("Prepared"), "Prepared journal precedes provider execution");
+            }
+            if (Failure == "journal-locked")
+            {
+                // A byte-range lock on the journal makes every later journal write fail, as a full or failing disk would.
+                JournalLock = new FileStream(Directory.GetFiles(Folder!, "*.jsonl").Single(), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                JournalLock.Lock(0, long.MaxValue / 2);
+                return Task.FromResult(new UpdateExecutionOutcome(selection, true, false, "Fixture installed"));
             }
             if (Failure == "timeout") throw new TimeoutException("Fixture timeout");
             if (Failure == "invalid-data") throw new InvalidDataException("Fixture invalid data");
