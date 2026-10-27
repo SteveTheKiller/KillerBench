@@ -46,9 +46,9 @@
       <Grid x:Name="SidebarRail" Grid.Column="1" Panel.ZIndex="1">
         <Button x:Name="SidebarButton" Style="{StaticResource RailButton}" Content="&#xE76B;" FontSize="12" VerticalAlignment="Top" Margin="2,10,0,0" Click="OnToggleSources" ToolTip="{DynamicResource Str_ToolTip_Toggle_sources_F2}"/>
         <StackPanel Style="{StaticResource RailButtonHost}" VerticalAlignment="Bottom">
-          <Button x:Name="ActivityButton" Style="{StaticResource RailButton}" Content="&#xE756;" Click="OnToggleActivity" ToolTip="{DynamicResource Str_ToolTip_Toggle_activity_log_F3}" Margin="0,0,0,6"/>
-          <Button x:Name="ShortcutButton" Style="{StaticResource RailButton}" Content="?" FontFamily="Consolas" FontSize="18" Click="OnShortcuts" ToolTip="{DynamicResource Str_ToolTip_Keyboard_shortcuts_F1}" Margin="0,0,0,6"><Button.Template><ControlTemplate TargetType="Button"><Border Background="Transparent"><TextBlock Text="?" FontFamily="Segoe UI" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource TextBrush}" TextOptions.TextFormattingMode="Display" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Button.Template></Button>
-          <Button x:Name="LangButton" Style="{StaticResource RailButton}" Content="&#xF2B7;" Click="OnLanguages" ContextMenuOpening="RailMenu_Opening" ToolTip="{DynamicResource Str_ToolTip_Language}" Margin="0,0,0,6"><Button.ContextMenu><ContextMenu/></Button.ContextMenu></Button>
+          <Button x:Name="ActivityButton" Style="{StaticResource RailButton}" Content="&#xE756;" Click="OnToggleActivity" ToolTip="{DynamicResource Str_ToolTip_Toggle_activity_log_F3}" Margin="0,0,0,10"/>
+          <Button x:Name="ShortcutButton" Style="{StaticResource RailButton}" Content="?" FontFamily="Consolas" FontSize="18" Click="OnShortcuts" ToolTip="{DynamicResource Str_ToolTip_Keyboard_shortcuts_F1}" Margin="0,0,0,10"><Button.Template><ControlTemplate TargetType="Button"><Border Background="Transparent"><TextBlock Text="?" FontFamily="Segoe UI" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource TextBrush}" TextOptions.TextFormattingMode="Display" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Button.Template></Button>
+          <Button x:Name="LangButton" Style="{StaticResource RailButton}" Content="&#xF2B7;" Click="OnLanguages" ContextMenuOpening="RailMenu_Opening" ToolTip="{DynamicResource Str_ToolTip_Language}" Margin="0,0,0,10"><Button.ContextMenu><ContextMenu/></Button.ContextMenu></Button>
 <Button x:Name="ThemeButton" Style="{StaticResource RailButton}" Content="&#xE790;" Click="OnThemes" ContextMenuOpening="RailMenu_Opening" ToolTip="{DynamicResource Str_ToolTip_Choose_app_theme}" Margin="0,0,0,6"><Button.ContextMenu><ContextMenu x:Name="ThemeFlyout">
                                 
                                 <ContextMenu.Template>
@@ -581,6 +581,7 @@
                   <WrapPanel Margin="0,4,0,0">
                     <CheckBox x:Name="UpdateAllowRestart" Content="{DynamicResource Str_Update_AllowRestart}" Checked="OnUpdateSelectionChanged" Unchecked="OnUpdateSelectionChanged" VerticalAlignment="Center" Margin="0,0,8,0"/>
                     <CheckBox x:Name="UpdateAllowFeatureUpgrade" Content="{DynamicResource Str_Update_AllowFeatureUpgrade}" Checked="OnUpdateSelectionChanged" Unchecked="OnUpdateSelectionChanged" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <CheckBox x:Name="UpdateInstallConsent" Content="{DynamicResource Str_Update_InstallConsent}" Checked="OnUpdateSelectionChanged" Unchecked="OnUpdateSelectionChanged" VerticalAlignment="Center" Margin="0,0,8,0"/>
                     <Button x:Name="UpdatePreviewButton" Content="{DynamicResource Str_Update_PreviewSelected}" IsEnabled="False" Click="OnPreviewUpdates"/>
                     <Button x:Name="UpdateInstallButton" Content="{DynamicResource Str_Update_InstallSelected}" IsEnabled="False" Click="OnInstallUpdates" Margin="6,0,0,0"/>
                   </WrapPanel>
