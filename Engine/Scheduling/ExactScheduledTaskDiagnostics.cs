@@ -23,7 +23,8 @@ public static class ExactScheduledTaskDiagnostics
         string name = taskName.Replace("'", "''", StringComparison.Ordinal);
         string script = "$ErrorActionPreference='Stop'; $ProgressPreference='SilentlyContinue'; " +
             $"$task=$null; try {{$task=Get-ScheduledTask -TaskPath '{path}' -TaskName '{name}' -ErrorAction Stop}} catch {{" +
-            "[pscustomobject]@{found=$false} | ConvertTo-Json -Compress; exit 0}; " +
+            "if($_.CategoryInfo.Category -eq 'ObjectNotFound' -or \"$($_.FullyQualifiedErrorId)\".StartsWith('CmdletizationQuery_NotFound')){" +
+            "[pscustomobject]@{found=$false} | ConvertTo-Json -Compress; exit 0}; [Console]::Error.WriteLine($_.Exception.Message); exit 1}; " +
             "$items=@($task); if($items.Count -ne 1){[pscustomobject]@{found=$true;ambiguous=$true} | ConvertTo-Json -Compress; exit 0}; " +
             "$runtime=$null; try {$runtime=$items[0] | Get-ScheduledTaskInfo -ErrorAction Stop} catch {}; " +
             "$lastRun=$null; if($null -ne $runtime -and $null -ne $runtime.LastRunTime){$lastRun=$runtime.LastRunTime.ToString('yyyy-MM-ddTHH:mm:ss.fffffff',[Globalization.CultureInfo]::InvariantCulture)}; " +

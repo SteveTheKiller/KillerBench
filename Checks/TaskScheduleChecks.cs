@@ -7,6 +7,7 @@ internal static class TaskScheduleChecks
     internal static void Run()
     {
         TaskRegistrationChecks.Run();
+        ExactScheduledTaskReadChecks.Run();
         var accountPrincipal = new ScheduledTaskPrincipal(ScheduledTaskAccountKind.LocalSystem, "S-1-5-18", true);
         var accountEvidence = new ToolResult(0, "{\"account\":\"S-1-5-18\",\"sid\":\"S-1-5-18\"}", "", false);
         if (ScheduledTaskAccount.Interpret(accountPrincipal, accountEvidence).Sid != "S-1-5-18") throw new Exception("Resolved account SID lost");
