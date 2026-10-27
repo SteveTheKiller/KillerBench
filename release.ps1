@@ -677,8 +677,12 @@ try {
 
     Write-Host "`n==> Tagging $Tag..." -ForegroundColor Cyan
     git tag -a $Tag -m "KillerBench $Tag"
+    if ($LASTEXITCODE -ne 0) { throw "Creating tag $Tag failed (git exit $LASTEXITCODE). Nothing was pushed or published." }
     git push origin $Tag
-    if ($LASTEXITCODE -ne 0) { throw "Tag push failed" }
+    if ($LASTEXITCODE -ne 0) {
+        throw ("Tag push failed (git exit $LASTEXITCODE). The local tag $Tag was created but not pushed, and the next run " +
+            "refuses an existing tag. Delete it with: git tag -d $Tag")
+    }
 
     Write-Host "`n==> Creating GitHub release..." -ForegroundColor Cyan
     $assets = @($releaseExecutablePaths) + @($licenseOut, $srcZip.FullName, $sumsPath)

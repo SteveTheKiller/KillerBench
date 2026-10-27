@@ -1,3 +1,4 @@
+using System.IO;
 using KillerBench.Services;
 
 internal static class ReleaseUpdateChecks
@@ -29,6 +30,26 @@ internal static class ReleaseUpdateChecks
         Require(SelfUpdate.StartupCheckEnabled(null) && SelfUpdate.StartupCheckEnabled("1") && !SelfUpdate.StartupCheckEnabled("0"),
             "The startup check stays on until it is turned off");
         Console.WriteLine("PASS: self-update offers only newer stable vX.Y.Z releases and reads each package's own checksum.");
+        TaggingFailuresStopRelease();
+    }
+
+    /// <summary>release.ps1 must stop when the tag cannot be created or pushed, and a failed push must say how to
+    /// delete the local tag it leaves behind, since the next run refuses an existing tag. Read only; never run.</summary>
+    private static void TaggingFailuresStopRelease()
+    {
+        string script = File.ReadAllText(CheckSource.Find("release.ps1")).Replace("\r\n", "\n");
+        int tag = script.IndexOf("git tag -a $Tag", StringComparison.Ordinal);
+        int push = script.IndexOf("git push origin $Tag", StringComparison.Ordinal);
+        Require(tag >= 0 && push > tag, "release.ps1 tags and then pushes the tag");
+        string afterTag = script[tag..push];
+        Require(afterTag.Contains("if ($LASTEXITCODE -ne 0) { throw", StringComparison.Ordinal),
+            "release.ps1 stops when git tag -a fails");
+        int release = script.IndexOf("gh release create", push, StringComparison.Ordinal);
+        string afterPush = script[push..release];
+        Require(afterPush.Contains("if ($LASTEXITCODE -ne 0)", StringComparison.Ordinal) &&
+            afterPush.Contains("git tag -d $Tag", StringComparison.Ordinal) && afterPush.Contains("throw", StringComparison.Ordinal),
+            "A failed tag push stops the release and says how to delete the stranded local tag");
+        Console.WriteLine("PASS: release.ps1 stops on a failed tag or tag push and says how to delete a stranded local tag.");
     }
 
     private static void Require(bool condition, string message) { if (!condition) throw new Exception(message); }
