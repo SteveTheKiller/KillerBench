@@ -1,7 +1,7 @@
 using System.IO;
 using KillerBench.Engine;
 
-namespace KillerBench;
+namespace KillerBench.Shell;
 
 public partial class MainWindow
 {

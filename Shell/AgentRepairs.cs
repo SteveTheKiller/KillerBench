@@ -2,7 +2,7 @@ using System.IO;
 using System.Text.Json;
 using System.Windows;
 
-namespace KillerBench;
+namespace KillerBench.Shell;
 
 // The KillerMCP section of the About card. KillerBench owns the user's choice of which repairs an AI agent
 // connected through KillerMCP may request. KillerMCP only reads the level and writes the lock after an

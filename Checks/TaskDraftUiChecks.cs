@@ -5,11 +5,11 @@ using KillerBench.Engine;
 
 internal static class TaskDraftUiChecks
 {
-    internal static void Run(KillerBench.MainWindow window)
+    internal static void Run(KillerBench.Shell.MainWindow window)
     {
         T Get<T>(string name) => (T)window.FindName(name);
         var flags = BindingFlags.Instance | BindingFlags.NonPublic;
-        void Invoke(string method) => typeof(KillerBench.MainWindow).GetMethod(method, flags)!.Invoke(window, [window, new RoutedEventArgs()]);
+        void Invoke(string method) => typeof(KillerBench.Shell.MainWindow).GetMethod(method, flags)!.Invoke(window, [window, new RoutedEventArgs()]);
         Get<ComboBox>("MainWorkflow").SelectedItem = WorkflowCatalog.All.Single(x => x.Kind == WorkflowKind.ScheduledTasks);
         window.UpdateLayout();
         var dimensions = new Size(window.ActualWidth, window.ActualHeight);

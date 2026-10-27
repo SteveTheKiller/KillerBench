@@ -1,83 +1,131 @@
-using System.Diagnostics;
+using System;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 using System.Windows.Navigation;
-using KillerBench.Features;
+using KillerBench.Controls;
 using KillerBench.Features.About;
+using KillerBench.Services;
 
-namespace KillerBench;
-
-// The About overlay's window half: opening and closing it, the click handling, and the IAboutHost
-// implementation that maps the controller's values onto the named XAML elements. All the About
-// behavior lives in Features\About\AboutController.cs, and the values it reports come from
-// Services\AppInfo.cs, Services\CodeSignature.cs and Services\UpdateService.cs. The update half of
-// the host is Shell\Updates.cs.
-public partial class MainWindow : IAboutHost
+namespace KillerBench.Shell
 {
-    private readonly AboutController about;
-
-    private async void OnAbout(object sender, MouseButtonEventArgs e)
+    /// <summary>
+    /// The About overlay's window half: the fade, the click handling, and the IAboutHost
+    /// implementation that maps the controller's values onto the named XAML elements.
+    /// Everything the card SAYS is decided in Features/About/AboutController.cs. Rows only this
+    /// app's card has (Start with Windows, Close to tray, KillerScan's vendor database) are mapped
+    /// in the app's own Shell/About.Extras.cs.
+    /// </summary>
+    public partial class MainWindow : IAboutHost
     {
-        e.Handled = true;
-        await ShowAboutAsync();
-    }
+        private AboutController _about = null!;
 
-    private Task ShowAboutAsync()
-    {
-        if (AboutOverlay.Visibility == Visibility.Visible) { CloseAbout(); return Task.CompletedTask; }
-        ShortcutsOverlay.Visibility = Visibility.Collapsed;
-        RefreshAgentRepairSettings();
-        about.Show();
-        return Task.CompletedTask;
-    }
+        private void ShowAboutOverlay() => _about.Show();
 
-    // ---- IShellServices / IAboutHost ----
+        // ---- IAboutHost ----
 
-    Window IShellServices.Window => this;
-    string IShellServices.Loc(string key) => TryFindResource(key) as string ?? key;
-    void IShellServices.SetStatus(string text) => Report(text);
+        string IAboutHost.Version     { set => AboutVersionBlock.Text = value; }
+        string IAboutHost.ReleaseDate { set => AboutReleaseDateBlock.Text = value; }
+        string IAboutHost.Publisher   { set => AboutPublisherBlock.Text = value; }
+        string IAboutHost.Alias       { set => AboutAkaRun.Text = value; }
+        string IAboutHost.Thumbprint  { set => AboutThumbprintBlock.Text = value; }
+        string IAboutHost.Sha256      { set => AboutSha256Block.Text = value; }
+        string IAboutHost.UpdateText  { set => AboutUpdateText.Text = value; }
 
-    string IAboutHost.Version     { set => AboutVersionBlock.Text = value; }
-    string IAboutHost.ReleaseDate { set => AboutReleaseDateBlock.Text = value; }
-    string IAboutHost.Publisher   { set => AboutPublisherBlock.Text = value; }
-    string IAboutHost.Alias       { set => AboutAkaRun.Text = value; }
-    string IAboutHost.Thumbprint  { set => AboutThumbprintBlock.Text = value; }
-    string IAboutHost.Sha256      { set => AboutSha256Block.Text = value; }
-    string IAboutHost.UpdateText  { set => AboutUpdateText.Text = value; }
+        bool IAboutHost.AliasVisible
+        {
+            set => AboutAkaBlock.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+        }
 
-    bool IAboutHost.AliasVisible
-    {
-        set => AboutAkaBlock.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
-    }
+        bool IAboutHost.UpdateVisible
+        {
+            set => AboutUpdateButton.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+        }
 
-    bool IAboutHost.UpdateVisible
-    {
-        set => AboutUpdateButton.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
-    }
+        bool IAboutHost.UpdateEnabled { set => AboutUpdateButton.IsEnabled = value; }
 
-    bool IAboutHost.UpdateEnabled { set => AboutUpdateButton.IsEnabled = value; }
+        bool IAboutHost.StartupUpdateCheck { set => AboutStartupUpdateCheck.IsChecked = value; }
 
-    bool IAboutHost.StartupUpdateCheck { set => AboutStartupUpdateCheck.IsChecked = value; }
+        void IAboutHost.ShowCard()
+        {
+            bool handled = false;
+            ShowingCard(ref handled);
+            if (!handled) FadeOverlayIn(AboutOverlay);
+        }
 
-    void IAboutHost.ShowCard()
-    {
-        AboutOverlay.Opacity = 1;
-        AboutOverlay.Visibility = Visibility.Visible;
-    }
+        /// <summary>App hook: show the card yourself and set <paramref name="handled"/> (KillerNotes
+        /// opens a keyboard focus scope around the fade and focuses the card after it).</summary>
+        partial void ShowingCard(ref bool handled);
 
-    // ---- Handlers ----
+        /// <summary>App hook: hide an overlay yourself and set <paramref name="handled"/> (KillerNotes
+        /// hands its keyboard-managed overlays to their own close path).</summary>
+        partial void OverlayFadingOut(UIElement overlay, ref bool handled);
 
-    private void OnAboutBackdrop(object sender, MouseButtonEventArgs e) => CloseAbout();
-    private void OnAboutCard(object sender, MouseButtonEventArgs e) => e.Handled = true;
-    private void OnAboutClose(object sender, RoutedEventArgs e) => CloseAbout();
-    private void CloseAbout() => AboutOverlay.Visibility = Visibility.Collapsed;
-    private void OnAboutWebsite(object sender, MouseButtonEventArgs e) { OpenUrl("https://killerbench.net"); e.Handled = true; }
-    private void OnAboutRelease(object sender, MouseButtonEventArgs e) { about.OpenReleaseNotes(); e.Handled = true; }
-    private void OnAboutLink(object sender, RequestNavigateEventArgs e) { OpenUrl(e.Uri.AbsoluteUri); e.Handled = true; }
+        /// <summary>App hook: close the shortcuts overlay before the footer version opens About, and
+        /// set <paramref name="handled"/>; otherwise the kit collapses ShortcutsOverlay.</summary>
+        partial void CloseShortcutsForAbout(ref bool handled);
 
-    private static void OpenUrl(string url)
-    {
-        try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
-        catch { }
+        // ---- Overlay fade (shared with the shortcuts overlay, ShortcutsOverlay.cs) ----
+
+        /// <summary>App hook: an overlay is about to show (KillerScan dims the frame behind it).</summary>
+        partial void OnOverlayShowing(UIElement overlay);
+
+        /// <summary>App hook: an overlay finished hiding.</summary>
+        partial void OnOverlayHidden(UIElement overlay);
+
+        private void FadeOverlayIn(UIElement o)
+        {
+            OnOverlayShowing(o);
+            o.Visibility = Visibility.Visible;
+            Anim.FadeIn(o);
+        }
+
+        private void FadeOverlayOut(UIElement o)
+        {
+            bool handled = false;
+            OverlayFadingOut(o, ref handled);
+            if (handled) return;
+            var a = new DoubleAnimation(o.Opacity, 0, new Duration(TimeSpan.FromMilliseconds(Anim.FadeMs)))
+            {
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
+            };
+            a.Completed += (_, _) =>
+            {
+                o.Visibility = Visibility.Collapsed;
+                OnOverlayHidden(o);
+            };
+            o.BeginAnimation(UIElement.OpacityProperty, a);
+        }
+
+        // ---- Handlers ----
+
+        // Click the dim backdrop to dismiss; a click on the card itself is swallowed.
+        private void AboutOverlay_Click(object sender, MouseButtonEventArgs e) => FadeOverlayOut(AboutOverlay);
+        private void AboutCard_Click(object sender, MouseButtonEventArgs e) => e.Handled = true;
+        private void AboutClose_Click(object sender, RoutedEventArgs e) => FadeOverlayOut(AboutOverlay);
+
+        private void AboutVersion_Click(object sender, MouseButtonEventArgs e) => _about.OpenReleaseNotes();
+
+        /// <summary>The footer version opens the About card, as in every app. One overlay at a
+        /// time, so the F1 overlay steps aside first.</summary>
+        private void VersionLabel_Click(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            bool handled = false;
+            CloseShortcutsForAbout(ref handled);
+            if (!handled && ShortcutsOverlay.Visibility == Visibility.Visible) ShortcutsOverlay.Visibility = Visibility.Collapsed;
+            ShowAboutOverlay();
+        }
+
+        private void AboutUpdateButton_Click(object sender, RoutedEventArgs e) => _about.Update();
+
+        private void AboutStartupUpdateCheck_Click(object sender, RoutedEventArgs e)
+            => _about.SetStartupCheck(AboutStartupUpdateCheck.IsChecked == true);
+
+        private void AboutLink_Navigate(object sender, RequestNavigateEventArgs e)
+        {
+            WebLink.Open(e.Uri.AbsoluteUri);
+            e.Handled = true;
+        }
     }
 }

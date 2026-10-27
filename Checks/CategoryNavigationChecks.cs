@@ -22,7 +22,7 @@ internal static class CategoryNavigationChecks
         ThemeManager.Initialize();
         string output = Path.Combine(Path.GetTempPath(), "KillerBench-category-checks-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(output);
-        var window = new KillerBench.MainWindow
+        var window = new KillerBench.Shell.MainWindow
         {
             ShowActivated = false, ShowInTaskbar = false,
             WindowStartupLocation = WindowStartupLocation.Manual,
@@ -108,7 +108,7 @@ internal static class CategoryNavigationChecks
                 Require(Math.Abs(stableHeight - Item(list, 0).ActualHeight) < .01, "Orientation threshold has stable layout");
                 if (offset == -1 || offset == 1) Capture(sidebar, Path.Combine(output, $"threshold-{offset}.png"));
             }
-            var zoom = typeof(KillerBench.MainWindow).GetMethod("ApplyAppScale", BindingFlags.Instance | BindingFlags.NonPublic)!;
+            var zoom = typeof(KillerBench.Shell.MainWindow).GetMethod("ApplyAppScale", BindingFlags.Instance | BindingFlags.NonPublic)!;
             foreach (double scale in new[] { .7, 1d, 1.5, 2.5 })
             {
                 zoom.Invoke(window, [scale]);
@@ -125,9 +125,9 @@ internal static class CategoryNavigationChecks
             Require(scroll.ScrollableHeight > 0, "Enlarged interface retains overflow access");
             Capture(sidebar, Path.Combine(output, "short-150-percent.png"));
             // Use only process-local preferences, with no load or save of the user's settings file.
-            var preferences = typeof(KillerBench.MainWindow).Assembly.GetType("KillerBench.Services.Preferences")!;
+            var preferences = typeof(KillerBench.Shell.MainWindow).Assembly.GetType("KillerBench.Services.Preferences")!;
             var setPreference = preferences.GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic)!;
-            var initializePanels = typeof(KillerBench.MainWindow).GetMethod("InitializePanels", BindingFlags.Instance | BindingFlags.NonPublic)!;
+            var initializePanels = typeof(KillerBench.Shell.MainWindow).GetMethod("InitializePanels", BindingFlags.Instance | BindingFlags.NonPublic)!;
             foreach (double savedWidth in new[] { 180d, 230d })
             {
                 setPreference.Invoke(null, ["SidebarWidth", savedWidth.ToString(System.Globalization.CultureInfo.InvariantCulture)]);
@@ -135,7 +135,7 @@ internal static class CategoryNavigationChecks
                 Require(sidebar.Width == savedWidth, "Saved sidebar width takes precedence over the new default");
             }
             sidebar.Width = 210;
-            typeof(KillerBench.MainWindow).GetMethod("OnSidebarGripCompleted", BindingFlags.Instance | BindingFlags.NonPublic)!
+            typeof(KillerBench.Shell.MainWindow).GetMethod("OnSidebarGripCompleted", BindingFlags.Instance | BindingFlags.NonPublic)!
                 .Invoke(window, [window.FindName("SidebarGrip"), new System.Windows.Controls.Primitives.DragCompletedEventArgs(0, 0, false)]);
             initializePanels.Invoke(window, []);
             Require(sidebar.Width == 210, "Splitter-completed width remains the restored sidebar width");

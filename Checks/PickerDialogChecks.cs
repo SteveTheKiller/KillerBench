@@ -12,7 +12,7 @@ internal static class PickerDialogChecks
     public static void Run()
     {
         IsolatedDesktop.Verify();
-        var owner = Application.Current.Windows.OfType<KillerBench.MainWindow>()
+        var owner = Application.Current.Windows.OfType<KillerBench.Shell.MainWindow>()
             .FirstOrDefault(window => window.IsVisible)
             ?? throw new InvalidOperationException("The picker check needs the isolated KillerBench owner window.");
 

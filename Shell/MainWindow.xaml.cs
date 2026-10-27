@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using KillerBench.Engine;
 
-namespace KillerBench;
+namespace KillerBench.Shell;
 
 public partial class MainWindow : Window
 {
@@ -23,7 +23,7 @@ public partial class MainWindow : Window
             ThirdPartyUpdateSection.Visibility = Visibility.Collapsed;
         }
         new KillerFamily.Accessibility.OverlayFocus(this).Track(ShortcutsOverlay, AboutOverlay);
-        about = new Features.About.AboutController(this);   // Features\About
+        _about = new Features.About.AboutController(this);   // Features\About
         var titleFrames = System.Windows.Media.Imaging.BitmapDecoder.Create(
             new Uri("pack://application:,,,/KillerBench;component/Assets/AppIcon.ico"),
             System.Windows.Media.Imaging.BitmapCreateOptions.None,

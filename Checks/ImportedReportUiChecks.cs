@@ -13,7 +13,7 @@ internal static class ImportedReportUiChecks
         foreach (string resource in new[] { "Themes/Black.xaml", "Controls/Controls.xaml", "Themes/Instrument.xaml", "Strings/en-US.xaml" })
             app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/KillerBench;component/" + resource, UriKind.Relative) });
         KillerBench.Services.ThemeManager.Initialize();
-        var window = new KillerBench.MainWindow { ShowActivated = false, ShowInTaskbar = false, WindowStartupLocation = WindowStartupLocation.Manual };
+        var window = new KillerBench.Shell.MainWindow { ShowActivated = false, ShowInTaskbar = false, WindowStartupLocation = WindowStartupLocation.Manual };
         string scratch = Path.Combine(Path.GetTempPath(), "import-report-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(scratch);
         try
@@ -73,7 +73,7 @@ internal static class ImportedReportUiChecks
     }
     private static IEnumerable<DependencyObject> Children(DependencyObject root) => LogicalTreeHelper.GetChildren(root).OfType<DependencyObject>();
 
-    private static void VerifyScale(KillerBench.MainWindow window, Border pane, Button evidenceButton)
+    private static void VerifyScale(KillerBench.Shell.MainWindow window, Border pane, Button evidenceButton)
     {
         var icon = (FrameworkElement)window.FindName("TitlebarIcon");
         var heading = ((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().First();

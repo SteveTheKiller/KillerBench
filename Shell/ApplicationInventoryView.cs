@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Windows;
 using KillerBench.Engine;
 
-namespace KillerBench;
+namespace KillerBench.Shell;
 
 public partial class MainWindow
 {

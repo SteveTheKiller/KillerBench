@@ -2,7 +2,7 @@ using KillerBench.Engine;
 using KillerBench.Controls;
 using System.Windows;
 
-namespace KillerBench;
+namespace KillerBench.Shell;
 
 public partial class MainWindow
 {

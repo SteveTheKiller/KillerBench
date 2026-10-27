@@ -33,7 +33,7 @@ internal static class DemoScreenshotChecks
 
         string output = Path.Combine(Path.GetTempPath(), "KillerBench-demo-screenshots-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(output);
-        var window = new KillerBench.MainWindow
+        var window = new KillerBench.Shell.MainWindow
         {
             WindowStartupLocation = WindowStartupLocation.Manual,
             ShowActivated = false,
@@ -44,9 +44,9 @@ internal static class DemoScreenshotChecks
         try
         {
             window.Show();
-            var run = typeof(KillerBench.MainWindow).GetMethod("RunDemoWorkflowAsync", BindingFlags.Instance | BindingFlags.NonPublic)
+            var run = typeof(KillerBench.Shell.MainWindow).GetMethod("RunDemoWorkflowAsync", BindingFlags.Instance | BindingFlags.NonPublic)
                 ?? throw new InvalidOperationException("Missing demo workflow entry point.");
-            var showRawOutput = typeof(KillerBench.MainWindow).GetMethod("ShowRawOutput", BindingFlags.Instance | BindingFlags.NonPublic)
+            var showRawOutput = typeof(KillerBench.Shell.MainWindow).GetMethod("ShowRawOutput", BindingFlags.Instance | BindingFlags.NonPublic)
                 ?? throw new InvalidOperationException("Missing raw output view.");
             var workflowPicker = (ComboBox)window.FindName("MainWorkflow");
             var raw = (TextBox)window.FindName("EvidenceBox");

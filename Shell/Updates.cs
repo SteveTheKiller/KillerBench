@@ -1,7 +1,7 @@
 using System.Windows;
 using KillerBench.Features.About;
 
-namespace KillerBench;
+namespace KillerBench.Shell;
 
 // The About card's update half of the host: when the startup check may run, the repair hold, and the
 // two update controls. The check, the prompts and the install live in Features\About\AboutController.cs
@@ -12,7 +12,7 @@ public partial class MainWindow : IAboutRepairHold
     /// modes and under the checks, which host the window in their own Application.</summary>
     private void CheckForUpdatesOnStartup()
     {
-        if (Application.Current is App && !App.DemoMode && !App.ScreenshotMode) about.CheckOnStartup();
+        if (Application.Current is App && !App.DemoMode && !App.ScreenshotMode) _about.CheckOnStartup();
     }
 
     bool IAboutRepairHold.HoldUpdateForRepair()
@@ -21,10 +21,4 @@ public partial class MainWindow : IAboutRepairHold
         Report("The update waits until the running repair finishes. Open About to update afterward.");
         return true;
     }
-
-    // Click, not Checked/Unchecked, so only a person's click saves; the card's own sync never writes.
-    private void OnAboutStartupUpdateCheck(object sender, RoutedEventArgs e)
-        => about.SetStartupCheck(AboutStartupUpdateCheck.IsChecked == true);
-
-    private void OnAboutUpdate(object sender, RoutedEventArgs e) => about.Update();
 }

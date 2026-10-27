@@ -11,7 +11,7 @@ using KillerBench.Engine;
 using KillerBench.Services;
 using KillerFamily.Windowing;
 
-namespace KillerBench;
+namespace KillerBench.Shell;
 
 public partial class MainWindow
 {
@@ -235,7 +235,7 @@ public partial class MainWindow
     private bool HandleShellKey(KeyEventArgs e)
     {
         if (e.Key == Key.Escape && AboutOverlay.Visibility == Visibility.Visible)
-        { CloseAbout(); e.Handled = true; return true; }
+        { FadeOverlayOut(AboutOverlay); e.Handled = true; return true; }
         if (e.Key == Key.Escape && ShortcutsOverlay.Visibility == Visibility.Visible)
         { ShortcutsOverlay.Visibility = Visibility.Collapsed; e.Handled = true; return true; }
         if (Keyboard.Modifiers != ModifierKeys.None) return false;

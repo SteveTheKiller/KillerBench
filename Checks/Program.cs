@@ -229,7 +229,7 @@ internal static class Program
         application.Resources.MergedDictionaries.Add(new ResourceDictionary
         { Source = new Uri("/KillerBench;component/Strings/en-US.xaml", UriKind.Relative) });
         KillerBench.Services.ThemeManager.Initialize();
-        var owner = new KillerBench.MainWindow
+        var owner = new KillerBench.Shell.MainWindow
         {
             WindowStartupLocation = WindowStartupLocation.Manual,
             ShowActivated = false,
@@ -304,7 +304,7 @@ internal static class Program
         application.Resources.MergedDictionaries.Add(new ResourceDictionary
         { Source = new Uri("/KillerBench;component/Strings/en-US.xaml", UriKind.Relative) });
         KillerBench.Services.ThemeManager.Initialize();
-        var window = new KillerBench.MainWindow
+        var window = new KillerBench.Shell.MainWindow
         {
             WindowStartupLocation = WindowStartupLocation.Manual,
             ShowActivated = false,
@@ -398,18 +398,18 @@ internal static class Program
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "Windows Maintenance Workbench",
                 "Desktop subtitle identifies the full maintenance scope");
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
-            typeof(KillerBench.MainWindow).GetMethod("SetCaptureBusy", flags)!.Invoke(window, [true]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("SetCaptureBusy", flags)!.Invoke(window, [true]);
             Require(window.FindName("CategoryList") is ListBox { IsEnabled: true } &&
                 window.FindName("CategoryWorkflow") is ComboBox { IsEnabled: true } &&
                 window.FindName("ExportReportButton") is Button { IsEnabled: true } &&
                 window.FindName("MainGo") is Button { IsEnabled: false },
                 "Live work keeps category navigation and report export available while preventing another run");
-            typeof(KillerBench.MainWindow).GetMethod("SetCaptureBusy", flags)!.Invoke(window, [false]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("SetCaptureBusy", flags)!.Invoke(window, [false]);
             var actionable = new WorkflowResult(WorkflowKind.CommonProblems, "smoke", DateTimeOffset.UtcNow, "Needs attention",
                 [new("Service repair", CheckState.Repairable, "Fixture repair option", RepairKind.SystemFiles),
                  new("Collected system detail", CheckState.Information, "Fixture informational evidence")], [], "smoke-journal.json");
-            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [actionable]);
-            typeof(KillerBench.MainWindow).GetMethod("SetOutputView", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, []);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [actionable]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("SetOutputView", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, []);
             window.UpdateLayout();
             Require(FindTextBlocks(window).Any(block => block.Text == "Collected information") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("Fixture informational evidence", StringComparison.Ordinal)),
@@ -431,7 +431,7 @@ internal static class Program
             var mixed = new WorkflowResult(WorkflowKind.CommonProblems, "smoke", DateTimeOffset.UtcNow, "Needs attention",
                 [new("File repair", CheckState.Repairable, "Fixture repair option", RepairKind.SystemFiles),
                  new("Print repair", CheckState.Repairable, "Fixture repair option", RepairKind.PrintSpooler)], [], "smoke-journal.json");
-            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [mixed]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [mixed]);
             window.UpdateLayout();
             Require(FindButtons(window).Any(button => Equals(button.Content, "Review repair options")) &&
                 !FindButtons(window).Any(button => Equals(button.Content, "Review System files repair")),
@@ -442,7 +442,7 @@ internal static class Program
             {
                 Recipes = [new RecipeResult(systemFilesRecipe, 1, RecipeOutcome.RepairAvailable, null, null, "Fixture repair option")]
             };
-            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [recipeOnly]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [recipeOnly]);
             window.UpdateLayout();
             Require(FindButtons(window).Any(button => Equals(button.Content, "Review System files repair")),
                 "Recipe-only repair reports identify their focused Repair workflow");
@@ -475,7 +475,7 @@ internal static class Program
                 "Browser extension identities reviewed; no browser or extension changed",
                 [new("Browser extension inventory", CheckState.Information, "1 extension identity collected."),
                  new("Fixture browser extension: fixture-extension", CheckState.Information, "Profile: Default. Identity only.")], [], "smoke-journal.json");
-            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [browserReport]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [browserReport]);
             window.UpdateLayout();
             Require(FindTextBlocks(window).Any(block => block.Text == "Collected information") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("fixture-extension", StringComparison.Ordinal)),
@@ -506,7 +506,7 @@ internal static class Program
                 "Application inventory comparison complete. No applications changed.",
                 [new("Comparison scope", CheckState.Information, "Both saved inventories use the Machine registration scope."),
                  new("Registration differences", CheckState.Attention, "1 registration difference was identified. Review the raw output before choosing any action.")], [], "read-only");
-            typeof(KillerBench.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [comparisonReport, "Application inventory comparison"]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [comparisonReport, "Application inventory comparison"]);
             Require(FindTextBlocks(window).Any(block => block.Text == "Application inventory comparison report") &&
                 FindTextBlocks(window).Any(block => block.Text == "Registration differences"),
                 "Saved inventory comparisons have a readable report with the retained change count");
@@ -514,7 +514,7 @@ internal static class Program
                 "Package snapshot reviewed. No package removal is available or authorized.",
                 [new("Package review item 1", CheckState.Information, "Windows reports this package as non-removable."),
                  new("Dependent packages", CheckState.Information, "No dependent packages were reported in this retained snapshot.")], [], "read-only");
-            typeof(KillerBench.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [packageReport, "Package snapshot review"]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [packageReport, "Package snapshot review"]);
             Require(FindTextBlocks(window).Any(block => block.Text == "Package snapshot review report") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("No package removal is available or authorized", StringComparison.Ordinal)),
                 "Selected package reviews have a readable report without a removal action");
@@ -523,7 +523,7 @@ internal static class Program
                 [new("Selected transfer", CheckState.Information, "Name: Fixture transfer. Owner: current account. State: Suspended."),
                  new("Snapshot review", CheckState.Information, "The job is suspended and may be intentional."),
                  new("Change boundary", CheckState.Information, "No transfer was resumed, completed, canceled, deleted, or reassigned.")], [], "read-only");
-            typeof(KillerBench.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [transferReport, "Background transfer review"]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [transferReport, "Background transfer review"]);
             Require(FindTextBlocks(window).Any(block => block.Text == "Background transfer review report") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("No transfer was resumed", StringComparison.Ordinal)),
                 "Background transfer reviews have a readable report that preserves the no-change boundary");
@@ -532,7 +532,7 @@ internal static class Program
                 [new("Print-job evidence", CheckState.Clear, "A complete bounded snapshot of current print jobs was collected."),
                  new("Cancellation candidates", CheckState.Attention, "1 exact Error or Blocked print job candidate was retained for review."),
                  new("Change boundary", CheckState.Information, "No print job was canceled, restarted, paused, resumed, or otherwise changed.")], [], "read-only");
-            typeof(KillerBench.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [printJobReport, "Blocked print job review"]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [printJobReport, "Blocked print job review"]);
             Require(FindTextBlocks(window).Any(block => block.Text == "Blocked print job review report") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("No print job was canceled", StringComparison.Ordinal)),
                 "Blocked print-job discovery has a readable report before any cancellation is considered");
@@ -540,7 +540,7 @@ internal static class Program
                 "One or more selected updates need review before installation can be considered.",
                 [new("Update: Fixture driver", CheckState.Attention, "Allow updates that may require a later restart to include this update. No automatic restart is planned."),
                  new("Installation boundary", CheckState.Information, "This is a preview only. No update was downloaded or installed, no license was accepted, and no restart was scheduled.")], [], "read-only");
-            typeof(KillerBench.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [updatePlanReport, "Windows Update plan"]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [updatePlanReport, "Windows Update plan"]);
             Require(FindTextBlocks(window).Any(block => block.Text == "Windows Update plan report") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("No update was downloaded or installed", StringComparison.Ordinal)),
                 "Update previews have a readable report that preserves the no-installation boundary");
@@ -548,7 +548,7 @@ internal static class Program
                 "No interrupted application update record was found.",
                 [new("Recovery result", CheckState.Clear, "No interrupted application update record was found."),
                  new("Change boundary", CheckState.Information, "This recovery check did not install, retry, remove, or change an application update.")], [], "read-only");
-            typeof(KillerBench.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [applicationRecoveryReport, "Application update recovery"]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [applicationRecoveryReport, "Application update recovery"]);
             Require(FindTextBlocks(window).Any(block => block.Text == "Application update recovery report") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("did not install, retry, remove", StringComparison.Ordinal)),
                 "Application update recovery has a readable no-retry report");
@@ -556,7 +556,7 @@ internal static class Program
                 "No interrupted time change record was found.",
                 [new("Recovery result", CheckState.Clear, "No interrupted time change record was found."),
                  new("Change boundary", CheckState.Information, "This recovery check did not synchronize the clock, change a time source, or retry a prior change.")], [], "read-only");
-            typeof(KillerBench.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [timeRecoveryReport, "Time recovery check"]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [timeRecoveryReport, "Time recovery check"]);
             Require(FindTextBlocks(window).Any(block => block.Text == "Time recovery check report") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("did not synchronize the clock", StringComparison.Ordinal)),
                 "Time recovery checks have a readable no-change report");
@@ -1033,8 +1033,8 @@ internal static class Program
             { Source = new Uri("/KillerBench;component/Strings/en-US.xaml", UriKind.Relative) });
             KillerBench.Services.ThemeManager.Initialize();
             Require(KillerBench.Services.ThemeManager.Current == KillerBench.Services.Theme.Dark && KillerBench.Services.ThemeManager.AccentChoiceFor(KillerBench.Services.Theme.Dark) == KillerBench.Services.Accent.Yellow, "Fresh default must be Dark using Yellow");
-            var window = new KillerBench.MainWindow();
-            var updateSnapshotField = typeof(KillerBench.MainWindow).GetField("availableUpdateResult", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            var window = new KillerBench.Shell.MainWindow();
+            var updateSnapshotField = typeof(KillerBench.Shell.MainWindow).GetField("availableUpdateResult", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
             var filteredUpdate = new AvailableUpdate("74ba239e-08d2-45bd-b285-b0d35610ca60", 1, "Fixture driver", "Driver", true, true);
             updateSnapshotField.SetValue(window, new UpdateSearchResult(new(true, true), [filteredUpdate, filteredUpdate with { Title = "Other", Downloaded = false }], false, "fixture"));
             var updateFilter = (TextBox)window.FindName("UpdateTitleFilter");
@@ -1063,7 +1063,7 @@ internal static class Program
             allowRestart.IsChecked = false;
             Require(!((Button)window.FindName("UpdateInstallButton")).IsEnabled, "Removing restart consent immediately disables installation");
             var thirdPartyCandidate = new ThirdPartyUpdateCandidate("Vendor.Tool", "Vendor Tool", "1.0", "winget", ["2.0", "1.5"]);
-            var setThirdPartyResult = typeof(KillerBench.MainWindow).GetMethod("SetThirdPartyUpdateResult", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            var setThirdPartyResult = typeof(KillerBench.Shell.MainWindow).GetMethod("SetThirdPartyUpdateResult", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
             setThirdPartyResult.Invoke(window, [new ThirdPartyUpdateResult(true, "1.11.0", true, 1, [thirdPartyCandidate], "fixture")]);
             var thirdPartyList = (ListBox)window.FindName("ThirdPartyUpdateList");
             thirdPartyList.SelectedIndex = 0;
@@ -1367,7 +1367,7 @@ internal static class Program
             Require(((Button)window.FindName("TaskRegistrationRecoveryButton")).Content is "Check interrupted registration",
                 "Desktop exposes exact read-only task registration recovery beside the draft");
             Require(((Button)window.FindName("MainGo")).IsEnabled && !((Button)window.FindName("CancelButton")).IsEnabled, "Navigation does not run a workflow");
-            var setCaptureBusy = typeof(KillerBench.MainWindow).GetMethod("SetCaptureBusy", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            var setCaptureBusy = typeof(KillerBench.Shell.MainWindow).GetMethod("SetCaptureBusy", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
             setCaptureBusy.Invoke(window, [true]);
             Require(!((Button)window.FindName("MainGo")).IsEnabled && ((Button)window.FindName("CancelButton")).IsEnabled &&
                 ((ListBox)window.FindName("CategoryList")).IsEnabled && ((ComboBox)window.FindName("CategoryWorkflow")).IsEnabled &&
@@ -1393,7 +1393,7 @@ internal static class Program
             var stableTitleIconSize = new Size(titleIcon.ActualWidth, titleIcon.ActualHeight);
             var zoomHost = (FrameworkElement)window.FindName("ScaleHost");
             var zoomViewport = (Grid)window.FindName("ZoomViewport");
-            var zoomMethod = typeof(KillerBench.MainWindow).GetMethod("ApplyAppScale", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            var zoomMethod = typeof(KillerBench.Shell.MainWindow).GetMethod("ApplyAppScale", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
             foreach (double scale in new[] { 0.7, 1.0, 1.5, 2.5 })
             {
                 zoomMethod.Invoke(window, [scale]);
@@ -1414,7 +1414,7 @@ internal static class Program
             titleIcon.RaiseEvent(new System.Windows.Input.MouseWheelEventArgs(System.Windows.Input.Mouse.PrimaryDevice, Environment.TickCount, 120)
                 { RoutedEvent = System.Windows.Input.Mouse.PreviewMouseWheelEvent });
             Require(Math.Abs(zoomHost.LayoutTransform.Value.M11 - 1.02) < .001 && Math.Abs(((TextBox)window.FindName("EvidenceBox")).FontSize - ((Slider)window.FindName("SizeSlider")).Value) < 0.001 &&
-                Equals(typeof(KillerBench.MainWindow).Assembly.GetType("KillerBench.Services.Preferences")!
+                Equals(typeof(KillerBench.Shell.MainWindow).Assembly.GetType("KillerBench.Services.Preferences")!
                     .GetMethod("Get", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!.Invoke(null, ["AppScale"]), "1.02"),
                 "Wheel over titlebar icon changes and persists zoom");
             titleIcon.RaiseEvent(new System.Windows.Input.MouseWheelEventArgs(System.Windows.Input.Mouse.PrimaryDevice, Environment.TickCount, -120)
@@ -1585,7 +1585,7 @@ internal static class Program
                     nameOutput.Contains("Current name: " + Environment.MachineName), "Live desktop name review completes and restores Run diagnosis");
                 Capture(window, Path.Combine(scratch, "computer-name-result.png"));
                 Console.WriteLine("PASS: opt-in native read-only computer name review through desktop Run diagnosis.");
-                typeof(KillerBench.MainWindow).GetMethod("OnSample", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [window, new RoutedEventArgs()]);
+                typeof(KillerBench.Shell.MainWindow).GetMethod("OnSample", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [window, new RoutedEventArgs()]);
             }
             var mainWorkflowForTime = (ComboBox)window.FindName("MainWorkflow");
             var previousWorkflowForTime = mainWorkflowForTime.SelectedItem;
@@ -1623,7 +1623,7 @@ internal static class Program
             ((Expander)window.FindName("AdvancedTools")).IsExpanded = true;
             ((Button)window.FindName("ActivityButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
-            typeof(KillerBench.MainWindow).GetMethod("LoadSample", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, null);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("LoadSample", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, null);
             Require(text.Text.Contains("SYNTHETIC SAMPLE"), "Theme changes start from explicitly loaded sample evidence");
             foreach (var theme in Enum.GetValues<KillerBench.Services.Theme>())
             {
@@ -1736,7 +1736,7 @@ internal static class Program
             var searchEntry = new KnowledgeEntry("fixture", "5", "Fixture title", "Fixture explanation", "https://example.com/reference", referenceDay, "Fixture product");
             var searchCatalog = KnowledgeCatalog.Read(System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(
                 new KnowledgePack(1, "fixture", 1, referenceDay, "Synthetic", [searchEntry])));
-            var formatSearch = typeof(KillerBench.MainWindow).GetMethod("FormatKnowledgeSearch", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!;
+            var formatSearch = typeof(KillerBench.Shell.MainWindow).GetMethod("FormatKnowledgeSearch", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!;
             var searchEvidence = (TextEvidence)formatSearch.Invoke(null, [searchCatalog, "fixture", "Fixture", new KnowledgeSearchResult(2, [searchEntry])])!;
             Require(searchEvidence.Truncated && searchEvidence.Lines.Any(line => line.Contains("Showing 1 of 2")) &&
                 searchEvidence.Lines.Any(line => line.Contains("https://example.com/reference")) &&
@@ -1855,8 +1855,8 @@ internal static class Program
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
             TaskDraftUiChecks.Run(window);
             ShellHandoffUiChecks.Run(window);
-            typeof(KillerBench.MainWindow).GetMethod("BeginWorkflowOutput", flags)!.Invoke(window, [WorkflowKind.SystemFiles, false]);
-            typeof(KillerBench.MainWindow).GetMethod("AppendWorkflowOutput", flags)!.Invoke(window, ["Verification 42% complete"]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("BeginWorkflowOutput", flags)!.Invoke(window, [WorkflowKind.SystemFiles, false]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("AppendWorkflowOutput", flags)!.Invoke(window, ["Verification 42% complete"]);
             Require(text.Text.Contains("Verification 42% complete") && !text.Text.Contains("SYNTHETIC SAMPLE") &&
                 ((TextBlock)window.FindName("CoverageLabel")).Text.Contains("browse tools and export earlier reports", StringComparison.Ordinal),
                 "Live output replaces sample evidence while retaining navigation and earlier report export guidance");
@@ -1868,7 +1868,7 @@ internal static class Program
             Capture(window, Path.Combine(scratch, "live-workflow.png"));
             var completedWorkflow = new WorkflowResult(WorkflowKind.Services, "fixture", DateTimeOffset.UtcNow, "Needs attention",
                 [new("Example service", CheckState.Attention, "Service needs review")], [], "fixture-journal.json");
-            typeof(KillerBench.MainWindow).GetMethod("RegisterWorkflowResult", flags)!.Invoke(window, [completedWorkflow, "Focused service review", false]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RegisterWorkflowResult", flags)!.Invoke(window, [completedWorkflow, "Focused service review", false]);
             var outcomeLabel = (TextBlock)window.FindName("CoverageLabel");
             Require(outcomeLabel.Text.Contains("Needs attention | 1 checks | 0 repairs run") && !outcomeLabel.Text.Contains("0 findings"),
                 "Workflow result summary uses recorded checks instead of log-rule findings");
@@ -1876,7 +1876,7 @@ internal static class Program
                 window.FindName("StartGuide") is TextBlock { Visibility: Visibility.Collapsed } &&
                 ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>().Any(card => card.Child is StackPanel),
                 "Completed workflows open a formatted report in the center pane, separate from the raw-output terminal");
-            typeof(KillerBench.MainWindow).GetMethod("OnSourceSelected", flags)!.Invoke(window, [window, null]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("OnSourceSelected", flags)!.Invoke(window, [window, null]);
             Require(((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Focused service review report"),
                 "Reopening a workflow source retains its focused readable report title");
             ((Button)window.FindName("ConsoleViewButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -1884,11 +1884,11 @@ internal static class Program
                 window.FindName("TerminalPanel") is Border { Visibility: Visibility.Visible } && text.Text.Contains("Verification 42% complete"),
                 "Console retains the raw live output after a report is created");
             ((TextBox)window.FindName("SearchBox")).Text = "no matching report text";
-            typeof(KillerBench.MainWindow).GetMethod("ShowEvidence", flags)!.Invoke(window, null);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("ShowEvidence", flags)!.Invoke(window, null);
             Require(outcomeLabel.Text.Contains("Needs attention") && outcomeLabel.Text.Contains("0 matching report lines"),
                 "Filtering does not replace the recorded workflow outcome");
             ((TextBox)window.FindName("SearchBox")).Clear();
-            typeof(KillerBench.MainWindow).GetMethod("ShowEvidence", flags)!.Invoke(window, null);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("ShowEvidence", flags)!.Invoke(window, null);
             ((Button)window.FindName("ReportViewButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(window.FindName("ReportPane") is Border { Visibility: Visibility.Visible } &&
                 ((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Next step"),
@@ -1896,14 +1896,14 @@ internal static class Program
             using var historicalRecord = JsonDocument.Parse(JsonSerializer.Serialize(completedWorkflow, KillerBench.Engine.Evidence.Capture.JsonOptions));
             var historicalSnapshot = new WorkflowJournalSnapshot("fixture-history.json", "fixture", "Services", "Needs attention",
                 DateTimeOffset.UtcNow, 1, 0, historicalRecord.RootElement.Clone());
-            var historicalReport = (WorkflowResult)typeof(KillerBench.MainWindow).GetMethod("BuildHistoricalWorkflowReport",
+            var historicalReport = (WorkflowResult)typeof(KillerBench.Shell.MainWindow).GetMethod("BuildHistoricalWorkflowReport",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!
                 .Invoke(null, [historicalSnapshot])!;
             Require(historicalReport.Status == "Historical evidence - current verification required" &&
                 historicalReport.JournalPath == "fixture-history.json" && historicalReport.Actions.Count == 0 &&
                 historicalReport.Checks.Any(check => check.Name == "Current health" && check.State == CheckState.Unknown),
                 "Historical workflow review is a readable current-health-unknown report without an action replay");
-            typeof(KillerBench.MainWindow).GetMethod("RenderNamedWorkflowReport", flags)!.Invoke(window, [historicalReport, "Saved workflow"]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderNamedWorkflowReport", flags)!.Invoke(window, [historicalReport, "Saved workflow"]);
             Require(((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Saved workflow report") &&
                 ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>().Any(card => card.Child is StackPanel panel &&
                     panel.Children.OfType<TextBlock>().Any(block => block.Text == "Current health")),
@@ -1913,7 +1913,7 @@ internal static class Program
                 Checks = [.. Enumerable.Range(1, 16).Select(index => new WorkflowCheck("Review item " + index,
                     CheckState.Attention, "Fixture attention item"))]
             };
-            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [largeWorkflow]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [largeWorkflow]);
             var reportContent = (StackPanel)window.FindName("ReportContent");
             Require(reportContent.Children.OfType<Border>().Count() == 13 &&
                 reportContent.Children.OfType<TextBlock>().Any(block => block.Text.Contains("4 additional review items")),
@@ -1927,7 +1927,7 @@ internal static class Program
                     new("Repairable item", CheckState.Repairable, "Fixture repairable item", RepairKind.SystemFiles)
                 ]
             };
-            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [prioritizedWorkflow]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [prioritizedWorkflow]);
             string[] cardTitles = [.. ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>()
                 .Select(card => ((StackPanel)card.Child).Children.OfType<TextBlock>().First().Text)];
             Require(cardTitles.Take(4).SequenceEqual(["Recommended next step", "Repairable item", "Attention item", "Unknown item"]),
@@ -1942,7 +1942,7 @@ internal static class Program
                 "Actionable reports open the focused Repair option without approving or starting a repair");
             var defenderWorkflow = new WorkflowResult(WorkflowKind.Defender, "fixture", DateTimeOffset.UtcNow, "Needs attention",
                 [new("Defender fixture", CheckState.Attention, "Security review required.")], [], "fixture-journal.json");
-            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [defenderWorkflow]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [defenderWorkflow]);
             var securityNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review security options"));
             securityNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
@@ -1951,7 +1951,7 @@ internal static class Program
                 "Defender reports open Security options without selecting a scan or security action");
             var bitLockerWorkflow = new WorkflowResult(WorkflowKind.BitLocker, "fixture", DateTimeOffset.UtcNow, "Needs attention",
                 [new("BitLocker fixture", CheckState.Attention, "Encryption review required.")], [], "fixture-journal.json");
-            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [bitLockerWorkflow]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [bitLockerWorkflow]);
             securityNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review security options"));
             securityNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
@@ -1960,7 +1960,7 @@ internal static class Program
                 "BitLocker reports open Security options without selecting encryption or recovery-key actions");
             var networkWorkflow = new WorkflowResult(WorkflowKind.Network, "fixture", DateTimeOffset.UtcNow, "Needs attention",
                 [new("Network fixture", CheckState.Attention, "Network review required.")], [], "fixture-journal.json");
-            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [networkWorkflow]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [networkWorkflow]);
             var networkNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review network options"));
             networkNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
@@ -1969,7 +1969,7 @@ internal static class Program
                 "Network reports open Network options without selecting a repair");
             var updateWorkflow = new WorkflowResult(WorkflowKind.AvailableUpdates, "fixture", DateTimeOffset.UtcNow, "Needs attention",
                 [new("Windows Update fixture", CheckState.Attention, "Update review required.")], [], "fixture-journal.json");
-            typeof(KillerBench.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [updateWorkflow]);
+            typeof(KillerBench.Shell.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [updateWorkflow]);
             var maintenanceNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review maintenance options"));
             maintenanceNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();

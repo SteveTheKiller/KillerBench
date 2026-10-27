@@ -4,7 +4,7 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using KillerBench.Engine;
 
-namespace KillerBench;
+namespace KillerBench.Shell;
 
 public sealed record DesktopWorkflowOptionBinding(string Key, string ControlName, bool Inverted = false, bool Aggregate = false);
 

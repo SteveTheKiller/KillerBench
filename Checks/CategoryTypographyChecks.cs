@@ -8,7 +8,7 @@ internal static class CategoryTypographyChecks
     // Family UI typography established by the Killer Sans migration. 98SE keeps its native face.
     private const string UiStack = "./Fonts/#Killer Sans UI, Segoe UI, Microsoft JhengHei UI, Nirmala UI";
 
-    internal static void Run(KillerBench.MainWindow window)
+    internal static void Run(KillerBench.Shell.MainWindow window)
     {
         RenderedTypographyChecks.VerifyFallbackRejected();
         var categories = (ListBox)window.FindName("CategoryList");

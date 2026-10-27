@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace KillerBench;
+namespace KillerBench.Shell;
 
 public partial class MainWindow
 {

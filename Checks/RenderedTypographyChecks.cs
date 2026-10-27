@@ -23,7 +23,7 @@ internal static class RenderedTypographyChecks
         Require(rejected, "Rendered font verification must reject the previous Segoe UI fallback");
     }
 
-    internal static void VerifySubtitle(KillerBench.MainWindow window)
+    internal static void VerifySubtitle(KillerBench.Shell.MainWindow window)
     {
         string subtitle = (string)window.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH");
         var label = ((StackPanel)window.FindName("LogoBar")).Children.OfType<TextBlock>().Single(block => block.Text == subtitle);

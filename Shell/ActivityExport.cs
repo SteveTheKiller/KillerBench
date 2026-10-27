@@ -3,7 +3,7 @@ using System.Text;
 using System.Windows;
 using KillerBench.Engine;
 
-namespace KillerBench;
+namespace KillerBench.Shell;
 
 public partial class MainWindow
 {

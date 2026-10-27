@@ -4,7 +4,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using KillerBench.Services;
 
-namespace KillerBench;
+namespace KillerBench.Shell;
 
 // Three-pane shell: section navigation on the left, the selected tool's options in the center, and its
 // output (readable report or raw log) in the wider pane on the right. The left sidebar resizes with the

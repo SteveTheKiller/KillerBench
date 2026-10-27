@@ -15,7 +15,7 @@ internal static class DesktopOperationStateChecks
             application.Resources.MergedDictionaries.Add(new ResourceDictionary
             { Source = new Uri("/KillerBench;component/" + resource, UriKind.Relative) });
         KillerBench.Services.ThemeManager.Initialize();
-        var window = new KillerBench.MainWindow();
+        var window = new KillerBench.Shell.MainWindow();
         try
         {
             T Get<T>(string name) => (T)window.FindName(name);

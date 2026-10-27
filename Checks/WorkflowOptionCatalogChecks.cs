@@ -186,7 +186,7 @@ internal static class WorkflowOptionCatalogChecks
 
         foreach (WorkflowOptionSet set in WorkflowOptionCatalog.All)
         {
-            if (!KillerBench.DesktopWorkflowOptionBindings.All.TryGetValue(set.Kind, out var bindings))
+            if (!KillerBench.Shell.DesktopWorkflowOptionBindings.All.TryGetValue(set.Kind, out var bindings))
                 throw new Exception("Desktop does not declare bindings for " + set.WorkflowKey);
             Require(bindings.Select(binding => binding.Key).Order(StringComparer.Ordinal).SequenceEqual(
                 set.Options.Select(option => option.Key).Order(StringComparer.Ordinal)),

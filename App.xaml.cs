@@ -1,4 +1,5 @@
 using System.Windows;
+using KillerBench.Shell;
 
 namespace KillerBench;
 
