@@ -38,6 +38,17 @@ internal static class BitLockerEscrowChecks
         Require(acceptedResult.Outcome == BitLockerEscrowOutcome.Accepted && accepted.Escrows == 1 && accepted.LastTarget == BitLockerEscrowTarget.ActiveDirectory &&
             accepted.LastProtector == Recovery && File.Exists(acceptedResult.JournalPath) && acceptedResult.Detail.Contains("not readable", StringComparison.Ordinal),
             "An accepted escrow is journaled and never claimed as proven");
+        // The journal must already hold a pending record when the backup request is sent.
+        string pendingRoot = Path.Combine(root, "pending-before-dispatch");
+        string? atDispatch = null;
+        var journaled = new Host([ok, ok, ok]) { OnEscrow = () => atDispatch = Directory.Exists(pendingRoot) ?
+            string.Join("|", Directory.GetFiles(pendingRoot, "bitlocker-escrow-*.json").Select(File.ReadAllText)) : "" };
+        var journaledResult = await BitLockerEscrow.RunAsync("C:", BitLockerEscrowTarget.ActiveDirectory, Recovery, true, pendingRoot, journaled);
+        Require(atDispatch is not null && System.Text.RegularExpressions.Regex.IsMatch(atDispatch, "\"stage\"\\s*:\\s*\"Pending\"", System.Text.RegularExpressions.RegexOptions.IgnoreCase) &&
+            atDispatch.Contains(Recovery.ToString(), StringComparison.OrdinalIgnoreCase) &&
+            Directory.GetFiles(pendingRoot, "bitlocker-escrow-*.json").Single() == journaledResult.JournalPath &&
+            !File.ReadAllText(journaledResult.JournalPath!).Contains("Pending", StringComparison.Ordinal),
+            "Escrow writes a pending journal record before the request and replaces it with the outcome");
         var entra = State(domain: false, entra: true);
         var entraHost = new Host([entra, entra, entra]);
         Require((await BitLockerEscrow.RunAsync("C:", BitLockerEscrowTarget.EntraId, Recovery, true, root, entraHost)).Outcome == BitLockerEscrowOutcome.Accepted &&
@@ -75,8 +86,9 @@ internal static class BitLockerEscrowChecks
         public int Escrows { get; private set; }
         public BitLockerEscrowTarget? LastTarget { get; private set; }
         public Guid? LastProtector { get; private set; }
+        public Action? OnEscrow { get; init; }
         public Task<BitLockerEscrowState> InspectAsync(string volume, CancellationToken token) => Task.FromResult(states[Math.Min(index++, states.Count - 1)]);
         public Task<ToolResult> EscrowAsync(string volume, BitLockerEscrowTarget target, Guid protector, CancellationToken token)
-        { Escrows++; LastTarget = target; LastProtector = protector; return Task.FromResult(Command); }
+        { OnEscrow?.Invoke(); Escrows++; LastTarget = target; LastProtector = protector; return Task.FromResult(Command); }
     }
 }

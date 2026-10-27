@@ -32,6 +32,9 @@ public interface IBitLockerEscrowHost
 /// <summary>Backs up one existing recovery-password protector to Active Directory or Microsoft Entra ID. The directory copy cannot be read back from the client, so success means Windows accepted the request for the same protector, never that escrow is proven.</summary>
 public static class BitLockerEscrow
 {
+    private sealed record PendingRecord(int Schema, string Stage, string Outcome, string Machine, DateTimeOffset StartedUtc,
+        string Volume, BitLockerEscrowTarget Target, Guid Protector, BitLockerEscrowState Before);
+
     public static string NormalizeVolume(string volume) => BitLockerProtectionResume.NormalizeVolume(volume);
 
     public static BitLockerEscrowResult Preview(string volume, BitLockerEscrowTarget target, Guid protector)
@@ -87,6 +90,9 @@ public static class BitLockerEscrow
             }
             else
             {
+                // Journal before acting. The outcome below replaces this record at the same path.
+                await JournalPersistence.WriteAsync(journalPath, JsonSerializer.Serialize(new PendingRecord(1, "Pending", "Pending", Environment.MachineName,
+                    DateTimeOffset.UtcNow, volume, target, protector, before), Capture.JsonOptions), token: token).ConfigureAwait(false);
                 Report(progress, "Sending the recovery-password backup request to " + TargetName(target) + ".");
                 dispatched = true;
                 command = await Required(ct => host.EscrowAsync(volume, target, protector, ct), "BitLocker escrow", limit, token: token).ConfigureAwait(false);
