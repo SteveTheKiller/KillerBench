@@ -32,6 +32,11 @@ foreach ($command in @('crash-review', 'bits-jobs', 'backup-events', 'vss-provid
                 if ($process.ExitCode -ne 2 -or $body.Length -ne 0 -or $messages -notmatch 'Usage:') {
                     throw "$command failed argument rejection."
                 }
+                # These commands have dedicated handlers; the shared diagnostic route must not shadow them.
+                $dedicatedUsage = @{ 'service-events' = 'recent service failures'; 'storage-events' = 'recent storage history'; 'printer-drivers' = 'queue/driver inventory' }
+                if ($dedicatedUsage.ContainsKey($command) -and -not $messages.Contains($dedicatedUsage[$command])) {
+                    throw "$command did not reach its dedicated handler."
+                }
             } else {
                 if ($command -eq 'task-check') {
                     $report = $body | ConvertFrom-Json
