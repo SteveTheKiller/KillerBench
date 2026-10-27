@@ -145,7 +145,7 @@ namespace KillerBench.Services
             {
                 // An installer or launcher package is not this app's assembly, so it is held to the
                 // publisher's signature alone; the app's own exe also has to be a newer release of it.
-                signer = target.IsPackage ? ReleaseIdentity.VerifyPackage(path)
+                signer = target.IsPackage ? ReleaseIdentity.VerifyPackage(path, tag)
                     : ReleaseIdentity.Verify(path, tag, requireInstalledSignature: false);
             }
             catch { DiscardDownload(path); throw; }

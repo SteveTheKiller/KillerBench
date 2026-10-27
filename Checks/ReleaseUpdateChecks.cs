@@ -30,7 +30,28 @@ internal static class ReleaseUpdateChecks
         Require(SelfUpdate.StartupCheckEnabled(null) && SelfUpdate.StartupCheckEnabled("1") && !SelfUpdate.StartupCheckEnabled("0"),
             "The startup check stays on until it is turned off");
         Console.WriteLine("PASS: self-update offers only newer stable vX.Y.Z releases and reads each package's own checksum.");
+        PackageVersionMustBeOfferedAndNewer();
         TaggingFailuresStopRelease();
+    }
+
+    /// <summary>An installer or launcher package must carry the offered tag's version, newer than the running copy.
+    /// ReleaseIdentity is internal to the app, so its version rule is reached by reflection.</summary>
+    private static void PackageVersionMustBeOfferedAndNewer()
+    {
+        var method = typeof(SelfUpdate).Assembly.GetType("KillerBench.Services.ReleaseIdentity")
+            ?.GetMethod("VerifyPackageVersion", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+            ?? throw new Exception("ReleaseIdentity.VerifyPackageVersion exists");
+        var installed = new Version(1, 2, 0, 0);
+        bool Refused(Version package, string tag)
+        {
+            try { method.Invoke(null, [package, tag, installed]); return false; }
+            catch (System.Reflection.TargetInvocationException e) when (e.InnerException is System.Security.SecurityException) { return true; }
+        }
+        Require(!Refused(new Version(1, 3, 0, 0), "v1.3.0"), "A package at the offered, newer version is accepted");
+        Require(Refused(new Version(1, 2, 0, 0), "v1.2.0") && Refused(new Version(1, 1, 0, 0), "v1.1.0"),
+            "A package at the running or an older version is refused");
+        Require(Refused(new Version(1, 2, 0, 0), "v1.3.0"), "A package whose version differs from the offered tag is refused");
+        Console.WriteLine("PASS: an installer or launcher package must carry the offered tag's version, newer than the running copy.");
     }
 
     /// <summary>release.ps1 must stop when the tag cannot be created or pushed, and a failed push must say how to
