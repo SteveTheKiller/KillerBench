@@ -116,9 +116,15 @@ public sealed class WindowsProcessRunningProbe : IProbePrimitive
     }
 }
 
-/// <summary>Starts the Windows shell for the current session when no Explorer process is running. It never terminates an existing shell.</summary>
-public sealed class WindowsExplorerStartAction : IActionPrimitive
+/// <summary>
+/// Starts the Windows shell for the current session when no Explorer process is running. It never terminates an existing shell.
+/// It refuses when KillerBench is elevated, because a shell started from an elevated process runs every later program elevated.
+/// </summary>
+public sealed class WindowsExplorerStartAction(Func<bool>? elevated = null) : IActionPrimitive
 {
+    private const string ElevatedRefusal = "KillerBench is running as administrator, so an Explorer it starts would run elevated. Nothing was started. Start Explorer normally from your desktop session.";
+    private readonly Func<bool> elevated = elevated ?? KillerBench.Engine.SystemHealth.WindowsState.IsAdministrator;
+
     public string Name => "explorer.start";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [];
     public RecipeRisk Risk => RecipeRisk.Reversible;
@@ -128,6 +134,7 @@ public sealed class WindowsExplorerStartAction : IActionPrimitive
     {
         token.ThrowIfCancellationRequested();
         if (!OperatingSystem.IsWindows()) return new ActionResult(false, false, "", "Explorer start requires Windows.");
+        if (elevated()) return new ActionResult(false, false, "", ElevatedRefusal);
         try
         {
             var existing = await new WindowsProcessRunningProbe().ObserveAsync(

@@ -128,9 +128,14 @@ public sealed class WindowsMemoryDiagnosticScheduleAction : IActionPrimitive
     }
 }
 
-/// <summary>Ends every Explorer process for the current session and starts one shell. Open File Explorer windows close.</summary>
-public sealed class WindowsExplorerRestartAction : IActionPrimitive
+/// <summary>
+/// Ends every Explorer process for the current session and starts one shell. Open File Explorer windows close.
+/// It refuses when KillerBench is elevated, before ending anything, because the new shell would run elevated.
+/// </summary>
+public sealed class WindowsExplorerRestartAction(Func<bool>? elevated = null) : IActionPrimitive
 {
+    private readonly Func<bool> elevated = elevated ?? KillerBench.Engine.SystemHealth.WindowsState.IsAdministrator;
+
     public string Name => "explorer.restart";
     public IReadOnlyList<PrimitiveParameter> Parameters { get; } = [];
     public RecipeRisk Risk => RecipeRisk.Reversible;
@@ -139,6 +144,8 @@ public sealed class WindowsExplorerRestartAction : IActionPrimitive
     public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
     {
         if (!OperatingSystem.IsWindows()) return new ActionResult(false, false, "", "Explorer restart requires Windows.");
+        if (elevated())
+            return new ActionResult(false, false, "", "KillerBench is running as administrator, so a restarted Explorer would run elevated. Nothing was ended or started. Start Explorer normally from your desktop session.");
         int ended = 0;
         bool killAttempted = false;
         try

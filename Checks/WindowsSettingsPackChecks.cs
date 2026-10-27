@@ -126,6 +126,15 @@ internal static class WindowsSettingsPackChecks
         var standardUser = await fixedRunner.RunAsync(safebootRecipe, new RecipeRunOptions { AuthorizeRepair = true, Elevated = false });
         if (standardUser.Outcome != RecipeRunOutcome.Blocked || safeboot != "Minimal") throw new Exception("Standard user dispatched a BCD change.");
 
+        // An elevated KillerBench must not start or restart the shell: the new Explorer would inherit the elevated token.
+        // The refusal comes before any process inventory, so these fixtures never touch the real shell.
+        foreach (IActionPrimitive shell in new IActionPrimitive[] { new KillerBench.Engine.Windows.Primitives.WindowsExplorerStartAction(() => true), new KillerBench.Engine.Windows.Primitives.WindowsExplorerRestartAction(() => true) })
+        {
+            var refused = await shell.ExecuteAsync(new Dictionary<string, string>(), TimeSpan.FromSeconds(5), null, CancellationToken.None);
+            if (refused is not { Dispatched: false, Succeeded: false } || refused.Error?.Contains("Start Explorer normally from your desktop session", StringComparison.Ordinal) != true)
+                throw new Exception(shell.Name + " did not refuse while elevated: " + refused);
+        }
+
         Console.WriteLine("PASS: Windows settings pack (" + pack.Recipes.Count + " recipes) validates, BCD and registry interpretation fixtures pass, live reads were read-only and substituted runs never changed this machine.");
     }
 }
