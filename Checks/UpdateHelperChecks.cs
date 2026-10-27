@@ -48,8 +48,12 @@ $ops.Publisher = { param($path, $plan)
         UpdateImagePublication.RememberVerified(portableDownload, hash, Signer);
         string portable = UpdateImagePublication.Script(portableDownload, Path.Combine(root, "KillerBench-Portable.exe"), false,
             "https://example.invalid/releases", "KillerBench");
-        var parse = Helper("$tokens=$null; $errors=$null; [void][System.Management.Automation.Language.Parser]::ParseInput([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('" +
-            Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(portable)) + "')),[ref]$tokens,[ref]$errors); if($errors.Count){exit 1}else{exit 0}");
+        // The real launch must fit; the parse runs from a file so its wrapper cannot hit the limit itself.
+        ImmutablePowerShell.Arguments(portable);
+        string portableScript = Path.Combine(root, "portable-helper.ps1");
+        File.WriteAllText(portableScript, portable, new System.Text.UTF8Encoding(true));
+        var parse = Helper("$tokens=$null; $errors=$null; [void][System.Management.Automation.Language.Parser]::ParseFile('" +
+            portableScript.Replace("'", "''") + "',[ref]$tokens,[ref]$errors); if($errors.Count){exit 1}else{exit 0}");
         using (var parser = Process.Start(parse) ?? throw new Exception("The parser did not start."))
         {
             parser.WaitForExit(60_000);
