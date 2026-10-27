@@ -602,7 +602,7 @@ body .outline a.sub { font-size: 12px; }
 
 /* Light theme, Yellow accent: the accent stays the apps' yellow (#F2C500), and a thin gray
    outline (#5A5A5A) around yellow text and icons keeps it readable on the light surfaces, as in the
-   apps. bench.js sets data-yellow-outline on <html> while Light and Yellow are both chosen. Text on a
+   apps. kb.js sets data-yellow-outline on <html> while Light and Yellow are both chosen. Text on a
    yellow fill turns dark instead and draws no outline. */
 html[data-yellow-outline] { --accent-text: #24231C; --btn-text: #24231C; }
 html[data-yellow-outline] a,

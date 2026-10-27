@@ -1,101 +1,154 @@
 <!doctype html>
 <html lang="en-US" data-theme="dark">
-<head><link rel="alternate" hreflang="en-US" href="https://killerbench.net/"><link rel="alternate" hreflang="bn" href="https://killerbench.net/bn/"><link rel="alternate" hreflang="cs-CZ" href="https://killerbench.net/cs-CZ/"><link rel="alternate" hreflang="de-DE" href="https://killerbench.net/de-DE/"><link rel="alternate" hreflang="es" href="https://killerbench.net/es/"><link rel="alternate" hreflang="fr-FR" href="https://killerbench.net/fr-FR/"><link rel="alternate" hreflang="hu-HU" href="https://killerbench.net/hu-HU/"><link rel="alternate" hreflang="it-IT" href="https://killerbench.net/it-IT/"><link rel="alternate" hreflang="ja-JP" href="https://killerbench.net/ja-JP/"><link rel="alternate" hreflang="kk-KZ" href="https://killerbench.net/kk-KZ/"><link rel="alternate" hreflang="nb-NO" href="https://killerbench.net/nb-NO/"><link rel="alternate" hreflang="pl-PL" href="https://killerbench.net/pl-PL/"><link rel="alternate" hreflang="pt-BR" href="https://killerbench.net/pt-BR/"><link rel="alternate" hreflang="ru-RU" href="https://killerbench.net/ru-RU/"><link rel="alternate" hreflang="sl-SI" href="https://killerbench.net/sl-SI/"><link rel="alternate" hreflang="tr-TR" href="https://killerbench.net/tr-TR/"><link rel="alternate" hreflang="uk-UA" href="https://killerbench.net/uk-UA/"><link rel="alternate" hreflang="vi-VN" href="https://killerbench.net/vi-VN/"><link rel="alternate" hreflang="zh-CN" href="https://killerbench.net/zh-CN/"><link rel="alternate" hreflang="zh-TW" href="https://killerbench.net/zh-TW/"><link rel="alternate" hreflang="x-default" href="https://killerbench.net/">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="KillerBench is a Windows diagnostic and repair workbench in development. Diagnose first, follow the evidence, and fix only what the evidence proves, all on the local computer.">
-<meta property="og:title" content="KillerBench | Diagnostic Workbench">
-<meta property="og:description" content="Diagnose first. Fix only what the evidence proves. A Windows workbench in development.">
+<meta name="description" content="KillerBench is a Windows diagnostic and repair workbench in development. Diagnose first, follow the evidence, and fix only what the evidence proves, all on the local computer." data-i18n-attr="content:a44">
+<meta property="og:title" content="KillerBench | Diagnostic Workbench" data-i18n-attr="content:a45">
+<meta property="og:description" content="Diagnose first. Fix only what the evidence proves. A Windows workbench in development." data-i18n-attr="content:a46">
 <meta property="og:image" content="https://killerbench.net/og-image.png">
 <meta property="og:url" content="https://killerbench.net/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://killerbench.net/">
-<title>KillerBench | Diagnostic Workbench</title>
+<title data-i18n="t2">KillerBench | Diagnostic Workbench</title>
 <link rel="stylesheet" href="family.css?v=13">
-<link rel="stylesheet" href="bench.css?v=7">
+<link rel="stylesheet" href="kb.css?v=7">
 <link rel="stylesheet" href="feature-carousel.css?v=2">
-<script defer src="bench.js?v=7"></script>
+<script defer src="kb-i18n.js?v=cea8f4bb"></script><script defer src="kb.js?v=7"></script>
 <script defer src="feature-carousel.js?v=2"></script>
 </head>
-<body data-brand-base="brand" data-ui-theme="Theme" data-ui-choose-theme="Choose theme" data-ui-accent="Accent color" data-ui-accent-label="accent:" data-ui-close="Close" data-ui-more="More" data-ui-no-results="No matching pages.">
-<header class="topbar">
-  <a class="tb-home" href="index.html" title="KillerBench"><img class="tb-icon" src="app-icon.png" alt="KillerBench" width="44" height="44"><img class="wm-logo tb-wm" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>
+<body data-brand-base="brand" data-ui-theme="Theme" data-ui-choose-theme="Choose theme" data-ui-accent="Accent color" data-ui-accent-label="accent:" data-ui-close="Close" data-ui-more="More" data-ui-no-results="No matching pages." data-i18n-attr="data-ui-theme:a47;data-ui-choose-theme:a48;data-ui-accent:a49;data-ui-accent-label:a50;data-ui-close:a51;data-ui-more:a52;data-ui-no-results:a53">
+
+<div class="topbar">
+  <a class="tb-home" href="index.html" title="KillerBench"><img class="tb-icon" src="kb-icon.png" alt="KillerBench" width="44" height="44"><img class="wm-logo tb-wm" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>
   <a class="tb-mcp-link" href="mcp.html" aria-label="KillerMCP"><img src="mcp.png" alt="" aria-hidden="true"><span class="tb-mcp-wordmark"><span>Killer</span><span class="tb-mcp-accent">MCP</span></span></a>
   <span class="tb-spacer"></span>
-<nav class="tb-nav"><a href="help.html">Help</a><a href="technical.html">Technical</a><a href="engine/index.html">Engine</a><a href="about.html">About</a></nav>
-<div class="tgrp" role="group" aria-label="Theme">
-<button class="swatch sw-dark" data-theme="dark" title="Dark"></button>
-<button class="swatch sw-light" data-theme="light" title="Light"></button>
-<button class="swatch sw-hc" data-theme="hc" title="Black"></button>
-<button class="swatch sw-blood" data-theme="blood" title="Blood"></button>
-<button class="swatch sw-greed" data-theme="greed" title="Greed"></button>
-<button class="swatch sw-cyanotic" data-theme="cyanotic" title="Cyanotic"></button>
-<button class="swatch sw-ectoplasm" data-theme="ectoplasm" title="Ectoplasm"></button>
-<button class="swatch sw-decay" data-theme="decay" title="Decay"></button>
-<button class="swatch sw-malaise" data-theme="malaise" title="Malaise"></button>
-<button class="swatch sw-sepulchre" data-theme="sepulchre" title="Sepulchre"></button>
-<button class="swatch sw-delirium" data-theme="delirium" title="Delirium"></button>
-<button class="swatch sw-mourning" data-theme="mourning" title="Mourning"></button>
+<nav class="tb-nav">
+<a href="help.html" data-i18n="t3">Help</a>
+<a href="technical.html" data-i18n="t4">Technical</a>
+<a href="engine/index.html">Engine</a>
+<a href="about.html" data-i18n="t5">About</a>
+</nav>
+<div class="tgrp" role="group" aria-label="Theme" data-i18n-attr="aria-label:a47">
+<button class="swatch sw-dark" data-theme="dark" title="Dark" data-i18n-attr="title:a54"></button>
+<button class="swatch sw-light" data-theme="light" title="Light" data-i18n-attr="title:a55"></button>
+<button class="swatch sw-hc" data-theme="hc" title="Black" data-i18n-attr="title:a56"></button>
+<button class="swatch sw-blood" data-theme="blood" title="Blood" data-i18n-attr="title:a57"></button>
+<button class="swatch sw-greed" data-theme="greed" title="Greed" data-i18n-attr="title:a58"></button>
+<button class="swatch sw-cyanotic" data-theme="cyanotic" title="Cyanotic" data-i18n-attr="title:a59"></button>
+<button class="swatch sw-ectoplasm" data-theme="ectoplasm" title="Ectoplasm" data-i18n-attr="title:a60"></button>
+<button class="swatch sw-decay" data-theme="decay" title="Decay" data-i18n-attr="title:a61"></button>
+<button class="swatch sw-malaise" data-theme="malaise" title="Malaise" data-i18n-attr="title:a62"></button>
+<button class="swatch sw-sepulchre" data-theme="sepulchre" title="Sepulchre" data-i18n-attr="title:a63"></button>
+<button class="swatch sw-delirium" data-theme="delirium" title="Delirium" data-i18n-attr="title:a64"></button>
+<button class="swatch sw-mourning" data-theme="mourning" title="Mourning" data-i18n-attr="title:a65"></button>
 </div>
 <div class="acc-fly accent-switch" id="accentSwitch">
-<button class="acc-toggle" id="accentToggle" aria-haspopup="true" aria-expanded="false" title="Accent color"></button>
-<div class="acc-pop" id="accentPop" hidden role="group" aria-label="Accent color">
-<span class="acc-pop-label">accent:</span>
-<button class="acc" data-accent="red" style="background:#EA524C;color:#EA524C" title="Red"></button>
-<button class="acc" data-accent="orange" style="background:#E8962C;color:#E8962C" title="Orange"></button><button class="acc" data-accent="yellow" style="background:#EAD900;color:#EAD900" title="Yellow"></button>
-<button class="acc" data-accent="green" style="background:#22BB56;color:#22BB56" title="Green"></button>
-<button class="acc" data-accent="teal" style="background:#1FB8A8;color:#1FB8A8" title="Teal"></button>
-<button class="acc" data-accent="blue" style="background:#50AEE8;color:#50AEE8" title="Blue"></button>
-<button class="acc" data-accent="purple" style="background:#C08FE6;color:#C08FE6" title="Purple"></button><button class="acc" data-accent="magenta" style="background:#FF6CD1;color:#FF6CD1" title="Magenta"></button>
+<button class="acc-toggle" id="accentToggle" aria-haspopup="true" aria-expanded="false" title="Accent color" data-i18n-attr="title:a49"></button>
+<div class="acc-pop" id="accentPop" hidden role="group" aria-label="Accent color" data-i18n-attr="aria-label:a49">
+<span class="acc-pop-label" data-i18n="t6">accent:</span>
+<button class="acc" data-accent="red" style="background:#EA524C;color:#EA524C" title="Red" data-i18n-attr="title:a66"></button>
+<button class="acc" data-accent="orange" style="background:#E8962C;color:#E8962C" title="Orange" data-i18n-attr="title:a67"></button><button class="acc" data-accent="yellow" style="background:#EAD900;color:#EAD900" title="Yellow" data-i18n-attr="title:a68"></button>
+<button class="acc" data-accent="green" style="background:#22BB56;color:#22BB56" title="Green" data-i18n-attr="title:a69"></button>
+<button class="acc" data-accent="teal" style="background:#1FB8A8;color:#1FB8A8" title="Teal" data-i18n-attr="title:a70"></button>
+<button class="acc" data-accent="blue" style="background:#50AEE8;color:#50AEE8" title="Blue" data-i18n-attr="title:a71"></button>
+<button class="acc" data-accent="purple" style="background:#C08FE6;color:#C08FE6" title="Purple" data-i18n-attr="title:a72"></button><button class="acc" data-accent="magenta" style="background:#FF6CD1;color:#FF6CD1" title="Magenta" data-i18n-attr="title:a73"></button>
 </div>
 </div>
-<div class="lang-switch"><button class="lang-toggle" id="languageToggle" aria-haspopup="true" aria-expanded="false" aria-label="Choose language">EN</button><div class="lang-menu" id="languageMenu" hidden><a class="lang-item" hreflang="en-US" lang="en-US" href="index.html" aria-pressed="true">English</a><a class="lang-item" hreflang="bn" lang="bn" href="bn/index.html" aria-pressed="false">বাংলা</a><a class="lang-item" hreflang="cs-CZ" lang="cs-CZ" href="cs-CZ/index.html" aria-pressed="false">Čeština</a><a class="lang-item" hreflang="de-DE" lang="de-DE" href="de-DE/index.html" aria-pressed="false">Deutsch</a><a class="lang-item" hreflang="es" lang="es" href="es/index.html" aria-pressed="false">Español</a><a class="lang-item" hreflang="fr-FR" lang="fr-FR" href="fr-FR/index.html" aria-pressed="false">Français</a><a class="lang-item" hreflang="hu-HU" lang="hu-HU" href="hu-HU/index.html" aria-pressed="false">Magyar</a><a class="lang-item" hreflang="it-IT" lang="it-IT" href="it-IT/index.html" aria-pressed="false">Italiano</a><a class="lang-item" hreflang="ja-JP" lang="ja-JP" href="ja-JP/index.html" aria-pressed="false">日本語</a><a class="lang-item" hreflang="kk-KZ" lang="kk-KZ" href="kk-KZ/index.html" aria-pressed="false">Қазақша</a><a class="lang-item" hreflang="nb-NO" lang="nb-NO" href="nb-NO/index.html" aria-pressed="false">Norsk bokmål</a><a class="lang-item" hreflang="pl-PL" lang="pl-PL" href="pl-PL/index.html" aria-pressed="false">Polski</a><a class="lang-item" hreflang="pt-BR" lang="pt-BR" href="pt-BR/index.html" aria-pressed="false">Português (Brasil)</a><a class="lang-item" hreflang="ru-RU" lang="ru-RU" href="ru-RU/index.html" aria-pressed="false">Русский</a><a class="lang-item" hreflang="sl-SI" lang="sl-SI" href="sl-SI/index.html" aria-pressed="false">Slovenščina</a><a class="lang-item" hreflang="tr-TR" lang="tr-TR" href="tr-TR/index.html" aria-pressed="false">Türkçe</a><a class="lang-item" hreflang="uk-UA" lang="uk-UA" href="uk-UA/index.html" aria-pressed="false">Українська</a><a class="lang-item" hreflang="vi-VN" lang="vi-VN" href="vi-VN/index.html" aria-pressed="false">Tiếng Việt</a><a class="lang-item" hreflang="zh-CN" lang="zh-CN" href="zh-CN/index.html" aria-pressed="false">简体中文</a><a class="lang-item" hreflang="zh-TW" lang="zh-TW" href="zh-TW/index.html" aria-pressed="false">繁體中文</a></div></div></header>
-<div class="shell"><main class="content"><div class="content-scroll"><div class="content-inner">
-  <section class="hero">
-    <div class="hero-lockup">
-      <span class="hero-icon-frame"><img class="hero-icon" src="app-icon.png" alt="" aria-hidden="true" width="230" height="230"></span>
-      <span class="hero-wordmark-frame"><img class="wm-logo" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></span>
-    </div>
-    <p class="tagline">Choose a tool, review its options, and press Run diagnosis. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.</p>
-    <div class="hero-grid">
-      <div class="hero-cta">
-        <div class="cta-row"><a class="download-btn" href="help.html"><svg viewbox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v16H6.5a.5.5 0 0 0 0 1H20v3H6.5A2.5 2.5 0 0 1 4 19.5v-15z"></path></svg><span>Read the guide</span></a></div>
-        <a class="gh-btn" href="engine/index.html"><svg viewbox="0 0 24 24"><path d="M8.6 16.6 4 12l4.6-4.6L7.2 6 1.2 12l6 6 1.4-1.4zm6.8 0L20 12l-4.6-4.6L16.8 6l6 6-6 6-1.4-1.4z"></path></svg><span>Engine developer guide</span></a>
-      </div>
-      <div class="hero-info">
-        <div class="row"><span class="k">version</span> <span class="v">KillerBench v1.0.0</span></div>
-        <div class="row"><span class="k">status</span> <span class="v">In development</span></div>
-        <div class="row"><span class="k">platform</span> <span class="v">Windows 10/11 x64</span></div>
-        <p class="note">KillerBench is in development. Public downloads are not available yet. Native repair validation is still in progress.</p>
-      </div>
-    </div>
-  </section>
-  <section id="workbench" class="bench-pane">
-    <h2>Your theme. Traceable findings.</h2>
-    <div class="console" role="region" aria-label="Illustrative evidence console showing a synthetic servicing finding">
-      <p>KILLERBENCH / SYNTHETIC EXAMPLE</p>
-      <p>01  Full system scan finished. Read-only.</p>
-      <p>02  Historical servicing error: 0x800F081F. Review current state.</p>
-      <p>03  Evidence retained. Original CBS line linked.</p>
-      <p>04  No repair selected. Fresh eligibility evidence required.</p>
-      <p class="console-note">FULL SYSTEM SCAN IS DIAGNOSTIC ONLY</p>
-    </div>
-    <p class="caption">Illustrative output, not a scan of your computer.</p>
-  </section>
-  <section class="features" id="features"><h2>Inside the workbench</h2><div class="feature-grid">
-    <article class="feature-card"><h3>Twelve sections, one habit</h3><p>Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker, Privacy and Storage. Every tool reads before it offers anything, and a full system scan ranks what needs attention.</p></article>
-    <article class="feature-card"><h3>Fix only what is proven</h3><p>A repair is offered only when fresh evidence matches the exact problem. It needs your confirmation, rechecks everything right before it runs, and reads the result back before it says Verified.</p></article>
-    <article class="feature-card"><h3>No black boxes</h3><p>Findings link to the event, log line or setting behind them. Incomplete evidence is never reported as healthy, and history stays history. Export the report straight into a ticket.</p></article>
-    <article class="feature-card"><h3>Encryption without guesswork</h3><p>Inspect protectors, back up recovery passwords to a file, Active Directory or Entra ID, encrypt Windows and data drives, turn on auto-unlock and prepare a TPM without ever clearing it.</p></article>
-    <article class="feature-card"><h3>Make a laptop yours</h3><p>Review and change privacy settings, app permissions and cloud search, then declutter Windows. Settings owned by policy or device management are left alone.</p></article>
-    <article class="feature-card"><h3>Check before retrying</h3><p>Journaled repairs record a pending request before dispatch. If a request is interrupted, recovery checks what happened without automatically repeating the change.</p></article>
-    <article class="feature-card"><h3>No AI required</h3><p>Diagnostics and report analysis run locally without an AI service or KillerBench account. Actions you select, such as downloads or recovery-key backup to Entra ID, can contact their destination. The same Engine powers the desktop app and command line.</p></article>
-  </div><p class="caption"><a href="help.html">Read the full guide</a> for every section and tool.</p></section>
-  <section class="bench-pane" id="about"><h2>Part of the Killer Tools family</h2><p>Textured surfaces, the Killer Tools wordmark, and 13 app themes. The smoked-glass console, readable reports, confirmations, and Open, Save, and Folder dialogs follow the active app theme.</p><p><a href="help.html#setup">Download and setup</a> · <a href="about.html">About KillerBench</a> · <a href="help.html#workspace">Find your way around</a> · <a href="help.html#safety">Review the safety model</a> · <a href="engine/index.html">Engine developer guide</a> · <a href="mcp.html">KillerMCP</a> · <a href="https://killertools.net">Explore Killer Tools</a></p></section>
-</div></div></main><aside class="sidebar"><div class="sb-thumbs" id="sbThumbs"><button type="button" class="sb-thumb" title="Full system scan, Dark theme with the yellow accent - the readable report on a demo machine" aria-label="Full system scan, Dark theme with the yellow accent - the readable report on a demo machine"><img src="screenshots/01.png" alt="Full system scan, Dark theme with the yellow accent - the readable report on a demo machine" loading="lazy"></button><button type="button" class="sb-thumb" title="Windows Update, Delirium theme - service, servicing and update history checks" aria-label="Windows Update, Delirium theme - service, servicing and update history checks"><img src="screenshots/02.png" alt="Windows Update, Delirium theme - service, servicing and update history checks" loading="lazy"></button><button type="button" class="sb-thumb" title="Network, Light theme with the orange accent - DNS and connection checks, Film Grain off" aria-label="Network, Light theme with the orange accent - DNS and connection checks, Film Grain off"><img src="screenshots/03.png" alt="Network, Light theme with the orange accent - DNS and connection checks, Film Grain off" loading="lazy"></button><button type="button" class="sb-thumb" title="Printing, 98SE theme - print queue and spooler checks beside the printer tools" aria-label="Printing, 98SE theme - print queue and spooler checks beside the printer tools"><img src="screenshots/04.png" alt="Printing, 98SE theme - print queue and spooler checks beside the printer tools" loading="lazy"></button><button type="button" class="sb-thumb" title="Simulated repair of Core Windows services, Malaise theme - at 110% app zoom" aria-label="Simulated repair of Core Windows services, Malaise theme - at 110% app zoom"><img src="screenshots/05.png" alt="Simulated repair of Core Windows services, Malaise theme - at 110% app zoom" loading="lazy"></button><button type="button" class="sb-thumb" title="Raw output, Black theme with the teal accent - the full system scan log" aria-label="Raw output, Black theme with the teal accent - the full system scan log"><img src="screenshots/06.png" alt="Raw output, Black theme with the teal accent - the full system scan log" loading="lazy"></button><button type="button" class="sb-thumb" title="Microsoft Defender, Sepulchre theme - with the tools sidebar collapsed" aria-label="Microsoft Defender, Sepulchre theme - with the tools sidebar collapsed"><img src="screenshots/07.png" alt="Microsoft Defender, Sepulchre theme - with the tools sidebar collapsed" loading="lazy"></button><button type="button" class="sb-thumb" title="Onboarding, Mourning theme - application and configuration groups for a new computer" aria-label="Onboarding, Mourning theme - application and configuration groups for a new computer"><img src="screenshots/08.png" alt="Onboarding, Mourning theme - application and configuration groups for a new computer" loading="lazy"></button><button type="button" class="sb-thumb" title="Storage, Ectoplasm theme - volume checks and drive maintenance at 90% app zoom" aria-label="Storage, Ectoplasm theme - volume checks and drive maintenance at 90% app zoom"><img src="screenshots/09.png" alt="Storage, Ectoplasm theme - volume checks and drive maintenance at 90% app zoom" loading="lazy"></button><button type="button" class="sb-thumb" title="BitLocker, Light theme with the green accent - protection, recovery key backup and encryption options, Film Grain off" aria-label="BitLocker, Light theme with the green accent - protection, recovery key backup and encryption options, Film Grain off"><img src="screenshots/10.png" alt="BitLocker, Light theme with the green accent - protection, recovery key backup and encryption options, Film Grain off" loading="lazy"></button><button type="button" class="sb-thumb" title="Keyboard shortcuts, Dark theme with the blue accent - the F1 overlay" aria-label="Keyboard shortcuts, Dark theme with the blue accent - the F1 overlay"><img src="screenshots/11.png" alt="Keyboard shortcuts, Dark theme with the blue accent - the F1 overlay" loading="lazy"></button><button type="button" class="sb-thumb" title="Certificate expiration, Greed theme - at 120% app zoom" aria-label="Certificate expiration, Greed theme - at 120% app zoom"><img src="screenshots/12.png" alt="Certificate expiration, Greed theme - at 120% app zoom" loading="lazy"></button></div></aside></div>
-<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Expanded KillerBench screenshot" aria-hidden="true" tabindex="-1"><figure class="lightbox-figure"><img id="lightboxImg" src="" alt=""><figcaption id="lightboxCaption"></figcaption></figure></div>
-<footer class="statusbar"><span class="left">In development · Part of <a href="https://killertools.net">killertools.net</a></span><span class="right">© 2026 <b><a href="https://thekiller.net">Steve the Killer</a></b></span></footer>
+<div class="lang-switch"><button class="lang-toggle" id="languageToggle" aria-haspopup="true" aria-expanded="false" aria-label="Choose language" data-i18n-attr="aria-label:a1">EN</button><div class="lang-menu" id="languageMenu" hidden><button type="button" class="lang-item" data-lang="en" lang="en-US" aria-pressed="true">English</button><button type="button" class="lang-item" data-lang="bn" lang="bn" aria-pressed="false">বাংলা</button><button type="button" class="lang-item" data-lang="cs" lang="cs-CZ" aria-pressed="false">Čeština</button><button type="button" class="lang-item" data-lang="de" lang="de-DE" aria-pressed="false">Deutsch</button><button type="button" class="lang-item" data-lang="es" lang="es" aria-pressed="false">Español</button><button type="button" class="lang-item" data-lang="fr" lang="fr-FR" aria-pressed="false">Français</button><button type="button" class="lang-item" data-lang="hu" lang="hu-HU" aria-pressed="false">Magyar</button><button type="button" class="lang-item" data-lang="it" lang="it-IT" aria-pressed="false">Italiano</button><button type="button" class="lang-item" data-lang="ja" lang="ja-JP" aria-pressed="false">日本語</button><button type="button" class="lang-item" data-lang="kk" lang="kk-KZ" aria-pressed="false">Қазақша</button><button type="button" class="lang-item" data-lang="nb" lang="nb-NO" aria-pressed="false">Norsk bokmål</button><button type="button" class="lang-item" data-lang="pl" lang="pl-PL" aria-pressed="false">Polski</button><button type="button" class="lang-item" data-lang="pt" lang="pt-BR" aria-pressed="false">Português (Brasil)</button><button type="button" class="lang-item" data-lang="ru" lang="ru-RU" aria-pressed="false">Русский</button><button type="button" class="lang-item" data-lang="sl" lang="sl-SI" aria-pressed="false">Slovenščina</button><button type="button" class="lang-item" data-lang="tr" lang="tr-TR" aria-pressed="false">Türkçe</button><button type="button" class="lang-item" data-lang="uk" lang="uk-UA" aria-pressed="false">Українська</button><button type="button" class="lang-item" data-lang="vi" lang="vi-VN" aria-pressed="false">Tiếng Việt</button><button type="button" class="lang-item" data-lang="zh-cn" lang="zh-CN" aria-pressed="false">简体中文</button><button type="button" class="lang-item" data-lang="zh" lang="zh-TW" aria-pressed="false">繁體中文</button></div></div>
+</div>
+
+<div class="shell">
+<div class="content">
+<div class="content-scroll">
+<div class="content-inner">
+
+<section class="hero">
+<div class="hero-lockup">
+<span class="hero-icon-frame"><img class="hero-icon" src="kb-icon.png" alt="" aria-hidden="true" width="230" height="230"></span>
+<span class="hero-wordmark-frame"><img class="wm-logo" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></span>
+</div>
+<p class="tagline" data-i18n="t7">Choose a tool, review its options, and press Run diagnosis. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.</p>
+<div class="hero-grid">
+<div class="hero-cta">
+<div class="cta-row">
+<a class="download-btn" href="help.html"><svg viewbox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v16H6.5a.5.5 0 0 0 0 1H20v3H6.5A2.5 2.5 0 0 1 4 19.5v-15z"></path></svg><span data-i18n="t8">Read the guide</span></a>
+</div>
+<a class="gh-btn" href="engine/index.html"><svg viewbox="0 0 24 24"><path d="M8.6 16.6 4 12l4.6-4.6L7.2 6 1.2 12l6 6 1.4-1.4zm6.8 0L20 12l-4.6-4.6L16.8 6l6 6-6 6-1.4-1.4z"></path></svg><span data-i18n="t9">Engine developer guide</span></a>
+</div>
+<div class="hero-info">
+<div class="row"><span class="k" data-i18n="t10">version</span> <span class="v">KillerBench v1.0.0</span></div>
+<div class="row"><span class="k" data-i18n="t11">status</span> <span class="v" data-i18n="t12">In development</span></div>
+<div class="row"><span class="k" data-i18n="t13">platform</span> <span class="v">Windows 10/11 x64</span></div>
+<p class="note" data-i18n="t14">KillerBench is in development. Public downloads are not available yet. Native repair validation is still in progress.</p>
+</div>
+</div>
+<div class="hero-blurbs">
+<div class="blurb"><h3 data-i18n="t15">What it is for</h3><p data-i18n="t16">Taking over a computer you have never seen. Run a full system scan and get a ranked list of what needs attention before you change anything.</p><br><p data-i18n="t17">Closing a ticket with proof. Export the readable report with the evidence behind every finding, so a repair is shown as verified rather than assumed.</p></div>
+<div class="blurb"><h3 data-i18n="t18">Your theme. Traceable findings.</h3><p data-i18n="t19">Textured surfaces, the Killer Tools wordmark, and 13 app themes. The smoked-glass console, readable reports, confirmations, and Open, Save, and Folder dialogs follow the active app theme.</p></div>
+<div class="blurb" id="about"><h3 data-i18n="t20">Part of the Killer Tools family</h3><ul class="blurb-list">
+<li data-i18n="t21"><a href="help.html#setup">Download and setup</a></li>
+<li data-i18n="t22"><a href="about.html">About KillerBench</a></li>
+<li data-i18n="t23"><a href="help.html#workspace">Find your way around</a></li>
+<li data-i18n="t24"><a href="help.html#safety">Review the safety model</a></li>
+<li data-i18n="t25"><a href="engine/index.html">Engine developer guide</a></li>
+<li><a href="mcp.html">KillerMCP</a></li>
+<li data-i18n="t26"><a href="https://killertools.net">Explore Killer Tools</a></li>
+</ul></div>
+</div>
+</section>
+
+<section class="features" id="features">
+<h2 data-i18n="t27">Inside the workbench</h2>
+<div class="feature-grid">
+<div class="feature-card"><h3 data-i18n="t28">Twelve sections, one habit</h3><p data-i18n="t29">Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker, Privacy and Storage. Every tool reads before it offers anything, and a full system scan ranks what needs attention.</p></div>
+<div class="feature-card"><h3 data-i18n="t30">Fix only what is proven</h3><p data-i18n="t31">A repair is offered only when fresh evidence matches the exact problem. It needs your confirmation, rechecks everything right before it runs, and reads the result back before it says Verified.</p></div>
+<div class="feature-card"><h3 data-i18n="t32">No black boxes</h3><p data-i18n="t33">Findings link to the event, log line or setting behind them. Incomplete evidence is never reported as healthy, and history stays history. Export the report straight into a ticket.</p></div>
+<div class="feature-card"><h3 data-i18n="t34">Encryption without guesswork</h3><p data-i18n="t35">Inspect protectors, back up recovery passwords to a file, Active Directory or Entra ID, encrypt Windows and data drives, turn on auto-unlock and prepare a TPM without ever clearing it.</p></div>
+<div class="feature-card"><h3 data-i18n="t36">Make a laptop yours</h3><p data-i18n="t37">Review and change privacy settings, app permissions and cloud search, then declutter Windows. Settings owned by policy or device management are left alone.</p></div>
+<div class="feature-card"><h3 data-i18n="t38">Check before retrying</h3><p data-i18n="t39">Journaled repairs record a pending request before dispatch. If a request is interrupted, recovery checks what happened without automatically repeating the change.</p></div>
+<div class="feature-card"><h3 data-i18n="t40">No AI required</h3><p data-i18n="t41">Diagnostics and report analysis run locally without an AI service or KillerBench account. Actions you select, such as downloads or recovery-key backup to Entra ID, can contact their destination. The same Engine powers the desktop app and command line.</p></div>
+</div>
+<p class="caption" data-i18n="t42"><a href="help.html">Read the full guide</a> for every section and tool.</p>
+</section>
+
+</div>
+</div>
+</div>
+
+<aside class="sidebar">
+<div class="sb-thumbs" id="sbThumbs">
+<button type="button" class="sb-thumb" title="Full system scan, Dark theme with the yellow accent - the readable report on a demo machine" aria-label="Full system scan, Dark theme with the yellow accent - the readable report on a demo machine" data-i18n-attr="title:a74;aria-label:a74"><img src="screenshots/01.png" alt="Full system scan, Dark theme with the yellow accent - the readable report on a demo machine" data-i18n-attr="alt:a74"></button>
+<button type="button" class="sb-thumb" title="Windows Update, Delirium theme - service, servicing and update history checks" aria-label="Windows Update, Delirium theme - service, servicing and update history checks" data-i18n-attr="title:a75;aria-label:a75"><img src="screenshots/02.png" alt="Windows Update, Delirium theme - service, servicing and update history checks" data-i18n-attr="alt:a75"></button>
+<button type="button" class="sb-thumb" title="Network, Light theme with the orange accent - DNS and connection checks, Film Grain off" aria-label="Network, Light theme with the orange accent - DNS and connection checks, Film Grain off" data-i18n-attr="title:a76;aria-label:a76"><img src="screenshots/03.png" alt="Network, Light theme with the orange accent - DNS and connection checks, Film Grain off" data-i18n-attr="alt:a76"></button>
+<button type="button" class="sb-thumb" title="Printing, 98SE theme - print queue and spooler checks beside the printer tools" aria-label="Printing, 98SE theme - print queue and spooler checks beside the printer tools" data-i18n-attr="title:a77;aria-label:a77"><img src="screenshots/04.png" alt="Printing, 98SE theme - print queue and spooler checks beside the printer tools" data-i18n-attr="alt:a77"></button>
+<button type="button" class="sb-thumb" title="Simulated repair of Core Windows services, Malaise theme - at 110% app zoom" aria-label="Simulated repair of Core Windows services, Malaise theme - at 110% app zoom" data-i18n-attr="title:a78;aria-label:a78"><img src="screenshots/05.png" alt="Simulated repair of Core Windows services, Malaise theme - at 110% app zoom" data-i18n-attr="alt:a78"></button>
+<button type="button" class="sb-thumb" title="Raw output, Black theme with the teal accent - the full system scan log" aria-label="Raw output, Black theme with the teal accent - the full system scan log" data-i18n-attr="title:a79;aria-label:a79"><img src="screenshots/06.png" alt="Raw output, Black theme with the teal accent - the full system scan log" data-i18n-attr="alt:a79"></button>
+<button type="button" class="sb-thumb" title="Microsoft Defender, Sepulchre theme - with the tools sidebar collapsed" aria-label="Microsoft Defender, Sepulchre theme - with the tools sidebar collapsed" data-i18n-attr="title:a80;aria-label:a80"><img src="screenshots/07.png" alt="Microsoft Defender, Sepulchre theme - with the tools sidebar collapsed" data-i18n-attr="alt:a80"></button>
+<button type="button" class="sb-thumb" title="Onboarding, Mourning theme - application and configuration groups for a new computer" aria-label="Onboarding, Mourning theme - application and configuration groups for a new computer" data-i18n-attr="title:a81;aria-label:a81"><img src="screenshots/08.png" alt="Onboarding, Mourning theme - application and configuration groups for a new computer" data-i18n-attr="alt:a81"></button>
+<button type="button" class="sb-thumb" title="Storage, Ectoplasm theme - volume checks and drive maintenance at 90% app zoom" aria-label="Storage, Ectoplasm theme - volume checks and drive maintenance at 90% app zoom" data-i18n-attr="title:a82;aria-label:a82"><img src="screenshots/09.png" alt="Storage, Ectoplasm theme - volume checks and drive maintenance at 90% app zoom" data-i18n-attr="alt:a82"></button>
+<button type="button" class="sb-thumb" title="BitLocker, Light theme with the green accent - protection, recovery key backup and encryption options, Film Grain off" aria-label="BitLocker, Light theme with the green accent - protection, recovery key backup and encryption options, Film Grain off" data-i18n-attr="title:a83;aria-label:a83"><img src="screenshots/10.png" alt="BitLocker, Light theme with the green accent - protection, recovery key backup and encryption options, Film Grain off" data-i18n-attr="alt:a83"></button>
+<button type="button" class="sb-thumb" title="Keyboard shortcuts, Dark theme with the blue accent - the F1 overlay" aria-label="Keyboard shortcuts, Dark theme with the blue accent - the F1 overlay" data-i18n-attr="title:a84;aria-label:a84"><img src="screenshots/11.png" alt="Keyboard shortcuts, Dark theme with the blue accent - the F1 overlay" data-i18n-attr="alt:a84"></button>
+<button type="button" class="sb-thumb" title="Certificate expiration, Greed theme - at 120% app zoom" aria-label="Certificate expiration, Greed theme - at 120% app zoom" data-i18n-attr="title:a85;aria-label:a85"><img src="screenshots/12.png" alt="Certificate expiration, Greed theme - at 120% app zoom" data-i18n-attr="alt:a85"></button>
+</div>
+<div class="sb-fade sb-fade-top" aria-hidden="true"></div>
+<div class="sb-fade sb-fade-bottom" aria-hidden="true"></div>
+</aside>
+</div>
+
+<footer class="statusbar">
+<span class="left" data-i18n="t43">In development · Part of <a href="https://killertools.net">killertools.net</a></span>
+<span class="right">© 2026 <b><a href="https://thekiller.net">Steve the Killer</a></b></span>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Expanded KillerBench screenshot" aria-hidden="true" tabindex="-1" data-i18n-attr="aria-label:a86">
+<figure class="lightbox-figure">
+<img id="lightboxImg" src="" alt="">
+<figcaption id="lightboxCaption"></figcaption>
+</figure>
+</div>
+
 <script src="brand-layout.js?v=1"></script>
 </body>
 </html>

@@ -2,8 +2,10 @@
   'use strict';
   var input = document.getElementById('docsSearch');
   var box = document.getElementById('docsSearchResults');
-  var pages = window.KillerBenchSearch || [];
-  if (!input || !box || !pages.length) return;
+  // KillerBenchSearch holds one index per language; follow the page's current language.
+  var all = window.KillerBenchSearch || {};
+  function currentPages() { return all[document.documentElement.getAttribute('data-lang') || 'en'] || all.en || []; }
+  if (!input || !box || !(all.en || []).length) return;
 
   function escapeHtml(value) {
     return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -20,7 +22,7 @@
     var terms = query.toLowerCase().split(/\s+/).filter(function (t) { return t.length > 1; });
     if (!terms.length) return [];
     var results = [];
-    pages.forEach(function (page) {
+    currentPages().forEach(function (page) {
       var title = page.t.toLowerCase(), body = page.x.toLowerCase(), score = 0, anchor = '', heading = '';
       for (var i = 0; i < terms.length; i++) {
         var term = terms[i], hit = false;

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://killerbench.net/</loc></url>
-  <url><loc>https://killerbench.net/help/</loc></url>
+  <url><loc>https://killerbench.net/help</loc></url>
+  <url><loc>https://killerbench.net/technical</loc></url>
+  <url><loc>https://killerbench.net/about</loc></url>
   <url><loc>https://killerbench.net/engine/</loc></url>
-  <url><loc>https://killerbench.net/engine/getting-started.html</loc></url>
+  <url><loc>https://killerbench.net/engine/getting-started</loc></url>
   <url><loc>https://killerbench.net/mcp</loc></url>
 </urlset>
