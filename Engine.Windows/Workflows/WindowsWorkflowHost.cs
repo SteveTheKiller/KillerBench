@@ -1917,7 +1917,10 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
     }
     private static async Task<WorkflowCheck> InspectWmiRepositoryAsync(IProgress<string>? progress, CancellationToken token) =>
         WmiRecovery.Interpret(await WmiRecovery.ExecuteAsync(WmiRecovery.Step(true), progress, token).ConfigureAwait(false));
-    public async Task<RepairResult> RepairAsync(RepairKind kind, string folder, IProgress<string>? progress, CancellationToken token)
+    public Task<RepairResult> RepairAsync(RepairKind kind, string folder, IProgress<string>? progress, CancellationToken token) =>
+        RepairAsync(kind, folder, false, progress, token);
+
+    public async Task<RepairResult> RepairAsync(RepairKind kind, string folder, bool demandStartAuthorized, IProgress<string>? progress, CancellationToken token)
     {
         if (kind == RepairKind.PrintQueues)
         {
@@ -1927,7 +1930,8 @@ public sealed class WindowsWorkflowHost : IWorkflowHost
                 cancellationToken: token).ConfigureAwait(false);
         }
         if (kind != RepairKind.DnsCache)
-            return await Repairs.RunAsync(kind, folder, progress, cancellationToken: token).ConfigureAwait(false);
+            return await Repairs.RunAsync(kind, folder, demandStartAuthorized && ServiceRecovery.IsDemandStartKind(kind), progress,
+                cancellationToken: token).ConfigureAwait(false);
         if (LastDnsLookup is null || !DnsCacheRecovery.IsEligible(LastDnsLookup))
             throw new InvalidOperationException("Fresh exact-hostname evidence is required before DNS cache recovery.");
         string dnsFolder = Path.Combine(folder, "dns-cache");

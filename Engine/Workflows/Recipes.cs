@@ -298,7 +298,7 @@ public static class RecipeEngine
                         repairAttempted = true;
                         using var executionDeadline = CancellationTokenSource.CreateLinkedTokenSource(token);
                         executionDeadline.CancelAfter(recipe.ExecutionTimeout);
-                        var pendingRepair = host.RepairAsync(recipe.Action, journalFolder, progress, executionDeadline.Token)
+                        var pendingRepair = host.RepairAsync(recipe.Action, journalFolder, check.DemandStartAuthorized, progress, executionDeadline.Token)
                             ?? throw new InvalidOperationException("The repair provider returned no task.");
                         try { repair = await pendingRepair.WaitAsync(executionDeadline.Token).ConfigureAwait(false); }
                         catch (OperationCanceledException) when (!token.IsCancellationRequested && executionDeadline.IsCancellationRequested)

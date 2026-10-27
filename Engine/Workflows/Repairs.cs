@@ -3,7 +3,12 @@ using System.Text.Json;
 namespace KillerBench.Engine.Workflows;
 
 public enum RepairKind { ComponentStore, SystemFiles, UpdateDataStoreReset, PrintSpooler, PrintSpoolDirectory, WindowsTime, WindowsInstaller, InstallerRegistration, MsiProduct, StorageFileSystem, VolumeOptimization, SystemRestorePoint, ComputerRename, SearchIndexRebuild, OrcaCacheReset, PreviousWindowsInstallationRemoval, BitLockerProtectionResume, BitLockerRecoveryBackup, HighPerformancePowerPlan, PowerTimers, HibernationDisable, PrintQueues, WmiRepository, TimeSynchronization, TimeSourceConfiguration, DhcpClient, DhcpLease, PrinterOffline, DefaultPrinter, UpdateService, BackgroundTransfer, BitsJobRetry, CryptographicServices, ModulesInstaller, WindowsUpdateMedicService, UpdateOrchestrator, DeliveryOptimization, AudioEndpoints, WindowsAudio, WindowsSearch, DefenderSignatures, ComponentCleanup, WindowsManagement, WmiProvider, WindowsEventLog, EventChannelEnable, DnsClient, DnsCache, Workstation, VolumeShadowCopy, SoftwareShadowProvider, WindowsBackupService, BlockLevelBackupEngineService, BaseFilteringEngine, WindowsFirewall, FirewallProfiles, WirelessAutoConfig, WiredAutoConfig, NetworkLocationAwareness, NetworkListService, IpHelper, BluetoothSupport, CameraFrameServer, SmartCardService, BiometricService, ServerService, TaskSchedulerService, WindowsRecoveryEnvironment, DiagnosticPolicyService, WindowsErrorReportingService, WindowsEventCollectorService, RemoteAccessConnectionManagerService, RemoteDesktopServices, WindowsRemoteManagement, SecurityCenterService, NetworkConnectionsService, WinHttpAutoProxyService, WindowsConnectionManagerService, NetworkSetupService, AppReadinessService, StateRepositoryService, UserProfileService, CredentialManagerService, ShellHardwareDetectionService, DeviceInstallService, AppxDeploymentService, ClientLicenseService, StoreInstallService, WindowsLicenseManagerService, PushToInstallService, WebAccountManagerService, MicrosoftAccountSignInService, StorageService, OptimizeDrivesService, WindowsImageAcquisitionService, FunctionDiscoveryProviderHostService, FunctionDiscoveryResourcePublicationService, HumanInterfaceDeviceService, PortableDeviceEnumeratorService, WindowsFontCacheService, DeviceAssociationService, TextInputManagementService, DisplayEnhancementService, ComPlusEventSystem, SystemEventNotificationService, PowerService, PlugAndPlayService, UserManagerService, GroupPolicyClientService, NetworkStoreInterfaceService, RpcEndpointMapperService, RemoteProcedureCallService, DcomServerProcessLauncherService, BackgroundTasksInfrastructureService, CoreMessagingService, PrintJobCancellation }
-public sealed record RepairStep(string Tool, string[] Arguments, bool Verification);
+public sealed record RepairStep(string Tool, string[] Arguments, bool Verification)
+{
+    /// <summary>Set only when the focused tool for this exact service selected the stopped demand-start repair. Never journaled.</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    public bool DemandStartAuthorized { get; init; }
+}
 public sealed record RepairPlan(RepairKind Kind, string Title, string Effects, IReadOnlyList<RepairStep> Steps);
 public sealed record RepairStepResult(RepairStep Step, ToolResult Result)
 {
@@ -190,9 +195,19 @@ public static class Repairs
         CancellationToken cancellationToken = default)
         => RunAsync(kind, journalDirectory, TimeSpan.FromMinutes(65), progress, host, recoveryStore, selectedPrinterQueues, cancellationToken: cancellationToken);
 
-    public static async Task<RepairResult> RunAsync(RepairKind kind, string journalDirectory, TimeSpan commandTimeout,
+    /// <summary>Runs a repair selected by its focused tool. demandStartAuthorized carries that selection to a stopped demand-start service start.</summary>
+    public static Task<RepairResult> RunAsync(RepairKind kind, string journalDirectory, bool demandStartAuthorized,
+        IProgress<string>? progress = null, IRepairHost? host = null, CancellationToken cancellationToken = default)
+        => RunAsync(kind, journalDirectory, TimeSpan.FromMinutes(65), progress, host, null, null, cancellationToken, demandStartAuthorized);
+
+    public static Task<RepairResult> RunAsync(RepairKind kind, string journalDirectory, TimeSpan commandTimeout,
         IProgress<string>? progress = null, IRepairHost? host = null, RepairRecoveryStore? recoveryStore = null,
         IReadOnlyList<string>? selectedPrinterQueues = null, CancellationToken cancellationToken = default)
+        => RunAsync(kind, journalDirectory, commandTimeout, progress, host, recoveryStore, selectedPrinterQueues, cancellationToken, false);
+
+    private static async Task<RepairResult> RunAsync(RepairKind kind, string journalDirectory, TimeSpan commandTimeout,
+        IProgress<string>? progress, IRepairHost? host, RepairRecoveryStore? recoveryStore,
+        IReadOnlyList<string>? selectedPrinterQueues, CancellationToken cancellationToken, bool demandStartAuthorized)
     {
         var commandLimit = commandTimeout;
         if (commandLimit <= TimeSpan.Zero || commandLimit > TimeSpan.FromHours(2))
@@ -207,6 +222,8 @@ public static class Repairs
         try
         {
             var plan = selectedPlan ?? Plan(kind);
+            if (demandStartAuthorized && ServiceRecovery.IsDemandStartKind(kind))
+                plan = plan with { Steps = [.. plan.Steps.Select(step => step.Verification ? step : step with { DemandStartAuthorized = true })] };
             if (plan.Steps.Count == 0) throw new InvalidOperationException("This recipe is diagnostic only and has no repair command.");
             using var executionLock = host is null ? AcquireExecutionLock() : null;
             recoveryStore ??= host is null ? RepairRecoveryStore.ForCurrentUser() : null;

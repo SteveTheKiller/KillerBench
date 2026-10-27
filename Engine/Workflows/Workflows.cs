@@ -51,6 +51,9 @@ public interface IWorkflowHost
         throw new NotSupportedException("This provider does not support focused diagnostic scopes.");
     Task<WorkflowCheck> CheckIntegrityAsync(RepairKind kind, IProgress<string>? progress, CancellationToken token);
     Task<RepairResult> RepairAsync(RepairKind kind, string folder, IProgress<string>? progress, CancellationToken token);
+    /// <summary>Runs a repair the focused workflow selected; demandStartAuthorized carries that selection to a stopped demand-start service.</summary>
+    Task<RepairResult> RepairAsync(RepairKind kind, string folder, bool demandStartAuthorized, IProgress<string>? progress, CancellationToken token) =>
+        RepairAsync(kind, folder, progress, token);
 }
 
 public static class Workflows

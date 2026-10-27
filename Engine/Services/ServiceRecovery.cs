@@ -184,9 +184,19 @@ public static partial class ServiceRecovery
         return names.Count == 1 && string.Equals(names[0].Groups[1].Value.Trim(), expectedService, StringComparison.OrdinalIgnoreCase);
     }
 
+    public static bool IsDemandStartKind(RepairKind kind) =>
+        kind is RepairKind.WindowsTime or RepairKind.WinHttpAutoProxyService or RepairKind.WindowsUpdateMedicService;
+
+    /// <summary>A stopped demand-start service may be started only when its focused tool selected the repair and carried that selection into the step.</summary>
+    public static bool DispatchAuthorizesDemandStart(RepairKind kind, RepairStep step)
+    {
+        ArgumentNullException.ThrowIfNull(step);
+        return step.DemandStartAuthorized && !step.Verification && IsDemandStartKind(kind);
+    }
+
     public static WorkflowCheck Interpret(RepairKind kind, ToolResult result, int? startup, bool demandStartAuthorized = false)
     {
-        demandStartAuthorized &= kind is RepairKind.WindowsTime or RepairKind.WinHttpAutoProxyService or RepairKind.WindowsUpdateMedicService;
+        demandStartAuthorized &= IsDemandStartKind(kind);
         string? expected = ServiceName(kind);
         if (expected is null || !MatchesService(result, expected))
             return new(kind.ToString(), CheckState.Unknown, "Service evidence does not identify the requested supported service. No repair selected.", Evidence: result);
@@ -328,8 +338,7 @@ public static partial class ServiceRecovery
                     string.Equals(ServiceName(k), step.Arguments[1], StringComparison.OrdinalIgnoreCase)).Cast<RepairKind?>().SingleOrDefault()
                     ?? throw new ArgumentException("Unsupported service start command.", nameof(step));
                 progress?.Report("Rechecking service state, dependencies and executable registration before start...");
-                bool focusedDemandStart = kind is RepairKind.WindowsTime or RepairKind.WinHttpAutoProxyService or RepairKind.WindowsUpdateMedicService;
-                var check = await CheckAsync(kind, focusedDemandStart, token: timeout.Token).ConfigureAwait(false);
+                var check = await CheckAsync(kind, DispatchAuthorizesDemandStart(kind, step), token: timeout.Token).ConfigureAwait(false);
                 if (check.State == CheckState.Clear)
                     throw new RepairStepSkippedException("The selected service is already running. No start command was run.", check.Evidence!);
                 if (!CanStart(kind, check))

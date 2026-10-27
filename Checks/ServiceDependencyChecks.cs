@@ -224,6 +224,7 @@ internal static class ServiceDependencyChecks
             focusedMedic.State == CheckState.Repairable && focusedMedic.Repair == RepairKind.WindowsUpdateMedicService &&
             focusedMedic.DemandStartAuthorized && ServiceRecovery.CanStart(RepairKind.WindowsUpdateMedicService, focusedMedic),
             "Only the focused Windows Update Medic workflow authorizes its stopped demand-start service");
+        DemandStartDispatchAuthorization();
         foreach (int startup in new[] { 0, 1, 2, 3 })
             Require(ServiceRecovery.AssessDependencies(eligible, [new("dependency", startup)], true) == eligible, "Enabled dependency does not invent a blocker");
         var disabled = ServiceRecovery.AssessDependencies(eligible, [new("dependency", 4)], true);
@@ -284,5 +285,72 @@ internal static class ServiceDependencyChecks
     {
         public void Report(string value) { if (value.StartsWith("Inspecting ", StringComparison.Ordinal) == atStart) stop.Cancel(); }
     }
+    private static void DemandStartDispatchAuthorization()
+    {
+        var unfocusedStart = new RepairStep("sc.exe", ["start", "W32Time"], false);
+        Require(!ServiceRecovery.DispatchAuthorizesDemandStart(RepairKind.WindowsTime, unfocusedStart) &&
+            !ServiceRecovery.DispatchAuthorizesDemandStart(RepairKind.WinHttpAutoProxyService, unfocusedStart with { Arguments = ["start", "WinHttpAutoProxySvc"] }) &&
+            !ServiceRecovery.DispatchAuthorizesDemandStart(RepairKind.WindowsUpdateMedicService, unfocusedStart with { Arguments = ["start", "WaaSMedicSvc"] }),
+            "A service start step without focused selection never authorizes a stopped demand-start service at dispatch");
+        Require(ServiceRecovery.DispatchAuthorizesDemandStart(RepairKind.WindowsTime, unfocusedStart with { DemandStartAuthorized = true }) &&
+            !ServiceRecovery.DispatchAuthorizesDemandStart(RepairKind.WindowsAudio, new RepairStep("sc.exe", ["start", "Audiosrv"], false) { DemandStartAuthorized = true }),
+            "Focused demand-start authorization reaches dispatch and cannot be broadened to another service");
+        string folder = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "KillerBench-demand-start-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            foreach (bool focused in new[] { true, false })
+            {
+                var host = new CapturingRepairHost();
+                Repairs.RunAsync(RepairKind.WinHttpAutoProxyService, folder, focused, host: host).GetAwaiter().GetResult();
+                Require(host.Steps.Count == 2 && host.Steps.Single(step => !step.Verification).DemandStartAuthorized == focused &&
+                    !host.Steps.Single(step => step.Verification).DemandStartAuthorized,
+                    focused ? "The focused repair carries demand-start authorization into its start step"
+                        : "A repair without focused selection leaves its start step unauthorized");
+            }
+            var stopped = new ToolResult(0, "SERVICE_NAME: WinHttpAutoProxySvc\nSTATE : 1 STOPPED\nWIN32_EXIT_CODE : 1077 (0x435)", "", false);
+            var recipe = RecipeCatalog.All.Single(candidate => candidate.Action == RepairKind.WinHttpAutoProxyService);
+            foreach (bool focused in new[] { true, false })
+            {
+                var check = ServiceRecovery.AssessGraph(ServiceRecovery.Interpret(RepairKind.WinHttpAutoProxyService, stopped, 3, true),
+                    new([], true) { TargetStartup = 3 }) with { DemandStartAuthorized = focused };
+                var workflow = new DemandStartWorkflowHost(check);
+                RecipeEngine.RunAsync([recipe], true, folder, workflow).GetAwaiter().GetResult();
+                Require(workflow.Requested == focused,
+                    focused ? "The focused workflow selection authorizes the demand-start repair it dispatches"
+                        : "A check without focused selection never dispatches an authorized demand-start repair");
+            }
+        }
+        finally { if (System.IO.Directory.Exists(folder)) System.IO.Directory.Delete(folder, true); }
+    }
+
+    private sealed class CapturingRepairHost : IRepairHost
+    {
+        public List<RepairStep> Steps { get; } = [];
+        public void CheckPrerequisites() { }
+        public Task<ToolResult> RunAsync(RepairStep step, IProgress<string>? progress)
+        {
+            Steps.Add(step);
+            return Task.FromResult(new ToolResult(0, step.Verification ? "SERVICE_NAME: WinHttpAutoProxySvc\nSTATE : 4 RUNNING" : "", "", false));
+        }
+    }
+
+    private sealed class DemandStartWorkflowHost(WorkflowCheck check) : IWorkflowHost
+    {
+        public bool? Requested { get; private set; }
+        public Task<IReadOnlyList<WorkflowCheck>> InspectAsync(WorkflowKind kind, CancellationToken token) =>
+            Task.FromResult<IReadOnlyList<WorkflowCheck>>([]);
+        public Task<WorkflowCheck> CheckIntegrityAsync(RepairKind kind, IProgress<string>? progress, CancellationToken token) =>
+            Task.FromResult(check);
+        public Task<RepairResult> RepairAsync(RepairKind kind, string folder, IProgress<string>? progress, CancellationToken token) =>
+            RepairAsync(kind, folder, false, progress, token);
+        public Task<RepairResult> RepairAsync(RepairKind kind, string folder, bool demandStartAuthorized, IProgress<string>? progress, CancellationToken token)
+        {
+            Requested = demandStartAuthorized;
+            return Task.FromResult(new RepairResult(Environment.MachineName, kind, DateTimeOffset.UtcNow, "fixture", folder,
+                [new(new("sc.exe", ["start", "WinHttpAutoProxySvc"], false), new(0, "", "", false)),
+                 new(new("sc.exe", ["query", "WinHttpAutoProxySvc"], true), new(0, "SERVICE_NAME: WinHttpAutoProxySvc\nSTATE : 4 RUNNING", "", false))]));
+        }
+    }
+
     private static void Require(bool condition, string message) { if (!condition) throw new Exception(message); }
 }
