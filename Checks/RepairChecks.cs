@@ -224,6 +224,16 @@ internal static class RepairChecks
         using (var interruptedJournal = JsonDocument.Parse(await File.ReadAllTextAsync(interruptedResult.JournalPath)))
             Require(interruptedJournal.RootElement.GetProperty("status").GetString() == interruptedResult.Status,
                 "Interrupted outcome is durable in the repair journal");
+        var failedProviderRecovery = new RepairRecoveryStore(Path.Combine(scratch, "failed-provider-recovery"),
+            _ => Task.FromResult<BootStamp?>(new(1, DateTimeOffset.Parse("2026-09-13T00:00:00Z"))));
+        var failedProvider = new FakeHost { AfterStep = () => throw new IOException("Fixture pipe closed") };
+        var failedProviderResult = await Repairs.RunAsync(RepairKind.SystemFiles, folder, host: failedProvider,
+            recoveryStore: failedProviderRecovery);
+        Require(failedProvider.Calls == 1 && failedProviderResult.Status.Contains("Fixture pipe closed") &&
+            failedProviderResult.Status.Contains("Machine changes may have occurred") &&
+            failedProviderResult.Status.Contains("reassessment required") &&
+            (await failedProviderRecovery.ReadAsync())?.Pending == true,
+            "A provider failure on a mutation step warns of possible changes and keeps the recovery record pending");
         var prematureRetry = new FakeHost();
         try
         {

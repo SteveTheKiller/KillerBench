@@ -303,7 +303,13 @@ public static class Repairs
                     return Current();
                 }
                 catch (Exception e) when (e is IOException or InvalidOperationException or System.ComponentModel.Win32Exception)
-                { status = "Execution failed: " + e.Message; await Save(); return Current(); }
+                {
+                    status = "Execution failed: " + e.Message;
+                    if (!step.Verification)
+                        status += (status.EndsWith('.') ? "" : ".") + " Machine changes may have occurred; remaining steps skipped; reassessment required.";
+                    await Save();
+                    return Current();
+                }
                 results.Add(new(step, result));
                 if (!step.Verification) mutationDispatched = true;
                 if (result.TimedOut) { status = "Timed out; Windows may still be completing work. Remaining steps skipped; reassessment required"; break; }
