@@ -96,7 +96,8 @@ public sealed class NativeScenarioRunner
         var journal = new FileRecipeJournal(journalPath);
         var progressLines = new StringBuilder();
         var capture = new Progress<string>(line => { progressLines.AppendLine(line); progress?.Report(line); });
-        var runner = new RecipeRunner(library, journal);
+        // Scenario-scoped barriers: a record left by one scenario must not block the next or reach the per-user store real repairs use.
+        var runner = new RecipeRunner(library, journal, new FileRecipeOperationStore(Path.Combine(folder, "recipe-operations")));
         var injection = new NativeServiceScenario(serviceBoundary, before);
         bool restored = true;
         try

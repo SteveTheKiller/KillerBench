@@ -28,6 +28,36 @@ internal static class NativeScenarioProducerChecks
                     "Scenario evidence must explicitly prove no recipe dispatch; only restoration may request a service start");
             }
             Console.WriteLine("PASS: actual native scenario producer retains result, final pre-restoration state and no-dispatch proof for all four supported non-mutating scenarios; OS boundaries substituted.");
+
+            // A dispatch that leaves a pending barrier must stay inside its own scenario: a later scenario for the same
+            // recipe still runs, and the per-user operation store that real repairs use is never written.
+            string userStore = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "RecipeOperations");
+            string[] UserRecords() => Directory.Exists(userStore) ? [.. Directory.GetFiles(userStore).Order(StringComparer.Ordinal)] : [];
+            var userBefore = UserRecords();
+            var plan = NativeValidationCatalog.Find("printing.spooler")!;
+            string verified = plan.Scenarios.Single(scenario => scenario.Kind == NativeValidationScenarioKind.VerifiedExecution).Id["printing.spooler.".Length..];
+            string primitive = WindowsPacks.All().SelectMany(pack => pack.Recipes).Single(recipe => recipe.Id == "printing.spooler").Action!.Primitive;
+            var scoped = new FixtureHost();
+            var scopedLibrary = new PrimitiveLibrary(WindowsPrimitiveLibrary.Platform).AddProbe(new FixtureProbe(scoped)).AddAction(new TimedOutAction(primitive));
+            string scopedFolder = Path.Combine(folder, "scoped");
+            try
+            {
+                var runner = new NativeScenarioRunner(scopedLibrary, scoped);
+                var left = (await runner.RunAsync("printing.spooler", verified, scopedFolder, scoped.MachineName)).Single();
+                var healthy = (await runner.RunAsync("printing.spooler", "healthy", scopedFolder, scoped.MachineName)).Single();
+                Require(left.Outcome == NativeValidationOutcome.Failed && healthy.Outcome == NativeValidationOutcome.Passed,
+                    "A barrier left by one scenario leaked into the next: " + left.Outcome + ", then healthy " + healthy.Outcome + " " + healthy.Notes);
+                Require(Directory.EnumerateFiles(scopedFolder, "*.pending.json", SearchOption.AllDirectories).Any(),
+                    "The timed-out scenario's barrier must be retained under the validation output folder.");
+            }
+            finally
+            {
+                // Before the fix the barrier landed in the real per-user store; remove only records this fixture created.
+                var created = UserRecords().Except(userBefore, StringComparer.Ordinal).ToArray();
+                foreach (string path in created) File.Delete(path);
+                Require(created.Length == 0, "Native validation wrote to the per-user recipe operation store: " + string.Join(", ", created));
+            }
+            Console.WriteLine("PASS: native scenarios use a scenario-scoped operation store; a retained barrier neither blocks the next scenario nor touches the per-user store.");
         }
         finally { Directory.Delete(folder, true); }
     }
@@ -55,6 +85,16 @@ internal static class NativeScenarioProducerChecks
             token.ThrowIfCancellationRequested();
             return Task.FromResult(new PrimitiveResult(true, host.Start == 4 ? "Attention" : host.State == 4 ? "Clear" : "Repairable", "Controlled provider observation"));
         }
+    }
+
+    private sealed class TimedOutAction(string name) : IActionPrimitive
+    {
+        public string Name => name;
+        public IReadOnlyList<PrimitiveParameter> Parameters => [];
+        public RecipeRisk Risk => RecipeRisk.Reversible;
+        public bool RequiresElevation => false;
+        public Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token) =>
+            Task.FromResult(new ActionResult(true, false, "") { TimedOut = true });
     }
 
     private static void Require(bool condition, string message)
