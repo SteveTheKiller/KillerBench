@@ -86,9 +86,18 @@ public static class BitsRetry
         if (current is null || current.Owner != target.Owner || current.Name != target.Name || current.BytesTotal != target.BytesTotal)
             return new(jobId, BitsRetryOutcome.Blocked, "The selected job changed, is unavailable or is no longer eligible. No retry requested.", before);
         Report(progress, "Saving retry preparation and checking for prior attempts.");
-        await journal.BeginAsync(jobId, before, deadline.Token).WaitAsync(deadline.Token).ConfigureAwait(false);
-        ToolResult? request = null;
         BitsRetryResult result;
+        try { await journal.BeginAsync(jobId, before, deadline.Token).WaitAsync(deadline.Token).ConfigureAwait(false); }
+        catch (OperationCanceledException)
+        {
+            // Preparation may already be durable, so release the retry guard; no request was sent.
+            result = new(jobId, BitsRetryOutcome.Stopped,
+                "BITS retry stopped during durable preparation and before any retry request was sent.", before);
+            await journal.AbandonAsync(result, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10), CancellationToken.None).ConfigureAwait(false);
+            Report(progress, result.Detail);
+            return result;
+        }
+        ToolResult? request = null;
         bool requestDispatched = false;
         try
         {
@@ -154,7 +163,12 @@ public static class BitsRetry
             result = new(jobId, BitsRetryOutcome.Uncertain, "Request or observation interrupted: " + error.Message + ". A retry may still be active; reconcile before another request.", before, request);
         }
         Report(progress, "Saving the observed outcome. The retry guard remains in place.");
-        await journal.CompleteAsync(result, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10), CancellationToken.None).ConfigureAwait(false);
+        try { await journal.CompleteAsync(result, CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(10), CancellationToken.None).ConfigureAwait(false); }
+        catch (TimeoutException)
+        {
+            // The request was sent, so the observed outcome is still returned; the pending guard stays until reconciled.
+            result = result with { Detail = result.Detail + " Retry journal completion unconfirmed; the retry guard remains until reconciled." };
+        }
         Report(progress, result.Detail);
         return result;
     }

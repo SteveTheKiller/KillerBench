@@ -110,8 +110,27 @@ internal static class BitsRetryChecks
         catch (System.IO.IOException) { }
         if (denied.Requests != 0) throw new Exception("Retry started without journal preparation.");
         var changedOwnerJournal = new Journal();
-        foreach (var persistenceFailure in new Exception[] { new System.IO.IOException("Fixture result write failed"),
-            new TimeoutException("Fixture result write timed out") })
+        using (var stopDuringBegin = new CancellationTokenSource())
+        {
+            var beginJournal = new Journal { StopDuringBegin = stopDuringBegin };
+            var beginHost = new Host(beginJournal, Snapshot("Queued"));
+            var beginStopped = await BitsRetry.RunAsync(Snapshot("Error"), JobId, beginHost, beginJournal, token: stopDuringBegin.Token);
+            if (beginStopped.Outcome != BitsRetryOutcome.Stopped || !beginJournal.Abandoned || beginHost.Requests != 0)
+                throw new Exception("Cancellation during retry preparation left the retry guard set.");
+        }
+        var hungJournal = new Journal { HangCompletion = true };
+        var hungHost = new Host(hungJournal, Snapshot("Queued"));
+        var hungCompletion = await BitsRetry.RunAsync(Snapshot("Error"), JobId, hungHost, hungJournal);
+        if (hungCompletion.Outcome != BitsRetryOutcome.RetryRequested || hungHost.Requests != 1 ||
+            !hungCompletion.Detail.Contains("journal completion unconfirmed", StringComparison.Ordinal))
+            throw new Exception("A slow journal completion discarded the observed retry result.");
+        var timedOutJournal = new Journal { CompletionFailure = new TimeoutException("Fixture result write timed out") };
+        var timedOutHost = new Host(timedOutJournal, Snapshot("Queued"));
+        var timedOutCompletion = await BitsRetry.RunAsync(Snapshot("Error"), JobId, timedOutHost, timedOutJournal);
+        if (!timedOutJournal.Began || timedOutJournal.Result is not null || timedOutHost.Requests != 1 ||
+            !timedOutCompletion.Detail.Contains("journal completion unconfirmed", StringComparison.Ordinal))
+            throw new Exception("A timed-out journal completion lost the observed result or reported the guard as cleared.");
+        foreach (var persistenceFailure in new Exception[] { new System.IO.IOException("Fixture result write failed") })
         {
             var persistenceJournal = new Journal { CompletionFailure = persistenceFailure };
             var persistenceHost = new Host(persistenceJournal, Snapshot("Queued"));
@@ -145,9 +164,19 @@ internal static class BitsRetryChecks
         public bool Abandoned;
         public BitsRetryResult? Result;
         public Exception? CompletionFailure;
-        public Task BeginAsync(Guid jobId, BitsInventoryResult before, CancellationToken token) { if (Deny) throw new System.IO.IOException("Fixture journal blocked"); Began = true; return Task.CompletedTask; }
+        public CancellationTokenSource? StopDuringBegin;
+        public bool HangCompletion;
+        public Task BeginAsync(Guid jobId, BitsInventoryResult before, CancellationToken token)
+        {
+            if (Deny) throw new System.IO.IOException("Fixture journal blocked");
+            Began = true;
+            if (StopDuringBegin is null) return Task.CompletedTask;
+            StopDuringBegin.Cancel();
+            return Task.Delay(Timeout.Infinite, token);
+        }
         public Task CompleteAsync(BitsRetryResult result, CancellationToken token)
         {
+            if (HangCompletion) return new TaskCompletionSource().Task;
             if (CompletionFailure is not null) throw CompletionFailure;
             Result = result;
             return Task.CompletedTask;
