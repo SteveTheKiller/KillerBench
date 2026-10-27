@@ -12,6 +12,11 @@ internal static class ExactScheduledTaskReadChecks
             "A failed lookup reads as unavailable");
         Require(Read(new ToolResult(1, "", "", false)) == ExactScheduledTaskReadState.Unavailable, "A nonzero exit reads as unavailable");
         Require(Read(new ToolResult(0, "{\"found\":false}", "", false)) == ExactScheduledTaskReadState.Missing, "A not-found lookup reads as missing");
+
+        // Task identities are literal, so wildcard characters must not reach Get-ScheduledTask as patterns.
+        string literal = ExactScheduledTaskDiagnostics.CreateReadStep("\\Fix*ture\\", "a[1]*'?").Arguments[^1];
+        Require(literal.Contains("-TaskName 'a`[1`]`*''`?'", StringComparison.Ordinal) && literal.Contains("-TaskPath '\\Fix`*ture\\'", StringComparison.Ordinal),
+            "Read script escapes wildcard characters in the task identity");
     }
 
     private static ExactScheduledTaskReadState Read(ToolResult result) => ExactScheduledTaskDiagnostics.Parse(result, "\\Fixture\\", "task").State;

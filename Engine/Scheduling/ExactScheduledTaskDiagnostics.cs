@@ -19,8 +19,7 @@ public static class ExactScheduledTaskDiagnostics
     public static RepairStep CreateReadStep(string taskPath, string taskName)
     {
         ValidateIdentity(taskPath, taskName);
-        string path = taskPath.Replace("'", "''", StringComparison.Ordinal);
-        string name = taskName.Replace("'", "''", StringComparison.Ordinal);
+        string path = Literal(taskPath), name = Literal(taskName);
         string script = "$ErrorActionPreference='Stop'; $ProgressPreference='SilentlyContinue'; " +
             $"$task=$null; try {{$task=Get-ScheduledTask -TaskPath '{path}' -TaskName '{name}' -ErrorAction Stop}} catch {{" +
             "if($_.CategoryInfo.Category -eq 'ObjectNotFound' -or \"$($_.FullyQualifiedErrorId)\".StartsWith('CmdletizationQuery_NotFound')){" +
@@ -79,6 +78,14 @@ public static class ExactScheduledTaskDiagnostics
             taskPath.Any(char.IsControl) || string.IsNullOrWhiteSpace(taskName) || taskName.Length > 256 || taskName.Any(char.IsControl))
             throw new ArgumentException("Scheduled task identity is invalid.");
     }
+
+    // Get-ScheduledTask treats its identity parameters as wildcards, so escape them as WildcardPattern.Escape would.
+    private static string Literal(string value) => string.Concat(value.Select(character => character switch
+    {
+        '`' or '*' or '?' or '[' or ']' => "`" + character,
+        '\'' => "''",
+        _ => character.ToString()
+    }));
 
     private static bool Unique(JsonElement value) => value.ValueKind == JsonValueKind.Object &&
         value.EnumerateObject().Select(property => property.Name).Distinct(StringComparer.Ordinal).Count() == value.EnumerateObject().Count();
