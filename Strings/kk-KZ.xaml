@@ -432,6 +432,7 @@
   <sys:String x:Key="Str_Update_Classification">Жаңарту жіктелуі</sys:String>
   <sys:String x:Key="Str_Update_AllowRestart">Қайта іске қосуды қажет етуі мүмкін жаңартуларды қосу</sys:String>
   <sys:String x:Key="Str_Update_AllowFeatureUpgrade">Ұсынылған бір Windows функция жаңартуына рұқсат беру</sys:String>
+  <sys:String x:Key="Str_Update_InstallConsent">Таңдалған Windows жаңартуларын осы компьютерге орнату</sys:String>
   <sys:String x:Key="Str_Update_PreviewSelected">Таңдалғанды алдын ала қарау</sys:String>
   <sys:String x:Key="Str_Update_InstallSelected">Таңдалғанды орнату</sys:String>
   <sys:String x:Key="Str_Update_SelectionStatus">Орнату талаптарын қарап шығу үшін жаңартуларды таңдаңыз.</sys:String>

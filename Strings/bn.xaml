@@ -440,6 +440,7 @@
   <sys:String x:Key="Str_Update_Classification">আপডেট শ্রেণীবিন্যাস</sys:String>
   <sys:String x:Key="Str_Update_AllowRestart">যেসব আপডেটে পুনরায় চালু করার প্রয়োজন হতে পারে সেগুলো অন্তর্ভুক্ত করুন</sys:String>
   <sys:String x:Key="Str_Update_AllowFeatureUpgrade">একটি প্রদত্ত উইন্ডোজ ফিচার আপগ্রেড অনুমোদন করুন</sys:String>
+  <sys:String x:Key="Str_Update_InstallConsent">এই কম্পিউটারে নির্বাচিত উইন্ডোজ আপডেটগুলি ইনস্টল করুন</sys:String>
   <sys:String x:Key="Str_Update_PreviewSelected">নির্বাচিতগুলোর প্রিভিউ</sys:String>
   <sys:String x:Key="Str_Update_InstallSelected">নির্বাচিতগুলো ইনস্টল করুন</sys:String>
   <sys:String x:Key="Str_Update_SelectionStatus">ইনস্টলেশনের প্রয়োজনীয়তা পর্যালোচনা করতে আপডেটগুলি নির্বাচন করুন।</sys:String>

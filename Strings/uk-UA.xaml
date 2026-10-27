@@ -431,6 +431,7 @@
   <sys:String x:Key="Str_Update_Classification">Класифікація оновлення</sys:String>
   <sys:String x:Key="Str_Update_AllowRestart">Включити оновлення, що можуть потребувати перезапуску</sys:String>
   <sys:String x:Key="Str_Update_AllowFeatureUpgrade">Дозволити одне запропоноване оновлення функцій Windows</sys:String>
+  <sys:String x:Key="Str_Update_InstallConsent">Інсталювати вибрані оновлення Windows на цей комп’ютер</sys:String>
   <sys:String x:Key="Str_Update_PreviewSelected">Попередній перегляд вибраного</sys:String>
   <sys:String x:Key="Str_Update_InstallSelected">Установити вибране</sys:String>
   <sys:String x:Key="Str_Update_SelectionStatus">Виберіть оновлення, щоб переглянути вимоги до їх установлення.</sys:String>

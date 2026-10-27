@@ -98,7 +98,7 @@ public partial class MainWindow
 
     private void RefreshUpdateActions()
     {
-        if (UpdatePreviewButton is null || UpdateInstallButton is null || UpdateSelectionStatus is null || UpdateAllowRestart is null || UpdateAllowFeatureUpgrade is null) return;
+        if (UpdatePreviewButton is null || UpdateInstallButton is null || UpdateSelectionStatus is null || UpdateAllowRestart is null || UpdateAllowFeatureUpgrade is null || UpdateInstallConsent is null) return;
         UpdatePreviewButton.IsEnabled = availableUpdateResult is not null && AvailableUpdateList.SelectedItems.Count > 0;
         UpdateInstallButton.IsEnabled = false;
         UpdateSelectionStatus.Text = "Select updates to review their installation requirements.";
@@ -108,8 +108,10 @@ public partial class MainWindow
             var selections = AvailableUpdateList.SelectedItems.Cast<AvailableUpdate>().Select(update => new UpdateSelection(Guid.Parse(update.Id), update.Revision));
             var plan = UpdatePlanning.Create(availableUpdateResult!, selections,
                 new(UpdateAllowRestart.IsChecked == true, UpdateAllowFeatureUpgrade.IsChecked == true));
-            UpdateInstallButton.IsEnabled = plan.Eligible;
-            UpdateSelectionStatus.Text = plan.Eligible ? $"{plan.Updates.Count} selected. Planning passed; installation rechecks prerequisites." :
+            UpdateInstallButton.IsEnabled = plan.Eligible && UpdateInstallConsent.IsChecked == true;
+            UpdateSelectionStatus.Text = plan.Eligible ? UpdateInstallConsent.IsChecked == true
+                ? $"{plan.Updates.Count} selected. Planning passed; installation rechecks prerequisites."
+                : $"{plan.Updates.Count} selected. Planning passed. Confirm installation on this computer before installing." :
                 string.Join(" ", plan.Updates.SelectMany(update => update.Blockers).Distinct().Take(2));
         }
         catch (Exception error) when (error is ArgumentException or FormatException)
@@ -342,6 +344,8 @@ public partial class MainWindow
     {
         if (readCancellation is not null) return;
         if (availableUpdateResult is null) { Report("Run Available updates first."); return; }
+        if (UpdateInstallConsent.IsChecked != true)
+        { Report("Confirm installation of the selected Windows updates on this computer before installation."); return; }
         var selections = AvailableUpdateList.SelectedItems.Cast<AvailableUpdate>().Select(u => new UpdateSelection(Guid.Parse(u.Id), u.Revision)).ToArray();
         var options = new UpdateInstallOptions(UpdateAllowRestart.IsChecked == true, UpdateAllowFeatureUpgrade.IsChecked == true);
         var search = availableUpdateResult.Options;
@@ -410,6 +414,7 @@ public partial class MainWindow
             SearchBox.IsEnabled = true;
             SetCaptureBusy(false);
             RepairPanel.IsEnabled = true;
+            UpdateInstallConsent.IsChecked = false;
             ModeLabel.Text = "UPDATE OPERATION ENDED";
             if (closeAfterOperation) Close();
         }

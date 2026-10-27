@@ -438,6 +438,7 @@
   <sys:String x:Key="Str_Update_Classification">Klasifikace aktualizací</sys:String>
   <sys:String x:Key="Str_Update_AllowRestart">Zahrnout aktualizace, které mohou vyžadovat restart</sys:String>
   <sys:String x:Key="Str_Update_AllowFeatureUpgrade">Povolit jeden nabízený upgrade funkcí Windows</sys:String>
+  <sys:String x:Key="Str_Update_InstallConsent">Nainstalovat vybrané aktualizace Windows do tohoto počítače</sys:String>
   <sys:String x:Key="Str_Update_PreviewSelected">Náhled vybraných</sys:String>
   <sys:String x:Key="Str_Update_InstallSelected">Nainstalovat vybrané</sys:String>
   <sys:String x:Key="Str_Update_SelectionStatus">Vyberte aktualizace a zkontrolujte jejich požadavky na instalaci.</sys:String>

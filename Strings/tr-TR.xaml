@@ -439,6 +439,7 @@
   <sys:String x:Key="Str_Update_Classification">Güncelleme sınıflandırması</sys:String>
   <sys:String x:Key="Str_Update_AllowRestart">Yeniden başlatma gerektirebilecek güncellemeleri dahil et</sys:String>
   <sys:String x:Key="Str_Update_AllowFeatureUpgrade">Sunulan bir Windows özellik yükseltmesine izin ver</sys:String>
+  <sys:String x:Key="Str_Update_InstallConsent">Seçili Windows güncelleştirmelerini bu bilgisayara yükle</sys:String>
   <sys:String x:Key="Str_Update_PreviewSelected">Seçilenleri önizle</sys:String>
   <sys:String x:Key="Str_Update_InstallSelected">Seçilenleri yükle</sys:String>
   <sys:String x:Key="Str_Update_SelectionStatus">Yükleme gereksinimlerini incelemek için güncellemeleri seçin.</sys:String>

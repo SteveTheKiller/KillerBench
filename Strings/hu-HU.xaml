@@ -432,6 +432,7 @@
   <sys:String x:Key="Str_Update_Classification">Frissítési besorolás</sys:String>
   <sys:String x:Key="Str_Update_AllowRestart">Újraindítást igénylő frissítések belefoglalása</sys:String>
   <sys:String x:Key="Str_Update_AllowFeatureUpgrade">Egy felajánlott Windows funkciófrissítés engedélyezése</sys:String>
+  <sys:String x:Key="Str_Update_InstallConsent">A kiválasztott Windows-frissítések telepítése erre a számítógépre</sys:String>
   <sys:String x:Key="Str_Update_PreviewSelected">Kiválasztottak előnézete</sys:String>
   <sys:String x:Key="Str_Update_InstallSelected">Kiválasztottak telepítése</sys:String>
   <sys:String x:Key="Str_Update_SelectionStatus">Válasszon frissítéseket a telepítési követelményeik áttekintéséhez.</sys:String>

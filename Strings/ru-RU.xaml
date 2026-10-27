@@ -437,6 +437,7 @@
   <sys:String x:Key="Str_Update_Classification">Классификация обновлений</sys:String>
   <sys:String x:Key="Str_Update_AllowRestart">Включить обновления, которые могут потребовать перезагрузки</sys:String>
   <sys:String x:Key="Str_Update_AllowFeatureUpgrade">Разрешить одно предложенное обновление компонентов Windows</sys:String>
+  <sys:String x:Key="Str_Update_InstallConsent">Установить выбранные обновления Windows на этот компьютер</sys:String>
   <sys:String x:Key="Str_Update_PreviewSelected">Предварительный просмотр выбранных</sys:String>
   <sys:String x:Key="Str_Update_InstallSelected">Установить выбранные</sys:String>
   <sys:String x:Key="Str_Update_SelectionStatus">Выберите обновления, чтобы проверить их требования к установке.</sys:String>

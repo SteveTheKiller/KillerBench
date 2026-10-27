@@ -103,6 +103,7 @@
   <sys:String x:Key="Str_Update_Classification">Classification de mise à jour</sys:String>
   <sys:String x:Key="Str_Update_AllowRestart">Inclure les mises à jour pouvant nécessiter un redémarrage</sys:String>
   <sys:String x:Key="Str_Update_AllowFeatureUpgrade">Autoriser une mise à niveau de fonctionnalité Windows proposée</sys:String>
+  <sys:String x:Key="Str_Update_InstallConsent">Installer les mises à jour Windows sélectionnées sur cet ordinateur</sys:String>
   <sys:String x:Key="Str_Update_PreviewSelected">Prévisualiser la sélection</sys:String>
   <sys:String x:Key="Str_Update_InstallSelected">Installer la sélection</sys:String>
   <sys:String x:Key="Str_Update_SelectionStatus">Sélectionnez des mises à jour pour examiner leurs exigences d&apos;installation.</sys:String>

@@ -439,6 +439,7 @@
   <sys:String x:Key="Str_Update_Classification">更新分类</sys:String>
   <sys:String x:Key="Str_Update_AllowRestart">包含可能需要重启的更新</sys:String>
   <sys:String x:Key="Str_Update_AllowFeatureUpgrade">允许一个提供的 Windows 功能升级</sys:String>
+  <sys:String x:Key="Str_Update_InstallConsent">在此计算机上安装所选的 Windows 更新</sys:String>
   <sys:String x:Key="Str_Update_PreviewSelected">预览所选内容</sys:String>
   <sys:String x:Key="Str_Update_InstallSelected">安装所选内容</sys:String>
   <sys:String x:Key="Str_Update_SelectionStatus">选择更新以查看其安装要求。</sys:String>

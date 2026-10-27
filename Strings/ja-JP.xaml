@@ -439,6 +439,7 @@
   <sys:String x:Key="Str_Update_Classification">更新の分類</sys:String>
   <sys:String x:Key="Str_Update_AllowRestart">再起動が必要な場合がある更新を含める</sys:String>
   <sys:String x:Key="Str_Update_AllowFeatureUpgrade">提供された Windows 機能アップグレードを 1 つ許可</sys:String>
+  <sys:String x:Key="Str_Update_InstallConsent">選択した Windows 更新プログラムをこのコンピューターにインストール</sys:String>
   <sys:String x:Key="Str_Update_PreviewSelected">選択内容をプレビュー</sys:String>
   <sys:String x:Key="Str_Update_InstallSelected">選択内容をインストール</sys:String>
   <sys:String x:Key="Str_Update_SelectionStatus">インストール要件を確認するために更新を選択</sys:String>

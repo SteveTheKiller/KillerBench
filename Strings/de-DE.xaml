@@ -439,6 +439,7 @@
   <sys:String x:Key="Str_Update_Classification">Updateklassifizierung</sys:String>
   <sys:String x:Key="Str_Update_AllowRestart">Updates einschließen, die einen Neustart benötigen können</sys:String>
   <sys:String x:Key="Str_Update_AllowFeatureUpgrade">Ein angebotenes Windows-Funktionsupgrade erlauben</sys:String>
+  <sys:String x:Key="Str_Update_InstallConsent">Die ausgewählten Windows-Updates auf diesem Computer installieren</sys:String>
   <sys:String x:Key="Str_Update_PreviewSelected">Ausgewählte in der Vorschau anzeigen</sys:String>
   <sys:String x:Key="Str_Update_InstallSelected">Ausgewählte installieren</sys:String>
   <sys:String x:Key="Str_Update_SelectionStatus">Updates auswählen, um ihre Installationsanforderungen zu prüfen.</sys:String>

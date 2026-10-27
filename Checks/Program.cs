@@ -377,6 +377,7 @@ internal static class Program
             Require(window.FindName("UpdateSoftware") is CheckBox { Content: "Software updates" } &&
                 window.FindName("UpdateStoreRecoveryConsent") is CheckBox { Content: "Retain the old database and rebuild Windows Update data" } &&
                 window.FindName("UpdateInstallButton") is Button { Content: "Install selected" } &&
+                window.FindName("UpdateInstallConsent") is CheckBox { Content: "Install the selected Windows updates on this computer" } &&
                 window.FindName("ThirdPartyUpdateAgreements") is CheckBox { Content: "Accept the selected package and source agreements" },
                 "Windows and third-party update controls resolve their localizable English resources");
             Require(window.FindName("SecurityVirtualization") is CheckBox { Content: "VBS, memory integrity and Credential Guard" } &&
@@ -1058,7 +1059,14 @@ internal static class Program
             allowRestart.IsChecked = true;
             Require(!((Button)window.FindName("UpdateInstallButton")).IsEnabled, "Feature upgrade remains blocked without its separate confirmation");
             allowFeatureUpgrade.IsChecked = true;
-            Require(((Button)window.FindName("UpdateInstallButton")).IsEnabled, "One offered feature upgrade enables installation after both confirmations");
+            var installConsent = (CheckBox)window.FindName("UpdateInstallConsent");
+            Require(installConsent.IsChecked != true && !((Button)window.FindName("UpdateInstallButton")).IsEnabled,
+                "Eligible Windows update selection stays blocked until installation consent is given");
+            installConsent.IsChecked = true;
+            Require(((Button)window.FindName("UpdateInstallButton")).IsEnabled, "One offered feature upgrade enables installation after both confirmations and installation consent");
+            installConsent.IsChecked = false;
+            Require(!((Button)window.FindName("UpdateInstallButton")).IsEnabled, "Removing installation consent immediately disables installation");
+            installConsent.IsChecked = true;
             allowFeatureUpgrade.IsChecked = false;
             allowRestart.IsChecked = false;
             Require(!((Button)window.FindName("UpdateInstallButton")).IsEnabled, "Removing restart consent immediately disables installation");

@@ -431,6 +431,7 @@
   <sys:String x:Key="Str_Update_Classification">Oppdateringsklassifisering</sys:String>
   <sys:String x:Key="Str_Update_AllowRestart">Ta med oppdateringer som kan kreve omstart</sys:String>
   <sys:String x:Key="Str_Update_AllowFeatureUpgrade">Tillat én tilbudt funksjonsoppgradering av Windows</sys:String>
+  <sys:String x:Key="Str_Update_InstallConsent">Installer de valgte Windows-oppdateringene på denne datamaskinen</sys:String>
   <sys:String x:Key="Str_Update_PreviewSelected">Forhåndsvis valgte</sys:String>
   <sys:String x:Key="Str_Update_InstallSelected">Installer valgte</sys:String>
   <sys:String x:Key="Str_Update_SelectionStatus">Velg oppdateringer for å se installasjonskravene deres.</sys:String>

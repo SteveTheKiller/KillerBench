@@ -431,6 +431,7 @@
   <sys:String x:Key="Str_Update_Classification">Phân loại cập nhật</sys:String>
   <sys:String x:Key="Str_Update_AllowRestart">Bao gồm các bản cập nhật có thể cần khởi động lại</sys:String>
   <sys:String x:Key="Str_Update_AllowFeatureUpgrade">Cho phép một nâng cấp tính năng Windows được cung cấp</sys:String>
+  <sys:String x:Key="Str_Update_InstallConsent">Cài đặt các bản cập nhật Windows đã chọn trên máy tính này</sys:String>
   <sys:String x:Key="Str_Update_PreviewSelected">Xem trước các bản đã chọn</sys:String>
   <sys:String x:Key="Str_Update_InstallSelected">Cài đặt các bản đã chọn</sys:String>
   <sys:String x:Key="Str_Update_SelectionStatus">Chọn các bản cập nhật để xem yêu cầu cài đặt của chúng.</sys:String>

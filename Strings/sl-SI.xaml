@@ -431,6 +431,7 @@
   <sys:String x:Key="Str_Update_Classification">Razvrstitev posodobitve</sys:String>
   <sys:String x:Key="Str_Update_AllowRestart">Vključi posodobitve, ki morda zahtevajo ponovni zagon</sys:String>
   <sys:String x:Key="Str_Update_AllowFeatureUpgrade">Dovoli eno ponujeno nadgradnjo funkcij sistema Windows</sys:String>
+  <sys:String x:Key="Str_Update_InstallConsent">Namesti izbrane posodobitve sistema Windows v ta računalnik</sys:String>
   <sys:String x:Key="Str_Update_PreviewSelected">Predogled izbranih</sys:String>
   <sys:String x:Key="Str_Update_InstallSelected">Namesti izbrane</sys:String>
   <sys:String x:Key="Str_Update_SelectionStatus">Izberite posodobitve za pregled zahtev namestitve.</sys:String>
