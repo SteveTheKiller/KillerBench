@@ -62,6 +62,34 @@ internal static class MutationDispatchChecks
                 ": uncertain=" + result.ExecutionUncertain + " pending=" + pending + " " + result.Detail);
         }
         Console.WriteLine("PASS: post-dispatch command failures stay dispatched and uncertain with a recovery barrier; pre-dispatch refusals do not.");
+
+        // A primitive that throws after dispatch began must still be journaled as dispatched and reported as uncertain.
+        var fixture = new RecipeDefinition("fixture.throws", 1, "Throwing fixture", "Test", "fixture state",
+            new ProbeSpec("netadapter.admin-status", new Dictionary<string, string> { ["name"] = "Fixture" }, ExpectSpec.ClearWhenEquals("Up")))
+        { Action = new ActionSpec("fixture.recorder", new Dictionary<string, string>()) { Timeout = TimeSpan.FromMinutes(10) }, ExecutionTimeout = TimeSpan.FromSeconds(30), Risk = RecipeRisk.Reversible };
+        var throwingJournal = new MemoryRecipeJournal();
+        var thrown = await new RecipeRunner(new PrimitiveLibrary("Fixture").AddProbe(new DownProbe()).AddAction(new RecordingAction(_ => throw new IOException("provider vanished"))),
+            throwingJournal, new MemoryRecipeOperationStore()).RunAsync(fixture, new RecipeRunOptions { AuthorizeRepair = true });
+        Require(thrown is { Outcome: RecipeRunOutcome.Unknown, ExecutionUncertain: true, Action.Dispatched: true } &&
+            throwingJournal.Entries.Any(entry => entry.Stage == RecipeJournalStage.Dispatched),
+            "An action that throws after dispatch must be journaled as dispatched and reported uncertain: " + thrown.Outcome + " " + thrown.Detail);
+
+        // The primitive is told the same effective timeout the runner enforces.
+        TimeSpan given = TimeSpan.Zero;
+        await new RecipeRunner(new PrimitiveLibrary("Fixture").AddProbe(new DownProbe()).AddAction(new RecordingAction(timeout => { given = timeout; return new ActionResult(true, true, ""); })),
+            new MemoryRecipeJournal(), new MemoryRecipeOperationStore()).RunAsync(fixture, new RecipeRunOptions { AuthorizeRepair = true });
+        Require(given == fixture.ExecutionTimeout, "The action was given " + given + " instead of the effective timeout " + fixture.ExecutionTimeout);
+        Console.WriteLine("PASS: a throwing action is journaled as dispatched and uncertain, and the action receives the effective timeout.");
+    }
+
+    private sealed class RecordingAction(Func<TimeSpan, ActionResult> execute) : IActionPrimitive
+    {
+        public string Name => "fixture.recorder";
+        public IReadOnlyList<PrimitiveParameter> Parameters => [];
+        public RecipeRisk Risk => RecipeRisk.Reversible;
+        public bool RequiresElevation => false;
+        public Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token) =>
+            Task.FromResult(execute(timeout));
     }
 
     private sealed class DownProbe : IProbePrimitive

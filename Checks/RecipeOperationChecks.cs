@@ -50,6 +50,17 @@ internal static class RecipeOperationChecks
             if (await store.IsPendingAsync(identity) || attempts != 1 || result.Outcome != (dispatched ? RecipeRunOutcome.Repaired : RecipeRunOutcome.Blocked))
                 throw new Exception("Definitive non-dispatch or verified completion retained a stale barrier.");
         }
+        {
+            // A pending record that cannot be closed must not replace a verified result with an exception.
+            var live = new PrimitiveLibrary("Fixture").AddProbe(new RepairableProbe()).AddProbe(new VerifiedProbe())
+                .AddAction(new CallbackAction(_ => Task.FromResult(new ActionResult(true, true, ""))));
+            var verifiable = recipe with { Verify = new ProbeSpec("fixture.verified", new Dictionary<string, string>(), ExpectSpec.ClearWhenEquals("clear")) };
+            RecipeRunResult result;
+            try { result = await new RecipeRunner(live, new MemoryRecipeJournal(), new UnclosableStore()).RunAsync(verifiable, new RecipeRunOptions { AuthorizeRepair = true }); }
+            catch (IOException error) { throw new Exception("A failure closing the pending record replaced the verified result: " + error.Message); }
+            if (result.Outcome != RecipeRunOutcome.Repaired || !result.Detail.Contains("pending record could not be closed", StringComparison.Ordinal))
+                throw new Exception("An unclosable pending record was not surfaced on the verified result: " + result.Outcome + " " + result.Detail);
+        }
         using (var stopped = new CancellationTokenSource())
         {
             int attempts = 0;
@@ -156,6 +167,20 @@ internal static class RecipeOperationChecks
         public IReadOnlyList<PrimitiveParameter> Parameters => [];
         public Task<PrimitiveResult> ObserveAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, CancellationToken token) =>
             Task.FromResult(new PrimitiveResult(true, "clear", ""));
+    }
+
+    private sealed class UnclosableStore : IRecipeOperationStore
+    {
+        public Task<IRecipeOperationLease?> TryBeginAsync(RecipeOperationIdentity identity, CancellationToken token = default) => Task.FromResult<IRecipeOperationLease?>(new Lease());
+        public Task<bool> IsPendingAsync(RecipeOperationIdentity identity, CancellationToken token = default) => Task.FromResult(false);
+        public Task<IRecipeRestartRecovery?> TryOpenRestartRecoveryAsync(RecipeOperationIdentity identity, CancellationToken token = default) => Task.FromResult<IRecipeRestartRecovery?>(null);
+
+        private sealed class Lease : IRecipeOperationLease
+        {
+            public Task CompleteAsync(CancellationToken token = default) => throw new IOException("Simulated sharing violation.");
+            public Task RecordRestartRequiredAsync(string? bootIdentity, IReadOnlyDictionary<string, string> recoveryParameters, CancellationToken token = default) => Task.CompletedTask;
+            public void Dispose() { }
+        }
     }
 
     private sealed class CancelPreparedJournal(CancellationTokenSource stop) : IRecipeJournal
