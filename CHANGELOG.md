@@ -82,7 +82,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - The three-pane workbench combines a resizable section sidebar and icon rail, tool options, readable reports, raw output and an activity log.
 - Screen readers receive names for controls and file-picker rows. Keyboard users get visible focus, arrow-key navigation within option groups, and focus that enters and returns from the About and shortcuts cards.
 - Interface zoom scales reports and controls inside scrollable panes. Windows fit the starting monitor's work area, Close stays reachable in short windows, and icons remain sharp at fractional display scales.
-- Twenty languages, including Slovenian, cover the app, installer, tool descriptions, options, reports, themes and action labels.
+- Twenty languages, including Slovenian, cover the app, installer, tool descriptions, options, reports, themes and action labels. Dates and numbers keep the Windows region format whatever the interface language.
 - Thirteen family themes include accent choices, Windows contrast-theme support and readable text. Dark with the yellow accent is the default; Film Grain can be toggled from the theme menu or with Alt+Shift+G.
 - Family fonts, buttons, dialog icons, menus, footers and About cards provide a consistent interface, with full bevels and compact fields on 98SE and Windows 11 snap layouts on the maximize button. File pickers use theme content colors for files and bookmarks.
 - The file picker's Accept button stays off while a folder is loading or an accept is already running, so it cannot fire twice, and a mistyped folder path returns to the last folder that worked.
