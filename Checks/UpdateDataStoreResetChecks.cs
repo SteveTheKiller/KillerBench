@@ -229,6 +229,20 @@ internal static class UpdateDataStoreResetChecks
                 File.Exists(Path.Combine(canceledAfterMutationRoot, "update-store-reset.pending.json")),
                 "Cancellation after a mutation journals a final Stopped record and keeps the pending guard");
 
+        string missingRetainedRoot = Path.Combine(root, "retained-missing-after-retention");
+        var retainedThenUncertainHost = ReadyHost(structural, structural, complete);
+        retainedThenUncertainHost.AfterStore = new(true, @"C:\Windows\SoftwareDistribution", false);
+        var retainedThenUncertain = await UpdateDataStoreReset.RunAsync(structural, true, missingRetainedRoot, retainedThenUncertainHost);
+        Require(retainedThenUncertain.Outcome == UpdateDataStoreResetOutcome.Uncertain &&
+            File.ReadAllText(retainedThenUncertain.JournalPath!).Contains("\"Stage\":\"RetainStore\"", StringComparison.Ordinal),
+            "Fixture reset journals store retention before uncertain verification");
+        var missingRetained = await UpdateDataStoreResetReconciliation.RunAsync(missingRetainedRoot, new FixtureHost { RetainedExists = false });
+        Require(missingRetained.Outcome == UpdateDataStoreReconciliationOutcome.Inconclusive &&
+            missingRetained.Detail.Contains("retention may have occurred", StringComparison.Ordinal) &&
+            !missingRetained.Detail.Contains("did not reach store retention", StringComparison.Ordinal) &&
+            File.Exists(Path.Combine(missingRetainedRoot, "update-store-reset.pending.json")),
+            "A missing retained store after a journaled retention is not reported as an unchanged reset");
+
         Console.WriteLine("PASS: guarded Windows Update data-store reset planning, eligibility, ordering, retention and verification.");
     }
 

@@ -97,11 +97,15 @@ public static class UpdateDataStoreResetReconciliation
             UpdateSearchResult? search = null;
             UpdateDataStoreReconciliationOutcome outcome;
             string detail;
-            if (!retainedExists)
+            if (!retainedExists && !JournalMayShowRetention(pending.JournalPath))
             {
                 outcome = UpdateDataStoreReconciliationOutcome.NotChanged;
                 detail = "The original store remains in place, the retained destination is absent, and required services are restored. The reset did not reach store retention and was archived without repeating it.";
             }
+            else if (!retainedExists)
+                return new(UpdateDataStoreReconciliationOutcome.Inconclusive,
+                    "Retained store not found; retention may have occurred because the reset journal records a store-retention step. The pending record was retained and no reset was repeated.",
+                    pendingPath, pending, Services: services);
             else
             {
                 Report(progress, "Running a fresh Windows Update search to reconcile the retained store.");
@@ -163,6 +167,27 @@ public static class UpdateDataStoreResetReconciliation
             return record with { OriginalStorePath = original, RetainedStorePath = retained, JournalPath = Path.GetFullPath(record.JournalPath) };
         }
         catch (JsonException error) { throw new InvalidDataException("Update-store reset record is not valid JSON.", error); }
+    }
+
+    // An unreadable journal cannot rule out retention, so it counts as possible retention.
+    private static bool JournalMayShowRetention(string journalPath)
+    {
+        try
+        {
+            foreach (string line in File.ReadLines(journalPath))
+            {
+                try
+                {
+                    using var entry = JsonDocument.Parse(line);
+                    if (entry.RootElement.ValueKind == JsonValueKind.Object &&
+                        entry.RootElement.TryGetProperty("Stage", out var stage) && stage.ValueKind == JsonValueKind.String &&
+                        stage.GetString() == "RetainStore") return true;
+                }
+                catch (JsonException) { }
+            }
+            return false;
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException) { return true; }
     }
 
     internal static bool ServicesRestored(IReadOnlyList<UpdateResetService> before, IReadOnlyList<UpdateResetService> after) =>
