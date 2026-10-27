@@ -86,6 +86,55 @@ public static class DemoWorkflow
             new("Default printer", CheckState.Information, "One fabricated default queue is configured; no printer setting changed."),
             new("Physical output", CheckState.Unknown, "A demonstration cannot verify paper output or device hardware.")
         ],
+        WorkflowKind.CoreWindowsServices =>
+        [
+            new("Windows Event Log", CheckState.Clear, "The synthetic EventLog service is running with automatic start."),
+            new("Cryptographic Services", CheckState.Attention, "The fabricated CryptSvc service is stopped although its start type is automatic.", RepairKind.CryptographicServices),
+            new("Remote Procedure Call", CheckState.Clear, "The synthetic RPC endpoint mapper and DCOM launcher are running."),
+            new("Windows Management Instrumentation", CheckState.Information, "The fabricated WMI repository was verified as consistent last week."),
+            new("Service dependencies", CheckState.Unknown, "One synthetic dependent service could not be queried, so dependency coverage is incomplete.")
+        ],
+        WorkflowKind.Defender =>
+        [
+            new("Real-time protection", CheckState.Clear, "Synthetic real-time protection is enabled and reporting normally."),
+            new("Security intelligence", CheckState.Attention, "The fabricated definitions are nine days old; the last update attempt failed."),
+            new("Last quick scan", CheckState.Information, "A synthetic quick scan completed three days ago with no detections."),
+            new("Tamper protection", CheckState.Clear, "Synthetic tamper protection is on and managed locally."),
+            new("Third-party antivirus", CheckState.Unknown, "The fabricated Security Center inventory is incomplete; another provider cannot be ruled out.")
+        ],
+        WorkflowKind.Depot =>
+        [
+            new("Browsers", CheckState.Information, "Two fabricated browsers are selected; one is already registered on the demo workstation."),
+            new("Productivity applications", CheckState.Attention, "The selected office suite has no matching Click-to-Run registration on the fabricated workstation."),
+            new("Communication applications", CheckState.Information, "One synthetic meeting client is selected and not yet present."),
+            new("Configuration: power and sleep", CheckState.Information, "The selected group would change synthetic sleep timeouts; it routes to a separately guarded workflow."),
+            new("Configuration: privacy defaults", CheckState.Clear, "The fabricated privacy settings already match the selected group."),
+            new("Provisioning boundary", CheckState.Information, "This review downloads, installs and changes nothing.")
+        ],
+        WorkflowKind.Storage =>
+        [
+            new("System volume free space", CheckState.Attention, "The fabricated C: volume has 11.8 GB free of 476 GB (2.5 percent)."),
+            new("Data volume", CheckState.Clear, "The synthetic D: volume has 612 GB free of 931 GB."),
+            new("Disk health", CheckState.Unknown, "The fabricated reliability counters are unavailable; no healthy verdict is inferred."),
+            new("File system state", CheckState.Clear, "No synthetic volume is marked dirty."),
+            new("Largest folders", CheckState.Information, "Synthetic user downloads and a retained update cache account for 64 GB.")
+        ],
+        WorkflowKind.BitLocker =>
+        [
+            new("Operating system volume", CheckState.Attention, "Protection on the fabricated C: volume is suspended until the next restart."),
+            new("Key protectors", CheckState.Information, "The synthetic volume has TPM and numerical password protectors. No recovery key is present in this fixture."),
+            new("Encryption method", CheckState.Clear, "The fabricated volume uses XTS-AES 128 and is fully encrypted."),
+            new("Fixed data volume", CheckState.Clear, "The synthetic D: volume is protected with automatic unlock."),
+            new("Recovery key backup", CheckState.Unknown, "Directory backup of the fabricated recovery password cannot be confirmed from the demo.")
+        ],
+        WorkflowKind.Certificates =>
+        [
+            new("Expiring soon", CheckState.Attention, "The fabricated client authentication certificate CN=demo-vpn expires in 12 days."),
+            new("Machine personal store", CheckState.Clear, "Four synthetic machine certificates are valid for more than 90 days."),
+            new("User personal store", CheckState.Information, "One synthetic code-signing certificate expires in 74 days."),
+            new("Expired certificates", CheckState.Information, "Two fabricated expired certificates remain in the user store; nothing was removed."),
+            new("Private key access", CheckState.Unknown, "Key accessibility for one synthetic certificate could not be confirmed.")
+        ],
         _ => [new(WorkflowCatalog.All.Single(item => item.Kind == kind).Title, CheckState.Attention,
             Scenario(kind), Evidence: SyntheticEvidence(kind))]
     };
