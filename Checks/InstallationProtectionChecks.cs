@@ -45,6 +45,19 @@ internal static class InstallationProtectionChecks
         Refuses(() => InstallationOwnership.ValidateElevatedPath(custom, true), "a user-owned custom destination");
         if (File.ReadAllText(sentinel) != "Preserved ACL fixture") throw new Exception("ACL refusal changed unrelated data.");
         TestHooksCompiledOut();
+        UserCleanupResultChecked();
+    }
+
+    /// <summary>A machine install removes the per-user copy it supersedes. When that removal fails, setup must
+    /// fail rather than report success with both installations registered.</summary>
+    private static void UserCleanupResultChecked()
+    {
+        string source = File.ReadAllText(CheckSource.Find(Path.Combine("Packaging", "KillerLauncher", "Program.cs")));
+        var tested = System.Text.RegularExpressions.Regex.Match(source,
+            @"int (\w+) = RunMaintenance\(destination, ""/remove-user-install""\);\s*if \(\1 != 0\)\s*throw new System\.ComponentModel\.Win32Exception\(\1,\s*LauncherStrings\.Format\(""UserCleanupFailed"", \1\)\);");
+        if (!tested.Success || source.Split(new[] { "\"/remove-user-install\"" }, StringSplitOptions.None).Length != 2)
+            throw new Exception("Setup ignores the /remove-user-install result after a machine install.");
+        Console.WriteLine("PASS: a machine install fails when the superseded per-user copy cannot be removed.");
     }
 
     /// <summary>The disposable install root and skipped registration exist for the package build's smoke test.

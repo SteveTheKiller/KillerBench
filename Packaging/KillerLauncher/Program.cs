@@ -201,9 +201,16 @@ namespace KillerLauncher
                         if (registrationExit != 0)
                             throw new System.ComponentModel.Win32Exception(registrationExit,
                                 LauncherStrings.Format("RegistrationFailed", registrationExit));
-                        if (machine && string.IsNullOrWhiteSpace(testRoot))
-                            RunMaintenance(destination, "/remove-user-install");
                     }, path => Console.WriteLine("Setup recovery directory retained: " + path), MoveDirectoryWithRetries);
+                // A machine install supersedes the per-user copy. If that copy cannot be removed, both stay
+                // registered, which setup otherwise refuses, so report it instead of claiming success.
+                if (machine && string.IsNullOrWhiteSpace(testRoot))
+                {
+                    int cleanupExit = RunMaintenance(destination, "/remove-user-install");
+                    if (cleanupExit != 0)
+                        throw new System.ComponentModel.Win32Exception(cleanupExit,
+                            LauncherStrings.Format("UserCleanupFailed", cleanupExit));
+                }
                 return 0;
             }
             catch
