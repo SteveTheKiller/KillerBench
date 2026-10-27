@@ -179,6 +179,7 @@ namespace KillerLauncher
             Directory.CreateDirectory(parent);
 
             string staging = destination + ".staging-" + Guid.NewGuid().ToString("N");
+            var retained = new List<string>();
             try
             {
                 if (KillerFamily.Deployment.InstallerExitCodes.IsElevated())
@@ -201,7 +202,7 @@ namespace KillerLauncher
                         if (registrationExit != 0)
                             throw new System.ComponentModel.Win32Exception(registrationExit,
                                 LauncherStrings.Format("RegistrationFailed", registrationExit));
-                    }, path => Console.WriteLine("Setup recovery directory retained: " + path), MoveDirectoryWithRetries);
+                    }, retained.Add, MoveDirectoryWithRetries);
                 // A machine install supersedes the per-user copy. If that copy cannot be removed, both stay
                 // registered, which setup otherwise refuses, so report it instead of claiming success.
                 if (machine && string.IsNullOrWhiteSpace(testRoot))
@@ -213,10 +214,15 @@ namespace KillerLauncher
                 }
                 return 0;
             }
-            catch
+            catch (Exception error)
             {
-                if (Directory.Exists(staging)) Console.Error.WriteLine("Setup staging directory retained: " + staging);
-                throw;
+                // Setup has no console, so the kept folders travel in the failure message that the wizard
+                // shows and a /silent caller receives.
+                if (Directory.Exists(staging) && !retained.Contains(staging)) retained.Add(staging);
+                Exception surfaced = KillerBench.Services.InstallationOwnership.WithRetainedDirectories(error, retained,
+                    list => LauncherStrings.Format("RetainedDirectories", list));
+                if (ReferenceEquals(surfaced, error)) throw;
+                throw surfaced;
             }
         }
 

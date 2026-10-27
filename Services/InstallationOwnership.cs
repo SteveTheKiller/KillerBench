@@ -106,6 +106,39 @@ public static class InstallationOwnership
         }
     }
 
+    /// <summary>Carries retained recovery folders in a failure message. Setup has no console and its elevated child
+    /// returns only an exit code, so the message is where the wizard and a /silent caller can see them. The original
+    /// failure stays as the inner exception, so its exit code mapping is unchanged.</summary>
+    public static Exception WithRetainedDirectories(Exception error, IReadOnlyCollection<string> retained, Func<string, string> describe)
+    {
+        if (error == null) throw new ArgumentNullException(nameof(error));
+        if (retained == null) throw new ArgumentNullException(nameof(retained));
+        if (describe == null) throw new ArgumentNullException(nameof(describe));
+        if (retained.Count == 0) return error;
+        return new InvalidOperationException(error.Message + Environment.NewLine + Environment.NewLine +
+            describe(string.Join(Environment.NewLine, retained.Distinct(StringComparer.OrdinalIgnoreCase))), error);
+    }
+
+    /// <summary>Staging and previous folders that setup kept beside <paramref name="destination"/> for recovery.</summary>
+    public static IReadOnlyList<string> FindRetainedDirectories(string destination)
+    {
+        if (destination == null) throw new ArgumentNullException(nameof(destination));
+        string full = Path.GetFullPath(destination).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        string? parent = Path.GetDirectoryName(full);
+        if (parent == null || !Directory.Exists(parent)) return Array.Empty<string>();
+        string name = Path.GetFileName(full);
+        try
+        {
+            return Directory.GetDirectories(parent, name + ".staging-*")
+                .Concat(Directory.GetDirectories(parent, name + ".previous-*"))
+                .OrderBy(path => path, StringComparer.OrdinalIgnoreCase).ToList();
+        }
+        catch (Exception error) when (error is IOException || error is UnauthorizedAccessException)
+        {
+            return Array.Empty<string>();
+        }
+    }
+
     public static void ValidateDestination(string directory, IReadOnlyCollection<string> trustedPayloadFiles,
         string? registeredExecutable, Func<string, bool> isTrustedProduct, IReadOnlyCollection<string>? trustedPriorManifestHashes = null)
     {

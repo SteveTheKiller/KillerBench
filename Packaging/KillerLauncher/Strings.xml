@@ -53,6 +53,8 @@ Let's get you set up.</string>
     <string key="InvalidDirectory">Invalid install directory.</string>
     <string key="RegistrationFailed">Windows integration could not be registered (exit {0}).</string>
     <string key="UserCleanupFailed">KillerBench was installed for everyone, but the copy installed for your account could not be removed (exit {0}). Remove it from Installed apps.</string>
+    <string key="RetainedDirectories">Setup kept these folders for recovery:
+{0}</string>
     <string key="StillRunning">KillerBench is still running. Close it, then choose Install again.</string>
     <string key="StillOpen">KillerBench is still open. Finish saving or close its window, then choose Install again.</string>
     <string key="ChooseDirectory">Choose an installation folder.</string>
@@ -121,6 +123,8 @@ Let's get you set up.</string>
     <string key="InvalidDirectory">ইনস্টলেশনের ফোল্ডারটি অবৈধ।</string>
     <string key="RegistrationFailed">Windows ইন্টিগ্রেশন নিবন্ধন করা যায়নি (প্রস্থান কোড {0})।</string>
     <string key="UserCleanupFailed">KillerBench সবার জন্য ইনস্টল হয়েছে, কিন্তু আপনার অ্যাকাউন্টের জন্য ইনস্টল করা কপিটি সরানো যায়নি (প্রস্থান কোড {0})। Installed apps থেকে এটি সরান।</string>
+    <string key="RetainedDirectories">পুনরুদ্ধারের জন্য সেটআপ এই ফোল্ডারগুলো রেখে দিয়েছে:
+{0}</string>
     <string key="StillRunning">KillerBench এখনও চলছে। এটি বন্ধ করে আবার ইনস্টল করুন বেছে নিন।</string>
     <string key="StillOpen">KillerBench এখনও খোলা আছে। সংরক্ষণ শেষ করুন অথবা এর উইন্ডো বন্ধ করে আবার ইনস্টল করুন বেছে নিন।</string>
     <string key="ChooseDirectory">একটি ইনস্টলেশনের ফোল্ডার বেছে নিন।</string>
@@ -189,6 +193,8 @@ Pojďme vše nastavit.</string>
     <string key="InvalidDirectory">Neplatná instalační složka.</string>
     <string key="RegistrationFailed">Integraci s Windows se nepodařilo zaregistrovat (návratový kód {0}).</string>
     <string key="UserCleanupFailed">KillerBench byl nainstalován pro všechny, ale kopii nainstalovanou pro váš účet se nepodařilo odebrat (návratový kód {0}). Odeberte ji v Nainstalovaných aplikacích.</string>
+    <string key="RetainedDirectories">Instalátor ponechal pro obnovení tyto složky:
+{0}</string>
     <string key="StillRunning">KillerBench je stále spuštěn. Zavřete jej a znovu zvolte Nainstalovat.</string>
     <string key="StillOpen">KillerBench je stále otevřený. Dokončete ukládání nebo zavřete jeho okno a znovu zvolte Nainstalovat.</string>
     <string key="ChooseDirectory">Vyberte instalační složku.</string>
@@ -257,6 +263,8 @@ Richten wir alles ein.</string>
     <string key="InvalidDirectory">Ungültiger Installationsordner.</string>
     <string key="RegistrationFailed">Die Windows-Integration konnte nicht registriert werden (Exitcode {0}).</string>
     <string key="UserCleanupFailed">KillerBench wurde für alle installiert, aber die für Ihr Konto installierte Kopie konnte nicht entfernt werden (Exitcode {0}). Entfernen Sie sie unter Installierte Apps.</string>
+    <string key="RetainedDirectories">Das Setup hat diese Ordner zur Wiederherstellung behalten:
+{0}</string>
     <string key="StillRunning">KillerBench wird noch ausgeführt. Schließen Sie es und wählen Sie erneut „Installieren“.</string>
     <string key="StillOpen">KillerBench ist noch geöffnet. Speichern Sie fertig oder schließen Sie das Fenster und wählen Sie erneut „Installieren“.</string>
     <string key="ChooseDirectory">Wählen Sie einen Installationsordner.</string>
@@ -325,6 +333,8 @@ Vamos a configurarlo.</string>
     <string key="InvalidDirectory">Carpeta de instalación no válida.</string>
     <string key="RegistrationFailed">No se pudo registrar la integración con Windows (código de salida {0}).</string>
     <string key="UserCleanupFailed">KillerBench se instaló para todos, pero no se pudo quitar la copia instalada para su cuenta (código de salida {0}). Quítela desde Aplicaciones instaladas.</string>
+    <string key="RetainedDirectories">El instalador conservó estas carpetas para la recuperación:
+{0}</string>
     <string key="StillRunning">KillerBench sigue ejecutándose. Ciérralo y vuelve a elegir Instalar.</string>
     <string key="StillOpen">KillerBench sigue abierto. Termina de guardar o cierra su ventana y vuelve a elegir Instalar.</string>
     <string key="ChooseDirectory">Elige una carpeta de instalación.</string>
@@ -393,6 +403,8 @@ Commençons l'installation.</string>
     <string key="InvalidDirectory">Dossier d'installation non valide.</string>
     <string key="RegistrationFailed">L'intégration à Windows n'a pas pu être enregistrée (code de sortie {0}).</string>
     <string key="UserCleanupFailed">KillerBench a été installé pour tous, mais la copie installée pour votre compte n'a pas pu être supprimée (code de sortie {0}). Supprimez-la depuis Applications installées.</string>
+    <string key="RetainedDirectories">Le programme d'installation a conservé ces dossiers pour la récupération :
+{0}</string>
     <string key="StillRunning">KillerBench est toujours en cours d'exécution. Fermez-le, puis choisissez à nouveau Installer.</string>
     <string key="StillOpen">KillerBench est toujours ouvert. Terminez l'enregistrement ou fermez sa fenêtre, puis choisissez à nouveau Installer.</string>
     <string key="ChooseDirectory">Choisissez un dossier d'installation.</string>
@@ -461,6 +473,8 @@ Kezdjük a beállítást.</string>
     <string key="InvalidDirectory">Érvénytelen telepítési mappa.</string>
     <string key="RegistrationFailed">A Windows-integráció nem regisztrálható (kilépési kód: {0}).</string>
     <string key="UserCleanupFailed">A KillerBench mindenki számára telepítve lett, de a fiókjához telepített példányt nem sikerült eltávolítani (kilépési kód: {0}). Távolítsa el a Telepített alkalmazások között.</string>
+    <string key="RetainedDirectories">A telepítő a helyreállításhoz megtartotta ezeket a mappákat:
+{0}</string>
     <string key="StillRunning">A KillerBench még fut. Zárja be, majd válassza ismét a Telepítés lehetőséget.</string>
     <string key="StillOpen">A KillerBench még nyitva van. Fejezze be a mentést vagy zárja be az ablakát, majd válassza ismét a Telepítés lehetőséget.</string>
     <string key="ChooseDirectory">Válasszon telepítési mappát.</string>
@@ -529,6 +543,8 @@ Procediamo con la configurazione.</string>
     <string key="InvalidDirectory">Cartella installazione non valida.</string>
     <string key="RegistrationFailed">Impossibile registrare l'integrazione con Windows (codice di uscita {0}).</string>
     <string key="UserCleanupFailed">KillerBench è stato installato per tutti, ma non è stato possibile rimuovere la copia installata per il tuo account (codice di uscita {0}). Rimuovila da App installate.</string>
+    <string key="RetainedDirectories">Il programma di installazione ha conservato queste cartelle per il ripristino:
+{0}</string>
     <string key="StillRunning">KillerBench è ancora in esecuzione. Chiudilo e scegli di nuovo 'Installa'.</string>
     <string key="StillOpen">KillerBench è ancora aperto. Termina il salvataggio o chiudi la finestra, poi scegli di nuovo 'Installa'.</string>
     <string key="ChooseDirectory">Scegli una cartella di installazione.</string>
@@ -597,6 +613,8 @@ Procediamo con la configurazione.</string>
     <string key="InvalidDirectory">インストール先フォルダーが無効です。</string>
     <string key="RegistrationFailed">Windows との統合を登録できませんでした (終了コード {0})。</string>
     <string key="UserCleanupFailed">KillerBench はすべてのユーザー向けにインストールされましたが、お使いのアカウント用にインストールされたコピーを削除できませんでした (終了コード {0})。インストールされているアプリから削除してください。</string>
+    <string key="RetainedDirectories">セットアップは復旧用に次のフォルダーを残しました:
+{0}</string>
     <string key="StillRunning">KillerBench はまだ実行中です。終了してから、もう一度「インストール」を選択してください。</string>
     <string key="StillOpen">KillerBench はまだ開いています。保存を完了するかウィンドウを閉じてから、もう一度「インストール」を選択してください。</string>
     <string key="ChooseDirectory">インストール先フォルダーを選択してください。</string>
@@ -665,6 +683,8 @@ Procediamo con la configurazione.</string>
     <string key="InvalidDirectory">Орнату қалтасы жарамсыз.</string>
     <string key="RegistrationFailed">Windows жүйесімен біріктіруді тіркеу мүмкін болмады (шығу коды {0}).</string>
     <string key="UserCleanupFailed">KillerBench барлық пайдаланушылар үшін орнатылды, бірақ сіздің тіркелгіңізге орнатылған көшірмені жою мүмкін болмады (шығу коды {0}). Оны орнатылған қолданбалардан жойыңыз.</string>
+    <string key="RetainedDirectories">Орнату бағдарламасы қалпына келтіру үшін мына қалталарды сақтады:
+{0}</string>
     <string key="StillRunning">KillerBench әлі жұмыс істеп тұр. Оны жауып, «Орнату» пәрменін қайта таңдаңыз.</string>
     <string key="StillOpen">KillerBench әлі ашық. Сақтауды аяқтаңыз немесе оның терезесін жабыңыз, содан кейін «Орнату» пәрменін қайта таңдаңыз.</string>
     <string key="ChooseDirectory">Орнату қалтасын таңдаңыз.</string>
@@ -733,6 +753,8 @@ La oss få deg i gang.</string>
     <string key="InvalidDirectory">Ugyldig installasjonsmappe.</string>
     <string key="RegistrationFailed">Windows-integrasjonen kunne ikke registreres (avslutningskode {0}).</string>
     <string key="UserCleanupFailed">KillerBench ble installert for alle, men kopien som er installert for kontoen din, kunne ikke fjernes (avslutningskode {0}). Fjern den fra Installerte apper.</string>
+    <string key="RetainedDirectories">Installasjonen beholdt disse mappene for gjenoppretting:
+{0}</string>
     <string key="StillRunning">KillerBench kjører fortsatt. Lukk det, og velg Installer på nytt.</string>
     <string key="StillOpen">KillerBench er fortsatt åpent. Fullfør lagringen eller lukk vinduet, og velg Installer på nytt.</string>
     <string key="ChooseDirectory">Velg en installasjonsmappe.</string>
@@ -801,6 +823,8 @@ Rozpocznijmy konfigurację.</string>
     <string key="InvalidDirectory">Nieprawidłowy folder instalacji.</string>
     <string key="RegistrationFailed">Nie można zarejestrować integracji z Windows (kod wyjścia {0}).</string>
     <string key="UserCleanupFailed">KillerBench zainstalowano dla wszystkich, ale nie można usunąć kopii zainstalowanej dla Twojego konta (kod wyjścia {0}). Usuń ją w Zainstalowanych aplikacjach.</string>
+    <string key="RetainedDirectories">Instalator zachował te foldery do odzyskania:
+{0}</string>
     <string key="StillRunning">KillerBench nadal działa. Zamknij go i ponownie wybierz Zainstaluj.</string>
     <string key="StillOpen">KillerBench jest nadal otwarty. Zakończ zapisywanie lub zamknij okno, a następnie ponownie wybierz Zainstaluj.</string>
     <string key="ChooseDirectory">Wybierz folder instalacji.</string>
@@ -869,6 +893,8 @@ Vamos configurar tudo.</string>
     <string key="InvalidDirectory">Diretório de instalação inválido.</string>
     <string key="RegistrationFailed">Não foi possível registrar a integração com o Windows (código {0}).</string>
     <string key="UserCleanupFailed">O KillerBench foi instalado para todos, mas a cópia instalada para sua conta não pôde ser removida (código {0}). Remova-a em Aplicativos instalados.</string>
+    <string key="RetainedDirectories">A instalação manteve estas pastas para recuperação:
+{0}</string>
     <string key="StillRunning">O KillerBench ainda está em execução. Feche-o e escolha Instalar novamente.</string>
     <string key="StillOpen">O KillerBench ainda está aberto. Termine de salvar ou feche a janela dele e escolha Instalar novamente.</string>
     <string key="ChooseDirectory">Escolha uma pasta de instalação.</string>
@@ -937,6 +963,8 @@ Vamos configurar tudo.</string>
     <string key="InvalidDirectory">Недопустимая папка установки.</string>
     <string key="RegistrationFailed">Не удалось зарегистрировать интеграцию с Windows (код выхода {0}).</string>
     <string key="UserCleanupFailed">KillerBench установлен для всех, но копию, установленную для вашей учетной записи, удалить не удалось (код выхода {0}). Удалите ее в разделе «Установленные приложения».</string>
+    <string key="RetainedDirectories">Программа установки сохранила эти папки для восстановления:
+{0}</string>
     <string key="StillRunning">KillerBench все еще работает. Закройте его и снова выберите «Установить».</string>
     <string key="StillOpen">KillerBench все еще открыт. Завершите сохранение или закройте его окно, затем снова выберите «Установить».</string>
     <string key="ChooseDirectory">Выберите папку установки.</string>
@@ -1005,6 +1033,8 @@ Kuruluma başlayalım.</string>
     <string key="InvalidDirectory">Geçersiz kurulum klasörü.</string>
     <string key="RegistrationFailed">Windows tümleştirmesi kaydedilemedi (çıkış kodu {0}).</string>
     <string key="UserCleanupFailed">KillerBench herkes için yüklendi, ancak hesabınız için yüklenen kopya kaldırılamadı (çıkış kodu {0}). Yüklü uygulamalar bölümünden kaldırın.</string>
+    <string key="RetainedDirectories">Kurulum, kurtarma için bu klasörleri sakladı:
+{0}</string>
     <string key="StillRunning">KillerBench hâlâ çalışıyor. Kapatın ve yeniden Yükle'yi seçin.</string>
     <string key="StillOpen">KillerBench hâlâ açık. Kaydetmeyi tamamlayın veya penceresini kapatın, ardından yeniden Yükle'yi seçin.</string>
     <string key="ChooseDirectory">Bir kurulum klasörü seçin.</string>
@@ -1073,6 +1103,8 @@ Hãy bắt đầu thiết lập.</string>
     <string key="InvalidDirectory">Thư mục cài đặt không hợp lệ.</string>
     <string key="RegistrationFailed">Không thể đăng ký tích hợp Windows (mã thoát {0}).</string>
     <string key="UserCleanupFailed">KillerBench đã được cài cho mọi người, nhưng không thể gỡ bản đã cài cho tài khoản của bạn (mã thoát {0}). Hãy gỡ bản đó trong Ứng dụng đã cài đặt.</string>
+    <string key="RetainedDirectories">Trình thiết lập đã giữ lại các thư mục này để khôi phục:
+{0}</string>
     <string key="StillRunning">KillerBench vẫn đang chạy. Hãy đóng ứng dụng, rồi chọn Cài đặt lần nữa.</string>
     <string key="StillOpen">KillerBench vẫn đang mở. Hãy hoàn tất việc lưu hoặc đóng cửa sổ, rồi chọn Cài đặt lần nữa.</string>
     <string key="ChooseDirectory">Chọn một thư mục cài đặt.</string>
@@ -1141,6 +1173,8 @@ Hãy bắt đầu thiết lập.</string>
     <string key="InvalidDirectory">Неправильна папка встановлення.</string>
     <string key="RegistrationFailed">Не вдалося зареєструвати інтеграцію з Windows (код {0}).</string>
     <string key="UserCleanupFailed">KillerBench встановлено для всіх, але копію, встановлену для вашого облікового запису, не вдалося видалити (код {0}). Видаліть її в розділі «Інстальовані програми».</string>
+    <string key="RetainedDirectories">Програма встановлення зберегла ці папки для відновлення:
+{0}</string>
     <string key="StillRunning">KillerBench досі працює. Закрийте його, а потім знову виберіть «Встановити».</string>
     <string key="StillOpen">KillerBench досі відкритий. Завершіть збереження або закрийте його вікно, а потім знову виберіть «Встановити».</string>
     <string key="ChooseDirectory">Виберіть папку встановлення.</string>
@@ -1209,6 +1243,8 @@ Hãy bắt đầu thiết lập.</string>
     <string key="InvalidDirectory">安装文件夹无效。</string>
     <string key="RegistrationFailed">无法注册 Windows 集成（退出代码 {0}）。</string>
     <string key="UserCleanupFailed">KillerBench 已为所有用户安装，但无法删除为你的帐户安装的副本（退出代码 {0}）。请在“已安装的应用”中将其删除。</string>
+    <string key="RetainedDirectories">安装程序保留了以下文件夹以便恢复：
+{0}</string>
     <string key="StillRunning">KillerBench 仍在运行。请关闭它，然后再次选择“安装”。</string>
     <string key="StillOpen">KillerBench 仍处于打开状态。请完成保存或关闭其窗口，然后再次选择“安装”。</string>
     <string key="ChooseDirectory">请选择安装文件夹。</string>
@@ -1277,6 +1313,8 @@ Hãy bắt đầu thiết lập.</string>
     <string key="InvalidDirectory">安裝資料夾無效。</string>
     <string key="RegistrationFailed">無法註冊 Windows 整合（結束代碼 {0}）。</string>
     <string key="UserCleanupFailed">KillerBench 已為所有使用者安裝，但無法移除為您的帳戶安裝的複本（結束代碼 {0}）。請在「已安裝的應用程式」中將其移除。</string>
+    <string key="RetainedDirectories">安裝程式保留了下列資料夾以便復原：
+{0}</string>
     <string key="StillRunning">KillerBench 仍在執行。請關閉它，然後再次選擇「安裝」。</string>
     <string key="StillOpen">KillerBench 仍處於開啟狀態。請完成儲存或關閉其視窗，然後再次選擇「安裝」。</string>
     <string key="ChooseDirectory">請選擇安裝資料夾。</string>
@@ -1342,6 +1380,8 @@ Hãy bắt đầu thiết lập.</string>
     <string key="InvalidDirectory">Neveljavna namestitvena mapa.</string>
     <string key="RegistrationFailed">Integracije s sistemom Windows ni bilo mogoče registrirati (izhodna koda {0}).</string>
     <string key="UserCleanupFailed">KillerBench je nameščen za vse, vendar kopije, nameščene za vaš račun, ni bilo mogoče odstraniti (izhodna koda {0}). Odstranite jo v Nameščenih aplikacijah.</string>
+    <string key="RetainedDirectories">Namestitev je za obnovitev ohranila te mape:
+{0}</string>
     <string key="StillRunning">KillerBench se še izvaja. Zaprite ga in nato znova izberite Namesti.</string>
     <string key="StillOpen">KillerBench je še odprt. Končajte shranjevanje ali zaprite njegovo okno in nato znova izberite Namesti.</string>
     <string key="ChooseDirectory">Izberite namestitveno mapo.</string>

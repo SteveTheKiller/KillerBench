@@ -179,7 +179,13 @@ namespace KillerLauncher
                 {
                     InstallProgress.Visibility = Visibility.Collapsed;
                     RenderPage();
-                    ShowNotice(LauncherStrings.Get("InstallFailed"), LauncherStrings.Format("SetupReturned", result), NoticeKind.Error);
+                    // The elevated setup returns only an exit code, so look for the folders it kept for recovery.
+                    string detail = LauncherStrings.Format("SetupReturned", result);
+                    var retained = KillerBench.Services.InstallationOwnership.FindRetainedDirectories(installDirectory);
+                    if (retained.Count > 0)
+                        detail += Environment.NewLine + Environment.NewLine +
+                            LauncherStrings.Format("RetainedDirectories", string.Join(Environment.NewLine, retained));
+                    ShowNotice(LauncherStrings.Get("InstallFailed"), detail, NoticeKind.Error);
                     return;
                 }
                 _installedDirectory = installDirectory;

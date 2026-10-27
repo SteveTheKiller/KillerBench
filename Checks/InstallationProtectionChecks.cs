@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using KillerBench.Services;
@@ -46,6 +47,48 @@ internal static class InstallationProtectionChecks
         if (File.ReadAllText(sentinel) != "Preserved ACL fixture") throw new Exception("ACL refusal changed unrelated data.");
         TestHooksCompiledOut();
         UserCleanupResultChecked();
+        RetainedDirectoriesSurfaced(scratch);
+    }
+
+    /// <summary>Setup is a windowless WinExe and the elevated /silent child returns only an exit code, so retained
+    /// recovery, previous and staging folders must travel in the failure message and be found from the install folder.</summary>
+    private static void RetainedDirectoriesSurfaced(string scratch)
+    {
+        string folder = Path.Combine(scratch, "retained-" + Guid.NewGuid().ToString("N"));
+        string destination = Path.Combine(folder, "app"), staging = destination + ".staging-" + Guid.NewGuid().ToString("N");
+        Directory.CreateDirectory(destination);
+        Directory.CreateDirectory(staging);
+        File.WriteAllText(Path.Combine(destination, "KillerBench.exe"), "Old payload");
+        var retained = new System.Collections.Generic.List<string>();
+        Exception? surfaced = null;
+        try
+        {
+            InstallationOwnership.PublishPreparedDirectory(destination, staging, _ => { }, () => { }, retained.Add,
+                (source, target) =>
+                {
+                    if (source != destination) throw new IOException("Substituted move failure.");
+                    Directory.Move(source, target);
+                });
+        }
+        catch (IOException error) { surfaced = InstallationOwnership.WithRetainedDirectories(error, retained, list => "Kept for recovery:" + Environment.NewLine + list); }
+        string backup = Directory.GetDirectories(folder, "app.previous-*").Single();
+        if (surfaced is not InvalidOperationException || surfaced.InnerException is not IOException ||
+            !surfaced.Message.StartsWith("Substituted move failure.", StringComparison.Ordinal) ||
+            !surfaced.Message.Contains(staging) || !surfaced.Message.Contains(backup))
+            throw new Exception("A failed setup did not surface its retained staging and previous folders: " + surfaced?.Message);
+        var found = InstallationOwnership.FindRetainedDirectories(destination);
+        if (found.Count != 2 || !found.Contains(staging) || !found.Contains(backup))
+            throw new Exception("Retained folders beside the install folder were not found: " + string.Join(", ", found));
+        var untouched = new IOException("Nothing retained.");
+        if (!ReferenceEquals(InstallationOwnership.WithRetainedDirectories(untouched, [], list => list), untouched))
+            throw new Exception("A failure with nothing retained changed its exception.");
+
+        string launcher = File.ReadAllText(CheckSource.Find(Path.Combine("Packaging", "KillerLauncher", "Program.cs")));
+        string wizard = File.ReadAllText(CheckSource.Find(Path.Combine("Packaging", "KillerLauncher", "InstallerWizard.xaml.cs")));
+        if (launcher.Contains("directory retained: ") || !launcher.Contains("InstallationOwnership.WithRetainedDirectories(") ||
+            !wizard.Contains("InstallationOwnership.FindRetainedDirectories(installDirectory)"))
+            throw new Exception("Setup still reports retained folders only to a console the windowless launcher does not have.");
+        Console.WriteLine("PASS: a failed setup names its retained recovery, previous and staging folders in the wizard and the /silent failure message.");
     }
 
     /// <summary>A machine install removes the per-user copy it supersedes. When that removal fails, setup must
