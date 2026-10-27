@@ -1871,7 +1871,7 @@ internal static class Program
             typeof(KillerBench.Shell.MainWindow).GetMethod("RegisterWorkflowResult", flags)!.Invoke(window, [completedWorkflow, "Focused service review", false]);
             var outcomeLabel = (TextBlock)window.FindName("CoverageLabel");
             Require(outcomeLabel.Text.Contains("Needs attention | 1 checks | 0 repairs run") && !outcomeLabel.Text.Contains("0 findings"),
-                "Workflow result summary uses recorded checks instead of log-rule findings");
+                "Workflow result summary uses recorded checks instead of log-rule findings: " + outcomeLabel.Text);
             Require(window.FindName("ReportPane") is Border { Visibility: Visibility.Visible } &&
                 window.FindName("StartGuide") is TextBlock { Visibility: Visibility.Collapsed } &&
                 ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>().Any(card => card.Child is StackPanel),

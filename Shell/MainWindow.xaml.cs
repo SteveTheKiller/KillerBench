@@ -235,7 +235,7 @@ public partial class MainWindow : Window
             (investigation.Partial ? "PARTIAL ANALYSIS. " : "") + $"{investigation.Findings.Count} findings. No current-health verdict.";
         if (workflowSummaries.TryGetValue(evidence, out var workflow))
         {
-            CoverageLabel.Text = Controls.LocalizedText.Format("Str_Output_WorkflowCoverage", LocalizedStatus(workflow.Status), workflow.Checks.Count, workflow.Repairs.Count, matches.ToString("N0"));
+            CoverageLabel.Text = Controls.LocalizedText.Format("Str_Output_WorkflowCoverage", LocalizedStatus(workflow.Status), workflow.Checks.Count(check => check.Name != NativeCapabilityCheckName),workflow.Repairs.Count, matches.ToString("N0"));
             SourceInfo.Text = $"{evidence.Source}\n\nWorkflow: {workflow.Kind}\nOutcome: {workflow.Status}\nJournal: {workflow.JournalPath}\n\n" +
                 "Recorded workflow results. Filtering report lines does not change the outcome or rerun diagnostics.";
         }

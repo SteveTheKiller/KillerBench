@@ -6,6 +6,8 @@ namespace KillerBench.Shell;
 public partial class MainWindow
 {
     private static readonly string[] DefaultStorageVolumeChoices = ["Windows volume"];
+    // Appended to live results for the report; it is not a check the workflow ran.
+    private const string NativeCapabilityCheckName = "Native lab capability status";
     private bool workflowOutputActive;
     private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, WorkflowResult> workflowSummaries = [];
     private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, string> workflowReportTitles = [];
@@ -13,7 +15,7 @@ public partial class MainWindow
     private void RegisterWorkflowResult(WorkflowResult result, string? reportTitle = null, bool demo = false)
     {
         if (!demo && result.Checks.Count > 0)
-            result = result with { Checks = [.. result.Checks, new WorkflowCheck("Native lab capability status", CheckState.Information, NativeCapabilityDetails(result.Kind))] };
+            result = result with { Checks = [.. result.Checks, new WorkflowCheck(NativeCapabilityCheckName,CheckState.Information, NativeCapabilityDetails(result.Kind))] };
         string summary = WorkflowReport.Format(result);
         AppendWorkflowOutput("Workflow completed: " + result.Status + ". Read the Report view for findings and next actions.");
         string source = demo
