@@ -601,6 +601,7 @@ internal static class Program
             GoalOptionValidationChecks.RunAsync().GetAwaiter().GetResult();
             InstallerRuntimeChecks.Run();
             UpdateHelperChecks.Run(scratch);
+            ExecutableDeploymentChecks.Run(scratch);
             PortablePublicationChecks.Run(scratch);
             InstallationOwnershipChecks.Run(scratch);
             InstallationProtectionChecks.Run(scratch);
