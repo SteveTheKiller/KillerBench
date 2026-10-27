@@ -48,7 +48,7 @@ if __name__ == '__main__':
     result = unittest.TextTestRunner().run(unittest.defaultTestLoader.loadTestsFromTestCase(PublishItemTests))
     if not result.wasSuccessful():
         sys.exit(1)
-    for name in ['LICENSE.txt', 'bench-landing/license.txt']:
+    for name in ['LICENSE.txt']:
         if hashlib.sha256((ROOT/name).read_bytes()).hexdigest() != GNU_SHA256:
             raise ValueError('Missing or modified GNU GPLv3 text: '+name)
     for name in ['KillerBench.csproj', 'Cli/KillerBench.Cli.csproj']:

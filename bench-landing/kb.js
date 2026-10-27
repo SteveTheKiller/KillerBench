@@ -1,74 +1,7 @@
-/* Language: one static page per route, like the other family sites. kb-i18n.js holds every
-   translation as KB_I18N[lang][key]; English is read from the page itself. data-i18n swaps an
-   element's markup and data-i18n-attr="title:key;alt:key" swaps attributes. The choice is kept in
-   localStorage, and ?lang=xx (used by the old /<locale>/ redirects) selects one directly. */
-(function () {
-  var root = document.documentElement;
-  var CODES = { en: 'en-US', bn: 'bn', cs: 'cs-CZ', de: 'de-DE', es: 'es', fr: 'fr-FR', hu: 'hu-HU', it: 'it-IT', ja: 'ja-JP', kk: 'kk-KZ', nb: 'nb-NO', pl: 'pl-PL', pt: 'pt-BR', ru: 'ru-RU', sl: 'sl-SI', tr: 'tr-TR', uk: 'uk-UA', vi: 'vi-VN', 'zh-cn': 'zh-CN', zh: 'zh-TW' };
-  var KEY = 'kbench-lang';
-  var dict = window.KB_I18N || {};
-  var text = [], attrs = [];
-  Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (node) {
-    text.push({ node: node, key: node.getAttribute('data-i18n'), en: node.innerHTML });
-  });
-  Array.prototype.forEach.call(document.querySelectorAll('[data-i18n-attr]'), function (node) {
-    node.getAttribute('data-i18n-attr').split(';').forEach(function (pair) {
-      var at = pair.indexOf(':');
-      if (at > 0) attrs.push({ node: node, name: pair.slice(0, at), key: pair.slice(at + 1), en: node.getAttribute(pair.slice(0, at)) });
-    });
-  });
-  function chosen() {
-    var lang = null;
-    try { lang = new URLSearchParams(window.location.search).get('lang'); } catch (e) {}
-    if (lang && CODES[lang.toLowerCase()]) {
-      lang = lang.toLowerCase();
-      try { localStorage.setItem(KEY, lang); } catch (e) {}
-      return lang;
-    }
-    try { lang = localStorage.getItem(KEY); } catch (e) { lang = null; }
-    return lang && CODES[lang] ? lang : 'en';
-  }
-  function apply(lang) {
-    var values = lang === 'en' ? {} : (dict[lang] || {});
-    text.forEach(function (item) {
-      var value = values[item.key] != null ? values[item.key] : item.en;
-      if (item.node.innerHTML !== value) item.node.innerHTML = value;
-    });
-    attrs.forEach(function (item) { item.node.setAttribute(item.name, values[item.key] != null ? values[item.key] : item.en); });
-    root.setAttribute('lang', CODES[lang]);
-    root.setAttribute('data-lang', lang);
-    var toggle = document.getElementById('languageToggle');
-    if (toggle) toggle.textContent = CODES[lang].split('-')[0].toUpperCase();
-    Array.prototype.forEach.call(document.querySelectorAll('.lang-item[data-lang]'), function (item) {
-      item.setAttribute('aria-pressed', String(item.getAttribute('data-lang') === lang));
-    });
-    document.dispatchEvent(new CustomEvent('kbench-languagechange', { detail: { lang: lang } }));
-  }
-  document.addEventListener('click', function (e) {
-    var item = e.target.closest ? e.target.closest('.lang-item[data-lang]') : null;
-    if (!item) return;
-    var lang = item.getAttribute('data-lang');
-    try { localStorage.setItem(KEY, lang); } catch (err) {}
-    apply(lang);
-    var menu = document.getElementById('languageMenu');
-    if (menu) menu.hidden = true;
-    var toggle = document.getElementById('languageToggle');
-    if (toggle) { toggle.setAttribute('aria-expanded', 'false'); toggle.focus(); }
-  });
-  apply(chosen());
-})();
 /* KillerBench site - shared chrome behavior (theme, accent, language, easter egg).
    Page-specific behavior (screenshot strip, outline scroll-spy) stays inline per page. */
 (function () {
   var root = document.documentElement;
-  var languageToggle = document.getElementById('languageToggle');
-  var languageMenu = document.getElementById('languageMenu');
-  if (languageToggle && languageMenu) {
-    function closeLanguages() { languageMenu.hidden = true; languageToggle.setAttribute('aria-expanded', 'false'); }
-    languageToggle.addEventListener('click', function (e) { e.stopPropagation(); languageMenu.hidden = !languageMenu.hidden; languageToggle.setAttribute('aria-expanded', String(!languageMenu.hidden)); });
-    document.addEventListener('click', function (e) { if (!languageMenu.contains(e.target)) closeLanguages(); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !languageMenu.hidden) { closeLanguages(); languageToggle.focus(); } });
-  }
   var THEMES = ['dark','light','hc','blood','greed','cyanotic','ectoplasm','decay','malaise','sepulchre','delirium','mourning'];
   var NEUTRAL = ['dark','light','hc'];
   var THEMED = ['blood','greed','cyanotic','ectoplasm','decay','malaise','sepulchre','delirium','mourning'];  // fixed-color wordmark art
@@ -101,7 +34,6 @@
   var accToggle = document.getElementById('accentToggle');
   var accPop = document.getElementById('accentPop');
   var curAccent = 'yellow';
-  var syncThemePreview = function () {};
 
   function buildThemeFlyout() {
     var group = document.querySelector('.topbar .tgrp');
@@ -109,8 +41,8 @@
     var toggle = document.createElement('button');
     toggle.type = 'button';
     toggle.className = 'theme-toggle';
-    toggle.title = document.body.getAttribute('data-ui-theme') || 'Theme';
-    toggle.setAttribute('aria-label', document.body.getAttribute('data-ui-choose-theme') || 'Choose theme');
+    toggle.title = 'Theme';
+    toggle.setAttribute('aria-label', 'Choose theme');
     toggle.setAttribute('aria-haspopup', 'true');
     toggle.setAttribute('aria-expanded', 'false');
     var preview = document.createElement('span');
@@ -127,7 +59,6 @@
       if (active) preview.className = active.className;
       preview.removeAttribute('aria-pressed');
     }
-    syncThemePreview = syncPreview;
     toggle.addEventListener('click', function (e) {
       e.stopPropagation();
       var opening = !group.classList.contains('open');
@@ -138,7 +69,7 @@
       var swatch = e.target.closest('.swatch[data-theme]');
       if (!swatch) return;
       syncPreview(swatch.getAttribute('data-theme'));
-      closeFlyout(false);
+      closeFlyout(true);
     });
     document.addEventListener('click', function (e) {
       if (!group.contains(e.target) && !toggle.contains(e.target)) closeFlyout(false);
@@ -149,6 +80,32 @@
     syncPreview(root.getAttribute('data-theme') || 'dark');
   }
   buildThemeFlyout();
+
+  function localPreviewSetting(name) {
+    if (window.location.protocol !== 'file:') return null;
+    try { return new URLSearchParams(window.location.search).get(name); } catch (e) { return null; }
+  }
+
+  function syncLocalPreviewLinks() {
+    if (window.location.protocol !== 'file:') return;
+    try {
+      var current = new URL(window.location.href);
+      current.searchParams.set('theme', root.getAttribute('data-theme'));
+      current.searchParams.set('accent', curAccent);
+      window.history.replaceState(null, '', current.href);
+    } catch (e) {}
+    document.querySelectorAll('a[href]').forEach(function (link) {
+      var href = link.getAttribute('href');
+      if (!href || href.charAt(0) === '#' || /^(?:https?:|mailto:|javascript:)/i.test(href)) return;
+      try {
+        var target = new URL(href, window.location.href);
+        if (target.protocol !== 'file:' || !/\.html$/i.test(target.pathname)) return;
+        target.searchParams.set('theme', root.getAttribute('data-theme'));
+        target.searchParams.set('accent', curAccent);
+        link.href = target.href;
+      } catch (e) {}
+    });
+  }
 
   function applyAccent(name) {
     var theme = root.getAttribute('data-theme');
@@ -170,7 +127,7 @@
       root.style.setProperty('--sel', (SEL[fam] && SEL[fam][name]) || pair[1]);
       root.style.setProperty('--btn-text', readableOn(pair[1]));
       root.style.setProperty('--accent-text', readableOn(pair[0]));
-      try { localStorage.setItem('kbench-av', pair[0] + '|' + pair[1]); } catch (e) {}
+      try { localStorage.setItem('kb-av', pair[0] + '|' + pair[1]); } catch (e) {}
     } else {
       root.style.removeProperty('--accent');
       root.style.removeProperty('--btn');
@@ -184,21 +141,24 @@
       d.setAttribute('aria-pressed', d.dataset.accent === name ? 'true' : 'false');
     });
     if (accToggle) { accToggle.style.background = fillOf(pair[0]); accToggle.title = uiText('ui_accent'); }
-    try { localStorage.setItem('kbench-accent', name); } catch (e) {}
+    try { localStorage.setItem('kb-accent', name); } catch (e) {}
     updateLogos();
+    syncLocalPreviewLinks();
   }
   function updateLogos() {
     var theme = root.getAttribute('data-theme');
-    var brandBase = document.body.getAttribute('data-brand-base') || 'brand';
     var src;
+    // Pages in a subfolder (engine/) reach brand/ through the path their own logo already uses.
+    var first = document.querySelector('img.wm-logo');
+    var base = first ? (first.getAttribute('src') || '').replace(/brand\/[^\/]*$/, '') : '';
     if (THEMED.indexOf(theme) >= 0) {
       // Fixed-color themes carry their own wordmark art, colored with the theme's in-app
       // PrimaryBrush (make-logo-svgs.py --themes).
-      src = brandBase + '/killerbench-logo-' + theme + '.svg';
+      src = base + 'brand/killerbench-logo-' + theme + '.svg';
     } else {
       var variant = theme === 'light' ? 'light' : theme === 'hc' ? 'black' : 'dark';
       var color = (NEUTRAL.indexOf(theme) >= 0) ? curAccent : 'yellow';
-      src = brandBase + '/killerbench-logo-' + variant + '-' + color + '.svg';
+      src = base + 'brand/killerbench-logo-' + variant + '-' + color + '.svg';
     }
     var imgs = document.querySelectorAll('img.wm-logo');
     for (var i = 0; i < imgs.length; i++) imgs[i].src = src;
@@ -207,9 +167,8 @@
   function setTheme(name) {
     if (THEMES.indexOf(name) < 0) name = 'dark';
     root.setAttribute('data-theme', name);
-    try { localStorage.setItem('kbench-theme', name); } catch (e) {}
+    try { localStorage.setItem('kb-theme', name); } catch (e) {}
     swatches.forEach(function (s) { s.setAttribute('aria-pressed', s.dataset.theme === name ? 'true' : 'false'); });
-    syncThemePreview(name);
     if (accentSwitch) accentSwitch.hidden = NEUTRAL.indexOf(name) < 0;
     applyAccent(curAccent);
   }
@@ -221,13 +180,17 @@
   if (topbarEl && accDots.length) {
     accentBar = document.createElement('div');
     accentBar.className = 'accent-bar';
+    accentBar.id = 'accentBar';
+    accentBar.inert = true;
+    accentBar.setAttribute('aria-hidden', 'true');
+    if (accToggle) accToggle.setAttribute('aria-controls', accentBar.id);
     var pill = document.createElement('div'); pill.className = 'pill';
     var grip = document.createElement('span'); grip.className = 'grip'; grip.setAttribute('aria-hidden', 'true');
     pill.appendChild(grip);
-    var blbl = document.createElement('span'); blbl.className = 'lbl'; blbl.setAttribute('data-i18n', 'accent_label'); blbl.textContent = document.body.getAttribute('data-ui-accent-label') || 'accent:';
+    var blbl = document.createElement('span'); blbl.className = 'lbl'; blbl.setAttribute('data-i18n', 'accent_label'); blbl.textContent = 'accent:';
     pill.appendChild(blbl);
     accDots.forEach(function (d) { pill.appendChild(d); });
-    var bx = document.createElement('button'); bx.className = 'x'; bx.setAttribute('aria-label', document.body.getAttribute('data-ui-close') || 'Close'); bx.innerHTML = '&times;';
+    var bx = document.createElement('button'); bx.className = 'x'; bx.setAttribute('aria-label', 'Close'); bx.innerHTML = '&times;';
     bx.addEventListener('click', hideAccentBar);
     pill.appendChild(bx);
     accentBar.appendChild(pill);
@@ -265,21 +228,250 @@
     // Default position: top-right corner, nearest the theme picker (still draggable from there).
     requestAnimationFrame(function () { dragDx = dragClamp(1e6); pill.style.transform = 'translateX(' + dragDx + 'px)'; });
   }
-  function showAccentBar() { if (accentBar && NEUTRAL.indexOf(root.getAttribute('data-theme')) >= 0) { var contentPane = document.querySelector('.content'); if (contentPane) accentBar.style.top = Math.round(contentPane.getBoundingClientRect().top) + 'px'; accentBar.classList.add('show'); if (accToggle) accToggle.setAttribute('aria-expanded', 'true'); } }
-  function hideAccentBar() { if (accentBar) { accentBar.classList.remove('show'); if (accToggle) accToggle.setAttribute('aria-expanded', 'false'); } }
+  function showAccentBar() { if (accentBar && NEUTRAL.indexOf(root.getAttribute('data-theme')) >= 0) { var contentPane = document.querySelector('.content'); if (contentPane) accentBar.style.top = Math.round(contentPane.getBoundingClientRect().top) + 'px'; accentBar.inert = false; accentBar.removeAttribute('aria-hidden'); accentBar.classList.add('show'); if (accToggle) accToggle.setAttribute('aria-expanded', 'true'); } }
+  function hideAccentBar() { if (accentBar) { if (accentBar.contains(document.activeElement) && accToggle && !accToggle.hidden) accToggle.focus(); accentBar.inert = true; accentBar.setAttribute('aria-hidden', 'true'); accentBar.classList.remove('show'); if (accToggle) accToggle.setAttribute('aria-expanded', 'false'); } }
   accDots.forEach(function (d) { d.addEventListener('click', function () { applyAccent(d.dataset.accent); }); });
   if (accToggle) {
     accToggle.addEventListener('click', function (e) { e.stopPropagation(); if (accentBar && accentBar.classList.contains('show')) hideAccentBar(); else showAccentBar(); });
   }
   document.addEventListener('click', function (e) { if (accentBar && accentBar.classList.contains('show') && !e.target.closest('.accent-bar') && !e.target.closest('#accentToggle')) hideAccentBar(); });
 
-  function uiText(key) { return key === 'ui_accent' ? (document.body.getAttribute('data-ui-accent') || 'Accent color') : key; }
-  swatches.concat(accDots).forEach(function(button){button.setAttribute('aria-label',button.title);});
-  var savedTheme = 'dark', savedAccent = 'yellow';
-  try { savedTheme = localStorage.getItem('kbench-theme') || savedTheme; savedAccent = localStorage.getItem('kbench-accent') || savedAccent; } catch(e) {}
+  // Localized visible text, accessible names, metadata, and generated controls.
+  var I18N = (typeof window !== 'undefined' && window.I18N) ? window.I18N : {};
+  var EN = {
+    "ui_home": "KillerBench home",
+    "ui_theme": "Theme",
+    "ui_accent": "Accent color",
+    "ui_language": "Language",
+    "ui_click_me": "click me",
+    "ui_screenshot_expanded": "Expanded KillerBench screenshot",
+    "ui_diagram_expanded": "Expanded diagram",
+    "ui_enlarge_album_diagram": "Enlarge diagram: how the album is keyed and what it holds",
+    "ui_cli_examples": "KillerBench command examples",
+    "ui_terminal_examples": "KillerBench terminal command examples",
+    "ui_carousel": "carousel",
+    "ui_slide": "slide",
+    "ui_features": "Product features",
+    "ui_previous_feature": "Previous feature",
+    "ui_next_feature": "Next feature",
+    "ui_choose_feature": "Choose a feature",
+    "ui_feature": "Feature",
+    "ui_base": "BASE",
+    "ui_part_of": "Part of",
+    "ui_report_issue": "Report an issue",
+    "ui_email": "Email",
+    "ui_coffee": "Buy me a coffee",
+    "ui_version": "version",
+    "ui_released": "released",
+    "ui_size": "size",
+    "ui_platform": "platform",
+    "ui_egg": "Smile. You are on the clipboard.",
+    "ui_cmd_wait": "REM Command Prompt: wait, then read %ERRORLEVEL%",
+    "ui_ps_wait": "# PowerShell: wait for completion",
+    "ui_close": "Close",
+    "ui_choose_theme": "Choose theme",
+    "ui_theme_dark": "Dark",
+    "ui_theme_light": "Light",
+    "ui_theme_hc": "Black",
+    "ui_theme_98se": "98SE",
+    "ui_theme_blood": "Blood",
+    "ui_theme_greed": "Greed",
+    "ui_theme_cyanotic": "Cyanotic",
+    "ui_theme_ectoplasm": "Ectoplasm",
+    "ui_theme_decay": "Decay",
+    "ui_theme_malaise": "Malaise",
+    "ui_theme_sepulchre": "Sepulchre",
+    "ui_theme_delirium": "Delirium",
+    "ui_theme_mourning": "Mourning",
+    "ui_accent_red": "Red",
+    "ui_accent_orange": "Orange",
+    "ui_accent_green": "Green",
+    "ui_accent_teal": "Teal",
+    "ui_accent_blue": "Blue",
+    "ui_accent_purple": "Purple",
+    "ui_accent_yellow": "Yellow",
+    "ui_accent_magenta": "Magenta"
+  };
+  var currentLang = 'en';
+  var translatedAttributes = ['title', 'aria-label', 'aria-roledescription', 'content'];
+  function bindLabel(selector, attribute, key) {
+    document.querySelectorAll(selector).forEach(function (node) {
+      node.setAttribute('data-i18n-' + attribute, key);
+    });
+  }
+  bindLabel('.tb-home', 'title', 'ui_home');
+  bindLabel('.tgrp, .theme-toggle', 'aria-label', 'ui_choose_theme');
+  bindLabel('.theme-toggle', 'title', 'ui_theme');
+  bindLabel('#accentToggle, #accentPop', 'title', 'ui_accent');
+  bindLabel('#accentToggle, #accentPop', 'aria-label', 'ui_accent');
+  bindLabel('.lang-switch, #langToggle', 'aria-label', 'ui_language');
+  bindLabel('#langToggle', 'title', 'ui_language');
+  bindLabel('#verEgg', 'title', 'ui_click_me');
+  bindLabel('#lightbox', 'aria-label', 'ui_screenshot_expanded');
+  bindLabel('#diagram-lightbox', 'aria-label', 'ui_diagram_expanded');
+  bindLabel('.diagram-zoom', 'aria-label', 'ui_enlarge_album_diagram');
+  bindLabel('.dlb-close', 'aria-label', 'ui_close');
+  bindLabel('.accent-bar .x', 'aria-label', 'ui_close');
+  document.querySelectorAll('.swatch[data-theme]').forEach(function (node) {
+    var key = 'ui_theme_' + node.getAttribute('data-theme');
+    node.setAttribute('data-i18n-title', key);
+    node.setAttribute('data-i18n-aria-label', key);
+  });
+  document.querySelectorAll('.acc[data-accent]').forEach(function (node) {
+    var key = 'ui_accent_' + node.getAttribute('data-accent');
+    node.setAttribute('data-i18n-title', key);
+    node.setAttribute('data-i18n-aria-label', key);
+  });
+  document.querySelectorAll('.cli-demo[aria-label]').forEach(function (node) {
+    node.setAttribute('data-i18n-aria-label', node.getAttribute('aria-label').indexOf('terminal') >= 0 ? 'ui_terminal_examples' : 'ui_cli_examples');
+  });
+  document.querySelectorAll('[data-i18n]').forEach(function (node) {
+    EN[node.getAttribute('data-i18n')] = node.innerHTML;
+  });
+  translatedAttributes.forEach(function (attribute) {
+    document.querySelectorAll('[data-i18n-' + attribute + ']').forEach(function (node) {
+      var key = node.getAttribute('data-i18n-' + attribute);
+      if (EN[key] == null) EN[key] = node.getAttribute(attribute);
+    });
+  });
+  function uiText(key) {
+    var dict = currentLang === 'en' ? EN : I18N[currentLang];
+    return dict && dict[key] != null ? dict[key] : EN[key];
+  }
+  function translateAttributes() {
+    translatedAttributes.forEach(function (attribute) {
+      document.querySelectorAll('[data-i18n-' + attribute + ']').forEach(function (node) {
+        var value = uiText(node.getAttribute('data-i18n-' + attribute));
+        if (value != null) node.setAttribute(attribute, value);
+      });
+    });
+  }
+  function translateCarousel() {
+    var selectors = [
+      ['.feature-carousel', 'aria-roledescription', 'ui_carousel'],
+      ['.feature-carousel', 'aria-label', 'ui_features'],
+      ['.feature-carousel-arrow:first-child', 'aria-label', 'ui_previous_feature'],
+      ['.feature-carousel-arrow:last-child', 'aria-label', 'ui_next_feature'],
+      ['.feature-carousel-rail', 'aria-label', 'ui_choose_feature'],
+      ['.feature-carousel .feature-card', 'aria-roledescription', 'ui_slide']
+    ];
+    selectors.forEach(function (item) {
+      document.querySelectorAll(item[0]).forEach(function (node) {
+        node.setAttribute(item[1], uiText(item[2]));
+      });
+    });
+  }
+  function fitDiagramLabels() {
+    document.querySelectorAll('svg text[data-i18n-max-width]').forEach(function (node) {
+      node.removeAttribute('textLength');
+      node.removeAttribute('lengthAdjust');
+      var width = Number(node.getAttribute('data-i18n-max-width'));
+      var advance = node.getComputedTextLength();
+      var bounds = Math.max(advance, node.getBBox().width);
+      if (width > 0 && bounds > width) {
+        node.setAttribute('textLength', String(advance * width / bounds));
+        node.setAttribute('lengthAdjust', 'spacingAndGlyphs');
+      }
+    });
+  }
+  var features = document.querySelector('.features');
+  if (features) new MutationObserver(translateCarousel).observe(features, { childList: true, subtree: true });
+  window.addEventListener('resize', fitDiagramLabels);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitDiagramLabels);
+  var LANGS = ['en','cs','es','de','fr','ja','kk','pl','ru','uk','nb','pt','tr','vi','zh','zh-cn','bn','hu','it', 'sl'];
+  var FLAGS = {
+    sl: '<svg viewBox="0 0 24 24"><rect width="24" height="8" fill="#fff"/><rect y="8" width="24" height="8" fill="#005da4"/><rect y="16" width="24" height="8" fill="#ed1c24"/><path d="M4 4h7v6c0 3-3.5 5-3.5 5S4 13 4 10Z" fill="#005da4" stroke="#ed1c24" stroke-width=".5"/><path d="m5 10 1.5-2 1 1 1-1 1.5 2v1H5Z" fill="#fff"/></svg>',
+    en: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#fff"/><g fill="#b22234"><rect width="24" height="1.85"/><rect y="3.7" width="24" height="1.85"/><rect y="7.4" width="24" height="1.85"/><rect y="11.1" width="24" height="1.85"/><rect y="14.8" width="24" height="1.85"/><rect y="18.5" width="24" height="1.85"/><rect y="22.2" width="24" height="1.8"/></g><rect width="11" height="12.95" fill="#3c3b6e"/></svg>',
+    cs: '<svg viewBox="0 0 24 24"><rect width="24" height="12" fill="#fff"/><rect y="12" width="24" height="12" fill="#d7141a"/><polygon points="0,0 12,12 0,24" fill="#11457e"/></svg>',
+    es: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#c60b1e"/><rect y="6" width="24" height="12" fill="#ffc400"/></svg>',
+    de: '<svg viewBox="0 0 24 24"><rect width="24" height="8" fill="#000"/><rect y="8" width="24" height="8" fill="#dd0000"/><rect y="16" width="24" height="8" fill="#ffce00"/></svg>',
+    fr: '<svg viewBox="0 0 24 24"><rect width="8" height="24" fill="#0055a4"/><rect x="8" width="8" height="24" fill="#fff"/><rect x="16" width="8" height="24" fill="#ef4135"/></svg>',
+    ja: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#fff"/><circle cx="12" cy="12" r="7" fill="#bc002d"/></svg>',
+    kk: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#00afca"/><circle cx="12" cy="12" r="4.5" fill="#f6d34a"/><g stroke="#f6d34a" stroke-width="1"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></g></svg>',
+    pl: '<svg viewBox="0 0 24 24"><rect width="24" height="12" fill="#fff"/><rect y="12" width="24" height="12" fill="#dc143c"/></svg>',
+    ru: '<svg viewBox="0 0 24 24"><rect width="24" height="8" fill="#fff"/><rect y="8" width="24" height="8" fill="#0039a6"/><rect y="16" width="24" height="8" fill="#d52b1e"/></svg>',
+    uk: '<svg viewBox="0 0 24 24"><rect width="24" height="12" fill="#0057b7"/><rect y="12" width="24" height="12" fill="#ffd700"/></svg>',
+    nb: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#ba0c2f"/><rect x="6" width="6" height="24" fill="#fff"/><rect y="9" width="24" height="6" fill="#fff"/><rect x="7.5" width="3" height="24" fill="#00205b"/><rect y="10.5" width="24" height="3" fill="#00205b"/></svg>',
+    pt: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#009c3b"/><polygon points="12,3.5 21.5,12 12,20.5 2.5,12" fill="#ffdf00"/><circle cx="12" cy="12" r="4.6" fill="#002776"/></svg>',
+    tr: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#e30a17"/><circle cx="9.5" cy="12" r="5" fill="#fff"/><circle cx="11" cy="12" r="4" fill="#e30a17"/><polygon points="15.5,9.4 16.12,11.15 17.97,11.2 16.5,12.32 17.03,14.1 15.5,13.05 13.97,14.1 14.5,12.32 13.03,11.2 14.88,11.15" fill="#fff"/></svg>',
+    vi: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#da251d"/><polygon points="12,4.5 13.76,9.93 19.47,9.93 14.86,13.28 16.62,18.72 12,15.36 7.38,18.72 9.14,13.28 4.53,9.93 10.24,9.93" fill="#ff0"/></svg>',
+    zh: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#fe0000"/><rect width="12" height="12" fill="#000095"/><polygon points="6,3 7.2,6.6 11,6.6 7.9,8.8 9.1,12.4 6,10.2 2.9,12.4 4.1,8.8 1,6.6 4.8,6.6" fill="#fff"/></svg>',
+    'zh-cn': '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#de2910"/><polygon points="4,3 4.9,5.6 7.6,5.6 5.4,7.3 6.2,9.9 4,8.3 1.8,9.9 2.6,7.3 0.4,5.6 3.1,5.6" fill="#ffde00"/></svg>',
+    bn: '<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#006a4e"/><circle cx="10.5" cy="12" r="6" fill="#f42a41"/></svg>',
+    hu: '<svg viewBox="0 0 24 24"><rect width="24" height="8" fill="#ce2939"/><rect y="8" width="24" height="8" fill="#fff"/><rect y="16" width="24" height="8" fill="#477050"/></svg>',
+    it: '<svg viewBox="0 0 24 24"><rect width="8" height="24" fill="#009246"/><rect x="8" width="8" height="24" fill="#fff"/><rect x="16" width="8" height="24" fill="#ce2b37"/></svg>'
+  };
+  var langItems = [].slice.call(document.querySelectorAll('.lang-item'));
+  var langToggle = document.getElementById('langToggle');
+  var langMenu = document.getElementById('langMenu');
+
+  function applyLang(lang) {
+    if (LANGS.indexOf(lang) < 0) lang = 'en';
+    currentLang = lang;
+    root.setAttribute('lang', lang === 'zh' ? 'zh-Hant' : (lang === 'zh-cn' ? 'zh-Hans' : lang));
+    var dict = (lang === 'en') ? EN : (I18N[lang] || {});
+    document.querySelectorAll('[data-i18n]').forEach(function (n) {
+      var k = n.getAttribute('data-i18n');
+      n.innerHTML = (dict && dict[k] != null) ? dict[k] : EN[k];
+    });
+    translateAttributes();
+    translateCarousel();
+    fitDiagramLabels();
+    langItems.forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.lang === lang ? 'true' : 'false'); });
+    if (langToggle) langToggle.innerHTML = FLAGS[lang] || FLAGS.en;
+    try { localStorage.setItem('kb-lang', lang); } catch (e) {}
+    // For text that is not in the DOM as a data-i18n node - the screenshot captions, which live
+    // in a script array and are used as alt/title/aria-label - so those follow the language too.
+    document.dispatchEvent(new CustomEvent('kb-languagechange', { detail: { lang: lang } }));
+  }
+  function closeLangMenu() { if (langMenu) { langMenu.hidden = true; langToggle.setAttribute('aria-expanded', 'false'); } }
+  if (langToggle && langMenu) {
+    langToggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var willOpen = langMenu.hidden;
+      langMenu.hidden = !willOpen;
+      langToggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    });
+    langItems.forEach(function (b) { b.addEventListener('click', function () { applyLang(b.dataset.lang); closeLangMenu(); }); });
+    document.addEventListener('click', function (e) { if (!langMenu.hidden && !e.target.closest('.lang-switch')) closeLangMenu(); });
+  }
+
+  // ---- Easter egg: click the version number ----
+  var verEgg = document.getElementById('verEgg');
+  var eggToast = document.getElementById('eggToast');
+  if (verEgg) verEgg.addEventListener('click', function () {
+    for (var i = 0; i < 18; i++) {
+      var d = document.createElement('span');
+      d.className = 'drip';
+      d.style.left = (Math.random() * 100) + 'vw';
+      d.style.height = (18 + Math.random() * 64) + 'px';
+      d.style.opacity = (0.6 + Math.random() * 0.4).toFixed(2);
+      var dur = 1.1 + Math.random() * 1.6;
+      d.style.animation = 'dripfall ' + dur + 's linear forwards';
+      d.style.animationDelay = (Math.random() * 0.5) + 's';
+      document.body.appendChild(d);
+      (function (el) { setTimeout(function () { el.remove(); }, (dur + 0.8) * 1000); })(d);
+    }
+    if (eggToast) {
+      eggToast.textContent = uiText('ui_egg');
+      eggToast.classList.add('show');
+      clearTimeout(verEgg._t);
+      verEgg._t = setTimeout(function () { eggToast.classList.remove('show'); }, 2800);
+    }
+  });
+
+  // ---- Init ----
+  var savedTheme = localPreviewSetting('theme'), savedAccent = localPreviewSetting('accent'), savedLang = 'en';
+  try {
+    savedTheme  = savedTheme || localStorage.getItem('kb-theme');
+    savedAccent = savedAccent || localStorage.getItem('kb-accent');
+    savedLang   = localStorage.getItem('kb-lang')   || savedLang;
+  } catch (e) {}
+  savedTheme = savedTheme || 'dark';
+  savedAccent = savedAccent || 'yellow';
   curAccent = savedAccent;
   setTheme(savedTheme);
-  document.addEventListener('keydown', function(e){if(e.key === 'Escape') hideAccentBar();});
+  applyLang(savedLang);
 })();
 /* Top bar fit: the bar never wraps. When it runs out of room, the Microsoft Store and KillerMCP
    buttons shrink to their logos first, then the navigation links move into a More menu from the
@@ -297,7 +489,13 @@
   btn.className = 'tb-more-toggle';
   btn.setAttribute('aria-haspopup', 'true');
   btn.setAttribute('aria-expanded', 'false');
-  btn.setAttribute('aria-label', document.body.getAttribute('data-ui-more') || 'More');
+  function labelMore(lang) {
+    lang = lang === 'zh-Hant' ? 'zh' : lang === 'zh-Hans' ? 'zh-cn' : lang;
+    var dict = window.I18N && window.I18N[lang];
+    btn.setAttribute('aria-label', dict && dict.ui_more ? dict.ui_more : 'More');
+  }
+  labelMore(document.documentElement.getAttribute('lang'));
+  document.addEventListener('kb-languagechange', function (e) { labelMore(e.detail && e.detail.lang); });
   btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>';
   var menu = document.createElement('div');
   menu.className = 'lang-menu tb-more-menu';
@@ -362,69 +560,6 @@
   document.addEventListener('click', function (e) { if (!menu.hidden && !more.contains(e.target)) close(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !menu.hidden) { close(); btn.focus(); } });
   fit();
-})();
-/* Screenshot strip: the home page in every language carries the thumbnails and their translated
-   captions in its markup. This fades the strip's bottom edge while more shots are below and opens
-   a thumbnail full size in the lightbox with its caption. */
-(function () {
-  var strip = document.getElementById('sbThumbs');
-  var box = document.getElementById('lightbox');
-  if (!strip || !box) return;
-  var big = document.getElementById('lightboxImg'), caption = document.getElementById('lightboxCaption');
-  var lastTrigger = null;
-  var inertSiblings = [];
-  function setPageInert() {
-    Array.prototype.forEach.call(document.body.children, function (element) {
-      if (element === box) return;
-      inertSiblings.push({ element: element, wasInert: element.inert });
-      element.inert = true;
-    });
-  }
-  function restorePage() {
-    inertSiblings.forEach(function (entry) { entry.element.inert = entry.wasInert; });
-    inertSiblings = [];
-  }
-  var fadeTop = document.querySelector('.sb-fade-top'), fadeBottom = document.querySelector('.sb-fade-bottom');
-  function refade() {
-    if (fadeTop) fadeTop.classList.toggle('on', strip.scrollTop > 2);
-    if (fadeBottom) fadeBottom.classList.toggle('on', strip.scrollHeight - strip.clientHeight - strip.scrollTop > 2);
-  }
-  Array.prototype.forEach.call(strip.querySelectorAll('img'), function (img) {
-    img.addEventListener('load', refade);
-    img.addEventListener('error', refade);
-  });
-  strip.addEventListener('scroll', refade, { passive: true });
-  window.addEventListener('resize', refade);
-  refade();
-  strip.addEventListener('click', function (e) {
-    var thumb = e.target.closest ? e.target.closest('.sb-thumb') : null;
-    if (!thumb) return;
-    var img = thumb.querySelector('img');
-    lastTrigger = thumb;
-    big.src = img.src;
-    big.alt = img.alt;
-    caption.textContent = img.alt;
-    box.setAttribute('aria-hidden', 'false');
-    box.classList.add('show');
-    setPageInert();
-    box.focus();
-  });
-  function closeBox() {
-    if (!box.classList.contains('show')) return;
-    box.classList.remove('show');
-    box.setAttribute('aria-hidden', 'true');
-    restorePage();
-    if (lastTrigger && lastTrigger.isConnected) lastTrigger.focus();
-  }
-  box.addEventListener('click', closeBox);
-  document.addEventListener('keydown', function (e) {
-    if (!box.classList.contains('show')) return;
-    if (e.key === 'Escape') { closeBox(); e.preventDefault(); }
-    if (e.key === 'Tab') { e.preventDefault(); box.focus(); }
-  });
-  document.addEventListener('focusin', function (e) {
-    if (box.classList.contains('show') && !box.contains(e.target)) box.focus();
-  });
 })();
 /* Film Grain: the same switch as the app's theme menu and KillerTools, on the family Alt+Shift+G chord.
    On by default; off sets data-grain="off", which empties --grain on every grained surface. */

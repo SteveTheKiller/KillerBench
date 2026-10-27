@@ -636,7 +636,7 @@ try {
     $numberWords = @{
         'seventeen' = 17; 'eighteen' = 18; 'nineteen' = 19; 'twenty' = 20; 'twenty-one' = 21
     }
-    $claimPages = @('README.md', 'bench-landing\templates\index.en.html', 'bench-landing\help\docs\about.md') |
+    $claimPages = @('README.md', 'bench-landing\index.html', 'bench-landing\about.html') |
         ForEach-Object { Join-Path $PSScriptRoot $_ } | Where-Object { Test-Path $_ }
     foreach ($page in $claimPages) {
         foreach ($hit in (Select-String -Path $page -Pattern '(?i)\b([\w-]+)\s+(?:interface\s+)?languages\b' -AllMatches)) {
@@ -691,7 +691,7 @@ try {
 
     Write-Host "`n==> Release $Tag published:" -ForegroundColor Green
     gh release view $Tag --json url --jq '.url'
-    Write-Host "    killerbench.net does NOT auto-deploy. Export bench-landing with prepare-publish.py and upload it to Cloudflare Pages." -ForegroundColor Yellow
+    Write-Host "    killerbench.net does NOT auto-deploy. Drag bench-landing/ into Cloudflare Pages." -ForegroundColor Yellow
 } finally {
     Pop-Location
 }

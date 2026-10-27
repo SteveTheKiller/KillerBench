@@ -16,14 +16,14 @@ The KillerBench.Engine is the reusable Windows diagnostics and repair library be
 
 ## Start here
 
-- [Getting started](../bench-landing/engine/docs/getting-started.md)
-- [Diagnostic workflows](../bench-landing/engine/docs/workflows.md)
-- [Evidence and results](../bench-landing/engine/docs/evidence.md)
-- [Repairs and safety](../bench-landing/engine/docs/repairs.md)
-- [CLI guide](../bench-landing/engine/docs/cli.md)
-- [API guide](../bench-landing/engine/docs/api.md)
-- [Architecture](../bench-landing/engine/docs/architecture.md)
-- [Knowledge packs](../bench-landing/engine/docs/knowledge-packs.md)
+- [Getting started](../bench-landing/engine/getting-started.html)
+- [Diagnostic workflows](../bench-landing/engine/workflows.html)
+- [Evidence and results](../bench-landing/engine/evidence.html)
+- [Repairs and safety](../bench-landing/engine/repairs.html)
+- [CLI guide](../bench-landing/engine/cli.html)
+- [API guide](../bench-landing/engine/api.html)
+- [Architecture](../bench-landing/engine/architecture.html)
+- [Knowledge packs](../bench-landing/engine/knowledge-packs.html)
 - [Detailed capability catalog](docs/CAPABILITY-CATALOG.md)
 
 ## Build

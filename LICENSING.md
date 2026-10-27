@@ -31,4 +31,4 @@ Font embedding flags alone do not establish redistribution permission; Microsoft
 
 ## Local verification
 
-Run `python check-license.py` from the repository, then the documented site generation, localization, route and Engine-example checks from `bench-landing`. Confirm the license is retained in the clean site export and evaluated desktop/CLI publish items. These checks establish documentation and packaging behavior; they do not certify legal compliance or authorize publication.
+Run `python check-license.py` from the repository, then confirm the license is retained in the evaluated desktop/CLI publish items. These checks establish documentation and packaging behavior; they do not certify legal compliance or authorize publication.

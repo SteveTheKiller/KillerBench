@@ -1,62 +1,155 @@
-<!doctype html>
-<html lang="en-US" data-theme="dark">
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="KillerBench is a Windows diagnostic and repair workbench in development. Diagnose first, follow the evidence, and fix only what the evidence proves, all on the local computer." data-i18n-attr="content:a44">
-<meta property="og:title" content="KillerBench | Diagnostic Workbench" data-i18n-attr="content:a45">
-<meta property="og:description" content="Diagnose first. Fix only what the evidence proves. A Windows workbench in development." data-i18n-attr="content:a46">
-<meta property="og:image" content="https://killerbench.net/og-image.png">
-<meta property="og:url" content="https://killerbench.net/">
-<meta property="og:type" content="website">
-<meta name="twitter:card" content="summary_large_image">
+<script>/* Apply saved theme + accent before first paint to avoid a reload flash */(function(){try{var d=document.documentElement,t=localStorage.getItem('kb-theme');if(t){d.setAttribute('data-theme',t);if({dark:1,light:1,hc:1}[t]){var v=localStorage.getItem('kb-av');if(v){var s=v.split('|');d.style.setProperty('--accent',s[0]);d.style.setProperty('--btn',s[1]);}}}}catch(e){}})();</script>
+<link rel="preload" href="brand/KillerSans-Regular.ttf" as="font" type="font/ttf" crossorigin><link rel="preload" href="brand/Punktype.ttf" as="font" type="font/ttf" crossorigin><link rel="preload" href="brand/Lacquer-Regular.ttf" as="font" type="font/ttf" crossorigin>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="darkreader-lock">
+<title data-i18n="page_index_title">KillerBench | Diagnostic Workbench</title>
 <link rel="canonical" href="https://killerbench.net/">
-<title data-i18n="t2">KillerBench | Diagnostic Workbench</title>
-<link rel="stylesheet" href="family.css?v=13">
-<link rel="stylesheet" href="kb.css?v=7">
+<meta name="description" data-i18n-content="page_index_description" content="KillerBench is a Windows diagnostic and repair workbench in development. Diagnose first, follow the evidence, and fix only what the evidence proves, all on the local computer.">
+<link rel="icon" type="image/x-icon" href="brand/kb-icon.ico">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://killerbench.net/">
+<meta property="og:title" data-i18n-content="page_index_title" content="KillerBench | Diagnostic Workbench">
+<meta property="og:description" data-i18n-content="page_index_description" content="KillerBench is a Windows diagnostic and repair workbench in development. Diagnose first, follow the evidence, and fix only what the evidence proves, all on the local computer.">
+<meta property="og:image" content="https://killerbench.net/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" data-i18n-content="page_index_title" content="KillerBench | Diagnostic Workbench">
+<meta name="twitter:description" data-i18n-content="page_index_description" content="KillerBench is a Windows diagnostic and repair workbench in development. Diagnose first, follow the evidence, and fix only what the evidence proves, all on the local computer.">
+<meta name="twitter:image" content="https://killerbench.net/og-image.png">
+<link rel="stylesheet" href="kb.css?v=1">
 <link rel="stylesheet" href="feature-carousel.css?v=2">
-<script defer src="kb-i18n.js?v=cea8f4bb"></script><script defer src="kb.js?v=7"></script>
-<script defer src="feature-carousel.js?v=2"></script>
+<style>
+/* ---- Page-specific (landing) ---- */
+.content-inner { max-width: 1100px; margin: 0 auto; padding: 0 28px 50px; }
+
+/* Hero */
+.hero { padding: 12px 0 28px; text-align: center; }
+.hero .wm-logo { height: clamp(64px, 11.9vw, 124px); margin: 0 auto; filter: drop-shadow(0 4px 7px rgba(0,0,0,0.5)); }
+.hero .hero-lockup { display: flex; align-items: center; justify-content: center; gap: clamp(10px, 2vw, 22px); flex-wrap: wrap; }
+.hero .hero-lockup .wm-logo { margin: 0; }
+.hero .hero-icon { height: clamp(120px, 24vw, 230px); width: auto; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5)); }
+.hero .tagline { margin: 10px auto 0; max-width: 620px; font-size: 16px; color: var(--text2); }
+
+.hero-blurbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 980px; margin: 30px auto 0; text-align: left; }
+.blurb h3 { font-family: var(--kt-font-section); font-size: 15px; font-weight: normal; letter-spacing: .5px; color: var(--accent); margin-bottom: 7px; text-shadow: 0 2px 5px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.5); }
+.blurb p { font-size: 13.5px; color: var(--muted); line-height: 1.55; }
+.blurb-list { list-style: none; }
+.blurb-list li { font-size: 13.5px; color: var(--muted); line-height: 1.5; padding-left: 16px; position: relative; margin-bottom: 5px; }
+.blurb-list li:last-child { margin-bottom: 0; }
+.blurb-list li::before { content: "\203A"; position: absolute; left: 3px; color: var(--accent); font-weight: 700; }
+
+.hero-grid { display: flex; flex-wrap: wrap; gap: 30px 40px; align-items: center; justify-content: center; margin: 34px auto 0; max-width: 980px; text-align: left; }
+
+/* Call to action (flat) */
+.hero-cta { display: flex; flex-direction: column; align-items: stretch; gap: 10px; flex: 0 1 360px; }
+.cta-row { display: flex; flex-direction: column; gap: 12px; max-width: 360px; }
+.download-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: var(--btn); color: var(--btn-text); font-size: 15px; font-weight: 700; padding: 14px 28px; border-radius: 6px; box-shadow: 0 8px 20px rgba(0,0,0,0.35); transition: filter 0.15s, transform 0.1s, box-shadow 0.15s; }
+.download-btn:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 12px 28px rgba(0,0,0,0.5); color: var(--btn-text); }
+.download-btn:active { transform: translateY(1px); }
+.download-btn svg { width: 18px; height: 18px; fill: currentColor; }
+.gh-btn { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; border: 1.5px solid var(--accent); color: var(--accent); background: transparent; font-size: 15px; font-weight: 700; padding: 12.5px 24px; border-radius: 6px; transition: background 0.15s, color 0.15s; }
+.gh-btn:hover { background: color-mix(in srgb, var(--text) 16%, transparent); color: var(--accent); }
+.gh-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+/* Features */
+.features { padding: 40px 0 24px; }
+.features h2 { font-family: var(--kt-font-card-title); font-size: 24px; font-weight: normal; letter-spacing: .5px; color: var(--text); text-align: center; margin-bottom: 26px; }
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(232px, 1fr)); gap: 14px; }
+.feature-card { background: var(--modal) var(--grain-img) repeat; background-size: 256px 256px; border: 1px solid var(--pane-border); border-top: 2px solid var(--tab-edge); border-radius: 6px; padding: 18px 20px; transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s; }
+.feature-card:hover { transform: translateY(-3px); box-shadow: 0 14px 28px rgba(0,0,0,0.4); border-right-color: var(--dragline); border-bottom-color: var(--dragline); border-left-color: var(--dragline); border-top-color: var(--accent); }
+.feature-card h3 { font-family: var(--kt-font-section); font-size: 15px; font-weight: normal; letter-spacing: .5px; margin-bottom: 8px; color: var(--accent); text-shadow: 0 2px 5px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.5); }
+html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { text-shadow: none; }
+.feature-card p { font-size: 13px; color: var(--muted); line-height: 1.55; }
+.feature-card code { display: inline-block; margin-top: 4px; background: var(--panel); padding: 2px 7px; border-radius: 4px; font-family: Consolas, monospace; font-size: 12px; color: var(--text); white-space: nowrap; }
+
+/* Sidebar (screenshot strip) */
+.sb-thumbs { padding: 4px 12px 0; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex: 1; }
+/* Thumbnails keep their shape; a flex column would otherwise squash them to fit the sidebar. */
+.sb-thumbs .sb-thumb { flex-shrink: 0; }
+.sb-empty { padding: 22px 16px; font-family: Consolas, monospace; font-size: 12px; color: var(--muted); text-align: center; line-height: 1.6; }
+
+@media (max-width: 900px) {
+  .content-inner { padding: 0 16px 42px; }
+  .hero-blurbs { grid-template-columns: 1fr; gap: 22px; }
+  .hero-grid { flex-direction: column; gap: 22px; }
+  .hero-cta, .hero-info { flex: 0 0 auto; min-width: 0; }
+  .feature-grid { grid-template-columns: 1fr; }
+  .sb-thumbs { flex-direction: row; overflow-x: auto; overflow-y: hidden; }
+}
+@media (max-width: 560px) {
+  .hero { padding: 28px 0 22px; }
+  .hero .tagline { font-size: 15px; }
+  .features h2 { font-size: 20px; margin-bottom: 20px; }
+}
+</style>
 </head>
-<body data-brand-base="brand" data-ui-theme="Theme" data-ui-choose-theme="Choose theme" data-ui-accent="Accent color" data-ui-accent-label="accent:" data-ui-close="Close" data-ui-more="More" data-ui-no-results="No matching pages." data-i18n-attr="data-ui-theme:a47;data-ui-choose-theme:a48;data-ui-accent:a49;data-ui-accent-label:a50;data-ui-close:a51;data-ui-more:a52;data-ui-no-results:a53">
+<body>
 
 <div class="topbar">
-  <a class="tb-home" href="index.html" title="KillerBench"><img class="tb-icon" src="kb-icon.png" alt="KillerBench" width="44" height="44"><img class="wm-logo tb-wm" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></a>
-  <a class="tb-mcp-link" href="mcp.html" aria-label="KillerMCP"><img src="mcp.png" alt="" aria-hidden="true"><span class="tb-mcp-wordmark"><span>Killer</span><span class="tb-mcp-accent">MCP</span></span></a>
-  <span class="tb-spacer"></span>
+<a href="index.html" class="tb-home" title="KillerBench home">
+<img class="tb-icon" src="brand/kb-icon.png" alt="KillerBench" width="44" height="44">
+<img class="wm-logo tb-wm" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench">
+</a>
+<a class="tb-mcp-link" href="mcp.html" aria-label="KillerMCP"><img src="mcp.png" alt="" aria-hidden="true"><span class="tb-mcp-wordmark"><span>Killer</span><span class="tb-mcp-accent">MCP</span></span></a>
+<span class="tb-spacer"></span>
 <nav class="tb-nav">
-<a href="help.html" data-i18n="t3">Help</a>
-<a href="technical.html" data-i18n="t4">Technical</a>
-<a href="engine/index.html">Engine</a>
-<a href="about.html" data-i18n="t5">About</a>
+<a href="help.html" data-i18n="nav_help">Help</a>
+<a href="technical.html" data-i18n="nav_tech">Technical</a>
+<a href="about.html" data-i18n="nav_about">About</a>
 </nav>
-<div class="tgrp" role="group" aria-label="Theme" data-i18n-attr="aria-label:a47">
-<button class="swatch sw-dark" data-theme="dark" title="Dark" data-i18n-attr="title:a54"></button>
-<button class="swatch sw-light" data-theme="light" title="Light" data-i18n-attr="title:a55"></button>
-<button class="swatch sw-hc" data-theme="hc" title="Black" data-i18n-attr="title:a56"></button>
-<button class="swatch sw-blood" data-theme="blood" title="Blood" data-i18n-attr="title:a57"></button>
-<button class="swatch sw-greed" data-theme="greed" title="Greed" data-i18n-attr="title:a58"></button>
-<button class="swatch sw-cyanotic" data-theme="cyanotic" title="Cyanotic" data-i18n-attr="title:a59"></button>
-<button class="swatch sw-ectoplasm" data-theme="ectoplasm" title="Ectoplasm" data-i18n-attr="title:a60"></button>
-<button class="swatch sw-decay" data-theme="decay" title="Decay" data-i18n-attr="title:a61"></button>
-<button class="swatch sw-malaise" data-theme="malaise" title="Malaise" data-i18n-attr="title:a62"></button>
-<button class="swatch sw-sepulchre" data-theme="sepulchre" title="Sepulchre" data-i18n-attr="title:a63"></button>
-<button class="swatch sw-delirium" data-theme="delirium" title="Delirium" data-i18n-attr="title:a64"></button>
-<button class="swatch sw-mourning" data-theme="mourning" title="Mourning" data-i18n-attr="title:a65"></button>
+<div class="tgrp" role="group" aria-label="Theme">
+<button class="swatch sw-dark"     data-theme="dark"     title="Dark"></button>
+<button class="swatch sw-light"    data-theme="light"    title="Light"></button>
+<button class="swatch sw-hc"       data-theme="hc"       title="Black"></button>
+<button class="swatch sw-blood"    data-theme="blood"    title="Blood"></button>
+<button class="swatch sw-greed"    data-theme="greed"    title="Greed"></button>
+<button class="swatch sw-cyanotic" data-theme="cyanotic" title="Cyanotic"></button>
+<button class="swatch sw-ectoplasm" data-theme="ectoplasm" title="Ectoplasm"></button>
+<button class="swatch sw-decay" data-theme="decay" title="Decay"></button>
+<button class="swatch sw-malaise" data-theme="malaise" title="Malaise"></button>
+<button class="swatch sw-sepulchre" data-theme="sepulchre" title="Sepulchre"></button>
+<button class="swatch sw-delirium" data-theme="delirium" title="Delirium"></button>
+<button class="swatch sw-mourning" data-theme="mourning" title="Mourning"></button>
 </div>
 <div class="acc-fly accent-switch" id="accentSwitch">
-<button class="acc-toggle" id="accentToggle" aria-haspopup="true" aria-expanded="false" title="Accent color" data-i18n-attr="title:a49"></button>
-<div class="acc-pop" id="accentPop" hidden role="group" aria-label="Accent color" data-i18n-attr="aria-label:a49">
-<span class="acc-pop-label" data-i18n="t6">accent:</span>
-<button class="acc" data-accent="red" style="background:#EA524C;color:#EA524C" title="Red" data-i18n-attr="title:a66"></button>
-<button class="acc" data-accent="orange" style="background:#E8962C;color:#E8962C" title="Orange" data-i18n-attr="title:a67"></button><button class="acc" data-accent="yellow" style="background:#EAD900;color:#EAD900" title="Yellow" data-i18n-attr="title:a68"></button>
-<button class="acc" data-accent="green" style="background:#22BB56;color:#22BB56" title="Green" data-i18n-attr="title:a69"></button>
-<button class="acc" data-accent="teal" style="background:#1FB8A8;color:#1FB8A8" title="Teal" data-i18n-attr="title:a70"></button>
-<button class="acc" data-accent="blue" style="background:#50AEE8;color:#50AEE8" title="Blue" data-i18n-attr="title:a71"></button>
-<button class="acc" data-accent="purple" style="background:#C08FE6;color:#C08FE6" title="Purple" data-i18n-attr="title:a72"></button><button class="acc" data-accent="magenta" style="background:#FF6CD1;color:#FF6CD1" title="Magenta" data-i18n-attr="title:a73"></button>
+<button class="acc-toggle" id="accentToggle" aria-haspopup="true" aria-expanded="false" title="Accent color"></button>
+<div class="acc-pop" id="accentPop" hidden role="group" aria-label="Accent color">
+<span class="acc-pop-label" data-i18n="accent_label">accent:</span>
+<button class="acc" data-accent="red"    style="background:#EA524C;color:#EA524C" title="Red"></button>
+<button class="acc" data-accent="orange" style="background:#E8962C;color:#E8962C" title="Orange"></button><button class="acc" data-accent="yellow" style="background:#EAD900;color:#EAD900" title="Yellow"></button>
+<button class="acc" data-accent="green"  style="background:#22BB56;color:#22BB56" title="Green"></button>
+<button class="acc" data-accent="teal"   style="background:#1FB8A8;color:#1FB8A8" title="Teal"></button>
+<button class="acc" data-accent="blue"   style="background:#50AEE8;color:#50AEE8" title="Blue"></button>
+<button class="acc" data-accent="purple" style="background:#C08FE6;color:#C08FE6" title="Purple"></button><button class="acc" data-accent="magenta" style="background:#FF6CD1;color:#FF6CD1" title="Magenta"></button>
 </div>
 </div>
-<div class="lang-switch"><button class="lang-toggle" id="languageToggle" aria-haspopup="true" aria-expanded="false" aria-label="Choose language" data-i18n-attr="aria-label:a1">EN</button><div class="lang-menu" id="languageMenu" hidden><button type="button" class="lang-item" data-lang="en" lang="en-US" aria-pressed="true">English</button><button type="button" class="lang-item" data-lang="bn" lang="bn" aria-pressed="false">বাংলা</button><button type="button" class="lang-item" data-lang="cs" lang="cs-CZ" aria-pressed="false">Čeština</button><button type="button" class="lang-item" data-lang="de" lang="de-DE" aria-pressed="false">Deutsch</button><button type="button" class="lang-item" data-lang="es" lang="es" aria-pressed="false">Español</button><button type="button" class="lang-item" data-lang="fr" lang="fr-FR" aria-pressed="false">Français</button><button type="button" class="lang-item" data-lang="hu" lang="hu-HU" aria-pressed="false">Magyar</button><button type="button" class="lang-item" data-lang="it" lang="it-IT" aria-pressed="false">Italiano</button><button type="button" class="lang-item" data-lang="ja" lang="ja-JP" aria-pressed="false">日本語</button><button type="button" class="lang-item" data-lang="kk" lang="kk-KZ" aria-pressed="false">Қазақша</button><button type="button" class="lang-item" data-lang="nb" lang="nb-NO" aria-pressed="false">Norsk bokmål</button><button type="button" class="lang-item" data-lang="pl" lang="pl-PL" aria-pressed="false">Polski</button><button type="button" class="lang-item" data-lang="pt" lang="pt-BR" aria-pressed="false">Português (Brasil)</button><button type="button" class="lang-item" data-lang="ru" lang="ru-RU" aria-pressed="false">Русский</button><button type="button" class="lang-item" data-lang="sl" lang="sl-SI" aria-pressed="false">Slovenščina</button><button type="button" class="lang-item" data-lang="tr" lang="tr-TR" aria-pressed="false">Türkçe</button><button type="button" class="lang-item" data-lang="uk" lang="uk-UA" aria-pressed="false">Українська</button><button type="button" class="lang-item" data-lang="vi" lang="vi-VN" aria-pressed="false">Tiếng Việt</button><button type="button" class="lang-item" data-lang="zh-cn" lang="zh-CN" aria-pressed="false">简体中文</button><button type="button" class="lang-item" data-lang="zh" lang="zh-TW" aria-pressed="false">繁體中文</button></div></div>
+<div class="lang-switch" role="group" aria-label="Language">
+<button class="lang-toggle" id="langToggle" aria-haspopup="true" aria-expanded="false" title="Language" aria-label="Language">&#127760;</button>
+<div class="lang-menu" id="langMenu" hidden>
+<button class="lang-item" data-lang="en">English</button>
+<button class="lang-item" data-lang="bn">&#2476;&#2494;&#2434;&#2482;&#2494;</button>
+<button class="lang-item" data-lang="cs">&#268;e&#353;tina</button>
+<button class="lang-item" data-lang="de">Deutsch</button>
+<button class="lang-item" data-lang="es">Espa&#241;ol</button>
+<button class="lang-item" data-lang="fr">Fran&#231;ais</button>
+<button class="lang-item" data-lang="ja">&#26085;&#26412;&#35486;</button>
+<button class="lang-item" data-lang="kk">&#1178;&#1072;&#1079;&#1072;&#1179;&#1096;&#1072;</button>
+<button class="lang-item" data-lang="nb">Norsk bokm&#229;l</button><button class="lang-item" data-lang="pl">Polski</button>
+<button class="lang-item" data-lang="hu">Magyar</button>
+<button class="lang-item" data-lang="it">Italiano</button>
+<button class="lang-item" data-lang="pt">Portugu&#234;s (Brasil)</button><button class="lang-item" data-lang="ru">&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</button><button class="lang-item" data-lang="sl">Slovenščina</button>
+<button class="lang-item" data-lang="tr">T&#252;rk&#231;e</button>
+<button class="lang-item" data-lang="uk">&#1059;&#1082;&#1088;&#1072;&#1111;&#1085;&#1089;&#1100;&#1082;&#1072;</button><button class="lang-item" data-lang="vi">Ti&#7871;ng Vi&#7879;t</button>
+<button class="lang-item" data-lang="zh-cn">&#20013;&#25991; (&#31616;&#20307;)</button>
+<button class="lang-item" data-lang="zh">&#20013;&#25991; (&#32321;&#39636;)</button>
+</div>
+</div>
 </div>
 
 <div class="shell">
@@ -69,48 +162,46 @@
 <span class="hero-icon-frame"><img class="hero-icon" src="kb-icon.png" alt="" aria-hidden="true" width="230" height="230"></span>
 <span class="hero-wordmark-frame"><img class="wm-logo" src="brand/killerbench-logo-dark-yellow.svg" alt="KillerBench"></span>
 </div>
-<p class="tagline" data-i18n="t7">Choose a tool, review its options, and press Run diagnosis. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.</p>
+<p class="tagline" data-i18n="tagline">Choose a tool, review its options, and press Run diagnosis. Follow the evidence in Raw output or the Readable report. Supported repairs check current prerequisites, record the request, and verify the result.</p>
 <div class="hero-grid">
 <div class="hero-cta">
 <div class="cta-row">
-<a class="download-btn" href="help.html"><svg viewbox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v16H6.5a.5.5 0 0 0 0 1H20v3H6.5A2.5 2.5 0 0 1 4 19.5v-15z"></path></svg><span data-i18n="t8">Read the guide</span></a>
+<a href="help.html" class="download-btn"><svg viewBox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v16H6.5a.5.5 0 0 0 0 1H20v3H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/></svg><span data-i18n="cta_guide">Read the guide</span></a>
 </div>
-<a class="gh-btn" href="engine/index.html"><svg viewbox="0 0 24 24"><path d="M8.6 16.6 4 12l4.6-4.6L7.2 6 1.2 12l6 6 1.4-1.4zm6.8 0L20 12l-4.6-4.6L16.8 6l6 6-6 6-1.4-1.4z"></path></svg><span data-i18n="t9">Engine developer guide</span></a>
+<a href="https://github.com/SteveTheKiller/KillerBench" class="gh-btn" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.29 3.44 9.77 8.2 11.36.6.11.82-.26.82-.58v-2.04c-3.34.72-4.04-1.61-4.04-1.61-.55-1.38-1.34-1.75-1.34-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.11-3.17 0 0 1.01-.32 3.3 1.23A11.5 11.5 0 0112 6.8c1.02 0 2.05.14 3 .4 2.29-1.55 3.3-1.23 3.3-1.23.65 1.65.24 2.87.12 3.17.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58A12 12 0 0024 12.5C24 5.87 18.63.5 12 .5z"/></svg><span data-i18n="gh_btn">Source on GitHub</span></a>
 </div>
 <div class="hero-info">
-<div class="row"><span class="k" data-i18n="t10">version</span> <span class="v">KillerBench v1.0.0</span></div>
-<div class="row"><span class="k" data-i18n="t11">status</span> <span class="v" data-i18n="t12">In development</span></div>
-<div class="row"><span class="k" data-i18n="t13">platform</span> <span class="v">Windows 10/11 x64</span></div>
-<p class="note" data-i18n="t14">KillerBench is in development. Public downloads are not available yet. Native repair validation is still in progress.</p>
+<div class="row"><span class="k" data-i18n="ui_version">version</span>&nbsp;<span class="v">KillerBench v1.0.0</span></div>
+<div class="row"><span class="k" data-i18n="ui_status">status</span>&nbsp;<span class="v" data-i18n="ui_in_development">In development</span></div>
+<div class="row"><span class="k" data-i18n="ui_platform">platform</span>&nbsp;<span class="v">Windows 10/11 x64</span></div>
+<p class="note" data-i18n="hero_note">KillerBench is in development. Public downloads are not available yet. Native repair validation is still in progress.</p>
 </div>
 </div>
 <div class="hero-blurbs">
-<div class="blurb"><h3 data-i18n="t15">What it is for</h3><p data-i18n="t16">Taking over a computer you have never seen. Run a full system scan and get a ranked list of what needs attention before you change anything.</p><br><p data-i18n="t17">Closing a ticket with proof. Export the readable report with the evidence behind every finding, so a repair is shown as verified rather than assumed.</p></div>
-<div class="blurb"><h3 data-i18n="t18">Your theme. Traceable findings.</h3><p data-i18n="t19">Textured surfaces, the Killer Tools wordmark, and 13 app themes. The smoked-glass console, readable reports, confirmations, and Open, Save, and Folder dialogs follow the active app theme.</p></div>
-<div class="blurb" id="about"><h3 data-i18n="t20">Part of the Killer Tools family</h3><ul class="blurb-list">
-<li data-i18n="t21"><a href="help.html#setup">Download and setup</a></li>
-<li data-i18n="t22"><a href="about.html">About KillerBench</a></li>
-<li data-i18n="t23"><a href="help.html#workspace">Find your way around</a></li>
-<li data-i18n="t24"><a href="help.html#safety">Review the safety model</a></li>
-<li data-i18n="t25"><a href="engine/index.html">Engine developer guide</a></li>
+<div class="blurb"><h3 data-i18n="b3_t">What it is for</h3><p data-i18n="b3_d0">Taking over a computer you have never seen. Run a full system scan and get a ranked list of what needs attention before you change anything.</p><br><p data-i18n="b3_d1">Closing a ticket with proof. Export the readable report with the evidence behind every finding, so a repair is shown as verified rather than assumed.</p></div>
+<div class="blurb"><h3 data-i18n="b2_t">Your theme. Traceable findings.</h3><p data-i18n="b2_d">Textured surfaces, the Killer Tools wordmark, and 13 app themes. The smoked-glass console, readable reports, confirmations, and Open, Save, and Folder dialogs follow the active app theme.</p></div>
+<div class="blurb"><h3 data-i18n="b1_t">Part of the Killer Tools family</h3><ul class="blurb-list" data-i18n="b1_d">
+<li><a href="help.html#setup">Download and setup</a></li>
+<li><a href="about.html">About KillerBench</a></li>
+<li><a href="help.html#workspace">Find your way around</a></li>
+<li><a href="help.html#safety">Review the safety model</a></li>
 <li><a href="mcp.html">KillerMCP</a></li>
-<li data-i18n="t26"><a href="https://killertools.net">Explore Killer Tools</a></li>
+<li><a href="https://killertools.net">Explore Killer Tools</a></li>
 </ul></div>
 </div>
 </section>
 
-<section class="features" id="features">
-<h2 data-i18n="t27">Inside the workbench</h2>
+<section class="features">
+<h2 data-i18n="features_h">Inside the workbench</h2>
 <div class="feature-grid">
-<div class="feature-card"><h3 data-i18n="t28">Twelve sections, one habit</h3><p data-i18n="t29">Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker, Privacy and Storage. Every tool reads before it offers anything, and a full system scan ranks what needs attention.</p></div>
-<div class="feature-card"><h3 data-i18n="t30">Fix only what is proven</h3><p data-i18n="t31">A repair is offered only when fresh evidence matches the exact problem. It needs your confirmation, rechecks everything right before it runs, and reads the result back before it says Verified.</p></div>
-<div class="feature-card"><h3 data-i18n="t32">No black boxes</h3><p data-i18n="t33">Findings link to the event, log line or setting behind them. Incomplete evidence is never reported as healthy, and history stays history. Export the report straight into a ticket.</p></div>
-<div class="feature-card"><h3 data-i18n="t34">Encryption without guesswork</h3><p data-i18n="t35">Inspect protectors, back up recovery passwords to a file, Active Directory or Entra ID, encrypt Windows and data drives, turn on auto-unlock and prepare a TPM without ever clearing it.</p></div>
-<div class="feature-card"><h3 data-i18n="t36">Make a laptop yours</h3><p data-i18n="t37">Review and change privacy settings, app permissions and cloud search, then declutter Windows. Settings owned by policy or device management are left alone.</p></div>
-<div class="feature-card"><h3 data-i18n="t38">Check before retrying</h3><p data-i18n="t39">Journaled repairs record a pending request before dispatch. If a request is interrupted, recovery checks what happened without automatically repeating the change.</p></div>
-<div class="feature-card"><h3 data-i18n="t40">No AI required</h3><p data-i18n="t41">Diagnostics and report analysis run locally without an AI service or KillerBench account. Actions you select, such as downloads or recovery-key backup to Entra ID, can contact their destination. The same Engine powers the desktop app and command line.</p></div>
+<div class="feature-card"><h3 data-i18n="f_sections_t">Twelve sections, one habit</h3><p data-i18n="f_sections_d">Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker, Privacy and Storage. Every tool reads before it offers anything, and a full system scan ranks what needs attention.</p></div>
+<div class="feature-card"><h3 data-i18n="f_proven_t">Fix only what is proven</h3><p data-i18n="f_proven_d">A repair is offered only when fresh evidence matches the exact problem. It needs your confirmation, rechecks everything right before it runs, and reads the result back before it says Verified.</p></div>
+<div class="feature-card"><h3 data-i18n="f_evidence_t">No black boxes</h3><p data-i18n="f_evidence_d">Findings link to the event, log line or setting behind them. Incomplete evidence is never reported as healthy, and history stays history. Export the report straight into a ticket.</p></div>
+<div class="feature-card"><h3 data-i18n="f_bitlocker_t">Encryption without guesswork</h3><p data-i18n="f_bitlocker_d">Inspect protectors, back up recovery passwords to a file, Active Directory or Entra ID, encrypt Windows and data drives, turn on auto-unlock and prepare a TPM without ever clearing it.</p></div>
+<div class="feature-card"><h3 data-i18n="f_privacy_t">Make a laptop yours</h3><p data-i18n="f_privacy_d">Review and change privacy settings, app permissions and cloud search, then declutter Windows. Settings owned by policy or device management are left alone.</p></div>
+<div class="feature-card"><h3 data-i18n="f_journal_t">Check before retrying</h3><p data-i18n="f_journal_d">Journaled repairs record a pending request before dispatch. If a request is interrupted, recovery checks what happened without automatically repeating the change.</p></div>
+<div class="feature-card"><h3 data-i18n="f_local_t">No AI required</h3><p data-i18n="f_local_d">Diagnostics and report analysis run locally without an AI service or KillerBench account. Actions you select, such as downloads or recovery-key backup to Entra ID, can contact their destination. The same Engine powers the desktop app and command line.</p></div>
 </div>
-<p class="caption" data-i18n="t42"><a href="help.html">Read the full guide</a> for every section and tool.</p>
 </section>
 
 </div>
@@ -119,18 +210,7 @@
 
 <aside class="sidebar">
 <div class="sb-thumbs" id="sbThumbs">
-<button type="button" class="sb-thumb" title="Full system scan, Dark theme with the yellow accent - the readable report on a demo machine" aria-label="Full system scan, Dark theme with the yellow accent - the readable report on a demo machine" data-i18n-attr="title:a74;aria-label:a74"><img src="screenshots/01.png" alt="Full system scan, Dark theme with the yellow accent - the readable report on a demo machine" data-i18n-attr="alt:a74"></button>
-<button type="button" class="sb-thumb" title="Windows Update, Delirium theme - service, servicing and update history checks" aria-label="Windows Update, Delirium theme - service, servicing and update history checks" data-i18n-attr="title:a75;aria-label:a75"><img src="screenshots/02.png" alt="Windows Update, Delirium theme - service, servicing and update history checks" data-i18n-attr="alt:a75"></button>
-<button type="button" class="sb-thumb" title="Network, Light theme with the orange accent - DNS and connection checks, Film Grain off" aria-label="Network, Light theme with the orange accent - DNS and connection checks, Film Grain off" data-i18n-attr="title:a76;aria-label:a76"><img src="screenshots/03.png" alt="Network, Light theme with the orange accent - DNS and connection checks, Film Grain off" data-i18n-attr="alt:a76"></button>
-<button type="button" class="sb-thumb" title="Printing, 98SE theme - print queue and spooler checks beside the printer tools" aria-label="Printing, 98SE theme - print queue and spooler checks beside the printer tools" data-i18n-attr="title:a77;aria-label:a77"><img src="screenshots/04.png" alt="Printing, 98SE theme - print queue and spooler checks beside the printer tools" data-i18n-attr="alt:a77"></button>
-<button type="button" class="sb-thumb" title="Simulated repair of Core Windows services, Malaise theme - at 110% app zoom" aria-label="Simulated repair of Core Windows services, Malaise theme - at 110% app zoom" data-i18n-attr="title:a78;aria-label:a78"><img src="screenshots/05.png" alt="Simulated repair of Core Windows services, Malaise theme - at 110% app zoom" data-i18n-attr="alt:a78"></button>
-<button type="button" class="sb-thumb" title="Raw output, Black theme with the teal accent - the full system scan log" aria-label="Raw output, Black theme with the teal accent - the full system scan log" data-i18n-attr="title:a79;aria-label:a79"><img src="screenshots/06.png" alt="Raw output, Black theme with the teal accent - the full system scan log" data-i18n-attr="alt:a79"></button>
-<button type="button" class="sb-thumb" title="Microsoft Defender, Sepulchre theme - with the tools sidebar collapsed" aria-label="Microsoft Defender, Sepulchre theme - with the tools sidebar collapsed" data-i18n-attr="title:a80;aria-label:a80"><img src="screenshots/07.png" alt="Microsoft Defender, Sepulchre theme - with the tools sidebar collapsed" data-i18n-attr="alt:a80"></button>
-<button type="button" class="sb-thumb" title="Onboarding, Mourning theme - application and configuration groups for a new computer" aria-label="Onboarding, Mourning theme - application and configuration groups for a new computer" data-i18n-attr="title:a81;aria-label:a81"><img src="screenshots/08.png" alt="Onboarding, Mourning theme - application and configuration groups for a new computer" data-i18n-attr="alt:a81"></button>
-<button type="button" class="sb-thumb" title="Storage, Ectoplasm theme - volume checks and drive maintenance at 90% app zoom" aria-label="Storage, Ectoplasm theme - volume checks and drive maintenance at 90% app zoom" data-i18n-attr="title:a82;aria-label:a82"><img src="screenshots/09.png" alt="Storage, Ectoplasm theme - volume checks and drive maintenance at 90% app zoom" data-i18n-attr="alt:a82"></button>
-<button type="button" class="sb-thumb" title="BitLocker, Light theme with the green accent - protection, recovery key backup and encryption options, Film Grain off" aria-label="BitLocker, Light theme with the green accent - protection, recovery key backup and encryption options, Film Grain off" data-i18n-attr="title:a83;aria-label:a83"><img src="screenshots/10.png" alt="BitLocker, Light theme with the green accent - protection, recovery key backup and encryption options, Film Grain off" data-i18n-attr="alt:a83"></button>
-<button type="button" class="sb-thumb" title="Keyboard shortcuts, Dark theme with the blue accent - the F1 overlay" aria-label="Keyboard shortcuts, Dark theme with the blue accent - the F1 overlay" data-i18n-attr="title:a84;aria-label:a84"><img src="screenshots/11.png" alt="Keyboard shortcuts, Dark theme with the blue accent - the F1 overlay" data-i18n-attr="alt:a84"></button>
-<button type="button" class="sb-thumb" title="Certificate expiration, Greed theme - at 120% app zoom" aria-label="Certificate expiration, Greed theme - at 120% app zoom" data-i18n-attr="title:a85;aria-label:a85"><img src="screenshots/12.png" alt="Certificate expiration, Greed theme - at 120% app zoom" data-i18n-attr="alt:a85"></button>
+<div class="sb-empty" data-i18n="sb_empty">Screenshots<br>coming soon</div>
 </div>
 <div class="sb-fade sb-fade-top" aria-hidden="true"></div>
 <div class="sb-fade sb-fade-bottom" aria-hidden="true"></div>
@@ -138,17 +218,138 @@
 </div>
 
 <footer class="statusbar">
-<span class="left" data-i18n="t43">In development · Part of <a href="https://killertools.net">killertools.net</a></span>
-<span class="right">© 2026 <b><a href="https://thekiller.net">Steve the Killer</a></b></span>
+<span class="left"><a href="https://github.com/SteveTheKiller/KillerBench" target="_blank" rel="noopener" data-i18n="footer_src">Source on GitHub</a> &middot; GPLv3 &middot; <span data-i18n="ui_part_of">Part of</span> <a href="https://killertools.net" target="_blank" rel="noopener">killertools.net</a></span>
+<span class="right"><span id="verEgg" title="click me">v1.0.0</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
 </footer>
+<div class="egg-toast" id="eggToast"></div>
 
-<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Expanded KillerBench screenshot" aria-hidden="true" tabindex="-1" data-i18n-attr="aria-label:a86">
-<figure class="lightbox-figure">
-<img id="lightboxImg" src="" alt="">
-<figcaption id="lightboxCaption"></figcaption>
-</figure>
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Expanded KillerBench screenshot" aria-hidden="true" tabindex="-1" inert>
+  <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close" title="Close">&times;</button>
+  <figure class="lightbox-figure">
+    <img id="lightboxImg" src="" alt="">
+    <figcaption id="lightboxCaption"></figcaption>
+  </figure>
 </div>
 
+<div hidden id="screenshotDescriptions">
+<span data-i18n="shot_scan">Full system scan, Dark theme with the yellow accent - the readable report on a demo machine</span>
+<span data-i18n="shot_update">Windows Update, Delirium theme - service, servicing and update history checks</span>
+<span data-i18n="shot_network">Network, Light theme with the orange accent - DNS and connection checks, Film Grain off</span>
+<span data-i18n="shot_printing">Printing, 98SE theme - print queue and spooler checks beside the printer tools</span>
+<span data-i18n="shot_repair">Simulated repair of Core Windows services, Malaise theme - at 110% app zoom</span>
+<span data-i18n="shot_raw">Raw output, Black theme with the teal accent - the full system scan log</span>
+<span data-i18n="shot_defender">Microsoft Defender, Sepulchre theme - with the tools sidebar collapsed</span>
+<span data-i18n="shot_onboarding">Onboarding, Mourning theme - application and configuration groups for a new computer</span>
+<span data-i18n="shot_storage">Storage, Ectoplasm theme - volume checks and drive maintenance at 90% app zoom</span>
+<span data-i18n="shot_bitlocker">BitLocker, Light theme with the green accent - protection, recovery key backup and encryption options, Film Grain off</span>
+<span data-i18n="shot_shortcuts">Keyboard shortcuts, Dark theme with the blue accent - the F1 overlay</span>
+<span data-i18n="shot_certs">Certificate expiration, Greed theme - at 120% app zoom</span>
+</div>
+
+<script src="kb-i18n.js?v=1"></script>
+<script src="kb.js?v=1"></script>
+<script src="feature-carousel.js?v=4"></script>
+<script>
+(function () {
+  // Rendered by Checks/DemoScreenshotChecks.cs from KillerBench --demo-screenshot on a fictional machine.
+  // Each localized description supplies alt text, a tooltip and the lightbox caption.
+  var screenshots = ['shot_scan', 'shot_update', 'shot_network', 'shot_printing', 'shot_repair', 'shot_raw',
+    'shot_defender', 'shot_onboarding', 'shot_storage', 'shot_bitlocker', 'shot_shortcuts', 'shot_certs'];
+  var sbThumbs = document.getElementById('sbThumbs');
+  var empty = sbThumbs.querySelector('.sb-empty');
+  var lightbox = document.getElementById('lightbox');
+  var lightboxImg = document.getElementById('lightboxImg');
+  var lightboxCaption = document.getElementById('lightboxCaption');
+  var lightboxClose = document.getElementById('lightboxClose');
+  var lastTrigger = null;
+  var background = [];
+
+  function file(n) { return 'screenshots/' + (n < 10 ? '0' : '') + n + '.png'; }
+  function descriptionFor(n) {
+    var caption = document.querySelector('[data-i18n="' + screenshots[n - 1] + '"]');
+    return caption ? caption.textContent : '';
+  }
+  function refreshDescriptions() {
+    sbThumbs.querySelectorAll('.sb-thumb').forEach(function (b) {
+      var description = descriptionFor(+b.dataset.idx);
+      b.title = description; b.setAttribute('aria-label', description);
+      var img = b.querySelector('img'); if (img) { img.alt = description; img.title = description; }
+    });
+    if (lastTrigger) {
+      var description = descriptionFor(+lastTrigger.dataset.idx);
+      lightboxCaption.textContent = description; lightboxImg.alt = description; lightboxImg.title = description;
+    }
+  }
+  new MutationObserver(refreshDescriptions).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+
+  // A real modal: everything behind the overlay is inert until it closes.
+  function openLightbox(trigger) {
+    if (!lightbox.classList.contains('show')) {
+      background = Array.from(document.body.children).filter(function (element) {
+        return element !== lightbox && !/^(SCRIPT|STYLE|LINK)$/.test(element.tagName);
+      }).map(function (element) {
+        var previous = element.inert; element.inert = true;
+        return { element: element, previous: previous };
+      });
+    }
+    lastTrigger = trigger;
+    var n = +trigger.dataset.idx, description = descriptionFor(n);
+    lightboxImg.src = file(n); lightboxImg.alt = description; lightboxImg.title = description;
+    lightboxCaption.textContent = description;
+    lightbox.setAttribute('aria-hidden', 'false');
+    lightbox.inert = false;
+    lightbox.classList.add('show');
+    lightboxClose.focus();
+  }
+  function closeLightbox() {
+    if (!lightbox.classList.contains('show')) return;
+    background.forEach(function (state) { state.element.inert = state.previous; });
+    background = [];
+    lightbox.classList.remove('show');
+    lightbox.setAttribute('aria-hidden', 'true');
+    lightbox.inert = true;
+    if (lastTrigger && lastTrigger.isConnected) lastTrigger.focus();
+    lastTrigger = null;
+  }
+  lightbox.addEventListener('click', closeLightbox);
+  lightboxClose.addEventListener('click', function (e) { e.stopPropagation(); closeLightbox(); });
+  document.addEventListener('keydown', function (e) {
+    if (!lightbox.classList.contains('show')) return;
+    if (e.key === 'Tab') { lightboxClose.focus(); e.preventDefault(); }
+    if (e.key === 'Escape') { closeLightbox(); e.preventDefault(); }
+  });
+
+  // Probe each still before adding its thumbnail, in numeric order whichever loads first,
+  // so a missing file leaves the rest of the strip usable.
+  screenshots.forEach(function (_, i) {
+    var n = i + 1, img = new Image();
+    img.onload = function () {
+      if (empty) { empty.remove(); empty = null; }
+      var b = document.createElement('button');
+      b.className = 'sb-thumb'; b.type = 'button'; b.dataset.idx = n;
+      b.appendChild(img);
+      b.addEventListener('click', function () { openLightbox(b); });
+      var next = null, kids = sbThumbs.children;
+      for (var k = 0; k < kids.length; k++) if (kids[k].dataset && +kids[k].dataset.idx > n) { next = kids[k]; break; }
+      sbThumbs.insertBefore(b, next);
+      refreshDescriptions();
+      updateFade();
+    };
+    img.src = file(n);
+  });
+
+  // Fade the strip's edges while more shots sit beyond them, as the app's sidebar does.
+  var fadeTop = document.querySelector('.sb-fade-top');
+  var fadeBottom = document.querySelector('.sb-fade-bottom');
+  function updateFade() {
+    if (fadeTop) fadeTop.classList.toggle('on', sbThumbs.scrollTop > 2);
+    if (fadeBottom) fadeBottom.classList.toggle('on', sbThumbs.scrollHeight - sbThumbs.clientHeight - sbThumbs.scrollTop > 2);
+  }
+  sbThumbs.addEventListener('scroll', updateFade, { passive: true });
+  window.addEventListener('resize', updateFade);
+  updateFade();
+})();
+</script>
 <script src="brand-layout.js?v=1"></script>
 </body>
 </html>
