@@ -116,7 +116,9 @@ $ops.Publisher = { param($path, $plan)
             UseShellExecute = false,
             CreateNoWindow = true,
             WindowStyle = ProcessWindowStyle.Hidden,
-            WorkingDirectory = Environment.SystemDirectory
+            WorkingDirectory = Environment.SystemDirectory,
+            // A PowerShell 7 parent leaks its module path, and Windows PowerShell then cannot load Get-AuthenticodeSignature.
+            Environment = { ["PSModulePath"] = Path.Combine(Environment.SystemDirectory, @"WindowsPowerShell\v1.0\Modules") }
         };
 
     private sealed record Outcome(int Exit, bool InstallerRan, bool Relaunched, bool ReleasesOpened, bool StageEmpty, string Download);
