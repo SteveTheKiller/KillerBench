@@ -41,7 +41,12 @@ $ops.Publisher = { param($path, $plan)
         var unsigned = Case(root, "wrong-publisher", installer, hash, "Fixture Publisher That Did Not Sign This");
         Require(unsigned.Exit != 0 && !unsigned.InstallerRan && unsigned.ReleasesOpened && unsigned.StageEmpty,
             "An installer not signed by the publisher is refused at the execution boundary: " + unsigned);
-        Console.WriteLine("PASS: the installed-copy update helper rechecks SHA-256 and publisher from a held staged copy, refuses a swapped download and runs only the verified image.");
+        var failed = Case(root, "installer-failed", installer, hash, "Microsoft", "/d /c exit 3");
+        string failedReport = failed.Download + ".update-failure.txt";
+        Require(failed.Exit != 0 && !failed.Relaunched && failed.ReleasesOpened && File.Exists(failed.Download) && File.Exists(failedReport)
+            && File.ReadAllText(failedReport).Contains("Download: " + failed.Download, StringComparison.Ordinal),
+            "An installer that exits nonzero keeps the verified download the failure report names: " + failed);
+        Console.WriteLine("PASS: the installed-copy update helper rechecks SHA-256 and publisher from a held staged copy, refuses a swapped download, runs only the verified image and keeps the download when the installer fails.");
 
         // The portable helper must still parse.
         string portableDownload = Path.Combine(root, "portable.exe");
@@ -105,7 +110,7 @@ $ops.Publisher = { param($path, $plan)
 
     private sealed record Outcome(int Exit, bool InstallerRan, bool Relaunched, bool ReleasesOpened, bool StageEmpty, string Download);
 
-    private static Outcome Case(string root, string name, byte[] download, string hash, string signer)
+    private static Outcome Case(string root, string name, byte[] download, string hash, string signer, string? arguments = null)
     {
         string folder = Path.Combine(root, name);
         Directory.CreateDirectory(folder);
@@ -120,7 +125,7 @@ $ops.Publisher = { param($path, $plan)
         string overrides = "$plan.Signer = '" + signer.Replace("'", "''") + "'\n" + CatalogPublisher + "\n" +
             "$ops.Relaunch = { param($plan) [IO.File]::WriteAllText('" + relaunched + "', 'yes') }\n" +
             "$ops.Releases = { param($url) [IO.File]::WriteAllText('" + releases + "', $url) }";
-        string script = UpdateImagePublication.Installer(path, "/d /c type nul > \"" + marker + "\"", false,
+        string script = UpdateImagePublication.Installer(path, arguments ?? "/d /c type nul > \"" + marker + "\"", false,
             "fixture-app.exe", stage, "https://example.invalid/releases", overrides);
         using var process = Process.Start(Helper(script)) ?? throw new Exception("The update helper did not start.");
         if (!process.WaitForExit(60_000)) { process.Kill(true); throw new Exception("The update helper did not finish."); }
