@@ -11,7 +11,7 @@
 <meta name="description" content="Knowledge packs keep large and frequently updated reference data outside the Engine&#x27;s diagnostic logic.">
 <link rel="icon" type="image/x-icon" href="../brand/kb-icon.ico">
 <link rel="stylesheet" href="../kb.css?v=1">
-<link rel="stylesheet" href="engine-docs.css?v=9">
+<link rel="stylesheet" href="engine-docs.css?v=10">
 </head>
 <body class="compact-sidebar sidebar-first">
 
@@ -76,26 +76,26 @@
 </div>
 </div>
 
-<div class="shell engine-shell"><aside class="sidebar engine-sidebar"><div class="sb-tabs"><span class="on" data-i18n="t1390">Developer guide</span><a href="../help.html" data-i18n="nav_help">Help</a></div><nav class="docs-nav" aria-label="Developer guide" data-i18n-aria-label="a1431"><div class="docs-nav-group"><span class="docs-nav-label">Engine</span><a href="index.html" data-i18n="t1391">Overview</a></div><div class="docs-nav-group"><span class="docs-nav-label" data-i18n="t88">Start here</span><a href="getting-started.html" data-i18n="t1398">Getting started</a></div><div class="docs-nav-group"><span class="docs-nav-label" data-i18n="t1399">Use the Engine</span><a href="workflows.html" data-i18n="t1400">Diagnostic workflows</a><a href="evidence.html" data-i18n="t1401">Evidence and results</a><a href="repairs.html" data-i18n="t1402">Repairs and safety</a></div><div class="docs-nav-group"><span class="docs-nav-label" data-i18n="t118">Reference</span><a href="cli.html" data-i18n="t1403">CLI guide</a><a href="api.html" data-i18n="t1404">API guide</a><a href="architecture.html" data-i18n="t1109">Architecture</a><a href="knowledge-packs.html" class="on" aria-current="page" data-i18n="t1105">Knowledge packs</a><div class="page-outline"><a href="#suitable-data">Suitable data</a><a href="#pack-contract">Pack contract</a><a href="#generators">Generators</a><a href="#updates" data-i18n="t109">Updates</a><a href="#separation-from-diagnostics">Separation from diagnostics</a></div></div></nav></aside><div class="content"><div class="content-scroll"><div class="engine-doc-wrap"><article class="engine-doc" id="engineDoc"><h1 id="knowledge-packs" data-i18n="t1105">Knowledge packs</h1>
-<p class="doc-lede">Knowledge packs keep large and frequently updated reference data outside the Engine's diagnostic logic.</p>
-<h2 id="suitable-data">Suitable data</h2>
-<ul><li>Windows and Setup error codes</li><li>Vendor and device identifiers</li><li>PCI, USB, ACPI, and UEFI references</li><li>Network OUI vendor data</li><li>Driver and support locations</li><li>Application and package metadata</li><li>Curated support links and diagnostic scopes</li></ul>
-<h2 id="pack-contract">Pack contract</h2>
-<p>A pack should identify its format, schema version, source, source revision, generation time, and content hash. The Engine validates those fields before using the data. Unknown or invalid packs remain unavailable rather than silently falling back to guesses.</p>
-<h2 id="generators">Generators</h2>
-<p>Generators belong in the repository when they are required to reproduce a distributed pack. They should:</p>
-<ol><li>Download only from named authoritative sources.</li><li>Record source revisions and licenses.</li><li>Validate input before transformation.</li><li>Normalize data deterministically.</li><li>Write a manifest and content hash.</li><li>Produce the same output from the same source input.</li></ol>
-<p>Large generated databases and temporary downloads do not belong in the Engine source folder. The repository can contain small fixtures for parser and schema tests.</p>
+<div class="shell engine-shell"><aside class="sidebar engine-sidebar"><div class="sb-tabs"><span class="on" data-i18n="t1390">Developer guide</span><a href="../help.html" data-i18n="nav_help">Help</a></div><nav class="docs-nav" aria-label="Developer guide" data-i18n-aria-label="a1431"><div class="docs-nav-group"><span class="docs-nav-label">Engine</span><a href="index.html" data-i18n="t1391">Overview</a></div><div class="docs-nav-group"><span class="docs-nav-label" data-i18n="t88">Start here</span><a href="getting-started.html" data-i18n="t1398">Getting started</a></div><div class="docs-nav-group"><span class="docs-nav-label" data-i18n="t1399">Use the Engine</span><a href="workflows.html" data-i18n="t1400">Diagnostic workflows</a><a href="evidence.html" data-i18n="t1401">Evidence and results</a><a href="repairs.html" data-i18n="t1402">Repairs and safety</a></div><div class="docs-nav-group"><span class="docs-nav-label" data-i18n="t118">Reference</span><a href="cli.html" data-i18n="t1403">CLI guide</a><a href="api.html" data-i18n="t1404">API guide</a><a href="architecture.html" data-i18n="t1109">Architecture</a><a href="knowledge-packs.html" class="on" aria-current="page" data-i18n="t1105">Knowledge packs</a><div class="page-outline"><a href="#suitable-data" data-i18n="e151">Suitable data</a><a href="#pack-contract" data-i18n="e159">Pack contract</a><a href="#generators" data-i18n="e161">Generators</a><a href="#updates" data-i18n="t109">Updates</a><a href="#separation-from-diagnostics" data-i18n="e171">Separation from diagnostics</a></div></div></nav></aside><div class="content"><div class="content-scroll"><div class="engine-doc-wrap"><article class="engine-doc" id="engineDoc"><h1 id="knowledge-packs" data-i18n="t1105">Knowledge packs</h1>
+<p class="doc-lede" data-i18n="e150">Knowledge packs keep large and frequently updated reference data outside the Engine's diagnostic logic.</p>
+<h2 id="suitable-data" data-i18n="e151">Suitable data</h2>
+<ul><li data-i18n="e152">Windows and Setup error codes</li><li data-i18n="e153">Vendor and device identifiers</li><li data-i18n="e154">PCI, USB, ACPI, and UEFI references</li><li data-i18n="e155">Network OUI vendor data</li><li data-i18n="e156">Driver and support locations</li><li data-i18n="e157">Application and package metadata</li><li data-i18n="e158">Curated support links and diagnostic scopes</li></ul>
+<h2 id="pack-contract" data-i18n="e159">Pack contract</h2>
+<p data-i18n="e160">A pack should identify its format, schema version, source, source revision, generation time, and content hash. The Engine validates those fields before using the data. Unknown or invalid packs remain unavailable rather than silently falling back to guesses.</p>
+<h2 id="generators" data-i18n="e161">Generators</h2>
+<p data-i18n="e162">Generators belong in the repository when they are required to reproduce a distributed pack. They should:</p>
+<ol><li data-i18n="e163">Download only from named authoritative sources.</li><li data-i18n="e164">Record source revisions and licenses.</li><li data-i18n="e165">Validate input before transformation.</li><li data-i18n="e166">Normalize data deterministically.</li><li data-i18n="e167">Write a manifest and content hash.</li><li data-i18n="e168">Produce the same output from the same source input.</li></ol>
+<p data-i18n="e169">Large generated databases and temporary downloads do not belong in the Engine source folder. The repository can contain small fixtures for parser and schema tests.</p>
 <h2 id="updates" data-i18n="t109">Updates</h2>
-<p>The desktop About surface can offer an Update databases action. An update should download to a temporary location, validate the manifest and hash, then replace the active pack atomically. A failed update must leave the prior valid pack available.</p>
-<h2 id="separation-from-diagnostics">Separation from diagnostics</h2>
-<p>Knowledge data can explain an identifier or suggest a next diagnostic scope. It cannot convert a historical code into a current fault, choose a driver automatically, or authorize a repair. Current machine evidence remains the deciding input.</p></article><nav class="doc-pager" aria-label="Documentation pages" data-i18n-aria-label="a1432"><a href="architecture.html"><small>Previous</small><span data-i18n="t1109">Architecture</span></a><span></span></nav></div></div></div></div><footer class="statusbar">
+<p data-i18n="e170">The desktop About surface can offer an Update databases action. An update should download to a temporary location, validate the manifest and hash, then replace the active pack atomically. A failed update must leave the prior valid pack available.</p>
+<h2 id="separation-from-diagnostics" data-i18n="e171">Separation from diagnostics</h2>
+<p data-i18n="e172">Knowledge data can explain an identifier or suggest a next diagnostic scope. It cannot convert a historical code into a current fault, choose a driver automatically, or authorize a repair. Current machine evidence remains the deciding input.</p></article><nav class="doc-pager" aria-label="Documentation pages" data-i18n-aria-label="a1432"><a href="architecture.html"><small>Previous</small><span data-i18n="t1109">Architecture</span></a><span></span></nav></div></div></div></div><footer class="statusbar">
 <span class="left"><a href="https://github.com/SteveTheKiller/KillerBench" target="_blank" rel="noopener" data-i18n="footer_src">Source on GitHub</a> &middot; GPLv3 &middot; <span data-i18n="ui_part_of">Part of</span> <a href="https://killertools.net" target="_blank" rel="noopener">killertools.net</a></span>
 <span class="right"><span id="verEgg" title="click me">v1.0.0</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
 </footer>
 <div class="egg-toast" id="eggToast"></div>
 
-<script src="../kb-i18n.js?v=1"></script>
+<script src="../kb-i18n.js?v=2"></script>
 <script src="../kb.js?v=1"></script>
 </body>
 </html>

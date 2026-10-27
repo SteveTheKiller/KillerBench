@@ -11,7 +11,7 @@
 <meta name="description" content="Run a read-only diagnostic workflow and inspect its typed result in a few minutes.">
 <link rel="icon" type="image/x-icon" href="../brand/kb-icon.ico">
 <link rel="stylesheet" href="../kb.css?v=1">
-<link rel="stylesheet" href="engine-docs.css?v=9">
+<link rel="stylesheet" href="engine-docs.css?v=10">
 </head>
 <body class="compact-sidebar sidebar-first">
 
@@ -76,15 +76,15 @@
 </div>
 </div>
 
-<div class="shell engine-shell"><aside class="sidebar engine-sidebar"><div class="sb-tabs"><span class="on" data-i18n="t1390">Developer guide</span><a href="../help.html" data-i18n="nav_help">Help</a></div><nav class="docs-nav" aria-label="Developer guide" data-i18n-aria-label="a1431"><div class="docs-nav-group"><span class="docs-nav-label">Engine</span><a href="index.html" data-i18n="t1391">Overview</a></div><div class="docs-nav-group"><span class="docs-nav-label" data-i18n="t88">Start here</span><a href="getting-started.html" class="on" aria-current="page" data-i18n="t1398">Getting started</a><div class="page-outline"><a href="#requirements">Requirements</a><a href="#reference-the-project">Reference the project</a><a href="#run-a-focused-workflow">Run a focused workflow</a><a href="#run-the-broad-diagnostic-scan">Run the broad diagnostic scan</a><a href="#handle-cancellation">Handle cancellation</a><a href="#next-steps">Next steps</a></div></div><div class="docs-nav-group"><span class="docs-nav-label" data-i18n="t1399">Use the Engine</span><a href="workflows.html" data-i18n="t1400">Diagnostic workflows</a><a href="evidence.html" data-i18n="t1401">Evidence and results</a><a href="repairs.html" data-i18n="t1402">Repairs and safety</a></div><div class="docs-nav-group"><span class="docs-nav-label" data-i18n="t118">Reference</span><a href="cli.html" data-i18n="t1403">CLI guide</a><a href="api.html" data-i18n="t1404">API guide</a><a href="architecture.html" data-i18n="t1109">Architecture</a><a href="knowledge-packs.html" data-i18n="t1105">Knowledge packs</a></div></nav></aside><div class="content"><div class="content-scroll"><div class="engine-doc-wrap"><article class="engine-doc" id="engineDoc"><h1 id="getting-started" data-i18n="t1398">Getting started</h1>
-<p class="doc-lede">Run a read-only diagnostic workflow and inspect its typed result in a few minutes.</p>
-<h2 id="requirements">Requirements</h2>
-<ul><li>Windows x64 for the current native provider; check Microsoft's <a href="https://learn.microsoft.com/en-us/dotnet/core/install/windows">.NET 10 Windows requirements</a></li><li>.NET 10 SDK</li><li>A .NET 10 application</li><li>A writable folder for workflow journals</li></ul>
-<p>The Engine has no WPF dependency. The desktop interface is a separate host.</p>
-<h2 id="reference-the-project">Reference the project</h2>
-<p>Use an authorized source checkout. Reference the Windows provider project from your .NET 10 console host; its project references also include the shared Engine and Engine.Core:</p>
+<div class="shell engine-shell"><aside class="sidebar engine-sidebar"><div class="sb-tabs"><span class="on" data-i18n="t1390">Developer guide</span><a href="../help.html" data-i18n="nav_help">Help</a></div><nav class="docs-nav" aria-label="Developer guide" data-i18n-aria-label="a1431"><div class="docs-nav-group"><span class="docs-nav-label">Engine</span><a href="index.html" data-i18n="t1391">Overview</a></div><div class="docs-nav-group"><span class="docs-nav-label" data-i18n="t88">Start here</span><a href="getting-started.html" class="on" aria-current="page" data-i18n="t1398">Getting started</a><div class="page-outline"><a href="#requirements" data-i18n="e131">Requirements</a><a href="#reference-the-project" data-i18n="e137">Reference the project</a><a href="#run-a-focused-workflow" data-i18n="e139">Run a focused workflow</a><a href="#run-the-broad-diagnostic-scan" data-i18n="e142">Run the broad diagnostic scan</a><a href="#handle-cancellation" data-i18n="e144">Handle cancellation</a><a href="#next-steps" data-i18n="e146">Next steps</a></div></div><div class="docs-nav-group"><span class="docs-nav-label" data-i18n="t1399">Use the Engine</span><a href="workflows.html" data-i18n="t1400">Diagnostic workflows</a><a href="evidence.html" data-i18n="t1401">Evidence and results</a><a href="repairs.html" data-i18n="t1402">Repairs and safety</a></div><div class="docs-nav-group"><span class="docs-nav-label" data-i18n="t118">Reference</span><a href="cli.html" data-i18n="t1403">CLI guide</a><a href="api.html" data-i18n="t1404">API guide</a><a href="architecture.html" data-i18n="t1109">Architecture</a><a href="knowledge-packs.html" data-i18n="t1105">Knowledge packs</a></div></nav></aside><div class="content"><div class="content-scroll"><div class="engine-doc-wrap"><article class="engine-doc" id="engineDoc"><h1 id="getting-started" data-i18n="t1398">Getting started</h1>
+<p class="doc-lede" data-i18n="e130">Run a read-only diagnostic workflow and inspect its typed result in a few minutes.</p>
+<h2 id="requirements" data-i18n="e131">Requirements</h2>
+<ul><li data-i18n="e132">Windows x64 for the current native provider; check Microsoft's <a href="https://learn.microsoft.com/en-us/dotnet/core/install/windows">.NET 10 Windows requirements</a></li><li data-i18n="e133">.NET 10 SDK</li><li data-i18n="e134">A .NET 10 application</li><li data-i18n="e135">A writable folder for workflow journals</li></ul>
+<p data-i18n="e136">The Engine has no WPF dependency. The desktop interface is a separate host.</p>
+<h2 id="reference-the-project" data-i18n="e137">Reference the project</h2>
+<p data-i18n="e138">Use an authorized source checkout. Reference the Windows provider project from your .NET 10 console host; its project references also include the shared Engine and Engine.Core:</p>
 <pre data-language="xml"><code>&lt;ProjectReference Include="path\to\KillerBench\Engine.Windows\KillerBench.Engine.Windows.csproj" /&gt;</code></pre>
-<h2 id="run-a-focused-workflow">Run a focused workflow</h2>
+<h2 id="run-a-focused-workflow" data-i18n="e139">Run a focused workflow</h2>
 <pre data-language="csharp"><code>using KillerBench.Engine.Workflows;
 using KillerBench.Engine.Windows;
 
@@ -111,25 +111,25 @@ foreach (WorkflowCheck check in result.Checks)
     Console.WriteLine($"{check.State}: {check.Name}");
     Console.WriteLine(check.Detail);
 }</code></pre>
-<p>Call <code>WindowsEngine.Register()</code> once at host startup before resolving native providers. Without registration, the platform-neutral Engine reports that no provider is registered. The example uses implicit .NET usings for System, IO and threading.</p>
-<p><code>autoRepair: false</code> keeps the run diagnostic-only. The Engine writes a workflow journal even when no repair is attempted.</p>
-<h2 id="run-the-broad-diagnostic-scan">Run the broad diagnostic scan</h2>
+<p data-i18n="e140">Call <code>WindowsEngine.Register()</code> once at host startup before resolving native providers. Without registration, the platform-neutral Engine reports that no provider is registered. The example uses implicit .NET usings for System, IO and threading.</p>
+<p data-i18n="e141"><code>autoRepair: false</code> keeps the run diagnostic-only. The Engine writes a workflow journal even when no repair is attempted.</p>
+<h2 id="run-the-broad-diagnostic-scan" data-i18n="e142">Run the broad diagnostic scan</h2>
 <pre data-language="csharp"><code>WorkflowResult result = await FullSystemScan.RunAsync(
     journalFolder,
     autoRepair: false,
     progress,
     token: CancellationToken.None);</code></pre>
-<p>The full scan combines common diagnostic areas. It does not prove every possible Windows component healthy, and it does not enable every optional repair.</p>
-<h2 id="handle-cancellation">Handle cancellation</h2>
-<p>Pass a <code>CancellationToken</code> from your host. The Engine checks cancellation between bounded stages. If a repair may already have reached Windows, the durable journal remains available for reconciliation instead of silently retrying the action.</p>
-<h2 id="next-steps">Next steps</h2>
-<ul><li>Read <a href="workflows.html">Diagnostic workflows</a> before selecting workflow kinds.</li><li>Read <a href="repairs.html">Repairs and safety</a> before exposing any repair action.</li><li>Use the <a href="cli.html">CLI guide</a> to explore diagnostics without writing a host application.</li></ul></article><nav class="doc-pager" aria-label="Documentation pages" data-i18n-aria-label="a1432"><a href="index.html"><small>Previous</small><span data-i18n="t1391">Overview</span></a><a href="workflows.html"><small data-i18n="t1427">Next</small><span data-i18n="t1400">Diagnostic workflows</span></a></nav></div></div></div></div><footer class="statusbar">
+<p data-i18n="e143">The full scan combines common diagnostic areas. It does not prove every possible Windows component healthy, and it does not enable every optional repair.</p>
+<h2 id="handle-cancellation" data-i18n="e144">Handle cancellation</h2>
+<p data-i18n="e145">Pass a <code>CancellationToken</code> from your host. The Engine checks cancellation between bounded stages. If a repair may already have reached Windows, the durable journal remains available for reconciliation instead of silently retrying the action.</p>
+<h2 id="next-steps" data-i18n="e146">Next steps</h2>
+<ul><li data-i18n="e147">Read <a href="workflows.html">Diagnostic workflows</a> before selecting workflow kinds.</li><li data-i18n="e148">Read <a href="repairs.html">Repairs and safety</a> before exposing any repair action.</li><li data-i18n="e149">Use the <a href="cli.html">CLI guide</a> to explore diagnostics without writing a host application.</li></ul></article><nav class="doc-pager" aria-label="Documentation pages" data-i18n-aria-label="a1432"><a href="index.html"><small>Previous</small><span data-i18n="t1391">Overview</span></a><a href="workflows.html"><small data-i18n="t1427">Next</small><span data-i18n="t1400">Diagnostic workflows</span></a></nav></div></div></div></div><footer class="statusbar">
 <span class="left"><a href="https://github.com/SteveTheKiller/KillerBench" target="_blank" rel="noopener" data-i18n="footer_src">Source on GitHub</a> &middot; GPLv3 &middot; <span data-i18n="ui_part_of">Part of</span> <a href="https://killertools.net" target="_blank" rel="noopener">killertools.net</a></span>
 <span class="right"><span id="verEgg" title="click me">v1.0.0</span> &middot; &copy; 2026 <b><a href="https://thekiller.net" target="_blank" rel="noopener">Steve the Killer</a></b></span>
 </footer>
 <div class="egg-toast" id="eggToast"></div>
 
-<script src="../kb-i18n.js?v=1"></script>
+<script src="../kb-i18n.js?v=2"></script>
 <script src="../kb.js?v=1"></script>
 </body>
 </html>

@@ -39,7 +39,7 @@
 @media(max-width:560px){.engine-doc{padding:22px 18px}.engine-doc h1{font-size:24px}.engine-doc table{display:block;overflow-x:auto}.doc-pager{grid-template-columns:1fr}.doc-pager a:last-child{text-align:left;align-items:flex-start}}
 .engine-sidebar .sb-tabs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch}
 html[lang]:not([lang="en-US"]) .engine-sidebar .sb-tabs{grid-template-columns:minmax(0,1fr)}
-.engine-sidebar .sb-tabs span,.engine-sidebar .sb-tabs a{min-width:0;white-space:normal;overflow-wrap:anywhere;align-content:center;text-align:center}
+.engine-sidebar .sb-tabs span,.engine-sidebar .sb-tabs a{min-width:0;white-space:normal;overflow-wrap:normal;hyphens:auto;align-content:center;text-align:center}
 .engine-sidebar .sb-tabs a{color:var(--muted);text-decoration:none;padding:9px 5px}
 .engine-sidebar .sb-tabs a:hover{color:var(--accent)}
 .docs-search{position:relative;padding:8px 8px 4px}
