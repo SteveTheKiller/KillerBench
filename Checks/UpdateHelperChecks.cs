@@ -48,6 +48,17 @@ $ops.Publisher = { param($path, $plan)
             "An installer that exits nonzero keeps the verified download the failure report names: " + failed);
         Console.WriteLine("PASS: the installed-copy update helper rechecks SHA-256 and publisher from a held staged copy, refuses a swapped download, runs only the verified image and keeps the download when the installer fails.");
 
+        // The wait for the portable launcher has a deadline, so a launcher that never exits cannot hold the helper forever.
+        var launcherWait = typeof(PortableUpdateTarget).Assembly.GetType("KillerBench.Services.UpdateService")
+            ?.GetMethod("LauncherWait", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+            ?? throw new Exception("UpdateService.LauncherWait exists");
+        string wait = (string)launcherWait.Invoke(null, [4242])!;
+        Require(wait.Contains("$deadline = [DateTime]::UtcNow.Add", StringComparison.Ordinal)
+            && wait.Contains("Get-Process -Id 4242", StringComparison.Ordinal)
+            && wait.Contains("[DateTime]::UtcNow -lt $deadline", StringComparison.Ordinal),
+            "The portable helper's launcher wait is bounded by a deadline: " + wait);
+        Console.WriteLine("PASS: the portable helper waits for its launcher only until a deadline.");
+
         // The portable helper must still parse.
         string portableDownload = Path.Combine(root, "portable.exe");
         File.WriteAllBytes(portableDownload, installer);
