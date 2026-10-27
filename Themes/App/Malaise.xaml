@@ -1,0 +1,6 @@
+<!-- KillerBench's own Malaise values, merged over the family palette by Services/AppTheme.cs.
+     The workbench panels sit one step lighter than the family list pane so they read as cards. -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="ContentPaneBrush" Color="#303638"/>
+</ResourceDictionary>

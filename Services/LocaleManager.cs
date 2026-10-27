@@ -11,9 +11,6 @@ namespace KillerBench.Services
         public static Func<string, string?> GetSetting { get; set; } = _ => null;
         public static Action<string, string> SetSetting { get; set; } = (_, _) => { };
 
-        private const int BaseIndex = 3;
-        private const int OverrideIndex = 4;
-
         private static Locale _current = Locale.EnUS;
         public static Locale Current => _current;
 
@@ -75,9 +72,14 @@ namespace KillerBench.Services
         private static void ApplyInternal(Locale locale)
         {
             var merged = Application.Current.Resources.MergedDictionaries;
+            // The en-US base is found by its source rather than a fixed slot, because the theme,
+            // the family control styles and KillerBench's own styles are merged ahead of it; the
+            // chosen locale's overrides sit directly after it.
+            int baseIndex = StringsBaseIndex(merged);
+            int overrideIndex = baseIndex + 1;
 
-            if (merged.Count > BaseIndex)
-                merged[BaseIndex] = new ResourceDictionary { Source = new Uri("pack://application:,,,/KillerBench;component/Strings/en-US.xaml") };
+            if (merged.Count > baseIndex)
+                merged[baseIndex] = new ResourceDictionary { Source = new Uri("pack://application:,,,/KillerBench;component/Strings/en-US.xaml") };
 
             Uri? overrideUri = locale switch
             {
@@ -108,17 +110,27 @@ namespace KillerBench.Services
                 try
                 {
                     var ov = new ResourceDictionary { Source = overrideUri };
-                    if (merged.Count > OverrideIndex) merged[OverrideIndex] = ov; else merged.Add(ov);
+                    if (merged.Count > overrideIndex) merged[overrideIndex] = ov; else merged.Add(ov);
                 }
                 catch
                 {
-                    if (merged.Count > OverrideIndex) merged.RemoveAt(OverrideIndex);
+                    if (merged.Count > overrideIndex) merged.RemoveAt(overrideIndex);
                 }
             }
-            else if (merged.Count > OverrideIndex)
+            else if (merged.Count > overrideIndex)
             {
-                merged.RemoveAt(OverrideIndex);
+                merged.RemoveAt(overrideIndex);
             }
+        }
+
+        /// <summary>Where the English string base is merged. Slot 3 if it cannot be found, which
+        /// is where App.xaml places it.</summary>
+        private static int StringsBaseIndex(System.Collections.ObjectModel.Collection<ResourceDictionary> merged)
+        {
+            for (int i = 0; i < merged.Count; i++)
+                if (merged[i].Source?.OriginalString.EndsWith("Strings/en-US.xaml", StringComparison.OrdinalIgnoreCase) == true)
+                    return i;
+            return 3;
         }
     }
 }

@@ -37,7 +37,7 @@ internal static class CategoryNavigationChecks
             Settle(window);
             Console.WriteLine("Category font: " + Item(list, 0).FontFamily.Source);
             CategoryTypographyChecks.Run(window);
-            foreach (var theme in new[] { Theme.Dark, Theme.Light, Theme.Black, Theme.Retro98 })
+            foreach (var theme in new[] { Theme.Dark, Theme.Light, Theme.Black, Theme.SE98 })
             {
                 ThemeManager.Apply(theme);
                 foreach (double height in new[] { 500d, 700d, 1200d })

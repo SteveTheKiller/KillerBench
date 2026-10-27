@@ -78,7 +78,7 @@ internal static class PickerDialogChecks
                     .SetEquals([first, second]),
             "Open picker returns both selected files");
 
-        ThemeManager.Apply(Theme.Retro98);
+        ThemeManager.Apply(Theme.SE98);
         var folder = new FileDialog(FileDialogMode.Folder)
         {
             Title = "Choose fixture folder",

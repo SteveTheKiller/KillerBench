@@ -4,9 +4,20 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-
 namespace KillerBench.Controls
 {
+    // Keeps the scrollbar reactive (thumb sized to the visible proportion) while guaranteeing it
+    // never shrinks below a grabbable floor. Ported from KillerPDF.
+    //
+    // WPF's Track sizes the thumb AND the repeat buttons from the raw proportional value
+    // (trackLen * viewport / (range + viewport)). Thumb.MinHeight does NOT feed that math - it
+    // only stretches the thumb's render, so on a long list the thumb overflows its tiny
+    // proportional slot and the increase RepeatButton paints over the overflow. Enforcing the
+    // minimum here, by raising the ViewportSize the Track sees, makes the Track size the thumb and
+    // the buttons from the same floored value - no overflow, no overlap, still proportional.
+    //
+    // Bindings (in order): ViewportSize, Maximum, Minimum, ActualWidth, ActualHeight, Orientation.
+    // ConverterParameter: the floor in pixels (default 64).
     public sealed class ThumbViewportFloorConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)

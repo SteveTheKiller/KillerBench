@@ -28,7 +28,7 @@ internal static class CategoryTypographyChecks
                 ThemeManager.Apply(theme);
                 window.UpdateLayout();
                 var uiFont = (FontFamily)window.FindResource("UiFont");
-                var expected = theme == Theme.Retro98 ? new FontFamily("Microsoft Sans Serif") :
+                var expected = theme == Theme.SE98 ? new FontFamily("Microsoft Sans Serif") :
                     new FontFamily(new Uri("pack://application:,,,/KillerBench;component/"), UiStack);
                 Require(uiFont.Equals(expected), $"{theme} retains the approved UI face and fallback stack");
                 RenderedTypographyChecks.VerifySubtitle(window);
@@ -39,8 +39,8 @@ internal static class CategoryTypographyChecks
                     var icon = FindTextBlocks(item).Single(block => block.Name == "CategoryIcon");
                     Require(item.FontFamily.Equals(expected) && label.FontFamily.Equals(expected),
                         $"{theme} category {index} inherits the approved UI face through its container and label");
-                    RenderedTypographyChecks.VerifyFont(label, theme == Theme.Retro98 ? "Microsoft Sans Serif" : "Killer Sans UI",
-                        theme == Theme.Retro98 ? null : "KillerSansUI-Regular.ttf");
+                    RenderedTypographyChecks.VerifyFont(label, theme == Theme.SE98 ? "Microsoft Sans Serif" : "Killer Sans UI",
+                        theme == Theme.SE98 ? null : "KillerSansUI-Regular.ttf");
                     Require(icon.FontFamily.Source == "Segoe MDL2 Assets", "Category glyphs retain their separate icon face");
                 }
             }

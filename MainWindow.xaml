@@ -104,7 +104,7 @@
                                                  Content="{DynamicResource Str_Theme_SE98}"
                                                  GroupName="ThemeGroup"
                                                  Style="{StaticResource ThemeRadio}"
-                                                 Tag="Retro98" Checked="OnThemeSelected"/>
+                                                 Tag="SE98" Checked="OnThemeSelected"/>
                                     <RadioButton x:Name="ThemeBloodRadio"
                                                  Content="{DynamicResource Str_Theme_Blood}"
                                                  GroupName="ThemeGroup"

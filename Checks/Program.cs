@@ -11,6 +11,12 @@ internal static class Program
     [STAThread]
     private static int Main(string[] args)
     {
+        // The family theme engine loads its palettes by application-relative pack URIs, which
+        // resolve against the app assembly only when it is the resource assembly; and every
+        // harness takes the app's theme hooks and first-run defaults, as App.OnStartup does.
+        typeof(Application).GetField("_resourceAssembly", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!
+            .SetValue(null, typeof(KillerBench.App).Assembly);
+        KillerBench.Services.AppTheme.Configure();
         WindowsEngine.Register();
         try
         {
@@ -188,7 +194,7 @@ internal static class Program
             KillerBench.Services.Theme.Dark => Color.FromRgb(0x2E, 0x2E, 0x2E),
             KillerBench.Services.Theme.Light => Color.FromRgb(0xC0, 0xC0, 0xC0),
             KillerBench.Services.Theme.Black => Color.FromRgb(0x2A, 0x2A, 0x2A),
-            KillerBench.Services.Theme.Retro98 => Color.FromRgb(0x80, 0x80, 0x80),
+            KillerBench.Services.Theme.SE98 => Color.FromRgb(0x80, 0x80, 0x80),
             KillerBench.Services.Theme.Blood => Color.FromRgb(0x40, 0x1D, 0x1D),
             KillerBench.Services.Theme.Greed => Color.FromRgb(0x0F, 0x4A, 0x30),
             KillerBench.Services.Theme.Cyanotic => Color.FromRgb(0x18, 0x34, 0x50),
@@ -1642,7 +1648,7 @@ internal static class Program
                 png.Save(file);
             }
             KillerBench.Services.ThemeManager.Apply(KillerBench.Services.Theme.Black);
-            foreach (var family in new[] { KillerBench.Services.Theme.Dark, KillerBench.Services.Theme.Light, KillerBench.Services.Theme.Black, KillerBench.Services.Theme.Retro98 })
+            foreach (var family in new[] { KillerBench.Services.Theme.Dark, KillerBench.Services.Theme.Light, KillerBench.Services.Theme.Black, KillerBench.Services.Theme.SE98 })
                 foreach (var accent in Enum.GetValues<KillerBench.Services.Accent>())
                 {
                     KillerBench.Services.ThemeManager.Apply(family);

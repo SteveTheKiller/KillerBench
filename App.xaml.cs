@@ -20,6 +20,8 @@ public partial class App : Application
     {
         KillerFamily.Accessibility.AccessibleControls.Initialize();
         KillerFamily.Theming.AccentShadow.Initialize();
+        Controls.AltDrag.Register();   // Alt+drag moves any window (Controls/AltDrag.cs)
+        Services.AppTheme.Configure();
         var cli = KillerFamily.CommandLine.CommandLineEntry.GetArguments(e.Args, Cli.CommandEngine.CommandNames);
         if (cli != null)
         {
@@ -32,8 +34,6 @@ public partial class App : Application
         DemoMode = ScreenshotMode || e.Args.Any(IsDemoArgument);
         WindowsEngine.Register();
         Services.Preferences.Load();
-        Services.ThemeManager.GetSetting = Services.Preferences.Get;
-        Services.ThemeManager.SetSetting = Services.Preferences.Set;
         KillerFamily.Layout.ShortcutHints.Initialize(Services.Preferences.Get, Services.Preferences.Set);
         Services.ThemeManager.Initialize();
         Services.FilmGrain.Initialize();

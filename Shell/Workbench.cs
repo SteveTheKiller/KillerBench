@@ -70,11 +70,11 @@ public partial class MainWindow
     private void RefreshWindowEdge()
     {
         bool nativeCorners = DwmChrome.SetRoundedCorners(this,
-            WindowState != WindowState.Maximized && ThemeManager.Current != Theme.Retro98);
+            WindowState != WindowState.Maximized && ThemeManager.Current != Theme.SE98);
         if (nativeCorners) WindowEdgeBorder.BorderBrush = Brushes.Transparent;
         else WindowEdgeBorder.SetResourceReference(Border.BorderBrushProperty, "AppBorderBrush");
     }
-    private static string ThemeLabel(Theme theme) => theme == Theme.Retro98 ? "98SE" : theme.ToString();
+    private static string ThemeLabel(Theme theme) => theme == Theme.SE98 ? "98SE" : theme.ToString();
 
     private void RegisterSource(TextEvidence item)
     {

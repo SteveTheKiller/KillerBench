@@ -1,0 +1,9 @@
+<!-- KillerBench's own 98SE values, merged over the family palette by Services/AppTheme.cs.
+     Win98 drew document and report areas as white client areas inside its gray chrome, so the
+     workbench panels, report cards and metric tiles stay white here. -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="ContentPaneBrush" Color="#ffffff"/>
+    <SolidColorBrush x:Key="ReportCardBrush" Color="#ffffff"/>
+    <SolidColorBrush x:Key="ReportMetricBrush" Color="#ffffff"/>
+</ResourceDictionary>

@@ -72,7 +72,7 @@ public partial class MainWindow
     private void UpdateAccentStrip(bool animate)
     {
         if (AccentStripHost is null) return;
-        bool show = ThemeManager.Current is Theme.Dark or Theme.Light or Theme.Black or Theme.Retro98;
+        bool show = ThemeManager.Current is Theme.Dark or Theme.Light or Theme.Black or Theme.SE98;
         double target = show ? 38 : 0;
         if (animate) AnimateWidth(AccentStripHost, target); else { AccentStripHost.BeginAnimation(WidthProperty, null); AccentStripHost.Width = target; }
         if (!show) return;
@@ -88,7 +88,7 @@ public partial class MainWindow
             dots[i].ToolTip = accent.ToString();
             // Each pill shows its accent the way a selection does (KillerNotes): the palette's own
             // SelectionBg gradient. 98SE keeps its flat Win98 swatches.
-            dots[i].Background = ThemeManager.Current == Theme.Retro98
+            dots[i].Background = ThemeManager.Current == Theme.SE98
                 ? (accent == Accent.Yellow
                     ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EAD900"))
                     : (Brush)colors["PrimaryBrush"])
@@ -117,7 +117,7 @@ public partial class MainWindow
         foreach (var dot in dots)
         {
             dot.BorderBrush = dot.IsMouseOver || (dot.Tag is Accent accent && accent == chosen) ? ring : Brushes.Transparent;
-            bool pop = dot.IsMouseOver && ThemeManager.Current != Theme.Retro98;
+            bool pop = dot.IsMouseOver && ThemeManager.Current != Theme.SE98;
             if (dot.RenderTransform is ScaleTransform scale)
             {
                 scale.BeginAnimation(ScaleTransform.ScaleXProperty,

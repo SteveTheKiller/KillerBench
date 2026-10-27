@@ -41,6 +41,7 @@ namespace KillerBench.Controls
                 _pinNavigatingWas = _navigating;
                 _navigating = true;
                 PlacesList.CaptureMouse();
+                DragCursors.BeginDrag();
             }
 
             var target = ItemUnder<PickerPlace>(PlacesList.InputHitTest(now) as DependencyObject);
@@ -78,6 +79,7 @@ namespace KillerBench.Controls
             if (PlacesList.IsMouseCaptured) PlacesList.ReleaseMouseCapture();
             _navigating = _pinNavigatingWas;
             SyncPlacesSelection();
+            DragCursors.EndDrag();
         }
 
         private void SavePinOrder()

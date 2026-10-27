@@ -27,7 +27,7 @@ internal static class RenderedTypographyChecks
     {
         string subtitle = (string)window.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH");
         var label = ((StackPanel)window.FindName("LogoBar")).Children.OfType<TextBlock>().Single(block => block.Text == subtitle);
-        bool classic = ThemeManager.Current == Theme.Retro98;
+        bool classic = ThemeManager.Current == Theme.SE98;
         Require(label.FontSize == (classic ? 11 : 18), "Subtitle retains its production filename font size");
         VerifyFont(label, classic ? "Microsoft Sans Serif" : "Killer Sans", classic ? null : "KillerSans-Regular.ttf");
     }
