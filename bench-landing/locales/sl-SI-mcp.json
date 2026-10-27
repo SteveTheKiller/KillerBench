@@ -13,7 +13,7 @@
     "Windows x64": "Windows x64",
     "Digitally signed": "Digitalno podpisano",
     "Hosted on GitHub Releases": "Gostuje na GitHub Releases",
-    "winget install SteveTheKiller.KillerMCP": "winget install SteveTheKiller.KillerMCP",
+    "winget install killermcp": "winget install killermcp",
     "choco install killermcp": "choco install killermcp",
     "Download and run KillerMCP Setup.": "Prenesite in zaženite namestitveni program KillerMCP.",
     "Use the signed installer above.": "Uporabite zgornji podpisani namestitveni program.",
