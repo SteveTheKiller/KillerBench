@@ -146,6 +146,9 @@ public sealed class GoalRunner(SymptomCatalog catalog, IReadOnlyList<RecipePack>
                         return node.Terminal switch
                         {
                             TriageTerminal.Resolved => await ConfirmResolvedAsync(symptom, repaired, Report, steps, runToken).ConfigureAwait(false),
+                            // A default edge can reach RuledOut on incomplete evidence; only a walk with nothing unresolved may exit healthy.
+                            TriageTerminal.RuledOut when unresolved.Count > 0 => Report(GoalOutcome.Unresolved,
+                                "The tree ended at ruled out, but these checks were not conclusive: " + string.Join(", ", unresolved.Distinct(StringComparer.Ordinal)) + ".", node.Guidance),
                             TriageTerminal.RuledOut => Report(GoalOutcome.RuledOut, "Every automated cause in this tree was ruled out.", node.Guidance),
                             TriageTerminal.OutOfScope => Report(GoalOutcome.OutOfScope, "This path is outside what KillerBench can change.", node.Guidance),
                             _ => Report(GoalOutcome.NeedsHuman, "Triage needs a person to continue.", node.Guidance)

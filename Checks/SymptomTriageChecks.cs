@@ -180,6 +180,18 @@ internal static class SymptomTriageChecks
             canceledReport.Steps is not [{ Recipe: { Outcome: RecipeRunOutcome.Canceled, Action: { Dispatched: true }, ExecutionUncertain: true } }])
             throw new Exception("Canceled triage hid the dispatched repair step.");
 
+        // A default edge to a RuledOut terminal must not turn unresolved evidence into a healthy exit.
+        var ruledOutTree = new TriageTree("test.ruled-out", "r1", [
+            new TriageNode("r1", TriageNodeKind.Recipe) { RecipeId = "test.alpha", Next = new Dictionary<string, string> { ["default"] = "done" } },
+            new TriageNode("done", TriageNodeKind.Terminal) { Terminal = TriageTerminal.RuledOut }]);
+        var ruledOutCatalog = new SymptomCatalog(1, "test.ruled-out", 1, "Test", "Ruled out",
+            [new Symptom("test.ruled-out", "Ruled out", "Test", "Falls through.") { TreeId = ruledOutTree.Id }], [ruledOutTree]);
+        var unknownLibrary = new PrimitiveLibrary("Test").AddProbe(new FakeProbe("service.check", _ => null)).AddProbe(new FakeProbe("service.running", _ => "Running")).AddAction(new FakeAction(_ => { }));
+        var fellThrough = await new GoalRunner(ruledOutCatalog, [pack], unknownLibrary, new MemoryRecipeJournal(), new MemoryRecipeOperationStore())
+            .RunAsync("test.ruled-out", new GoalRunOptions());
+        if (fellThrough.Outcome != GoalOutcome.Unresolved || fellThrough.GetExitCode() == 0 || !fellThrough.Unresolved.SequenceEqual(["test.alpha"]))
+            throw new Exception("A RuledOut terminal reached with unresolved recipes reported " + fellThrough.Outcome + " exit " + fellThrough.GetExitCode());
+
         // Built-in Windows catalog against the built-in pack and library.
         var windows = WindowsSymptomCatalog.Build();
         var windowsValidation = SymptomCatalogValidation.Validate(windows, WindowsPacks.All(), WindowsPrimitiveLibrary.Create());
