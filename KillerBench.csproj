@@ -33,6 +33,7 @@
     <None Include="Fonts\KillerSans-OFL.txt;Fonts\Lacquer-OFL.txt;Fonts\Punktype-LICENSE.txt" Link="%(Filename)%(Extension)" CopyToPublishDirectory="PreserveNewest" />
     <Resource Include="Fonts\*.ttf" />
     <Resource Include="Assets\AppIcon.png" />
+    <Resource Include="Assets\AppIcon.png" Link="Resources\app-icon-master.png" />
     <Resource Include="Assets\AppIcon.ico" />
     <!-- Grab cursors for the family drag handles (Controls/DragCursors.cs). -->
     <Resource Include="Resources\*.cur" />

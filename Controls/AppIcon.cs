@@ -12,10 +12,10 @@ namespace KillerBench.Controls
     /// <summary>Renders the app artwork once for its device-pixel footprint.</summary>
     public sealed class AppIcon : Image
     {
-        private const string MasterUri = "pack://application:,,,/Assets/AppIcon.png";
+        private const string MasterUri = "pack://application:,,,/Resources/app-icon-master.png";
         private static BitmapSource? master;
         private static readonly ConditionalWeakTable<BitmapSource, RasterCache> rasters =
-            [];
+            new();
         private Rect lastPixels = Rect.Empty;
 
         private sealed class RasterCache

@@ -1,13 +1,14 @@
 using System.Diagnostics;
 
-namespace KillerBench.Services;
-
-/// <summary>Hands a URL to the default browser.</summary>
-internal static class WebLink
+namespace KillerBench.Services
 {
-    internal static void Open(string url)
+    /// <summary>Hands a URL to the default browser.</summary>
+    internal static class WebLink
     {
-        try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
-        catch { /* no browser available */ }
+        internal static void Open(string url)
+        {
+            try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
+            catch { /* no browser available */ }
+        }
     }
 }

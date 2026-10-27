@@ -1,20 +1,21 @@
 using System.Windows;
 
-namespace KillerBench.Features;
-
-/// <summary>
-/// The three things every feature needs from the window: an owner for modal dialogs, string
-/// lookup, and the status line. Each feature's own interface extends this, so the shell
-/// implements these once rather than once per feature.
-/// </summary>
-internal interface IShellServices
+namespace KillerBench.Features
 {
-    /// <summary>Owner for modal dialogs.</summary>
-    Window Window { get; }
+    /// <summary>
+    /// The three things every feature needs from the window: an owner for modal dialogs, string
+    /// lookup, and the status line. Each feature's own interface extends this, so the shell
+    /// implements these once rather than once per feature.
+    /// </summary>
+    internal interface IShellServices
+    {
+        /// <summary>Owner for modal dialogs.</summary>
+        Window Window { get; }
 
-    /// <summary>Localized string for a Str_ key.</summary>
-    string Loc(string key);
+        /// <summary>Localized string for a Str_ key.</summary>
+        string Loc(string key);
 
-    /// <summary>Writes the status line.</summary>
-    void SetStatus(string text);
+        /// <summary>Writes the status line.</summary>
+        void SetStatus(string text);
+    }
 }

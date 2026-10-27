@@ -5,12 +5,18 @@ using System.Windows.Media;
 
 namespace KillerBench.Shell
 {
+    /// <summary>Shared geometry and behavior for the permanent 24px rail and sidebar chrome.</summary>
     internal static class SidebarChrome
     {
         internal const double RailWidth = 24;
         internal const double RailButtonSize = 20;
         internal const double ResizeGripWidth = 5;
 
+        /// <summary>
+        /// Keeps both edge fades synchronized with a scrolling list. Opacity ramps over each
+        /// fade's height, so neither edge pops on after the first wheel tick. Call once after
+        /// InitializeComponent; the handler also covers extent and viewport changes.
+        /// </summary>
         internal static void WireEdgeFades(ItemsControl list, Border top, Border bottom)
         {
             void Sync()
