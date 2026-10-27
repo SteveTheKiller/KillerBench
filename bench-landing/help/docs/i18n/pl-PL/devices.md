@@ -38,7 +38,7 @@ Sprawdza dostępność usługi Usługa urządzeń interfejsu HID. Opcjonalne odz
 
 ### Usługa modułu wyliczającego urządzenia przenośne
 
-Sprawdza dostępność usługi Usługa modułu wyliczającego urządzenia przenośne. Opcjonalne odzyskiwanie uruchamia tylko dokładnie tę włączoną i zatrzymaną usługę po świeżych kontrolach zależności. Istniejące aplikacje mogą wznowić wykrywanie podłączonych urządzeń przenośnych i dostęp do nich. Urządzenia, sterowniki, pliki, biblioteki, ustawienia synchronizacji, uprawnienia, zasady, uprawnienia usługi i typ uruchomienia są zachowywane. KillerBench nie wybiera żadnej operacji na urządzeniach, plikach, bibliotekach, synchronizacji ani przesyłaniu. Weryfikacja obejmuje tylko stabilny stan usługi, a nie wyliczanie, dostęp, synchronizację ani przesyłanie.
+Sprawdza dostępność usługi Usługa modułu wyliczającego urządzenia przenośne. Opcjonalne odzyskiwanie uruchamia tylko dokładnie tę usługę, gdy jest zatrzymana i ustawiona na uruchamianie automatyczne, po świeżych kontrolach zależności. Zatrzymana usługa uruchamiana ręcznie ma charakter wyłącznie informacyjny. Istniejące aplikacje mogą wznowić wykrywanie podłączonych urządzeń przenośnych i dostęp do nich. Urządzenia, sterowniki, pliki, biblioteki, ustawienia synchronizacji, uprawnienia, zasady, uprawnienia usługi i typ uruchomienia są zachowywane. KillerBench nie wybiera żadnej operacji na urządzeniach, plikach, bibliotekach, synchronizacji ani przesyłaniu. Weryfikacja obejmuje tylko stabilny stan usługi, a nie wyliczanie, dostęp, synchronizację ani przesyłanie.
 
 ### Pozyskiwanie obrazów w systemie Windows (WIA)
 

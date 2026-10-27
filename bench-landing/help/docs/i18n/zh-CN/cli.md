@@ -316,7 +316,7 @@
 - `delete-notifications`: 只读的 NTFS 和 ReFS 删除通知配置；JSON；不优化，不更改设置。
 - `diagnostic-scopes [--all]`: 列出 11 个建议的结果组，或全部 49 个只读区域；不收集。
 - `full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json]`: 专用诊断日志；不修复。
-- `full-scan [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json]`: 所有诊断区域；除非明确指定 `--auto-repair`，否则不修复。
+- `full-scan [--recipes ID[,ID]] [--report OUTPUT.html|OUTPUT.txt] [--json]`: 所有诊断区域；仅用于诊断，不修复。
 - `gateway-check`: 对已配置的确切默认下一跃点进行有范围限制的 ICMP 检查；不扫描地址。
 - `infrastructure-service-events`: 读取一个有范围限制的确切连接、远程管理、通知和核心服务故障快照。
 - `investigate-batch FILE [FILE ...]`: 最多 12 个文件；JSON Lines；导入失败或部分导入时退出代码为 3。

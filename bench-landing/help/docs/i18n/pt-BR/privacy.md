@@ -10,7 +10,7 @@ Selecione as áreas de privacidade a inspecionar e pressione **Executar diagnós
 
 Para alterar uma configuração, use o controle **Configuração de privacidade**. O KillerBench verifica se uma política ou o gerenciamento de dispositivos já controla a configuração, registra o valor atual, faz a única alteração pedida e a lê de volta para confirmar. Configurações controladas por política não são tocadas.
 
-As configurações incluem as opções de dados de diagnóstico e publicidade, o histórico da área de transferência, 17 permissões de aplicativos como câmera, microfone e localização, a pesquisa de conteúdo na nuvem para contas pessoais e corporativas, e os destaques da pesquisa.
+As configurações incluem as opções de publicidade, o histórico da área de transferência, 19 permissões de aplicativos como câmera, microfone e localização, a pesquisa de conteúdo na nuvem para contas pessoais e corporativas, e os destaques da pesquisa.
 
 ## Ferramentas desta seção
 

@@ -31,7 +31,7 @@ Every repair is journaled and read back. See [How changes stay safe](safety.html
 
 1. Choose **Available updates** in **Updates** and press **Run diagnosis** to discover updates from the configured source.
 2. Select the updates you want and press **Preview selected**. The preview lists exactly what would install and any restart requirement.
-3. Install only after reading the preview. KillerBench never selects or approves an update for you.
+3. Read the preview, tick the confirmation checkbox, then press **Install**. The checkbox clears after each run, and KillerBench never selects or approves an update for you.
 
 ## From the command line
 

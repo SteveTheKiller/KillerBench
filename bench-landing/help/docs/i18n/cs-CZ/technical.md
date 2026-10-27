@@ -39,7 +39,7 @@ Instalační program ověří a rozbalí aplikaci do `%LOCALAPPDATA%\Programs\Ki
 | `HKCU` nebo `HKLM\Software\KillerBench` | Cesta instalace pro odpovídající rozsah instalace |
 | Soubor `.kbench`, který zvolíte | Uložený záznam s uchovanými důkazy |
 
-Nic se neodesílá. Deník odstraňte, až když důkazy k nejistému výsledku už nebudete potřebovat.
+Deníky zůstávají v tomto počítači a KillerBench je neodesílá. Deník odstraňte, až když důkazy k nejistému výsledku už nebudete potřebovat.
 
 ## Nejprve diagnostika
 

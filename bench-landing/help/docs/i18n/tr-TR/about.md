@@ -16,7 +16,7 @@ Bir ikili dosyayı dağıtmadan önce yayıncısı, lisansın gerektirdiği kayn
 
 ## Gizlilik ve dış hizmetler
 
-Tanılama ve günlük analizi, yapay zekâ hizmeti veya KillerBench hesabı olmadan yerel olarak çalışır. Günlükler ve saklanan kanıtlar yerel hesabın `%LOCALAPPDATA%\KillerBench` klasörlerini kullanır. Seçilen işlemler Windows Update, yazılım indirme hizmetleri, dizinler veya adı belirtilen diğer hedeflerle iletişim kurabilir. Başlangıçtaki güncelleme denetimi GitHub ile, bilgi güncelleştirmeleri ve MCP yükleyici sayfası ise yapılandırılmış hizmetleriyle iletişim kurar. MCP kullanan bir yapay zekâ istemcisi, döndürülen başvuru sonucunu alabilir.
+Tanılama ve günlük analizi, yapay zekâ hizmeti veya KillerBench hesabı olmadan yerel olarak çalışır. Günlükler ve saklanan kanıtlar yerel hesabın `%LOCALAPPDATA%\KillerBench` klasörlerini kullanır. Seçilen işlemler Windows Update, yazılım indirme hizmetleri, dizinler veya adı belirtilen diğer hedeflerle iletişim kurabilir. Başlangıçtaki güncelleştirme denetimi GitHub ile, bilgi güncelleştirmeleri ve MCP yükleyici sayfası ise yapılandırılmış hizmetleriyle iletişim kurar. MCP kullanan bir yapay zekâ istemcisi, döndürülen başvuru sonucunu alabilir.
 
 Bu web sitesi tema ve vurgu rengi seçimlerini tarayıcının yerel depolamasında saklar. Kılavuzları bilgisayarınızda tanılama çalıştırmaz. Ham günlükler, içe aktarılan dosyalar ve dışa aktarılan kanıtlar bilgisayar adları, hesaplar, yollar veya hassas kaynak metin içerebilir. Paylaşmadan önce gözden geçirin; herkese açık bir rapora kurtarma anahtarları, kimlik bilgileri veya müşteri verileri eklemeyin.
 

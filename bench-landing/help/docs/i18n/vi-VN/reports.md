@@ -22,4 +22,4 @@ KillerBench cũng có thể đọc các nhật ký Windows đã lưu, như nhậ
 
 ## Xuất
 
-**Xuất báo cáo** lưu báo cáo cùng đường dẫn nguồn, các mục đã phân tích và đoạn trích bằng chứng, để xem lại trước khi đính kèm vào phiếu hỗ trợ. Nhật ký thô và đoạn trích bằng chứng có thể chứa tên máy tính, tài khoản, đường dẫn hoặc văn bản nguồn nhạy cảm. Các bộ thu thập được bảo vệ giới hạn những gì chúng giữ lại, nhưng bằng chứng được nhập không được đảm bảo đã được biên tập. Hãy kiểm tra và xóa thông tin nhạy cảm trước khi chia sẻ.
+**Xuất báo cáo** lưu báo cáo cùng đường dẫn nguồn, các mục đã phân tích và đoạn trích bằng chứng, để xem lại trước khi đính kèm vào phiếu hỗ trợ. Báo cáo đã xuất có chứa tên của máy tính này, và nhật ký thô cùng đoạn trích bằng chứng cũng có thể chứa tài khoản, đường dẫn hoặc văn bản nguồn nhạy cảm. Các bộ thu thập được bảo vệ giới hạn những gì chúng giữ lại, nhưng bằng chứng được nhập không được đảm bảo đã được biên tập. Hãy kiểm tra và xóa thông tin nhạy cảm trước khi chia sẻ.

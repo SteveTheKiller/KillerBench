@@ -39,7 +39,7 @@ Trình cài đặt xác minh và giải nén ứng dụng vào `%LOCALAPPDATA%\P
 | `HKCU` hoặc `HKLM\Software\KillerBench` | Đường dẫn cài đặt, theo phạm vi cài đặt tương ứng |
 | Một tệp `.kbench` do bạn chọn | Một ảnh chụp đã lưu cùng bằng chứng được giữ lại |
 
-Không có gì được tải lên. Chỉ xóa nhật ký khi bạn không còn cần bằng chứng cho một kết quả không chắc chắn.
+Nhật ký được giữ trên máy tính này, và KillerBench không tải chúng lên. Chỉ xóa nhật ký khi bạn không còn cần bằng chứng cho một kết quả không chắc chắn.
 
 ## Chẩn đoán trước
 

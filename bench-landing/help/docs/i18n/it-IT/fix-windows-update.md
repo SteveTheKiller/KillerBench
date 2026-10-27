@@ -31,7 +31,7 @@ Ogni riparazione viene registrata nel giornale e riletta. Vedi [Come le modifich
 
 1. Scegli **Aggiornamenti disponibili** in **Aggiornamenti** e premi **Esegui diagnosi** per individuare gli aggiornamenti dall'origine configurata.
 2. Seleziona gli aggiornamenti che vuoi e premi **Anteprima selezionati**. L'anteprima elenca esattamente cosa verrebbe installato e qualsiasi riavvio richiesto.
-3. Installa solo dopo aver letto l'anteprima. KillerBench non seleziona né approva mai un aggiornamento al posto tuo.
+3. Leggi l'anteprima, seleziona la casella di conferma, quindi premi **Installa**. La casella si deseleziona dopo ogni esecuzione e KillerBench non seleziona né approva mai un aggiornamento al posto tuo.
 
 ## Dalla riga di comando
 

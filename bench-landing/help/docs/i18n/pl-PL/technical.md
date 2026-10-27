@@ -39,7 +39,7 @@ Instalator weryfikuje i rozpakowuje aplikację do `%LOCALAPPDATA%\Programs\Kille
 | `HKCU` lub `HKLM\Software\KillerBench` | Ścieżka instalacji dla odpowiedniego zakresu instalacji |
 | Wybrany przez Ciebie plik `.kbench` | Zapisane przechwycenie z zachowanymi dowodami |
 
-Nic nie jest wysyłane. Usuń dziennik dopiero wtedy, gdy dowody dotyczące niepewnego wyniku nie będą Ci już potrzebne.
+Dzienniki pozostają na tym komputerze, a KillerBench ich nie przesyła. Usuń dziennik dopiero wtedy, gdy dowody dotyczące niepewnego wyniku nie będą Ci już potrzebne.
 
 ## Najpierw diagnoza
 
@@ -157,7 +157,7 @@ Każde uruchomienie tworzy raport, który możesz czytać, filtrować i eksporto
 
 KillerBench może badać dowody bez uruchamiania czegokolwiek na komputerze. Upuść dziennik tekstowy na okno albo wklej jego ścieżkę i wybierz **Otwórz dziennik**. Wiersze CBS, CSI i Setup są analizowane wraz ze znacznikami czasu, a ustalenia prowadzą do dokładnego oryginalnego wiersza. Pliki EVTX i XML zdarzeń można zaimportować w ten sam sposób.
 
-**Skanuj Windows Update** to uruchamiane na żądanie zbieranie tylko do odczytu dzienników CBS, DISM, Panther i wycofywania Setup, kanałów zdarzeń aktualizacji i obsługi, stanów usług aktualizacji, wolnego miejsca, czasu działania, wskaźników oczekującego ponownego uruchomienia i wybranych zasad aktualizacji. **Zapisz przechwycenie** zapisuje zachowane dowody w pliku `.kbench`. **Otwórz przechwycenie** otwiera go ponownie bez oryginalnych plików i ocenia jeszcze raz zainstalowanymi regułami, więc te same reguły dają te same ustalenia.
+**Skanuj Windows Update** to uruchamiane na żądanie zbieranie tylko do odczytu dzienników CBS, DISM, Panther i wycofywania Instalatora systemu Windows, kanałów zdarzeń aktualizacji i obsługi, stanów usług aktualizacji, wolnego miejsca, czasu działania, wskaźników oczekującego ponownego uruchomienia i wybranych zasad aktualizacji. **Zapisz przechwycenie** zapisuje zachowane dowody w pliku `.kbench`. **Otwórz przechwycenie** otwiera go ponownie bez oryginalnych plików i ocenia jeszcze raz zainstalowanymi regułami, więc te same reguły dają te same ustalenia.
 
 ## Tryb demonstracyjny
 
@@ -167,7 +167,7 @@ Uruchom `KillerBench.exe --demo`, aby wypróbować **Uruchom diagnozę** na fikc
 
 ## Pakiety wiedzy
 
-Obszerne i często aktualizowane dane referencyjne znajdują się w pakietach wiedzy, a nie w logice diagnostycznej: kody błędów systemu Windows i Setup, identyfikatory producentów i urządzeń, odwołania PCI, USB, ACPI i UEFI, dane producentów OUI kart sieciowych, lokalizacje sterowników i pomocy technicznej oraz wybrane linki pomocy.
+Obszerne i często aktualizowane dane referencyjne znajdują się w pakietach wiedzy, a nie w logice diagnostycznej: kody błędów systemu Windows i Instalatora systemu Windows, identyfikatory producentów i urządzeń, odwołania PCI, USB, ACPI i UEFI, dane producentów OUI kart sieciowych, lokalizacje sterowników i pomocy technicznej oraz wybrane linki pomocy.
 
 Każdy pakiet określa swój format, wersję schematu, źródło, wersję źródła, czas wygenerowania i skrót zawartości, a KillerBench sprawdza je przed użyciem. Nieznany lub nieprawidłowy pakiet pozostaje niedostępny, zamiast prowadzić do zgadywania. Aktualizacja jest pobierana do lokalizacji tymczasowej, sprawdzana, a następnie zastępuje aktywny pakiet w jednym kroku, więc nieudana aktualizacja pozostawia poprzedni pakiet na miejscu.
 

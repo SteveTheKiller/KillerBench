@@ -7,7 +7,7 @@ Użyj tego przewodnika, gdy zadania utknęły w kolejce, drukarka jest wyświetl
 1. Otwórz **Urządzenia** i wybierz **Drukowanie**.
 2. Naciśnij **Znajdź drukarki lokalne** i wybierz kolejkę, która działa nieprawidłowo. Aby sprawdzić wszystkie kolejki, wybierz **Użyj ogólnych kontroli drukowania**.
 3. Pozostaw wyłączoną opcję **Automatycznie napraw potwierdzone problemy** i naciśnij **Uruchom diagnozę**.
-4. Przeczytaj raport. Pokazuje on stan Buforu wydruku, wstrzymane kolejki, tryb offline, widoczne zadania, stan sterowników, rejestracje portów, ostatnie błędy PrintService, a w przypadku drukarek sieciowych jedną próbę połączenia z adresem przypisanym do drukarki.
+4. Przeczytaj raport. Pokazuje on stan Bufora wydruku, wstrzymane kolejki, tryb offline, widoczne zadania, stan sterowników, rejestracje portów, ostatnie błędy PrintService, a w przypadku drukarek sieciowych jedną próbę połączenia z adresem przypisanym do drukarki.
 
 Udane połączenie lub czysty kod stanu nie dowodzą, że drukarka ma papier, toner lub sprawny mechanizm.
 
@@ -25,7 +25,7 @@ Udane połączenie lub czysty kod stanu nie dowodzą, że drukarka ma papier, to
 
 ## Napraw drukarkę domyślną
 
-Wybierz kolejkę, która ma być domyślna, zaznacz **Napraw brakującą lub konfliktową domyślną drukarkę tą kolejką** i naciśnij **Uruchom diagnozę**. Działa to tylko wtedy, gdy drukarki domyślnej brakuje lub występuje konflikt.
+Wybierz kolejkę, która ma być domyślna, zaznacz **Napraw brakującą lub sprzeczną drukarkę domyślną, używając tej kolejki** i naciśnij **Uruchom diagnozę**. Działa to tylko wtedy, gdy drukarki domyślnej brakuje lub występuje konflikt.
 
 ## Z wiersza polecenia
 

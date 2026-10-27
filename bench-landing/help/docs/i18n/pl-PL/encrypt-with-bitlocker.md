@@ -5,16 +5,16 @@ Użyj tego przewodnika, aby włączyć funkcję BitLocker, utworzyć kopię kluc
 ## Zanim zaczniesz
 
 - Uruchom KillerBench jako administrator.
-- Dysk systemu Windows wymaga protektora TPM i protektora z hasłem odzyskiwania. Dysk z danymi wymaga tylko hasła odzyskiwania.
+- Dysk systemu Windows wymaga funkcji ochrony TPM i funkcji ochrony z hasłem odzyskiwania. Dysk z danymi wymaga tylko hasła odzyskiwania.
 - Zdecyduj, gdzie trafi kopia klucza odzyskiwania: do pliku poza szyfrowanym dyskiem i opcjonalnie do Active Directory lub Microsoft Entra ID.
 
 ## Sprawdź dysk
 
 1. Otwórz **BitLocker** i wybierz dysk w polu **Wolumin**.
-2. Pozostaw operację **Sprawdź** i naciśnij **Uruchom diagnozę**. Raport pokazuje stan szyfrowania, stan ochrony i tożsamości protektorów.
+2. Pozostaw operację **Sprawdź** i naciśnij **Uruchom diagnozę**. Raport pokazuje stan szyfrowania, stan ochrony i tożsamości funkcji ochrony.
 3. Jeśli moduł TPM jest obecny, ale nie jest gotowy, najpierw przygotuj go w sekcji **Zabezpieczenia**. KillerBench nigdy nie czyści modułu TPM.
 
-## Dodaj potrzebne protektory
+## Dodaj potrzebne funkcje ochrony
 
 1. Otwórz **Więcej akcji funkcji BitLocker**.
 2. Wybierz **Dodaj funkcję ochrony TPM** lub **Dodaj hasło odzyskiwania**, naciśnij **Podgląd**, zaznacz **Wprowadź tę zmianę na wybranym dysku po naciśnięciu Uruchom akcję**, a następnie naciśnij **Uruchom akcję**.
@@ -22,7 +22,7 @@ Użyj tego przewodnika, aby włączyć funkcję BitLocker, utworzyć kopię kluc
 
 ## Utwórz kopię klucza odzyskiwania i zaszyfruj
 
-1. Naciśnij **Znajdź protektory odzyskiwania** i wybierz protektor z hasłem odzyskiwania.
+1. Naciśnij **Znajdź funkcje ochrony odzyskiwania** i wybierz funkcję ochrony z hasłem odzyskiwania.
 2. Wpisz pełną ścieżkę pliku kopii zapasowej poza szyfrowanym dyskiem.
 3. Wybierz **Zaszyfruj**, wybierz metodę szyfrowania i zaznacz **Utwórz kopię wybranego klucza odzyskiwania, a następnie rozpocznij szyfrowanie, gdy wybiorę Uruchom diagnozę**.
 4. Naciśnij **Uruchom diagnozę**. KillerBench zapisuje kopię, weryfikuje ją, a następnie jeden raz rozpoczyna szyfrowanie.
@@ -30,7 +30,7 @@ Użyj tego przewodnika, aby włączyć funkcję BitLocker, utworzyć kopię kluc
 
 ## Kopia w Active Directory lub Entra ID
 
-W **Więcej akcji funkcji BitLocker** wybierz kopię w katalogu dla wybranego protektora. KillerBench zgłasza, że system Windows przyjął żądanie, ale nie może odczytać kopii w katalogu, więc potwierdź ją w Active Directory lub w centrum administracyjnym Entra.
+W **Więcej akcji funkcji BitLocker** wybierz kopię w katalogu dla wybranej funkcji ochrony. KillerBench zgłasza, że system Windows przyjął żądanie, ale nie może odczytać kopii w katalogu, więc potwierdź ją w Active Directory lub w centrum administracyjnym Entra.
 
 ## Dyski z danymi i automatyczne odblokowywanie
 

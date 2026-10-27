@@ -26,7 +26,7 @@ Indításkor a KillerBench újabb stabil kiadást keres a GitHubon, és telepít
 
 A jelenlegi build tizenkét szakaszt, csak olvasási diagnózist, jelentéseket és egyenként kiválasztható javításokat tartalmaz. A javítások natív ellenőrzése még folyamatban van. Egy működő felület, egy sikeres build vagy egy tesztkészlet eredménye nem igazolja a javítás viselkedését egy valódi számítógépen. Lásd: [Hogyan maradnak biztonságosak a módosítások](safety.html#development-status).
 
-A kezdőoldal szemléltető konzolja szintetikus kimenet. A végleges alkalmazás-képernyőképek és az első nyilvános csomag még várat magára.
+A kezdőoldal szemléltető konzolja szintetikus kimenet. Az első nyilvános csomag még várat magára.
 
 ## Forráskód, licenc és támogatás
 

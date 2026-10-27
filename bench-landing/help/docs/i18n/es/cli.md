@@ -316,7 +316,7 @@ Ejecuta `killerbench-cli` sin argumentos para imprimir esta lista en tu propio e
 - `delete-notifications`: Configuración de notificación de eliminación de NTFS y ReFS, de solo lectura; JSON; sin optimización ni cambio de configuración.
 - `diagnostic-scopes [--all]`: Enumera 11 grupos de resultados recomendados, o las 49 áreas de solo lectura; sin recopilación.
 - `full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Diario de diagnóstico específico; sin reparaciones.
-- `full-scan [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Todas las áreas de diagnóstico; sin reparación salvo que se indique `--auto-repair` explícitamente.
+- `full-scan [--recipes ID[,ID]] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Todas las áreas de diagnóstico; solo diagnóstico, sin reparaciones.
 - `gateway-check`: Comprobaciones ICMP delimitadas de los siguientes saltos predeterminados exactos configurados; sin barrido de direcciones.
 - `infrastructure-service-events`: Lee una instantánea delimitada y exacta de fallos de los servicios de conectividad, administración remota, notificaciones y servicios principales.
 - `investigate-batch FILE [FILE ...]`: Hasta 12 archivos; JSON Lines; salida 3 para importaciones fallidas o parciales.

@@ -39,7 +39,7 @@ Das Installationsprogramm überprüft die Anwendung und entpackt sie nach `%LOCA
 | `HKCU` oder `HKLM\Software\KillerBench` | Der Installationspfad für den jeweiligen Installationsbereich |
 | Eine `.kbench`-Datei Ihrer Wahl | Eine gespeicherte Erfassung mit ihren aufbewahrten Nachweisen |
 
-Nichts wird hochgeladen. Löschen Sie ein Journal erst, wenn Sie die Nachweise für ein unsicheres Ergebnis nicht mehr brauchen.
+Journale bleiben auf diesem Computer, und KillerBench lädt sie nicht hoch. Löschen Sie ein Journal erst, wenn Sie die Nachweise für ein unsicheres Ergebnis nicht mehr brauchen.
 
 ## Zuerst diagnostizieren
 

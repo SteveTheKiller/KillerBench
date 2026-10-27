@@ -35,11 +35,11 @@ Namestitveni program preveri in razširi aplikacijo v `%LOCALAPPDATA%\Programs\K
 | `%LOCALAPPDATA%\KillerBench\Workflows\` | En dnevnik JSON na zagon postopka: odločitve, omejen izhod ukazov in rezultati popravil |
 | `%LOCALAPPDATA%\KillerBench\Repairs\` | Dnevniki izvajanja servisnih popravil, kot sta DISM in SFC |
 | Mape funkcij pod `%LOCALAPPDATA%\KillerBench\` | Čakajoča varovala in izidi posameznih varovanih dejanj, na primer `BitLockerBackup`, `Time`, `Firewall` in `Profiles` |
-| `%LOCALAPPDATA%\KillerBench\agent-repairs.json` | Raven popravil KillerMCP, izbrana v razdelku O programu |
+| `%LOCALAPPDATA%\KillerBench\agent-repairs.json` | Raven popravil KillerMCP, izbrana v razdelku O aplikaciji |
 | `HKCU` ali `HKLM\Software\KillerBench` | Namestitvena pot za ustrezen obseg namestitve |
 | Izbrana datoteka `.kbench` | Shranjen zajem z ohranjenimi dokazi |
 
-Nič se ne naloži na strežnik. Dnevnik izbrišite šele, ko dokazov o negotovem izidu ne potrebujete več.
+Dnevniki ostanejo v tem računalniku in jih KillerBench ne naloži na strežnik. Dnevnik izbrišite šele, ko dokazov o negotovem izidu ne potrebujete več.
 
 ## Najprej diagnostika
 
@@ -175,13 +175,13 @@ Podatki znanja lahko pojasnijo identifikator ali predlagajo, kje iskati naprej. 
 
 ## Posodobitve in podpisovanje
 
-Ob zagonu KillerBench z omejitvijo štirih sekund vpraša GitHub po najnovejši stabilni izdaji in ponudi posodobitev le, če je ta novejša. Preverjanje lahko izklopite z možnostjo **Ob zagonu preveri posodobitve** v razdelku O programu ali v pozivu za posodobitev. Prenese paket, ki ustreza zagnani kopiji, namestitveni ali prenosni. Pred namestitvijo se mora njegova vrednost SHA-256 ujemati z `SHA256SUMS.txt` izdaje. Aplikacija se zapre in znova odpre, da dokonča postopek. Storitve v ozadju ni.
+Ob zagonu KillerBench z omejitvijo štirih sekund vpraša GitHub po najnovejši stabilni izdaji in ponudi posodobitev le, če je ta novejša. Preverjanje lahko izklopite z možnostjo **Ob zagonu preveri posodobitve** v razdelku O aplikaciji ali v pozivu za posodobitev. Prenese paket, ki ustreza zagnani kopiji, namestitveni ali prenosni. Pred namestitvijo se mora njegova vrednost SHA-256 ujemati z `SHA256SUMS.txt` izdaje. Aplikacija se zapre in znova odpre, da dokonča postopek. Storitve v ozadju ni.
 
-Kartica O programu prikazuje različico, izdajatelja in prstni odtis podpisa kode ter SHA-256 zagnane izvršljive datoteke, da lahko preverite svojo kopijo.
+Kartica O aplikaciji prikazuje različico, izdajatelja in prstni odtis podpisa kode ter SHA-256 zagnane izvršljive datoteke, da lahko preverite svojo kopijo.
 
 ## KillerMCP
 
-KillerBench ne vključuje agenta umetne inteligence. [KillerMCP](../mcp.html) ga lahko poveže z istim Engine. **Možnosti KillerMCP** v razdelku O programu določajo, kaj sme agent storiti:
+KillerBench ne vključuje agenta umetne inteligence. [KillerMCP](../mcp.html) ga lahko poveže z istim Engine. **Možnosti KillerMCP** v razdelku O aplikaciji določajo, kaj sme agent storiti:
 
 | Nastavitev | Učinek |
 | --- | --- |
@@ -189,7 +189,7 @@ KillerBench ne vključuje agenta umetne inteligence. [KillerMCP](../mcp.html) ga
 | Dovoli varna popravila | Agent lahko zahteva popravila, razvrščena kot varna. |
 | Dovoli tudi moteča popravila | Moteča popravila postanejo na voljo, vsako pa še vedno zahteva odobritev. |
 
-Raven lahko zviša le oseba pri tem računalniku. Po negotovem izidu popravila KillerMCP zapiše zaklep in popravila agentov ostanejo blokirana, dokler jih nekdo ne odklene v razdelku O programu.
+Raven lahko zviša le oseba pri tem računalniku. Po negotovem izidu popravila KillerMCP zapiše zaklep in popravila agentov ostanejo blokirana, dokler jih nekdo ne odklene v razdelku O aplikaciji.
 
 ## Lokalizacija
 
@@ -246,7 +246,7 @@ Preproste razlage izrazov na tej strani v zaporedju izvirnega slovarja.
 
 | Izraz | Pomen |
 | --- | --- |
-| BITS | Background Intelligent Transfer Service, storitev Windows za prenos posodobitev in drugih datotek v ozadju. |
+| BITS | Storitev inteligentnega prenosa v ozadju (Background Intelligent Transfer Service), storitev Windows za prenos posodobitev in drugih datotek v ozadju. |
 | Zajem | Shranjena datoteka `.kbench` z ohranjenimi dokazi, ki jih je mogoče znova pregledati brez izvirnega računalnika. |
 | CBS | Component-Based Servicing, podsistem Windows za nameščanje posodobitev in funkcij. Njegov dnevnik je `CBS.log`. |
 | DISM | Deployment Image Servicing and Management, orodje Windows za preverjanje in popravilo shrambe komponent. |

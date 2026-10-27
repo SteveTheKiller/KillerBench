@@ -10,10 +10,10 @@
 
 ## Жаңартулар және қызмет көрсету
 
-- `bits-job-review JOB_GUID [--all-users] [--observe]`: Тасымалды нақты қарап шығу немесе екі суретті бақылау; қайталаусыз.
+- `bits-job-review JOB_GUID [--all-users] [--observe]`: Тасымалды нақты қарап шығу немесе екі лездік көшірмені бақылау; қайталаусыз.
 - `bits-jobs [--all-users]`: BITS тапсырмаларының күйлері, иелері және байт сандары; тасымалдар өзгертілмейді.
 - `bits-retry JOB_GUID [--execute]`: Әдепкі бойынша алдын ала қарау; нақты тапсырманы айқын қайталау, қолданбаның аяқталғаны туралы мәлімдемесіз.
-- `bits-retry-recover JOB_GUID`: Тек оқуға арналған екі сурет; тұрақты нәтижелерді қайта әрекетсіз мұрағаттайды.
+- `bits-retry-recover JOB_GUID`: Тек оқуға арналған екі лездік көшірме; тұрақты нәтижелерді қайта әрекетсіз мұрағаттайды.
 - `component-repair-source`: Басқарылатын DISM жөндеу көзі саясаты мен қайшылықтар; өзгеріссіз.
 - `delivery-optimization`: Delivery Optimization қызметінің күйі, тек оқу; JSON дәлелдері.
 - `delivery-optimization-activity`: Құпиялылыққа байланысты шектелген ағымдағы тапсырма сандары мен байт қосындылары; тасымал сәйкестендіргіштерінсіз және өзгеріссіз.
@@ -23,7 +23,7 @@
 - `pending-file-operations`: Құпиялылыққа байланысты шектелген күтудегі файл әрекеттерінің қорытындысы, тек оқу; JSON дәлелдері.
 - `restart-check`: Күтудегі қайта іске қосу көздері, тек оқу; JSON дәлелдері.
 - `servicing-logs`: Ең жаңа CBS, мәтіндік және сығылған CBS мұрағаттарын, DISM және Windows Setup журналдарын шектелген талдау; жөндеусіз.
-- `servicing-monitor [--refresh 1..60] [--samples 1..120] [--skip-events] [--skip-history] [--skip-services] [--skip-restart] [--skip-setup] [--skip-compatibility] [--skip-readiness] [--skip-transfers] [--skip-delivery-optimization] [--skip-installer] [--skip-scheduled-task]`: Қызмет көрсету әрекетінің суреттері, тек оқу.
+- `servicing-monitor [--refresh 1..60] [--samples 1..120] [--skip-events] [--skip-history] [--skip-services] [--skip-restart] [--skip-setup] [--skip-compatibility] [--skip-readiness] [--skip-transfers] [--skip-delivery-optimization] [--skip-installer] [--skip-scheduled-task]`: Қызмет көрсету әрекетінің лездік көшірмелері, тек оқу.
 - `servicing-service-events`: Windows Update қызмет көрсету тізбегінің нақты ақаулар тарихы, тек оқу.
 - `servicing-service-states`: Windows Update қызмет көрсету тізбегіндегі алты қызметтің ағымдағы күйі, тек оқу.
 - `setup-code DECIMAL_OR_0xHEX`: Windows Setup нәтиже кодтарының құжатталған анықтамасы; компьютерді тексерусіз және жөндеусіз.
@@ -111,7 +111,7 @@
 - `backup-events`: VSS және volsnap тарихы; JSON дәлелдері; өзгеріссіз.
 - `backup-service-events`: VSS, бағдарламалық көлеңкелі көшірме провайдері, Windows сақтық көшірмесі және блок деңгейіндегі механизмнің нақты ақаулар тарихын оқиды.
 - `backup-summary`: Жергілікті Windows сақтық көшірме әрекеттерінің қорытындысы; сақтық көшірме өзгертілмейді.
-- `cleanup --user-temp [--windows-temp] [--system-temp] [--shader-caches] [--browser-caches] [--office-caches] [--thumbnail-cache] [--icon-cache] [--error-reports] [--crash-dumps] [--windows-minidumps] [--delivery-optimization-cache] [--recycle-bin] [--days 7] [--max-files 100] [--json] [--execute]`: Әдепкі бойынша алдын ала қарау; себет толығымен тазаланады немесе мүлде тазаланбайды, жас қолданылмайды.
+- `cleanup --user-temp [--windows-temp] [--system-temp] [--shader-caches] [--browser-caches] [--office-caches] [--thumbnail-cache] [--icon-cache] [--error-reports] [--crash-dumps] [--windows-minidumps] [--delivery-optimization-cache] [--recycle-bin] [--days 7] [--max-files 100] [--json] [--execute]`: Әдепкі бойынша алдын ала қарау; Себет толығымен тазаланады немесе мүлде тазаланбайды, файл жасы ескерілмейді.
 - `disk-cleanup-task`: Нақты тапсырма күйі мен орындалу тарихы, тек оқу; тапсырманы іске қосусыз және тазалаусыз.
 - `disk-diagnostic`: Дискіні диагностикалаудың нақты тапсырмалары мен оқиғалар тарихын салыстырады; тапсырмамен немесе дискімен әрекетсіз.
 - `disk-diagnostic-tasks`: Жинаушы мен шешуші тапсырмаларының нақты тарихы, тек оқу; тапсырмамен немесе дискімен әрекетсіз.
@@ -244,7 +244,7 @@
 - `default-printer-set QUEUE [--execute] [--folder PATH]`: Әдепкі бойынша алдын ала қарау; тек жоқ немесе қайшы әдепкі принтер.
 - `default-printer-set-recover [--folder PATH]`: Үзілген таңдауды қайталамай қайта тексереді.
 - `device-check <CATEGORY> [--knowledge PACK_PATH ...]`: 32 пакетке дейінгі қосымша нақты драйвер сілтемелері бар құрылғы дәлелдері, тек оқу.
-- `device-code DECIMAL_OR_0xHEX`: Құрылғылар реттеушісі мәселе кодтарының офлайн анықтамасы.
+- `device-code DECIMAL_OR_0xHEX`: Құрылғылар диспетчері мәселе кодтарының офлайн анықтамасы.
 - `driver-reference PACK_PATH HARDWARE_ID x86|x64|arm64 client|server BUILD`: Тек анықтамалық үміткерлер.
 - `event-channel-enable CHANNEL [--execute]`: Әдепкі бойынша алдын ала қарау; бір нақты басқарылмайтын диагностикалық арнаны қосады және басқа параметрлерді сақтайды.
 - `event-channel-enable-recover`: Қосу пәрменін қайталамай салыстыру, тек оқу.
@@ -316,9 +316,9 @@
 - `delete-notifications`: NTFS және ReFS жою хабарландыруларының конфигурациясы, тек оқу; JSON; оңтайландырусыз және параметрді өзгертусіз.
 - `diagnostic-scopes [--all]`: 11 ұсынылған нәтиже тобын немесе тек оқуға арналған барлық 49 аймақты тізімдейді; жинаусыз.
 - `full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Мақсатты диагностика журналы; жөндеусіз.
-- `full-scan [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Барлық диагностика аймақтары; `--auto-repair` айқын көрсетілмесе, жөндеусіз.
+- `full-scan [--recipes ID[,ID]] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Барлық диагностика аймақтары; тек диагностика, жөндеусіз.
 - `gateway-check`: Бапталған әдепкі келесі түйіндердің нақты ICMP тексерулері, шектелген; мекенжайларды сканерлеусіз.
-- `infrastructure-service-events`: Қосылым, қашықтан басқару, хабарландыру және негізгі қызметтер ақауларының бір шектелген нақты суретін оқиды.
+- `infrastructure-service-events`: Қосылым, қашықтан басқару, хабарландыру және негізгі қызметтер ақауларының бір шектелген нақты лездік көшірмесін оқиды.
 - `investigate-batch FILE [FILE ...]`: 12 файлға дейін; JSON Lines; сәтсіз немесе ішінара импорттар үшін 3 шығу коды.
 - `licensing-check`: Өнім кілттерінсіз Windows белсендіру күйі, тек оқу; JSON дәлелдері.
 - `mac-vendor PACK_PATH MAC_ADDRESS`: Ең ұзын префикс бойынша жергілікті пакеттен іздеу; желі сұрауынсыз.
@@ -328,7 +328,7 @@
 - `pagefile-check`: Пейджинг файлын басқару, бөлу және пайдалану қорытындысы, тек оқу; толық жолдар алынып тасталған.
 - `pci-vendor PACK_PATH PCI_HARDWARE_ID`: Нақты жергілікті пакеттен іздеу; желі сұрауынсыз және драйвер таңдаусыз.
 - `physical-disks`: Ағымдағы денсаулық, жұмыс, тасығыш, шина және пайдалану күйі, тек оқу; JSON; жөндеусіз.
-- `platform-service-events`: Қолданба, сәйкестендіру, профиль және құрылғыны қолдау қызметтері ақауларының бір шектелген нақты суретін оқиды.
+- `platform-service-events`: Қолданба, сәйкестендіру, профиль және құрылғыны қолдау қызметтері ақауларының бір шектелген нақты лездік көшірмесін оқиды.
 - `previous-windows [--execute --backup-confirmed]`: Әдепкі бойынша алдын ала қарау; DISM арқылы Windows-ты кері қайтару мүмкіндігін біржола жояды.
 - `previous-windows-recover`: Кері қайтаруды жоюды қайталамай салыстыру, тек оқу.
 - `provisioned-packages`: Жергілікті Windows-та жаңа пайдаланушылар үшін дайындалған пакеттер; жоюсыз.
@@ -338,11 +338,11 @@
 - `restore-point DESCRIPTION [ModifySettings|ApplicationInstall|DeviceDriverInstall] [--execute]`: Әдепкі бойынша алдын ала қарау; жаңа тексерулерден кейін бір нүкте жасайды.
 - `restore-point-recover`: Күтудегі сұрауды басқа нүкте жасамай растайды.
 - `schedule-preview daily|weekly|monthly YYYY-MM-DD HH:mm TIME_ZONE_ID [Mon,Tue|1,15|last]`: Тек алдын ала қарау.
-- `shadow-copies`: VSS суреттерінің ағымдағы күйлері мен атрибуттары, тек оқу; сәйкестендіргіштер алынып тасталған; суреттер өзгертілмейді.
-- `shadow-storage`: VSS дифференциалдық аймағының бөлінуі мен толуы, тек оқу; JSON; өлшемді өзгертусіз және сурет әрекетінсіз.
+- `shadow-copies`: VSS суреттерінің ағымдағы күйлері мен атрибуттары, тек оқу; сәйкестендіргіштер алынып тасталған; лездік көшірмелер өзгертілмейді.
+- `shadow-storage`: VSS дифференциалдық аймағының бөлінуі мен толуы, тек оқу; JSON; өлшемді өзгертусіз және лездік көшірме әрекетінсіз.
 - `uac-policy`: UAC қосылуы және құқықтарды көтеру сұрауы саясаты, тек оқу; тіркелгі деректерінсіз.
 - `uefi-vendor PACK_PATH PNP|ACPI VENDOR_ID`: UEFI жергілікті тізілімінен нақты іздеу; желі сұрауынсыз және драйвер таңдаусыз.
 - `usb-vendor PACK_PATH USB_HARDWARE_ID`: Нақты жергілікті пакеттен іздеу; желі сұрауынсыз және драйвер таңдаусыз.
-- `vitals-check`: Windows, жабдық, тіркелгі, ресурс, батарея және физикалық диск суреттері, тек оқу; JSON дәлелдері.
+- `vitals-check`: Windows, жабдық, тіркелгі, ресурс, батарея және физикалық диск лездік көшірмелері, тек оқу; JSON дәлелдері.
 - `win32-code DECIMAL_OR_0xHEX`: Орнатылған Windows хабарларын офлайн іздеу.
 - `workflows`: Орнатылған жұмыс ағындарының кілттері мен атауларын тізімдейді; сканерлеусіз және жөндеусіз.

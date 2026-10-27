@@ -10,7 +10,7 @@ Wybierz obszary prywatności do sprawdzenia i naciśnij **Uruchom diagnozę**. W
 
 Aby zmienić ustawienie, użyj kontrolki **Ustawienie prywatności**. KillerBench sprawdza, czy ustawienie nie należy już do zasad lub zarządzania urządzeniami, zapisuje bieżącą wartość, wprowadza jedną żądaną zmianę i odczytuje ją ponownie w celu potwierdzenia. Ustawienia należące do zasad pozostają nietknięte.
 
-Ustawienia obejmują wybory dotyczące danych diagnostycznych i reklam, historię schowka, 17 uprawnień aplikacji, takich jak kamera, mikrofon i lokalizacja, wyszukiwanie zawartości w chmurze dla kont osobistych i służbowych oraz wyróżnienia wyszukiwania.
+Ustawienia obejmują wybory dotyczące reklam, historię schowka, 19 ustawień uprawnień aplikacji, takich jak kamera, mikrofon i lokalizacja, wyszukiwanie zawartości w chmurze dla kont osobistych i służbowych oraz wyróżnienia wyszukiwania.
 
 ## Narzędzia w tej sekcji
 

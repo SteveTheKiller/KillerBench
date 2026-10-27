@@ -26,7 +26,7 @@ Ved oppstart spør KillerBench GitHub om en nyere stabil versjon og spør deg f�
 
 Gjeldende versjon har tolv seksjoner, skrivebeskyttet diagnose, rapporter og reparasjonsflater som velges enkeltvis. Native validering av reparasjoner pågår fortsatt. Et fungerende grensesnitt, en vellykket bygging eller et fixture-resultat beviser ikke hvordan en reparasjon oppfører seg på en ekte datamaskin. Se [Slik holdes endringer trygge](safety.html#development-status).
 
-Illustrasjonskonsollen på landingssiden er syntetiske utdata. Endelige skjermbilder av appen og den første offentlige pakken er fortsatt ventende.
+Illustrasjonskonsollen på landingssiden er syntetiske utdata. Den første offentlige pakken er fortsatt ventende.
 
 ## Kildekode, lisens og støtte
 

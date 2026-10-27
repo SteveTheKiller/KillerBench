@@ -31,7 +31,7 @@ Cada reparación queda en el diario y se vuelve a leer. Consulta [Cómo se manti
 
 1. Elige **Actualizaciones disponibles** en **Actualizaciones** y pulsa **Ejecutar diagnóstico** para descubrir las actualizaciones del origen configurado.
 2. Selecciona las actualizaciones que quieras y pulsa **Previsualizar seleccionadas**. La vista previa enumera exactamente lo que se instalaría y cualquier reinicio necesario.
-3. Instala solo después de leer la vista previa. KillerBench nunca selecciona ni aprueba una actualización por ti.
+3. Lee la vista previa, marca la casilla de confirmación y pulsa **Instalar**. La casilla se desmarca después de cada ejecución, y KillerBench nunca selecciona ni aprueba una actualización por ti.
 
 ## Desde la línea de comandos
 

@@ -5,7 +5,7 @@ Utilisez ce guide lorsque Windows redémarre de manière inattendue, affiche une
 ## Vérifier l'ordinateur
 
 1. Ouvrez **Diagnostics** et choisissez **Signes vitaux**.
-2. Appuyez sur **Exécuter le diagnostic**. Le rapport combine la mémoire, l'état des disques, les problèmes de périphériques, l'historique de l'Analyseur de fiabilité, les enregistrements d'erreurs matérielles, les rapports de plantage, les arrêts inattendus et les résultats de l'Outil Diagnostics de mémoire Windows.
+2. Appuyez sur **Exécuter le diagnostic**. Le rapport combine la mémoire, l'état des disques, les problèmes de périphériques, l'historique du Moniteur de fiabilité, les enregistrements d'erreurs matérielles, les rapports de plantage, les arrêts inattendus et les résultats de l'Outil Diagnostics de mémoire Windows.
 3. Lisez la conclusion et les preuves qui l'accompagnent. Les plantages historiques expliquent ce qui s'est passé ; ils ne prouvent pas qu'une panne est toujours présente.
 
 ## Affiner la recherche

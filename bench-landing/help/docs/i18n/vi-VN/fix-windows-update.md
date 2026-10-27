@@ -31,7 +31,7 @@ Mọi sửa chữa đều được ghi nhật ký và đọc lại. Xem [Cách g
 
 1. Chọn **Bản cập nhật có sẵn** trong **Cập nhật** và nhấn **Chạy chẩn đoán** để tìm bản cập nhật từ nguồn đã cấu hình.
 2. Chọn các bản cập nhật bạn muốn và nhấn **Xem trước các bản đã chọn**. Bản xem trước liệt kê chính xác những gì sẽ được cài và mọi yêu cầu khởi động lại.
-3. Chỉ cài đặt sau khi đọc bản xem trước. KillerBench không bao giờ chọn hay phê duyệt bản cập nhật thay bạn.
+3. Đọc bản xem trước, đánh dấu ô xác nhận, rồi nhấn **Cài đặt**. Ô đánh dấu được xóa sau mỗi lần chạy, và KillerBench không bao giờ chọn hay phê duyệt bản cập nhật thay bạn.
 
 ## Từ dòng lệnh
 

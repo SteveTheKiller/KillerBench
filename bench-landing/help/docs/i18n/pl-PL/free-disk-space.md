@@ -11,7 +11,7 @@ Użyj tego przewodnika, gdy na dysku zaczyna brakować miejsca. KillerBench poka
 ## Podgląd czyszczenia
 
 1. Otwórz **Konserwacja** i wybierz **Czyszczenie**.
-2. Zaznacz wybrane cele, na przykład **Pliki tymczasowe bieżącego użytkownika**, **Pliki tymczasowe Windows**, **Pamięci podręczne przeglądarek bieżącego użytkownika**, **Pamięć podręczna Delivery Optimization** lub **Kosz bieżącego użytkownika**. Najedź kursorem na cel, aby zobaczyć dokładnie, jakie foldery obejmuje.
+2. Zaznacz wybrane cele, na przykład **Pliki tymczasowe bieżącego użytkownika**, **Pliki tymczasowe Windows**, **Pamięci podręczne przeglądarek bieżącego użytkownika**, **Pamięć podręczna Optymalizacji dostarczania** lub **Kosz bieżącego użytkownika**. Najedź kursorem na cel, aby zobaczyć dokładnie, jakie foldery obejmuje.
 3. Ustaw **Minimalny wiek (dni)** i **Maksymalna liczba plików na cel**.
 4. Naciśnij **Uruchom diagnozę** przy wyłączonej opcji **Wykonaj wybrane trwałe czyszczenie po świeżych kontrolach**. Raport wymienia kandydatów i szacowane miejsce dla każdego celu. Nic nie jest usuwane.
 

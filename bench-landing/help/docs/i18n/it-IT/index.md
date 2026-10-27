@@ -1,6 +1,6 @@
 # Guida di KillerBench
 
-KillerBench è un banco di lavoro per la diagnosi e la riparazione di Windows pensato per i tecnici. Prima controlla il computer, spiega cosa ha trovato con le evidenze di ogni rilevamento e modifica Windows solo quando scegli una correzione precisa e la confermi.
+KillerBench è un ambiente di lavoro per la diagnosi e la riparazione di Windows pensato per i tecnici. Prima controlla il computer, spiega cosa ha trovato con le evidenze di ogni rilevamento e modifica Windows solo quando scegli una correzione precisa e la confermi.
 
 KillerBench è in sviluppo. Non esiste ancora un download pubblico. Queste pagine descrivono la build attuale.
 

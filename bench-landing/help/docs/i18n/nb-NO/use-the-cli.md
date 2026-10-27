@@ -14,7 +14,7 @@ Bruk kommandolinjen når du vil ha KillerBench-bevis i et skript, en RMM-jobb el
 killerbench-cli full-scan --report C:\Reports\scan.html --json
 ```
 
-`full-scan` er skrivebeskyttet med mindre du legger til `--auto-repair`. `--report` skriver den samme temabaserte rapporten som appen eksporterer. Bruk `--scope` for å kontrollere bare noen områder, og `common-check` for samlet JSON uten arbeidsflytjournal.
+`full-scan` er bare diagnose og avviser `--auto-repair`. Bruk en målrettet reparasjonsarbeidsflyt når en bestemt handling trengs. `--report` skriver den samme temabaserte rapporten som appen eksporterer. Bruk `--scope` for å kontrollere bare noen områder, og `common-check` for samlet JSON uten arbeidsflytjournal.
 
 ## Les avslutningskoder
 

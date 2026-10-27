@@ -38,7 +38,7 @@ Kontroluje dostupnost Služby zařízení HID. Volitelné obnovení spustí pouz
 
 ### Služba výčtu přenosných zařízení
 
-Kontroluje dostupnost Služby výčtu přenosných zařízení. Volitelné obnovení spustí pouze přesně tuto povolenou a zastavenou službu po čerstvých kontrolách závislostí. Existující aplikace mohou obnovit rozpoznávání připojených přenosných zařízení a přístup k nim. Zařízení, ovladače, soubory, knihovny, nastavení synchronizace, oprávnění, zásady, oprávnění služby a typ spouštění se zachovávají. KillerBench nevybírá žádnou operaci se zařízeními, soubory, knihovnami, synchronizací ani přenosem. Ověření pokrývá pouze stabilní stav služby, nikoli výčet, přístup, synchronizaci ani přenos.
+Kontroluje dostupnost Služby výčtu přenosných zařízení. Volitelné obnovení spustí po čerstvých kontrolách závislostí pouze přesně tuto službu, pokud je zastavená a nastavená na automatické spouštění. Zastavená služba spouštěná na vyžádání zůstává pouze informací. Existující aplikace mohou obnovit rozpoznávání připojených přenosných zařízení a přístup k nim. Zařízení, ovladače, soubory, knihovny, nastavení synchronizace, oprávnění, zásady, oprávnění služby a typ spouštění se zachovávají. KillerBench nevybírá žádnou operaci se zařízeními, soubory, knihovnami, synchronizací ani přenosem. Ověření pokrývá pouze stabilní stav služby, nikoli výčet, přístup, synchronizaci ani přenos.
 
 ### Získávání obrázků systému Windows (WIA)
 

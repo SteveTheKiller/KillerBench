@@ -31,7 +31,7 @@ Hver reparasjon journalføres og leses tilbake. Se [Slik holdes endringer trygge
 
 1. Velg **Tilgjengelige oppdateringer** under **Oppdateringer** og trykk **Kjør diagnose** for å finne oppdateringer fra den konfigurerte kilden.
 2. Velg oppdateringene du vil ha, og trykk **Forhåndsvis valgte**. Forhåndsvisningen viser nøyaktig hva som vil bli installert, og eventuelle krav om omstart.
-3. Installer bare etter at du har lest forhåndsvisningen. KillerBench velger eller godkjenner aldri en oppdatering for deg.
+3. Les forhåndsvisningen, merk av for bekreftelsen, og trykk deretter **Installer**. Avmerkingsboksen tømmes etter hver kjøring, og KillerBench velger eller godkjenner aldri en oppdatering for deg.
 
 ## Fra kommandolinjen
 

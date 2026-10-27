@@ -7,7 +7,7 @@ Uporabite, ko opravila obtičijo v vrsti, tiskalnik kaže stanje brez povezave a
 1. Odprite **Naprave** in izberite **Tiskanje**.
 2. Pritisnite **Poišči lokalne tiskalnike** in izberite vrsto s težavami. Za pregled vseh vrst izberite **Uporabi splošna preverjanja tiskanja**.
 3. Pustite **Samodejno popravi potrjene težave** izklopljeno in pritisnite **Zaženi diagnostiko**.
-4. Preberite poročilo. Prikazuje stanje storitve Print Spooler, začasno ustavljene vrste, način brez povezave, vidna opravila, stanja gonilnikov, registracije vrat, nedavne napake PrintService in pri omrežnih tiskalnikih en poskus povezave z dodeljenim naslovom tiskalnika.
+4. Preberite poročilo. Prikazuje stanje storitve Tiskalni posrednik, začasno ustavljene vrste, način brez povezave, vidna opravila, stanja gonilnikov, registracije vrat, nedavne napake PrintService in pri omrežnih tiskalnikih en poskus povezave z dodeljenim naslovom tiskalnika.
 
 Uspešna povezava ali koda stanja brez napak ne dokazuje, da ima tiskalnik papir, toner ali delujoč mehanizem.
 

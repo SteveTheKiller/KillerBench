@@ -10,7 +10,7 @@ Počistite datoteke, profile in načrtovana opravila ter odstranite navlako iz s
 
 ### Čiščenje
 
-Oceni izbrane cilje začasnih datotek, predpomnilnikov in shranjenih diagnostičnih dokazov z nastavitvami starosti in omejitve števila datotek na glavni plošči. Windows Temp in Windows SystemTemp sta neodvisna cilja. Delivery Optimization je ločena izbira predpomnilnika; odstranjeno vsebino bo morda treba znova prenesti. Izbirno trajno brisanje uporablja ločeno potrditveno polje za čiščenje, znova preveri shranjene kandidate znotraj izbrane omejitve in zabeleži vsak izid. Brisanje obide koš. Cilje, starost in omejitve števila datotek lahko nastavite tudi z ukazom CLI za čiščenje.
+Oceni izbrane cilje začasnih datotek, predpomnilnikov in shranjenih diagnostičnih dokazov z nastavitvami starosti in omejitve števila datotek na glavni plošči. Windows Temp in Windows SystemTemp sta neodvisna cilja. Optimizacija dostave je ločena izbira predpomnilnika; odstranjeno vsebino bo morda treba znova prenesti. Izbirno trajno brisanje uporablja ločeno potrditveno polje za čiščenje, znova preveri shranjene kandidate znotraj izbrane omejitve in zabeleži vsak izid. Brisanje obide koš. Cilje, starost in omejitve števila datotek lahko nastavite tudi z ukazom CLI za čiščenje.
 
 ### Profili
 

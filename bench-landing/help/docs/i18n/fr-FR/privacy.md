@@ -10,7 +10,7 @@ Sélectionnez les domaines de confidentialité à inspecter et appuyez sur **Ex�
 
 Pour modifier un paramètre, utilisez la commande **Paramètre de confidentialité**. KillerBench vérifie si une stratégie ou la gestion des appareils contrôle déjà ce paramètre, enregistre la valeur actuelle, effectue la seule modification demandée et la relit pour la confirmer. Les paramètres contrôlés par une stratégie ne sont pas touchés.
 
-Les paramètres comprennent les choix relatifs aux données de diagnostic et à la publicité, l'historique du Presse-papiers, 17 autorisations d'applications comme la caméra, le microphone et la localisation, la recherche de contenu dans le cloud pour les comptes personnels et professionnels, et les points forts de la recherche.
+Les paramètres comprennent les choix relatifs à la publicité, l'historique du Presse-papiers, 19 autorisations d'applications comme la caméra, le microphone et la localisation, la recherche de contenu dans le cloud pour les comptes personnels et professionnels, et les points forts de la recherche.
 
 ## Outils de cette section
 

@@ -17,7 +17,7 @@ Użyj tego przewodnika, gdy aktualizacje kończą się niepowodzeniem, zawieszaj
 
 ## Obserwuj aktualizację, która wydaje się zawieszona
 
-Wybierz **Monitor aktywności obsługi** w sekcji **Aktualizacje** i naciśnij **Uruchom diagnozę**. Wykonuje on powtarzane migawki aktywności aktualizacji, Setup i Installera, sum transferów oraz wskaźników ponownego uruchomienia. Aktywność jest pokazywana wyłącznie jako dowód; nigdy sama nie stwierdza zawieszenia ani usterki.
+Wybierz **Monitor aktywności obsługi** w sekcji **Aktualizacje** i naciśnij **Uruchom diagnozę**. Wykonuje on powtarzane migawki aktywności aktualizacji, Instalatora systemu Windows i Instalatora Windows, sum transferów oraz wskaźników ponownego uruchomienia. Aktywność jest pokazywana wyłącznie jako dowód; nigdy sama nie stwierdza zawieszenia ani usterki.
 
 ## Napraw to, co wykazał raport
 
@@ -31,7 +31,7 @@ Każda naprawa jest zapisywana w dzienniku i odczytywana ponownie. Pełną sekwe
 
 1. Wybierz **Dostępne aktualizacje** w sekcji **Aktualizacje** i naciśnij **Uruchom diagnozę**, aby wyszukać aktualizacje ze skonfigurowanego źródła.
 2. Zaznacz wybrane aktualizacje i naciśnij **Podgląd wybranych**. Podgląd pokazuje dokładnie, co zostałoby zainstalowane, i czy wymagane jest ponowne uruchomienie.
-3. Instaluj dopiero po przeczytaniu podglądu. KillerBench nigdy nie wybiera ani nie zatwierdza aktualizacji za Ciebie.
+3. Przeczytaj podgląd, zaznacz pole wyboru potwierdzenia, a następnie naciśnij **Zainstaluj**. Pole wyboru jest czyszczone po każdym uruchomieniu, a KillerBench nigdy nie wybiera ani nie zatwierdza aktualizacji za Ciebie.
 
 ## Z wiersza polecenia
 

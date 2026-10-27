@@ -38,7 +38,7 @@ Check Human Interface Device Service availability. Optional recovery starts only
 
 ### Portable Device Enumerator Service
 
-Check Portable Device Enumerator Service availability. Optional recovery starts only the enabled, stopped exact service after fresh dependency checks. Existing applications may resume detecting and accessing connected portable devices. Devices, drivers, files, libraries, synchronization settings, permissions, policy, service permissions and startup type are preserved. KillerBench selects no device, file, library, synchronization or transfer operation. Verification covers stable service state only, not enumeration, access, synchronization or transfer.
+Check Portable Device Enumerator Service availability. Optional recovery starts only the exact service when it is stopped and set to start automatically, after fresh dependency checks. A stopped demand-start service remains informational. Existing applications may resume detecting and accessing connected portable devices. Devices, drivers, files, libraries, synchronization settings, permissions, policy, service permissions and startup type are preserved. KillerBench selects no device, file, library, synchronization or transfer operation. Verification covers stable service state only, not enumeration, access, synchronization or transfer.
 
 ### Windows Image Acquisition
 

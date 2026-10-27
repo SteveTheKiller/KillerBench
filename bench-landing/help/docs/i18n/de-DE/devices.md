@@ -38,7 +38,7 @@ Prüft die Verfügbarkeit des Dienstes für Eingabegeräte (Human Interface Devi
 
 ### Enumeratordienst für tragbare Geräte
 
-Prüft die Verfügbarkeit des Enumeratordienstes für tragbare Geräte. Die optionale Wiederherstellung startet nach aktuellen Abhängigkeitsprüfungen nur den aktivierten, angehaltenen, genau bezeichneten Dienst. Vorhandene Anwendungen können angeschlossene tragbare Geräte wieder erkennen und darauf zugreifen. Geräte, Treiber, Dateien, Bibliotheken, Synchronisierungseinstellungen, Berechtigungen, Richtlinie, Dienstberechtigungen und Starttyp bleiben erhalten. KillerBench wählt keinen Vorgang an Geräten, Dateien, Bibliotheken, Synchronisierung oder Übertragung. Die Überprüfung umfasst nur einen stabilen Dienstzustand, nicht Aufzählung, Zugriff, Synchronisierung oder Übertragung.
+Prüft die Verfügbarkeit des Enumeratordienstes für tragbare Geräte. Die optionale Wiederherstellung startet nach aktuellen Abhängigkeitsprüfungen nur den genau bezeichneten Dienst, wenn er angehalten ist und automatisch starten soll. Ein angehaltener Dienst mit manuellem Start bleibt eine Information. Vorhandene Anwendungen können angeschlossene tragbare Geräte wieder erkennen und darauf zugreifen. Geräte, Treiber, Dateien, Bibliotheken, Synchronisierungseinstellungen, Berechtigungen, Richtlinie, Dienstberechtigungen und Starttyp bleiben erhalten. KillerBench wählt keinen Vorgang an Geräten, Dateien, Bibliotheken, Synchronisierung oder Übertragung. Die Überprüfung umfasst nur einen stabilen Dienstzustand, nicht Aufzählung, Zugriff, Synchronisierung oder Übertragung.
 
 ### Windows-Bilderfassung (WIA)
 

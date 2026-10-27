@@ -10,7 +10,7 @@ Adım adım kılavuzlar: [Windows'u daha gizli hâle getirme](make-windows-priva
 
 Bir ayarı değiştirmek için **Gizlilik ayarı** denetimini kullanın. KillerBench ayarın sahibinin zaten bir ilke veya aygıt yönetimi olup olmadığını denetler, geçerli değeri kaydeder, istediğiniz tek değişikliği yapar ve onaylamak için geri okur. İlkenin sahip olduğu ayarlara dokunulmaz.
 
-Ayarlar arasında tanılama verileri ve reklam seçenekleri, pano geçmişi, kamera, mikrofon ve konum gibi 17 uygulama izni ayarı, kişisel ve iş hesapları için bulut içerik araması ve arama vurguları bulunur.
+Ayarlar arasında reklam seçenekleri, pano geçmişi, kamera, mikrofon ve konum gibi 19 uygulama izni ayarı, kişisel ve iş hesapları için bulut içerik araması ve arama vurguları bulunur.
 
 ## Bu bölümdeki araçlar
 

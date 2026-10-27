@@ -316,7 +316,7 @@ Futtassa a `killerbench-cli` parancsot argumentumok nélkül, ha ezt a listát a
 - `delete-notifications`: Az NTFS és a ReFS törlésiértesítés-konfigurációja csak olvasva; JSON; nincs optimalizálás vagy beállításmódosítás.
 - `diagnostic-scopes [--all]`: A 11 ajánlott eredménycsoport vagy mind a 49 csak olvasó terület listázása; nincs gyűjtés.
 - `full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Célzott diagnosztikai napló; nincs javítás.
-- `full-scan [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Minden diagnosztikai terület; nincs javítás, hacsak nincs kifejezetten megadva a `--auto-repair`.
+- `full-scan [--recipes ID[,ID]] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Minden diagnosztikai terület; kizárólag diagnosztikai, nincs javítás.
 - `gateway-check`: A pontosan beállított alapértelmezett következő ugrások korlátozott ICMP-ellenőrzése; nincs címvizsgálat.
 - `infrastructure-service-events`: Egyetlen korlátozott, pontos pillanatkép olvasása a kapcsolódási, távfelügyeleti, értesítési és alapvető szolgáltatások hibáiról.
 - `investigate-batch FILE [FILE ...]`: Legfeljebb 12 fájl; JSON Lines; 3-as kilépési kód sikertelen vagy részleges importálás esetén.

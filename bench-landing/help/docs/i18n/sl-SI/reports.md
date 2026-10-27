@@ -22,4 +22,4 @@ KillerBench lahko prebere tudi shranjene dnevnike Windows, kot so dnevniki CBS i
 
 ## Izvažanje
 
-**Izvozi poročilo** shrani poročilo z izvornimi potmi, razčlenjenimi vnosi in odlomki dokazov, da ga lahko pregledate, preden ga priložite zahtevku. Surovi dnevniki in odlomki dokazov lahko vsebujejo imena računalnikov, račune, poti ali občutljivo izvorno besedilo. Varovani zbiralniki omejujejo shranjeno vsebino, vendar ni zagotovljeno, da so uvoženi dokazi očiščeni občutljivih podatkov. Pred deljenjem jih preglejte in odstranite občutljive informacije.
+**Izvozi poročilo** shrani poročilo z izvornimi potmi, razčlenjenimi vnosi in odlomki dokazov, da ga lahko pregledate, preden ga priložite zahtevku. Izvožena poročila vsebujejo ime tega računalnika, surovi dnevniki in odlomki dokazov pa lahko vsebujejo tudi račune, poti ali občutljivo izvorno besedilo. Varovani zbiralniki omejujejo shranjeno vsebino, vendar ni zagotovljeno, da so uvoženi dokazi očiščeni občutljivih podatkov. Pred deljenjem jih preglejte in odstranite občutljive informacije.

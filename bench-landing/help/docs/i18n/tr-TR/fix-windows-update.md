@@ -31,7 +31,7 @@ Her onarım günlüğe yazılır ve geri okunur. Tüm sıra için [Değişiklikl
 
 1. **Güncelleştirmeler** bölümünde **Kullanılabilir güncelleştirmeler** öğesini seçin ve yapılandırılmış kaynaktan güncelleştirmeleri bulmak için **Tanılama çalıştır** düğmesine basın.
 2. İstediğiniz güncelleştirmeleri seçin ve **Seçilenleri önizle** düğmesine basın. Önizleme, tam olarak neyin yükleneceğini ve varsa yeniden başlatma gereksinimini listeler.
-3. Yalnızca önizlemeyi okuduktan sonra yükleyin. KillerBench sizin yerinize hiçbir güncelleştirmeyi seçmez veya onaylamaz.
+3. Önizlemeyi okuyun, onay kutusunu işaretleyin ve ardından **Yükle** düğmesine basın. Onay kutusu her çalıştırmadan sonra temizlenir ve KillerBench sizin yerinize hiçbir güncelleştirmeyi seçmez veya onaylamaz.
 
 ## Komut satırından
 

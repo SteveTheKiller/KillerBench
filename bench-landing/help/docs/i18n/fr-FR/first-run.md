@@ -13,7 +13,7 @@ Commencez sans élévation. Certaines preuves Windows, comme les protecteurs Bit
 
 ## Lire le rapport
 
-Le rapport commence par les nombres de **À examiner**, **Réparations vérifiées**, **Incomplètes** et **Vérifiées**, suivis d'une étape suivante recommandée.
+Le rapport commence par les nombres de **À examiner**, **Réparations vérifiées**, **Incomplètes** et **Contrôlées**, suivis d'une étape suivante recommandée.
 
 - **Ce qui demande de l'attention** liste les problèmes étayés par les preuves, du plus important au moins important.
 - **Informations collectées** montre ce qui a été lu, y compris les preuves incomplètes ou indisponibles.

@@ -1,4 +1,4 @@
-# La técnica de KillerBench
+# La tecnología de KillerBench
 
 Un vistazo por dentro a cómo KillerBench lee un equipo Windows, mantiene honestas sus evidencias y decide cuándo se permite un cambio.
 
@@ -39,7 +39,7 @@ El instalador verifica y extrae la aplicación en `%LOCALAPPDATA%\Programs\Kille
 | `HKCU` o `HKLM\Software\KillerBench` | La ruta instalada, según el ámbito de la instalación |
 | Un archivo `.kbench` que elijas | Una captura guardada con sus evidencias conservadas |
 
-No se carga nada. Elimina un diario solo cuando ya no necesites las evidencias de un resultado incierto.
+Los diarios se quedan en este equipo y KillerBench no los carga. Elimina un diario solo cuando ya no necesites las evidencias de un resultado incierto.
 
 ## Primero el diagnóstico
 

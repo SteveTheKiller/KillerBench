@@ -22,4 +22,4 @@ KillerBench umí číst i uložené protokoly Windows, například protokoly CBS
 
 ## Export
 
-**Exportovat zprávu** uloží zprávu se zdrojovými cestami, zpracovanými položkami a výňatky důkazů, abyste ji mohli zkontrolovat před připojením k tiketu. Surové protokoly a výňatky důkazů mohou obsahovat názvy počítačů, účty, cesty nebo citlivý zdrojový text. Chráněné kolektory omezují, co uchovávají, ale u importovaných důkazů není začernění zaručeno. Před sdílením citlivé údaje zkontrolujte a odstraňte.
+**Exportovat zprávu** uloží zprávu se zdrojovými cestami, zpracovanými položkami a výňatky důkazů, abyste ji mohli zkontrolovat před připojením k tiketu. Exportované zprávy obsahují název tohoto počítače a surové protokoly a výňatky důkazů mohou obsahovat také účty, cesty nebo citlivý zdrojový text. Chráněné kolektory omezují, co uchovávají, ale u importovaných důkazů není začernění zaručeno. Před sdílením citlivé údaje zkontrolujte a odstraňte.

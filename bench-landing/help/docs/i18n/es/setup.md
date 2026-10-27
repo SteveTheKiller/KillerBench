@@ -26,7 +26,7 @@ Al iniciarse, KillerBench consulta GitHub en busca de una versión estable más 
 
 La compilación actual tiene doce secciones, diagnóstico de solo lectura, informes y superficies de reparación seleccionadas de forma individual. La validación nativa de reparaciones sigue en curso. Una interfaz que funciona, una compilación correcta o el resultado de un fixture no demuestran el comportamiento de una reparación en un equipo real. Consulta [Cómo se mantienen seguros los cambios](safety.html#development-status).
 
-La consola ilustrativa de la página principal es una salida sintética. Las capturas de pantalla finales de la aplicación y el primer paquete público siguen pendientes.
+La consola ilustrativa de la página principal es una salida sintética. El primer paquete público sigue pendiente.
 
 ## Código fuente, licencia y soporte
 

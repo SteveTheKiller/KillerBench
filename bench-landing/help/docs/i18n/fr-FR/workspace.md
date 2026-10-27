@@ -34,7 +34,7 @@ La console en verre fumé et les rapports lisibles suivent le thème actif. Les 
 | F1 | Raccourcis clavier |
 | F2 | Afficher ou masquer la barre latérale |
 | F3 | Afficher ou masquer le journal d'activité |
-| Alt+Shift+G | Grain de film |
+| Alt+Maj+G | Grain de film |
 | F12 | À propos de KillerBench |
 | Ctrl+O | Ouvrir une preuve |
 | Esc | Fermer une superposition ou arrêter la lecture d'un fichier |

@@ -9,7 +9,7 @@ Zacznij od strony [Pobieranie i konfiguracja](setup.html), a następnie uruchom 
 3. Naciśnij **Uruchom diagnozę**. Postęp pojawia się w panelu **Surowe wyjście** po prawej stronie podczas każdej kontroli.
 4. Po zakończeniu panel wyjścia przełącza się na **Czytelny raport**.
 
-Zacznij bez podniesionych uprawnień. Niektóre dowody systemu Windows, takie jak protektory BitLocker i chronione usługi, wymagają uprawnień administratora. Na koncie standardowym te kontrole zgłaszają niedostępne dowody. Jeśli ich potrzebujesz, dokończ bieżące uruchomienie, zachowaj raport, a następnie celowo otwórz KillerBench ponownie za pomocą **Uruchom jako administrator**. Podniesienie uprawnień nie wybiera ani nie zatwierdza żadnej naprawy.
+Zacznij bez podniesionych uprawnień. Niektóre dowody systemu Windows, takie jak funkcje ochrony BitLocker i chronione usługi, wymagają uprawnień administratora. Na koncie standardowym te kontrole zgłaszają niedostępne dowody. Jeśli ich potrzebujesz, dokończ bieżące uruchomienie, zachowaj raport, a następnie celowo otwórz KillerBench ponownie za pomocą **Uruchom jako administrator**. Podniesienie uprawnień nie wybiera ani nie zatwierdza żadnej naprawy.
 
 ## Przeczytaj raport
 

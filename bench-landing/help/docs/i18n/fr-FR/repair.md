@@ -56,7 +56,7 @@ Inventorie de manière délimitée l'état des tâches planifiées, les résulta
 
 ### Service de profil utilisateur
 
-Vérifie la disponibilité de Service de profil utilisateur. La récupération facultative ne démarre que le service exact activé et arrêté, après de nouvelles vérifications des dépendances. Les demandes existantes de connexion et de profil peuvent reprendre. Les dossiers de profil, les ruches du registre, les autorisations, les inscriptions de la liste des profils, les identifiants, les données utilisateur, la stratégie, les autorisations du service et le type de démarrage sont conservés. Aucune opération de profil n'est demandée. La vérification ne couvre que l'état stable du service, pas la connexion, le chargement des profils ni l'accès aux données utilisateur.
+Vérifie la disponibilité du Service de profil utilisateur. La récupération facultative ne démarre que le service exact activé et arrêté, après de nouvelles vérifications des dépendances. Les demandes existantes de connexion et de profil peuvent reprendre. Les dossiers de profil, les ruches du registre, les autorisations, les inscriptions de la liste des profils, les identifiants, les données utilisateur, la stratégie, les autorisations du service et le type de démarrage sont conservés. Aucune opération de profil n'est demandée. La vérification ne couvre que l'état stable du service, pas la connexion, le chargement des profils ni l'accès aux données utilisateur.
 
 ### Services de sauvegarde
 

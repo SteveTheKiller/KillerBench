@@ -31,7 +31,7 @@ Minden javítás naplózásra és visszaolvasásra kerül. A teljes folyamatot a
 
 1. A **Frissítések** szakaszban válassza az **Elérhető frissítések** eszközt, és nyomja meg a **Diagnózis futtatása** gombot a beállított forrásból elérhető frissítések felderítéséhez.
 2. Jelölje ki a kívánt frissítéseket, és nyomja meg a **Kiválasztottak előnézete** gombot. Az előnézet pontosan felsorolja, mi települne, és van-e újraindítási követelmény.
-3. Csak az előnézet elolvasása után telepítsen. A KillerBench soha nem választ ki és nem hagy jóvá frissítést Ön helyett.
+3. Olvassa el az előnézetet, jelölje be a megerősítő jelölőnégyzetet, majd nyomja meg a **Telepítés** gombot. A jelölőnégyzet minden futtatás után törlődik, és a KillerBench soha nem választ ki és nem hagy jóvá frissítést Ön helyett.
 
 ## Parancssorból
 

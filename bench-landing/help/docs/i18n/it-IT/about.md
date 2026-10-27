@@ -1,6 +1,6 @@
 # Informazioni su KillerBench
 
-KillerBench è un banco di lavoro per la diagnosi, la riparazione e la manutenzione di Windows creato da Steve the Killer, parte della [famiglia Killer Tools](https://killertools.net). La versione 1.0.0 non è ancora stata rilasciata. L'app desktop, l'Engine e la CLI condividono le evidenze diagnostiche e i flussi di riparazione supportati.
+KillerBench è un ambiente di lavoro per la diagnosi, la riparazione e la manutenzione di Windows creato da Steve the Killer, parte della [famiglia Killer Tools](https://killertools.net). La versione 1.0.0 non è ancora stata rilasciata. L'app desktop, l'Engine e la CLI condividono le evidenze diagnostiche e i flussi di riparazione supportati.
 
 ## Disponibilità e ambito
 

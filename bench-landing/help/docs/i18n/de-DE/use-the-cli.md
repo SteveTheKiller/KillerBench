@@ -14,7 +14,7 @@ Verwenden Sie die Befehlszeile, wenn Sie KillerBench-Nachweise in einem Skript, 
 killerbench-cli full-scan --report C:\Reports\scan.html --json
 ```
 
-`full-scan` ist schreibgeschützt, solange Sie nicht `--auto-repair` hinzufügen. `--report` schreibt denselben Bericht mit Design, den die App exportiert. Mit `--scope` prüfen Sie nur einige Bereiche, und `common-check` liefert kombiniertes JSON ohne Workflow-Journal.
+`full-scan` dient nur der Diagnose und lehnt `--auto-repair` ab. Verwenden Sie einen gezielten Reparatur-Workflow, wenn eine bestimmte Aktion nötig ist. `--report` schreibt denselben Bericht mit Design, den die App exportiert. Mit `--scope` prüfen Sie nur einige Bereiche, und `common-check` liefert kombiniertes JSON ohne Workflow-Journal.
 
 ## Exitcodes lesen
 

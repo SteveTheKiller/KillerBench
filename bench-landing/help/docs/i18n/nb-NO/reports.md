@@ -22,4 +22,4 @@ KillerBench kan også lese lagrede Windows-logger, som CBS- og Setup-logger, ute
 
 ## Eksport
 
-**Eksporter rapport** lagrer rapporten med kildestier, tolkede oppføringer og bevisutdrag, slik at du kan se over den før du legger den ved en sak. Rå logger og bevisutdrag kan inneholde datamaskinnavn, kontoer, stier eller sensitiv kildetekst. Beskyttede innsamlere begrenser hva de tar vare på, men importerte bevis er ikke garantert anonymisert. Se over og fjern sensitiv informasjon før du deler.
+**Eksporter rapport** lagrer rapporten med kildestier, tolkede oppføringer og bevisutdrag, slik at du kan se over den før du legger den ved en sak. Eksporterte rapporter inneholder navnet på denne datamaskinen, og rå logger og bevisutdrag kan også inneholde kontoer, stier eller sensitiv kildetekst. Beskyttede innsamlere begrenser hva de tar vare på, men importerte bevis er ikke garantert anonymisert. Se over og fjern sensitiv informasjon før du deler.

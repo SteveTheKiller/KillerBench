@@ -39,6 +39,6 @@ killerbench-cli servicing-logs
 
 ## সম্পর্কিত
 
-- [উইন্ডোজ আপডেট ঠিক করুন](fix-windows-update.html)
+- [Windows Update ঠিক করুন](fix-windows-update.html)
 - [মেরামত বিভাগ](repair.html#system-files)
 - [পরিবর্তন কীভাবে নিরাপদ থাকে](safety.html)

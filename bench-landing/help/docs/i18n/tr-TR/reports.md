@@ -22,4 +22,4 @@ KillerBench, makinede hiçbir şey çalıştırmadan CBS ve Setup günlükleri g
 
 ## Dışa aktarma
 
-**Raporu dışa aktar**, raporu kaynak yolları, ayrıştırılmış girdiler ve kanıt alıntılarıyla birlikte kaydeder; böylece bir talebe eklemeden önce gözden geçirebilirsiniz. Ham günlükler ve kanıt alıntıları bilgisayar adları, hesaplar, yollar veya hassas kaynak metin içerebilir. Korumalı toplayıcılar sakladıklarını sınırlar, ancak içe aktarılan kanıtların karartılması garanti edilmez. Paylaşmadan önce hassas bilgileri inceleyip kaldırın.
+**Raporu dışa aktar**, raporu kaynak yolları, ayrıştırılmış girdiler ve kanıt alıntılarıyla birlikte kaydeder; böylece bir talebe eklemeden önce gözden geçirebilirsiniz. Dışa aktarılan raporlar bu bilgisayarın adını içerir; ham günlükler ve kanıt alıntıları da hesaplar, yollar veya hassas kaynak metin içerebilir. Korumalı toplayıcılar sakladıklarını sınırlar, ancak içe aktarılan kanıtların karartılması garanti edilmez. Paylaşmadan önce hassas bilgileri inceleyip kaldırın.

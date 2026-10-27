@@ -5,7 +5,7 @@ Dùng hướng dẫn này khi ổ đĩa sắp đầy. KillerBench cho thấy dun
 ## Xem còn bao nhiêu dung lượng
 
 1. Mở **Lưu trữ** và chọn **Lưu trữ**.
-2. Nhấn **Chạy chẩn đoán**. Báo cáo đánh dấu mọi ổ đĩa có ký tự còn dưới 10% dung lượng trống và hiển thị phân bổ bản sao bóng, giá trị hạn ngạch mặc định và chính sách Storage Sense.
+2. Nhấn **Chạy chẩn đoán**. Báo cáo đánh dấu mọi ổ đĩa có ký tự còn dưới 10% dung lượng trống và hiển thị phân bổ bản sao bóng, giá trị hạn ngạch mặc định và chính sách Cảm biến Lưu trữ.
 3. Với tệp kết xuất sự cố và nội dung cập nhật cũ, hãy chạy thêm **Chỉ số chính** trong **Chẩn đoán** và **Windows Update** trong **Cập nhật**; kích thước bộ nhớ đệm cập nhật xuất hiện ở đó.
 
 ## Xem trước việc dọn dẹp

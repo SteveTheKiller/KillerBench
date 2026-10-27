@@ -14,7 +14,7 @@
 killerbench-cli full-scan --report C:\Reports\scan.html --json
 ```
 
-除非添加 `--auto-repair`，否则 `full-scan` 是只读的。`--report` 会写入与应用导出的相同主题样式报告。使用 `--scope` 可以只检查部分区域，使用 `common-check` 可以在没有工作流程日志的情况下获取合并的 JSON。
+`full-scan` 仅用于诊断，并会拒绝 `--auto-repair`。需要执行具体操作时，请使用专门的修复工作流程。`--report` 会写入与应用导出的报告相同的主题样式报告。使用 `--scope` 可以只检查部分区域，使用 `common-check` 可以在没有工作流程日志的情况下获取合并的 JSON。
 
 ## 了解退出代码
 
@@ -53,5 +53,5 @@ killerbench-cli workflow-report journal.json report.html --include-repairs
 ## 相关内容
 
 - [命令行参考](cli.html)
-- [Engine 开发人员指南](../engine/index.html)
+- [Engine 开发者指南](../engine/index.html)
 - [疑难解答](troubleshooting.html)

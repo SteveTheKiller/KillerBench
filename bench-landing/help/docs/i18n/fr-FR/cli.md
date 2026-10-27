@@ -1,6 +1,6 @@
 # Ligne de commande
 
-`killerbench-cli` exécute le même Engine que l'application de bureau depuis PowerShell ou une console distante. Toute commande susceptible de modifier l'ordinateur affiche un aperçu par défaut et nécessite une option explicite, comme `--execute`, avant d'agir. Les commandes impriment les preuves JSON sur la sortie standard et la progression sur la sortie d'erreur standard.
+`killerbench-cli` exécute la même Engine que l'application de bureau depuis PowerShell ou une console distante. Toute commande susceptible de modifier l'ordinateur affiche un aperçu par défaut et nécessite une option explicite, comme `--execute`, avant d'agir. Les commandes impriment les preuves JSON sur la sortie standard et la progression sur la sortie d'erreur standard.
 
 Guides pas à pas : [Exécuter KillerBench depuis des scripts](use-the-cli.html).
 
@@ -130,7 +130,7 @@ Exécutez `killerbench-cli` sans argument pour afficher cette liste sur votre pr
 - `storage-repair-review DRIVE: SpotFix|OfflineScanAndFix [--allow-dismount]`: Collecte et lie les preuves actuelles ; aucune réparation ni planification.
 - `storage-sense-policy`: Stratégie de nettoyage reconnue de l'ordinateur, en lecture seule ; paramètres utilisateur et identités des fichiers exclus.
 - `storage-sense-task`: État exact et historique d'exécution de la tâche, en lecture seule ; aucune exécution de tâche ni nettoyage.
-- `storage-service-events`: Lit l'historique exact des défaillances de Service de stockage, Optimiser les lecteurs, VSS et du fournisseur de clichés logiciels.
+- `storage-service-events`: Lit l'historique exact des défaillances du Service de stockage, Optimiser les lecteurs, VSS et du fournisseur de clichés logiciels.
 - `volume-capacity DRIVE:`: Espace disponible en lecture seule, avec preuves JSON.
 - `volume-dirty DRIVE:`: État du bit d'intégrité en lecture seule ; aucune réparation ni redémarrage.
 - `volume-optimize DRIVE: [Recommended|ReTrim|Defragment] [--execute]`: Analyse en lecture seule par défaut ; un volume exact en bon état et un support compatible sont requis.
@@ -316,7 +316,7 @@ Exécutez `killerbench-cli` sans argument pour afficher cette liste sur votre pr
 - `delete-notifications`: Configuration de notification de suppression NTFS et ReFS, en lecture seule ; JSON ; aucune optimisation ni modification de paramètre.
 - `diagnostic-scopes [--all]`: Liste 11 groupes de résultats recommandés, ou les 49 domaines en lecture seule ; aucune collecte.
 - `full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Journal de diagnostic ciblé ; aucune réparation.
-- `full-scan [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Tous les domaines de diagnostic ; aucune réparation sauf si `--auto-repair` est indiqué explicitement.
+- `full-scan [--recipes ID[,ID]] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Tous les domaines de diagnostic ; uniquement diagnostique, aucune réparation.
 - `gateway-check`: Vérifications ICMP délimitées des prochains sauts par défaut exacts configurés ; aucun balayage d'adresses.
 - `infrastructure-service-events`: Lit un instantané délimité et exact des défaillances des services de connectivité, de gestion à distance, de notification et des services principaux.
 - `investigate-batch FILE [FILE ...]`: Jusqu'à 12 fichiers ; JSON Lines ; code 3 pour les importations échouées ou partielles.

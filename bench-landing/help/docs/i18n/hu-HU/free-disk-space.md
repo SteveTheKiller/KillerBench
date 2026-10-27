@@ -24,7 +24,7 @@ A végleges tisztítás megkerüli a Lomtárat, és nem vonható vissza. A hibaj
 
 ## A korábbi Windows-telepítés eltávolítása
 
-Egy szolgáltatásfrissítés után a **Tisztítás** **Korábbi Windows-telepítés** eleme a Windows támogatott visszaállításeltávolítási kérésével eltávolíthatja a visszaállítási másolatot. Önállóan fut, a **Biztonsági mentést készítettem minden szükséges fájlról és beállításról a korábbi telepítésből** jelölést igényli, és véglegesen megszünteti a korábbi verzióra való visszatérés lehetőségét.
+Egy szolgáltatásfrissítés után a **Tisztítás** **Korábbi Windows-telepítés** eleme a visszaállítási adatok eltávolítására szolgáló támogatott Windows-kéréssel eltávolíthatja a visszaállítási másolatot. Önállóan fut, a **Biztonsági mentést készítettem minden szükséges fájlról és beállításról a korábbi telepítésből** jelölést igényli, és véglegesen megszünteti a korábbi verzióra való visszatérés lehetőségét.
 
 ## Parancssorból
 

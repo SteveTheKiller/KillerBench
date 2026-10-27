@@ -14,7 +14,7 @@ Dùng hướng dẫn này khi Windows khởi động lại bất ngờ, hiển t
 - **Lịch sử độ tin cậy** nhóm các sự cố ứng dụng, tình trạng treo và lần tắt máy bất ngờ trong 14 ngày gần nhất.
 - **Lỗi ứng dụng** tập trung vào các chương trình bị treo.
 - **Lịch sử cài đặt trình điều khiển** hiển thị các lần cài trình điều khiển thất bại được đối chiếu với thiết bị hiện có.
-- **Sự cố thiết bị** liệt kê các thiết bị có mã lỗi Device Manager.
+- **Sự cố thiết bị** liệt kê các thiết bị có mã lỗi của Trình quản lý Thiết bị.
 
 ## Đọc tệp kết xuất sự cố
 

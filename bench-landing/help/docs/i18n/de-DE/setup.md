@@ -26,7 +26,7 @@ Beim Start sucht KillerBench auf GitHub nach einer neueren stabilen Version und 
 
 Der aktuelle Build umfasst zwölf Bereiche, schreibgeschützte Diagnose, Berichte und einzeln auswählbare Reparaturen. Die native Validierung der Reparaturen läuft noch. Eine funktionierende Oberfläche, ein erfolgreicher Build oder ein Testergebnis mit Prüfdaten belegt kein Reparaturverhalten auf einem echten Computer. Siehe [Wie Änderungen sicher bleiben](safety.html#development-status).
 
-Die Beispielkonsole auf der Startseite zeigt simulierte Ausgaben. Endgültige Screenshots der Anwendung und das erste öffentliche Paket stehen noch aus.
+Die Beispielkonsole auf der Startseite zeigt simulierte Ausgaben. Das erste öffentliche Paket steht noch aus.
 
 ## Quellcode, Lizenz und Support
 

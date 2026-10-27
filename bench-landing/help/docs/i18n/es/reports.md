@@ -22,4 +22,4 @@ KillerBench también puede leer registros de Windows guardados, como los de CBS 
 
 ## Exportar
 
-**Exportar informe** guarda el informe con sus rutas de origen, las entradas analizadas y los fragmentos de evidencia, para revisarlo antes de adjuntarlo a un ticket. Los registros sin procesar y los fragmentos de evidencia pueden contener nombres de equipos, cuentas, rutas o texto de origen confidencial. Los recopiladores protegidos limitan lo que conservan, pero no se garantiza que las evidencias importadas estén anonimizadas. Revisa y quita la información confidencial antes de compartirla.
+**Exportar informe** guarda el informe con sus rutas de origen, las entradas analizadas y los fragmentos de evidencia, para revisarlo antes de adjuntarlo a un ticket. Los informes exportados incluyen el nombre de este equipo, y los registros sin procesar y los fragmentos de evidencia también pueden contener cuentas, rutas o texto de origen confidencial. Los recopiladores protegidos limitan lo que conservan, pero no se garantiza que las evidencias importadas estén anonimizadas. Revisa y quita la información confidencial antes de compartirla.

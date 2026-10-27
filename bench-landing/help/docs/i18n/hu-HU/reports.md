@@ -22,4 +22,4 @@ A KillerBench a mentett Windows-naplókat, például a CBS- és a Setup-naplóka
 
 ## Exportálás
 
-A **Jelentés exportálása** a jelentést a forrásútvonalakkal, a feldolgozott bejegyzésekkel és a bizonyítékrészletekkel együtt menti, hogy átnézhesse, mielőtt egy hibajegyhez csatolja. A nyers naplók és a bizonyítékrészletek számítógépneveket, fiókokat, útvonalakat vagy bizalmas forrásszöveget tartalmazhatnak. A védett gyűjtők korlátozzák, mit őriznek meg, de az importált bizonyítékok kitakarása nem garantált. Megosztás előtt ellenőrizze és távolítsa el a bizalmas adatokat.
+A **Jelentés exportálása** a jelentést a forrásútvonalakkal, a feldolgozott bejegyzésekkel és a bizonyítékrészletekkel együtt menti, hogy átnézhesse, mielőtt egy hibajegyhez csatolja. Az exportált jelentések tartalmazzák ennek a számítógépnek a nevét, a nyers naplók és a bizonyítékrészletek pedig fiókokat, útvonalakat vagy bizalmas forrásszöveget tartalmazhatnak. A védett gyűjtők korlátozzák, mit őriznek meg, de az importált bizonyítékok kitakarása nem garantált. Megosztás előtt ellenőrizze és távolítsa el a bizalmas adatokat.

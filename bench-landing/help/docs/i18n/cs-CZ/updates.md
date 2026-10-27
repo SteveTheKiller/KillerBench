@@ -14,11 +14,11 @@ Sleduje ohraničenou aktivitu údržby Windows Update a Setup v jednom nebo víc
 
 ### Dostupné aktualizace
 
-Vyhledává vybrané aktualizace softwaru a ovladačů pomocí nakonfigurovaného zdroje, Windows Update nebo již zaregistrované služby Microsoft Update. Připravenost zdroje se kontroluje před vyhledáváním. Bez instalace, přijetí licence, registrace zdroje a změn zásad. Je to oddělené od oprav údržby.
+Vyhledává vybrané aktualizace softwaru a ovladačů pomocí nakonfigurovaného zdroje, Windows Update nebo již zaregistrované služby Microsoft Update. Připravenost zdroje se kontroluje před vyhledáváním. Vyhledávání nic neinstaluje, nepřijímá licence, neregistruje zdroje ani nemění zásady. Vybrané aktualizace lze poté samostatně nainstalovat, až po zaškrtnutí potvrzovacího políčka. Je to oddělené od oprav údržby.
 
 ### Windows Update
 
-Ohraničeně inventarizuje stavy balíčků údržby, volitelných funkcí a možností Windows, kontroluje indikátory restartu, volné místo a služby aktualizací, sleduje Optimalizaci doručení, aniž by ji spouštěl, a potom prověří úložiště komponent a chráněné systémové soubory. Čekající stavy balíčků, funkcí nebo možností vyžadují kontrolu, ale neopravňují k žádné akci s komponentami. Automatická oprava může spustit povolené služby Windows Update, BITS, Kryptografické služby, Instalační služba modulů Windows a Update Orchestrator. Spuštění Update Orchestrator může podle aktuálních zásad obnovit existující naplánovanou aktivitu aktualizací. Balíčky, volitelné funkce, možnosti, mezipaměť Optimalizace doručení, partnerské uzly, šířka pásma, zásady, registrace zdroje, plány a nastavení spouštění se zachovávají. DISM nebo SFC vyžadují živé důkazy o poškození. Tento postup nevybírá ani neschvaluje žádnou aktualizaci.
+Ohraničeně inventarizuje stavy balíčků údržby, volitelných funkcí a možností Windows, kontroluje indikátory restartu, volné místo a služby aktualizací, sleduje Optimalizaci doručení, aniž by ji spouštěl, a potom prověří úložiště komponent a chráněné systémové soubory. Čekající stavy balíčků, funkcí nebo možností vyžadují kontrolu, ale neopravňují k žádné akci s komponentami. Automatická oprava může spustit zastavené služby Windows Update, BITS, Kryptografické služby, Instalační služba modulů Windows a Update Orchestrator, které jsou nastavené na automatické spouštění. Zastavená služba spouštěná na vyžádání se nahlásí, ale nespustí. Spuštění Update Orchestrator může podle aktuálních zásad obnovit existující naplánovanou aktivitu aktualizací. Balíčky, volitelné funkce, možnosti, mezipaměť Optimalizace doručení, partnerské uzly, šířka pásma, zásady, registrace zdroje, plány a nastavení spouštění se zachovávají. DISM nebo SFC vyžadují živé důkazy o poškození. Tento postup nevybírá ani neschvaluje žádnou aktualizaci.
 
 ### Služba Windows Update
 
@@ -30,7 +30,7 @@ Kontroluje přesný stav služby Optimalizace doručení. Zastavená služba spo
 
 ### Služba BITS
 
-Kontroluje přesný stav Služby inteligentního přenosu na pozadí, přenosové úlohy aktuálního účtu a ohraničenou přesnou historii selhání služby. Historická selhání a snímky přenosů nemohou opravňovat ke spuštění služby. Volitelné obnovení spustí pouze přesně tuto povolenou a zastavenou službu po čerstvých kontrolách závislostí. Existující aplikace mohou obnovit přenosy na pozadí ve frontě. Úlohy, priority, vlastníci, cíle, nastavení proxy, zásady a typ spouštění se zachovávají. Ověření pokrývá pouze stabilní stav služby, nikoli průběh přenosu, vlastnictví aplikací ani dokončení.
+Kontroluje přesný stav Služby inteligentního přenosu na pozadí, přenosové úlohy aktuálního účtu a ohraničenou přesnou historii selhání služby. Historická selhání a snímky přenosů nemohou opravňovat ke spuštění služby. Volitelné obnovení spustí po čerstvých kontrolách závislostí pouze přesně tuto službu, pokud je zastavená a nastavená na automatické spouštění. Zastavená služba spouštěná na vyžádání zůstává pouze informací. Existující aplikace mohou obnovit přenosy na pozadí ve frontě. Úlohy, priority, vlastníci, cíle, nastavení proxy, zásady a typ spouštění se zachovávají. Ověření pokrývá pouze stabilní stav služby, nikoli průběh přenosu, vlastnictví aplikací ani dokončení.
 
 ### Přenosy na pozadí (BITS)
 
@@ -42,7 +42,7 @@ Kontroluje přesný stav Kryptografických služeb, jejich zaregistrovanou kniho
 
 ### Instalační služba modulů Windows
 
-Kontroluje přesný stav Instalační služby modulů Windows, ohraničené přechody balíčků údržby a přesnou historii selhání služby. Historická selhání a stavy balíčků nemohou opravňovat ke spuštění služby ani k operaci s balíčky. Volitelné obnovení spustí pouze přesně tuto povolenou a zastavenou službu po čerstvých kontrolách závislostí. Existující aktivita údržby může pokračovat. Balíčky, obsah úložiště komponent, zdroje, zásady a typ spouštění se zachovávají. Ověření pokrývá pouze stabilní stav služby, nikoli stav úložiště komponent, použitelnost balíčků, dokončení údržby ani připravenost k restartu.
+Kontroluje přesný stav Instalační služby modulů Windows, ohraničené přechody balíčků údržby a přesnou historii selhání služby. Historická selhání a stavy balíčků nemohou opravňovat ke spuštění služby ani k operaci s balíčky. Volitelné obnovení spustí po čerstvých kontrolách závislostí pouze přesně tuto službu, pokud je zastavená a nastavená na automatické spouštění. Zastavená služba spouštěná na vyžádání zůstává pouze informací. Existující aktivita údržby může pokračovat. Balíčky, obsah úložiště komponent, zdroje, zásady a typ spouštění se zachovávají. Ověření pokrývá pouze stabilní stav služby, nikoli stav úložiště komponent, použitelnost balíčků, dokončení údržby ani připravenost k restartu.
 
 ### Služba Windows Update Medic
 

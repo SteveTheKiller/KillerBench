@@ -11,7 +11,7 @@ Usa esta guía cuando a una unidad le queda poco espacio. KillerBench muestra en
 ## Previsualizar una limpieza
 
 1. Abre **Mantenimiento** y elige **Limpieza**.
-2. Marca los destinos que quieras, como **Archivos temporales del usuario actual**, **Archivos temporales de Windows**, **Cachés de navegador del usuario actual**, **Caché de Delivery Optimization** o **Papelera de reciclaje del usuario actual**. Pasa el puntero sobre un destino para leer exactamente qué carpetas abarca.
+2. Marca los destinos que quieras, como **Archivos temporales del usuario actual**, **Archivos temporales de Windows**, **Cachés de navegador del usuario actual**, **Caché de Optimización de distribución** o **Papelera de reciclaje del usuario actual**. Pasa el puntero sobre un destino para leer exactamente qué carpetas abarca.
 3. Ajusta **Antigüedad mínima (días)** y **Archivos máximos por destino**.
 4. Pulsa **Ejecutar diagnóstico** con **Realizar la limpieza permanente seleccionada después de comprobaciones actualizadas** desactivado. El informe enumera los candidatos y el espacio estimado de cada destino. No se borra nada.
 

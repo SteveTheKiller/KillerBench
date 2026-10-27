@@ -22,4 +22,4 @@ KillerBench kann auch gespeicherte Windows-Protokolle wie CBS- und Setup-Protoko
 
 ## Exportieren
 
-**Bericht exportieren** speichert den Bericht mit seinen Quellpfaden, ausgewerteten Einträgen und Nachweisauszügen, damit Sie ihn prüfen können, bevor Sie ihn an ein Ticket anhängen. Rohprotokolle und Nachweisauszüge können Computernamen, Konten, Pfade oder vertraulichen Quelltext enthalten. Abgesicherte Sammler begrenzen, was sie aufbewahren, importierte Nachweise sind aber nicht zwingend geschwärzt. Prüfen und entfernen Sie vertrauliche Informationen vor dem Weitergeben.
+**Bericht exportieren** speichert den Bericht mit seinen Quellpfaden, ausgewerteten Einträgen und Nachweisauszügen, damit Sie ihn prüfen können, bevor Sie ihn an ein Ticket anhängen. Exportierte Berichte enthalten den Namen dieses Computers, und Rohprotokolle und Nachweisauszüge können zudem Konten, Pfade oder vertraulichen Quelltext enthalten. Abgesicherte Sammler begrenzen, was sie aufbewahren, importierte Nachweise sind aber nicht zwingend geschwärzt. Prüfen und entfernen Sie vertrauliche Informationen vor dem Weitergeben.

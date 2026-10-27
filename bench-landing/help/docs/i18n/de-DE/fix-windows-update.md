@@ -31,7 +31,7 @@ Jede Reparatur wird im Journal festgehalten und zurückgelesen. Den vollständig
 
 1. Wählen Sie unter **Updates** das Werkzeug **Verfügbare Updates** und drücken Sie **Diagnose ausführen**, um Updates aus der konfigurierten Quelle zu finden.
 2. Wählen Sie die gewünschten Updates aus und drücken Sie **Ausgewählte in der Vorschau anzeigen**. Die Vorschau listet genau, was installiert würde, und jede Neustartanforderung.
-3. Installieren Sie erst, nachdem Sie die Vorschau gelesen haben. KillerBench wählt oder genehmigt nie ein Update für Sie.
+3. Lesen Sie die Vorschau, aktivieren Sie das Bestätigungskontrollkästchen und klicken Sie dann auf **Installieren**. Das Kontrollkästchen wird nach jedem Lauf zurückgesetzt, und KillerBench wählt oder genehmigt nie ein Update für Sie.
 
 ## Über die Befehlszeile
 

@@ -14,7 +14,7 @@ En vellykket tilkobling eller en ren tilstandskode beviser ikke at skriveren har
 ## Reparer køen
 
 1. Kjør **Utskrift** på nytt med **Reparer bekreftede problemer automatisk** slått på. Den kan starte den aktiverte utskriftskøtjenesten, gjenoppta en nøyaktig kø på pause som har ventende jobber, og slå av frakoblet modus.
-2. Når frakoblet modus slås av, kan ventende jobber bli sluppet løs, så kontroller at de fortsatt skal skrives ut.
+2. Når frakoblet modus slås av, kan ventende jobber bli frigitt, så kontroller at de fortsatt skal skrives ut.
 3. En kø som noen har satt på pause med vilje og som ikke har noe ventende, forblir på pause.
 
 ## Fjern én fastlåst jobb

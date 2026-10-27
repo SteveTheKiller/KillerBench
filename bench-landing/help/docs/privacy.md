@@ -10,7 +10,7 @@ Select the privacy areas to inspect and press **Run diagnosis**. Every area star
 
 To change a setting, use the **Privacy setting** control. KillerBench checks whether a policy or device management already owns the setting, records the current value, makes the one change you asked for and reads it back to confirm it. Settings owned by policy are left alone.
 
-The settings include diagnostic data and advertising choices, clipboard history, 17 app-permission settings such as camera, microphone and location, cloud content search for personal and work accounts, and search highlights.
+The settings include advertising choices, clipboard history, 19 app-permission settings such as camera, microphone and location, cloud content search for personal and work accounts, and search highlights.
 
 ## Tools in this section
 

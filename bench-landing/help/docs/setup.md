@@ -26,7 +26,7 @@ At startup KillerBench checks GitHub for a newer stable release and asks before 
 
 The current build has twelve sections, read-only diagnosis, reports and individually selected repair surfaces. Native repair validation is still in progress. A working UI, successful build or fixture result does not establish repair behavior on a real computer. See [How changes stay safe](safety.html#development-status).
 
-The illustrative console on the landing page is synthetic output. Final application screenshots and the first public package are still pending.
+The illustrative console on the landing page is synthetic output. The first public package is still pending.
 
 ## Source, license and support
 

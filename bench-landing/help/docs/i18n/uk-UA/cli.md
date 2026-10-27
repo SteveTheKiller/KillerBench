@@ -316,7 +316,7 @@
 - `delete-notifications`: Конфігурація сповіщень про видалення для NTFS і ReFS лише для читання; JSON; без оптимізації й зміни параметрів.
 - `diagnostic-scopes [--all]`: Показує 11 рекомендованих груп результатів або всі 49 областей лише для читання; без збирання.
 - `full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Журнал вузько спрямованої діагностики; без виправлень.
-- `full-scan [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Усі діагностичні області; без виправлень, якщо явно не вказано `--auto-repair`.
+- `full-scan [--recipes ID[,ID]] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Усі діагностичні області; лише діагностика, без виправлень.
 - `gateway-check`: Обмежені перевірки ICMP точних налаштованих стандартних наступних вузлів; без сканування адрес.
 - `infrastructure-service-events`: Читає один обмежений точний знімок збоїв служб підключення, віддаленого керування, сповіщень і основних служб.
 - `investigate-batch FILE [FILE ...]`: До 12 файлів; JSON Lines; код 3 для невдалих чи часткових імпортів.

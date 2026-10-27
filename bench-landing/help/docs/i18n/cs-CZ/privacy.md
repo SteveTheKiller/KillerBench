@@ -10,7 +10,7 @@ Vyberte oblasti soukromí ke kontrole a stiskněte **Spustit diagnostiku**. Žá
 
 Ke změně nastavení použijte ovládací prvek **Nastavení soukromí**. KillerBench zkontroluje, zda nastavení již vlastní zásady nebo správa zařízení, zaznamená aktuální hodnotu, provede jedinou požadovanou změnu a znovu ji přečte, aby ji potvrdil. Nastavení vlastněná zásadami zůstávají beze změny.
 
-Nastavení zahrnují volby diagnostických dat a reklamy, historii schránky, 17 nastavení oprávnění aplikací, například kamery, mikrofonu a polohy, cloudové vyhledávání obsahu pro osobní a pracovní účty a zvýraznění vyhledávání.
+Nastavení zahrnují volby reklamy, historii schránky, 19 nastavení oprávnění aplikací, například kamery, mikrofonu a polohy, cloudové vyhledávání obsahu pro osobní a pracovní účty a zvýraznění vyhledávání.
 
 ## Nástroje v této sekci
 

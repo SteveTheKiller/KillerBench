@@ -1,6 +1,6 @@
 # 关于 KillerBench
 
-KillerBench 是由 Steve the Killer 开发的 Windows 诊断、修复和维护工作台，属于 [Killer Tools 系列](https://killertools.net)。1.0.0 版本尚未发布。其桌面应用、Engine 和 CLI 共享诊断证据和受支持的修复工作流程。
+KillerBench 是由 Steve the Killer 开发的 Windows 诊断、修复和维护工具台，属于 [Killer Tools 系列](https://killertools.net)。1.0.0 版本尚未发布。其桌面应用、Engine 和 CLI 共享诊断证据和受支持的修复工作流程。
 
 ## 可用性和范围
 
@@ -8,7 +8,7 @@ KillerBench 是由 Steve the Killer 开发的 Windows 诊断、修复和维护�
 
 ## 源代码和分发声明
 
-KillerBench 采用 **GPLv3** 许可证。其分发许可证为 [GNU 通用公共许可证第 3 版](../license.txt)。该许可证规定了复制、修改和分发受保护作品的权限和条件。
+KillerBench 采用 **GPLv3** 许可证。其分发许可证为 [GNU 通用公共许可证第 3 版](../license.txt)。该许可证规定了复制、修改和分发受本许可证约束的作品的权限和条件。
 
 公开的 [KillerBench 仓库](https://github.com/SteveTheKiller/KillerBench) 目前提供项目信息，完整的实现并未在那里公开。这些开发人员指南描述的是经授权的源代码检出，并不提供公开的源代码下载。
 

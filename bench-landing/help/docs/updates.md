@@ -14,11 +14,11 @@ Observe bounded Windows Update and Setup servicing activity over one or more sna
 
 ### Available updates
 
-Discover selected software and driver updates using the configured source, Windows Update or an already registered Microsoft Update service. Source readiness is checked before discovery. No installation, license acceptance, source registration or policy changes. This is separate from servicing repair.
+Discover selected software and driver updates using the configured source, Windows Update or an already registered Microsoft Update service. Source readiness is checked before discovery. Discovery installs nothing and accepts no license, registers no source and changes no policy. Selected updates can be installed afterward, separately, only after you tick the confirmation checkbox. This is separate from servicing repair.
 
 ### Windows Update
 
-Inventory bounded Windows servicing package, optional-feature and capability states, check restart indicators, free space and update services, observe Delivery Optimization without starting it, then scan the component store and protected system files. Pending package, feature or capability states request review but do not authorize a component action. Auto-repair can start enabled Windows Update, BITS, Cryptographic Services, Windows Modules Installer and Update Orchestrator services. Starting Update Orchestrator may resume existing scheduled update activity under current policy. Packages, optional features, capabilities, Delivery Optimization cache, peer, bandwidth, policy, source enrollment, schedules and startup settings are preserved. DISM or SFC requires live evidence of corruption. No update is selected or approved by this workflow.
+Inventory bounded Windows servicing package, optional-feature and capability states, check restart indicators, free space and update services, observe Delivery Optimization without starting it, then scan the component store and protected system files. Pending package, feature or capability states request review but do not authorize a component action. Auto-repair can start stopped Windows Update, BITS, Cryptographic Services, Windows Modules Installer and Update Orchestrator services that are set to start automatically. A stopped demand-start service is reported, not started. Starting Update Orchestrator may resume existing scheduled update activity under current policy. Packages, optional features, capabilities, Delivery Optimization cache, peer, bandwidth, policy, source enrollment, schedules and startup settings are preserved. DISM or SFC requires live evidence of corruption. No update is selected or approved by this workflow.
 
 ### Windows Update Service
 
@@ -30,7 +30,7 @@ Check the exact Delivery Optimization service state. A stopped demand-start serv
 
 ### BITS service
 
-Check the exact Background Intelligent Transfer Service state, current-account transfer jobs and bounded exact service-failure history. Historical failures and transfer snapshots cannot authorize a service start. Optional recovery starts only the enabled, stopped exact service after fresh dependency checks. Existing applications may resume queued background transfers. Jobs, priorities, owners, destinations, proxy settings, policy and startup type are preserved. Verification covers stable service state only, not transfer progress, application ownership or completion.
+Check the exact Background Intelligent Transfer Service state, current-account transfer jobs and bounded exact service-failure history. Historical failures and transfer snapshots cannot authorize a service start. Optional recovery starts only the exact service when it is stopped and set to start automatically, after fresh dependency checks. A stopped demand-start service remains informational. Existing applications may resume queued background transfers. Jobs, priorities, owners, destinations, proxy settings, policy and startup type are preserved. Verification covers stable service state only, not transfer progress, application ownership or completion.
 
 ### Background transfers (BITS)
 
@@ -42,7 +42,7 @@ Check exact Cryptographic Services state, its registered service DLL and bounded
 
 ### Windows Modules Installer
 
-Check exact Windows Modules Installer state, bounded servicing package transitions and exact service-failure history. Historical failures and package states cannot authorize a service start or package operation. Optional recovery starts only the enabled, stopped exact service after fresh dependency checks. Existing servicing activity may resume. Packages, component-store content, sources, policy and startup type are preserved. Verification covers stable service state only, not component-store health, package applicability, servicing completion or restart readiness.
+Check exact Windows Modules Installer state, bounded servicing package transitions and exact service-failure history. Historical failures and package states cannot authorize a service start or package operation. Optional recovery starts only the exact service when it is stopped and set to start automatically, after fresh dependency checks. A stopped demand-start service remains informational. Existing servicing activity may resume. Packages, component-store content, sources, policy and startup type are preserved. Verification covers stable service state only, not component-store health, package applicability, servicing completion or restart readiness.
 
 ### Windows Update Medic Service
 

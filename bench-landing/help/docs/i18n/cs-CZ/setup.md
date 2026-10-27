@@ -26,7 +26,7 @@ Při spuštění KillerBench zkontroluje na GitHubu novější stabilní vydán�
 
 Aktuální sestavení má dvanáct sekcí, diagnostiku pouze pro čtení, zprávy a jednotlivě vybírané opravy. Nativní ověřování oprav stále probíhá. Funkční rozhraní, úspěšné sestavení ani výsledek testovací sady neprokazují chování oprav na skutečném počítači. Viz [Jak změny zůstávají bezpečné](safety.html#development-status).
 
-Ilustrační konzole na úvodní stránce zobrazuje simulovaný výstup. Konečné snímky obrazovky aplikace a první veřejný balíček stále čekají.
+Ilustrační konzole na úvodní stránce zobrazuje simulovaný výstup. První veřejný balíček stále čeká.
 
 ## Zdrojový kód, licence a podpora
 

@@ -18,7 +18,7 @@ Pregleda omejene registracije protivirusnih programov s surovim stanjem ponudnik
 
 ### Storitve požarnega zidu
 
-Prebere nastavitve omogočenosti profilov Domain, Private in Public iz ActiveStore, nato preveri storitvi Base Filtering Engine in Windows Defender Firewall. Izbirna obnovitev po svežem preverjanju odvisnosti zažene le omogočene, ustavljene storitve. Obstoječi pravilniki filtriranja lahko začnejo veljati in prekinejo omrežni ali oddaljeni dostop. Vrste zagona, dovoljenja storitev, pravila požarnega zidu, profili in nastavitve IPsec se ohranijo. Brez ponastavitev, sprememb pravil ali ustavljanja storitev. Preverjanje potrjuje le delovanje storitev; dejanska zaščita in povezljivost ostaneta nepreverjeni.
+Prebere nastavitve omogočenosti profilov domene, zasebnega in javnega omrežja iz ActiveStore, nato preveri storitvi Mehanizem osnovnega filtriranja (Base Filtering Engine) in Požarni zid programa Windows Defender. Izbirna obnovitev po svežem preverjanju odvisnosti zažene le omogočene, ustavljene storitve. Obstoječi pravilniki filtriranja lahko začnejo veljati in prekinejo omrežni ali oddaljeni dostop. Vrste zagona, dovoljenja storitev, pravila požarnega zidu, profili in nastavitve IPsec se ohranijo. Brez ponastavitev, sprememb pravil ali ustavljanja storitev. Preverjanje potrjuje le delovanje storitev; dejanska zaščita in povezljivost ostaneta nepreverjeni.
 
 ### Potek veljavnosti potrdil
 
@@ -26,7 +26,7 @@ Pregleda datume potrdil in zgradi lokalne verige zaupanja samo iz predpomnilnika
 
 ### Upravitelj poverilnic
 
-Preveri razpoložljivost storitve Credential Manager. Izbirna obnovitev zažene le omogočeno, ustavljeno točno določeno storitev po svežem preverjanju odvisnosti. Obstoječe aplikacije lahko nadaljujejo zahteve za shranjene poverilnice. Vsebina trezorjev, gesla, ključi za dostop, potrdila, žetoni, registracije poverilnic, dovoljenja, pravilniki, dovoljenja storitve in vrsta zagona se ohranijo. Ne zahteva vsebine poverilnic ali dejanj z njimi. Preverjanje potrjuje le stabilno stanje storitve, ne pa pridobivanja poverilnic, preverjanja pristnosti ali dostopa aplikacij.
+Preveri razpoložljivost storitve Upravitelj poverilnic. Izbirna obnovitev zažene le omogočeno, ustavljeno točno določeno storitev po svežem preverjanju odvisnosti. Obstoječe aplikacije lahko nadaljujejo zahteve za shranjene poverilnice. Vsebina trezorjev, gesla, ključi za dostop, potrdila, žetoni, registracije poverilnic, dovoljenja, pravilniki, dovoljenja storitve in vrsta zagona se ohranijo. Ne zahteva vsebine poverilnic ali dejanj z njimi. Preverjanje potrjuje le stabilno stanje storitve, ne pa pridobivanja poverilnic, preverjanja pristnosti ali dostopa aplikacij.
 
 ### Upravitelj spletnih računov
 

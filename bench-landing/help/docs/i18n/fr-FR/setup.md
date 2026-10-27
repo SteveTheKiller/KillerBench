@@ -24,9 +24,9 @@ Au démarrage, KillerBench interroge GitHub pour savoir s'il existe une version 
 
 ## Limites actuelles
 
-La version actuelle comporte douze sections, un diagnostic en lecture seule, des rapports et des surfaces de réparation sélectionnées individuellement. La validation native des réparations est encore en cours. Une interface qui fonctionne, une compilation réussie ou le résultat d'un fixture ne prouvent pas le comportement d'une réparation sur un vrai ordinateur. Voir [Comment les modifications restent sûres](safety.html#development-status).
+La version actuelle comporte douze sections, un diagnostic en lecture seule, des rapports et des surfaces de réparation sélectionnées individuellement. La validation native des réparations est encore en cours. Une interface qui fonctionne, une compilation réussie ou le résultat d'un jeu de test ne prouvent pas le comportement d'une réparation sur un vrai ordinateur. Voir [Comment les modifications restent sûres](safety.html#development-status).
 
-La console illustrative de la page d'accueil est une sortie synthétique. Les captures d'écran définitives de l'application et le premier paquet public sont encore en attente.
+La console illustrative de la page d'accueil est une sortie synthétique. Le premier paquet public est encore en attente.
 
 ## Code source, licence et assistance
 

@@ -39,7 +39,7 @@ Il programma di installazione verifica ed estrae l'applicazione in `%LOCALAPPDAT
 | `HKCU` o `HKLM\Software\KillerBench` | Il percorso di installazione, per l'ambito di installazione corrispondente |
 | Un file `.kbench` che scegli | Una cattura salvata con le evidenze conservate |
 
-Non viene caricato nulla. Elimina un giornale solo quando non ti servono più le evidenze di un esito incerto.
+I giornali restano su questo computer e KillerBench non li carica. Elimina un giornale solo quando non ti servono più le evidenze di un esito incerto.
 
 ## Prima la diagnosi
 

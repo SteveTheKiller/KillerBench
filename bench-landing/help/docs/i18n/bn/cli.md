@@ -24,19 +24,19 @@
 - `restart-check`: শুধু-পড়া মুলতুবি রিস্টার্টের উৎস; JSON প্রমাণ।
 - `servicing-logs`: সীমিত সর্বশেষ CBS, সাধারণ-টেক্সট ও সংকুচিত CBS আর্কাইভ, DISM ও Windows Setup লগ বিশ্লেষণ; কোনো মেরামত নেই।
 - `servicing-monitor [--refresh 1..60] [--samples 1..120] [--skip-events] [--skip-history] [--skip-services] [--skip-restart] [--skip-setup] [--skip-compatibility] [--skip-readiness] [--skip-transfers] [--skip-delivery-optimization] [--skip-installer] [--skip-scheduled-task]`: শুধু-পড়া সার্ভিসিং কার্যক্রমের স্ন্যাপশট।
-- `servicing-service-events`: শুধু-পড়া উইন্ডোজ আপডেট সার্ভিসিং চেইনের সঠিক ব্যর্থতার ইতিহাস।
-- `servicing-service-states`: ছয়-সার্ভিসের উইন্ডোজ আপডেট সার্ভিসিং চেইনের শুধু-পড়া বর্তমান অবস্থা।
+- `servicing-service-events`: শুধু-পড়া Windows Update সার্ভিসিং চেইনের সঠিক ব্যর্থতার ইতিহাস।
+- `servicing-service-states`: ছয়-সার্ভিসের Windows Update সার্ভিসিং চেইনের শুধু-পড়া বর্তমান অবস্থা।
 - `setup-code DECIMAL_OR_0xHEX`: নথিভুক্ত Windows Setup ফলাফল-কোড রেফারেন্স; কোনো কম্পিউটার পরিদর্শন বা মেরামত নেই।
 - `update-applicability`: শুধু-পড়া Windows সংস্করণ, বিল্ড ও আর্কিটেকচারের প্রমাণ।
 - `update-cache`: সীমিত শুধু-পড়া SoftwareDistribution ক্যাশের মোট পরিমাণ; কোনো ফাইলের নাম নেই।
-- `update-code DECIMAL_OR_0xHEX`: নথিভুক্ত উইন্ডোজ আপডেট ফলাফল-কোড রেফারেন্স; কোনো কম্পিউটার পরিদর্শন বা মেরামত নেই।
+- `update-code DECIMAL_OR_0xHEX`: নথিভুক্ত Windows Update ফলাফল-কোড রেফারেন্স; কোনো কম্পিউটার পরিদর্শন বা মেরামত নেই।
 - `update-context`: শুধু-পড়া বর্তমান এলিভেশন ও ডেস্কটপ-সেশনের প্রমাণ; কোনো অ্যাকাউন্ট শনাক্তকারী নেই।
-- `update-engine-files`: শুধু-পড়া নেটিভ উইন্ডোজ আপডেট ইঞ্জিনের উপস্থিতি, সংস্করণ ও স্বাক্ষরের প্রমাণ।
+- `update-engine-files`: শুধু-পড়া নেটিভ Windows Update ইঞ্জিনের উপস্থিতি, সংস্করণ ও স্বাক্ষরের প্রমাণ।
 - `update-events`: শেষ সাত দিনের শুধু-পড়া Windows Update Client ইতিহাস; কাঁচা প্রমাণসহ JSON।
-- `update-followup DECIMAL_OR_0xHEX`: একটি নথিভুক্ত উইন্ডোজ আপডেট ফলাফল কোড দিয়ে নির্বাচিত নতুন শুধু-পড়া ডায়াগনস্টিক্স।
-- `update-history`: শুধু-পড়া সর্বশেষ 100টি উইন্ডোজ আপডেট অপারেশনের ফলাফল; JSON প্রমাণ।
+- `update-followup DECIMAL_OR_0xHEX`: একটি নথিভুক্ত Windows Update ফলাফল কোড দিয়ে নির্বাচিত নতুন শুধু-পড়া ডায়াগনস্টিক্স।
+- `update-history`: শুধু-পড়া সর্বশেষ 100টি Windows Update অপারেশনের ফলাফল; JSON প্রমাণ।
 - `update-plan --select GUID:REVISION [--drivers] [--no-software] [--allow-restart-required] [--json] [--execute]`: `--select` পুনরাবৃত্তি করুন; ডিফল্টভাবে প্রিভিউ।
-- `update-policy`: শুধু-পড়া ব্যবস্থাপিত উইন্ডোজ আপডেট নীতি; JSON প্রমাণ।
+- `update-policy`: শুধু-পড়া ব্যবস্থাপিত Windows Update নীতি; JSON প্রমাণ।
 - `update-policy-surfaces`: শুধু-পড়া ক্লাসিক ও Policy CSP কনফিগারেশন-ক্ষেত্রের প্রমাণ; মান ও প্রোভাইডারের পরিচয় বাদ।
 - `update-recover`: একটি মুলতুবি আপডেট পরীক্ষা করে; কখনো ইনস্টল বা পুনঃচেষ্টা করে না।
 - `update-restart-policy`: শুধু-পড়া কমপ্লায়েন্সের সময়সীমা, অতিরিক্ত সময়, রিস্টার্ট দমন ও বিজ্ঞপ্তির আচরণ।
@@ -289,7 +289,7 @@
 - `knowledge-status CONFIG_JSON STORAGE_ROOT`: প্রতিটি কনফিগার করা ইনস্টল করা ডেটাবেস যাচাই করে; কোনো ডাউনলোড বা সক্রিয়করণ নেই।
 - `knowledge-update CONFIG_JSON STORAGE_ROOT`: কনফিগার করা HTTPS এন্ডপয়েন্ট থেকে স্বাক্ষরিত ডেটাবেস প্রার্থী এনে অ্যাটমিকভাবে সক্রিয় করে।
 - `open <file.kbench> [--json]`: একটি সংরক্ষিত ক্যাপচার আবার খোলে এবং ইনস্টল করা নিয়ম দিয়ে আবার মূল্যায়ন করে।
-- `scan --output <new-file.kbench> [--json]`: একটি নতুন ফাইলে সংরক্ষিত শুধু-পড়া উইন্ডোজ আপডেট ক্যাপচার।
+- `scan --output <new-file.kbench> [--json]`: একটি নতুন ফাইলে সংরক্ষিত শুধু-পড়া Windows Update ক্যাপচার।
 - `validation-coverage RECORD.json [...]`: বর্তমান সংস্করণের নেটিভ VM প্রমাণের সারাংশ; কোনো ডায়াগনস্টিক্স বা মেরামত নেই।
 - `validation-plan [--recipe RECIPE_ID | --workflow WORKFLOW]`: শুধু-পড়া অস্থায়ী-VM দৃশ্যপট পরিকল্পনা; কোনো ডায়াগনস্টিক্স বা মেরামত নেই।
 - `validation-record RECORD.json`: একটি সীমিত নেটিভ VM প্রমাণ রেকর্ড যাচাই করে; কোনো ডায়াগনস্টিক্স বা মেরামত নেই।
@@ -316,7 +316,7 @@
 - `delete-notifications`: শুধু-পড়া NTFS ও ReFS ডিলিট-নোটিফিকেশন কনফিগারেশন; JSON; কোনো অপটিমাইজেশন বা সেটিং পরিবর্তন নেই।
 - `diagnostic-scopes [--all]`: 11টি প্রস্তাবিত ফলাফল গোষ্ঠী, বা সব 49টি শুধু-পড়া ক্ষেত্রের তালিকা করে; কোনো সংগ্রহ নেই।
 - `full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json]`: নির্দিষ্ট ডায়াগনস্টিক জার্নাল; কোনো মেরামত নেই।
-- `full-scan [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json]`: সব ডায়াগনস্টিক ক্ষেত্র; `--auto-repair` স্পষ্ট না হলে কোনো মেরামত নেই।
+- `full-scan [--recipes ID[,ID]] [--report OUTPUT.html|OUTPUT.txt] [--json]`: সব ডায়াগনস্টিক ক্ষেত্র; কেবল ডায়াগনস্টিক, কোনো মেরামত নেই।
 - `gateway-check`: সঠিক কনফিগার করা ডিফল্ট পরবর্তী হপের সীমিত ICMP পরীক্ষা; কোনো ঠিকানা স্ক্যান নেই।
 - `infrastructure-service-events`: একটি সীমিত সঠিক সংযোগ, রিমোট-ব্যবস্থাপনা, বিজ্ঞপ্তি ও মূল সার্ভিস ব্যর্থতার স্ন্যাপশট পড়ে।
 - `investigate-batch FILE [FILE ...]`: সর্বোচ্চ 12টি ফাইল; JSON Lines; ব্যর্থ বা আংশিক আমদানির জন্য এক্সিট 3।

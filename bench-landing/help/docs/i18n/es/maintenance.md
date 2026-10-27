@@ -10,7 +10,7 @@ Limpia archivos, perfiles y tareas programadas, y despeja Windows.
 
 ### Limpieza
 
-Estima los destinos seleccionados de archivos temporales, cachés y evidencias de diagnóstico conservadas usando la antigüedad y el límite de archivos del panel principal. Windows Temp y Windows SystemTemp son destinos independientes. Delivery Optimization es una opción de caché aparte, y el contenido quitado puede tener que descargarse de nuevo. La eliminación permanente opcional usa la casilla de limpieza independiente, vuelve a comprobar los candidatos conservados dentro del límite seleccionado y registra cada resultado. El borrado no pasa por la Papelera de reciclaje. Los destinos, la antigüedad y el límite de archivos también se pueden configurar con el comando cleanup de la CLI.
+Estima los destinos seleccionados de archivos temporales, cachés y evidencias de diagnóstico conservadas usando la antigüedad y el límite de archivos del panel principal. Windows Temp y Windows SystemTemp son destinos independientes. Optimización de distribución es una opción de caché aparte, y el contenido quitado puede tener que descargarse de nuevo. La eliminación permanente opcional usa la casilla de limpieza independiente, vuelve a comprobar los candidatos conservados dentro del límite seleccionado y registra cada resultado. El borrado no pasa por la Papelera de reciclaje. Los destinos, la antigüedad y el límite de archivos también se pueden configurar con el comando cleanup de la CLI.
 
 ### Perfiles
 

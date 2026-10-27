@@ -34,7 +34,7 @@ Die Rauchglas-Konsole und die lesbaren Berichte folgen dem aktiven Design. Best�
 | F1 | Tastenkürzel |
 | F2 | Seitenleiste ein- oder ausblenden |
 | F3 | Aktivitätsprotokoll ein- oder ausblenden |
-| Alt+Shift+G | Filmkorn |
+| Alt+Umschalt+G | Filmkorn |
 | F12 | Über KillerBench |
-| Ctrl+O | Nachweis öffnen |
+| Strg+O | Nachweis öffnen |
 | Esc | Überlagerung schließen oder das Lesen einer Datei stoppen |

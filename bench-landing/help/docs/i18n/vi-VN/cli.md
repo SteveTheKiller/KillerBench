@@ -244,7 +244,7 @@ Chạy `killerbench-cli` không kèm đối số để in danh sách này trên 
 - `default-printer-set QUEUE [--execute] [--folder PATH]`: Xem trước theo mặc định; chỉ máy in mặc định bị thiếu hoặc xung đột.
 - `default-printer-set-recover [--folder PATH]`: Kiểm tra lại một lựa chọn bị gián đoạn mà không lặp lại.
 - `device-check <CATEGORY> [--knowledge PACK_PATH ...]`: Bằng chứng thiết bị chỉ đọc kèm tham chiếu trình điều khiển chính xác tùy chọn từ tối đa 32 gói.
-- `device-code DECIMAL_OR_0xHEX`: Tham chiếu mã sự cố Device Manager ngoại tuyến.
+- `device-code DECIMAL_OR_0xHEX`: Tham chiếu mã sự cố của Trình quản lý Thiết bị ngoại tuyến.
 - `driver-reference PACK_PATH HARDWARE_ID x86|x64|arm64 client|server BUILD`: Chỉ các ứng viên tham chiếu.
 - `event-channel-enable CHANNEL [--execute]`: Xem trước theo mặc định; bật đúng một kênh chẩn đoán không được quản lý và giữ nguyên các cài đặt khác.
 - `event-channel-enable-recover`: Đối chiếu chỉ đọc mà không lặp lại lệnh bật.
@@ -315,8 +315,8 @@ Chạy `killerbench-cli` không kèm đối số để in danh sách này trên 
 - `common-check [--scope NAME ...]`: Mọi vùng chẩn đoán theo mặc định; chỉ các vùng đã chọn khi được chỉ định; JSON chỉ đọc.
 - `delete-notifications`: Cấu hình thông báo xóa của NTFS và ReFS chỉ đọc; JSON; không tối ưu hóa và không thay đổi cài đặt.
 - `diagnostic-scopes [--all]`: Liệt kê 11 nhóm kết quả được đề xuất, hoặc tất cả 49 vùng chỉ đọc; không thu thập.
-- `full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Nhật ký chẩn đoán chuyên biệt; không sửa chữa.
-- `full-scan [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Mọi vùng chẩn đoán; không sửa chữa trừ khi chỉ định tường minh `--auto-repair`.
+- `full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Nhật ký chẩn đoán có phạm vi cụ thể; không sửa chữa.
+- `full-scan [--recipes ID[,ID]] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Mọi vùng chẩn đoán; chỉ chẩn đoán, không sửa chữa.
 - `gateway-check`: Kiểm tra ICMP có giới hạn tới đúng các bước nhảy kế tiếp mặc định đã cấu hình; không quét địa chỉ.
 - `infrastructure-service-events`: Đọc một ảnh chụp lỗi chính xác, có giới hạn của các dịch vụ kết nối, quản lý từ xa, thông báo và dịch vụ lõi.
 - `investigate-batch FILE [FILE ...]`: Tối đa 12 tệp; JSON Lines; mã thoát 3 cho lần nhập thất bại hoặc một phần.

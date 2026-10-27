@@ -14,7 +14,7 @@ KillerBench kanıtlarını bir betikte, bir RMM işinde veya uzak bir konsolda k
 killerbench-cli full-scan --report C:\Reports\scan.html --json
 ```
 
-`full-scan`, `--auto-repair` eklemediğiniz sürece salt okunurdur. `--report`, uygulamanın dışa aktardığı temalı raporun aynısını yazar. Yalnızca bazı alanları denetlemek için `--scope`, iş akışı günlüğü olmadan birleşik JSON için `common-check` kullanın.
+`full-scan` yalnızca tanılama yapar ve `--auto-repair` seçeneğini reddeder. Belirli bir işlem gerektiğinde odaklı bir onarım iş akışı kullanın. `--report`, uygulamanın dışa aktardığı temalı raporun aynısını yazar. Yalnızca bazı alanları denetlemek için `--scope`, iş akışı günlüğü olmadan birleşik JSON için `common-check` kullanın.
 
 ## Çıkış kodlarını okuma
 

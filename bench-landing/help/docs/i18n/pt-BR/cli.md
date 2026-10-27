@@ -146,7 +146,7 @@ Execute `killerbench-cli` sem argumentos para imprimir esta lista no seu própri
 - `print-job-cancel-recover [--folder PATH]`: Verifica de novo um cancelamento interrompido sem repeti-lo.
 - `print-job-list`: Lista os trabalhos visíveis atuais sem alterá-los.
 - `print-operational-events`: Estado do canal operacional do PrintService e histórico disponível, somente leitura; evidências JSON.
-- `print-policy`: Restrições do Point and Print e política de instalação de drivers, somente leitura; evidências JSON.
+- `print-policy`: Restrições do Apontar e Imprimir e política de instalação de drivers, somente leitura; evidências JSON.
 - `print-rendering-policy`: Política de renderização e de isolamento de drivers somente leitura; evidências JSON.
 - `print-spooler-events`: Falhas do Gerenciador de Controle de Serviços ligadas à identidade local do Spooler de Impressão, somente leitura; evidências JSON.
 - `printer-check --queue NAME [--queue NAME ...]`: Configurações da fila local selecionada, somente leitura.
@@ -316,7 +316,7 @@ Execute `killerbench-cli` sem argumentos para imprimir esta lista no seu própri
 - `delete-notifications`: Configuração de notificação de exclusão do NTFS e do ReFS, somente leitura; JSON; sem otimização nem alteração de configuração.
 - `diagnostic-scopes [--all]`: Lista 11 grupos de resultados recomendados, ou todas as 49 áreas somente leitura; sem coleta.
 - `full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Diário de diagnóstico específico; sem reparos.
-- `full-scan [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Todas as áreas de diagnóstico; sem reparo, a menos que `--auto-repair` seja explícito.
+- `full-scan [--recipes ID[,ID]] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Todas as áreas de diagnóstico; apenas diagnóstico, sem reparos.
 - `gateway-check`: Verificações ICMP delimitadas dos próximos saltos padrão exatos configurados; sem varredura de endereços.
 - `infrastructure-service-events`: Lê um instantâneo delimitado e exato de falhas dos serviços de conectividade, gerenciamento remoto, notificação e serviços essenciais.
 - `investigate-batch FILE [FILE ...]`: Até 12 arquivos; JSON Lines; saída 3 para importações com falha ou parciais.

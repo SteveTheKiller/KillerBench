@@ -18,8 +18,8 @@ Każde uruchomienie tworzy raport, który możesz czytać, filtrować i eksporto
 
 ## Zapisane dzienniki
 
-KillerBench może też odczytywać zapisane dzienniki systemu Windows, takie jak dzienniki CBS i Setup, bez uruchamiania czegokolwiek na komputerze. Ustalenia prowadzą do dokładnego wiersza, który je wygenerował. **Wczytaj próbkę** w Źródłach sesji otwiera syntetyczny przykład, który można bezpiecznie przeglądać.
+KillerBench może też odczytywać zapisane dzienniki systemu Windows, takie jak dzienniki CBS i Instalatora systemu Windows, bez uruchamiania czegokolwiek na komputerze. Ustalenia prowadzą do dokładnego wiersza, który je wygenerował. **Wczytaj próbkę** w Źródłach sesji otwiera syntetyczny przykład, który można bezpiecznie przeglądać.
 
 ## Eksport
 
-**Eksportuj raport** zapisuje raport ze ścieżkami źródłowymi, przeanalizowanymi wpisami i fragmentami dowodów, aby można go było przejrzeć przed dołączeniem do zgłoszenia. Surowe dzienniki i fragmenty dowodów mogą zawierać nazwy komputerów, konta, ścieżki lub poufny tekst źródłowy. Chronione moduły zbierające ograniczają to, co zachowują, ale nie ma gwarancji, że zaimportowane dowody zostały zanonimizowane. Przed udostępnieniem sprawdź i usuń poufne informacje.
+**Eksportuj raport** zapisuje raport ze ścieżkami źródłowymi, przeanalizowanymi wpisami i fragmentami dowodów, aby można go było przejrzeć przed dołączeniem do zgłoszenia. Wyeksportowane raporty zawierają nazwę tego komputera, a surowe dzienniki i fragmenty dowodów mogą też zawierać konta, ścieżki lub poufny tekst źródłowy. Chronione moduły zbierające ograniczają to, co zachowują, ale nie ma gwarancji, że zaimportowane dowody zostały zanonimizowane. Przed udostępnieniem sprawdź i usuń poufne informacje.

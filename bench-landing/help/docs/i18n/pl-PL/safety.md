@@ -23,7 +23,7 @@ Obsługiwane akcje z dziennikiem zachowują wpis oczekujący, gdy żądanie mog�
 
 ## Czego KillerBench nie zrobi
 
-- Nie wyczyści modułu TPM, nie usunie protektorów, których nie utworzył, ani nie wyświetli haseł odzyskiwania.
+- Nie wyczyści modułu TPM, nie usunie funkcji ochrony, których nie utworzył, ani nie wyświetli haseł odzyskiwania.
 - Nie zmieni ustawienia kontrolowanego przez zasady grupy lub zarządzanie urządzeniami.
 - Nie uruchomi naprawy tylko dlatego, że historyczne zdarzenie lub zaimportowany raport wspomina o problemie.
 

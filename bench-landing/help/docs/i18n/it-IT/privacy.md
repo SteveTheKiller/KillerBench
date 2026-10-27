@@ -10,7 +10,7 @@ Seleziona le aree di privacy da ispezionare e premi **Esegui diagnosi**. Tutte l
 
 Per modificare un'impostazione, usa il controllo **Impostazione privacy**. KillerBench controlla se un criterio o la gestione dei dispositivi controlla già l'impostazione, registra il valore attuale, effettua l'unica modifica richiesta e la rilegge per confermarla. Le impostazioni controllate da un criterio non vengono toccate.
 
-Le impostazioni comprendono le scelte su dati di diagnostica e pubblicità, la cronologia degli Appunti, 17 autorizzazioni delle app come fotocamera, microfono e posizione, la ricerca dei contenuti nel cloud per account personali e aziendali, e i punti salienti della ricerca.
+Le impostazioni comprendono le scelte sulla pubblicità, la cronologia degli Appunti, 19 autorizzazioni delle app come fotocamera, microfono e posizione, la ricerca dei contenuti nel cloud per account personali e aziendali, e i punti salienti della ricerca.
 
 ## Strumenti di questa sezione
 

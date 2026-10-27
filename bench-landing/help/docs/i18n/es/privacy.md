@@ -10,7 +10,7 @@ Selecciona las áreas de privacidad que quieres inspeccionar y pulsa **Ejecutar 
 
 Para cambiar una configuración, usa el control **Configuración de privacidad**. KillerBench comprueba si una directiva o la administración de dispositivos ya controla la configuración, registra el valor actual, hace el único cambio que pediste y lo vuelve a leer para confirmarlo. La configuración controlada por directivas no se toca.
 
-La configuración incluye las opciones de datos de diagnóstico y publicidad, el historial del portapapeles, 17 permisos de apps como la cámara, el micrófono y la ubicación, la búsqueda de contenido en la nube para cuentas personales y profesionales, y los resaltados de búsqueda.
+La configuración incluye las opciones de publicidad, el historial del portapapeles, 19 permisos de apps como la cámara, el micrófono y la ubicación, la búsqueda de contenido en la nube para cuentas personales y profesionales, y los resaltados de búsqueda.
 
 ## Herramientas de esta sección
 

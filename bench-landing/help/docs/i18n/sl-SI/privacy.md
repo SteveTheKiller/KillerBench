@@ -10,7 +10,7 @@ Izberite področja zasebnosti za pregled in pritisnite **Zaženi diagnostiko**. 
 
 Za spremembo uporabite kontrolnik **Nastavitev zasebnosti**. KillerBench preveri, ali nastavitev že nadzira pravilnik ali upravljanje naprave, zabeleži trenutno vrednost, izvede eno zahtevano spremembo in vrednost znova prebere za potrditev. Nastavitev, ki jih nadzirajo pravilniki, ne spremeni.
 
-Nastavitve vključujejo diagnostične podatke in izbire oglaševanja, zgodovino odložišča, 17 dovoljenj aplikacij, kot so kamera, mikrofon in lokacija, iskanje vsebine v oblaku za osebne in službene račune ter poudarke iskanja.
+Nastavitve vključujejo izbire oglaševanja, zgodovino odložišča, 19 nastavitev dovoljenj aplikacij, kot so kamera, mikrofon in lokacija, iskanje vsebine v oblaku za osebne in službene račune ter poudarke iskanja.
 
 ## Orodja v tem razdelku
 

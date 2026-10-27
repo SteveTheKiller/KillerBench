@@ -10,7 +10,7 @@ Velg personvernområdene du vil kontrollere, og trykk **Kjør diagnose**. Alle o
 
 For å endre en innstilling bruker du kontrollen **Personverninnstilling**. KillerBench kontrollerer om en policy eller enhetsadministrasjon allerede eier innstillingen, registrerer gjeldende verdi, gjør den ene endringen du ba om, og leser den tilbake for å bekrefte. Innstillinger som eies av en policy, blir ikke rørt.
 
-Innstillingene omfatter valg for diagnosedata og reklame, utklippstavlelogg, 17 apptillatelser som kamera, mikrofon og posisjon, skysøk i innhold for personlige kontoer og jobbkontoer, og søkehøydepunkter.
+Innstillingene omfatter valg for reklame, utklippstavlelogg, 19 apptillatelser som kamera, mikrofon og posisjon, skysøk i innhold for personlige kontoer og jobbkontoer, og søkehøydepunkter.
 
 ## Verktøy i denne seksjonen
 

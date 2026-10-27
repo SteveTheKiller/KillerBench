@@ -22,4 +22,4 @@ KillerBench peut aussi lire des journaux Windows enregistrés, comme ceux de CBS
 
 ## Exporter
 
-**Exporter le rapport** enregistre le rapport avec ses chemins sources, ses entrées analysées et ses extraits de preuves, pour relecture avant de le joindre à un ticket. Les journaux bruts et les extraits de preuves peuvent contenir des noms d'ordinateurs, des comptes, des chemins ou du texte source sensible. Les collecteurs protégés limitent ce qu'ils conservent, mais les preuves importées ne sont pas forcément expurgées. Examinez et retirez les informations sensibles avant de partager.
+**Exporter le rapport** enregistre le rapport avec ses chemins sources, ses entrées analysées et ses extraits de preuves, pour relecture avant de le joindre à un ticket. Les rapports exportés incluent le nom de cet ordinateur, et les journaux bruts et les extraits de preuves peuvent aussi contenir des comptes, des chemins ou du texte source sensible. Les collecteurs protégés limitent ce qu'ils conservent, mais les preuves importées ne sont pas forcément expurgées. Examinez et retirez les informations sensibles avant de partager.

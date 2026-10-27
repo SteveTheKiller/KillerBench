@@ -316,7 +316,7 @@ Bu listeyi kendi makinenizde yazdırmak için `killerbench-cli` komutunu bağım
 - `delete-notifications`: Salt okunur NTFS ve ReFS silme bildirimi yapılandırması; JSON; iyileştirme veya ayar değişikliği yok.
 - `diagnostic-scopes [--all]`: Önerilen 11 sonuç grubunu veya salt okunur 49 alanın tamamını listeler; toplama yok.
 - `full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Odaklı tanılama günlüğü; onarım yok.
-- `full-scan [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Tüm tanılama alanları; `--auto-repair` açıkça belirtilmedikçe onarım yok.
+- `full-scan [--recipes ID[,ID]] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Tüm tanılama alanları; yalnızca tanılama, onarım yok.
 - `gateway-check`: Tam yapılandırılmış varsayılan sonraki atlamaların sınırlı ICMP denetimleri; adres taraması yok.
 - `infrastructure-service-events`: Bağlantı, uzaktan yönetim, bildirim ve temel hizmet hatalarının sınırlı tek bir tam anlık görüntüsünü okur.
 - `investigate-batch FILE [FILE ...]`: En fazla 12 dosya; JSON Lines; başarısız veya kısmi içe aktarmalar için çıkış kodu 3.

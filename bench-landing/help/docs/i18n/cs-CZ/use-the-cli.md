@@ -14,7 +14,7 @@ Příkazový řádek použijte, když chcete důkazy KillerBench ve skriptu, v �
 killerbench-cli full-scan --report C:\Reports\scan.html --json
 ```
 
-`full-scan` je pouze pro čtení, pokud nepřidáte `--auto-repair`. `--report` zapíše stejnou zprávu s motivem, jakou exportuje aplikace. Pomocí `--scope` zkontrolujete jen některé oblasti a `common-check` vrátí kombinovaný JSON bez deníku postupu.
+`full-scan` je pouze diagnostický a odmítne `--auto-repair`. Když je potřeba konkrétní akce, použijte cílený postup opravy. `--report` zapíše stejnou zprávu s motivem, jakou exportuje aplikace. Pomocí `--scope` zkontrolujete jen některé oblasti a `common-check` vrátí kombinovaný JSON bez deníku postupu.
 
 ## Čtení návratových kódů
 

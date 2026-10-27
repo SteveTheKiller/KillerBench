@@ -25,4 +25,4 @@ KillerBench je v razvoju. Javni prenos še ni na voljo. Te strani opisujejo tren
 - [Ukazna vrstica](cli.html) navaja vse ukaze `killerbench-cli`.
 - [Odpravljanje težav](troubleshooting.html) opisuje blokirana dejanja, ponovne zagone in prekinjene zahteve.
 
-Razvijalci, ki želijo diagnostiko vgraditi v svoja orodja, lahko preberejo [vodnik po pogonu za razvijalce](../engine/index.html).
+Razvijalci, ki želijo diagnostiko vgraditi v svoja orodja, lahko preberejo [vodnik za razvijalce Engine](../engine/index.html).

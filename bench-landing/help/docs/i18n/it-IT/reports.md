@@ -22,4 +22,4 @@ KillerBench può anche leggere log di Windows salvati, come quelli di CBS e Setu
 
 ## Esportare
 
-**Esporta rapporto** salva il rapporto con i percorsi di origine, le voci analizzate e gli estratti delle evidenze, da rivedere prima di allegarlo a un ticket. I log grezzi e gli estratti delle evidenze possono contenere nomi di computer, account, percorsi o testo di origine sensibile. I raccoglitori protetti limitano ciò che conservano, ma non è garantito che le evidenze importate siano anonimizzate. Esamina e rimuovi le informazioni sensibili prima di condividere.
+**Esporta rapporto** salva il rapporto con i percorsi di origine, le voci analizzate e gli estratti delle evidenze, da rivedere prima di allegarlo a un ticket. I rapporti esportati includono il nome di questo computer, e i log grezzi e gli estratti delle evidenze possono contenere anche account, percorsi o testo di origine sensibile. I raccoglitori protetti limitano ciò che conservano, ma non è garantito che le evidenze importate siano anonimizzate. Esamina e rimuovi le informazioni sensibili prima di condividere.

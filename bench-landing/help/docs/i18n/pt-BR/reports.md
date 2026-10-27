@@ -22,4 +22,4 @@ O KillerBench também pode ler logs salvos do Windows, como os do CBS e do Setup
 
 ## Exportar
 
-**Exportar relatório** salva o relatório com os caminhos de origem, as entradas analisadas e os trechos de evidência, para revisão antes de anexá-lo a um chamado. Logs brutos e trechos de evidência podem conter nomes de computadores, contas, caminhos ou texto de origem sensível. Os coletores protegidos limitam o que guardam, mas não há garantia de que as evidências importadas estejam anonimizadas. Inspecione e remova as informações sensíveis antes de compartilhar.
+**Exportar relatório** salva o relatório com os caminhos de origem, as entradas analisadas e os trechos de evidência, para revisão antes de anexá-lo a um chamado. Os relatórios exportados incluem o nome deste computador, e logs brutos e trechos de evidência também podem conter contas, caminhos ou texto de origem sensível. Os coletores protegidos limitam o que guardam, mas não há garantia de que as evidências importadas estejam anonimizadas. Inspecione e remova as informações sensíveis antes de compartilhar.

@@ -14,11 +14,11 @@ Quan sát có giới hạn hoạt động bảo trì của Windows Update và Se
 
 ### Bản cập nhật có sẵn
 
-Tìm các bản cập nhật phần mềm và trình điều khiển đã chọn bằng nguồn đã cấu hình, Windows Update hoặc một dịch vụ Microsoft Update đã đăng ký sẵn. Mức sẵn sàng của nguồn được kiểm tra trước khi tìm. Không cài đặt, không chấp nhận giấy phép, không đăng ký nguồn và không thay đổi chính sách. Đây là phần tách biệt với sửa chữa bảo trì.
+Tìm các bản cập nhật phần mềm và trình điều khiển đã chọn bằng nguồn đã cấu hình, Windows Update hoặc một dịch vụ Microsoft Update đã đăng ký sẵn. Mức sẵn sàng của nguồn được kiểm tra trước khi tìm. Việc tìm không cài đặt gì, không chấp nhận giấy phép, không đăng ký nguồn và không thay đổi chính sách. Các bản cập nhật đã chọn có thể được cài đặt sau đó, riêng biệt, chỉ sau khi bạn đánh dấu ô xác nhận. Đây là phần tách biệt với sửa chữa bảo trì.
 
 ### Windows Update
 
-Kiểm kê có giới hạn trạng thái của gói bảo trì, tính năng tùy chọn và khả năng của Windows, kiểm tra chỉ báo khởi động lại, dung lượng trống và các dịch vụ cập nhật, quan sát Delivery Optimization mà không khởi động nó, sau đó quét kho thành phần và các tệp hệ thống được bảo vệ. Trạng thái chờ của gói, tính năng hoặc khả năng cần được xem lại nhưng không cho phép thao tác trên thành phần. Tự động sửa có thể khởi động các dịch vụ Windows Update, BITS, Dịch vụ mật mã, Trình cài đặt mô-đun Windows và Update Orchestrator đang bật. Khởi động Update Orchestrator có thể tiếp tục hoạt động cập nhật đã lên lịch hiện có theo chính sách hiện tại. Gói, tính năng tùy chọn, khả năng, bộ nhớ đệm Delivery Optimization, máy ngang hàng, băng thông, chính sách, đăng ký nguồn, lịch và cài đặt khởi động được giữ nguyên. DISM hoặc SFC cần bằng chứng trực tiếp về hỏng hóc. Quy trình này không chọn hay phê duyệt bản cập nhật nào.
+Kiểm kê có giới hạn trạng thái của gói bảo trì, tính năng tùy chọn và khả năng của Windows, kiểm tra chỉ báo khởi động lại, dung lượng trống và các dịch vụ cập nhật, quan sát Delivery Optimization mà không khởi động nó, sau đó quét kho thành phần và các tệp hệ thống được bảo vệ. Trạng thái chờ của gói, tính năng hoặc khả năng cần được xem lại nhưng không cho phép thao tác trên thành phần. Tự động sửa có thể khởi động các dịch vụ Windows Update, BITS, Dịch vụ mật mã, Trình cài đặt mô-đun Windows và Update Orchestrator đã dừng và được đặt khởi động tự động. Dịch vụ khởi động theo yêu cầu đã dừng chỉ được báo cáo, không được khởi động. Khởi động Update Orchestrator có thể tiếp tục hoạt động cập nhật đã lên lịch hiện có theo chính sách hiện tại. Gói, tính năng tùy chọn, khả năng, bộ nhớ đệm Delivery Optimization, máy ngang hàng, băng thông, chính sách, đăng ký nguồn, lịch và cài đặt khởi động được giữ nguyên. DISM hoặc SFC cần bằng chứng trực tiếp về hỏng hóc. Quy trình này không chọn hay phê duyệt bản cập nhật nào.
 
 ### Dịch vụ Windows Update
 
@@ -30,7 +30,7 @@ Kiểm tra trạng thái chính xác của dịch vụ Delivery Optimization. M�
 
 ### Dịch vụ BITS
 
-Kiểm tra trạng thái chính xác của Background Intelligent Transfer Service, các tác vụ truyền của tài khoản hiện tại và lịch sử lỗi chính xác có giới hạn của dịch vụ. Lỗi trong quá khứ và ảnh chụp truyền không thể cho phép khởi động dịch vụ. Khôi phục tùy chọn chỉ khởi động đúng dịch vụ đang bật và đã dừng sau khi kiểm tra phụ thuộc mới. Các ứng dụng hiện có có thể tiếp tục các lượt truyền nền trong hàng đợi. Tác vụ, mức ưu tiên, chủ sở hữu, đích, cài đặt proxy, chính sách và kiểu khởi động được giữ nguyên. Việc xác minh chỉ bao gồm trạng thái ổn định của dịch vụ, không bao gồm tiến độ truyền, quyền sở hữu của ứng dụng hay việc hoàn tất.
+Kiểm tra trạng thái chính xác của Background Intelligent Transfer Service, các tác vụ truyền của tài khoản hiện tại và lịch sử lỗi chính xác có giới hạn của dịch vụ. Lỗi trong quá khứ và ảnh chụp truyền không thể cho phép khởi động dịch vụ. Khôi phục tùy chọn chỉ khởi động đúng dịch vụ khi dịch vụ đã dừng và được đặt khởi động tự động, sau khi kiểm tra phụ thuộc mới. Dịch vụ khởi động theo yêu cầu đã dừng chỉ được ghi nhận để tham khảo. Các ứng dụng hiện có có thể tiếp tục các lượt truyền nền trong hàng đợi. Tác vụ, mức ưu tiên, chủ sở hữu, đích, cài đặt proxy, chính sách và kiểu khởi động được giữ nguyên. Việc xác minh chỉ bao gồm trạng thái ổn định của dịch vụ, không bao gồm tiến độ truyền, quyền sở hữu của ứng dụng hay việc hoàn tất.
 
 ### Truyền nền (BITS)
 
@@ -38,11 +38,11 @@ Kiểm tra trạng thái chính xác của Background Intelligent Transfer Servi
 
 ### Dịch vụ mật mã
 
-Kiểm tra trạng thái chính xác của Dịch vụ mật mã, DLL dịch vụ đã đăng ký của nó và lịch sử lỗi chính xác có giới hạn của dịch vụ. Lỗi trong quá khứ và quan sát DLL không thể cho phép khởi động dịch vụ hay thay thế thành phần. Khôi phục tùy chọn chỉ khởi động đúng dịch vụ đang bật và đã dừng sau khi kiểm tra phụ thuộc mới. Các thao tác danh mục, chứng chỉ và cập nhật hiện có có thể tiếp tục. Chứng chỉ, khóa, danh mục, cài đặt tin cậy, chính sách và kiểu khởi động được giữ nguyên. Việc xác minh chỉ bao gồm trạng thái ổn định của dịch vụ, không bao gồm việc xác thực chứng chỉ, chữ ký, danh mục hay độ tin cậy.
+Kiểm tra trạng thái chính xác của Dịch vụ mật mã, DLL dịch vụ đã đăng ký của nó và lịch sử lỗi chính xác có giới hạn của dịch vụ. Lỗi trong quá khứ và quan sát DLL không thể cho phép khởi động dịch vụ hay thay thế thành phần. Khôi phục tùy chọn chỉ khởi động đúng dịch vụ khi dịch vụ đã dừng và được đặt khởi động tự động, sau khi kiểm tra phụ thuộc mới. Dịch vụ khởi động theo yêu cầu đã dừng chỉ được ghi nhận để tham khảo. Các thao tác danh mục, chứng chỉ và cập nhật hiện có có thể tiếp tục. Chứng chỉ, khóa, danh mục, cài đặt tin cậy, chính sách và kiểu khởi động được giữ nguyên. Việc xác minh chỉ bao gồm trạng thái ổn định của dịch vụ, không bao gồm việc xác thực chứng chỉ, chữ ký, danh mục hay độ tin cậy.
 
 ### Trình cài đặt mô-đun Windows
 
-Kiểm tra trạng thái chính xác của Trình cài đặt mô-đun Windows, các chuyển đổi có giới hạn của gói bảo trì và lịch sử lỗi chính xác của dịch vụ. Lỗi trong quá khứ và trạng thái gói không thể cho phép khởi động dịch vụ hay thao tác trên gói. Khôi phục tùy chọn chỉ khởi động đúng dịch vụ đang bật và đã dừng sau khi kiểm tra phụ thuộc mới. Hoạt động bảo trì hiện có có thể tiếp tục. Gói, nội dung kho thành phần, nguồn, chính sách và kiểu khởi động được giữ nguyên. Việc xác minh chỉ bao gồm trạng thái ổn định của dịch vụ, không bao gồm tình trạng kho thành phần, khả năng áp dụng gói, việc hoàn tất bảo trì hay mức sẵn sàng khởi động lại.
+Kiểm tra trạng thái chính xác của Trình cài đặt mô-đun Windows, các chuyển đổi có giới hạn của gói bảo trì và lịch sử lỗi chính xác của dịch vụ. Lỗi trong quá khứ và trạng thái gói không thể cho phép khởi động dịch vụ hay thao tác trên gói. Khôi phục tùy chọn chỉ khởi động đúng dịch vụ khi dịch vụ đã dừng và được đặt khởi động tự động, sau khi kiểm tra phụ thuộc mới. Dịch vụ khởi động theo yêu cầu đã dừng chỉ được ghi nhận để tham khảo. Hoạt động bảo trì hiện có có thể tiếp tục. Gói, nội dung kho thành phần, nguồn, chính sách và kiểu khởi động được giữ nguyên. Việc xác minh chỉ bao gồm trạng thái ổn định của dịch vụ, không bao gồm tình trạng kho thành phần, khả năng áp dụng gói, việc hoàn tất bảo trì hay mức sẵn sàng khởi động lại.
 
 ### Dịch vụ Windows Update Medic
 

@@ -1,7 +1,6 @@
 {
   "language": "English",
   "strings": {
-    ".": ".",
     "01  Full system scan finished. Read-only.": "01  Full system scan finished. Read-only.",
     "02  Historical servicing error: 0x800F081F. Review current state.": "02  Historical servicing error: 0x800F081F. Review current state.",
     "03  Evidence retained. Original CBS line linked.": "03  Evidence retained. Original CBS line linked.",
@@ -122,12 +121,11 @@
     "The KillerBench.Engine is a Windows diagnostics and repair library for applications that need structured evidence instead of a collection of opaque scripts. It powers the KillerBench desktop and command-line tools, and it can be embedded in another .NET host.": "The KillerBench.Engine is a Windows diagnostics and repair library for applications that need structured evidence instead of a collection of opaque scripts. It powers the KillerBench desktop and command-line tools, and it can be embedded in another .NET host.",
     "The KillerBench.Engine | KillerBench developer guide": "The KillerBench.Engine | KillerBench developer guide",
     "The desktop shell presents Engine output through Raw output and Readable report views. Its confirmations and Open, Save, and Folder dialogs follow the active app theme. Those controls belong to the desktop host; an embedded host must provide its own review and authorization UI while preserving the Engine's evidence, prerequisite, journaling, and verification gates.": "The desktop shell presents Engine output through Raw output and Readable report views. Its confirmations and Open, Save, and Folder dialogs follow the active app theme. Those controls belong to the desktop host; an embedded host must provide its own review and authorization UI while preserving the Engine's evidence, prerequisite, journaling, and verification gates.",
-    "The full system scan is diagnostic-only, including when a focused workflow has automatic repair enabled. Saved captures and historical events never authorize a repair. Native repair validation remains scoped to the retained disposable-Windows-machine evidence recorded in the repository's": "The full system scan is diagnostic-only, including when a focused workflow has automatic repair enabled. Saved captures and historical events never authorize a repair. Native repair validation remains scoped to the retained disposable-Windows-machine evidence recorded in the repository's",
+    "The full system scan is diagnostic-only, including when a focused workflow has automatic repair enabled. Saved captures and historical events never authorize a repair. Native repair validation requires retained evidence from disposable Windows machines.": "The full system scan is diagnostic-only, including when a focused workflow has automatic repair enabled. Saved captures and historical events never authorize a repair. Native repair validation requires retained evidence from disposable Windows machines.",
     "Theme": "Theme",
     "Twelve sections, one habit": "Twelve sections, one habit",
     "Typed evidence with explicit complete, incomplete, unknown, and historical states": "Typed evidence with explicit complete, incomplete, unknown, and historical states",
     "Use the Engine": "Use the Engine",
-    "VM-VALIDATION.md": "VM-VALIDATION.md",
     "Versioned knowledge packs for error codes, hardware identifiers, vendors, and support references": "Versioned knowledge packs for error codes, hardware identifiers, vendors, and support references",
     "What it provides": "What it provides",
     "Windows 10/11 x64": "Windows 10/11 x64",

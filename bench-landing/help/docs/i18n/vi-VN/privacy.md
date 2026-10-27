@@ -10,7 +10,7 @@ Chọn các vùng quyền riêng tư cần kiểm tra và nhấn **Chạy chẩn
 
 Để thay đổi một cài đặt, dùng điều khiển **Cài đặt quyền riêng tư**. KillerBench kiểm tra xem chính sách hoặc quản lý thiết bị đã sở hữu cài đặt đó chưa, ghi lại giá trị hiện tại, thực hiện đúng một thay đổi bạn yêu cầu và đọc lại để xác nhận. Các cài đặt do chính sách sở hữu được giữ nguyên.
 
-Các cài đặt bao gồm lựa chọn về dữ liệu chẩn đoán và quảng cáo, lịch sử bảng tạm, 17 cài đặt quyền ứng dụng như máy ảnh, micrô và vị trí, tìm kiếm nội dung đám mây cho tài khoản cá nhân và tài khoản công việc, và điểm nổi bật tìm kiếm.
+Các cài đặt bao gồm lựa chọn về quảng cáo, lịch sử bảng tạm, 19 cài đặt quyền ứng dụng như máy ảnh, micrô và vị trí, tìm kiếm nội dung đám mây cho tài khoản cá nhân và tài khoản công việc, và điểm nổi bật tìm kiếm.
 
 ## Công cụ trong mục này
 

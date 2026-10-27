@@ -31,7 +31,7 @@ Cada reparo é registrado no diário e lido de volta. Consulte [Como as alteraç
 
 1. Escolha **Atualizações disponíveis** em **Atualizações** e pressione **Executar diagnóstico** para descobrir as atualizações da origem configurada.
 2. Selecione as atualizações desejadas e pressione **Visualizar selecionadas**. A visualização lista exatamente o que seria instalado e qualquer reinicialização necessária.
-3. Instale somente depois de ler a visualização. O KillerBench nunca seleciona nem aprova uma atualização por você.
+3. Leia a visualização, marque a caixa de confirmação e pressione **Instalar**. A caixa é desmarcada após cada execução, e o KillerBench nunca seleciona nem aprova uma atualização por você.
 
 ## Pela linha de comando
 

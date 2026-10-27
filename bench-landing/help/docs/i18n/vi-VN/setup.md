@@ -26,7 +26,7 @@ Khi khởi động, KillerBench kiểm tra GitHub để tìm bản phát hành �
 
 Bản dựng hiện tại có mười hai mục, chẩn đoán chỉ đọc, báo cáo và các bề mặt sửa chữa được chọn riêng lẻ. Việc xác thực sửa chữa trên máy thật vẫn đang tiến hành. Một giao diện hoạt động, bản dựng thành công hay kết quả dữ liệu thử không chứng minh hành vi sửa chữa trên máy tính thật. Xem [Cách giữ an toàn khi thay đổi](safety.html#development-status).
 
-Bảng điều khiển minh họa trên trang giới thiệu là đầu ra tổng hợp. Ảnh chụp màn hình cuối cùng của ứng dụng và gói công khai đầu tiên vẫn đang chờ.
+Bảng điều khiển minh họa trên trang giới thiệu là đầu ra tổng hợp. Gói công khai đầu tiên vẫn đang chờ.
 
 ## Mã nguồn, giấy phép và hỗ trợ
 

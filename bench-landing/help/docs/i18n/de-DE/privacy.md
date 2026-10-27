@@ -10,7 +10,7 @@ Wählen Sie die zu prüfenden Datenschutzbereiche und drücken Sie **Diagnose au
 
 Um eine Einstellung zu ändern, verwenden Sie das Steuerelement **Datenschutzeinstellung**. KillerBench prüft, ob bereits eine Richtlinie oder Geräteverwaltung die Einstellung steuert, hält den aktuellen Wert fest, nimmt genau die gewünschte Änderung vor und liest sie zur Bestätigung zurück. Von Richtlinien gesteuerte Einstellungen bleiben unverändert.
 
-Die Einstellungen umfassen Diagnosedaten und Werbung, den Zwischenablageverlauf, 17 App-Berechtigungen wie Kamera, Mikrofon und Standort, die Suche in Cloudinhalten für persönliche und Geschäftskonten sowie Suchhighlights.
+Die Einstellungen umfassen Werbung, den Zwischenablageverlauf, 19 App-Berechtigungen wie Kamera, Mikrofon und Standort, die Suche in Cloudinhalten für persönliche und Geschäftskonten sowie Suchhighlights.
 
 ## Werkzeuge in diesem Bereich
 

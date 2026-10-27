@@ -1,6 +1,6 @@
 # Zaženite KillerBench iz skriptov
 
-Uporabite ukazno vrstico, ko želite dokaze KillerBench v skriptu, opravilu RMM ali oddaljeni konzoli. `killerbench-cli` uporablja isti pogon kot namizna aplikacija in izpisuje JSON.
+Uporabite ukazno vrstico, ko želite dokaze KillerBench v skriptu, opravilu RMM ali oddaljeni konzoli. `killerbench-cli` uporablja isti Engine kot namizna aplikacija in izpisuje JSON.
 
 ## Prvi koraki
 
@@ -53,5 +53,5 @@ killerbench-cli workflow-report journal.json report.html --include-repairs
 ## Povezano
 
 - [Referenčni vodnik ukazne vrstice](cli.html)
-- [Vodnik po pogonu za razvijalce](../engine/index.html)
+- [Vodnik za razvijalce Engine](../engine/index.html)
 - [Odpravljanje težav](troubleshooting.html)

@@ -31,7 +31,7 @@ Chaque réparation est journalisée et relue. Voir [Comment les modifications re
 
 1. Choisissez **Mises à jour disponibles** dans **Mises à jour** et appuyez sur **Exécuter le diagnostic** pour découvrir les mises à jour de la source configurée.
 2. Sélectionnez les mises à jour voulues et appuyez sur **Prévisualiser la sélection**. L'aperçu indique exactement ce qui serait installé et tout redémarrage nécessaire.
-3. N'installez qu'après avoir lu l'aperçu. KillerBench ne sélectionne ni n'approuve jamais une mise à jour à votre place.
+3. Lisez l'aperçu, cochez la case de confirmation, puis appuyez sur **Installer**. La case se décoche après chaque exécution, et KillerBench ne sélectionne ni n'approuve jamais une mise à jour à votre place.
 
 ## Depuis la ligne de commande
 

@@ -14,7 +14,7 @@ A parancssort akkor használja, ha a KillerBench bizonyítékaira egy szkriptben
 killerbench-cli full-scan --report C:\Reports\scan.html --json
 ```
 
-A `full-scan` csak olvas, hacsak nem adja hozzá a `--auto-repair` kapcsolót. A `--report` ugyanazt a témázott jelentést írja ki, amelyet az alkalmazás exportál. A `--scope` kapcsolóval csak egyes területeket ellenőrizhet, a `common-check` pedig folyamatnapló nélküli összesített JSON-t ad.
+A `full-scan` kizárólag diagnosztikai, és elutasítja a `--auto-repair` kapcsolót. Ha konkrét műveletre van szükség, használjon egy célzott javítási folyamatot. A `--report` ugyanazt a témázott jelentést írja ki, amelyet az alkalmazás exportál. A `--scope` kapcsolóval csak egyes területeket ellenőrizhet, a `common-check` pedig folyamatnapló nélküli összesített JSON-t ad.
 
 ## Kilépési kódok értelmezése
 
@@ -23,7 +23,7 @@ A `full-scan` csak olvas, hacsak nem adja hozzá a `--auto-repair` kapcsolót. A
 | 0 | Az előnézet vagy az igazolt eredmény sikeres volt. |
 | 1 | Indítási, bemeneti vagy naplóhiba állította le a parancsot. |
 | 2 | Az argumentumok nem ismerhetők fel. |
-| 3 | Letiltva, sikertelen vagy nem igazolt. |
+| 3 | Blokkolva, sikertelen vagy nem igazolt. |
 | 4 | Egy folyamatnak újraindításra van szüksége az ellenőrzés előtt. |
 | 130 | Ön leállította. |
 

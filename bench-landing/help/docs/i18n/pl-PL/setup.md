@@ -20,13 +20,13 @@ Jeśli `dotnet` jest dostępne, `dotnet --list-runtimes` powinno wyświetlić `M
 
 Nie omijaj ostrzeżeń zabezpieczeń systemu Windows, aby uruchomić niezweryfikowaną kopię. Przed wybraniem jakiejkolwiek akcji zmieniającej komputer miej aktualną kopię zapasową.
 
-Przy uruchamianiu KillerBench sprawdza w serwisie GitHub, czy jest nowsza stabilna wersja, i pyta przed jej instalacją. Pobrany plik musi odpowiadać opublikowanej sumie kontrolnej SHA-256. Wyłącz to sprawdzanie opcją **Sprawdzaj aktualizacje przy uruchamianiu** w oknie O programie.
+Przy uruchamianiu KillerBench sprawdza w serwisie GitHub, czy jest nowsza stabilna wersja, i pyta przed jej instalacją. Pobrany plik musi odpowiadać opublikowanej sumie kontrolnej SHA-256. Wyłącz to sprawdzanie opcją **Sprawdzaj aktualizacje przy uruchamianiu** w sekcji Informacje.
 
 ## Bieżące ograniczenia
 
 Bieżąca kompilacja ma dwanaście sekcji, diagnostykę tylko do odczytu, raporty i indywidualnie wybierane obszary napraw. Natywna weryfikacja napraw wciąż trwa. Działający interfejs, udana kompilacja ani wynik testu na danych przykładowych nie potwierdzają działania naprawy na prawdziwym komputerze. Zobacz [Jak zmiany pozostają bezpieczne](safety.html#development-status).
 
-Przykładowa konsola na stronie głównej pokazuje syntetyczne dane. Ostateczne zrzuty ekranu aplikacji i pierwszy publiczny pakiet nadal są w przygotowaniu.
+Przykładowa konsola na stronie głównej pokazuje syntetyczne dane. Pierwszy publiczny pakiet nadal jest w przygotowaniu.
 
 ## Kod źródłowy, licencja i pomoc
 

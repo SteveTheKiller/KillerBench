@@ -14,7 +14,7 @@
 killerbench-cli full-scan --report C:\Reports\scan.html --json
 ```
 
-`full-scan` は、`--auto-repair` を追加しない限り読み取り専用です。`--report` は、アプリがエクスポートするのと同じテーマ付きのレポートを書き込みます。一部の領域だけを確認するには `--scope` を、ワークフロー ジャーナルなしで JSON をまとめて取得するには `common-check` を使います。
+`full-scan` は診断専用で、`--auto-repair` は受け付けません。特定の操作が必要な場合は、対象を絞った修復ワークフローを使用してください。`--report` は、アプリがエクスポートするのと同じテーマ付きのレポートを書き込みます。一部の領域だけを確認するには `--scope` を、ワークフロー ジャーナルなしで JSON をまとめて取得するには `common-check` を使います。
 
 ## 終了コードを読む
 

@@ -10,7 +10,7 @@ Vérifiez d'abord l'ordinateur, puis lisez dans le rapport ce qui demande de l'a
 
 ### Analyse complète du système
 
-Inspecte 49 domaines de diagnostic, puis évalue chaque recette de récupération de service installée ainsi que les recettes de maintenance, DHCP, impression, Defender, heure et WMI. Les vérifications peuvent prendre plusieurs minutes. La réparation automatique est facultative et exige les preuves actuelles, les prérequis de l'ordinateur et les vérifications de dépendances propres à chaque recette. Les réparations éligibles peuvent renouveler des baux DHCP manquants, libérer des travaux d'impression en file d'attente, resynchroniser l'horloge, actualiser les signatures de Defender, restaurer des services éligibles et réparer une corruption de Windows confirmée. Les services automatiques arrêtés peuvent être démarrés une fois leur fenêtre de démarrage et leurs dépendances vérifiées. Un service à démarrage manuel arrêté reste inchangé lorsque l'état d'inactivité est la seule preuve ; des flux de travail plus ciblés ne peuvent l'exiger que lorsque des preuves actuelles de la fonctionnalité justifient le démarrage. Les types de démarrage, les définitions de tâches, les rapports, les vidages, les abonnements, les identifiants, les paramètres des canaux, la stratégie du pare-feu et les paramètres gérés sont conservés. Les instantanés historiques, de sauvegarde et de transfert sont en lecture seule. Le contenu des vidages n'est pas ouvert. L'inspection du bit d'intégrité ne planifie ni réparation ni redémarrage. Ce flux de travail n'installe pas de mises à jour, ne modifie pas les pilotes, ne supprime pas de fichiers et n'effectue pas de test complet du matériel.
+Inspecte 49 domaines de diagnostic et évalue les recettes de réparation installées au regard des preuves actuelles. Les vérifications peuvent prendre plusieurs minutes. L'analyse complète du système est uniquement diagnostique. Utilisez un flux de travail de réparation ciblé pour sélectionner et confirmer une action prise en charge après avoir examiné des prérequis récents. Les instantanés historiques, de sauvegarde et de transfert restent en lecture seule. Le contenu des vidages n'est pas ouvert. L'inspection du bit d'intégrité ne planifie ni réparation ni redémarrage. Cette analyse n'installe pas de mises à jour, ne modifie pas les pilotes, ne supprime pas de fichiers et n'effectue pas de test complet du matériel.
 
 ### Signes vitaux
 
@@ -18,7 +18,7 @@ Capture la mémoire disponible, l'état des disques indiqué par le fournisseur 
 
 ### Historique de fiabilité
 
-Lit les enregistrements de l'Analyseur de fiabilité de Windows des 14 derniers jours avec les erreurs récentes du journal Application et les événements d'arrêt inattendu, puis renvoie une seule conclusion historique délimitée. Les enregistrements historiques n'établissent ni l'état actuel ni la cause profonde. Aucune réparation n'est sélectionnée et aucune application, aucun service ni aucun paramètre n'est modifié.
+Lit les enregistrements du Moniteur de fiabilité de Windows des 14 derniers jours avec les erreurs récentes du journal Application et les événements d'arrêt inattendu, puis renvoie une seule conclusion historique délimitée. Les enregistrements historiques n'établissent ni l'état actuel ni la cause profonde. Aucune réparation n'est sélectionnée et aucune application, aucun service ni aucun paramètre n'est modifié.
 
 ### Performances du démarrage
 
@@ -50,7 +50,7 @@ Inventorie les noms de services installés, les noms complets, les états, les m
 
 ### Erreurs d'application
 
-Lit les événements récents d'erreur et critiques du journal Application avec un historique délimité de l'Analyseur de fiabilité, puis renvoie une seule conclusion sur l'historique de stabilité. Les enregistrements historiques ne prouvent ni une panne actuelle ni une cause profonde et orientent seulement vers un diagnostic plus ciblé. Aucune application n'est arrêtée, réparée, supprimée ou reconfigurée.
+Lit les événements récents d'erreur et critiques du journal Application avec un historique délimité du Moniteur de fiabilité, puis renvoie une seule conclusion sur l'historique de stabilité. Les enregistrements historiques ne prouvent ni une panne actuelle ni une cause profonde et orientent seulement vers un diagnostic plus ciblé. Aucune application n'est arrêtée, réparée, supprimée ou reconfigurée.
 
 ### Périphériques d'affichage
 

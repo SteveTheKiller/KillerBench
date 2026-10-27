@@ -26,7 +26,7 @@ Başlangıçta KillerBench GitHub'da daha yeni bir kararlı sürüm olup olmadı
 
 Geçerli derlemede on iki bölüm, salt okunur tanılama, raporlar ve tek tek seçilen onarım yüzeyleri vardır. Yerel onarım doğrulaması hâlâ sürmektedir. Çalışan bir arayüz, başarılı bir derleme veya bir test düzeni sonucu, gerçek bir bilgisayardaki onarım davranışını kanıtlamaz. Bkz. [Değişiklikler nasıl güvenli kalır](safety.html#development-status).
 
-Açılış sayfasındaki örnek konsol yapay çıktıdır. Son uygulama ekran görüntüleri ve ilk herkese açık paket hâlâ beklemededir.
+Açılış sayfasındaki örnek konsol yapay çıktıdır. İlk herkese açık paket hâlâ beklemededir.
 
 ## Kaynak, lisans ve destek
 

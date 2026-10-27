@@ -39,7 +39,7 @@ The installer verifies and extracts the application to `%LOCALAPPDATA%\Programs\
 | `HKCU` or `HKLM\Software\KillerBench` | The installed path, for the matching installation scope |
 | A `.kbench` file you choose | A saved capture with its retained evidence |
 
-Nothing is uploaded. Delete a journal only after you no longer need the evidence for an uncertain outcome.
+Journals stay on this computer, and KillerBench does not upload them. Delete a journal only after you no longer need the evidence for an uncertain outcome.
 
 ## Diagnose first
 

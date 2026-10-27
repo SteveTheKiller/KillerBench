@@ -14,7 +14,7 @@ Usa la línea de comandos cuando quieras evidencias de KillerBench en un script,
 killerbench-cli full-scan --report C:\Reports\scan.html --json
 ```
 
-`full-scan` es de solo lectura salvo que añadas `--auto-repair`. `--report` escribe el mismo informe con tema que exporta la app. Usa `--scope` para comprobar solo algunas áreas, y `common-check` para obtener JSON combinado sin diario de flujo de trabajo.
+`full-scan` es solo de diagnóstico y rechaza `--auto-repair`. Usa un flujo de trabajo de reparación específico cuando necesites una acción concreta. `--report` escribe el mismo informe con tema que exporta la app. Usa `--scope` para comprobar solo algunas áreas, y `common-check` para obtener JSON combinado sin diario de flujo de trabajo.
 
 ## Leer los códigos de salida
 

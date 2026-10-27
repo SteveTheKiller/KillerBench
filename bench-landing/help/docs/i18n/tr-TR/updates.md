@@ -14,11 +14,11 @@ Sınırlı Windows Update ve Setup bakım etkinliğini bir veya daha fazla anlı
 
 ### Kullanılabilir güncelleştirmeler
 
-Yapılandırılmış kaynağı, Windows Update'i veya zaten kayıtlı bir Microsoft Update hizmetini kullanarak seçili yazılım ve sürücü güncelleştirmelerini bulur. Kaynak hazırlığı bulmadan önce denetlenir. Yükleme, lisans kabulü, kaynak kaydı veya ilke değişikliği yoktur. Bu, bakım onarımından ayrıdır.
+Yapılandırılmış kaynağı, Windows Update'i veya zaten kayıtlı bir Microsoft Update hizmetini kullanarak seçili yazılım ve sürücü güncelleştirmelerini bulur. Kaynak hazırlığı bulmadan önce denetlenir. Bulma işlemi hiçbir şey yüklemez, lisans kabul etmez, kaynak kaydetmez ve ilke değiştirmez. Seçili güncelleştirmeler daha sonra, ayrı olarak ve yalnızca onay kutusunu işaretledikten sonra yüklenebilir. Bu, bakım onarımından ayrıdır.
 
 ### Windows Update
 
-Sınırlı Windows bakım paketi, isteğe bağlı özellik ve yetenek durumlarını envantere alır, yeniden başlatma göstergelerini, boş alanı ve güncelleştirme hizmetlerini denetler, Teslim İyileştirme'yi başlatmadan gözlemler, ardından bileşen deposunu ve korumalı sistem dosyalarını tarar. Bekleyen paket, özellik veya yetenek durumları incelenmeyi gerektirir ancak bir bileşen işlemine yetki vermez. Otomatik onarım etkin Windows Update, BITS, Şifreleme Hizmetleri, Windows Modül Yükleyicisi ve Update Orchestrator hizmetlerini başlatabilir. Update Orchestrator'ın başlatılması, geçerli ilke altında mevcut zamanlanmış güncelleştirme etkinliğini sürdürebilir. Paketler, isteğe bağlı özellikler, yetenekler, Teslim İyileştirme önbelleği, eşler, bant genişliği, ilke, kaynak kaydı, zamanlamalar ve başlangıç ayarları korunur. DISM veya SFC canlı bozulma kanıtı gerektirir. Bu iş akışı hiçbir güncelleştirmeyi seçmez veya onaylamaz.
+Sınırlı Windows bakım paketi, isteğe bağlı özellik ve yetenek durumlarını envantere alır, yeniden başlatma göstergelerini, boş alanı ve güncelleştirme hizmetlerini denetler, Teslim İyileştirme'yi başlatmadan gözlemler, ardından bileşen deposunu ve korumalı sistem dosyalarını tarar. Bekleyen paket, özellik veya yetenek durumları incelenmeyi gerektirir ancak bir bileşen işlemine yetki vermez. Otomatik onarım, otomatik başlayacak şekilde ayarlanmış durdurulmuş Windows Update, BITS, Şifreleme Hizmetleri, Windows Modül Yükleyicisi ve Update Orchestrator hizmetlerini başlatabilir. Durdurulmuş, isteğe bağlı başlatılan bir hizmet bildirilir, başlatılmaz. Update Orchestrator'ın başlatılması, geçerli ilke altında mevcut zamanlanmış güncelleştirme etkinliğini sürdürebilir. Paketler, isteğe bağlı özellikler, yetenekler, Teslim İyileştirme önbelleği, eşler, bant genişliği, ilke, kaynak kaydı, zamanlamalar ve başlangıç ayarları korunur. DISM veya SFC canlı bozulma kanıtı gerektirir. Bu iş akışı hiçbir güncelleştirmeyi seçmez veya onaylamaz.
 
 ### Windows Update Hizmeti
 
@@ -30,7 +30,7 @@ Tam Teslim İyileştirme hizmeti durumunu denetler. Durdurulmuş, isteğe bağl�
 
 ### BITS hizmeti
 
-Tam Arka Plan Akıllı Aktarım Hizmeti durumunu, geçerli hesabın aktarım işlerini ve sınırlı tam hizmet hatası geçmişini denetler. Geçmiş hatalar ve aktarım anlık görüntüleri bir hizmet başlatmaya yetki veremez. İsteğe bağlı kurtarma, güncel bağımlılık denetimlerinden sonra yalnızca etkin ve durdurulmuş tam hizmeti başlatır. Mevcut uygulamalar kuyruğa alınmış arka plan aktarımlarını sürdürebilir. İşler, öncelikler, sahipler, hedefler, ara sunucu ayarları, ilke ve başlangıç türü korunur. Doğrulama yalnızca kararlı hizmet durumunu kapsar; aktarım ilerlemesini, uygulama sahipliğini veya tamamlanmayı kapsamaz.
+Tam Arka Plan Akıllı Aktarım Hizmeti durumunu, geçerli hesabın aktarım işlerini ve sınırlı tam hizmet hatası geçmişini denetler. Geçmiş hatalar ve aktarım anlık görüntüleri bir hizmet başlatmaya yetki veremez. İsteğe bağlı kurtarma, güncel bağımlılık denetimlerinden sonra yalnızca durdurulmuş ve otomatik başlayacak şekilde ayarlanmış tam hizmeti başlatır. Durdurulmuş, isteğe bağlı başlatılan bir hizmet yalnızca bilgi amaçlı kalır. Mevcut uygulamalar kuyruğa alınmış arka plan aktarımlarını sürdürebilir. İşler, öncelikler, sahipler, hedefler, ara sunucu ayarları, ilke ve başlangıç türü korunur. Doğrulama yalnızca kararlı hizmet durumunu kapsar; aktarım ilerlemesini, uygulama sahipliğini veya tamamlanmayı kapsamaz.
 
 ### Arka plan aktarımları (BITS)
 
@@ -38,11 +38,11 @@ Seçili hesap kapsamındaki BITS aktarım işlerini okur ve tam iş kimliklerini
 
 ### Şifreleme Hizmetleri
 
-Tam Şifreleme Hizmetleri durumunu, kayıtlı hizmet DLL'sini ve sınırlı tam hizmet hatası geçmişini denetler. Geçmiş hatalar ve DLL gözlemleri bir hizmet başlatmaya veya bileşen değişimine yetki veremez. İsteğe bağlı kurtarma, güncel bağımlılık denetimlerinden sonra yalnızca etkin ve durdurulmuş tam hizmeti başlatır. Mevcut katalog, sertifika ve güncelleştirme işlemleri sürebilir. Sertifikalar, anahtarlar, kataloglar, güven ayarları, ilke ve başlangıç türü korunur. Doğrulama yalnızca kararlı hizmet durumunu kapsar; sertifika, imza, katalog veya güven doğrulamasını kapsamaz.
+Tam Şifreleme Hizmetleri durumunu, kayıtlı hizmet DLL'sini ve sınırlı tam hizmet hatası geçmişini denetler. Geçmiş hatalar ve DLL gözlemleri bir hizmet başlatmaya veya bileşen değişimine yetki veremez. İsteğe bağlı kurtarma, güncel bağımlılık denetimlerinden sonra yalnızca durdurulmuş ve otomatik başlayacak şekilde ayarlanmış tam hizmeti başlatır. Durdurulmuş, isteğe bağlı başlatılan bir hizmet yalnızca bilgi amaçlı kalır. Mevcut katalog, sertifika ve güncelleştirme işlemleri sürebilir. Sertifikalar, anahtarlar, kataloglar, güven ayarları, ilke ve başlangıç türü korunur. Doğrulama yalnızca kararlı hizmet durumunu kapsar; sertifika, imza, katalog veya güven doğrulamasını kapsamaz.
 
 ### Windows Modül Yükleyicisi
 
-Tam Windows Modül Yükleyicisi durumunu, sınırlı bakım paketi geçişlerini ve tam hizmet hatası geçmişini denetler. Geçmiş hatalar ve paket durumları bir hizmet başlatmaya veya paket işlemine yetki veremez. İsteğe bağlı kurtarma, güncel bağımlılık denetimlerinden sonra yalnızca etkin ve durdurulmuş tam hizmeti başlatır. Mevcut bakım etkinliği sürebilir. Paketler, bileşen deposu içeriği, kaynaklar, ilke ve başlangıç türü korunur. Doğrulama yalnızca kararlı hizmet durumunu kapsar; bileşen deposu sağlığını, paket uygulanabilirliğini, bakımın tamamlanmasını veya yeniden başlatma hazırlığını kapsamaz.
+Tam Windows Modül Yükleyicisi durumunu, sınırlı bakım paketi geçişlerini ve tam hizmet hatası geçmişini denetler. Geçmiş hatalar ve paket durumları bir hizmet başlatmaya veya paket işlemine yetki veremez. İsteğe bağlı kurtarma, güncel bağımlılık denetimlerinden sonra yalnızca durdurulmuş ve otomatik başlayacak şekilde ayarlanmış tam hizmeti başlatır. Durdurulmuş, isteğe bağlı başlatılan bir hizmet yalnızca bilgi amaçlı kalır. Mevcut bakım etkinliği sürebilir. Paketler, bileşen deposu içeriği, kaynaklar, ilke ve başlangıç türü korunur. Doğrulama yalnızca kararlı hizmet durumunu kapsar; bileşen deposu sağlığını, paket uygulanabilirliğini, bakımın tamamlanmasını veya yeniden başlatma hazırlığını kapsamaz.
 
 ### Windows Update Medic Hizmeti
 

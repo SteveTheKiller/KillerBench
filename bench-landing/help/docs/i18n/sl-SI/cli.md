@@ -15,7 +15,7 @@ Zaženite `killerbench-cli` brez argumentov, da ta seznam izpišete v svojem ra�
 - `bits-retry JOB_GUID [--execute]`: Privzeto predogled; izrecen ponovni poskus točno določenega opravila, brez trditve o dokončanju v aplikaciji.
 - `bits-retry-recover JOB_GUID`: Dva posnetka samo za branje; arhivira stabilne izide brez novega poskusa.
 - `component-repair-source`: Upravljani pravilnik virov popravil DISM in spori; brez sprememb.
-- `delivery-optimization`: Stanje storitve Delivery Optimization samo za branje; dokazi JSON.
+- `delivery-optimization`: Stanje storitve Optimizacija dostave samo za branje; dokazi JSON.
 - `delivery-optimization-activity`: Trenutna števila opravil in skupna števila bajtov z omejitvami zasebnosti; brez identitet prenosov ali sprememb.
 - `delivery-optimization-policy`: Klasične nastavitve in nastavitve Policy CSP samo za branje; občutljive vrednosti in identitete ponudnikov so izključene.
 - `feature-service-events`: Prebere zgodovino napak točno določenih storitev Time, Search, WMI, Event Log in zvoka.
@@ -79,9 +79,9 @@ Zaženite `killerbench-cli` brez argumentov, da ta seznam izpišete v svojem ra�
 - `firewall-enable --profile Domain|Private|Public [--profile ...] [--execute]`: Privzeto predogled; le neupravljani lokalni profili.
 - `firewall-enable-recover`: Pregleda čakajočo spremembo brez ponavljanja.
 - `firewall-events`: Prebere omejeno zgodovino opozoril, napak in kritičnih dogodkov delovanja Windows Firewall.
-- `firewall-logging`: Prebere nastavitve beleženja prometa profilov Domain, Private in Public brez odpiranja dnevnikov.
+- `firewall-logging`: Prebere nastavitve beleženja prometa profilov domene, zasebnega in javnega omrežja brez odpiranja dnevnikov.
 - `firewall-rules`: Prebere števila veljavnih pravil in virov pravilnikov z omejitvami zasebnosti.
-- `firewall-service-events`: Prebere zgodovino napak točno določenih storitev BFE in Windows Defender Firewall v Service Control Manager.
+- `firewall-service-events`: Prebere zgodovino napak točno določenih storitev BFE in Požarni zid programa Windows Defender v Service Control Manager.
 - `privacy-clipboard-history on|off [--execute]`: Privzeto predogled; točna vrednost trenutnega uporabnika z ohranitvijo pravilnikov.
 - `privacy-clipboard-history-recover`: Znova preveri prekinjeno spremembo brez ponavljanja.
 - `privacy-clipboard-history-undo VERIFIED_JOURNAL [--execute]`: Varovana obnovitev prejšnje vrednosti.
@@ -98,7 +98,7 @@ Zaženite `killerbench-cli` brez argumentov, da ta seznam izpišete v svojem ra�
 - `service-dependencies`: Pregled celovitosti neposrednih odvisnosti samo za branje; brez sprememb storitev.
 - `service-dlls`: Prisotnost registriranih DLL storitev in stanje Authenticode samo za branje; poti so izključene in nelokalne poti niso obiskane.
 - `service-events`: Zgodovina napak storitev samo za branje; JSON s surovimi dokazi.
-- `time-events`: Nedavna zgodovina dogodkov Windows Time samo za branje z dokazi JSON.
+- `time-events`: Nedavna zgodovina dogodkov storitve Čas sistema Windows samo za branje z dokazi JSON.
 - `service-logons`: Pregled razredov računov storitev in interakcije z namizjem samo za branje; identitete računov so izključene.
 - `service-path-quoting`: Pregled narekovajev poti izvršljivih datotek storitev samo za branje; polne poti in argumenti so izključeni.
 - `service-recovery-policy`: Povzetek obnovitvenih dejanj nameščenih storitev samo za branje; ukazi in sporočila ponovnega zagona so izključeni.
@@ -148,7 +148,7 @@ Zaženite `killerbench-cli` brez argumentov, da ta seznam izpišete v svojem ra�
 - `print-operational-events`: Stanje kanala PrintService Operational in razpoložljiva zgodovina samo za branje; dokazi JSON.
 - `print-policy`: Omejitve Point and Print ter pravilniki nameščanja gonilnikov samo za branje; dokazi JSON.
 - `print-rendering-policy`: Pravilniki izrisa in izolacije gonilnikov samo za branje; dokazi JSON.
-- `print-spooler-events`: Napake Service Control Manager, povezane z lokalno identiteto Print Spooler, samo za branje; dokazi JSON.
+- `print-spooler-events`: Napake Service Control Manager, povezane z lokalno identiteto storitve Tiskalni posrednik, samo za branje; dokazi JSON.
 - `printer-check --queue NAME [--queue NAME ...]`: Izbrane nastavitve lokalnih čakalnih vrst samo za branje.
 - `printer-conditions`: Kode stanj lokalnih čakalnih vrst samo za branje; brez fizičnega preverjanja ali sprememb.
 - `printer-driver-files`: Povzetek prisotnosti registriranih datotek in podpisov izvršljivih datotek samo za branje; polne poti so izključene.
@@ -268,7 +268,7 @@ Zaženite `killerbench-cli` brez argumentov, da ta seznam izpišete v svojem ra�
 - `task-register PLAN.json YYYY-MM-DD [--execute] [--report OUTPUT.html|OUTPUT.txt]`: Privzeto predogled; le ustvarjanje onemogočene definicije Local System.
 - `task-register-recover PLAN.json [--report OUTPUT.html|OUTPUT.txt]`: Usklajevanje točne definicije samo za branje; nikoli ne ponovi ali zažene opravila.
 - `task-xml PLAN.json YYYY-MM-DD`: Onemogočeni XML za pregled na standardni izhod; le koledarski urniki v lokalnem časovnem pasu; brez registracije.
-- `time-config`: Način Windows Time, partnerji in dokazi o pravilnikih samo za branje.
+- `time-config`: Način storitve Čas sistema Windows, partnerji in dokazi o pravilnikih samo za branje.
 - `time-configure --source DomainHierarchy|CustomPeers [--peer HOST ...] [--execute]`: Privzeto predogled; način po meri zahteva partnerje.
 - `time-plan [--source Existing|DomainHierarchy|CustomPeers] [--peer HOST ...]`: Samo predogled.
 - `time-recover --folder PATH`: Preveri in arhivira čakajoči zapis; sprememb nikoli ne ponovi.

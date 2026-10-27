@@ -22,7 +22,7 @@ Popiše omejen nabor identitet razširitev Chrome, Edge, Brave in Firefox v tren
 
 ### Zagonske aplikacije
 
-Popiše imena registracij Run in RunOnce računalnika ter trenutnega računa, imena datotek v mapi Startup, stanja odobritve zagona v sistemu Windows ter imena in stanja opravil ob zagonu ali prijavi. Nato poda eno ugotovitev o zagonskem okolju. Ne zbira ukaznih vrstic, ciljnih poti, binarnih časovnih oznak odobritve, dejanj opravil, argumentov, računov ali poverilnic. Registracija ne dokazuje, da se je element zagnal, povzročil zamudo, je nezaželen ali ga je varno onemogočiti. Stanje odobritve ne dokazuje obstoja ustrezne registracije. Ne izbere sprememb registracij, datotek, aplikacij, opravil, storitev ali pravilnikov.
+Popiše imena registracij Run in RunOnce računalnika ter trenutnega računa, imena datotek v mapi Zagon, stanja odobritve zagona v sistemu Windows ter imena in stanja opravil ob zagonu ali prijavi. Nato poda eno ugotovitev o zagonskem okolju. Ne zbira ukaznih vrstic, ciljnih poti, binarnih časovnih oznak odobritve, dejanj opravil, argumentov, računov ali poverilnic. Registracija ne dokazuje, da se je element zagnal, povzročil zamudo, je nezaželen ali ga je varno onemogočiti. Stanje odobritve ne dokazuje obstoja ustrezne registracije. Ne izbere sprememb registracij, datotek, aplikacij, opravil, storitev ali pravilnikov.
 
 ### Odstranitev Microsoftovih aplikacij
 

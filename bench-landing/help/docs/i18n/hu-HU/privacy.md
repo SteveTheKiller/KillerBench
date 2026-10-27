@@ -10,7 +10,7 @@ Jelölje ki a vizsgálandó adatvédelmi területeket, és nyomja meg a **Diagn�
 
 Egy beállítás módosításához használja az **Adatvédelmi beállítás** vezérlőt. A KillerBench ellenőrzi, hogy a beállítás már házirend vagy eszközkezelés tulajdonában van-e, rögzíti az aktuális értéket, végrehajtja az egyetlen kért módosítást, majd megerősítésként visszaolvassa. A házirend tulajdonában lévő beállítások változatlanok maradnak.
 
-A beállítások közé tartoznak a diagnosztikai adatokra és a hirdetésekre vonatkozó választások, a vágólapelőzmények, 17 alkalmazásengedély-beállítás, például a kamera, a mikrofon és a hely, a felhőalapú tartalomkeresés személyes és munkahelyi fiókokhoz, valamint a keresési kiemelések.
+A beállítások közé tartoznak a hirdetésekre vonatkozó választások, a vágólapelőzmények, 19 alkalmazásengedély-beállítás, például a kamera, a mikrofon és a hely, a felhőalapú tartalomkeresés személyes és munkahelyi fiókokhoz, valamint a keresési kiemelések.
 
 ## Az ebben a szakaszban található eszközök
 

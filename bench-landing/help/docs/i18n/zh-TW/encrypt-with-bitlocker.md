@@ -6,7 +6,7 @@
 
 - 以系統管理員身份執行 KillerBench。
 - Windows 磁碟機需要 TPM 保護裝置和修復密碼保護裝置。資料磁碟機只需要修復密碼。
-- 確定修復金鑰備份的儲存位置：位於要加密的磁碟機之外的檔案，以及可選的 Active Directory 或 Microsoft Entra ID。
+- 確定修復金鑰備份的儲存位置：位於要加密的磁碟機之外的檔案，以及選用的 Active Directory 或 Microsoft Entra ID。
 
 ## 檢查磁碟機
 
@@ -30,7 +30,7 @@
 
 ## 備份到 Active Directory 或 Entra ID
 
-在 **更多 BitLocker 動作** 中，為所選保護裝置選擇目錄備份。KillerBench 會報告 Windows 已接受請求，但無法讀取目錄中的副本，因此請在 Active Directory 或 Entra 管理中心中確認。
+在 **更多 BitLocker 動作** 中，為所選保護裝置選擇目錄備份。KillerBench 會報告 Windows 已接受要求，但無法讀取目錄中的副本，因此請在 Active Directory 或 Entra 管理中心中確認。
 
 ## 資料磁碟機和自動解鎖
 
@@ -45,10 +45,10 @@ killerbench-cli bitlocker-encrypt C: RECOVERY_PROTECTOR_GUID D:\Keys\C-recovery.
 killerbench-cli bitlocker-escrow C: RECOVERY_PROTECTOR_GUID entra --execute
 ```
 
-請參閱 [bitlocker-protectors](cli.html#cmd-bitlocker-protectors)、[bitlocker-protector-add](cli.html#cmd-bitlocker-protector-add)、[bitlocker-encrypt](cli.html#cmd-bitlocker-encrypt) 和 [bitlocker-escrow](cli.html#cmd-bitlocker-escrow)。每個命令都有對應的 `-recover` 命令，用於處理中斷的請求。
+請參閱 [bitlocker-protectors](cli.html#cmd-bitlocker-protectors)、[bitlocker-protector-add](cli.html#cmd-bitlocker-protector-add)、[bitlocker-encrypt](cli.html#cmd-bitlocker-encrypt) 和 [bitlocker-escrow](cli.html#cmd-bitlocker-escrow)。每個命令都有對應的 `-recover` 命令，用於處理中斷的要求。
 
 ## 相關內容
 
 - [BitLocker 區段](bitlocker.html)
 - [安全區段](security.html)
-- [如何保證更改安全](safety.html)
+- [如何保證變更安全](safety.html)

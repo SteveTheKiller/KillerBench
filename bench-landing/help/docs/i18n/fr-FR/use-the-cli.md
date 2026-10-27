@@ -1,6 +1,6 @@
 # Exécuter KillerBench depuis des scripts
 
-Utilisez la ligne de commande lorsque vous voulez des preuves KillerBench dans un script, une tâche RMM ou une console distante. `killerbench-cli` exécute le même Engine que l'application de bureau et imprime du JSON.
+Utilisez la ligne de commande lorsque vous voulez des preuves KillerBench dans un script, une tâche RMM ou une console distante. `killerbench-cli` exécute la même Engine que l'application de bureau et produit du JSON.
 
 ## Premiers pas
 
@@ -14,7 +14,7 @@ Utilisez la ligne de commande lorsque vous voulez des preuves KillerBench dans u
 killerbench-cli full-scan --report C:\Reports\scan.html --json
 ```
 
-`full-scan` est en lecture seule, sauf si vous ajoutez `--auto-repair`. `--report` écrit le même rapport thématisé que celui exporté par l'application. Utilisez `--scope` pour ne vérifier que certains domaines, et `common-check` pour obtenir un JSON combiné sans journal de flux de travail.
+`full-scan` est uniquement diagnostique et refuse `--auto-repair`. Utilisez un flux de travail de réparation ciblé lorsqu'une action précise est nécessaire. `--report` écrit le même rapport thématisé que celui exporté par l'application. Utilisez `--scope` pour ne vérifier que certains domaines, et `common-check` pour obtenir un JSON combiné sans journal de flux de travail.
 
 ## Lire les codes de sortie
 

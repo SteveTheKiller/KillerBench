@@ -39,7 +39,7 @@ Yükleyici uygulamayı doğrular ve `%LOCALAPPDATA%\Programs\KillerBench\` konum
 | `HKCU` veya `HKLM\Software\KillerBench` | Eşleşen yükleme kapsamı için yüklü yol |
 | Seçtiğiniz bir `.kbench` dosyası | Saklanan kanıtlarıyla kaydedilmiş bir yakalama |
 
-Hiçbir şey karşıya yüklenmez. Bir günlüğü yalnızca belirsiz bir sonuca ait kanıta artık ihtiyacınız kalmadığında silin.
+Günlükler bu bilgisayarda kalır ve KillerBench bunları karşıya yüklemez. Bir günlüğü yalnızca belirsiz bir sonuca ait kanıta artık ihtiyacınız kalmadığında silin.
 
 ## Önce tanılama
 

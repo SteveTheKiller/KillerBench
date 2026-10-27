@@ -31,7 +31,7 @@ Každá oprava se zapisuje do deníku a znovu čte. Úplný postup popisuje str�
 
 1. V části **Aktualizace** zvolte **Dostupné aktualizace** a stisknutím **Spustit diagnostiku** vyhledejte aktualizace z nakonfigurovaného zdroje.
 2. Vyberte požadované aktualizace a stiskněte **Náhled vybraných**. Náhled přesně uvádí, co by se nainstalovalo, a případný požadavek na restart.
-3. Instalujte až po přečtení náhledu. KillerBench nikdy nevybírá ani neschvaluje aktualizaci za vás.
+3. Přečtěte si náhled, zaškrtněte potvrzovací políčko a stiskněte **Instalovat**. Políčko se po každém spuštění zruší a KillerBench nikdy nevybírá ani neschvaluje aktualizaci za vás.
 
 ## Z příkazového řádku
 

@@ -31,7 +31,7 @@ Vsako popravilo se zabeleži v dnevnik, rezultat pa se znova prebere. Celotno za
 
 1. V razdelku **Posodobitve** izberite **Razpoložljive posodobitve** in pritisnite **Zaženi diagnostiko**, da odkrijete posodobitve iz nastavljenega vira.
 2. Izberite želene posodobitve in pritisnite **Predogled izbranih**. Predogled natančno navede, kaj bi se namestilo, in morebitno zahtevo po ponovnem zagonu.
-3. Namestite šele po pregledu predogleda. KillerBench nikoli ne izbere ali odobri posodobitve namesto vas.
+3. Preberite predogled, označite potrditveno polje in pritisnite **Namesti**. Polje se po vsakem zagonu počisti, KillerBench pa nikoli ne izbere ali odobri posodobitve namesto vas.
 
 ## Iz ukazne vrstice
 

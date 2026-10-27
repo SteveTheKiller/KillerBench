@@ -39,7 +39,7 @@ A telepítő ellenőrzi és kicsomagolja az alkalmazást a `%LOCALAPPDATA%\Progr
 | `HKCU` vagy `HKLM\Software\KillerBench` | A telepítési útvonal a megfelelő telepítési hatókörhöz |
 | Egy Ön által választott `.kbench` fájl | Egy mentett rögzítés a megőrzött bizonyítékokkal |
 
-Semmi sem kerül feltöltésre. Egy naplót csak akkor töröljön, ha a bizonytalan eredményhez tartozó bizonyítékra már nincs szüksége.
+A naplók ezen a számítógépen maradnak, és a KillerBench nem tölti fel őket. Egy naplót csak akkor töröljön, ha a bizonytalan eredményhez tartozó bizonyítékra már nincs szüksége.
 
 ## Először diagnózis
 

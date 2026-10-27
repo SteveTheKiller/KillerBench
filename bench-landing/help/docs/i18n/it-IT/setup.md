@@ -26,7 +26,7 @@ All'avvio KillerBench controlla su GitHub se esiste una versione stabile più re
 
 La build attuale ha dodici sezioni, diagnosi in sola lettura, rapporti e superfici di riparazione selezionate singolarmente. La convalida nativa delle riparazioni è ancora in corso. Un'interfaccia funzionante, una build riuscita o il risultato di un fixture non dimostrano il comportamento di una riparazione su un computer reale. Vedi [Come le modifiche restano sicure](safety.html#development-status).
 
-La console illustrativa nella pagina principale è un output sintetico. Le schermate definitive dell'applicazione e il primo pacchetto pubblico sono ancora in sospeso.
+La console illustrativa nella pagina principale è un output sintetico. Il primo pacchetto pubblico è ancora in sospeso.
 
 ## Sorgente, licenza e supporto
 

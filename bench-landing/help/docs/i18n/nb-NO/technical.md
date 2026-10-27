@@ -39,7 +39,7 @@ Installasjonsprogrammet verifiserer og pakker ut appen til `%LOCALAPPDATA%\Progr
 | `HKCU` eller `HKLM\Software\KillerBench` | Installert bane, for tilsvarende installasjonsomfang |
 | En `.kbench`-fil du velger | Et lagret opptak med bevarte bevis |
 
-Ingenting lastes opp. Slett en journal bare når du ikke lenger trenger bevisene for et usikkert utfall.
+Journaler blir værende på denne datamaskinen, og KillerBench laster dem ikke opp. Slett en journal bare når du ikke lenger trenger bevisene for et usikkert utfall.
 
 ## Diagnose først
 

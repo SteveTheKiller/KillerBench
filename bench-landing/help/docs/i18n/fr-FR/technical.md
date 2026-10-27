@@ -10,7 +10,7 @@ KillerBench est une application Windows native. L'application de bureau, la lign
 | --- | --- |
 | Interface | WPF sur .NET 10 (`net10.0-windows`), Windows x64, cadre de fenêtre personnalisé |
 | Engine | `Engine.Core`, `Engine` et `Engine.Windows`, sans aucune référence à WPF ni aux contrôles de bureau |
-| Ligne de commande | `killerbench-cli`, un hôte distinct reposant sur le même Engine |
+| Ligne de commande | `killerbench-cli`, un hôte distinct reposant sur la même Engine |
 | Fournisseurs Windows | .NET, API Windows, PowerShell et outils en ligne de commande de Windows, chacun exécuté dans des limites fixes de durée, d'enregistrements et de taille |
 | Rapports | Sortie brute, Rapport lisible, HTML, texte et JSON |
 | Données de référence | Packs de connaissances versionnés pour les codes d'erreur, les identifiants matériels, les fabricants et les références d'assistance |
@@ -39,7 +39,7 @@ Le programme d'installation vérifie et extrait l'application dans `%LOCALAPPDAT
 | `HKCU` ou `HKLM\Software\KillerBench` | Le chemin d'installation, selon la portée de l'installation |
 | Un fichier `.kbench` de votre choix | Une capture enregistrée avec ses preuves conservées |
 
-Rien n'est envoyé. Ne supprimez un journal que lorsque vous n'avez plus besoin des preuves d'un résultat incertain.
+Les journaux restent sur cet ordinateur, et KillerBench ne les envoie pas. Ne supprimez un journal que lorsque vous n'avez plus besoin des preuves d'un résultat incertain.
 
 ## Le diagnostic d'abord
 
@@ -199,7 +199,7 @@ Les preuves, les constats de l'Engine, les journaux et la Sortie brute restent e
 
 ## Ligne de commande et codes de sortie
 
-`killerbench-cli` exécute le même Engine sans l'application de bureau. La progression va vers la sortie d'erreur standard et le JSON vers la sortie standard. La plupart des commandes affichent un aperçu par défaut, et une modification nécessite `--execute`. Les commandes `-recover` correspondantes examinent une action interrompue sans la répéter. Voir [Exécuter KillerBench depuis des scripts](use-the-cli.html) et la [référence des commandes](cli.html).
+`killerbench-cli` exécute la même Engine sans l'application de bureau. La progression va vers la sortie d'erreur standard et le JSON vers la sortie standard. La plupart des commandes affichent un aperçu par défaut, et une modification nécessite `--execute`. Les commandes `-recover` correspondantes examinent une action interrompue sans la répéter. Voir [Exécuter KillerBench depuis des scripts](use-the-cli.html) et la [référence des commandes](cli.html).
 
 | Code de sortie | Commandes de flux de travail | Analyse et ouverture |
 | --- | --- | --- |

@@ -158,7 +158,7 @@ Kjør `killerbench-cli` uten argumenter for å skrive ut denne listen på din eg
 - `printer-list`: Finner lokale køer uten å endre innstillinger.
 - `printer-ports`: Skrivebeskyttet samsvar mellom kø- og portregistreringer; JSON-bevis.
 - `printer-queue-attributes`: Skrivebeskyttede attributter for køing, oppbevaring og deling for lokale køer.
-- `printer-repair --queue NAME [--queue NAME ...] [--execute]`: Forhåndsvisning som standard; når frakoblet modus slås av, kan ventende jobber bli sluppet løs.
+- `printer-repair --queue NAME [--queue NAME ...] [--execute]`: Forhåndsvisning som standard; når frakoblet modus slås av, kan ventende jobber bli frigitt.
 
 ## Nettverk
 
@@ -316,7 +316,7 @@ Kjør `killerbench-cli` uten argumenter for å skrive ut denne listen på din eg
 - `delete-notifications`: Skrivebeskyttet konfigurasjon for slettevarsler i NTFS og ReFS; JSON; ingen optimalisering eller innstillingsendring.
 - `diagnostic-scopes [--all]`: Viser 11 anbefalte resultatgrupper, eller alle 49 skrivebeskyttede områder; ingen innsamling.
 - `full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Målrettet diagnosejournal; ingen reparasjoner.
-- `full-scan [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Alle diagnoseområder; ingen reparasjon med mindre `--auto-repair` er angitt eksplisitt.
+- `full-scan [--recipes ID[,ID]] [--report OUTPUT.html|OUTPUT.txt] [--json]`: Alle diagnoseområder; bare diagnose, ingen reparasjoner.
 - `gateway-check`: Avgrensede ICMP-kontroller av nøyaktige konfigurerte neste standardhopp; ingen adresseskanning.
 - `infrastructure-service-events`: Leser ett avgrenset, nøyaktig øyeblikksbilde av feil for tilkoblings-, ekstern administrasjons-, varslings- og kjernetjenester.
 - `investigate-batch FILE [FILE ...]`: Opptil 12 filer; JSON Lines; avslutningskode 3 for mislykket eller delvis import.

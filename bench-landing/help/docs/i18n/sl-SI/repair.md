@@ -48,7 +48,7 @@ Pregleda omogočenost, način hranjenja, trenutno velikost, nastavljeno omejitev
 
 ### Časovna storitev Windows
 
-Preveri nastavitve, storitev in sinhronizacijo Windows Time. Samodejno popravilo lahko zažene W32Time, če trenutno stanje sporoča točno določeno napako ustavljene storitve in so sveža preverjanja pravilnikov, načina ter odvisnosti uspešna. Nato lahko zahteva ponovno sinhronizacijo in preveri sveže stanje. To lahko prilagodi uro z uporabo že nastavljenih virov. Vrsta zagona, nastavitve virov in upravljane nastavitve se ohranijo.
+Preveri nastavitve, storitev in sinhronizacijo storitve Čas sistema Windows (W32Time). Samodejno popravilo lahko zažene W32Time, če trenutno stanje sporoča točno določeno napako ustavljene storitve in so sveža preverjanja pravilnikov, načina ter odvisnosti uspešna. Nato lahko zahteva ponovno sinhronizacijo in preveri sveže stanje. To lahko prilagodi uro z uporabo že nastavljenih virov. Vrsta zagona, nastavitve virov in upravljane nastavitve se ohranijo.
 
 ### Storitev razporejevalnika opravil
 

@@ -14,7 +14,7 @@ Dùng dòng lệnh khi bạn muốn có bằng chứng của KillerBench trong m
 killerbench-cli full-scan --report C:\Reports\scan.html --json
 ```
 
-`full-scan` chỉ đọc trừ khi bạn thêm `--auto-repair`. `--report` ghi cùng một báo cáo có chủ đề như ứng dụng xuất ra. Dùng `--scope` để chỉ kiểm tra một số vùng, và `common-check` để có JSON kết hợp mà không có nhật ký quy trình.
+`full-scan` chỉ thực hiện chẩn đoán và từ chối `--auto-repair`. Khi cần một thao tác cụ thể, hãy dùng quy trình sửa chữa chuyên biệt. `--report` ghi cùng một báo cáo có chủ đề như ứng dụng xuất ra. Dùng `--scope` để chỉ kiểm tra một số vùng, và `common-check` để có JSON kết hợp mà không có nhật ký quy trình.
 
 ## Đọc mã thoát
 
@@ -48,7 +48,7 @@ killerbench-cli workflow-report journal.json report.html --include-repairs
 
 ## Dùng từ trợ lý AI
 
-[KillerMCP](../mcp.html) có thể gọi CLI đã cài để tra cứu mã lỗi của Device Manager và Windows.
+[KillerMCP](../mcp.html) có thể gọi CLI đã cài để tra cứu mã lỗi của Trình quản lý Thiết bị và Windows.
 
 ## Liên quan
 

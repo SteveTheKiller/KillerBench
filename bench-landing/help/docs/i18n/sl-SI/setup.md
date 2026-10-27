@@ -26,7 +26,7 @@ Ob zagonu KillerBench preveri, ali je na GitHubu novejša stabilna izdaja, in va
 
 Trenutna različica ima dvanajst razdelkov, diagnostiko samo za branje, poročila in posamično izbrane možnosti popravil. Preverjanje popravil v dejanskem sistemu še poteka. Delujoč vmesnik, uspešna gradnja ali rezultat nadzorovanega preizkusa ne dokazuje delovanja popravil na dejanskem računalniku. Glejte [Kako spremembe ostanejo varne](safety.html#development-status).
 
-Ponazoritvena konzola na pristajalni strani prikazuje izmišljene rezultate. Končni posnetki aplikacije in prvi javni paket še čakajo.
+Ponazoritvena konzola na pristajalni strani prikazuje izmišljene rezultate. Prvi javni paket še čaka.
 
 ## Izvorna koda, licenca in podpora
 

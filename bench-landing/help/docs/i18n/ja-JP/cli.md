@@ -315,8 +315,8 @@
 - `common-check [--scope NAME ...]`: 既定ではすべての診断領域。指定した場合は選択した領域のみ。読み取り専用の JSON。
 - `delete-notifications`: NTFS と ReFS の削除通知の構成、読み取り専用。JSON。最適化や設定の変更なし。
 - `diagnostic-scopes [--all]`: 推奨される 11 の結果グループ、または読み取り専用の 49 領域すべてを一覧表示します。収集なし。
-- `full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json]`: 対象を絞った診断のジャーナル。修復なし。
-- `full-scan [--recipes ID[,ID]] [--auto-repair] [--report OUTPUT.html|OUTPUT.txt] [--json]`: すべての診断領域。`--auto-repair` を明示しない限り修復なし。
+- `full-scan --scope NAME [--scope NAME ...] [--report OUTPUT.html|OUTPUT.txt] [--json]`: 対象を絞った診断ジャーナル。修復なし。
+- `full-scan [--recipes ID[,ID]] [--report OUTPUT.html|OUTPUT.txt] [--json]`: すべての診断領域。診断のみで、修復は行いません。
 - `gateway-check`: 構成された既定の次ホップに対する正確で範囲を限定した ICMP チェック。アドレスのスキャンなし。
 - `infrastructure-service-events`: 接続、リモート管理、通知、コア サービスの正確で範囲を限定した障害スナップショットを 1 件読み取ります。
 - `investigate-batch FILE [FILE ...]`: 最大 12 ファイル。JSON Lines。失敗または一部のみのインポートは終了コード 3。
