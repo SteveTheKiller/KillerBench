@@ -25,6 +25,7 @@
     <DefineConstants Condition="'$(AllowUnsignedInstall)' == 'true'">$(DefineConstants);ALLOW_UNSIGNED_INSTALL</DefineConstants>
     <DefineConstants Condition="'$(InstallerPackage)' == 'true'">$(DefineConstants);INSTALLER_PACKAGE</DefineConstants>
     <DefineConstants Condition="'$(StorePackage)' == 'true'">$(DefineConstants);STORE_PACKAGE</DefineConstants>
+    <DefineConstants Condition="'$(InstallerTestHooks)' == 'true'">$(DefineConstants);INSTALLER_TEST_HOOKS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

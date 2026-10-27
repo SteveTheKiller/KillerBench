@@ -44,5 +44,37 @@ internal static class InstallationProtectionChecks
         File.WriteAllText(sentinel, "Preserved ACL fixture");
         Refuses(() => InstallationOwnership.ValidateElevatedPath(custom, true), "a user-owned custom destination");
         if (File.ReadAllText(sentinel) != "Preserved ACL fixture") throw new Exception("ACL refusal changed unrelated data.");
+        TestHooksCompiledOut();
+    }
+
+    /// <summary>The disposable install root and skipped registration exist for the package build's smoke test.
+    /// A shipping setup must not honour them, so every read sits behind INSTALLER_TEST_HOOKS, which only the
+    /// unsigned smoke-test build defines.</summary>
+    private static void TestHooksCompiledOut()
+    {
+        string[] lines = File.ReadAllLines(CheckSource.Find(Path.Combine("Packaging", "KillerLauncher", "Program.cs")));
+        bool guarded = false;
+        int reads = 0;
+        foreach (string raw in lines)
+        {
+            string line = raw.Trim();
+            if (line == "#if INSTALLER_TEST_HOOKS") guarded = true;
+            else if (guarded && (line == "#else" || line == "#endif")) guarded = false;
+            else if (line.Contains("GetEnvironmentVariable(TestInstallRootEnvironmentVariable)") ||
+                line.Contains("GetEnvironmentVariable(SkipRegistrationEnvironmentVariable)") ||
+                line.Contains("\"KILLERBENCH_TEST_INSTALL_ROOT\"") && !line.Contains("const string") ||
+                line.Contains("\"KILLERBENCH_SKIP_REGISTRATION\"") && !line.Contains("const string"))
+            {
+                if (!guarded) throw new Exception("Shipping setup reads a test hook outside INSTALLER_TEST_HOOKS: " + line);
+                reads++;
+            }
+        }
+        if (reads != 2) throw new Exception("Expected the two guarded test hook reads in the launcher, found " + reads + ".");
+        string project = File.ReadAllText(CheckSource.Find(Path.Combine("Packaging", "KillerLauncher", "KillerLauncher.csproj")));
+        string build = File.ReadAllText(CheckSource.Find(Path.Combine("Packaging", "build-packages.ps1")));
+        if (!project.Contains("'$(InstallerTestHooks)' == 'true'\">$(DefineConstants);INSTALLER_TEST_HOOKS<") ||
+            !build.Contains("-p:InstallerTestHooks=\"$(!$RequireSignature)\"") || !build.Contains("if ($isInstaller -and -not $RequireSignature)"))
+            throw new Exception("The package smoke test no longer builds the launcher with INSTALLER_TEST_HOOKS, or a signed build would.");
+        Console.WriteLine("PASS: setup honours the install-root and skip-registration test hooks only in the unsigned smoke-test build.");
     }
 }

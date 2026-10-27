@@ -138,6 +138,7 @@ $results = foreach ($kind in $kinds) {
         -p:InstallerPackage="$isInstaller" `
         -p:StorePackage="$isStore" `
         -p:AllowUnsignedInstall="$(!$RequireSignature)" `
+        -p:InstallerTestHooks="$(!$RequireSignature)" `
         -p:PublishDir="$launcherOutput\"
     if ($LASTEXITCODE -ne 0) { throw "$kind launcher build failed." }
     $builtLauncher = Join-Path $launcherOutput 'KillerBench.exe'

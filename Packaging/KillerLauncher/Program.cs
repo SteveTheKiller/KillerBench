@@ -152,7 +152,16 @@ namespace KillerLauncher
                 throw new System.Security.SecurityException(
                     LauncherStrings.Get("SignatureInvalid"));
 
+            // The disposable install root and skipped registration exist for the package build's smoke
+            // test only. A signed shipping setup is compiled without them.
+#if INSTALLER_TEST_HOOKS
             string? testRoot = Environment.GetEnvironmentVariable(TestInstallRootEnvironmentVariable);
+            bool skipRegistration = string.Equals(
+                Environment.GetEnvironmentVariable(SkipRegistrationEnvironmentVariable), "1", StringComparison.Ordinal);
+#else
+            string? testRoot = null;
+            bool skipRegistration = false;
+#endif
             if (string.IsNullOrWhiteSpace(testRoot) && !machine &&
                 File.Exists(Path.Combine(MachineInstallDirectory, InnerExeName)))
                 throw new InvalidOperationException(
@@ -188,9 +197,7 @@ namespace KillerLauncher
                     {
                         if (KillerFamily.Deployment.InstallerExitCodes.IsElevated())
                             KillerBench.Services.InstallationOwnership.ValidateElevatedPath(destination, true);
-                        int registrationExit = string.Equals(
-                            Environment.GetEnvironmentVariable(SkipRegistrationEnvironmentVariable), "1", StringComparison.Ordinal)
-                            ? 0 : RunRegistration(destination, machine, desktop);
+                        int registrationExit = skipRegistration ? 0 : RunRegistration(destination, machine, desktop);
                         if (registrationExit != 0)
                             throw new System.ComponentModel.Win32Exception(registrationExit,
                                 LauncherStrings.Format("RegistrationFailed", registrationExit));
