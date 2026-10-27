@@ -218,6 +218,17 @@ internal static class UpdateDataStoreResetChecks
         Require(unchanged.Outcome == UpdateDataStoreReconciliationOutcome.NotChanged,
             "Reconciliation can prove the original store remained in place without rerunning the reset");
 
+        string canceledAfterMutationRoot = Path.Combine(root, "canceled-after-mutation");
+        var canceledAfterMutationHost = ReadyHost(structural, structural);
+        canceledAfterMutationHost.CancelOperation = "retain";
+        var canceledAfterMutation = await UpdateDataStoreReset.RunAsync(structural, true, canceledAfterMutationRoot, canceledAfterMutationHost);
+        using (var lastStage = System.Text.Json.JsonDocument.Parse(File.ReadAllLines(canceledAfterMutation.JournalPath!).Last()))
+            Require(canceledAfterMutation.Outcome == UpdateDataStoreResetOutcome.Stopped &&
+                lastStage.RootElement.GetProperty("Stage").GetString() == "Finished" &&
+                lastStage.RootElement.GetProperty("Result").GetProperty("Outcome").GetInt32() == (int)UpdateDataStoreResetOutcome.Stopped &&
+                File.Exists(Path.Combine(canceledAfterMutationRoot, "update-store-reset.pending.json")),
+                "Cancellation after a mutation journals a final Stopped record and keeps the pending guard");
+
         Console.WriteLine("PASS: guarded Windows Update data-store reset planning, eligibility, ordering, retention and verification.");
     }
 
@@ -255,6 +266,7 @@ internal static class UpdateDataStoreResetChecks
         public UpdateStoreSnapshot? FinalStore { get; set; }
         public UpdateStoreSnapshot? AfterStore { get; set; }
         public string? FailOperation { get; set; }
+        public string? CancelOperation { get; set; }
         public Queue<UpdateSearchResult> SearchResults { get; init; } = new();
         public bool RetainedExists { get; set; } = true;
         public List<string> Calls { get; } = [];
@@ -298,6 +310,7 @@ internal static class UpdateDataStoreResetChecks
         private Task<ToolResult> Result(string operation)
         {
             Calls.Add(operation);
+            if (CancelOperation == operation) return Task.FromCanceled<ToolResult>(new CancellationToken(true));
             return Task.FromResult(FailOperation == operation ? new ToolResult(1, "", "fixture failure", false) : new ToolResult(0, "", "", false));
         }
     }

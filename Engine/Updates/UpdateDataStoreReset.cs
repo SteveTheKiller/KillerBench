@@ -407,9 +407,11 @@ public static class UpdateDataStoreReset
                 return stoppedBeforeMutation;
             }
             await RestoreAsync(stopped, host, progress, RecordAsync).ConfigureAwait(false);
-            return new(UpdateDataStoreResetOutcome.Stopped,
+            var stoppedAfterMutation = new UpdateDataStoreResetResult(UpdateDataStoreResetOutcome.Stopped,
                 "The reset stopped after durable preparation. Service restoration was attempted. Reconcile the pending operation before another reset.",
                 journalPath, retainedPath, failedSearch, Services: services);
+            await RecordAsync(new { Stage = "Finished", Result = stoppedAfterMutation }).ConfigureAwait(false);
+            return stoppedAfterMutation;
         }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or
             InvalidOperationException or TimeoutException or System.ComponentModel.Win32Exception)
