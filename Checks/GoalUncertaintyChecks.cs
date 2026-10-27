@@ -67,6 +67,13 @@ internal static class GoalUncertaintyChecks
                 !result.Unresolved.SequenceEqual([first.Id]))
                 throw new Exception("Symptom progression lost pending evidence or continued after " + scenario + ".");
         }
+        // A time budget that expires while a repair is running is not a plain budget stop: the change may have completed.
+        var slow = new PrimitiveLibrary("Fixture").AddProbe(new StateProbe()).AddAction(new BlockingAction());
+        var budgetWalk = await new GoalRunner(catalog, [new RecipePack(1, "fixture.pack", 1, "Fixture", "Fixture", [first, second])], slow,
+            new MemoryRecipeJournal(), new MemoryRecipeOperationStore()).RunAsync("fixture.symptom", new GoalRunOptions { AuthorizeRepair = true, TimeBudget = TimeSpan.FromMilliseconds(200) });
+        if (budgetWalk.Outcome == GoalOutcome.BudgetExhausted || budgetWalk.Outcome != GoalOutcome.Unresolved ||
+            !budgetWalk.Detail.Contains("dispatched change may have completed", StringComparison.Ordinal) || !budgetWalk.Unresolved.SequenceEqual([first.Id]))
+            throw new Exception("A budget stop during a dispatched repair lost its uncertainty: " + budgetWalk.Outcome + " " + budgetWalk.Detail);
         Console.WriteLine("PASS: symptom triage stops after an uncertain first repair and retains its unresolved evidence; fixtures only.");
     }
 
@@ -80,6 +87,19 @@ internal static class GoalUncertaintyChecks
         public IReadOnlyList<PrimitiveParameter> Parameters => [new("target", true, "Fixture target")];
         public Task<PrimitiveResult> ObserveAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, CancellationToken token) =>
             Task.FromResult(new PrimitiveResult(true, value?.Invoke(parameters["target"]) ?? "repairable", ""));
+    }
+
+    private sealed class BlockingAction : IActionPrimitive
+    {
+        public string Name => "fixture.repair";
+        public IReadOnlyList<PrimitiveParameter> Parameters => [new("target", true, "Fixture target")];
+        public RecipeRisk Risk => RecipeRisk.Reversible;
+        public bool RequiresElevation => false;
+        public async Task<ActionResult> ExecuteAsync(IReadOnlyDictionary<string, string> parameters, TimeSpan timeout, IProgress<string>? progress, CancellationToken token)
+        {
+            await Task.Delay(Timeout.Infinite, token);
+            return new ActionResult(true, true, "");
+        }
     }
 
     private sealed class RepairAction(List<string> dispatched, Func<string, ActionResult>? result = null) : IActionPrimitive

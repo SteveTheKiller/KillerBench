@@ -177,6 +177,9 @@ public sealed class GoalRunner(SymptomCatalog catalog, IReadOnlyList<RecipePack>
                         steps.Add(new(index, node.Id, node.Kind, recipe.Title + ": " + outcome + ". " + result.Detail) { Recipe = result, BranchKey = next is null ? null : key });
                         if (result.JournalFailure)
                             return Report(GoalOutcome.Unresolved, "The repair journal could not be saved. Stop further repairs and inspect the current state before retrying.");
+                        // A budget stop during a dispatched repair keeps its uncertainty; only the caller's cancellation is reported as Canceled.
+                        if (outcome == RecipeRunOutcome.Canceled && result.ExecutionUncertain && !token.IsCancellationRequested)
+                            return Report(GoalOutcome.Unresolved, "The time budget of " + options.TimeBudget + " was reached while a repair was running; a dispatched change may have completed. No further triage repairs were attempted. Review the pending operation and journal before retrying.");
                         if (outcome == RecipeRunOutcome.Canceled)
                             throw new OperationCanceledException(runToken);
                         if (result.ExecutionUncertain)
