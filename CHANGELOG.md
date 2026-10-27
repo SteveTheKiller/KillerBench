@@ -74,7 +74,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - The file picker's recent locations and places lists are named for screen readers.
 - Black table headers match the content surface, and softer grain keeps dark surfaces from looking gray.
 
-- About groups settings in two columns and can hide shortcut hints in menus and tooltips without disabling keyboard shortcuts.
+- About groups settings in two columns and can hide shortcut hints in menus and tooltips without disabling keyboard shortcuts. Hover tooltips clear large pointers while preserving custom placement.
 - In 98SE, menu hover fill follows the selected accent.
 - In 98SE, long paths in the file dialog no longer run under the recent-locations arrow.
 - Light is shades of gray with nothing white: the background, sidebar and footer are the darkest gray (#cccccc), menus and bars a step lighter, then panes, then fields.
