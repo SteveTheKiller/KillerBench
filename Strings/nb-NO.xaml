@@ -741,6 +741,7 @@
   <sys:String x:Key="Str_Report_RecommendedNextStep">Anbefalt neste trinn</sys:String>
   <sys:String x:Key="Str_Report_DemoNextStep">Bare et syntetisk eksempel. Gjennomgå de oppdiktede funnene for å utforske rapportoppsettet.</sys:String>
   <sys:String x:Key="Str_Report_DemoNextAction">Ingen bevis ble samlet inn fra maskinen, og ingen reparasjon ble kjørt.</sys:String>
+  <sys:String x:Key="Str_Report_DemoRepairNextStep">Kun et syntetisk eksempel. Reparasjonen ble simulert; ingenting på denne datamaskinen ble endret.</sys:String>
   <sys:String x:Key="Str_Report_NoActionStarts">Ingen handling starter fra denne rapporten. Gjennomgå kontrollene for den valgte arbeidsflyten før du bekrefter en reparasjon.</sys:String>
   <sys:String x:Key="Str_Report_NeedsAttention">Hva som trenger oppmerksomhet</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">De fullførte kontrollene fastslo ingen problemer. Gjennomgå ufullstendig dekning før du regner datamaskinen som frisk.</sys:String>

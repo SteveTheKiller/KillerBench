@@ -742,6 +742,7 @@
   <sys:String x:Key="Str_Report_RecommendedNextStep">Javasolt következő lépés</sys:String>
   <sys:String x:Key="Str_Report_DemoNextStep">Csak szintetikus példa. A jelentés elrendezésének megismeréséhez tekintse át a kitalált megállapításokat.</sys:String>
   <sys:String x:Key="Str_Report_DemoNextAction">A gépről nem történt bizonyítékgyűjtés, és javítás sem futott.</sys:String>
+  <sys:String x:Key="Str_Report_DemoRepairNextStep">Csak szintetikus példa. A javítás szimulált volt; ezen a számítógépen semmi sem változott.</sys:String>
   <sys:String x:Key="Str_Report_NoActionStarts">Ebből a jelentésből nem indul művelet. Javítás megerősítése előtt tekintse át a kiválasztott munkafolyamat vezérlőit.</sys:String>
   <sys:String x:Key="Str_Report_NeedsAttention">Mi igényel figyelmet</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">A befejezett ellenőrzések nem állapítottak meg problémát. Mielőtt egészségesnek tekintené a gépet, tekintse át a hiányos lefedettséget.</sys:String>

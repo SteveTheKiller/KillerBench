@@ -742,6 +742,7 @@
   <sys:String x:Key="Str_Report_RecommendedNextStep">建议的下一步</sys:String>
   <sys:String x:Key="Str_Report_DemoNextStep">仅为合成示例。查看模拟结果以熟悉报告布局。</sys:String>
   <sys:String x:Key="Str_Report_DemoNextAction">未从机器收集任何证据，也未运行任何修复。</sys:String>
+  <sys:String x:Key="Str_Report_DemoRepairNextStep">仅为合成示例。修复只是模拟的，此计算机上没有任何更改。</sys:String>
   <sys:String x:Key="Str_Report_NoActionStarts">此报告不会启动任何操作。确认任何修复之前，请先查看所选工作流的控件。</sys:String>
   <sys:String x:Key="Str_Report_NeedsAttention">需要注意的问题</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">已完成的检查未确定任何问题。在认为这台电脑运行正常之前，请先查看未完整覆盖的部分。</sys:String>

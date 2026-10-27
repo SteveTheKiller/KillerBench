@@ -742,6 +742,7 @@
   <sys:String x:Key="Str_Report_RecommendedNextStep">Ұсынылған келесі қадам</sys:String>
   <sys:String x:Key="Str_Report_DemoNextStep">Тек синтетикалық мысал. Есеп құрылымымен танысу үшін ойдан шығарылған нәтижелерді қарап шығыңыз.</sys:String>
   <sys:String x:Key="Str_Report_DemoNextAction">Компьютерден дәлел жиналмады және жөндеу іске қосылмады.</sys:String>
+  <sys:String x:Key="Str_Report_DemoRepairNextStep">Тек синтетикалық мысал. Жөндеу тек имитацияланды; бұл компьютерде ештеңе өзгертілмеді.</sys:String>
   <sys:String x:Key="Str_Report_NoActionStarts">Бұл есептен ешбір әрекет басталмайды. Жөндеуді растамас бұрын таңдалған жұмыс ағынының басқару элементтерін қарап шығыңыз.</sys:String>
   <sys:String x:Key="Str_Report_NeedsAttention">Назар аударуды қажет ететіндер</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">Аяқталған тексерулер мәселе анықтамады. Компьютерді жарамды деп санамас бұрын толық емес қамтуды қарап шығыңыз.</sys:String>

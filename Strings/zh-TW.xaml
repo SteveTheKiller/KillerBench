@@ -742,6 +742,7 @@
   <sys:String x:Key="Str_Report_RecommendedNextStep">建議的下一步</sys:String>
   <sys:String x:Key="Str_Report_DemoNextStep">僅為合成範例。檢視模擬結果以熟悉報告佈局。</sys:String>
   <sys:String x:Key="Str_Report_DemoNextAction">未從機器收集任何證據，也未執行任何修復。</sys:String>
+  <sys:String x:Key="Str_Report_DemoRepairNextStep">僅為合成範例。修復只是模擬的，這台電腦上沒有任何變更。</sys:String>
   <sys:String x:Key="Str_Report_NoActionStarts">此報告不會啟動任何操作。確認任何修復之前，請先檢閱所選工作流程的控制項。</sys:String>
   <sys:String x:Key="Str_Report_NeedsAttention">需要注意的問題</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">已完成的檢查未確定任何問題。在認為這臺電腦執行正常之前，請先檢閱未完整覆蓋的部分。</sys:String>

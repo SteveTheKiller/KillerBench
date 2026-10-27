@@ -742,6 +742,7 @@
   <sys:String x:Key="Str_Report_RecommendedNextStep">Empfohlener nächster Schritt</sys:String>
   <sys:String x:Key="Str_Report_DemoNextStep">Nur ein synthetisches Beispiel. Die erfundenen Befunde ansehen, um den Berichtsaufbau kennenzulernen.</sys:String>
   <sys:String x:Key="Str_Report_DemoNextAction">Es wurden keine Nachweise vom Computer gesammelt und keine Reparatur ausgeführt.</sys:String>
+  <sys:String x:Key="Str_Report_DemoRepairNextStep">Nur ein synthetisches Beispiel. Die Reparatur wurde simuliert; auf diesem Computer wurde nichts geändert.</sys:String>
   <sys:String x:Key="Str_Report_NoActionStarts">Von diesem Bericht startet keine Aktion. Vor der Bestätigung einer Reparatur die Steuerelemente des ausgewählten Workflows prüfen.</sys:String>
   <sys:String x:Key="Str_Report_NeedsAttention">Was Aufmerksamkeit braucht</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">In den abgeschlossenen Prüfungen wurde kein Problem festgestellt. Unvollständige Abdeckung prüfen, bevor der Computer als fehlerfrei gilt.</sys:String>

@@ -741,6 +741,7 @@
   <sys:String x:Key="Str_Report_RecommendedNextStep">Priporočeni naslednji korak</sys:String>
   <sys:String x:Key="Str_Report_DemoNextStep">Samo izmišljen primer. Preglejte izmišljene ugotovitve, da spoznate postavitev poročila.</sys:String>
   <sys:String x:Key="Str_Report_DemoNextAction">Dokazi iz računalnika niso bili zbrani in popravilo ni bilo izvedeno.</sys:String>
+  <sys:String x:Key="Str_Report_DemoRepairNextStep">Samo sintetični primer. Popravilo je bilo simulirano; na tem računalniku ni bilo nič spremenjeno.</sys:String>
   <sys:String x:Key="Str_Report_NoActionStarts">Iz tega poročila se ne zažene nobeno dejanje. Pred potrditvijo popravila preglejte kontrolnike izbranega poteka dela.</sys:String>
   <sys:String x:Key="Str_Report_NeedsAttention">Kaj zahteva pozornost</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">Dokončana preverjanja niso potrdila težave. Preden računalnik označite kot brezhiben, preglejte nepopolno pokritost.</sys:String>

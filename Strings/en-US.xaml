@@ -741,6 +741,7 @@
   <sys:String x:Key="Str_Report_RecommendedNextStep">Recommended next step</sys:String>
   <sys:String x:Key="Str_Report_DemoNextStep">Synthetic example only. Review the fabricated findings to explore the report layout.</sys:String>
   <sys:String x:Key="Str_Report_DemoNextAction">No machine evidence was collected and no repair was run.</sys:String>
+  <sys:String x:Key="Str_Report_DemoRepairNextStep">Synthetic example only. The repair was simulated; nothing on this computer was changed.</sys:String>
   <sys:String x:Key="Str_Report_NoActionStarts">No action starts from this report. Review the selected workflow controls before confirming a repair.</sys:String>
   <sys:String x:Key="Str_Report_NeedsAttention">What needs attention</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">No problem was established in the completed checks. Review incomplete coverage before treating the computer as healthy.</sys:String>

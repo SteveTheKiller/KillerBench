@@ -742,6 +742,7 @@
   <sys:String x:Key="Str_Report_RecommendedNextStep">Önerilen sonraki adım</sys:String>
   <sys:String x:Key="Str_Report_DemoNextStep">Yalnızca yapay bir örnek. Rapor düzenini keşfetmek için uydurma bulguları inceleyin.</sys:String>
   <sys:String x:Key="Str_Report_DemoNextAction">Makineden kanıt toplanmadı ve onarım çalıştırılmadı.</sys:String>
+  <sys:String x:Key="Str_Report_DemoRepairNextStep">Yalnızca yapay bir örnek. Onarım benzetildi; bu bilgisayarda hiçbir şey değiştirilmedi.</sys:String>
   <sys:String x:Key="Str_Report_NoActionStarts">Bu rapordan hiçbir eylem başlamaz. Bir onarımı onaylamadan önce seçili iş akışının denetimlerini inceleyin.</sys:String>
   <sys:String x:Key="Str_Report_NeedsAttention">Dikkat gerektirenler</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">Tamamlanan denetimler bir sorun saptamadı. Bilgisayarı sağlıklı kabul etmeden önce eksik kapsamı inceleyin.</sys:String>

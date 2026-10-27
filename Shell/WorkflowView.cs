@@ -23,7 +23,9 @@ public partial class MainWindow
             : Controls.LocalizedText.Format("Str_Output_WorkflowSource", DateTime.Now.ToString("HHmmss"));
         var text = new TextEvidence(source, EvidenceBox.Text.Replace("\r\n", "\n").Split('\n'), false);
         reports.Add(text, Investigation.Analyze(text) with { Limitation = demo
-            ? "Synthetic demonstration. No machine evidence was collected and no repair was run."
+            ? (result.Status == "Demo repair simulated"
+                ? "Synthetic demonstration. The repair was simulated; no machine evidence was collected and nothing on this computer was changed."
+                : "Synthetic demonstration. No machine evidence was collected and no repair was run.")
             : "Live workflow results. See the workflow journal for decisions and repair verification." });
         workflowSummaries.Add(text, result);
         if (!string.IsNullOrWhiteSpace(reportTitle)) workflowReportTitles.Add(text, reportTitle);

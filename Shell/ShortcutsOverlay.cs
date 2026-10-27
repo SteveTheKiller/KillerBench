@@ -87,6 +87,8 @@ public partial class MainWindow
     private void BuildShortcutList()
     {
         ShortcutListHost.Children.Clear();
+        // Key column sizes to the widest key text in the list so long chords never run into their labels.
+        Grid.SetIsSharedSizeScope(ShortcutListHost, true);
         foreach (ShortcutCategory category in Enum.GetValues<ShortcutCategory>())
         {
             var group = ShortcutBindings.Where(binding => binding.Category == category).ToArray();
@@ -97,9 +99,9 @@ public partial class MainWindow
             foreach (ShortcutBinding binding in group)
             {
                 var row = new Grid { Margin = new Thickness(0, 0, 0, 7) };
-                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto, MinWidth = 100, SharedSizeGroup = "ShortcutKeys" });
                 row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                var keys = new TextBlock { Text = binding.Keys, FontSize = 12 };
+                var keys = new TextBlock { Text = binding.Keys, FontSize = 12, Margin = new Thickness(0, 0, 16, 0) };
                 keys.SetResourceReference(TextBlock.ForegroundProperty, "PrimaryBrush");
                 var label = new TextBlock { Text = Label(binding), FontSize = 12, TextWrapping = TextWrapping.Wrap };
                 label.SetResourceReference(TextBlock.ForegroundProperty, "MutedTextBrush");

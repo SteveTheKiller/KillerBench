@@ -741,6 +741,7 @@
   <sys:String x:Key="Str_Report_RecommendedNextStep">Bước tiếp theo được khuyến nghị</sys:String>
   <sys:String x:Key="Str_Report_DemoNextStep">Chỉ là ví dụ tổng hợp. Xem các phát hiện giả lập để làm quen với bố cục báo cáo.</sys:String>
   <sys:String x:Key="Str_Report_DemoNextAction">Không có bằng chứng nào được thu thập từ máy và không có sửa chữa nào được chạy.</sys:String>
+  <sys:String x:Key="Str_Report_DemoRepairNextStep">Chỉ là ví dụ tổng hợp. Việc sửa chữa chỉ được mô phỏng; không có gì trên máy tính này bị thay đổi.</sys:String>
   <sys:String x:Key="Str_Report_NoActionStarts">Không có hành động nào bắt đầu từ báo cáo này. Xem lại các điều khiển của quy trình làm việc đã chọn trước khi xác nhận sửa chữa.</sys:String>
   <sys:String x:Key="Str_Report_NeedsAttention">Những gì cần chú ý</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">Các kiểm tra đã hoàn tất không xác lập được vấn đề nào. Hãy xem lại phần phạm vi chưa đầy đủ trước khi coi máy tính là ổn.</sys:String>

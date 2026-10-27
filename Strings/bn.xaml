@@ -742,6 +742,7 @@
   <sys:String x:Key="Str_Report_RecommendedNextStep">প্রস্তাবিত পরবর্তী পদক্ষেপ</sys:String>
   <sys:String x:Key="Str_Report_DemoNextStep">শুধু কৃত্রিম উদাহরণ। রিপোর্টের বিন্যাস শিখতে সিমুলেটেড ফলাফল পর্যালোচনা করুন।</sys:String>
   <sys:String x:Key="Str_Report_DemoNextAction">মেশিন থেকে কোনো প্রমাণ সংগ্রহ করা হয়নি এবং কোনো মেরামত চালানো হয়নি।</sys:String>
+  <sys:String x:Key="Str_Report_DemoRepairNextStep">শুধু কৃত্রিম উদাহরণ। মেরামতটি অনুকরণ করা হয়েছে; এই কম্পিউটারে কিছুই পরিবর্তন করা হয়নি।</sys:String>
   <sys:String x:Key="Str_Report_NoActionStarts">এই রিপোর্ট থেকে কোনো অ্যাকশন শুরু হয় না। কোনো মেরামত নিশ্চিত করার আগে নির্বাচিত ওয়ার্কফ্লোর নিয়ন্ত্রণগুলো পর্যালোচনা করুন।</sys:String>
   <sys:String x:Key="Str_Report_NeedsAttention">যা মনোযোগ দরকার</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">সম্পন্ন পরীক্ষাগুলো কোনো সমস্যা প্রতিষ্ঠা করেনি। কম্পিউটারটিকে সুস্থ ধরে নেওয়ার আগে অসম্পূর্ণ কভারেজ পর্যালোচনা করুন।</sys:String>

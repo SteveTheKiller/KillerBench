@@ -742,6 +742,7 @@
   <sys:String x:Key="Str_Report_RecommendedNextStep">Рекомендуемый следующий шаг</sys:String>
   <sys:String x:Key="Str_Report_DemoNextStep">Только синтетический пример. Просмотрите вымышленные результаты, чтобы познакомиться со структурой отчёта.</sys:String>
   <sys:String x:Key="Str_Report_DemoNextAction">Доказательства с компьютера не собирались, исправления не запускались.</sys:String>
+  <sys:String x:Key="Str_Report_DemoRepairNextStep">Только синтетический пример. Исправление было смоделировано; на этом компьютере ничего не изменилось.</sys:String>
   <sys:String x:Key="Str_Report_NoActionStarts">Этот отчёт не запускает никаких действий. Перед подтверждением исправления проверьте элементы управления выбранного рабочего процесса.</sys:String>
   <sys:String x:Key="Str_Report_NeedsAttention">Что требует внимания</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">Завершённые проверки не выявили проблем. Прежде чем считать компьютер исправным, проверьте неполное покрытие.</sys:String>

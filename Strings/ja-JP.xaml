@@ -742,6 +742,7 @@
   <sys:String x:Key="Str_Report_RecommendedNextStep">推奨される次の手順</sys:String>
   <sys:String x:Key="Str_Report_DemoNextStep">合成された例にすぎません。シミュレートされた結果を確認して、レポートのレイアウトを把握してください。</sys:String>
   <sys:String x:Key="Str_Report_DemoNextAction">マシンから証拠は収集されておらず、修復も実行されていません。</sys:String>
+  <sys:String x:Key="Str_Report_DemoRepairNextStep">合成された例のみです。修復はシミュレーションであり、このコンピューターでは何も変更されていません。</sys:String>
   <sys:String x:Key="Str_Report_NoActionStarts">このレポートからアクションが開始されることはありません。修復を確定する前に、選択したワークフローのコントロールを確認してください。</sys:String>
   <sys:String x:Key="Str_Report_NeedsAttention">注意が必要な点</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">完了したチェックでは問題は確認されませんでした。コンピューターが正常であるとみなす前に、不完全な範囲を確認してください。</sys:String>

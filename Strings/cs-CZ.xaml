@@ -742,6 +742,7 @@
   <sys:String x:Key="Str_Report_RecommendedNextStep">Doporučený další krok</sys:String>
   <sys:String x:Key="Str_Report_DemoNextStep">Pouze syntetický příklad. Projděte si smyšlená zjištění a seznamte se s rozvržením zprávy.</sys:String>
   <sys:String x:Key="Str_Report_DemoNextAction">Z počítače nebyly shromážděny žádné důkazy a nebyla spuštěna žádná oprava.</sys:String>
+  <sys:String x:Key="Str_Report_DemoRepairNextStep">Pouze syntetický příklad. Oprava byla jen simulována; na tomto počítači se nic nezměnilo.</sys:String>
   <sys:String x:Key="Str_Report_NoActionStarts">Z této zprávy se nespouští žádná akce. Před potvrzením opravy zkontrolujte ovládací prvky vybraného pracovního postupu.</sys:String>
   <sys:String x:Key="Str_Report_NeedsAttention">Co vyžaduje pozornost</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">Dokončené kontroly nezjistily žádný problém. Než budete počítač považovat za v pořádku, zkontrolujte neúplné pokrytí.</sys:String>

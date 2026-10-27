@@ -70,7 +70,7 @@ public partial class MainWindow
 
         ReportContent.Children.Add(Heading(LocalizedText.Get("Str_Report_NextStep"), 13));
         ReportContent.Children.Add(Card(LocalizedText.Get("Str_Report_RecommendedNextStep"), "",
-            demo ? LocalizedText.Get("Str_Report_DemoNextStep") : NextAction(result),
+            demo ? LocalizedText.Get(result.Status == "Demo repair simulated" ? "Str_Report_DemoRepairNextStep" : "Str_Report_DemoNextStep") : NextAction(result),
             demo ? LocalizedText.Get("Str_Report_DemoNextAction") : LocalizedText.Get("Str_Report_NoActionStarts")));
         if (!demo)
         {

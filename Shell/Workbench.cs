@@ -216,8 +216,10 @@ public partial class MainWindow
         ScaleHost.ColumnDefinitions[1].Width = new GridLength(24 / appScale);
         ContentPane.ColumnDefinitions[1].Width = new GridLength(24 / appScale);
         ContentPane.ColumnDefinitions[2].MinWidth = (appScale > 1 ? 200 : 300) / appScale;
-        ToolScroll.HorizontalScrollBarVisibility = appScale > 1 ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
-        OutputScroll.HorizontalScrollBarVisibility = appScale > 1 ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+        // Panes never scroll sideways at any zoom: content takes the viewport width and text wraps inside it.
+        // A forced minimum content width wider than the viewport is what clipped text mid-word above 100%.
+        ToolScroll.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+        OutputScroll.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
         UpdateScaledWorkspaceWidths();
         EvidenceBox.FontSize = SizeSlider.Value;
         EvidenceBox.TextWrapping = TextWrapping.Wrap;
@@ -228,9 +230,8 @@ public partial class MainWindow
     }
     private void UpdateScaledWorkspaceWidths()
     {
-        OutputWorkspace.Width = appScale > 1 ? Math.Max(400, OutputScroll.ActualWidth) : double.NaN;
-        if (ToolScroll.Content is FrameworkElement content)
-            content.Width = appScale > 1 ? Math.Max(300, ToolScroll.ActualWidth) : double.NaN;
+        OutputWorkspace.Width = double.NaN;
+        if (ToolScroll.Content is FrameworkElement content) content.Width = double.NaN;
     }
     private bool HandleShellKey(KeyEventArgs e)
     {

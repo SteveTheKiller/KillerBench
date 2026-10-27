@@ -742,6 +742,7 @@
   <sys:String x:Key="Str_Report_RecommendedNextStep">Prochaine étape recommandée</sys:String>
   <sys:String x:Key="Str_Report_DemoNextStep">Exemple synthétique uniquement. Examinez les constats fictifs pour découvrir la mise en page du rapport.</sys:String>
   <sys:String x:Key="Str_Report_DemoNextAction">Aucune preuve n'a été collectée sur la machine et aucune réparation n'a été exécutée.</sys:String>
+  <sys:String x:Key="Str_Report_DemoRepairNextStep">Exemple synthétique uniquement. La réparation a été simulée ; rien n'a été modifié sur cet ordinateur.</sys:String>
   <sys:String x:Key="Str_Report_NoActionStarts">Aucune action ne démarre depuis ce rapport. Examinez les contrôles du flux de travail sélectionné avant de confirmer une réparation.</sys:String>
   <sys:String x:Key="Str_Report_NeedsAttention">Ce qui demande de l'attention</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">Aucun problème n'a été établi par les vérifications terminées. Examinez la couverture incomplète avant de considérer l'ordinateur comme sain.</sys:String>
