@@ -843,4 +843,8 @@
   <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Še ni preverjeno: izvorna dokazila so nepopolna ali preizkus ni uspel</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">V laboratoriju preverjeno za zabeležene scenarije</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Samo diagnostika; popravilo se ne zažene</sys:String>
+  <sys:String x:Key="Str_Sys_Close">Zapri</sys:String>
+  <sys:String x:Key="Str_Dlg_Preview">Predogled</sys:String>
+  <sys:String x:Key="Str_Tray_Open">Odpri {0}</sys:String>
+  <sys:String x:Key="Str_Tray_Exit">Izhod</sys:String>
 </ResourceDictionary>

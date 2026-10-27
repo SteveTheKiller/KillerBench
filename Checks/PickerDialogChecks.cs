@@ -52,7 +52,7 @@ internal static class PickerDialogChecks
                     ScrollViewer.GetCanContentScroll(list),
                 "Picker lists stay virtualized when a folder contains many entries");
             Capture(dialog, Path.Combine(scratch, "open-dark.png"));
-            ((Button)dialog.FindName("CancelButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ((Button)dialog.FindName("CaptionCloseButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         });
         Require(openResult != true && canceledOpen.FileNames.Length == 0,
             "Open picker cancel returns no files");
@@ -82,7 +82,9 @@ internal static class PickerDialogChecks
         var folder = new FileDialog(FileDialogMode.Folder)
         {
             Title = "Choose fixture folder",
-            InitialDirectory = scratch
+            InitialDirectory = scratch,
+            HideFilesInFolderMode = true,
+            AcceptHighlightedFolder = true
         };
         bool? folderResult = Show(owner, folder, dialog =>
         {
@@ -185,7 +187,7 @@ internal static class PickerDialogChecks
 
     private static void Capture(FrameworkElement visual, string path)
     {
-        if (visual is FileDialog dialog && dialog.FindName("RootBorder") is UIElement card)
+        if (visual is FileDialog dialog && dialog.FindName("RootFade") is UIElement card)
         {
             card.BeginAnimation(UIElement.OpacityProperty, null);
             card.Opacity = 1;

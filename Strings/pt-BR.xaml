@@ -843,4 +843,8 @@
   <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Ainda não verificado: as evidências nativas estão incompletas ou os testes falharam</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">Verificado no laboratório para os cenários registrados</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Somente diagnóstico; nenhum reparo é executado</sys:String>
+  <sys:String x:Key="Str_Sys_Close">Fechar</sys:String>
+  <sys:String x:Key="Str_Dlg_Preview">Visualização</sys:String>
+  <sys:String x:Key="Str_Tray_Open">Abrir o {0}</sys:String>
+  <sys:String x:Key="Str_Tray_Exit">Sair</sys:String>
 </ResourceDictionary>

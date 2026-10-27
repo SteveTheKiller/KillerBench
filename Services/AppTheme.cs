@@ -16,7 +16,7 @@ namespace KillerBench.Services
         public static void Configure()
         {
             ThemeManager.GetSetting = Get;
-            ThemeManager.SetSetting = Preferences.Set;
+            ThemeManager.SetSetting = Set;
             ThemeManager.SetDefaults(Theme.Dark, dark: Accent.Yellow, light: Accent.Green, black: Accent.Green, se98: Accent.Green);
             ThemeManager.AppTokens = AppTokens;
             ThemeManager.AppDerivedTokens = AppDerivedTokens;
@@ -32,6 +32,14 @@ namespace KillerBench.Services
             // KillerBench saved Czech and Italian as "Cs" and "It" before the family Locale names.
             if (key == "Locale") return value switch { "Cs" => "CsCZ", "It" => "ItIT", _ => value };
             return value;
+        }
+
+        // The update check choice is saved at once, as it was before the shared About controller
+        // read it through these hooks; everything else is saved when the app closes.
+        private static void Set(string key, string value)
+        {
+            Preferences.Set(key, value);
+            if (key == Features.About.AboutController.StartupCheckSetting) Preferences.Save();
         }
 
         private static string FileName(Theme theme) => theme == Theme.SE98 ? "98SE" : theme.ToString();

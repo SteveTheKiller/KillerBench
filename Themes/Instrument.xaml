@@ -62,4 +62,22 @@
           </Setter.Value>
       </Setter>
   </Style>
+  <!-- The file picker's four-layer sunken well edge (Controls/FileDialog.xaml uses it). Every
+       thickness is zero on the flat themes, so it draws only on 98SE. -->
+  <Style x:Key="PaneBevelOverlay" TargetType="{x:Type Control}">
+    <Setter Property="IsHitTestVisible" Value="False"/>
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Control}">
+          <Grid>
+            <Border BorderBrush="{DynamicResource PaneBevelDarkBrush}" BorderThickness="{DynamicResource PaneBevelLightThickness}"/>
+            <Border BorderBrush="{DynamicResource PaneBevelLightBrush}" BorderThickness="{DynamicResource PaneBevelDarkThickness}"/>
+            <Border Margin="{DynamicResource PaneBevelInnerMargin}" BorderBrush="{DynamicResource PaneBevelDark2Brush}" BorderThickness="{DynamicResource PaneBevel2LightThickness}"/>
+            <Border Margin="{DynamicResource PaneBevelInnerMargin}" BorderBrush="{DynamicResource PaneBevelLight2Brush}" BorderThickness="{DynamicResource PaneBevel2DarkThickness}"/>
+          </Grid>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 </ResourceDictionary>

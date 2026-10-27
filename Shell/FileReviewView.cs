@@ -9,7 +9,7 @@ public partial class MainWindow
 {
     private void OnBrowseFileReviewFolder(object sender, RoutedEventArgs e)
     {
-        var picker = new Controls.FileDialog(Controls.FileDialogMode.Folder) { Title = "Choose one local folder to review", Multiselect = false };
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Folder) { Title = "Choose one local folder to review", Multiselect = false, HideFilesInFolderMode = true, AcceptHighlightedFolder = true };
         if (picker.ShowDialog(this) == true) FileReviewFolder.Text = picker.FileName;
     }
 

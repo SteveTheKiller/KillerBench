@@ -41,7 +41,7 @@ namespace KillerBench.Controls
         // their label is "Local Disk (C:)" rather than a bare folder name.
         public bool IsDrive { get; }
 
-        public ObservableCollection<FolderNode> Children { get; } = [];
+        public ObservableCollection<FolderNode> Children { get; } = new();
 
         public FolderNode(string path, string name, bool mayHaveChildren)
         {
@@ -76,6 +76,14 @@ namespace KillerBench.Controls
 
         public bool IsLoaded { get; private set; }
 
+        /// <summary>Lists a folder's subfolders. A test seam: tests swap in a slow or failing
+        /// enumerator to exercise the tree without touching the disk.</summary>
+        internal Func<string, List<FolderNode>> ChildEnumerator { get; set; } = EnumerateChildren;
+
+        // One load or refresh at a time per node. A second caller waits for the first instead of
+        // seeing IsLoaded already set over a still-empty child list.
+        private readonly System.Threading.SemaphoreSlim _loadGate = new(1, 1);
+
         // A drive's REAL icon (USB, network, optical) via the real-path query; plain folders get
         // the shared generic folder icon so the tree never touches the disk per row.
         public ImageSource? Icon
@@ -102,14 +110,17 @@ namespace KillerBench.Controls
         /// </summary>
         public async Task LoadChildrenAsync()
         {
-            if (IsLoaded) return;
-            IsLoaded = true;
-
-            string path = Path;
-            List<FolderNode> kids = await Task.Run(() => EnumerateChildren(path)).ConfigureAwait(true);
-
-            Children.Clear();
-            foreach (var k in kids) Children.Add(k);
+            await _loadGate.WaitAsync().ConfigureAwait(true);
+            try
+            {
+                if (IsLoaded) return;
+                string path = Path;
+                List<FolderNode> kids = await Task.Run(() => ChildEnumerator(path)).ConfigureAwait(true);
+                Children.Clear();
+                foreach (var k in kids) Children.Add(k);
+                IsLoaded = true;
+            }
+            finally { _loadGate.Release(); }
         }
 
         /// <summary>
@@ -121,32 +132,37 @@ namespace KillerBench.Controls
         /// </summary>
         internal async Task RefreshAsync()
         {
-            if (!IsLoaded) return;
-
-            string path = Path;
-            var fresh = await Task.Run(() => EnumerateChildren(path)).ConfigureAwait(true);
-
-            var byName = new Dictionary<string, FolderNode>(StringComparer.OrdinalIgnoreCase);
-            foreach (var n in fresh) byName[n.Name] = n;
-
-            for (int i = Children.Count - 1; i >= 0; i--)
-                if (!byName.ContainsKey(Children[i].Name)) Children.RemoveAt(i);
-
-            var have = new Dictionary<string, FolderNode>(StringComparer.OrdinalIgnoreCase);
-            foreach (var c in Children) have[c.Name] = c;
-
-            for (int i = 0; i < fresh.Count; i++)
+            await _loadGate.WaitAsync().ConfigureAwait(true);
+            try
             {
-                if (have.TryGetValue(fresh[i].Name, out var existing))
+                if (!IsLoaded) return;
+
+                string path = Path;
+                var fresh = await Task.Run(() => ChildEnumerator(path)).ConfigureAwait(true);
+
+                var byName = new Dictionary<string, FolderNode>(StringComparer.OrdinalIgnoreCase);
+                foreach (var n in fresh) byName[n.Name] = n;
+
+                for (int i = Children.Count - 1; i >= 0; i--)
+                    if (!byName.ContainsKey(Children[i].Name)) Children.RemoveAt(i);
+
+                var have = new Dictionary<string, FolderNode>(StringComparer.OrdinalIgnoreCase);
+                foreach (var c in Children) have[c.Name] = c;
+
+                for (int i = 0; i < fresh.Count; i++)
                 {
-                    // Anything the user has opened stays the SAME node object, so its own subtree
-                    // and IsExpanded survive; only genuinely new entries get fresh nodes.
-                    int at = Children.IndexOf(existing);
-                    if (at != i) Children.Move(at, i);
-                    await existing.RefreshAsync();   // its children are stale for the same reason
+                    if (have.TryGetValue(fresh[i].Name, out var existing))
+                    {
+                        // Anything the user has opened stays the SAME node object, so its own subtree
+                        // and IsExpanded survive; only genuinely new entries get fresh nodes.
+                        int at = Children.IndexOf(existing);
+                        if (at != i) Children.Move(at, i);
+                        await existing.RefreshAsync();   // its children are stale for the same reason
+                    }
+                    else Children.Insert(i, fresh[i]);
                 }
-                else Children.Insert(i, fresh[i]);
             }
+            finally { _loadGate.Release(); }
         }
 
         private static List<FolderNode> EnumerateChildren(string path)
@@ -164,7 +180,7 @@ namespace KillerBench.Controls
                     {
                         var a = d.Attributes;
                         if ((a & FileAttributes.Hidden) != 0 || (a & FileAttributes.System) != 0) continue;
-                        if (d.Name.StartsWith('.')) continue;
+                        if (d.Name.StartsWith(".", StringComparison.Ordinal)) continue;
                     }
 
                     list.Add(new FolderNode(d.FullName, d.Name, mayHaveChildren: true));
@@ -181,5 +197,4 @@ namespace KillerBench.Controls
         private void Raise([CallerMemberName] string? p = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(p));
     }
-
 }

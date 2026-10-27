@@ -844,4 +844,8 @@
   <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Әлі тексерілмеген: нативті деректер толық емес немесе сынақ сәтсіз аяқталды</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">Жазылған сценарийлер зертханада тексерілген</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Тек диагностика; жөндеу іске қосылмайды</sys:String>
+  <sys:String x:Key="Str_Sys_Close">Жабу</sys:String>
+  <sys:String x:Key="Str_Dlg_Preview">Алдын ала қарау</sys:String>
+  <sys:String x:Key="Str_Tray_Open">{0} ашу</sys:String>
+  <sys:String x:Key="Str_Tray_Exit">Шығу</sys:String>
 </ResourceDictionary>

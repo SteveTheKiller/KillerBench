@@ -844,4 +844,8 @@
   <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Henüz doğrulanmadı: yerel kanıtlar eksik veya test başarısız</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">Kaydedilen senaryolar için laboratuvarda doğrulandı</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Yalnızca tanılama; onarım başlatılmaz</sys:String>
+  <sys:String x:Key="Str_Sys_Close">Kapat</sys:String>
+  <sys:String x:Key="Str_Dlg_Preview">Önizleme</sys:String>
+  <sys:String x:Key="Str_Tray_Open">{0} uygulamasını aç</sys:String>
+  <sys:String x:Key="Str_Tray_Exit">Çıkış</sys:String>
 </ResourceDictionary>

@@ -844,4 +844,8 @@
   <sys:String x:Key="Str_NativeLab_IncompleteEvidence">এখনো যাচাই করা হয়নি: নেটিভ প্রমাণ অসম্পূর্ণ বা ব্যর্থ</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">নথিভুক্ত পরিস্থিতিগুলো ল্যাবে যাচাই করা হয়েছে</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">শুধু রোগনির্ণয়; কোনো মেরামত চালানো হয় না</sys:String>
+  <sys:String x:Key="Str_Sys_Close">বন্ধ করুন</sys:String>
+  <sys:String x:Key="Str_Dlg_Preview">পূর্বরূপ</sys:String>
+  <sys:String x:Key="Str_Tray_Open">{0} খুলুন</sys:String>
+  <sys:String x:Key="Str_Tray_Exit">প্রস্থান</sys:String>
 </ResourceDictionary>

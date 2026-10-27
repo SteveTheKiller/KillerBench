@@ -844,4 +844,8 @@
   <sys:String x:Key="Str_NativeLab_IncompleteEvidence">未検証: ネイティブ環境の検証記録が不完全、またはテストが失敗しています</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">記録されたシナリオについてラボで検証済み</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">診断のみ。修復は実行されません</sys:String>
+  <sys:String x:Key="Str_Sys_Close">閉じる</sys:String>
+  <sys:String x:Key="Str_Dlg_Preview">プレビュー</sys:String>
+  <sys:String x:Key="Str_Tray_Open">{0} を開く</sys:String>
+  <sys:String x:Key="Str_Tray_Exit">終了</sys:String>
 </ResourceDictionary>

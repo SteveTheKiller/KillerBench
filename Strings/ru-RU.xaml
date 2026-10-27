@@ -844,4 +844,8 @@
   <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Еще не проверено: нативные данные неполны или тест не пройден</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">Проверено в лаборатории для записанных сценариев</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Только диагностика; исправление не запускается</sys:String>
+  <sys:String x:Key="Str_Sys_Close">Закрыть</sys:String>
+  <sys:String x:Key="Str_Dlg_Preview">Предварительный просмотр</sys:String>
+  <sys:String x:Key="Str_Tray_Open">Открыть {0}</sys:String>
+  <sys:String x:Key="Str_Tray_Exit">Выход</sys:String>
 </ResourceDictionary>

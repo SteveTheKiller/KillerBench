@@ -843,4 +843,8 @@
   <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Ennå ikke kontrollert: native testbevis er ufullstendige eller testen mislyktes</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">Kontrollert i testmiljøet for de registrerte scenarioene</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Bare diagnostikk; ingen reparasjon utføres</sys:String>
+  <sys:String x:Key="Str_Sys_Close">Lukk</sys:String>
+  <sys:String x:Key="Str_Dlg_Preview">Forhåndsvisning</sys:String>
+  <sys:String x:Key="Str_Tray_Open">Åpne {0}</sys:String>
+  <sys:String x:Key="Str_Tray_Exit">Avslutt</sys:String>
 </ResourceDictionary>

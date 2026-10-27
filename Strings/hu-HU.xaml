@@ -844,4 +844,8 @@
   <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Még nincs ellenőrizve: a natív bizonyíték hiányos vagy a teszt sikertelen</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">A rögzített forgatókönyvekre laborban ellenőrizve</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Csak diagnosztika; nem indul javítás</sys:String>
+  <sys:String x:Key="Str_Sys_Close">Bezárás</sys:String>
+  <sys:String x:Key="Str_Dlg_Preview">Előnézet</sys:String>
+  <sys:String x:Key="Str_Tray_Open">A(z) {0} megnyitása</sys:String>
+  <sys:String x:Key="Str_Tray_Exit">Kilépés</sys:String>
 </ResourceDictionary>

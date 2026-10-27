@@ -13,6 +13,9 @@ namespace KillerBench.Controls
         private CancellationTokenSource? _listingRows;
         private bool _listingClosed;
         private string? _listingError;
+        // Bumped on every navigation, so a slow tree reveal for an older folder stops instead of
+        // selecting it over the folder now shown.
+        private long _navigationVersion;
         public Func<string, bool, CancellationToken, PickerListingResult> DirectoryListingReader { get; set; } = PickerDirectoryListing.Read;
         public Task DirectoryListingTask { get; private set; } = Task.CompletedTask;
         public bool IsDirectoryListingBusy { get; private set; }
@@ -23,6 +26,8 @@ namespace KillerBench.Controls
         {
             if (_listingClosed || string.IsNullOrWhiteSpace(directory)) return Task.CompletedTask;
             _listingRows?.Cancel();
+            long version = ++_navigationVersion;
+            UpdateImagePreview(null);
             IsDirectoryListingBusy = true;
             IsDirectoryListingAvailable = false;
             IsDirectoryListingComplete = false;
@@ -47,7 +52,7 @@ namespace KillerBench.Controls
                 {
                     _currentDir = directory;
                     PathBox.Text = directory;
-                    _raw.AddRange(result.Entries.Where(entry => _mode != FileDialogMode.Folder || entry.IsFolder).Take(PickerDirectoryListing.MaximumEntries));
+                    _raw.AddRange(result.Entries.Take(PickerDirectoryListing.MaximumEntries));
                 });
                 await ApplySortAsync();
                 token.ThrowIfCancellationRequested();
@@ -58,7 +63,7 @@ namespace KillerBench.Controls
                 UpdateInfoSummary();
                 MutateListingRows(SyncPlacesSelection);
                 RecordRecent(directory);
-                _ = RevealInTree(directory);
+                _ = RevealInTree(directory, version);
             }, error =>
             {
                 IsDirectoryListingBusy = false;

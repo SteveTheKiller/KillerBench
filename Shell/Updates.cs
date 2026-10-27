@@ -6,7 +6,7 @@ namespace KillerBench;
 // The About card's update half of the host: when the startup check may run, the repair hold, and the
 // two update controls. The check, the prompts and the install live in Features\About\AboutController.cs
 // and Services\UpdateService.cs, the same as in the rest of the family.
-public partial class MainWindow
+public partial class MainWindow : IAboutRepairHold
 {
     /// <summary>After the window has painted (MainWindow.xaml.cs). Skipped in demo and screenshot
     /// modes and under the checks, which host the window in their own Application.</summary>
@@ -15,7 +15,7 @@ public partial class MainWindow
         if (Application.Current is App && !App.DemoMode && !App.ScreenshotMode) about.CheckOnStartup();
     }
 
-    bool IAboutHost.HoldUpdateForRepair()
+    bool IAboutRepairHold.HoldUpdateForRepair()
     {
         if (!repairRunning) return false;
         Report("The update waits until the running repair finishes. Open About to update afterward.");

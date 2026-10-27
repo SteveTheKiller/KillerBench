@@ -844,4 +844,8 @@
   <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Noch nicht geprüft: native Nachweise sind unvollständig oder fehlgeschlagen</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">Für die dokumentierten Szenarien im Labor geprüft</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Nur Diagnose; keine Reparatur wird ausgeführt</sys:String>
+  <sys:String x:Key="Str_Sys_Close">Schließen</sys:String>
+  <sys:String x:Key="Str_Dlg_Preview">Vorschau</sys:String>
+  <sys:String x:Key="Str_Tray_Open">{0} öffnen</sys:String>
+  <sys:String x:Key="Str_Tray_Exit">Beenden</sys:String>
 </ResourceDictionary>

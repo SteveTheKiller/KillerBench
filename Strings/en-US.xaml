@@ -843,4 +843,8 @@
   <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Not yet verified: native evidence is incomplete or failed</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">Lab verified for the recorded scenarios</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Diagnostic only; no repair is dispatched</sys:String>
+  <sys:String x:Key="Str_Sys_Close">Close</sys:String>
+  <sys:String x:Key="Str_Dlg_Preview">Preview</sys:String>
+  <sys:String x:Key="Str_Tray_Open">Open {0}</sys:String>
+  <sys:String x:Key="Str_Tray_Exit">Exit</sys:String>
 </ResourceDictionary>

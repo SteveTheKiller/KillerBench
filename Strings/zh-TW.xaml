@@ -844,4 +844,8 @@
   <sys:String x:Key="Str_NativeLab_IncompleteEvidence">尚未驗證：原生驗證記錄不完整或測試失敗</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">已在實驗室中驗證所記錄的情境</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">僅診斷；不執行修復</sys:String>
+  <sys:String x:Key="Str_Sys_Close">關閉</sys:String>
+  <sys:String x:Key="Str_Dlg_Preview">預覽</sys:String>
+  <sys:String x:Key="Str_Tray_Open">開啟 {0}</sys:String>
+  <sys:String x:Key="Str_Tray_Exit">結束</sys:String>
 </ResourceDictionary>

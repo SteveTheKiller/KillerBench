@@ -9,12 +9,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using KillerBench.Services;
 
 namespace KillerBench.Controls
 {
-    /// <summary>Open or Save. Picked at construction; changes the accept button and the rules.</summary>
+    /// <summary>Open, Save or Folder. Picked at construction; changes the accept button and the
+    /// rules. Folder hides the name and type fields, labels the button Select, and returns a
+    /// folder as FileName.</summary>
     public enum FileDialogMode { Open, Save, Folder }
 
     /// <summary>
@@ -33,7 +35,6 @@ namespace KillerBench.Controls
     /// </summary>
     public partial class FileDialog : Window
     {
-        private static readonly string[] AllFilesPatterns = ["*.*"];
         // ── Win32-compatible surface ─────────────────────────────────────────────
 
         /// <summary>Win32 filter syntax: "Desc|*.a;*.b|Other|*.c". Empty means every file.</summary>
@@ -51,6 +52,11 @@ namespace KillerBench.Controls
         public string DefaultExt { get; set; } = "";
 
         public bool AddExtension { get; set; } = true;
+        /// <summary>
+        /// Append the active filter's extension even when the typed name contains another dot.
+        /// Use this for format-locked exports such as flattened PDF output.
+        /// </summary>
+        public bool RequireFilterExtension { get; set; }
 
         /// <summary>Save mode: confirm before replacing an existing file.</summary>
         public bool OverwritePrompt { get; set; } = true;
@@ -58,18 +64,36 @@ namespace KillerBench.Controls
         /// <summary>Open mode: refuse to return a path that does not exist.</summary>
         public bool CheckFileExists { get; set; } = true;
 
+        /// <summary>Refuse a path whose DIRECTORY does not exist. On by default, matching the
+        /// Win32 dialogs - the picker never creates folder trees on the user's behalf, so turning
+        /// this off only means the caller has agreed to handle a missing directory itself.</summary>
         public bool CheckPathExists { get; set; } = true;
 
+        /// <summary>Open mode only: let the user pick several files at once (Ctrl/Shift click, or
+        /// a drag over the list). Ignored in Save mode, where "several names" is meaningless.
+        /// Set it BEFORE ShowDialog - the list's selection mode is applied there.</summary>
         public bool Multiselect { get; set; }
 
-        /// <summary>
-        /// Opt in to the preview pane on the right. On for an image picker, where choosing from a
-        /// list of file names is a guess; off by default, because a picker aimed at a FOLDER has
-        /// nothing to preview, and the column is 0-wide when off so the layout is byte-identical
-        /// to before for every existing caller.
-        /// </summary>
-        public bool ShowPreview { get; set; }
+        /// <summary>Folder mode only: list folders alone instead of folders and the files that
+        /// pass the filter. Off by default.</summary>
+        public bool HideFilesInFolderMode { get; set; }
 
+        /// <summary>Folder mode only: Explorer-style picking. A highlighted subfolder is the answer
+        /// (otherwise the folder being shown), Enter anywhere accepts, and the chosen folder is
+        /// remembered as the next starting point. Off by default: the folder being shown is the
+        /// answer and nothing is remembered.</summary>
+        public bool AcceptHighlightedFolder { get; set; }
+
+        /// <summary>Show a live preview pane for image-selection workflows. The pane is opt-in so
+        /// ordinary Open and Save dialogs keep their compact layout.</summary>
+        public bool ShowImagePreview { get; set; }
+
+        /// <summary>The kit's older name for <see cref="ShowImagePreview"/>, kept for its callers.</summary>
+        public bool ShowPreview { get => ShowImagePreview; set => ShowImagePreview = value; }
+
+        /// <summary>Every path chosen. Always populated on success, so a caller can read this
+        /// whether or not it asked for Multiselect - single selection yields one entry, matching
+        /// the Win32 dialogs' FileNames. FileName remains the first of them.</summary>
         public string[] FileNames { get; private set; } = [];
 
         // ── internals ────────────────────────────────────────────────────────────
@@ -86,6 +110,12 @@ namespace KillerBench.Controls
         private int  _viewMode;              // 0 list, 1 icons, 2 details
         private int  _sortKey;               // 0 name, 1 size, 2 modified
         private bool _sortAsc = true;
+        private int _imagePreviewGeneration;
+
+        private static readonly HashSet<string> PreviewImageExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tif", ".tiff"
+        };
 
         // Per-filter-entry patterns, parallel to FilterCombo's items. Empty list = show all.
         private readonly List<string[]> _filterPatterns = [];
@@ -104,23 +134,55 @@ namespace KillerBench.Controls
         private const string PlacesHKey    = "FileDlgPlacesH";
         private const string LastOpenKey   = "FileDlgLastOpenDir";
         private const string LastSaveKey   = "FileDlgLastSaveDir";
+        private const string SortKeyKey    = "FileDlgSortKey";
+        private const string SortAscKey    = "FileDlgSortAsc";
+
+        // Image pickers (every caller with ShowImagePreview) remember their own folder, separate
+        // from the document open/save memory. One shared key meant Insert Image always started
+        // wherever the last PDF was opened from, never where the user last picked an image.
+        private string LastDirKey =>
+            (_mode == FileDialogMode.Open ? LastOpenKey : LastSaveKey) + (ShowImagePreview ? "Img" : "");
         private const int    RecentsMax    = 12;
+
+        // Guards the fade-then-close re-entry below. Without it OnClosing would cancel forever.
+        private bool _fadingOut;
+
+        /// <summary>The result Accept wants, held until the window is actually allowed to close.
+        /// Null means cancel (the X, Escape, the Cancel button - none of them set it).</summary>
+        private bool? _pendingResult;
+
+        /// <summary>Fades the dialog out before it actually closes. The first pass cancels the
+        /// close and runs the fade; the second sees the flag and lets it through.
+        ///
+        /// The result CANNOT be assigned before the fade. Assigning Window.DialogResult is itself a
+        /// close request, so it lands in this handler, which cancels that close - and WPF resets
+        /// DialogResult to null whenever a close is canceled. Accept therefore records what it
+        /// wants in _pendingResult and the assignment happens in the fade's completion callback,
+        /// where nothing will cancel it. Assigning DialogResult there also closes the window, which
+        /// is why that branch does not call Close() as well.</summary>
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            if (!_fadingOut)
+            {
+                _fadingOut = true;
+                e.Cancel = true;
+                Anim.FadeOut(RootFade, () =>
+                {
+                    if (_pendingResult.HasValue) DialogResult = _pendingResult;   // this closes it
+                    else Close();                                                 // cancel path
+                });
+                return;
+            }
+            base.OnClosing(e);
+        }
+
         public FileDialog(FileDialogMode mode = FileDialogMode.Open)
         {
             _mode = mode;
             InitializeComponent();
             Closed += (_, _) => CloseDirectoryListing();
-            var titleFrames = BitmapDecoder.Create(
-                new Uri("pack://application:,,,/KillerBench;component/Assets/AppIcon.ico"),
-                BitmapCreateOptions.None, BitmapCacheOption.OnLoad).Frames;
-            TitleIcon.Source = titleFrames[0];
-            Loaded += (_, _) =>
-            {
-                RootBorder.BeginAnimation(OpacityProperty,
-                    new System.Windows.Media.Animation.DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(150)));
-                if (_mode == FileDialogMode.Folder) AcceptButton.Focus();
-                else FileNameBox.Focus();
-            };
+            if (!DialogChrome.SetTitleIcon(TitleIcon)) TitleIcon.Visibility = Visibility.Collapsed;
+            Loaded += (_, _) => Anim.FadeIn(RootFade);
 
             // Size and placement remembered separately from the folder picker: this dialog is a
             // different shape and sharing the keys would make each one fight the other.
@@ -158,6 +220,11 @@ namespace KillerBench.Controls
             _showHidden = Services.ThemeManager.GetSetting(ShowHiddenKey) == "1";
             FolderNode.ShowHidden = _showHidden;
             ApplyShowHiddenButton();
+            if (int.TryParse(Services.ThemeManager.GetSetting(SortKeyKey), out int savedSortKey)
+                && savedSortKey is >= 0 and <= 2)
+                _sortKey = savedSortKey;
+            _sortAsc = Services.ThemeManager.GetSetting(SortAscKey) is not string savedSortAsc
+                || savedSortAsc != "0";
 
             Closing += (_, _) =>
             {
@@ -191,29 +258,24 @@ namespace KillerBench.Controls
         {
             if (owner != null && owner.IsVisible) Owner = owner;
 
-            HeadingText.Text    = Title ?? "";
             AcceptButton.Content = Loc(_mode switch
             {
-                FileDialogMode.Save => "Str_Btn_Save",
+                FileDialogMode.Save   => "Str_Btn_Save",
                 FileDialogMode.Folder => "Str_Btn_Select",
-                _ => "Str_Btn_Open",
+                _                     => "Str_Btn_Open",
             });
-            FileFields.Visibility = _mode == FileDialogMode.Folder
-                ? Visibility.Collapsed : Visibility.Visible;
-            AcceptButton.IsDefault = _mode == FileDialogMode.Folder;
+            if (_mode == FileDialogMode.Folder)
+            {
+                FileFields.Visibility = Visibility.Collapsed;
+                AcceptButton.IsDefault = AcceptHighlightedFolder;
+            }
+            ConfigureImagePreview();
+            // Extended, not Multiple: Extended is the Explorer behavior (plain click replaces the
+            // selection, Ctrl adds, Shift ranges). Multiple toggles on every click, which feels
+            // broken to anyone who has used a file dialog before.
             FileList.SelectionMode = Multiselect && _mode == FileDialogMode.Open
                 ? SelectionMode.Extended
                 : SelectionMode.Single;
-
-            // The preview column is 0-wide unless the caller asked for it, so every existing
-            // call site lays out exactly as it did before.
-            if (ShowPreview)
-            {
-                PreviewPane.Visibility = Visibility.Visible;
-                PreviewGapCol.Width = new GridLength(8);
-                PreviewCol.Width    = new GridLength(220);
-                UpdatePreview();
-            }
 
             // Open mode has nothing to name, so the box is for typing/filtering a path, not a
             // new file. It stays visible: typing an exact name is faster than hunting for it.
@@ -229,7 +291,7 @@ namespace KillerBench.Controls
             string seedName = "";
             if (!string.IsNullOrWhiteSpace(FileName))
             {
-                if (FileName.AsSpan().ContainsAny('\\', '/'))
+                if (FileName.IndexOfAny(['\\', '/']) >= 0)
                 {
                     var d = Path.GetDirectoryName(FileName);
                     if (!string.IsNullOrEmpty(d) && Directory.Exists(d)) startDir = d!;
@@ -239,8 +301,7 @@ namespace KillerBench.Controls
             }
             if (string.IsNullOrWhiteSpace(startDir) || !Directory.Exists(startDir))
             {
-                string? remembered = Services.ThemeManager.GetSetting(
-                    _mode == FileDialogMode.Open ? LastOpenKey : LastSaveKey);
+                string? remembered = Services.ThemeManager.GetSetting(LastDirKey);
                 startDir = !string.IsNullOrWhiteSpace(remembered) && Directory.Exists(remembered)
                     ? remembered!
                     : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -251,7 +312,7 @@ namespace KillerBench.Controls
             FileNameBox.Text = seedName;
 
             // Save: preselect the stem so typing replaces the name but keeps the extension
-            // visible. Open: caret at the end.
+            // visible. Open: caret at the end. Folder: there is no name box, so the button.
             if (_mode == FileDialogMode.Folder) AcceptButton.Focus();
             else FileNameBox.Focus();
             if (_mode == FileDialogMode.Save && seedName.Length > 0)
@@ -292,7 +353,7 @@ namespace KillerBench.Controls
             if (FilterCombo.Items.Count == 0)
             {
                 FilterCombo.Items.Add(Loc("Str_Dlg_AllFiles"));
-                _filterPatterns.Add(AllFilesPatterns);
+                _filterPatterns.Add(["*.*"]);
             }
 
             int idx = FilterIndex - 1;
@@ -306,43 +367,53 @@ namespace KillerBench.Controls
             if (!_built) return;
             FilterIndex = FilterCombo.SelectedIndex + 1;
 
+            // Save mode follows the Win32 dialogs: switching the type swaps the typed name's
+            // extension - but only when the current one belongs to another entry of THIS filter.
+            // An extension the user typed by hand is theirs and is left alone.
             if (_mode == FileDialogMode.Save)
             {
                 string? newExt = ActiveFilterExt();
-                string name = FileNameBox.Text?.Trim() ?? "";
-                string cur = name.Length == 0 ? "" : Path.GetExtension(name);
+                string  name   = FileNameBox.Text?.Trim() ?? "";
+                string  cur    = name.Length == 0 ? "" : Path.GetExtension(name);
                 if (newExt != null && cur.Length > 0 &&
                     !cur.Equals(newExt, StringComparison.OrdinalIgnoreCase) &&
                     AllFilterExts().Contains(cur, StringComparer.OrdinalIgnoreCase))
+                {
                     FileNameBox.Text = Path.ChangeExtension(name, newExt);
+                }
             }
 
             ApplySort();
         }
 
+        /// <summary>
+        /// The active filter entry's own extension (".csv"), or null when its first pattern is a
+        /// wildcard-any or a multi-pattern catch-all that names no single extension.
+        /// </summary>
         private string? ActiveFilterExt()
         {
             int i = FilterCombo.SelectedIndex;
             if (i < 0 || i >= _filterPatterns.Count) return null;
             string p = _filterPatterns[i][0];
-            if (p.Length > 2 && p.StartsWith("*.") && !p.AsSpan(2).ContainsAny('*', '?'))
+            if (p.Length > 2 && p.StartsWith("*.") && p.IndexOfAny(['*', '?'], 2) < 0)
                 return p[1..];
             return null;
         }
 
+        /// <summary>Every concrete extension the filter list names, for the swap test above.</summary>
         private IEnumerable<string> AllFilterExts()
         {
             foreach (var pats in _filterPatterns)
                 foreach (var p in pats)
-                    if (p.Length > 2 && p.StartsWith("*.") && !p.AsSpan(2).ContainsAny('*', '?'))
+                    if (p.Length > 2 && p.StartsWith("*.") && p.IndexOfAny(['*', '?'], 2) < 0)
                         yield return p[1..];
         }
 
         /// <summary>True when the name passes the active filter. Folders are never filtered out.</summary>
         private bool PassesFilter(PickerEntry en)
         {
-            if (_mode == FileDialogMode.Folder) return en.IsFolder;
             if (en.IsFolder) return true;
+            if (_mode == FileDialogMode.Folder && HideFilesInFolderMode) return false;
             int i = FilterCombo.SelectedIndex;
             if (i < 0 || i >= _filterPatterns.Count) return true;
             var pats = _filterPatterns[i];
@@ -384,17 +455,29 @@ namespace KillerBench.Controls
             }
         }
 
-        private static IEnumerable<(string Label, string Path)> ExplorerQuickAccessPlaces()
+        /// <summary>
+        /// Explorer's Quick Access entries, read through the Shell.Application COM object.
+        ///
+        /// Returns a materialized list rather than an iterator so the whole body can sit inside a
+        /// real try/catch: a yield-return method is only allowed a finally, so every failure here
+        /// used to escape into BuildPlaces and take the Open dialog down with it. Each call below
+        /// is late-bound COM and can fail outright - Wine and CrossOver register the
+        /// Shell.Application ProgID but implement no NameSpace, so the ProgID null check passes
+        /// and the binder then throws RuntimeBinderException. Quick Access is a convenience, so
+        /// any failure just drops it and leaves the pinned folders and the drives.
+        /// </summary>
+        private static List<(string Label, string Path)> ExplorerQuickAccessPlaces()
         {
             const string QuickAccess = "shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}";
+            var places = new List<(string Label, string Path)>();
             object? shell = null, folder = null, items = null;
             try
             {
                 var type = Type.GetTypeFromProgID("Shell.Application");
-                if (type == null) yield break;
+                if (type == null) return places;
                 shell = Activator.CreateInstance(type);
                 folder = ((dynamic)shell!).NameSpace(QuickAccess);
-                if (folder == null) yield break;
+                if (folder == null) return places;
                 items = ((dynamic)folder).Items();
                 int count = ((dynamic)items).Count;
                 for (int i = 0; i < count; i++)
@@ -408,17 +491,20 @@ namespace KillerBench.Controls
                         if (!Convert.ToBoolean(quickItem.IsFolder)) continue;
                         string path = Convert.ToString(quickItem.Path) ?? "";
                         string name = Convert.ToString(quickItem.Name) ?? "";
-                        if (Directory.Exists(path)) yield return (name.Length > 0 ? name : LabelFor(path), path);
+                        if (Directory.Exists(path)) places.Add((name.Length > 0 ? name : LabelFor(path), path));
                     }
+                    catch { /* one unreadable entry must not lose the rest */ }
                     finally { if (item != null && Marshal.IsComObject(item)) Marshal.FinalReleaseComObject(item); }
                 }
             }
+            catch { /* no shell, or a shell without Quick Access: keep whatever was read */ }
             finally
             {
                 if (items != null && Marshal.IsComObject(items)) Marshal.FinalReleaseComObject(items);
                 if (folder != null && Marshal.IsComObject(folder)) Marshal.FinalReleaseComObject(folder);
                 if (shell != null && Marshal.IsComObject(shell)) Marshal.FinalReleaseComObject(shell);
             }
+            return places;
         }
 
         /// <summary>
@@ -431,15 +517,14 @@ namespace KillerBench.Controls
             if (saved != null)
                 return [.. saved.Split('|').Where(s => s.Length > 0)];
 
-            string[] defaults =
-            [
+            return [.. new List<string>
+            {
                 Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
                 Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads"),
                 Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
-            ];
-            return [.. defaults.Where(p => !string.IsNullOrEmpty(p))];
+            }.Where(p => !string.IsNullOrEmpty(p))];
         }
 
         /// <summary>Localized label for the five standard folders, plain folder name otherwise.</summary>
@@ -757,7 +842,7 @@ namespace KillerBench.Controls
         /// own expander is left exactly as the user had it (KillerShell's rule - forcing it
         /// collapsed the branch under the cursor and the whole tree jumped).
         /// </summary>
-        private async Task RevealInTree(string folder)
+        private async Task RevealInTree(string folder, long version)
         {
             if (string.IsNullOrEmpty(folder)) return;
 
@@ -775,6 +860,7 @@ namespace KillerBench.Controls
             if (segments.Count > 0)
             {
                 await current.LoadChildrenAsync();
+                if (version != _navigationVersion) return;   // a newer folder is being shown
                 current.IsExpanded = true;
             }
 
@@ -788,6 +874,7 @@ namespace KillerBench.Controls
                 if (i == segments.Count - 1) break;
 
                 await current.LoadChildrenAsync();   // needed to match the NEXT segment
+                if (version != _navigationVersion) return;
                 current.IsExpanded = true;
             }
 
@@ -874,30 +961,79 @@ namespace KillerBench.Controls
                 if (!en.IsFolder) FileNameBox.Text = en.Name;
                 SelName.Text = en.Name;
                 SelMeta.Text = en.IsFolder ? en.ModifiedLabel : $"{en.SizeLabel}  |  {en.ModifiedLabel}";
+                UpdateImagePreview(en);
             }
-            else UpdateInfoSummary();
-            UpdatePreview();
+            else
+            {
+                UpdateInfoSummary();
+                UpdateImagePreview(null);
+            }
         }
 
-        /// <summary>
-        /// Paints the preview pane for the current selection. Nothing to show for a folder, a
-        /// non-image, or an image that will not decode - Preview returns null for all three, so
-        /// one null check covers them.
-        /// </summary>
-        private void UpdatePreview()
+        private void ConfigureImagePreview()
         {
-            if (!ShowPreview || PreviewImage is null) return;
-            var src = (FileList.SelectedItem as PickerEntry)?.Preview;
-            PreviewImage.Source     = src;
-            PreviewImage.Visibility = src is null ? Visibility.Collapsed : Visibility.Visible;
-            PreviewHint.Visibility  = src is null ? Visibility.Visible  : Visibility.Collapsed;
+            if (!ShowImagePreview)
+            {
+                ImagePreviewHost.Visibility = Visibility.Collapsed;
+                ImagePreviewGapColumn.Width = new GridLength(0);
+                ImagePreviewColumn.Width = new GridLength(0);
+                return;
+            }
+
+            ImagePreviewHost.Visibility = Visibility.Visible;
+            ImagePreviewGapColumn.Width = new GridLength(8);
+            ImagePreviewColumn.Width = new GridLength(230);
+
+            // A preview should not consume the file list. Only image pickers grow; the remembered
+            // size remains the user's starting point and is still clamped to the work area.
+            MinWidth = 780;
+            Width = Math.Min(SystemParameters.WorkArea.Width, Math.Max(Width, 880));
+        }
+
+        private async void UpdateImagePreview(PickerEntry? entry)
+        {
+            int generation = ++_imagePreviewGeneration;
+            ImagePreview.Source = null;
+            ImagePreviewPlaceholder.Visibility = Visibility.Visible;
+
+            if (!ShowImagePreview || entry == null || entry.IsFolder ||
+                !PreviewImageExtensions.Contains(Path.GetExtension(entry.FullPath)))
+                return;
+
+            string path = entry.FullPath;
+            try
+            {
+                // BitmapCacheOption.OnLoad closes the file after decoding, and DecodePixelWidth
+                // caps memory for camera images while retaining enough detail for this pane.
+                var bitmap = await Task.Run(() =>
+                {
+                    var image = new BitmapImage();
+                    image.BeginInit();
+                    image.CacheOption = BitmapCacheOption.OnLoad;
+                    image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                    image.DecodePixelWidth = 900;
+                    image.UriSource = new Uri(path, UriKind.Absolute);
+                    image.EndInit();
+                    image.Freeze();
+                    return image;
+                });
+
+                if (generation != _imagePreviewGeneration) return;
+                ImagePreview.Source = bitmap;
+                ImagePreviewPlaceholder.Visibility = Visibility.Collapsed;
+            }
+            catch
+            {
+                // Corrupt, unsupported, or transiently unavailable image: leave the neutral
+                // placeholder visible and keep the picker fully usable.
+            }
         }
 
         private void Files_DoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (FileList.SelectedItem is not PickerEntry en) return;
             if (en.IsFolder) NavigateTo(en.FullPath);
-            else if (_mode != FileDialogMode.Folder) Accept();
+            else Accept();
         }
 
         private void PathBox_KeyDown(object sender, KeyEventArgs e)
@@ -924,7 +1060,7 @@ namespace KillerBench.Controls
             }
 
             // A wildcard retargets the listing rather than naming a file.
-            if (typed.AsSpan().ContainsAny('*', '?'))
+            if (typed.IndexOfAny(['*', '?']) >= 0)
             {
                 _filterPatterns.Insert(0, [typed]);
                 FilterCombo.Items.Insert(0, typed);
@@ -1000,6 +1136,11 @@ namespace KillerBench.Controls
             ViewDetailsBtn.Tag = _viewMode == 2 ? "on" : null;
         }
 
+        /// <summary>
+        /// List view wraps entries into columns and scrolls horizontally. A normal mouse wheel
+        /// only asks WPF to scroll vertically, which is disabled in this view, so translate the
+        /// wheel delta to the horizontal scrollbar. Icon and details views remain vertical.
+        /// </summary>
         private int _pickerIconSize = 32;
         private int _pickerWheelDelta;
         private static readonly int[] PickerIconSizes = [16, 32, 48, 96];
@@ -1039,10 +1180,18 @@ namespace KillerBench.Controls
         private void SortSize_Click(object sender, RoutedEventArgs e)     => SetSort(1);
         private void SortModified_Click(object sender, RoutedEventArgs e) => SetSort(2);
 
+        private void SortButton_Click(object sender, RoutedEventArgs e)
+        {
+            SortMenu.PlacementTarget = SortButton;
+            SortMenu.IsOpen = true;
+        }
+
         private void SetSort(int key)
         {
             if (_sortKey == key) _sortAsc = !_sortAsc;
-            else { _sortKey = key; _sortAsc = true; }
+            else { _sortKey = key; _sortAsc = key == 0; }
+            Services.ThemeManager.SetSetting(SortKeyKey, _sortKey.ToString());
+            Services.ThemeManager.SetSetting(SortAscKey, _sortAsc ? "1" : "0");
             ApplySort();
         }
 
@@ -1071,6 +1220,10 @@ namespace KillerBench.Controls
             NameArrow.Text = _sortKey == 0 ? (_sortAsc ? ArrowUp : ArrowDown) : "";
             SizeArrow.Text = _sortKey == 1 ? (_sortAsc ? ArrowUp : ArrowDown) : "";
             ModArrow.Text  = _sortKey == 2 ? (_sortAsc ? ArrowUp : ArrowDown) : "";
+            SortNameItem.IsChecked = _sortKey == 0;
+            SortSizeItem.IsChecked = _sortKey == 1;
+            SortModifiedItem.IsChecked = _sortKey == 2;
+            SortButton.Tag = "on";
 
             EmptyHint.Visibility = Entries.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -1089,29 +1242,32 @@ namespace KillerBench.Controls
             if (IsDirectoryListingBusy || !IsDirectoryListingAvailable) return;
             if (_mode == FileDialogMode.Folder)
             {
-                string folder = FileList.SelectedItem is PickerEntry { IsFolder: true } selected
+                string folder = AcceptHighlightedFolder && FileList.SelectedItem is PickerEntry { IsFolder: true } selected
                     ? selected.FullPath : _currentDir;
                 if (!Directory.Exists(folder)) return;
-                FileName = folder;
-                FileNames = [FileName];
-                RememberAcceptedDirectory();
-                DialogResult = true;
+                FileName  = folder;
+                FileNames = [folder];
+                if (AcceptHighlightedFolder) RememberAcceptedDirectory();
+                _pendingResult = true;   // applied after the fade - see OnClosing
                 Close();
                 return;
             }
-
+            // Multiselect: several files highlighted wins outright. The name box shows a quoted
+            // list in that state and is not worth re-parsing - the selection IS the answer. A
+            // single highlighted file falls through to the normal path so every rule below
+            // (extension, existence) still applies.
             if (Multiselect && _mode == FileDialogMode.Open)
             {
                 var picked = FileList.SelectedItems.OfType<PickerEntry>()
-                    .Where(x => !x.IsFolder)
-                    .Select(x => x.FullPath)
-                    .ToArray();
+                                                   .Where(x => !x.IsFolder)
+                                                   .Select(x => x.FullPath)
+                                                   .ToArray();
                 if (picked.Length > 1)
                 {
                     FileNames = picked;
-                    FileName = picked[0];
+                    FileName  = picked[0];
                     RememberAcceptedDirectory();
-                    DialogResult = true;
+                    _pendingResult = true;   // applied after the fade - see OnClosing
                     Close();
                     return;
                 }
@@ -1129,12 +1285,15 @@ namespace KillerBench.Controls
 
             if (_mode == FileDialogMode.Save)
             {
-                if (AddExtension && string.IsNullOrEmpty(Path.GetExtension(full)))
+                // The extension follows the ACTIVE filter, so picking "CSV files" in the type
+                // combo is enough to get a .csv - DefaultExt only decides when the filter names
+                // no single extension (a wildcard or a multi-pattern entry).
+                if (AddExtension)
                 {
                     string? ext = ActiveFilterExt();
                     if (ext == null && !string.IsNullOrEmpty(DefaultExt))
-                        ext = DefaultExt.StartsWith('.') ? DefaultExt : "." + DefaultExt;
-                    if (ext != null) full += ext;
+                        ext = DefaultExt.StartsWith(".") ? DefaultExt : "." + DefaultExt;
+                    full = SaveFileNamePolicy.ApplyExtension(full, ext, AddExtension, RequireFilterExtension);
                 }
 
                 // The directory must exist; we do not silently create trees on the user's behalf.
@@ -1148,12 +1307,13 @@ namespace KillerBench.Controls
 
                 if (OverwritePrompt && File.Exists(full))
                 {
-                    // Empty rather than null: ConfirmDialog takes a non-nullable string and
-                    // collapses the detail line when it is empty.
+                    // The app's own themed ConfirmDialog, the same prompt every other question in
+                    // the app uses, rather than a system MessageBox.
                     var confirm = new ConfirmDialog(
                         string.Format(Loc("Str_Dlg_OverwriteMsg"), Path.GetFileName(full)),
                         "",
-                        Loc("Str_Btn_Replace")) { Owner = this };
+                        Loc("Str_Btn_Replace"),
+                        Loc("Str_Btn_Cancel")) { Owner = this };
                     confirm.ShowDialog();
                     if (!confirm.Confirmed) { FileNameBox.Focus(); return; }
                 }
@@ -1170,17 +1330,16 @@ namespace KillerBench.Controls
             }
 
             FileName = full;
-            FileNames = [full];
+            FileNames = [full];   // always populated on success, so callers can read either
             RememberAcceptedDirectory();
-            DialogResult = true;
+            _pendingResult = true;   // applied after the fade - see OnClosing
             Close();
         }
 
         private void RememberAcceptedDirectory()
         {
             if (_currentDir.Length > 0 && Directory.Exists(_currentDir))
-                Services.ThemeManager.SetSetting(
-                    _mode == FileDialogMode.Open ? LastOpenKey : LastSaveKey, _currentDir);
+                Services.ThemeManager.SetSetting(LastDirKey, _currentDir);
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e) => Close();
@@ -1261,7 +1420,7 @@ namespace KillerBench.Controls
                         WM_NCLBUTTONDOWN, new IntPtr(ht), IntPtr.Zero);
         }
 
-        [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
-        private static partial IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+        [System.Runtime.InteropServices.DllImport("user32.dll", EntryPoint = "SendMessageW")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
     }
 }

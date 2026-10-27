@@ -55,8 +55,9 @@ internal static class UpdateService
 
     /// <summary>Starts the update helper. Throws if it cannot be started, including when the user
     /// declines the UAC prompt, so the caller only shuts down once it is running. The installer
-    /// records the new version itself, so unlike an exe swap there is no registry to fix.</summary>
-    internal static void StartSwap(string download)
+    /// records the new version itself, so unlike an exe swap there is no registry to fix, and the
+    /// shared controller's version argument is not needed.</summary>
+    internal static void StartSwap(string download, string? newVersion = null)
     {
         UpdateTarget target = FindTarget()
             ?? throw new InvalidOperationException("This copy is neither installed nor portable.");

@@ -843,4 +843,8 @@
   <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Chưa được xác minh: bằng chứng gốc chưa đầy đủ hoặc thử nghiệm thất bại</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">Đã xác minh trong phòng thử nghiệm cho các kịch bản đã ghi</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Chỉ chẩn đoán; không thực hiện sửa chữa</sys:String>
+  <sys:String x:Key="Str_Sys_Close">Đóng</sys:String>
+  <sys:String x:Key="Str_Dlg_Preview">Xem trước</sys:String>
+  <sys:String x:Key="Str_Tray_Open">Mở {0}</sys:String>
+  <sys:String x:Key="Str_Tray_Exit">Thoát</sys:String>
 </ResourceDictionary>

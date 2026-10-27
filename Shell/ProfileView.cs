@@ -13,7 +13,9 @@ public partial class MainWindow
         var picker = new Controls.FileDialog(Controls.FileDialogMode.Folder)
         {
             Title = "Choose the existing copied profile backup",
-            Multiselect = false
+            Multiselect = false,
+            HideFilesInFolderMode = true,
+            AcceptHighlightedFolder = true
         };
         if (picker.ShowDialog(this) == true) ProfileBackupPath.Text = picker.FileName;
     }

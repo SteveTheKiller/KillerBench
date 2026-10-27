@@ -844,4 +844,8 @@
   <sys:String x:Key="Str_NativeLab_IncompleteEvidence">尚未验证：原生验证记录不完整或测试失败</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">已在实验室中验证所记录的场景</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">仅诊断；不执行修复</sys:String>
+  <sys:String x:Key="Str_Sys_Close">关闭</sys:String>
+  <sys:String x:Key="Str_Dlg_Preview">预览</sys:String>
+  <sys:String x:Key="Str_Tray_Open">打开 {0}</sys:String>
+  <sys:String x:Key="Str_Tray_Exit">退出</sys:String>
 </ResourceDictionary>
