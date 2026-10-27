@@ -82,6 +82,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Twenty languages, including Slovenian, cover the app, installer, tool descriptions, options, reports, themes and action labels.
 - Thirteen family themes include accent choices, Windows contrast-theme support and readable text. Dark with the yellow accent is the default; Film Grain can be toggled from the theme menu or with Alt+Shift+G.
 - Family fonts, buttons, dialog icons, menus, footers and About cards provide a consistent interface, with full bevels and compact fields on 98SE and Windows 11 snap layouts on the maximize button. File pickers use theme content colors for files and bookmarks.
+- The file picker's Accept button stays off while a folder is loading or an accept is already running, so it cannot fire twice, and a mistyped folder path returns to the last folder that worked.
 - List and Keyboard shortcut views share one binding table and link to the online guide. F12 opens About.
 - KillerMCP repair access is off by default and controlled from About. Disruptive agent repairs require a separate setting and desktop approval; uncertain results retain a review lock.
 
