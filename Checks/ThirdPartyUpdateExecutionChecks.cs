@@ -67,6 +67,19 @@ internal static class ThirdPartyUpdateExecutionChecks
             "{\"Schema\":1,\"Schema\":1,\"Machine\":\"" + Environment.MachineName + "\",\"Journal\":\"C:\\\\fixture.jsonl\",\"Selection\":{\"Id\":\"Vendor.Tool\",\"Source\":\"winget\",\"TargetVersion\":\"2.0\"},\"PreparedUtc\":\"2026-09-16T00:00:00Z\"}");
         Require((await ThirdPartyUpdateExecution.ReconcileAsync(invalidFolder, unverified)).Outcome == ThirdPartyUpdateRecoveryOutcome.InvalidRecord,
             "Duplicate pending fields cannot authorize recovery");
+        string renamedFolder = Path.Combine(scratch, "third-party-update-renamed-machine");
+        Directory.CreateDirectory(renamedFolder);
+        string renamedJournal = Path.Combine(renamedFolder, "third-party-update-fixture.jsonl");
+        await File.WriteAllTextAsync(Path.Combine(renamedFolder, "third-party-update.pending.json"),
+            "{\"schema\":1,\"machine\":\"KILLERBENCH-OLD-NAME\",\"journal\":" + System.Text.Json.JsonSerializer.Serialize(renamedJournal) +
+            ",\"selection\":{\"id\":\"Vendor.Tool\",\"source\":\"winget\",\"targetVersion\":\"2.0\"},\"preparedUtc\":\"2026-09-16T00:00:00Z\"}");
+        var renamed = new Fixture(discovery, "1.0");
+        Require((await ThirdPartyUpdateExecution.ReconcileAsync(renamedFolder, renamed)).Outcome == ThirdPartyUpdateRecoveryOutcome.StillPending,
+            "A record from before a computer rename still reconciles and verifies the installed version");
+        renamed.InstalledVersion = "2.0";
+        Require((await ThirdPartyUpdateExecution.ReconcileAsync(renamedFolder, renamed)).Outcome == ThirdPartyUpdateRecoveryOutcome.Verified &&
+            renamed.Upgrades == 0, "A renamed-machine record is archived once the exact version is verified, without another update");
+
         Console.WriteLine("PASS: exact third-party application planning, bounded update dispatch, final eligibility, version verification and no-repeat recovery; simulated provider only.");
     }
 

@@ -203,7 +203,8 @@ public static class ThirdPartyUpdateExecution
                 document.RootElement.EnumerateObject().Select(property => property.Name).Distinct(StringComparer.Ordinal).Count() != 5)
                 throw new InvalidDataException("Pending record fields are invalid or duplicated.");
             var record = JsonSerializer.Deserialize<PendingRecord>(json, Capture.JsonOptions) ?? throw new InvalidDataException("Pending record is empty.");
-            if (record.Schema != 1 || !string.Equals(record.Machine, Environment.MachineName, StringComparison.OrdinalIgnoreCase) ||
+            // Machine is kept as evidence only: this per-user folder survives a computer rename, and the installed version is still verified.
+            if (record.Schema != 1 || string.IsNullOrWhiteSpace(record.Machine) ||
                 string.IsNullOrWhiteSpace(record.Journal) || !Path.IsPathFullyQualified(record.Journal)) throw new InvalidDataException("Pending record identity is invalid.");
             ThirdPartyUpdatePlanning.Validate(record.Selection);
             string? installed = await ReadBounded(t => host.ReadInstalledVersionAsync(record.Selection.Id, record.Selection.Source, t), TimeSpan.FromMinutes(5), token).ConfigureAwait(false);
