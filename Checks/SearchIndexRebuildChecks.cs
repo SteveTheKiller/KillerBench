@@ -129,6 +129,22 @@ internal static class SearchIndexRebuildChecks
         Require(ambiguous.Outcome == SearchIndexReconciliationOutcome.Inconclusive &&
             File.Exists(Path.Combine(ambiguousRoot, "search-index-rebuild.pending.json")), "Ambiguous reconciliation retains its no-repeat guard");
 
+        // Every exit after the stop request and before the index move must try once to bring Windows Search back.
+        foreach (var (name, host) in new (string, FixtureHost)[]
+        {
+            ("restore-canceled", new FixtureHost { Services = new([Running(), Running()]), Cancel = "stop" }),
+            ("restore-stop-failed", new FixtureHost { Services = new([Running(), Running()]), Fail = "stop" }),
+            ("restore-still-running", new FixtureHost { Services = new([Running(), Running(), Running()]) }),
+            ("restore-read-error", new FixtureHost { Services = new([Running(), Running()]), ReadErrorCall = 10, ReadError = new IOException("fixture") })
+        })
+        {
+            var stoppedEarly = await SearchIndexRebuild.RunAsync(true, Path.Combine(root, name), host);
+            Require(host.Calls.Contains("stop") && host.Calls.Count(call => call == "start") == 1 && !host.Calls.Contains("retain") &&
+                stoppedEarly.Detail.Contains("restart was attempted", StringComparison.Ordinal) &&
+                File.Exists(Path.Combine(root, name, "search-index-rebuild.pending.json")),
+                "Search rebuild exit after stopping the service attempts one restart: " + name);
+        }
+
         Console.WriteLine("PASS: guarded Windows Search index retention, repeated eligibility, rebuild verification and no-repeat reconciliation.");
     }
 

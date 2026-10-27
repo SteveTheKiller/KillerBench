@@ -112,7 +112,7 @@ public static class SearchIndexRebuild
             IndexPath, retainedPath, service.Running, service.StartMode, "Prepared");
         Directory.CreateDirectory(directory);
         await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(record, Capture.JsonOptions), token: token).ConfigureAwait(false);
-        bool mutationDispatched = false;
+        bool mutationDispatched = false, serviceRestoreNeeded = false;
 
         try
         {
@@ -139,15 +139,16 @@ public static class SearchIndexRebuild
             }
 
             progress?.Report("Stopping Windows Search");
-            mutationDispatched = true;
-            if (!Complete(await host.StopServiceAsync(token).ConfigureAwait(false))) return Uncertain("Windows Search did not stop cleanly. The preparation record was retained.");
+            mutationDispatched = serviceRestoreNeeded = true;
+            if (!Complete(await host.StopServiceAsync(token).ConfigureAwait(false))) return await RestoreAsync("Windows Search did not stop cleanly. The preparation record was retained.").ConfigureAwait(false);
             var stopped = await host.ReadServiceAsync(token).ConfigureAwait(false);
             if (!stopped.Complete || !stopped.Exists || stopped.Running || stopped.StartMode != service.StartMode)
-                return Uncertain("The stopped service state could not be verified exactly. The preparation record was retained.");
+                return await RestoreAsync("The stopped service state could not be verified exactly. The preparation record was retained.").ConfigureAwait(false);
 
             record = record with { Stage = "ServiceStopped" };
             await JournalPersistence.WriteAsync(pendingPath, JsonSerializer.Serialize(record, Capture.JsonOptions), token: token).ConfigureAwait(false);
             progress?.Report("Retaining the existing Search index");
+            serviceRestoreNeeded = false;
             if (!Complete(await host.RetainIndexAsync(IndexPath, retainedPath, token).ConfigureAwait(false)))
             {
                 await host.StartServiceAsync(CancellationToken.None).ConfigureAwait(false);
@@ -185,8 +186,9 @@ public static class SearchIndexRebuild
                 return new(SearchIndexRebuildOutcome.Stopped,
                     "The final check was canceled before any Search service or index change was requested.", stoppedPath, retainedPath);
             }
-            return new(SearchIndexRebuildOutcome.Stopped,
-                "The operation was canceled. Current state is uncertain, so the retained data and preparation record were preserved for read-only reconciliation.", pendingPath, retainedPath);
+            string canceled = "The operation was canceled. Current state is uncertain, so the retained data and preparation record were preserved for read-only reconciliation.";
+            if (serviceRestoreNeeded) canceled = (await RestoreAsync(canceled).ConfigureAwait(false)).Detail;
+            return new(SearchIndexRebuildOutcome.Stopped, canceled, pendingPath, retainedPath);
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or TimeoutException or InvalidOperationException)
         {
@@ -203,11 +205,21 @@ public static class SearchIndexRebuild
                 return new(SearchIndexRebuildOutcome.Blocked,
                     "Final Search index rebuild evidence was unavailable before any service or index change was requested.", blockedPath, retainedPath);
             }
-            return Uncertain("The rebuild stopped with " + error.GetType().Name + ". Current state is uncertain, so the preparation record was preserved.");
+            string failed = "The rebuild stopped with " + error.GetType().Name + ". Current state is uncertain, so the preparation record was preserved.";
+            return serviceRestoreNeeded ? await RestoreAsync(failed).ConfigureAwait(false) : Uncertain(failed);
         }
 
         SearchIndexRebuildResult Blocked(string detail) => new(SearchIndexRebuildOutcome.Blocked, detail);
         SearchIndexRebuildResult Uncertain(string detail) => new(SearchIndexRebuildOutcome.Uncertain, detail, pendingPath, retainedPath);
+
+        // The index has not moved yet, so restarting Windows Search is the safe way back. Reconciliation never restarts it.
+        async Task<SearchIndexRebuildResult> RestoreAsync(string detail)
+        {
+            serviceRestoreNeeded = false;
+            try { await host.StartServiceAsync(CancellationToken.None).ConfigureAwait(false); }
+            catch (Exception failure) when (failure is IOException or UnauthorizedAccessException or TimeoutException or InvalidOperationException or OperationCanceledException) { }
+            return Uncertain(detail + " Windows Search restart was attempted.");
+        }
     }
 
     internal static bool ValidService(SearchIndexServiceSnapshot value) => value.Complete && value.Exists && value.Running &&
