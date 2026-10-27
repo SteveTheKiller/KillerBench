@@ -81,8 +81,8 @@ public partial class App
         string version = AppVersion();
 
         Directory.CreateDirectory(StartMenuDir(machine));
-        CreateShortcut(Path.Combine(StartMenuDir(machine), AppName + ".lnk"), exePath);
-        if (desktop) CreateShortcut(DesktopShortcut(machine), exePath);
+        WriteRegistrationShortcuts(Path.Combine(StartMenuDir(machine), AppName + ".lnk"),
+            desktop ? DesktopShortcut(machine) : null, exePath, CreateShortcut);
 
         using (var key = root.CreateSubKey(RegistryKeyPath))
         {
@@ -244,19 +244,30 @@ public partial class App
         notice.ShowDialog();
     }
 
-    private static void CreateShortcut(string shortcutPath, string targetPath)
+    /// <summary>Writes the Start Menu shortcut and, when requested, the desktop one. A shortcut that cannot be
+    /// written fails registration, so setup reports a nonzero result instead of success without shortcuts.</summary>
+    public static void WriteRegistrationShortcuts(string startMenuShortcut, string? desktopShortcut, string targetPath,
+        Func<string, string, bool> writeShortcut)
+    {
+        foreach (string? shortcut in new[] { startMenuShortcut, desktopShortcut })
+            if (shortcut is not null && !writeShortcut(shortcut, targetPath))
+                throw new IOException("The shortcut could not be created: " + shortcut);
+    }
+
+    private static bool CreateShortcut(string shortcutPath, string targetPath)
     {
         try
         {
             var shellType = Type.GetTypeFromProgID("WScript.Shell");
-            if (shellType is null) return;
+            if (shellType is null) return false;
             dynamic shell = Activator.CreateInstance(shellType)!;
             dynamic shortcut = shell.CreateShortcut(shortcutPath);
             shortcut.TargetPath = targetPath;
             shortcut.WorkingDirectory = Path.GetDirectoryName(targetPath);
             shortcut.Save();
+            return true;
         }
-        catch { }
+        catch { return false; }
     }
 
     /// <summary>The registered installed copy this process is running from, or null for a portable or

@@ -48,6 +48,29 @@ internal static class InstallationProtectionChecks
         TestHooksCompiledOut();
         UserCleanupResultChecked();
         RetainedDirectoriesSurfaced(scratch);
+        ShortcutFailureFailsRegistration();
+    }
+
+    /// <summary>/register-user and /register-machine must not report success when the Start Menu or requested
+    /// desktop shortcut could not be written. A thrown failure becomes a nonzero registration exit code.</summary>
+    private static void ShortcutFailureFailsRegistration()
+    {
+        var written = new System.Collections.Generic.List<string>();
+        KillerBench.App.WriteRegistrationShortcuts(@"C:\Fixture\Start\KillerBench.lnk", @"C:\Fixture\Desktop\KillerBench.lnk", @"C:\Fixture\KillerBench.exe",
+            (shortcut, _) => { written.Add(shortcut); return true; });
+        if (written.Count != 2) throw new Exception("Registration did not write the Start Menu and desktop shortcuts.");
+        foreach (string failing in new[] { "Start", "Desktop" })
+        {
+            bool refused = false;
+            try
+            {
+                KillerBench.App.WriteRegistrationShortcuts(@"C:\Fixture\Start\KillerBench.lnk", @"C:\Fixture\Desktop\KillerBench.lnk", @"C:\Fixture\KillerBench.exe",
+                    (shortcut, _) => !shortcut.Contains(failing));
+            }
+            catch (IOException) { refused = true; }
+            if (!refused) throw new Exception("Registration reported success after the " + failing + " shortcut failed.");
+        }
+        Console.WriteLine("PASS: install registration fails with a nonzero result when a shortcut cannot be written.");
     }
 
     /// <summary>Setup is a windowless WinExe and the elevated /silent child returns only an exit code, so retained
