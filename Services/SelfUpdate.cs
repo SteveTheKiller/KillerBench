@@ -7,10 +7,10 @@ using System.Text.RegularExpressions;
 namespace KillerBench.Services;
 
 /// <summary>
-/// KillerBench's own update check and download, ported from KillerPDF: the latest stable GitHub
-/// release, the installer or portable package that matches the running copy, and that package's
-/// SHA-256 from the release's SHA256SUMS.txt. Nothing on disk changes here except the temporary
-/// download; Shell\Updates.cs decides whether and how to install it.
+/// KillerBench's release names and the parsing rules its checks cover: the latest stable GitHub
+/// release, the installer and portable package names, and a package's SHA-256 from the release's
+/// SHA256SUMS.txt. The download and install run on the shared update stack
+/// (Services\UpdateService.cs, with KillerBench's modes in Services\UpdateService.Extras.cs).
 /// </summary>
 public static partial class SelfUpdate
 {
@@ -72,33 +72,6 @@ public static partial class SelfUpdate
                 return parts[1];
         }
         return null;
-    }
-
-    /// <summary>Downloads the package and checks it against the published checksum. Returns the
-    /// temporary file, or null if anything at all went wrong.</summary>
-    public static async Task<string?> DownloadVerifiedAsync(string tag, string assetName)
-    {
-        try
-        {
-            using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(120) };
-            http.DefaultRequestHeaders.UserAgent.ParseAdd("KillerBench-UpdateCheck");
-            // The checksums come from the release asset uploaded beside the package, so they cannot
-            // drift from it the way a file committed to the repository could.
-            byte[] package = await http.GetByteArrayAsync($"{Repo}/releases/download/{tag}/{assetName}").ConfigureAwait(false);
-            string sums = await http.GetStringAsync($"{Repo}/releases/download/{tag}/SHA256SUMS.txt").ConfigureAwait(false);
-            string? expected = ExpectedHash(sums, assetName);
-            if (expected is null
-                || !Convert.ToHexString(SHA256.HashData(package)).Equals(expected, StringComparison.OrdinalIgnoreCase))
-                return null;
-            string path = Path.Combine(Path.GetTempPath(), $"KillerBench_update_{Guid.NewGuid():N}.exe");
-            await File.WriteAllBytesAsync(path, package).ConfigureAwait(false);
-            UpdateImagePublication.RememberVerified(path, expected);
-            return path;
-        }
-        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or IOException or UnauthorizedAccessException)
-        {
-            return null;
-        }
     }
 
     [GeneratedRegex(@"\Av[0-9]+\.[0-9]+\.[0-9]+\z", RegexOptions.CultureInvariant)]

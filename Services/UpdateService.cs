@@ -1,124 +1,315 @@
+using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
-using System.Text;
+using System.Net;
+using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
-namespace KillerBench.Services;
-
-/// <summary>
-/// Release checking and one-click self-update against the GitHub releases of
-/// <see cref="AppInfo.GitHubRepo"/>, in the family's three steps so AboutController owns every piece
-/// of UI and the shutdown: <see cref="CheckAsync"/> finds a newer tag, <see cref="DownloadAsync"/>
-/// fetches and verifies the package, <see cref="StartSwap"/> launches the script that installs it.
-///
-/// KillerBench installs the way KillerPDF does rather than by copying an exe over itself. An
-/// installed copy hands the verified installer the same /install-user or /silent command a manual
-/// upgrade uses, into the folder it is already installed in. A portable copy replaces its launcher
-/// once the launcher and this process have exited. A copy that is neither, such as a development
-/// build, is not updated; the download step fails and the release page opens instead.
-/// </summary>
-internal static class UpdateService
+namespace KillerBench.Services
 {
-    private readonly record struct UpdateTarget(string Asset, string Executable, string? Launcher, int LauncherPid,
-        bool Machine, string? InstallDirectory);
-
-    /// <summary>Latest release page, used as the fallback whenever an automatic step fails.</summary>
-    internal static string ReleasesUrl => $"{SelfUpdate.Repo}/releases/latest";
-
-    /// <summary>Release page for one version.</summary>
-    internal static string ReleaseUrl(string version) => $"{SelfUpdate.Repo}/releases/tag/v{version}";
-
-    /// <summary>The newer stable release's tag, or null when this copy is current, offline, or there
-    /// is no release yet.</summary>
-    internal static Task<string?> CheckAsync(System.Version? current) =>
-        current is null ? Task.FromResult<string?>(null) : SelfUpdate.FindNewerReleaseAsync(current);
-
-    /// <summary>Downloads the package that matches this copy, checks it against the published
-    /// checksum and the publisher's signature, and returns the temporary file. Throws when this copy
-    /// cannot be updated or anything at all went wrong: an update that cannot be verified must not be
-    /// installed.</summary>
-    internal static async Task<string> DownloadAsync(string tag)
+    /// <summary>
+    /// Release checking and one-click self-update against the GitHub releases of
+    /// <see cref="AppInfo.GitHubRepo"/>.
+    ///
+    /// Split into three steps so the caller owns every piece of UI and the shutdown:
+    /// <see cref="CheckAsync"/> finds a newer tag, <see cref="DownloadAsync"/> fetches and verifies
+    /// the exe, <see cref="StartSwap"/> launches the helper that replaces it.
+    /// </summary>
+    internal static partial class UpdateService
     {
-        UpdateTarget target = FindTarget()
-            ?? throw new InvalidOperationException("This copy is neither installed nor portable.");
-        string download = await SelfUpdate.DownloadVerifiedAsync(tag, target.Asset).ConfigureAwait(false)
-            ?? throw new InvalidOperationException("The package could not be downloaded or did not match its checksum.");
-        // The checksum proves the file is the one on the release page; the signature proves the
-        // release page carried a package Steve signed.
-        var (valid, subject, _) = CodeSignature.GetSignerInfo(download);
-        if (!valid || !subject.Contains(AppInfo.SignerName, StringComparison.OrdinalIgnoreCase))
+        /// <summary>How this copy updates. The default swaps this exe for the released one. An app
+        /// that installs through its own installer, or runs behind a portable launcher, describes
+        /// that in <see cref="ChooseUpdateTarget"/> (KillerBench's installer and launcher modes).</summary>
+        internal sealed class UpdateTarget
         {
-            DiscardDownload(download);
-            throw new InvalidOperationException("The package is not signed by the publisher.");
-        }
-        return download;
-    }
+            /// <summary>Release asset to download and verify.</summary>
+            internal string Asset { get; set; } = AppInfo.ExeName;
+            /// <summary>An exe other than this one to swap, such as a portable launcher.</summary>
+            internal string? Replace { get; set; }
+            /// <summary>Another process (the launcher) the helper waits for before it swaps.</summary>
+            internal int WaitForProcess { get; set; }
+            /// <summary>When set, the verified installer is run with these arguments instead of a swap.</summary>
+            internal string? InstallerArguments { get; set; }
+            /// <summary>The installer targets a machine-wide installation, so its helper runs elevated.</summary>
+            internal bool Machine { get; set; }
+            /// <summary>This copy cannot update itself (a development build, say); the download step fails.</summary>
+            internal bool Unsupported { get; set; }
 
-    /// <summary>Starts the update helper. Throws if it cannot be started, including when the user
-    /// declines the UAC prompt, so the caller only shuts down once it is running. The installer
-    /// records the new version itself, so unlike an exe swap there is no registry to fix, and the
-    /// shared controller's version argument is not needed.</summary>
-    internal static void StartSwap(string download, string? newVersion = null)
-    {
-        UpdateTarget target = FindTarget()
-            ?? throw new InvalidOperationException("This copy is neither installed nor portable.");
-        int pid = Environment.ProcessId;
-        string replaced = target.Launcher ?? target.Executable;
-        // A machine-wide install or a portable copy in a protected folder is not writable by a normal
-        // user, so the helper runs elevated there. It relaunches through explorer.exe so the app comes
-        // back at the user's normal integrity level.
-        bool elevate = target.Machine || !CanWriteTo(Path.GetDirectoryName(replaced)!);
-        // The whole helper travels in the process command line, so nothing the user account can
-        // write is read after a consented elevated helper starts.
-        string script;
-        if (target.Launcher is not null)
-            script = UpdateHelperLaunch.WaitFor(pid, target.LauncherPid) +
-                UpdateImagePublication.Script(download, target.Launcher, elevate, ReleasesUrl, AppInfo.DisplayName);
-        else
+            internal bool IsPackage => InstallerArguments is not null || Replace is not null;
+        }
+
+        /// <summary>App hook: describe how this copy updates. Left alone, it swaps this exe.</summary>
+        static partial void ChooseUpdateTarget(UpdateTarget target);
+
+        internal static UpdateTarget Target()
         {
-            string folder = Convert.ToBase64String(Encoding.UTF8.GetBytes(target.InstallDirectory!));
-            // An elevated helper stages under Program Files, where only administrators can write.
-            string stageRoot = elevate
-                ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), AppInfo.DisplayName + " Update")
-                : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppInfo.DisplayName, "UpdateStage");
-            script = UpdateHelperLaunch.WaitFor(pid) + UpdateHelperLaunch.Installer(download,
-                UpdateImagePublication.VerifiedHash(download), AppInfo.SignerName,
-                (target.Machine ? "/silent" : "/install-user") + " /install-dir64:" + folder, elevate, replaced, stageRoot, ReleasesUrl);
+            var target = new UpdateTarget();
+            ChooseUpdateTarget(target);
+            return target;
         }
-        if (Process.Start(UpdateHelperLaunch.StartInfo(script, elevate)) is null)
-            throw new IOException("The update helper did not start. Download retained at: " + download);
-    }
 
-    /// <summary>Deletes a downloaded update that will not be installed.</summary>
-    internal static void DiscardDownload(string? path)
-    {
-        try { if (path is not null && File.Exists(path)) File.Delete(path); }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { }
-    }
+        /// <summary>Latest release page, used as the fallback whenever an automatic step fails.</summary>
+        internal static string ReleasesUrl =>
+            $"https://github.com/{AppInfo.GitHubRepo}/releases/latest";
 
-    private static UpdateTarget? FindTarget()
-    {
-        string? executable = Environment.ProcessPath;
-        if (string.IsNullOrEmpty(executable)) return null;
-        string? launcher = Environment.GetEnvironmentVariable("KILLERBENCH_LAUNCHER_PATH");
-        if (!string.IsNullOrWhiteSpace(launcher) && File.Exists(launcher))
+        /// <summary>Release page for one version.</summary>
+        internal static string ReleaseUrl(string version) =>
+            $"https://github.com/{AppInfo.GitHubRepo}/releases/tag/v{version}";
+
+        private static HttpClient NewClient(int timeoutSeconds)
         {
-            _ = int.TryParse(Environment.GetEnvironmentVariable("KILLERBENCH_LAUNCHER_PID"), out int launcherPid);
-            return new UpdateTarget(SelfUpdate.PortableAsset, executable, launcher, launcherPid, false, null);
+#if NETFRAMEWORK
+            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+#endif
+            var http = new HttpClient { Timeout = TimeSpan.FromSeconds(timeoutSeconds) };
+            http.DefaultRequestHeaders.UserAgent.ParseAdd($"{AppInfo.DisplayName}-UpdateCheck");
+            return http;
         }
-        var installed = App.InstalledCopy();
-        return installed is null
-            ? null
-            : new UpdateTarget(SelfUpdate.InstallerAsset, executable, null, 0, installed.Value.Machine, installed.Value.Directory);
-    }
 
-    private static bool CanWriteTo(string folder)
-    {
-        try
+        /// <summary>Asks GitHub for the latest release tag and returns it only when it is newer than
+        /// <paramref name="current"/>, as "v1.2.3". Null when there is nothing newer, or on any
+        /// failure: with no internet this has to stay quiet. Times out fast.</summary>
+        internal static async Task<string?> CheckAsync(Version? current)
         {
-            string probe = Path.Combine(folder, $".kb_write_{Guid.NewGuid():N}.tmp");
-            using (new FileStream(probe, FileMode.CreateNew, FileAccess.Write, FileShare.None, 1, FileOptions.DeleteOnClose)) { }
-            return true;
+            if (current is null) return null;
+            try
+            {
+                using var http = NewClient(4);
+                var json = await http.GetStringAsync(
+                    $"https://api.github.com/repos/{AppInfo.GitHubRepo}/releases/latest")
+                    .ConfigureAwait(false);
+
+                // Only a published, stable vX.Y.Z release is offered (KillerBench's release check).
+                if (Regex.IsMatch(json, "\"(draft|prerelease)\"\\s*:\\s*true")) return null;
+                var m = Regex.Match(json, "\"tag_name\"\\s*:\\s*\"(v?[0-9]+\\.[0-9]+\\.[0-9]+)\"");
+                if (!m.Success) return null;
+                if (!Version.TryParse(m.Groups[1].Value.TrimStart('v'), out var latest))
+                    return null;
+
+                var cur = new Version(current.Major, current.Minor, current.Build < 0 ? 0 : current.Build);
+                var lat = new Version(latest.Major, latest.Minor, latest.Build < 0 ? 0 : latest.Build);
+                return lat > cur ? $"v{lat.ToString(3)}" : null;
+            }
+            catch { return null; }
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { return false; }
+
+        /// <summary>Downloads the released exe for <paramref name="tag"/>, checks it against the
+        /// published SHA256SUMS.txt and writes it to a temp file, whose path is returned. Throws if
+        /// the download fails, the checksum entry is missing, or the hash does not match: an update
+        /// that cannot be verified must not be installed.</summary>
+        internal static async Task<string> DownloadAsync(string tag)
+        {
+            var target = Target();
+            if (target.Unsupported) throw new InvalidOperationException("This copy is neither installed nor portable.");
+            using var http = NewClient(90);
+
+            var exeUrl = $"https://github.com/{AppInfo.GitHubRepo}/releases/download/{tag}/{target.Asset}";
+            // The checksums come from the release asset next to the exe, not from the repo at the
+            // tag. Both files are uploaded to the release together, so the hash cannot drift from
+            // the exe the way a committed file does when the tag and commit order get muddled.
+            var sumsUrl = $"https://github.com/{AppInfo.GitHubRepo}/releases/download/{tag}/SHA256SUMS.txt";
+
+            var exeBytes = await http.GetByteArrayAsync(exeUrl).ConfigureAwait(false);
+            var sumsTxt  = await http.GetStringAsync(sumsUrl).ConfigureAwait(false);
+
+            string? expected = null;
+            foreach (var line in sumsTxt.Replace("\r", "").Split('\n'))
+            {
+                // Exactly "<asset> <hash>" for exactly this asset name (KillerBench's checksum rule).
+                var parts = line.Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length == 2 && string.Equals(parts[0], target.Asset, StringComparison.OrdinalIgnoreCase))
+                {
+                    expected = parts[1];
+                    break;
+                }
+            }
+            if (string.IsNullOrEmpty(expected)) throw new Exception("checksum entry not found");
+
+            string actual;
+            using (var sha = SHA256.Create())
+                actual = BitConverter.ToString(sha.ComputeHash(exeBytes)).Replace("-", "");
+            if (!actual.Equals(expected, StringComparison.OrdinalIgnoreCase))
+                throw new Exception("checksum mismatch");
+
+            SweepStaleDownloads(Path.GetTempPath(), DateTime.UtcNow);
+            var path = Path.Combine(Path.GetTempPath(),
+                                    $"{AppInfo.DisplayName}_update_{Guid.NewGuid():N}.exe");
+            File.WriteAllBytes(path, exeBytes);
+            // The checksum file comes from the same release as the exe, so it only proves the
+            // download arrived intact. The signature, product and version prove where it came from.
+            string signer;
+            try
+            {
+                // An installer or launcher package is not this app's assembly, so it is held to the
+                // publisher's signature alone; the app's own exe also has to be a newer release of it.
+                signer = target.IsPackage ? ReleaseIdentity.VerifyPackage(path)
+                    : ReleaseIdentity.Verify(path, tag, requireInstalledSignature: false);
+            }
+            catch { DiscardDownload(path); throw; }
+            UpdateImagePublication.RememberVerified(path, actual, signer);
+            return path;
+        }
+
+        /// <summary>Starts a helper that waits for this process to exit, swaps
+        /// <paramref name="newExe"/> over the running exe and relaunches it. Throws if the helper
+        /// cannot be started, including when the user declines the UAC prompt (Win32 1223) - the
+        /// caller must only shut down once this returns.
+        ///
+        /// A machine-wide install (Program Files, from the /silent path, winget, choco or an RMM) is
+        /// not writable by a normal user, so the swap has to run elevated. The copy result is
+        /// checked: without that, an unelevated swap fails silently and relaunches the OLD exe, and
+        /// the app appears to update to the same version with no error.</summary>
+        internal sealed class Platform
+        {
+            internal Func<string, bool> CanWrite = CanWriteTo;
+            internal Func<bool> IsElevated = KillerFamily.Deployment.InstallerExitCodes.IsElevated;
+            internal Func<ProcessStartInfo, Process?> Start = Process.Start;
+        }
+
+        internal static void StartSwap(string newExe, string? newVersion = null, Platform? platform = null)
+        {
+            platform ??= new Platform();
+            using var self = Process.GetCurrentProcess();
+            var curExe = self.MainModule!.FileName;
+            var target = Target();
+            if (target.Unsupported) throw new InvalidOperationException("This copy is neither installed nor portable.");
+            if (target.IsPackage)
+            {
+                StartPackage(newExe, curExe, self, target, platform);
+                return;
+            }
+            string hive = RegistryHiveFor(curExe);
+
+            // The machine install always goes through the trusted helper, elevated or not. A per-user
+            // or portable copy run as administrator can still write its own folder, and the trusted
+            // helper would refuse it, so it takes the same helper an unelevated copy uses.
+            bool needsElevation = !platform.CanWrite(Path.GetDirectoryName(curExe)!);
+            if (needsElevation || (hive == "HKLM" && platform.IsElevated()))
+            {
+                TrustedUpdate.Start(newExe, newVersion, platform);
+                return;
+            }
+
+            // The whole helper travels in the process command line, so no file the user account can
+            // write is read after it starts. A failed publication opens the recovery report.
+            string script = "$ErrorActionPreference = 'Stop'\n"
+                + TrustedUpdate.Wait(self.Id, self.StartTime.ToUniversalTime().Ticks) + "\n"
+                + UpdateImagePublication.Script(newExe, curExe, false, ReleasesUrl, AppInfo.DisplayName,
+                    newVersion, hive, showReport: true);
+            var psi = HelperStart(script);
+            if (platform.Start(psi) is null)
+                throw new IOException("The update helper did not start. Download retained at: " + newExe);
+        }
+
+        /// <summary>The installer and launcher modes. The helper waits for this process (and the
+        /// launcher), then either runs the verified installer from a staging folder it holds open or
+        /// swaps the launcher. A machine install or a protected launcher folder runs the helper
+        /// elevated, with its whole script in the consented command line.</summary>
+        private static void StartPackage(string download, string curExe, Process self, UpdateTarget target, Platform platform)
+        {
+            string replaced = target.Replace ?? curExe;
+            bool elevate = target.Machine || !platform.CanWrite(Path.GetDirectoryName(replaced)!);
+            string script = "$ErrorActionPreference = 'Stop'\n"
+                + TrustedUpdate.Wait(self.Id, self.StartTime.ToUniversalTime().Ticks) + "\n";
+            if (target.WaitForProcess > 0)
+                script += "while (Get-Process -Id " + target.WaitForProcess.ToString(CultureInfo.InvariantCulture)
+                    + " -ErrorAction SilentlyContinue) { Start-Sleep -Milliseconds 500 }\n";
+            if (target.InstallerArguments is null)
+                script += UpdateImagePublication.Script(download, replaced, elevate, ReleasesUrl, AppInfo.DisplayName,
+                    showReport: !elevate);
+            else
+            {
+                // An elevated helper stages under Program Files, where only administrators can write.
+                string stageRoot = elevate
+                    ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), AppInfo.DisplayName + " Update")
+                    : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppInfo.DisplayName, "UpdateStage");
+                script += UpdateImagePublication.Installer(download, target.InstallerArguments, elevate, replaced, stageRoot, ReleasesUrl);
+            }
+            var start = HelperStart(script);
+            if (elevate) start.Verb = "runas";
+            if (platform.Start(start) is null)
+                throw new IOException("The update helper did not start. Download retained at: " + download);
+        }
+
+        /// <summary>Starts Windows PowerShell directly with the whole unelevated helper in its command line.</summary>
+        internal static ProcessStartInfo HelperStart(string script)
+        {
+            string system = Environment.GetFolderPath(Environment.SpecialFolder.System);
+            return new ProcessStartInfo(Path.Combine(system, @"WindowsPowerShell\v1.0\powershell.exe"),
+                ImmutablePowerShell.Arguments(script))
+            {
+                WindowStyle = ProcessWindowStyle.Hidden,
+                WorkingDirectory = system,
+                UseShellExecute = true
+            };
+        }
+
+        /// <summary>"HKCU" when <paramref name="exePath"/> is the per-user install,
+        /// "HKLM" when it is the machine-wide install, "" for a portable copy - which has no
+        /// install keys and must not gain any from an update.</summary>
+        private static string RegistryHiveFor(string exePath)
+        {
+            try
+            {
+                string userExe = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "Programs", AppInfo.DisplayName, AppInfo.ExeName);
+                string machineExe = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                    AppInfo.DisplayName, AppInfo.ExeName);
+                if (string.Equals(exePath, userExe, StringComparison.OrdinalIgnoreCase)) return "HKCU";
+                if (string.Equals(exePath, machineExe, StringComparison.OrdinalIgnoreCase)) return "HKLM";
+            }
+            catch { }
+            return "";
+        }
+
+        /// <summary>Deletes update downloads and recovery reports from earlier attempts that were
+        /// refused, declined or interrupted. Only names this app writes are touched, and only after an
+        /// hour, so a download another window is installing right now is left alone.</summary>
+        internal static void SweepStaleDownloads(string directory, DateTime utcNow)
+        {
+            string prefix = AppInfo.DisplayName + "_update_";
+            string[] files;
+            try { files = Directory.GetFiles(directory, prefix + "*.exe*"); }
+            catch { return; }
+            foreach (string file in files)
+            {
+                string name = Path.GetFileName(file);
+                string rest = name.Substring(prefix.Length);
+                if (!rest.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) && !rest.EndsWith(".exe.recovery.txt", StringComparison.OrdinalIgnoreCase))
+                    continue;
+                if (rest.Length < 32 || !Guid.TryParseExact(rest.Substring(0, 32), "N", out _) || rest[32] != '.') continue;
+                try
+                {
+                    if (utcNow - File.GetLastWriteTimeUtc(file) > TimeSpan.FromHours(1)) File.Delete(file);
+                }
+                catch { /* In use or protected: a later sweep gets it. */ }
+            }
+        }
+
+        /// <summary>Deletes a downloaded update that will not be installed.</summary>
+        internal static void DiscardDownload(string? path)
+        {
+            try { if (path is not null && File.Exists(path)) File.Delete(path); } catch { }
+        }
+
+        /// <summary>True if this process can create a file in <paramref name="dir"/>. Decides whether
+        /// the swap needs elevating: Program Files installs are not writable by a normal user,
+        /// per-user installs under LOCALAPPDATA always are.</summary>
+        private static bool CanWriteTo(string dir)
+        {
+            try
+            {
+                var probe = Path.Combine(dir, $".upd_write_{Guid.NewGuid():N}.tmp");
+                using (new FileStream(probe, FileMode.CreateNew, FileAccess.Write, FileShare.None,
+                                      1, FileOptions.DeleteOnClose)) { }
+                return true;
+            }
+            catch { return false; }
+        }
     }
 }

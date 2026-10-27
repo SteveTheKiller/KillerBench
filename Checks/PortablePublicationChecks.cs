@@ -15,9 +15,7 @@ internal static class PortablePublicationChecks
             Directory.CreateDirectory(Path.GetDirectoryName(target)!);
             byte[] bytes = mode == "unsigned" ? [1, 2, 3] : File.ReadAllBytes(Path.Combine(Environment.SystemDirectory, "cmd.exe"));
             File.WriteAllBytes(download, bytes);
-            UpdateImagePublication.RememberVerified(download, Convert.ToHexString(SHA256.HashData(bytes)));
-            string script = UpdateImagePublication.Script(download, target, false, "https://example.invalid", "Fixture");
-            string marker = Path.Combine(root, "relaunch.txt");
+            UpdateImagePublication.RememberVerified(download, Convert.ToHexString(SHA256.HashData(bytes)), UpdateHelperChecks.Signer);
             string hook = """
 $ops.Relaunch = { param($plan)
     $blocked = 0
@@ -27,13 +25,13 @@ $ops.Relaunch = { param($plan)
     [IO.File]::WriteAllText($plan.Report + '.launched', [string]$blocked)
 }
 """;
-            // Replace only the UI/launch boundary and fixture publisher. Production trust and file protection run.
-            string signerHook = mode == "wrong-publisher" ? "$plan | Add-Member Signer 'Not The Publisher' -Force\n" : "$plan | Add-Member Signer 'Microsoft' -Force\n";
-            script = script.Replace("if (Invoke-UpdateImagePublication $plan $ops)", signerHook + hook + "\nif (Invoke-UpdateImagePublication $plan $ops)", StringComparison.Ordinal)
-                .Replace("try { Start-Process $plan.Releases } catch { }", "", StringComparison.Ordinal);
+            // Replace only the launch boundary and the fixture publisher (cmd.exe is catalog-signed by Microsoft).
+            // The hash checks, parent pins and held image run as shipped.
+            string signer = mode == "wrong-publisher" ? "$plan.Signer = 'Not The Publisher'\n" : "$plan.Signer = 'Microsoft'\n";
+            string script = UpdateImagePublication.Script(download, target, false, "https://example.invalid", "Fixture",
+                overrides: signer + UpdateHelperChecks.CatalogPublisher + "\n" + hook);
             if (mode == "swapped") File.AppendAllText(download, "changed after verification");
-            var start = UpdateHelperLaunch.StartInfo(script, elevate: false);
-            start.UseShellExecute = false;
+            var start = UpdateHelperChecks.Helper(script);
             start.RedirectStandardError = true;
             start.RedirectStandardOutput = true;
             start.Environment["PSModulePath"] = Path.Combine(Environment.SystemDirectory, @"WindowsPowerShell\v1.0\Modules");
@@ -49,7 +47,7 @@ $ops.Relaunch = { param($plan)
             }
             else if (child.ExitCode == 0 || File.Exists(launched))
                 throw new Exception("Portable publication executed an unverified " + mode + " image.");
-            Console.WriteLine("PASS: portable publication " + mode + "; real signature/hash/hold, launch substituted.");
+            Console.WriteLine("PASS: portable publication " + mode + "; real hash/hold, fixture publisher, launch substituted.");
         }
     }
 }
