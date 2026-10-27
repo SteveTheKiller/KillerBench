@@ -26,6 +26,7 @@ $ops.Publisher = { param($path, $plan)
     {
         string root = Path.Combine(scratch, "update-helper");
         Directory.CreateDirectory(root);
+        PortableLauncherCases(root);
         byte[] installer = File.ReadAllBytes(Path.Combine(Environment.SystemDirectory, "cmd.exe"));
         string hash = Convert.ToHexString(SHA256.HashData(installer));
 
@@ -60,6 +61,36 @@ $ops.Publisher = { param($path, $plan)
             Require(parser.ExitCode == 0, "The portable update helper script parses");
         }
         Console.WriteLine("PASS: the portable update helper parses and helpers launch PowerShell with the whole script in the command line.");
+    }
+
+    /// <summary>A portable copy overwrites the launcher named by KILLERBENCH_LAUNCHER_PATH, elevated when its folder
+    /// is not writable. Only a KillerBench launcher that this copy's portable marker names, and that may replace this
+    /// copy under its signature, is accepted. Anything else falls through to the installed or unsupported path.</summary>
+    private static void PortableLauncherCases(string root)
+    {
+        string folder = Path.Combine(root, "portable-launcher");
+        string extracted = Path.Combine(folder, "extracted");
+        Directory.CreateDirectory(extracted);
+        // An unsigned image stands in for the running copy, as a local build is.
+        string current = Path.Combine(AppContext.BaseDirectory, "KillerBench.Checks.exe");
+        Require(File.Exists(current), "The unsigned check host is available as the running copy");
+        string launcher = Path.Combine(folder, "KillerBench-Portable.exe");
+        File.Copy(Path.Combine(Environment.SystemDirectory, "cmd.exe"), launcher, true);
+        string marker = Path.Combine(extracted, ".killerbench-portable");
+        File.WriteAllLines(marker, ["KillerBench", "1.0.0", "4242", "", "0", ""]);
+
+        Require(PortableUpdateTarget.IsTrustedLauncher(launcher, "4242", extracted, current),
+            "The launcher that started this portable copy is accepted");
+        Require(!PortableUpdateTarget.IsTrustedLauncher(Path.Combine(Environment.SystemDirectory, "cmd.exe"), "4242", extracted, current),
+            "An unrelated existing file named by KILLERBENCH_LAUNCHER_PATH is never replaced");
+        string notes = Path.Combine(folder, "KillerBench-notes.txt");
+        File.WriteAllText(notes, "Unrelated data");
+        Require(!PortableUpdateTarget.IsTrustedLauncher(notes, "4242", extracted, current), "A file that is not an executable is never replaced");
+        Require(!PortableUpdateTarget.IsTrustedLauncher(launcher, "4243", extracted, current), "A launcher the portable marker does not name is refused");
+        Require(!PortableUpdateTarget.IsTrustedLauncher(launcher, "4242", folder, current), "A copy with no portable marker is not portable");
+        Require(!PortableUpdateTarget.IsTrustedLauncher(Path.Combine(folder, "KillerBench-Missing.exe"), "4242", extracted, current),
+            "A missing launcher is refused");
+        Console.WriteLine("PASS: a portable update replaces only the KillerBench launcher named by this copy's marker, never another file from KILLERBENCH_LAUNCHER_PATH.");
     }
 
     /// <summary>Windows PowerShell with the whole script in its command line, hidden, as the update stack starts it.</summary>

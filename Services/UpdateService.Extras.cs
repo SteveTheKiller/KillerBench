@@ -17,9 +17,10 @@ namespace KillerBench.Services
         static partial void ChooseUpdateTarget(UpdateTarget target)
         {
             string? launcher = Environment.GetEnvironmentVariable("KILLERBENCH_LAUNCHER_PATH");
-            if (!string.IsNullOrWhiteSpace(launcher) && File.Exists(launcher))
+            string? launcherPidText = Environment.GetEnvironmentVariable("KILLERBENCH_LAUNCHER_PID");
+            if (PortableUpdateTarget.IsTrustedLauncher(launcher, launcherPidText, AppContext.BaseDirectory, Environment.ProcessPath))
             {
-                _ = int.TryParse(Environment.GetEnvironmentVariable("KILLERBENCH_LAUNCHER_PID"), out int launcherPid);
+                _ = int.TryParse(launcherPidText, out int launcherPid);
                 target.Asset = SelfUpdate.PortableAsset;
                 target.Replace = launcher;
                 target.WaitForProcess = launcherPid;
@@ -35,6 +36,42 @@ namespace KillerBench.Services
             target.Machine = installed.Value.Machine;
             target.InstallerArguments = (installed.Value.Machine ? "/silent" : "/install-user")
                 + " /install-dir64:" + Convert.ToBase64String(Encoding.UTF8.GetBytes(installed.Value.Directory));
+        }
+    }
+
+    /// <summary>
+    /// APP-OWNED: decides whether the launcher named by KILLERBENCH_LAUNCHER_PATH is the one to replace. The
+    /// variable is inherited, and the replacement can run elevated, so the path alone is not trusted. It must be a
+    /// KillerBench executable, the portable marker beside this copy must name the launcher process that started it,
+    /// and the launcher must be one this copy may replace under its signature.
+    /// </summary>
+    public static class PortableUpdateTarget
+    {
+        private const string MarkerName = ".killerbench-portable";
+
+        public static bool IsTrustedLauncher(string? launcher, string? launcherPid, string appDirectory, string? currentExecutable)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(launcher) || string.IsNullOrWhiteSpace(launcherPid) ||
+                    string.IsNullOrWhiteSpace(currentExecutable)) return false;
+                string path = Path.GetFullPath(launcher);
+                string name = Path.GetFileName(path);
+                if (!name.StartsWith("KillerBench", StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(Path.GetExtension(name), ".exe", StringComparison.OrdinalIgnoreCase) ||
+                    !File.Exists(path)) return false;
+                string marker = Path.Combine(appDirectory, MarkerName);
+                if (!File.Exists(marker)) return false;
+                string[] lines = File.ReadAllLines(marker);
+                if (lines.Length < 3 || !string.Equals(lines[0], "KillerBench", StringComparison.Ordinal) ||
+                    !string.Equals(lines[2], launcherPid.Trim(), StringComparison.Ordinal)) return false;
+                return CodeSignature.MayReplace(currentExecutable, path);
+            }
+            catch (Exception error) when (error is IOException || error is UnauthorizedAccessException ||
+                error is ArgumentException || error is NotSupportedException)
+            {
+                return false;
+            }
         }
     }
 }
