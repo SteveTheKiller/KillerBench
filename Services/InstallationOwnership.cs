@@ -96,9 +96,9 @@ public static class InstallationOwnership
             {
                 if (!Directory.Exists(destination))
                 {
+                    // A restored backup is the live install again, not recovery data, so it is not reported.
                     try { move(backup, destination); }
                     catch { retained(backup); throw; }
-                    retained(destination);
                 }
                 else retained(backup);
             }

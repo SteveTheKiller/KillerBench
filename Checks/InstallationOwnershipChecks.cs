@@ -132,6 +132,37 @@ internal static class InstallationOwnershipChecks
                 mode == "registration-failed" && !retained.Contains(destination))
                 throw new Exception("Publication cleanup lost a post-validation sentinel, new payload, or recovery path.");
         }
+        RestoredPublicationCase(scratch);
+    }
+
+    private static void RestoredPublicationCase(string scratch)
+    {
+        // The staged payload cannot be moved in, so the previous install is moved back. The restored
+        // live install is not recovery data and must never be reported as retained.
+        string folder = Path.Combine(scratch, "publication-" + Guid.NewGuid().ToString("N"));
+        string destination = Path.Combine(folder, "app"), staging = Path.Combine(folder, "app.staging-fixture");
+        Directory.CreateDirectory(destination);
+        Directory.CreateDirectory(staging);
+        string oldExe = Path.Combine(destination, "KillerBench.exe");
+        File.WriteAllText(oldExe, "Old payload must be preserved");
+        File.WriteAllText(Path.Combine(staging, "KillerBench.exe"), "New prepared payload");
+        var retained = new List<string>();
+        bool failed = false;
+        try
+        {
+            InstallationOwnership.PublishPreparedDirectory(destination, staging, _ => { }, () => { }, retained.Add,
+                (source, target) =>
+                {
+                    if (source == staging) throw new IOException("Substituted staging move failure.");
+                    Directory.Move(source, target);
+                });
+        }
+        catch (IOException) { failed = true; }
+        if (!failed || File.ReadAllText(oldExe) != "Old payload must be preserved" || Directory.GetDirectories(folder, "app.previous-*").Length != 0)
+            throw new Exception("A failed staging move did not restore the previous install.");
+        if (retained.Contains(destination) || !retained.Contains(staging))
+            throw new Exception("Setup reported the restored live install as retained recovery data, or lost the staging path: " + string.Join(", ", retained));
+        Console.WriteLine("PASS: a restored live install is not reported as retained recovery data.");
     }
 
     private static string Entry(string path, string name)
