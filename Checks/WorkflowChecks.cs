@@ -6,6 +6,17 @@ internal static class WorkflowChecks
 {
     internal static async Task RunAsync(string folder)
     {
+        foreach (var failedEvidence in new ToolResult[] { new(1, "", "", false), new(0, "", "", false) { TimedOut = true },
+            new(0, "", "", true), new(0, "", "Fixture read failed", false) })
+        {
+            var failedInformation = new WorkflowCheck("Search history", CheckState.Information, "Fixture history", Evidence: failedEvidence);
+            Require(failedInformation.EffectiveState == CheckState.Unknown,
+                "Information on failed, timed-out, truncated or errored evidence is effectively unknown");
+            var failedInformationHost = new Host { InspectionOverride = [failedInformation] };
+            var failedInformationRun = await Workflows.RunAsync(WorkflowKind.Search, false, folder, host: failedInformationHost);
+            Require(failedInformationRun.Status == "Needs attention",
+                "A workflow never reports no issues when Information rests on failed evidence");
+        }
         foreach (bool otherFault in new[] { false, true })
         {
             var elevationHost = new Host { InspectionOverride = [new("Administrator", CheckState.Attention, "Elevation required"),

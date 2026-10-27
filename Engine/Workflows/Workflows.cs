@@ -10,7 +10,7 @@ public sealed record WorkflowCheck(string Name, CheckState State, string Detail,
 {
     public ServiceDependencyGraphResult? ServiceDependencies { get; init; }
     public bool DemandStartAuthorized { get; init; }
-    public CheckState EffectiveState => State == CheckState.Clear &&
+    public CheckState EffectiveState => State is CheckState.Clear or CheckState.Information &&
         (Evidence is { ExitCode: not 0 } or { TimedOut: true } or { Truncated: true } || !string.IsNullOrWhiteSpace(Evidence?.Error))
         ? CheckState.Unknown : State;
 }
