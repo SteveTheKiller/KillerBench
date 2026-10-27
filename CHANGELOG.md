@@ -69,6 +69,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Desktop, accessibility and localization
 
+- The file picker's recent locations and places lists are named for screen readers.
 - Black table headers match the content surface, and softer grain keeps dark surfaces from looking gray.
 
 - About groups settings in two columns and can hide shortcut hints in menus and tooltips without disabling keyboard shortcuts.
