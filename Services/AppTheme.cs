@@ -29,6 +29,8 @@ namespace KillerBench.Services
             string? value = Preferences.Get(key);
             if (key == "Theme" && value == "Retro98") return "98SE";
             if (key == "98SEAccent" && value == null) return Preferences.Get("RetroAccent");
+            // KillerBench saved Czech and Italian as "Cs" and "It" before the family Locale names.
+            if (key == "Locale") return value switch { "Cs" => "CsCZ", "It" => "ItIT", _ => value };
             return value;
         }
 

@@ -37,14 +37,22 @@ public partial class App : Application
         KillerFamily.Layout.ShortcutHints.Initialize(Services.Preferences.Get, Services.Preferences.Set);
         Services.ThemeManager.Initialize();
         Services.FilmGrain.Initialize();
-        Services.LocaleManager.GetSetting = Services.Preferences.Get;
-        Services.LocaleManager.SetSetting = Services.Preferences.Set;
-        Services.LocaleManager.Initialize();
+        // The family LocaleManager reads and writes "Locale" through the theme settings hooks.
+        // Demo screenshots are always English, without touching the saved language.
         if (ScreenshotMode)
         {
-            Services.LocaleManager.ApplyTemporary(Services.Locale.EnUS);
-            System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
-            System.Globalization.CultureInfo.CurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
+            var saved = Services.ThemeManager.GetSetting;
+            Services.ThemeManager.GetSetting = key => key == "Locale" ? nameof(Services.Locale.EnUS) : saved(key);
+            Services.LocaleManager.Initialize();
+            Services.ThemeManager.GetSetting = saved;
+        }
+        else
+        {
+            // --lang-file <path>: translator test mode (Services/LocaleManager.cs).
+            int langFile = Array.FindIndex(e.Args, a => string.Equals(a, "--lang-file", StringComparison.OrdinalIgnoreCase));
+            if (langFile >= 0 && langFile + 1 < e.Args.Length)
+                Services.LocaleManager.ExternalFile = System.IO.Path.GetFullPath(e.Args[langFile + 1]);
+            Services.LocaleManager.Initialize();
         }
         base.OnStartup(e);
         // Every window (dialogs, pickers) takes the family UI face from the active theme unless it sets

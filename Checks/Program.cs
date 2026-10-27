@@ -198,7 +198,7 @@ internal static class Program
             KillerBench.Services.Theme.Blood => Color.FromRgb(0x40, 0x1D, 0x1D),
             KillerBench.Services.Theme.Greed => Color.FromRgb(0x0F, 0x4A, 0x30),
             KillerBench.Services.Theme.Cyanotic => Color.FromRgb(0x18, 0x34, 0x50),
-            KillerBench.Services.Theme.Ectoplasm => Color.FromRgb(0x10, 0x9F, 0xA3),
+            KillerBench.Services.Theme.Ectoplasm => Color.FromRgb(0x0B, 0x5C, 0x5F),
             KillerBench.Services.Theme.Decay => Color.FromRgb(0x6B, 0x70, 0x5C),
             KillerBench.Services.Theme.Malaise => Color.FromRgb(0x4A, 0x51, 0x54),
             KillerBench.Services.Theme.Sepulchre => Color.FromRgb(0x83, 0x5A, 0x30),
@@ -1674,7 +1674,12 @@ internal static class Program
             Capture(languages, Path.Combine(scratch, "language-menu.png"));
             var languageColumns = ((StackPanel)languages.Items[0]).Children.OfType<StackPanel>().ToArray();
             var languageButtons = languageColumns.SelectMany(column => column.Children.OfType<RadioButton>()).ToArray();
-            var supportedLocales = Enum.GetValues<KillerBench.Services.Locale>();
+            // The family Locale and LocaleManager are internal to the app, so they are reached by reflection.
+            var localeType = typeof(KillerBench.App).Assembly.GetType("KillerBench.Services.Locale", true)!;
+            var applyLocale = typeof(KillerBench.App).Assembly.GetType("KillerBench.Services.LocaleManager", true)!
+                .GetMethod("Apply", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic)!;
+            var englishLocale = Enum.Parse(localeType, "EnUS");
+            var supportedLocales = Enum.GetValues(localeType).Cast<object>().ToArray();
             Require(languageColumns.Length == 2 &&
                     Math.Abs(languageColumns[0].Children.OfType<RadioButton>().Count() -
                              languageColumns[1].Children.OfType<RadioButton>().Count()) <= 1 &&
@@ -1682,22 +1687,22 @@ internal static class Program
                     supportedLocales.All(locale => languageButtons.Count(button => Equals(button.Tag, locale)) == 1),
                 "Every supported language appears exactly once in two balanced columns");
             languages.IsOpen = false;
-            foreach (var locale in Enum.GetValues<KillerBench.Services.Locale>())
+            foreach (var locale in supportedLocales)
             {
-                KillerBench.Services.LocaleManager.Apply(locale);
+                applyLocale.Invoke(null, new[] { locale });
                 var openLog = (string)application.FindResource("Str_Content_Open_log");
-                Require(locale == KillerBench.Services.Locale.EnUS
+                Require(Equals(locale, englishLocale)
                         ? openLog == "Open log"
                         : openLog != "Open log",
                     "Every non-English locale overrides ordinary UI text");
-                if (locale != KillerBench.Services.Locale.EnUS)
+                if (!Equals(locale, englishLocale))
                 {
                     var dictionaries = application.Resources.MergedDictionaries;
                     Require(dictionaries.Count > 4 && dictionaries[4].Count == dictionaries[3].Count,
                         "Every non-English locale has complete resource coverage");
                 }
             }
-            KillerBench.Services.LocaleManager.Apply(KillerBench.Services.Locale.EnUS);
+            applyLocale.Invoke(null, new[] { englishLocale });
             Require(((Border)window.FindName("LeftPanel")).Style != window.FindResource("Panel") && ((Border)window.FindName("LeftPanel")).Background == window.FindResource("SidebarPaneBrush"),
                 "Tool sidebar sits on the window through SidebarPaneBrush like KillerScan");
             Require(((TextBox)window.FindName("PathBox")).Padding.Top <= 3, "Compact text input padding");
