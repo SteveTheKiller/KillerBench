@@ -80,6 +80,19 @@ internal static class ThirdPartyUpdateExecutionChecks
         Require((await ThirdPartyUpdateExecution.ReconcileAsync(renamedFolder, renamed)).Outcome == ThirdPartyUpdateRecoveryOutcome.Verified &&
             renamed.Upgrades == 0, "A renamed-machine record is archived once the exact version is verified, without another update");
 
+        string redirectedFolder = Path.Combine(scratch, "third-party-update-redirected-journal");
+        string outsideFolder = Path.Combine(scratch, "third-party-update-outside");
+        Directory.CreateDirectory(redirectedFolder);
+        Directory.CreateDirectory(outsideFolder);
+        string outsideJournal = Path.Combine(outsideFolder, "planted.jsonl");
+        await File.WriteAllTextAsync(Path.Combine(redirectedFolder, "third-party-update.pending.json"),
+            "{\"schema\":1,\"machine\":\"FIXTURE\",\"journal\":" + System.Text.Json.JsonSerializer.Serialize(outsideJournal) +
+            ",\"selection\":{\"id\":\"Vendor.Tool\",\"source\":\"winget\",\"targetVersion\":\"2.0\"},\"preparedUtc\":\"2026-09-16T00:00:00Z\"}");
+        var redirected = await ThirdPartyUpdateExecution.ReconcileAsync(redirectedFolder, new Fixture(discovery, "2.0"));
+        Require(redirected.Outcome == ThirdPartyUpdateRecoveryOutcome.InvalidRecord && Directory.GetFiles(outsideFolder).Length == 0 &&
+            File.Exists(Path.Combine(redirectedFolder, "third-party-update.pending.json")),
+            "A pending record cannot direct its archive outside the journal folder");
+
         Console.WriteLine("PASS: exact third-party application planning, bounded update dispatch, final eligibility, version verification and no-repeat recovery; simulated provider only.");
     }
 

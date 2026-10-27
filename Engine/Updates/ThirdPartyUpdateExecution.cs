@@ -206,11 +206,16 @@ public static class ThirdPartyUpdateExecution
             // Machine is kept as evidence only: this per-user folder survives a computer rename, and the installed version is still verified.
             if (record.Schema != 1 || string.IsNullOrWhiteSpace(record.Machine) ||
                 string.IsNullOrWhiteSpace(record.Journal) || !Path.IsPathFullyQualified(record.Journal)) throw new InvalidDataException("Pending record identity is invalid.");
+            // The record is user-writable while recovery may run elevated, so it never chooses where the archive is written.
+            string journalFile = Path.GetFileName(record.Journal);
+            if (!string.Equals(Path.GetDirectoryName(Path.GetFullPath(record.Journal))?.TrimEnd(Path.DirectorySeparatorChar),
+                    Path.GetFullPath(journalFolder).TrimEnd(Path.DirectorySeparatorChar), StringComparison.OrdinalIgnoreCase) || string.IsNullOrEmpty(journalFile))
+                throw new InvalidDataException("Pending record journal is outside the update journal folder.");
             ThirdPartyUpdatePlanning.Validate(record.Selection);
             string? installed = await ReadBounded(t => host.ReadInstalledVersionAsync(record.Selection.Id, record.Selection.Source, t), TimeSpan.FromMinutes(5), token).ConfigureAwait(false);
             if (!string.Equals(installed, record.Selection.TargetVersion, StringComparison.OrdinalIgnoreCase))
                 return new(ThirdPartyUpdateRecoveryOutcome.StillPending, "The exact target version is not verified. No update was retried.", pendingPath);
-            RecoveryRecordFiles.Archive(recordFile, record.Journal + ".recovered.json");
+            RecoveryRecordFiles.Archive(recordFile, Path.Combine(journalFolder, journalFile + ".recovered.json"));
             return new(ThirdPartyUpdateRecoveryOutcome.Verified, "Fresh exact-package inventory reports the requested version. The pending record was archived without retrying the update.", pendingPath);
         }
         catch (OperationCanceledException) { throw; }
