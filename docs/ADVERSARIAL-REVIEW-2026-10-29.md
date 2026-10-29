@@ -64,6 +64,15 @@ Three read-only diagnostics use the same apostrophe-only quoting (EventLogCapaci
 
 KillerPDF and KillerShot have the same `TrustedUpdate` helper with no `/apply-verified-update` dispatch in `App.xaml.cs`. KillerNotes, KillerScan, KillerShell and Killendar do route it. Both are now fixed: KillerPDF `5d7d7f2` (1,446 headless tests pass) and KillerShot `c356ecc` (builds clean; it has no unit test project).
 
+## SN01 verification, 2026-10-29
+
+Steve assigned SN01 for the remaining tests. Builds were self-contained Release publishes of `5763859` (fixed) and `f9b3be2` (before this review).
+
+- **D-010, different account.** `killerbench-cli cleanup --user-temp --office-caches` and `orca-cache-reset --mode Classic` ran as `nt authority\system` twice, through a token moved into each session. In session 0, with no desktop shell, the paths stayed on `C:\WINDOWS\system32\config\systemprofile\AppData\Local`. In the agent's console session (session 1), the same SYSTEM process resolved `C:\Users\agent\AppData\Local\Temp` and the agent's Office cache folders, and the Outlook reset returned Blocked with the different-account message. Both runs were previews only.
+- **S-001, update helper dispatch.** `KillerBench.exe /apply-verified-update` ran in the agent's desktop session. The fixed build exited in 3.4 seconds with code 1625 and showed no window. The pre-review build opened a "KillerBench" window and was still running at 25 seconds, when the test ended it.
+- **Not covered.** A full elevated update needs a signed release and an administrator approving UAC, and SN01's agent is a standard user. The real file removal under another account was not run; only the previews were.
+
+Cleanup: the task folder, the temporary scheduled task and a lock file the SYSTEM run created under the system profile were removed. Every `kp-*` and `ks-*` folder on SN01 was left untouched, and the lease was released.
 ## Fix plan
 
 Each cut is committed separately.
