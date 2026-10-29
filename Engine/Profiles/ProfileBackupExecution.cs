@@ -201,6 +201,8 @@ public static class ProfileBackupRecovery
         }
         catch (Exception error) when (error is JsonException or InvalidOperationException or KeyNotFoundException or ArgumentException)
         { return Failed("The pending backup record is malformed."); }
+        catch (IOException error)
+        { return Failed("The pending backup record could not be read: " + error.Message); }
 
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(token);
         deadline.CancelAfter(limit);

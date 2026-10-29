@@ -147,8 +147,12 @@ public static class ThirdPartyUpdateExecution
                 "The requested version was not verified. The pending record remains and must be reconciled before another third-party update.";
             outcome = new(selection, verified, detail);
             Record(new { Stage = "Verification", InstalledVersion = installed, Outcome = outcome });
-            if (verified) File.Delete(pendingPath);
-            return Finish(verified ? "Completed" : "Needs review", []);
+            if (!verified) return Finish("Needs review", []);
+            // The update is verified; a pending record that will not delete only needs tidying, not review.
+            try { File.Delete(pendingPath); }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+            { details.Add("The update was verified, but its pending record could not be removed: " + error.Message); }
+            return Finish("Completed", []);
         }
         catch (ToolStartCanceledException) when (!upgradeReturned)
         {

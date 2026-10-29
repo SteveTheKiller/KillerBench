@@ -383,12 +383,14 @@ public static class UpdateDataStoreReset
                 if (!services.Single(service => service.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).Running) continue;
                 Report(progress, "Stopping " + name + ".");
                 mutationDispatched = true;
+                // Listed before the stop is dispatched: a stop that times out, fails partway or is
+                // interrupted can still leave the service stopped, and restoring a running one is harmless.
+                stopped.Add(name);
                 var command = await Required(ct => host.StopServiceAsync(name, ct), "Stop " + name, token).ConfigureAwait(false);
                 await RecordAsync(new { Stage = "StopService", Name = name, Result = command }).ConfigureAwait(false);
                 if (!Succeeded(command)) return await RecoverAsync(UpdateDataStoreResetOutcome.Uncertain,
                     "A required service did not stop cleanly. The store was not renamed.", stopped, services, host,
                     failedSearch, journalPath, retainedPath, progress, RecordAsync).ConfigureAwait(false);
-                stopped.Add(name);
             }
 
             Report(progress, "Retaining the existing Windows Update data store.");
@@ -452,9 +454,13 @@ public static class UpdateDataStoreReset
                 return blockedBeforeMutation;
             }
             await RestoreAsync(stopped, host, progress, RecordAsync).ConfigureAwait(false);
-            return new(UpdateDataStoreResetOutcome.Uncertain,
+            var interrupted = new UpdateDataStoreResetResult(UpdateDataStoreResetOutcome.Uncertain,
                 "The reset was interrupted: " + error.Message + ". Service restoration was attempted. Reconcile the pending operation before another reset.",
                 journalPath, retainedPath, failedSearch, Services: services);
+            // Best effort: the journal may be what failed, and the result must still reach the caller.
+            try { await RecordAsync(new { Stage = "Finished", Result = interrupted }).ConfigureAwait(false); }
+            catch (Exception recordError) when (recordError is IOException or UnauthorizedAccessException) { }
+            return interrupted;
         }
     }
 
