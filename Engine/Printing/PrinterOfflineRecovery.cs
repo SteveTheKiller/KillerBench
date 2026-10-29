@@ -1,3 +1,4 @@
+using KillerBench.Engine.Infrastructure;
 using System.Text.Json;
 
 namespace KillerBench.Engine.Printing;
@@ -21,7 +22,7 @@ public static class PrinterOfflineRecovery
         if (selected.Length is < 1 or > 64 || selected.Any(id => string.IsNullOrWhiteSpace(id) || id.Length > 256 || id.Any(char.IsControl)) ||
             selected.Distinct(StringComparer.OrdinalIgnoreCase).Count() != selected.Length)
             throw new ArgumentException("Select 1 to 64 unique local queue identities.", nameof(selectedQueues));
-        string literals = string.Join(",", selected.Select(id => "'" + id.Replace("'", "''") + "'"));
+        string literals = string.Join(",", selected.Select(PowerShellText.Literal));
         string prefix = "$ErrorActionPreference='Stop'; $ProgressPreference='SilentlyContinue'; $selected=@(" + literals + "); " +
             "function Get-LocalQueues { $all=@(Get-WmiObject -Class Win32_Printer -EnableAllPrivileges -ErrorAction Stop | Where-Object { $_.Local -eq $true -and $_.Network -eq $false }); " +
             "foreach($id in $selected) { $matches=@($all | Where-Object { $_.DeviceID -eq $id }); if($matches.Count -ne 1) { throw 'Selected queue is missing or ambiguous' } }; " +

@@ -1,3 +1,4 @@
+using KillerBench.Engine.Infrastructure;
 using System.Text;
 using System.Text.Json;
 using System.Collections.Concurrent;
@@ -331,7 +332,7 @@ public sealed class WindowsThirdPartyUpdateExecutionHost : IThirdPartyUpdateExec
     {
         ThirdPartyUpdatePlanning.Validate(new(id, source, "fixture"));
         string script = "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';Import-Module Microsoft.WinGet.Client -ErrorAction Stop;" +
-            "$rows=@(Get-WinGetPackage -Count 4097 -ErrorAction Stop|Where-Object{[string]$_.Id -ieq '" + Ps(id) + "' -and [string]$_.Source -ieq '" + Ps(source) + "'});" +
+            "$rows=@(Get-WinGetPackage -Count 4097 -ErrorAction Stop|Where-Object{[string]$_.Id -ieq " + Ps(id) + " -and [string]$_.Source -ieq " + Ps(source) + "});" +
             "if($rows.Count-ne 1){[pscustomobject]@{count=$rows.Count;version=''}|ConvertTo-Json -Compress;exit 0};" +
             "[pscustomobject]@{count=1;version=[string]$rows[0].InstalledVersion}|ConvertTo-Json -Compress";
         var result = await BoundedTool.RunAsync(new("pwsh.exe", ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", script], true), TimeSpan.FromMinutes(5), token: token).ConfigureAwait(false);
@@ -361,5 +362,5 @@ public sealed class WindowsThirdPartyUpdateExecutionHost : IThirdPartyUpdateExec
         catch (JsonException) { return null; }
     }
 
-    private static string Ps(string value) => value.Replace("'", "''", StringComparison.Ordinal);
+    private static string Ps(string value) => PowerShellText.Literal(value);
 }

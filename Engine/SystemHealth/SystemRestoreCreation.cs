@@ -1,3 +1,4 @@
+using KillerBench.Engine.Infrastructure;
 using System.Text.Json;
 
 namespace KillerBench.Engine.SystemHealth;
@@ -366,10 +367,10 @@ public sealed class WindowsSystemRestoreCreationHost : ISystemRestoreCreationHos
             SystemRestorePointReason.DeviceDriverInstall => "DEVICE_DRIVER_INSTALL",
             _ => "MODIFY_SETTINGS"
         };
-        string description = request.Description.Replace("'", "''");
+        string description = PowerShellText.Literal(request.Description);
         var step = new RepairStep(PrintRecovery.Tool,
             ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command",
-                "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';Checkpoint-Computer -Description '" + description + "' -RestorePointType '" + type + "' -ErrorAction Stop"], false);
+                "$ErrorActionPreference='Stop';$ProgressPreference='SilentlyContinue';Checkpoint-Computer -Description " + description + " -RestorePointType '" + type + "' -ErrorAction Stop"], false);
         return BoundedTool.RunAsync(step, TimeSpan.FromMinutes(5), progress, token);
     }
 }

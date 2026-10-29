@@ -19,6 +19,12 @@ public partial class App : Application
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        // The elevated machine-update helper (Services/TrustedUpdate.cs) runs headless and exits.
+        if (e.Args.Length > 0 && string.Equals(e.Args[0], Services.TrustedUpdate.HelperArgument, StringComparison.OrdinalIgnoreCase))
+        {
+            Shutdown(Services.TrustedUpdate.Apply(e.Args));
+            return;
+        }
         KillerFamily.Accessibility.AccessibleControls.Initialize();
         KillerFamily.Theming.AccentShadow.Initialize();
         Controls.AltDrag.Register();   // Alt+drag moves any window (Controls/AltDrag.cs)
@@ -70,7 +76,9 @@ public partial class App : Application
     }
     protected override void OnExit(ExitEventArgs e)
     {
-        if (!_commandLine) Services.Preferences.Save();
+        // Only a run that loaded preferences may write them back; installer and update hand-offs
+        // exit before Load and would otherwise replace the saved file with an empty one.
+        if (!_commandLine && Services.Preferences.Loaded) Services.Preferences.Save();
         base.OnExit(e);
     }
 

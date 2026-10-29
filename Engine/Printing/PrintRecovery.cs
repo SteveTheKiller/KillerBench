@@ -1,3 +1,4 @@
+using KillerBench.Engine.Infrastructure;
 using System.Text.Json;
 
 namespace KillerBench.Engine.Printing;
@@ -22,7 +23,7 @@ public static class PrintRecovery
     public static RepairStep Step(bool verification, IReadOnlyList<string> selectedQueues)
     {
         var selected = ValidateSelection(selectedQueues);
-        string literals = string.Join(",", selected.Select(name => "'" + name.Replace("'", "''") + "'"));
+        string literals = string.Join(",", selected.Select(PowerShellText.Literal));
         string load = "$selected=@(" + literals + "); $all=" + Query + "; $p=$all; " + Validate +
             "$p=@($all | Where-Object { $selected -contains $_.Name }); " +
             "if($p.Count -ne $selected.Count) { throw 'Selected queue is missing or ambiguous' }; " +

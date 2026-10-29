@@ -51,7 +51,7 @@ internal static class PrintJobChecks
         }
         var selectedPlan = PrintRecovery.Plan(["Office, Floor 2"]);
         Require(selectedPlan.Steps.Count == 2 && selectedPlan.Steps[0].Arguments[^1].Contains("Selected queue no longer has exact waiting-job evidence") &&
-            selectedPlan.Steps.All(step => step.Arguments[^1].Contains("Office, Floor 2")),
+            selectedPlan.Steps.All(step => step.Arguments[^1].Contains(KillerBench.Engine.Infrastructure.PowerShellText.Literal("Office, Floor 2"))),
             "Selected queue repair repeats waiting-job evidence immediately before the bounded mutation");
         foreach (Exception failure in new Exception[] { new IOException("fixture"), new UnauthorizedAccessException("fixture"),
             new InvalidOperationException("fixture"), new NotSupportedException("fixture"),
