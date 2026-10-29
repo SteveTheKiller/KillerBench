@@ -74,12 +74,22 @@ internal static class MutationDispatchChecks
             throwingJournal.Entries.Any(entry => entry.Stage == RecipeJournalStage.Dispatched),
             "An action that throws after dispatch must be journaled as dispatched and reported uncertain: " + thrown.Outcome + " " + thrown.Detail);
 
+        // A tool that provably never started changed nothing: no dispatch, no uncertainty barrier.
+        foreach (Exception neverStarted in new Exception[] { new KillerBench.Engine.Infrastructure.ToolNotStartedException("missing tool"),
+            new KillerBench.Engine.Infrastructure.ToolStartCanceledException(new CancellationToken(true)) })
+        {
+            var notStarted = await new RecipeRunner(new PrimitiveLibrary("Fixture").AddProbe(new DownProbe()).AddAction(new RecordingAction(_ => throw neverStarted)),
+                new MemoryRecipeJournal(), new MemoryRecipeOperationStore()).RunAsync(fixture, new RecipeRunOptions { AuthorizeRepair = true });
+            Require(notStarted is { ExecutionUncertain: false, Action.Dispatched: false, Action.Succeeded: false },
+                "A tool that never started (" + neverStarted.GetType().Name + ") must be a failure without dispatch or uncertainty: " + notStarted.Outcome + " " + notStarted.Detail);
+        }
+
         // The primitive is told the same effective timeout the runner enforces.
         TimeSpan given = TimeSpan.Zero;
         await new RecipeRunner(new PrimitiveLibrary("Fixture").AddProbe(new DownProbe()).AddAction(new RecordingAction(timeout => { given = timeout; return new ActionResult(true, true, ""); })),
             new MemoryRecipeJournal(), new MemoryRecipeOperationStore()).RunAsync(fixture, new RecipeRunOptions { AuthorizeRepair = true });
         Require(given == fixture.ExecutionTimeout, "The action was given " + given + " instead of the effective timeout " + fixture.ExecutionTimeout);
-        Console.WriteLine("PASS: a throwing action is journaled as dispatched and uncertain, and the action receives the effective timeout.");
+        Console.WriteLine("PASS: a throwing action is journaled as dispatched and uncertain, a tool that never started is a plain failure, and the action receives the effective timeout.");
     }
 
     private sealed class RecordingAction(Func<TimeSpan, ActionResult> execute) : IActionPrimitive

@@ -4,13 +4,6 @@ using KillerBench.Engine.Automation;
 
 namespace KillerBench.Engine.Infrastructure;
 
-/// <summary>Proves that the requested native executable was never started.</summary>
-public sealed class ToolNotStartedException(string message, Exception? innerException = null) : IOException(message, innerException);
-
-/// <summary>Cancellation prevented the requested executable from reaching process startup.</summary>
-public sealed class ToolStartCanceledException(CancellationToken token, Exception? innerException = null)
-    : OperationCanceledException("The native executable was canceled before process startup.", innerException, token);
-
 /// <summary>Resolves only the registered, signed App Installer binary in the protected system package directory.</summary>
 public static class WinGetExecutableResolver
 {

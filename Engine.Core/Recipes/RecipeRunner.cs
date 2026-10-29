@@ -1,3 +1,5 @@
+using KillerBench.Engine.Infrastructure;
+
 namespace KillerBench.Engine.Core.Recipes;
 
 public sealed record ProbeOutcome(string Role, ProbeSpec Probe, PrimitiveResult Result, Expectation.Evaluation Evaluation);
@@ -187,6 +189,16 @@ public sealed class RecipeRunner(PrimitiveLibrary library, IRecipeJournal journa
                         dispatchAttempted = true;
                         actionResult = await action.ExecuteAsync(recipe.Action.Parameters, effectiveTimeout, options.Progress, deadline.Token).ConfigureAwait(false)
                             ?? throw new InvalidOperationException("The action primitive returned no result.");
+                    }
+                    // A tool that provably never started changed nothing, so it is a plain failure that
+                    // leaves no uncertainty barrier, not a dispatched action of unknown effect.
+                    catch (ToolNotStartedException error)
+                    {
+                        actionResult = new ActionResult(false, false, "", error.Message);
+                    }
+                    catch (ToolStartCanceledException) when (!token.IsCancellationRequested)
+                    {
+                        actionResult = new ActionResult(false, false, "", "The time limit ended before the tool started. Nothing was changed.");
                     }
                     catch (OperationCanceledException) when (!token.IsCancellationRequested)
                     {
