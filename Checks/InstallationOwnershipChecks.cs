@@ -68,8 +68,9 @@ internal static class InstallationOwnershipChecks
         foreach (string argument in new[] { "/d", "/c", "mklink", "/J", Path.GetFullPath(link), Path.GetFullPath(directory) }) start.ArgumentList.Add(argument);
         using (var process = Process.Start(start) ?? throw new Exception("Owned scratch junction fixture did not start."))
         {
-            process.WaitForExit();
-            if (process.ExitCode != 0) throw new Exception("Owned scratch junction fixture failed: " + process.StandardError.ReadToEnd());
+            var fixtureError = process.StandardError.ReadToEndAsync();
+            if (!process.WaitForExit(15_000)) { process.Kill(true); throw new Exception("Owned scratch junction fixture timed out."); }
+            if (process.ExitCode != 0) throw new Exception("Owned scratch junction fixture failed: " + fixtureError.GetAwaiter().GetResult());
         }
         try
         {

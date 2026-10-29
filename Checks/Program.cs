@@ -135,7 +135,8 @@ internal static class Program
                 string scratch = Path.Combine(Path.GetTempPath(), "KillerBench-checks-" + Guid.NewGuid().ToString("N"));
                 Directory.CreateDirectory(scratch);
                 try { RecipeChecks.RunAsync(scratch).GetAwaiter().GetResult(); }
-                finally { Directory.Delete(scratch, true); }
+                // A cleanup failure must not replace the check failure that is already propagating.
+                finally { try { Directory.Delete(scratch, true); } catch (Exception e) when (e is IOException or UnauthorizedAccessException) { } }
                 return 0;
             }
             if (args is ["--only", "native-validation"])
@@ -161,7 +162,7 @@ internal static class Program
                 string scratch = Path.Combine(Path.GetTempPath(), "KillerBench-checks-" + Guid.NewGuid().ToString("N"));
                 Directory.CreateDirectory(scratch);
                 try { WorkflowChecks.RunAsync(scratch).GetAwaiter().GetResult(); }
-                finally { Directory.Delete(scratch, true); }
+                finally { try { Directory.Delete(scratch, true); } catch (Exception e) when (e is IOException or UnauthorizedAccessException) { } }
                 return 0;
             }
             throw new ArgumentException("Use no arguments for all non-UI checks, or --only workflow-report-export, workflow-options, servicing-monitor, recipes, native-validation, workflow, dialog-smoke, demo-screenshots, ui-smoke, ui-category or ui-full. UI checks require an isolated desktop.");

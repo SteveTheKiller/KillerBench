@@ -283,7 +283,9 @@ internal static class WindowsRetentionScopeChecks
         using var process = Process.Start(start) ?? throw new Exception("Junction fixture did not start.");
         var output = process.StandardOutput.ReadToEndAsync();
         var error = process.StandardError.ReadToEndAsync();
-        await process.WaitForExitAsync();
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+        try { await process.WaitForExitAsync(deadline.Token); }
+        catch (OperationCanceledException) { process.Kill(true); throw new Exception("Junction fixture timed out."); }
         await output;
         if (process.ExitCode != 0) throw new Exception("Junction fixture failed: " + await error);
     }

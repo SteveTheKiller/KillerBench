@@ -24,7 +24,10 @@ internal static partial class IsolatedDesktop
                 throw new Win32Exception(Marshal.GetLastWin32Error(), "Cannot launch isolated UI tests.");
             try
             {
-                if (WaitForSingleObject(process.Process, uint.MaxValue) != 0 || !GetExitCodeProcess(process.Process, out uint exit))
+                // A child stuck behind a dialog nobody can see on the hidden desktop is ended, not waited on forever.
+                uint waited = WaitForSingleObject(process.Process, 15 * 60 * 1000);
+                if (waited == 0x102) { TerminateProcess(process.Process, 1); throw new TimeoutException("Isolated UI tests did not finish within 15 minutes."); }
+                if (waited != 0 || !GetExitCodeProcess(process.Process, out uint exit))
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 return unchecked((int)exit);
             }
@@ -87,6 +90,7 @@ internal static partial class IsolatedDesktop
         string? directory, ref StartupInfo startup, out ProcessInfo process);
     [LibraryImport("kernel32.dll")] private static partial nint GetStdHandle(int id);
     [LibraryImport("kernel32.dll", SetLastError = true)] private static partial uint WaitForSingleObject(nint handle, uint milliseconds);
+    [LibraryImport("kernel32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)] private static partial bool TerminateProcess(nint handle, uint exitCode);
     [LibraryImport("kernel32.dll", SetLastError = true)] [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool GetExitCodeProcess(nint process, out uint exit);
     [LibraryImport("kernel32.dll")] [return: MarshalAs(UnmanagedType.Bool)] private static partial bool CloseHandle(nint handle);

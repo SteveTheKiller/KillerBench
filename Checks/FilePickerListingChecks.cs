@@ -56,7 +56,7 @@ internal static class FilePickerListingChecks
             picker.Close(); closeRelease.Set(); Pump(() => closing.IsCompleted);
             if (picker.IsDirectoryListingBusy || picker.Entries.Count != 0) throw new Exception("S008 closed dialog received stale publication.");
             NoPresentation(picker);
-            Console.WriteLine("PASS S008: real picker public navigation stays responsive, rejects stale and closed publications, and completes513 rows without showing a window.");
+            Console.WriteLine("PASS S008: real picker public navigation stays responsive, rejects stale and closed publications, and completes 513 rows without showing a window.");
         }
         finally { timer.Stop(); release.Set(); if (!picker.IsDirectoryListingBusy) picker.Close(); Directory.Delete(root, true); }
         return 0;

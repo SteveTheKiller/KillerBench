@@ -41,13 +41,13 @@ The referee ruled 26 findings valid, 0 invalid, and 4 needs-investigation. Statu
 | S-004 | Services/UpdateService.cs:101 | A release tag without a `v` is accepted, but the download URL is rebuilt with a `v`. This is latent while every tag has the `v`. | Family: the same line is in all eight apps |
 | S-005 | Services/SelfUpdate.cs:28 | A duplicate release parser is exercised only by the checks; the shipping parser in UpdateService has different rules. | Open |
 | S-006 | Features/About/AboutController.cs:265 | A failed update hand-off is swallowed, and the user sees no message. | Family: the same handler is in all eight apps |
-| C-001 | Checks/IsolatedDesktop.cs:26 | The harness waits on its child with INFINITE. | Open |
-| C-002 | Checks/InstallationOwnershipChecks.cs:69 | `mklink` fixture with no timeout, and stderr is read after exit. | Open |
-| C-003 | Checks/WindowsRetentionScopeChecks.cs:283 | Junction fixture with no timeout. | Open |
-| C-004 | Checks/ExecutableDeploymentChecks.cs:41 | Temp cleanup is not in a finally block. | Open |
-| C-005 | Checks/Program.cs:138 | An unguarded `Directory.Delete` in finally can mask the real failure. | Open |
-| C-006 | Checks/FilePickerListingChecks.cs:61 | Cleanup deletes the root while a listing may still be running. | Open |
-| C-007 | Checks/FilePickerListingChecks.cs:59 | The PASS message reads "completes513". | Open |
+| C-001 | Checks/IsolatedDesktop.cs:26 | The harness waits on its child with INFINITE. | Fixed (15-minute limit, then the child is ended) |
+| C-002 | Checks/InstallationOwnershipChecks.cs:69 | `mklink` fixture with no timeout, and stderr is read after exit. | Fixed |
+| C-003 | Checks/WindowsRetentionScopeChecks.cs:283 | Junction fixture with no timeout. | Fixed |
+| C-004 | Checks/ExecutableDeploymentChecks.cs:41 | Temp cleanup is not in a finally block. | Won't fix: the root sits inside the run's scratch folder, which RunChecks deletes in its own finally |
+| C-005 | Checks/Program.cs:138 | An unguarded `Directory.Delete` in finally can mask the real failure. | Fixed (both `--only` branches) |
+| C-006 | Checks/FilePickerListingChecks.cs:61 | Cleanup deletes the root while a listing may still be running. | Open: only a failed run hits it, and the original failure is still thrown first |
+| C-007 | Checks/FilePickerListingChecks.cs:59 | The PASS message reads "completes513". | Fixed |
 
 Three read-only diagnostics use the same apostrophe-only quoting (EventLogCapacityDiagnostics, DefenderProtectionDiagnostics and ServiceDllDiagnostics), but the values they quote are fixed names in the code, so they were left alone.
 
@@ -74,6 +74,6 @@ Each cut is committed separately.
   E-004 is deferred. RecipeRunner lives in Engine.Core, which cannot see the tool exception types in Engine, and a self-check pins "a throwing action is journaled as dispatched and uncertain" as intended behavior. Fixing it means moving `ToolNotStartedException` and `ToolStartCanceledException` into Engine.Core and changing that contract, so it needs a decision first.
 - **KB-C, engine primitives, done.** E-001 refuses a type mismatch the way `set-string` does. E-002 starts the stdout and stderr readers before writing stdin and tolerates a broken pipe. E-003 and E-005 stay as they are, for the reasons in the table.
 - **KB-D, install and update, done.** S-007 uses `UnregisterRequired` and counts a failure as incomplete. S-009 treats an unreadable process named KillerBench.exe as running. S-004 and S-006 live in the shared `UpdateService.cs` and `AboutController.cs`, so they move to the family list. S-005 stays open: SelfUpdate is KillerBench-only, and removing it means repointing ReleaseUpdateChecks.
-- **KB-E, harness hygiene.** C-001 through C-007.
+- **KB-E, harness hygiene, done.** C-001, C-002, C-003, C-005 and C-007 are fixed. C-004 needs nothing, and C-006 stays open as low.
 - **KB-F, investigations.** D-007, D-008, D-010 and S-008. Each gets a ruling and then either a fix or a note explaining why the current behavior stands.
 - **Family.** Port the S-001 dispatch to KillerPDF and KillerShot. Fix S-004 (require the `v` or keep the matched tag) and S-006 (show why the update hand-off failed) in KillerUI first, then roll them out to every app.
