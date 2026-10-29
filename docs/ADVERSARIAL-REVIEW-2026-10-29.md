@@ -25,8 +25,8 @@ The referee ruled 26 findings valid, 0 invalid, and 4 needs-investigation. Statu
 | E-003 | Engine.Windows/Primitives/WindowsRegistryPrimitives.cs:185 | `registry.set-string` declares `RequiresElevation => false` but accepts HKLM. | Won't fix: elevating would point HKCU writes at the admin's hive, and unelevated HKLM fails at key open before anything is written |
 | E-004 | Engine.Core/Recipes/RecipeRunner.cs:187 | `ToolNotStartedException` (an IOException) and a deadline-only `ToolStartCanceledException` are recorded as dispatched, so a repair that never started is reported as uncertain and blocks later runs. | Deferred: needs a decision |
 | E-005 | Engine/Infrastructure/NativeTool.cs:72 | Progress shows only the first 500 characters of each 4096-character read. The referee rated this medium; it is cosmetic. | Won't fix: the 500-character cap is a progress throttle, and the full output is kept in the result |
-| S-007 | App.Installation.cs:154 | Uninstall uses the best-effort `CommandLinePath.Unregister` instead of `UnregisterRequired`, so a stale PATH entry still reports success. | Open |
-| S-009 | App.Installation.cs:184 | `CloseOtherCopies` skips any process whose `MainModule` throws, such as an elevated copy seen from an unelevated uninstaller. Uninstall then proceeds while that copy is running. | Open |
+| S-007 | App.Installation.cs:154 | Uninstall uses the best-effort `CommandLinePath.Unregister` instead of `UnregisterRequired`, so a stale PATH entry still reports success. | Fixed |
+| S-009 | App.Installation.cs:184 | `CloseOtherCopies` skips any process whose `MainModule` throws, such as an elevated copy seen from an unelevated uninstaller. Uninstall then proceeds while that copy is running. | Fixed |
 
 ### Low
 
@@ -38,9 +38,9 @@ The referee ruled 26 findings valid, 0 invalid, and 4 needs-investigation. Statu
 | D-006 | Engine/Updates/UpdateDataStoreReset.cs:454 | The exception path returns Uncertain with no Finished journal record. | Fixed |
 | D-009 | Engine/Updates/ThirdPartyUpdateExecution.cs:149 | A failure to delete the pending file after a verified update downgrades the result to Needs review. | Fixed |
 | D-011 | Engine/Profiles/ProfileBackupExecution.cs:184 | An IOException from `JsonDocument.Parse` escapes recovery, and `OpenLocked` sits outside the try. | Fixed (read failures return Failed; the lock open still throws, which callers treat as busy) |
-| S-004 | Services/UpdateService.cs:101 | A release tag without a `v` is accepted, but the download URL is rebuilt with a `v`. This is latent while every tag has the `v`. | Open |
+| S-004 | Services/UpdateService.cs:101 | A release tag without a `v` is accepted, but the download URL is rebuilt with a `v`. This is latent while every tag has the `v`. | Family: the same line is in all eight apps |
 | S-005 | Services/SelfUpdate.cs:28 | A duplicate release parser is exercised only by the checks; the shipping parser in UpdateService has different rules. | Open |
-| S-006 | Features/About/AboutController.cs:265 | A failed update hand-off is swallowed, and the user sees no message. | Open |
+| S-006 | Features/About/AboutController.cs:265 | A failed update hand-off is swallowed, and the user sees no message. | Family: the same handler is in all eight apps |
 | C-001 | Checks/IsolatedDesktop.cs:26 | The harness waits on its child with INFINITE. | Open |
 | C-002 | Checks/InstallationOwnershipChecks.cs:69 | `mklink` fixture with no timeout, and stderr is read after exit. | Open |
 | C-003 | Checks/WindowsRetentionScopeChecks.cs:283 | Junction fixture with no timeout. | Open |
@@ -73,7 +73,7 @@ Each cut is committed separately.
 - **KB-B, repair outcomes, done.** D-005 restarts every service whose stop was dispatched. D-006 writes a Finished record on the interrupted path. D-009 keeps a verified update Completed when its pending record will not delete. D-011 returns Failed on a read error. All non-UI checks pass except the pre-existing portable failure.
   E-004 is deferred. RecipeRunner lives in Engine.Core, which cannot see the tool exception types in Engine, and a self-check pins "a throwing action is journaled as dispatched and uncertain" as intended behavior. Fixing it means moving `ToolNotStartedException` and `ToolStartCanceledException` into Engine.Core and changing that contract, so it needs a decision first.
 - **KB-C, engine primitives, done.** E-001 refuses a type mismatch the way `set-string` does. E-002 starts the stdout and stderr readers before writing stdin and tolerates a broken pipe. E-003 and E-005 stay as they are, for the reasons in the table.
-- **KB-D, install and update.** S-007 uses `UnregisterRequired`. S-009 treats an unreadable process named KillerBench.exe as running. S-006 shows a notice when the hand-off fails. S-004 requires the `v` in the tag. S-005 removes the duplicate parser and points the checks at UpdateService.
+- **KB-D, install and update, done.** S-007 uses `UnregisterRequired` and counts a failure as incomplete. S-009 treats an unreadable process named KillerBench.exe as running. S-004 and S-006 live in the shared `UpdateService.cs` and `AboutController.cs`, so they move to the family list. S-005 stays open: SelfUpdate is KillerBench-only, and removing it means repointing ReleaseUpdateChecks.
 - **KB-E, harness hygiene.** C-001 through C-007.
 - **KB-F, investigations.** D-007, D-008, D-010 and S-008. Each gets a ruling and then either a fix or a note explaining why the current behavior stands.
-- **Family.** Port the S-001 dispatch to KillerPDF and KillerShot once Steve confirms the approach.
+- **Family.** Port the S-001 dispatch to KillerPDF and KillerShot. Fix S-004 (require the `v` or keep the matched tag) and S-006 (show why the update hand-off failed) in KillerUI first, then roll them out to every app.

@@ -151,7 +151,7 @@ public partial class App
         bool complete = true;
         bool removed = Services.InstallationOwnership.UnregisterPreservingFiles(installDirectory, registered, () =>
         {
-            Services.CommandLinePath.Unregister(installDirectory, machine);
+            try { Services.CommandLinePath.UnregisterRequired(installDirectory, machine); } catch { complete = false; }
             try { File.Delete(Path.Combine(StartMenuDir(machine), AppName + ".lnk")); } catch { complete = false; }
             try { Directory.Delete(StartMenuDir(machine), recursive: false); } catch { }
             try { File.Delete(DesktopShortcut(machine)); } catch { complete = false; }
@@ -189,13 +189,28 @@ public partial class App
                     continue;
                 }
             }
-            catch { }
+            catch
+            {
+                // An elevated copy seen from an unelevated uninstaller hides its module path. A process
+                // with this app's name is treated as running rather than skipped, so it is never removed under.
+                if (process.Id != self && string.Equals(process.ProcessName + ".exe", Services.AppInfo.ExeName, StringComparison.OrdinalIgnoreCase))
+                {
+                    running.Add(process);
+                    continue;
+                }
+            }
             process.Dispose();
         }
         try
         {
-            foreach (var process in running) if (!process.HasExited) process.CloseMainWindow();
-            return running.All(process => process.HasExited || process.WaitForExit(30000));
+            foreach (var process in running)
+                try { if (!process.HasExited) process.CloseMainWindow(); }
+                catch (Exception error) when (error is InvalidOperationException or System.ComponentModel.Win32Exception) { }
+            return running.All(process =>
+            {
+                try { return process.HasExited || process.WaitForExit(30000); }
+                catch (Exception error) when (error is InvalidOperationException or System.ComponentModel.Win32Exception) { return false; }
+            });
         }
         finally
         {
