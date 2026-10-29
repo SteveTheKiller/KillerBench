@@ -153,7 +153,10 @@ public sealed class WindowsRegistrySetDwordAction : IActionPrimitive
             try
             {
                 object? prior = key.GetValue(name, null, RegistryValueOptions.DoNotExpandEnvironmentNames);
-                string priorText = prior is null ? "absent" : key.GetValueKind(name) + ":" + WindowsRegistryPrimitives.Render(prior, key.GetValueKind(name));
+                var priorKind = prior is null ? RegistryValueKind.Unknown : key.GetValueKind(name);
+                string priorText = prior is null ? "absent" : priorKind + ":" + WindowsRegistryPrimitives.Render(prior, priorKind);
+                if (prior is not null && priorKind != RegistryValueKind.DWord)
+                    return Task.FromResult(new ActionResult(false, false, "prior=" + priorText, "The existing value is " + priorKind + ", not DWord; it was left unchanged."));
                 if (prior is int existing && unchecked((uint)existing) == requested)
                     return Task.FromResult(new ActionResult(false, true, "prior=" + priorText, "The value already matches; nothing was written."));
                 attempted = true;

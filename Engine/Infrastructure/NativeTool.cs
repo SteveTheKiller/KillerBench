@@ -46,13 +46,21 @@ internal static class NativeTool
         { throw new ToolNotStartedException("The native executable did not start.", startupError); }
         using var process = started;
         using var stop = token.Register(() => { try { if (!process.HasExited) process.Kill(true); } catch (Exception e) when (e is InvalidOperationException or System.ComponentModel.Win32Exception) { } });
-        if (standardInput is not null)
-        {
-            await process.StandardInput.WriteAsync(standardInput.AsMemory(), token).ConfigureAwait(false);
-            process.StandardInput.Close();
-        }
+        // The readers start before stdin is written, so a child that fills its output pipe while
+        // still reading a large input cannot deadlock against this writer.
         var output = ReadAsync(process.StandardOutput);
         var error = ReadAsync(process.StandardError);
+        if (standardInput is not null)
+        {
+            // A child that exits without reading all of its input breaks the pipe; its exit code and
+            // output still say what happened, so the write failure is not the result.
+            try
+            {
+                await process.StandardInput.WriteAsync(standardInput.AsMemory(), token).ConfigureAwait(false);
+                process.StandardInput.Close();
+            }
+            catch (IOException) { }
+        }
         await Task.WhenAll(output, error).ConfigureAwait(false);
         await process.WaitForExitAsync(token).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
