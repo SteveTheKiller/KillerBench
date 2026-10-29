@@ -62,7 +62,7 @@ Three read-only diagnostics use the same apostrophe-only quoting (EventLogCapaci
 
 ### Family drift found during the review
 
-KillerPDF and KillerShot have the same `TrustedUpdate` helper with no `/apply-verified-update` dispatch in `App.xaml.cs`. KillerNotes, KillerScan, KillerShell and Killendar do route it. The KillerPDF case matters for 1.9, so it needs its own fix in each repo; this review did not touch them.
+KillerPDF and KillerShot have the same `TrustedUpdate` helper with no `/apply-verified-update` dispatch in `App.xaml.cs`. KillerNotes, KillerScan, KillerShell and Killendar do route it. Both are now fixed: KillerPDF `5d7d7f2` (1,446 headless tests pass) and KillerShot `c356ecc` (builds clean; it has no unit test project).
 
 ## Fix plan
 
@@ -76,4 +76,4 @@ Each cut is committed separately.
 - **KB-D, install and update, done.** S-007 uses `UnregisterRequired` and counts a failure as incomplete. S-009 treats an unreadable process named KillerBench.exe as running. S-004 and S-006 live in the shared `UpdateService.cs` and `AboutController.cs`, so they move to the family list. S-005 stays open: SelfUpdate is KillerBench-only, and removing it means repointing ReleaseUpdateChecks.
 - **KB-E, harness hygiene, done.** C-001, C-002, C-003, C-005 and C-007 are fixed. C-004 needs nothing, and C-006 stays open as low.
 - **KB-F, investigations.** D-007, D-008, D-010 and S-008. Each gets a ruling and then either a fix or a note explaining why the current behavior stands.
-- **Family.** Port the S-001 dispatch to KillerPDF and KillerShot. Fix S-004 (require the `v` or keep the matched tag) and S-006 (show why the update hand-off failed) in KillerUI first, then roll them out to every app.
+- **Family.** The S-001 dispatch is ported to KillerPDF and KillerShot. Still to do: fix S-004 (require the `v` or keep the matched tag) and S-006 (show why the update hand-off failed) in KillerUI first, then roll them out to every app.
