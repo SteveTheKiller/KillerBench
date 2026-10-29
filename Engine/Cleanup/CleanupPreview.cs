@@ -55,7 +55,7 @@ public static class CleanupPreview
     }
 
     public static string ThumbnailCacheRoot() => ThumbnailCacheRoot(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+        UserLocal());
 
     public static string ThumbnailCacheRoot(string localApplicationData)
     {
@@ -129,15 +129,17 @@ public static class CleanupPreview
             : new CleanupEstimate("Delivery Optimization cache", root, 0, 0, 0, false, [], "Target is absent; no cached delivery files are retained at the standard service location.");
     }
 
-    public static IReadOnlyList<string> ShaderRoots() =>
+    public static IReadOnlyList<string> ShaderRoots() => ShaderRoots(UserLocal());
+
+    public static IReadOnlyList<string> ShaderRoots(string localApplicationData) =>
     [
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "D3DSCache"),
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AMD", "DxCache"),
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "NVIDIA", "GLCache")
+        Path.Combine(localApplicationData, "D3DSCache"),
+        Path.Combine(localApplicationData, "AMD", "DxCache"),
+        Path.Combine(localApplicationData, "NVIDIA", "GLCache")
     ];
 
     public static IReadOnlyList<string> OfficeCacheRoots() => OfficeCacheRoots(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+        UserLocal());
 
     public static IReadOnlyList<string> OfficeCacheRoots(string localApplicationData)
     {
@@ -163,7 +165,7 @@ public static class CleanupPreview
     }
 
     public static IReadOnlyList<string> ErrorReportRoots() => ErrorReportRoots(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+        UserLocal());
 
     public static IReadOnlyList<string> ErrorReportRoots(string localApplicationData)
     {
@@ -177,7 +179,7 @@ public static class CleanupPreview
     }
 
     public static string CrashDumpRoot() => CrashDumpRoot(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+        UserLocal());
 
     public static string CrashDumpRoot(string localApplicationData)
     {
@@ -232,23 +234,45 @@ public static class CleanupPreview
             : new CleanupEstimate("Current user Windows error reports", root, 0, 0, 0, false, [], "Target is absent; no reports are retained at this standard location."))];
     }
 
+    private static string UserLocal() => SignedInUser.Current.LocalApplicationData;
+
+    private static readonly (CleanupTargets Flag, string Label)[] PerUserTargets =
+    [
+        (CleanupTargets.UserTemp, "Current user temporary files"), (CleanupTargets.ShaderCaches, "Current user shader caches"),
+        (CleanupTargets.BrowserCaches, "Current user browser caches"), (CleanupTargets.OfficeCaches, "Current user Office caches"),
+        (CleanupTargets.ErrorReports, "Current user error reports"), (CleanupTargets.CrashDumps, "Current user crash dumps"),
+        (CleanupTargets.ThumbnailCache, "Current user thumbnail cache"), (CleanupTargets.IconCache, "Current user icon cache")
+    ];
+
     public static CleanupPreviewResult Inspect(CleanupOptions options, IProgress<string>? progress = null, CancellationToken token = default)
     {
         options.Validate();
         var now = DateTimeOffset.UtcNow;
         var targets = new List<CleanupEstimate>();
-        if (options.Targets.HasFlag(CleanupTargets.UserTemp))
-            targets.Add(InspectDirectory("Current user temporary files", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Temp"), options.MinimumAgeDays, now, progress, maximumCandidates: options.MaximumFilesPerTarget, token: token));
-        if (options.Targets.HasFlag(CleanupTargets.WindowsTemp))
+        var selected = options.Targets;
+        // Per-user targets belong to the account signed in to this session, which can differ from an
+        // over-the-shoulder elevated KillerBench; when that account cannot be established they are
+        // reported as partial and not inspected, never resolved to the running administrator's profile.
+        string? local = SignedInUser.TryLocalApplicationData(out string unavailable);
+        if (local is null)
+            foreach (var (flag, label) in PerUserTargets)
+                if (selected.HasFlag(flag))
+                {
+                    targets.Add(new(label, "", 0, 0, 0, true, [], unavailable + " No file in this target was inspected."));
+                    selected &= ~flag;
+                }
+        if (selected.HasFlag(CleanupTargets.UserTemp))
+            targets.Add(InspectDirectory("Current user temporary files", Path.Combine(local!, "Temp"), options.MinimumAgeDays, now, progress, maximumCandidates: options.MaximumFilesPerTarget, token: token));
+        if (selected.HasFlag(CleanupTargets.WindowsTemp))
             targets.Add(InspectDirectory("Windows temporary files", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Temp"), options.MinimumAgeDays, now, progress, maximumCandidates: options.MaximumFilesPerTarget, token: token));
-        if (options.Targets.HasFlag(CleanupTargets.SystemTemp))
+        if (selected.HasFlag(CleanupTargets.SystemTemp))
             targets.Add(InspectSystemTemp(Environment.GetFolderPath(Environment.SpecialFolder.Windows), options, now, progress, token));
-        if (options.Targets.HasFlag(CleanupTargets.ShaderCaches))
+        if (selected.HasFlag(CleanupTargets.ShaderCaches))
             foreach (string root in ShaderRoots())
                 targets.Add(InspectDirectory("Current user shader cache: " + Path.GetFileName(root), root, options.MinimumAgeDays, now, progress, maximumCandidates: options.MaximumFilesPerTarget, token: token));
-        if (options.Targets.HasFlag(CleanupTargets.BrowserCaches))
+        if (selected.HasFlag(CleanupTargets.BrowserCaches))
         {
-            var discovery = BrowserCacheRoots.Discover(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), token);
+            var discovery = BrowserCacheRoots.Discover(local!, token);
             var timer = System.Diagnostics.Stopwatch.StartNew();
             bool partial = discovery.Partial;
             foreach (string root in discovery.Roots)
@@ -259,21 +283,21 @@ public static class CleanupPreview
             targets.Add(new("Browser profile discovery", "", 0, 0, 0, partial, [],
                 "Default Chrome, Edge, Brave, Firefox and Opera cache locations only; custom locations are not searched. Cookies, saved logins and profile settings are outside these targets."));
         }
-        if (options.Targets.HasFlag(CleanupTargets.OfficeCaches))
-            targets.AddRange(InspectOfficeCaches(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), options, now, progress, token));
-        if (options.Targets.HasFlag(CleanupTargets.ErrorReports))
-            targets.AddRange(InspectErrorReports(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), options, now, progress, token));
-        if (options.Targets.HasFlag(CleanupTargets.CrashDumps))
-            targets.Add(InspectCrashDumps(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), options, now, progress, token));
-        if (options.Targets.HasFlag(CleanupTargets.WindowsMinidumps))
+        if (selected.HasFlag(CleanupTargets.OfficeCaches))
+            targets.AddRange(InspectOfficeCaches(local!, options, now, progress, token));
+        if (selected.HasFlag(CleanupTargets.ErrorReports))
+            targets.AddRange(InspectErrorReports(local!, options, now, progress, token));
+        if (selected.HasFlag(CleanupTargets.CrashDumps))
+            targets.Add(InspectCrashDumps(local!, options, now, progress, token));
+        if (selected.HasFlag(CleanupTargets.WindowsMinidumps))
             targets.Add(InspectWindowsMinidumps(Environment.GetFolderPath(Environment.SpecialFolder.Windows), options, now, progress, token));
-        if (options.Targets.HasFlag(CleanupTargets.DeliveryOptimizationCache))
+        if (selected.HasFlag(CleanupTargets.DeliveryOptimizationCache))
             targets.Add(InspectDeliveryOptimizationCache(Environment.GetFolderPath(Environment.SpecialFolder.Windows), options, now, progress, token));
-        if (options.Targets.HasFlag(CleanupTargets.ThumbnailCache))
-            targets.Add(InspectThumbnailCache(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), options, now, progress, token));
-        if (options.Targets.HasFlag(CleanupTargets.IconCache))
-            targets.Add(InspectIconCache(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), options, now, progress, token));
-        if (options.Targets.HasFlag(CleanupTargets.RecycleBin))
+        if (selected.HasFlag(CleanupTargets.ThumbnailCache))
+            targets.Add(InspectThumbnailCache(local!, options, now, progress, token));
+        if (selected.HasFlag(CleanupTargets.IconCache))
+            targets.Add(InspectIconCache(local!, options, now, progress, token));
+        if (selected.HasFlag(CleanupTargets.RecycleBin))
         {
             progress?.Report("Inspecting the current shell Recycle Bin without opening item contents...");
             targets.Add(RecycleBinCleanup.Inspect(options.MaximumFilesPerTarget));

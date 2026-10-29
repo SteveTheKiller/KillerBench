@@ -52,6 +52,8 @@ public static class OrcaCacheReset
         if (options.Scope != OrcaScope.RunningAccount || options.Actions != OrcaActions.ClearCaches)
             return new("Outlook cache retention", CheckState.Information,
                 "Cache retention requires ClearCaches as the sole running-account action. The selected Outlook reset areas remain review-only.");
+        if (host is null && OtherAccountReason() is { } otherAccount)
+            return new("Outlook cache retention", CheckState.Attention, otherAccount + " No cache retention is available.");
         host ??= new WindowsOrcaCacheResetHost();
         var processes = await Required(ct => host.ReadProcessesAsync(options.Mode, ct), "Outlook process", token).ConfigureAwait(false);
         var targets = await Required(ct => host.ReadTargetsAsync(options.Mode, ct), "Outlook cache", token).ConfigureAwait(false);
@@ -84,6 +86,8 @@ public static class OrcaCacheReset
             return new(OrcaCacheResetOutcome.Blocked,
                 "Cache retention supports only the running account with ClearCaches as the sole selected action. No Outlook data changed.");
 
+        if (host is null && OtherAccountReason() is { } otherAccount)
+            return new(OrcaCacheResetOutcome.Blocked, otherAccount + " No Outlook data changed.");
         host ??= new WindowsOrcaCacheResetHost();
         string root = Path.GetFullPath(journalFolder);
         Directory.CreateDirectory(root);
@@ -194,12 +198,14 @@ public static class OrcaCacheReset
         IOrcaCacheResetHost? host = null, CancellationToken token = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(journalFolder);
-        host ??= new WindowsOrcaCacheResetHost();
         string root = Path.GetFullPath(journalFolder);
         string pendingPath = Path.Combine(root, "orca-cache-reset.pending.json");
         if (!File.Exists(pendingPath))
             return new(OrcaCacheReconciliationOutcome.NoPendingRecord,
                 "No interrupted Outlook cache reset record is present.", pendingPath);
+        if (host is null && OtherAccountReason() is { } otherAccount)
+            return new(OrcaCacheReconciliationOutcome.Inconclusive, otherAccount + " The pending record was retained and no move was repeated.", pendingPath);
+        host ??= new WindowsOrcaCacheResetHost();
         Directory.CreateDirectory(root);
         await using var operationLock = new FileStream(Path.Combine(root, "orca-cache-reset.reconcile.lock"),
             FileMode.CreateNew, FileAccess.Write, FileShare.None, 1, FileOptions.DeleteOnClose);
@@ -244,6 +250,20 @@ public static class OrcaCacheReset
                 "The interrupted Outlook cache reset record or current directory evidence could not be verified. The pending record was retained and no move was repeated.",
                 pendingPath);
         }
+    }
+
+    /// <summary>Outlook's caches, add-ins, profiles and credentials all belong to the running account. Under an
+    /// over-the-shoulder elevation that is another administrator, so the reset refuses rather than clearing
+    /// that administrator's caches or half of the signed-in user's.</summary>
+    private static string? OtherAccountReason()
+    {
+        try
+        {
+            return SignedInUser.Current.DifferentAccount
+                ? "KillerBench is running as a different account from the one signed in to Windows. Run it as the signed-in user to reset that user's Outlook caches."
+                : null;
+        }
+        catch (InvalidOperationException error) { return error.Message; }
     }
 
     public static IReadOnlyList<string> ExpectedPaths(OrcaOutlookMode mode)

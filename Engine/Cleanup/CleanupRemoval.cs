@@ -116,23 +116,26 @@ public sealed partial class WindowsCleanupRemovalHost : ICleanupRemovalHost
         if (cutoffUtc > DateTime.UtcNow.AddDays(-1) || candidate.Bytes < 0 || path.AsSpan(2).Contains(':'))
             return new(path, "Skipped", "Invalid age, size or alternate-stream target.");
         root = Path.TrimEndingDirectorySeparator(Path.GetFullPath(root));
-        string userRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Temp");
         string windowsRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Temp");
         string systemTempRoot = CleanupPreview.SystemTempRoot();
-        bool thumbnailCandidate = CleanupPreview.ThumbnailCacheRoot().Equals(root, StringComparison.OrdinalIgnoreCase) &&
-            CleanupPreview.IsThumbnailCacheFile(path);
-        bool iconCandidate = CleanupPreview.ThumbnailCacheRoot().Equals(root, StringComparison.OrdinalIgnoreCase) &&
-            CleanupPreview.IsIconCacheFile(path);
-        if ((!root.Equals(userRoot, StringComparison.OrdinalIgnoreCase) && !root.Equals(windowsRoot, StringComparison.OrdinalIgnoreCase) &&
+        // Per-user roots are the signed-in account's, the same ones the preview inspected. When that
+        // account cannot be established, no per-user root is supported and its candidates are skipped.
+        string? local = SignedInUser.TryLocalApplicationData(out _);
+        bool thumbnailRoot = local is not null && CleanupPreview.ThumbnailCacheRoot(local).Equals(root, StringComparison.OrdinalIgnoreCase);
+        bool thumbnailCandidate = thumbnailRoot && CleanupPreview.IsThumbnailCacheFile(path);
+        bool iconCandidate = thumbnailRoot && CleanupPreview.IsIconCacheFile(path);
+        bool userTarget = local is not null &&
+            (root.Equals(Path.Combine(local, "Temp"), StringComparison.OrdinalIgnoreCase) ||
+            CleanupPreview.ShaderRoots(local).Contains(root, StringComparer.OrdinalIgnoreCase) ||
+            CleanupPreview.OfficeCacheRoots(local).Contains(root, StringComparer.OrdinalIgnoreCase) ||
+            CleanupPreview.ErrorReportRoots(local).Contains(root, StringComparer.OrdinalIgnoreCase) ||
+            CleanupPreview.CrashDumpRoot(local).Equals(root, StringComparison.OrdinalIgnoreCase) ||
+            BrowserCacheRoots.IsKnownRoot(root, local));
+        if ((!userTarget && !root.Equals(windowsRoot, StringComparison.OrdinalIgnoreCase) &&
             !root.Equals(systemTempRoot, StringComparison.OrdinalIgnoreCase) &&
-            !CleanupPreview.ShaderRoots().Contains(root, StringComparer.OrdinalIgnoreCase) &&
-            !CleanupPreview.OfficeCacheRoots().Contains(root, StringComparer.OrdinalIgnoreCase) &&
-            !CleanupPreview.ErrorReportRoots().Contains(root, StringComparer.OrdinalIgnoreCase) &&
-            !CleanupPreview.CrashDumpRoot().Equals(root, StringComparison.OrdinalIgnoreCase) &&
             !CleanupPreview.WindowsMinidumpRoot().Equals(root, StringComparison.OrdinalIgnoreCase) &&
             !CleanupPreview.DeliveryOptimizationCacheRoot().Equals(root, StringComparison.OrdinalIgnoreCase) &&
-            !thumbnailCandidate && !iconCandidate &&
-            !BrowserCacheRoots.IsKnownRoot(root, Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData))) ||
+            !thumbnailCandidate && !iconCandidate) ||
             !path.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
             return new(path, "Skipped", "Path is outside supported temporary-file, cache, error-report and crash-dump targets.");
 

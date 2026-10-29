@@ -1,4 +1,3 @@
-using KillerBench.Engine.Infrastructure;
 using System.Text.Json;
 
 namespace KillerBench.Engine.Printing;

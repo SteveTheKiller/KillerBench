@@ -812,6 +812,7 @@ internal static class Program
             ServiceStartupConfigurationChecks.Run();
             ServiceDependencyConfigurationChecks.Run();
             ServiceDllChecks.Run();
+            SignedInUserChecks.Run();
             ServiceTransitionChecks.Run();
             ServiceRecoveryPolicyChecks.Run();
             ServiceTriggerChecks.RunAsync().GetAwaiter().GetResult();
