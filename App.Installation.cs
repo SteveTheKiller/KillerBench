@@ -152,6 +152,8 @@ public partial class App
         bool removed = Services.InstallationOwnership.UnregisterPreservingFiles(installDirectory, registered, () =>
         {
             try { Services.CommandLinePath.UnregisterRequired(installDirectory, machine); } catch { complete = false; }
+            // The retained exe would otherwise keep starting at sign-in after uninstall.
+            try { KillerFamily.Deployment.StartupRegistration.Remove(Services.AppInfo.DisplayName); } catch { complete = false; }
             try { File.Delete(Path.Combine(StartMenuDir(machine), AppName + ".lnk")); } catch { complete = false; }
             try { Directory.Delete(StartMenuDir(machine), recursive: false); } catch { }
             try { File.Delete(DesktopShortcut(machine)); } catch { complete = false; }

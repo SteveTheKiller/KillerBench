@@ -166,11 +166,21 @@ public static class PreviousWindowsInstallationRemoval
             if (!Verified(after))
                 return new(PreviousWindowsRemovalOutcome.Uncertain,
                     "Fresh evidence does not yet prove rollback removal. The pending record remains and the command will not be repeated automatically.", pendingPath);
+            const string removed = "Windows reports that operating-system rollback is no longer available. Windows controls any remaining cleanup of Windows.old.";
             string journal = Path.Combine(directory, $"previous-windows-removal.{operationId}.verified.json");
-            await JournalPersistence.WriteAsync(journal, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: token).ConfigureAwait(false);
-            File.Delete(pendingPath);
-            return new(PreviousWindowsRemovalOutcome.Verified,
-                "Windows reports that operating-system rollback is no longer available. Windows controls any remaining cleanup of Windows.old.", journal);
+            // Removal is already verified; failing bookkeeping leaves the pending record for
+            // reconciliation, which confirms the same fresh evidence, but never unverifies the result.
+            try
+            {
+                await JournalPersistence.WriteAsync(journal, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
+                File.Delete(pendingPath);
+            }
+            catch (Exception error) when (IsExpected(error))
+            {
+                return new(PreviousWindowsRemovalOutcome.Verified,
+                    removed + " The verification record could not be saved, so the pending record remains for reconciliation.", pendingPath);
+            }
+            return new(PreviousWindowsRemovalOutcome.Verified, removed, journal);
         }
         catch (OperationCanceledException)
         {
@@ -266,9 +276,18 @@ public static class PreviousWindowsInstallationRemoval
         string detail)
     {
         string archive = Path.Combine(directory, $"previous-windows-removal.{pending.OperationId}.{outcome.ToString().ToLowerInvariant()}.json");
-        await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
-        File.Move(pendingPath, archive + ".prepared.json");
-        return new(outcome, detail, archive);
+        // Nothing was requested on any path that closes here, so a bookkeeping failure must not escape
+        // as an exception: the result still says no change was made, and the pending record stays.
+        try
+        {
+            await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(pending, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
+            File.Move(pendingPath, archive + ".prepared.json");
+            return new(outcome, detail, archive);
+        }
+        catch (Exception error) when (IsExpected(error))
+        {
+            return new(outcome, detail + " The pending record could not be archived and remains for read-only reconciliation.", pendingPath);
+        }
     }
 }
 

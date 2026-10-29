@@ -18,7 +18,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 - Windows and app updates recheck the exact package and version before installation. Feature upgrades and restarts require separate consent; onboarding installers require a valid signature from the confirmed vendor.
 - Service recovery checks configuration, executable files and dependencies, preserves startup settings, and requires stable Running observations before reporting success. The Windows Update data-store reset restarts every service it asked to stop, even when the stop fails partway. Network and printer repairs bind to the selected adapter or queue; interrupted MTU writes remain uncertain.
 - Diagnostic reports preserve failed proxy reads and invalid Group Policy timestamps as unknown. Entra reports and journals include join and token flags without account or device identities.
-- Setup checks destination ownership and elevated access, recognizes registered custom installations, and preserves recovery folders. Uninstall removes matching registration, shortcuts and the PATH entry, waits for every running copy including an elevated one, retains files and shows their location.
+- Setup checks destination ownership and elevated access, recognizes registered custom installations, and preserves recovery folders. Uninstall removes matching registration, shortcuts, the PATH entry and start-with-Windows, waits for every running copy including an elevated one, retains files and shows their location.
 
 ### Diagnosis and workflows
 

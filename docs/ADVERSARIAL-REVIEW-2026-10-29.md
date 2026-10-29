@@ -55,10 +55,10 @@ Three read-only diagnostics use the same apostrophe-only quoting (EventLogCapaci
 
 | ID | Location | Question |
 | --- | --- | --- |
-| S-008 | App.Installation.cs:146 | Uninstall never removes the start-with-Windows Run value. Should uninstall clear it? |
-| D-007 | Engine/Cleanup/PreviousWindowsInstallation.cs:169 | Can a verified rollback removal be reported Uncertain when the journal write or the pending-file delete fails afterward? |
-| D-008 | Engine/Cleanup/PreviousWindowsInstallation.cs:155 | Can the `ClosePreparedAsync` retry in the catch block throw out of `RunAsync`? |
-| D-010 | Engine/Automation/OrcaCacheReset.cs:252, Engine/Cleanup/CleanupRemoval.cs:119 | Under over-the-shoulder UAC, do the per-user cache cleanups target the admin's profile instead of the signed-in user's? |
+| S-008 | App.Installation.cs:146 | Real, fixed. KillerNotes already removes the Run value on uninstall, so KillerBench now does too and counts a failure as incomplete. |
+| D-007 | Engine/Cleanup/PreviousWindowsInstallation.cs:169 | Real, fixed. A verified removal stays Verified when its bookkeeping fails, and the pending record is left for reconciliation. |
+| D-008 | Engine/Cleanup/PreviousWindowsInstallation.cs:155 | Real, fixed. `ClosePreparedAsync` no longer throws; an archive failure keeps the no-change result and leaves the pending record. |
+| D-010 | Engine/Automation/OrcaCacheReset.cs:252, Engine/Cleanup/CleanupRemoval.cs:119 | Real, open for a product decision. The app runs `asInvoker` and has no same-user guard, so a copy elevated with another admin account cleans that admin's profile and reports success. |
 
 ### Family drift found during the review
 
@@ -75,5 +75,5 @@ Each cut is committed separately.
 - **KB-C, engine primitives, done.** E-001 refuses a type mismatch the way `set-string` does. E-002 starts the stdout and stderr readers before writing stdin and tolerates a broken pipe. E-003 and E-005 stay as they are, for the reasons in the table.
 - **KB-D, install and update, done.** S-007 uses `UnregisterRequired` and counts a failure as incomplete. S-009 treats an unreadable process named KillerBench.exe as running. S-004 and S-006 live in the shared `UpdateService.cs` and `AboutController.cs`, so they move to the family list. S-005 stays open: SelfUpdate is KillerBench-only, and removing it means repointing ReleaseUpdateChecks.
 - **KB-E, harness hygiene, done.** C-001, C-002, C-003, C-005 and C-007 are fixed. C-004 needs nothing, and C-006 stays open as low.
-- **KB-F, investigations.** D-007, D-008, D-010 and S-008. Each gets a ruling and then either a fix or a note explaining why the current behavior stands.
+- **KB-F, investigations, done.** D-007, D-008 and S-008 are fixed. D-010 is confirmed and waits on whether per-user cleanups should refuse or retarget under another account.
 - **Family.** The S-001 dispatch is ported to KillerPDF and KillerShot. Still to do: fix S-004 (require the `v` or keep the matched tag) and S-006 (show why the update hand-off failed) in KillerUI first, then roll them out to every app.
