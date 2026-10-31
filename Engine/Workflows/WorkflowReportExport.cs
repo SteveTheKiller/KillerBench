@@ -27,7 +27,33 @@ public static class WorkflowReportExport
         new("se98", "98SE", "#c0c0c0", "#c0c0c0", "#ffffff", "#000080", "#000000", "#404040", "#808080")
     ];
 
-    public static string BuildHtml(WorkflowResult result, WorkflowReportScope scope, string themeKey = "dark", string accentKey = "orange")
+    /// <summary>Publishes a finished report. Without <paramref name="overwrite"/> the final rename fails
+    /// on anything that appeared since preflight, so a competing file is never truncated.</summary>
+    public static async Task PublishAsync(string path, string content, bool overwrite)
+    {
+        string full = Path.GetFullPath(path);
+        string temporary = full + ".creating-" + Guid.NewGuid().ToString("N");
+        try
+        {
+            await File.WriteAllTextAsync(temporary, content).ConfigureAwait(false);
+            File.Move(temporary, full, overwrite);
+        }
+        finally
+        {
+            try { File.Delete(temporary); }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException) { }
+        }
+    }
+
+    private const string RecordedNotice = "This report was rebuilt from a saved journal. Every outcome below is a recorded claim, and no current verification occurred.";
+
+    private static IEnumerable<RecipeResult> RecipeOnly(WorkflowResult result) => result.Recipes
+        .Where(r => r.Repair is null && r.EffectiveOutcome != RecipeOutcome.Clear &&
+            !result.Checks.Any(check => check.Detail == r.Detail))
+        .OrderBy(recipe => ReviewPriority(recipe.EffectiveOutcome)).ThenBy(recipe => recipe.RecipeId, StringComparer.Ordinal);
+
+    public static string BuildHtml(WorkflowResult result, WorkflowReportScope scope, string themeKey = "dark", string accentKey = "orange",
+        string? importedFrom = null)
     {
         ArgumentNullException.ThrowIfNull(result);
         string theme = NormalizeTheme(themeKey);
@@ -50,9 +76,11 @@ public static class WorkflowReportExport
         sb.AppendLine("*{box-sizing:border-box}body{margin:0;padding:24px;background:var(--bg);color:var(--text);font:14px/1.5 'Segoe UI',sans-serif}.wrap{max-width:1120px;margin:auto}.top{display:flex;justify-content:space-between;gap:24px;align-items:flex-start}.brand{font:700 30px Consolas,monospace}.brand b{color:var(--accent)}h1{font:600 23px Consolas,monospace;margin:20px 0 4px}.sub,.muted{color:var(--muted)}.switchers{display:grid;gap:8px}.switchrow{display:flex;align-items:center;justify-content:flex-end;gap:9px}.switchlabel{color:var(--muted);font:10px Consolas,monospace;text-transform:uppercase}.switch{display:flex;flex-wrap:wrap;gap:7px;justify-content:flex-end}.switch button{width:19px;height:19px;border-radius:50%;border:2px solid var(--border);padding:0;cursor:pointer}.switch button.active{outline:2px solid var(--text);outline-offset:2px}.panel{margin-top:16px;padding:17px;border:1px solid var(--border);border-radius:9px;background-color:var(--pane);background-image:radial-gradient(rgba(255,255,255,.035) .65px,transparent .75px);background-size:3px 3px;box-shadow:0 10px 28px rgba(0,0,0,.35)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px}.metric{padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:7px}.metric strong{display:block;font:700 25px Consolas,monospace;color:var(--accent)}h2{font:600 18px Consolas,monospace;color:var(--accent);margin:0 0 12px}.item{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--accent);border-radius:7px;padding:14px;margin:10px 0}.item.verdict{border-left-width:9px;box-shadow:inset 0 0 24px color-mix(in srgb,var(--accent) 12%,transparent)}.item h3{margin:0 0 7px;font:600 16px Consolas,monospace}.label{font:700 10px Consolas,monospace;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-top:9px}.text{white-space:pre-wrap;overflow-wrap:anywhere}.badge{display:inline-block;padding:3px 8px;border-radius:99px;background:var(--accent);color:#111;font:700 11px Consolas,monospace}details{margin:8px 0}summary{cursor:pointer;color:var(--accent)}code{font:12px Consolas,monospace}.notice{border-left:5px solid var(--accent)}.footer{margin:18px 0;color:var(--muted);font-size:11px}.footer a{color:var(--accent)}@media(max-width:650px){body{padding:12px}.top{display:block}.switchrow{justify-content:flex-start;margin-top:10px}}@media print{body{padding:0;background:#fff;color:#111}.switchers{display:none}.panel,.item,.metric{box-shadow:none;break-inside:avoid}.panel{background:#fff;border-color:#aaa}.muted,.sub,.label{color:#555}}</style></head><body><main class='wrap'>");
         sb.AppendLine("<div class='top'><div><div class='brand'>Killer<b>Bench</b></div><h1>" + (scope == WorkflowReportScope.Diagnostics ? "Diagnostic report" : "Diagnostic and repair report") + "</h1><div class='sub'>Structured findings, actions, and verification</div></div><div class='switchers'><div class='switchrow'><span class='switchlabel'>Theme</span><div class='switch' id='themes' aria-label='Report theme'></div></div><div class='switchrow' id='accentrow'><span class='switchlabel'>Accent</span><div class='switch' id='accents' aria-label='Report accent'></div></div></div></div>");
         sb.Append("<section class='panel'><div class='grid'>");
-        Metric(sb, "Status", result.Status); Metric(sb, "Problems", problemChecks.Length.ToString()); Metric(sb, "Verified repairs", summary.VerifiedRepairs.ToString()); Metric(sb, "Incomplete", summary.Incomplete.ToString());
+        bool imported = importedFrom is not null;
+        Metric(sb, imported ? "Recorded status" : "Status", result.Status); Metric(sb, "Problems", problemChecks.Length.ToString()); Metric(sb, imported ? "Recorded repairs" : "Verified repairs", summary.VerifiedRepairs.ToString()); Metric(sb, "Incomplete", summary.Incomplete.ToString());
         sb.Append("</div><p><b>Machine:</b> ").Append(E(result.Machine)).Append("<br/><b>Workflow:</b> ").Append(E(Humanize(result.Kind.ToString())))
             .Append("<br/><b>Started:</b> ").Append(E(result.StartedUtc.ToString("yyyy-MM-dd HH:mm:ss zzz"))).AppendLine("</p></section>");
+        if (imported) sb.Append("<section class='panel notice'><h2>Recorded history</h2><p>").Append(E(RecordedNotice)).Append(" Source: ").Append(E(importedFrom)).AppendLine("</p></section>");
         sb.Append("<section class='panel notice'><h2>Start here</h2><p>").Append(E(nextAction)).AppendLine("</p></section>");
         sb.AppendLine("<section class='panel notice'><h2>Scope and limitations</h2><p>This report covers only the checks selected for this workflow. A clear result does not prove overall computer health. Historical evidence does not by itself prove a current fault or authorize a repair.</p></section>");
         if (verdicts.Length > 0)
@@ -67,9 +95,9 @@ public static class WorkflowReportExport
         sb.AppendLine("</section>");
         if (fixedChecks.Length > 0)
         {
-            sb.AppendLine("<section class='panel'><h2>Repaired and verified</h2>");
+            sb.AppendLine(imported ? "<section class='panel'><h2>Recorded as repaired</h2>" : "<section class='panel'><h2>Repaired and verified</h2>");
             foreach (var check in fixedChecks)
-                sb.Append("<article class='item'><h3>").Append(E(check.Name)).Append("</h3><span class='badge'>Repair verified</span><div class='label'>Found before repair</div><div class='text'>")
+                sb.Append("<article class='item'><h3>").Append(E(check.Name)).Append("</h3><span class='badge'>").Append(imported ? "Recorded repair" : "Repair verified").Append("</span><div class='label'>Found before repair</div><div class='text'>")
                     .Append(E(check.Detail)).AppendLine("</div></article>");
             sb.AppendLine("</section>");
         }
@@ -79,8 +107,7 @@ public static class WorkflowReportExport
             if (result.Actions.Count == 0 && result.Repairs.Count == 0) sb.AppendLine("<p>No repair was executed in this workflow.</p>");
             foreach (var action in result.Actions) ActionCard(sb, action);
             foreach (var repair in result.Repairs) RepairCard(sb, repair);
-            foreach (var recipe in result.Recipes.Where(r => r.Repair is null && r.EffectiveOutcome != RecipeOutcome.Clear)
-                .OrderBy(recipe => ReviewPriority(recipe.EffectiveOutcome)).ThenBy(recipe => recipe.RecipeId, StringComparer.Ordinal))
+            foreach (var recipe in RecipeOnly(result))
                 sb.Append("<article class='item'><h3>").Append(E(Humanize(recipe.RecipeId))).Append("</h3><span class='badge'>").Append(E(Humanize(recipe.EffectiveOutcome.ToString()))).Append("</span><div class='label'>Result</div><div class='text'>").Append(E(recipe.Detail)).AppendLine("</div></article>");
             sb.AppendLine("</section>");
         }
@@ -94,13 +121,15 @@ public static class WorkflowReportExport
         return sb.ToString();
     }
 
-    public static string BuildText(WorkflowResult result, WorkflowReportScope scope)
+    public static string BuildText(WorkflowResult result, WorkflowReportScope scope, string? importedFrom = null)
     {
+        bool imported = importedFrom is not null;
         ArgumentNullException.ThrowIfNull(result);
         var sb = new StringBuilder();
         string nextAction = WorkflowReport.NextAction(result);
         sb.AppendLine("KILLERBENCH " + (scope == WorkflowReportScope.Diagnostics ? "DIAGNOSTIC REPORT" : "DIAGNOSTIC AND REPAIR REPORT"));
-        sb.AppendLine("Status: " + result.Status).AppendLine("Machine: " + result.Machine).AppendLine("Workflow: " + Humanize(result.Kind.ToString()))
+        if (imported) sb.AppendLine("RECORDED HISTORY").AppendLine(RecordedNotice + " Source: " + importedFrom).AppendLine();
+        sb.AppendLine((imported ? "Recorded status: " : "Status: ") + result.Status).AppendLine("Machine: " + result.Machine).AppendLine("Workflow: " + Humanize(result.Kind.ToString()))
             .AppendLine("Started: " + result.StartedUtc.ToString("yyyy-MM-dd HH:mm:ss zzz"));
         sb.AppendLine().AppendLine("START HERE").AppendLine(nextAction);
         sb.AppendLine().AppendLine("SCOPE AND LIMITATIONS").AppendLine("This report covers only the checks selected for this workflow. Historical evidence does not prove a current fault or authorize a repair.");
@@ -119,9 +148,9 @@ public static class WorkflowReportExport
         foreach (var check in problems) TextCheck(sb, check);
         if (fixedChecks.Length > 0)
         {
-            sb.AppendLine().AppendLine("REPAIRED AND VERIFIED");
+            sb.AppendLine().AppendLine(imported ? "RECORDED AS REPAIRED" : "REPAIRED AND VERIFIED");
             foreach (var check in fixedChecks)
-                sb.AppendLine().AppendLine(check.Name + " [Repair verified]").AppendLine("Found before repair: " + check.Detail);
+                sb.AppendLine().AppendLine(check.Name + (imported ? " [Recorded repair]" : " [Repair verified]")).AppendLine("Found before repair: " + check.Detail);
         }
         if (scope == WorkflowReportScope.DiagnosticsAndRepairs)
         {
@@ -137,6 +166,9 @@ public static class WorkflowReportExport
                     sb.AppendLine(StepLabel(step) + ": " + step.Step.Tool + " " + string.Join(' ', step.Step.Arguments))
                         .AppendLine("Outcome: " + Describe(step));
             }
+            foreach (var recipe in RecipeOnly(result))
+                sb.AppendLine().AppendLine(Humanize(recipe.RecipeId)).AppendLine("Result: " + Humanize(recipe.EffectiveOutcome.ToString()))
+                    .AppendLine(recipe.Detail);
         }
         sb.AppendLine().AppendLine("COMPLETED CHECKS");
         foreach (var check in detailedChecks.Except(problems)) TextCheck(sb, check);

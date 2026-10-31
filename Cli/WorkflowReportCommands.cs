@@ -33,10 +33,11 @@ internal static class WorkflowReportCommands
             var snapshot = await WorkflowJournalReview.ReadAsync(args[1]);
             var workflow = snapshot.ReadWorkflow();
             var scope = includeRepairs ? WorkflowReportScope.DiagnosticsAndRepairs : WorkflowReportScope.Diagnostics;
+            string source = Path.GetFileName(args[1]);
             string output = extension.Equals(".html", StringComparison.OrdinalIgnoreCase)
-                ? WorkflowReportExport.BuildHtml(workflow, scope, theme, accent)
-                : WorkflowReportExport.BuildText(workflow, scope);
-            await File.WriteAllTextAsync(args[2], output);
+                ? WorkflowReportExport.BuildHtml(workflow, scope, theme, accent, source)
+                : WorkflowReportExport.BuildText(workflow, scope, source);
+            await WorkflowReportExport.PublishAsync(args[2], output, overwrite);
             Console.WriteLine(Path.GetFullPath(args[2]));
             return 0;
         }

@@ -1009,6 +1009,7 @@ internal static class Program
             ProfileBackupCopyChecks.Run();
             RecordPreservationChecks.Run(scratch);
             ProfileBackupBoundaryChecks.Run(scratch);
+            ReportPublicationChecks.Run(scratch);
             ProfileRemovalChecks.RunAsync(scratch).GetAwaiter().GetResult();
             UpdateDiscoveryChecks.RunAsync().GetAwaiter().GetResult();
             ThirdPartyUpdateChecks.RunAsync().GetAwaiter().GetResult();

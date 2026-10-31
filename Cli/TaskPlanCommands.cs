@@ -130,7 +130,7 @@ internal static class TaskPlanCommands
         string content = Path.GetExtension(reportPath) == ".html"
             ? WorkflowReportExport.BuildHtml(report, execute ? WorkflowReportScope.DiagnosticsAndRepairs : WorkflowReportScope.Diagnostics)
             : WorkflowReportExport.BuildText(report, execute ? WorkflowReportScope.DiagnosticsAndRepairs : WorkflowReportScope.Diagnostics);
-        await File.WriteAllTextAsync(reportPath, content).ConfigureAwait(false);
+        await WorkflowReportExport.PublishAsync(reportPath, content, false).ConfigureAwait(false);
     }
 
     internal static async Task<int> RecoverRegistrationAsync(string[] args,
@@ -210,7 +210,7 @@ internal static class TaskPlanCommands
         string content = Path.GetExtension(reportPath) == ".html"
             ? WorkflowReportExport.BuildHtml(report, WorkflowReportScope.Diagnostics)
             : WorkflowReportExport.BuildText(report, WorkflowReportScope.Diagnostics);
-        await File.WriteAllTextAsync(reportPath, content).ConfigureAwait(false);
+        await WorkflowReportExport.PublishAsync(reportPath, content, false).ConfigureAwait(false);
     }
 
     internal static async Task<int> RunAsync(string[] args, Readers? readers = null)
