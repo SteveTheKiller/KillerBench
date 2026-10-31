@@ -5,7 +5,7 @@ namespace KillerBench.Services;
 
 internal static class Preferences
 {
-    private static readonly string FilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "appearance.json");
+    internal static string FilePath { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "appearance.json");
     private static Dictionary<string, string> values = [];
     internal static string? Get(string key) => values.GetValueOrDefault(key);
     internal static void Set(string key, string value) => values[key] = value;
@@ -14,6 +14,7 @@ internal static class Preferences
     internal static bool Loaded { get; private set; }
     internal static void Load()
     {
+        Loaded = false;
         try
         {
             if (!File.Exists(FilePath)) { Loaded = true; return; }
@@ -25,6 +26,7 @@ internal static class Preferences
     }
     internal static bool Save()
     {
+        if (!Loaded) return false;
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);

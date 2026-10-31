@@ -187,7 +187,11 @@ public static class ProfileBackupRecovery
             using var json = JsonDocument.Parse(stream);
             if (!UniqueFields(json.RootElement)) return Failed("The pending backup record contains ambiguous fields.");
             record = json.RootElement.Deserialize<PendingProfileBackup>(StrictJson)!;
-            if (record is null || record.Schema != 1 || record.StartedUtc == default ||
+            // Required parameters reject a missing member, not an explicit null.
+            if (record is null || record.Machine is null || record.Target?.Sid is null || record.Target.Path is null ||
+                record.DestinationPath is null || record.Journal is null)
+                return Failed("The pending backup record identity is invalid.");
+            if (record.Schema != 1 || record.StartedUtc == default ||
                 !record.Machine.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase) ||
                 string.IsNullOrWhiteSpace(record.Journal) ||
                 ProfileBackupExecution.ValidateDestination(record.Target, record.DestinationPath) != record.DestinationPath)

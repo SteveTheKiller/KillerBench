@@ -18,6 +18,7 @@
   <ItemGroup><Compile Include="../Services/CommandLinePath.cs" Link="CommandLinePath.cs" /></ItemGroup>
   <ItemGroup><Compile Include="../Services/ImmutablePowerShell.cs" Link="ImmutablePowerShell.cs" /></ItemGroup>
   <ItemGroup><Compile Include="../Services/AppInfo.cs" Link="AppInfo.cs" /></ItemGroup>
+  <ItemGroup><Compile Include="../Services/Preferences.cs" Link="Preferences.cs" /></ItemGroup>
   <ItemGroup><Compile Include="../Services/UpdateImagePublication.cs" Link="UpdateImagePublication.cs" /></ItemGroup>
   <ItemGroup><Compile Include="../Services/ExecutableDeployment.cs" Link="ExecutableDeployment.cs" /></ItemGroup>
   <ItemGroup><Compile Include="../Packaging/KillerLauncher/InstallerPrerequisitePolicy.cs" Link="InstallerPrerequisitePolicy.cs" /></ItemGroup>
