@@ -56,6 +56,21 @@ public sealed class WindowsProfileBackupHost : IProfileBackupHost
         }
     }
 
+    public Task<bool> BoundaryReadyAsync(ProfileSnapshot target, string destinationPath, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+        try
+        {
+            using var held = ProfileBackupPathGuard.Open(target.Path, destinationPath);
+            return Task.FromResult(ProfileBackupPathGuard.SourceSupported(Path.GetFullPath(target.Path).TrimEnd('\\'), token));
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or ArgumentException or
+            NotSupportedException or System.ComponentModel.Win32Exception)
+        {
+            return Task.FromResult(false);
+        }
+    }
+
     public async Task CopyAsync(ProfileSnapshot target, string destinationPath, IProgress<string>? progress,
         CancellationToken token)
     {
@@ -63,6 +78,8 @@ public sealed class WindowsProfileBackupHost : IProfileBackupHost
         RepairStep step = ProfileBackupCopy.CreateStep(target, destinationPath);
         string source = step.Arguments[0];
         string destination = step.Arguments[1];
+        // Held through the copy: the final check and the native dispatch see the same folders.
+        using var held = ProfileBackupPathGuard.Open(source, destination);
         if (!Directory.Exists(source) || (File.GetAttributes(source) & FileAttributes.ReparsePoint) != 0 ||
             Directory.Exists(destination) || File.Exists(destination))
             throw new InvalidOperationException("The exact source and absent destination are required before profile backup copying.");

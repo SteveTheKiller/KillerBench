@@ -33,6 +33,11 @@ internal static class Program
                 RecordPreservationChecks.Run(Path.GetTempPath());
                 return 0;
             }
+            if (args is ["--only", "profile-boundary"])
+            {
+                ProfileBackupBoundaryChecks.Run(Path.GetTempPath());
+                return 0;
+            }
             if (args is ["--only", "portable-publication"])
             {
                 PortablePublicationChecks.Run(Path.GetTempPath());
@@ -1003,6 +1008,7 @@ internal static class Program
             ProfileOperationalCorrelationChecks.Run();
             ProfileBackupCopyChecks.Run();
             RecordPreservationChecks.Run(scratch);
+            ProfileBackupBoundaryChecks.Run(scratch);
             ProfileRemovalChecks.RunAsync(scratch).GetAwaiter().GetResult();
             UpdateDiscoveryChecks.RunAsync().GetAwaiter().GetResult();
             ThirdPartyUpdateChecks.RunAsync().GetAwaiter().GetResult();

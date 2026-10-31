@@ -228,7 +228,8 @@ public static class ProfileBackupArtifactVerifier
                 totalBytes = checked(totalBytes + entry.Length);
             }
 
-            var sourcePaths = EnumerateRelativeFiles(source, null, null, token);
+            var omitted = new List<string>();
+            var sourcePaths = EnumerateRelativeFiles(source, null, null, token, omitted);
             var destinationPaths = EnumerateRelativeFiles(destination, normalizedReceipt, manifestPath, token);
             if (fileCount != artifact.FileCount || totalBytes != artifact.TotalBytes ||
                 !sourcePaths.SetEquals(relativePaths) || !destinationPaths.SetEquals(relativePaths) ||
@@ -237,7 +238,9 @@ public static class ProfileBackupArtifactVerifier
             var receipt = new ProfileBackupReceipt(artifact.SourceSid, artifact.SourcePath, destination, artifact.CompletedUtc,
                 fileCount, totalBytes, manifestDigest, true);
             return new(receipt, true,
-                $"Verified {fileCount} source and backed-up files and {totalBytes} bytes against the fixed manifest. This does not prove ACL, alternate-stream, encrypted-file, application-state or restore behavior.");
+                $"Verified {fileCount} source and backed-up files and {totalBytes} bytes against the fixed manifest. " +
+                (omitted.Count == 0 ? "" : $"Omitted {omitted.Count} {(omitted.Count == 1 ? "junction" : "junctions")}; a junction is a link, and anything it points to was not copied. ") +
+                "This does not prove ACL, alternate-stream, encrypted-file, application-state or restore behavior.");
         }
         catch (OperationCanceledException) { throw; }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or NotSupportedException or ArgumentException or JsonException or OverflowException)
@@ -297,7 +300,7 @@ public static class ProfileBackupArtifactVerifier
     }
 
     private static HashSet<string> EnumerateRelativeFiles(string root, string? excludedFile1, string? excludedFile2,
-        CancellationToken token)
+        CancellationToken token, List<string>? omittedJunctions = null)
     {
         var relativePaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var folders = new Stack<string>();
@@ -312,7 +315,12 @@ public static class ProfileBackupArtifactVerifier
                 token.ThrowIfCancellationRequested();
                 var attributes = File.GetAttributes(entry);
                 if ((attributes & FileAttributes.ReparsePoint) != 0)
-                    throw new IOException("A redirected entry was found while comparing the backup.");
+                {
+                    if (omittedJunctions is null || !ProfileBackupPathGuard.IsJunction(entry))
+                        throw new IOException("A redirected entry was found while comparing the backup.");
+                    omittedJunctions.Add(entry);
+                    continue;
+                }
                 if ((attributes & FileAttributes.Directory) != 0) folders.Push(entry);
                 else if (!entry.Equals(excludedFile1, StringComparison.OrdinalIgnoreCase) &&
                          !entry.Equals(excludedFile2, StringComparison.OrdinalIgnoreCase))

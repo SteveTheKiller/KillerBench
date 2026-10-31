@@ -10,6 +10,7 @@ public interface IProfileBackupHost
     Task<bool> ReadyAsync(CancellationToken token);
     Task<bool> DestinationAbsentAsync(string destinationPath, CancellationToken token);
     Task CopyAsync(ProfileSnapshot target, string destinationPath, IProgress<string>? progress, CancellationToken token);
+    Task<bool> BoundaryReadyAsync(ProfileSnapshot target, string destinationPath, CancellationToken token) => Task.FromResult(true);
 }
 
 public sealed record ProfileBackupExecutionResult(string Status, string JournalPath, ProfileBackupVerification? Verification);
@@ -61,6 +62,7 @@ public static class ProfileBackupExecution
                 host.RegistrationsAsync, token: token).ConfigureAwait(false);
             if (!plan.ReviewPassed || plan.Targets.Single() != target) return false;
             if (!requireAbsent) return true;
+            if (!await host.BoundaryReadyAsync(target, destination, token).WaitAsync(token).ConfigureAwait(false)) return false;
             var absent = host.DestinationAbsentAsync(destination, token) ??
                 throw new InvalidOperationException("Backup destination provider returned no operation.");
             return await absent.WaitAsync(token).ConfigureAwait(false);
