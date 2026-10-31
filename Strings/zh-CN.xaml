@@ -842,9 +842,9 @@
   <sys:String x:Key="Str_Output_CheckedScopes">{0}。仅适用于已检查的范围。</sys:String>
   <sys:String x:Key="Str_NativeLab_Name">原生实验室功能验证状态</sys:String>
   <sys:String x:Key="Str_NativeLab_Format">原生实验室：{0}</sys:String>
-  <sys:String x:Key="Str_NativeLab_NotYetVerified">尚未在原生实验室中验证</sys:String>
-  <sys:String x:Key="Str_NativeLab_StaleEvidence">尚未验证：原生验证记录已过期</sys:String>
-  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">尚未验证：原生验证记录不完整或测试失败</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">使用风险自负</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">使用风险自负</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">使用风险自负</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">已在实验室中验证所记录的场景</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">仅诊断；不执行修复</sys:String>
   <sys:String x:Key="Str_Sys_Close">关闭</sys:String>

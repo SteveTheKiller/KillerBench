@@ -842,9 +842,9 @@
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. S’applique uniquement aux périmètres vérifiés.</sys:String>
   <sys:String x:Key="Str_NativeLab_Name">État de validation dans le laboratoire natif</sys:String>
   <sys:String x:Key="Str_NativeLab_Format">Laboratoire natif : {0}</sys:String>
-  <sys:String x:Key="Str_NativeLab_NotYetVerified">Pas encore vérifié dans le laboratoire natif</sys:String>
-  <sys:String x:Key="Str_NativeLab_StaleEvidence">Pas encore vérifié : les preuves natives sont périmées</sys:String>
-  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Pas encore vérifié : les preuves natives sont incomplètes ou les tests ont échoué</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Utilisation à vos risques et périls</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Utilisation à vos risques et périls</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Utilisation à vos risques et périls</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">Vérifié en laboratoire pour les scénarios consignés</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Diagnostic uniquement ; aucune réparation n’est exécutée</sys:String>
   <sys:String x:Key="Str_Sys_Close">Fermer</sys:String>

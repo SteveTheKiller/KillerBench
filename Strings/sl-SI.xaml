@@ -841,9 +841,9 @@
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. Velja samo za preverjene obsege.</sys:String>
   <sys:String x:Key="Str_NativeLab_Name">Stanje preverjanja funkcij v izvornem laboratoriju</sys:String>
   <sys:String x:Key="Str_NativeLab_Format">Izvorni laboratorij: {0}</sys:String>
-  <sys:String x:Key="Str_NativeLab_NotYetVerified">V izvornem laboratoriju še ni preverjeno</sys:String>
-  <sys:String x:Key="Str_NativeLab_StaleEvidence">Še ni preverjeno: izvorna dokazila so zastarela</sys:String>
-  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Še ni preverjeno: izvorna dokazila so nepopolna ali preizkus ni uspel</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Uporaba na lastno odgovornost</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Uporaba na lastno odgovornost</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Uporaba na lastno odgovornost</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">V laboratoriju preverjeno za zabeležene scenarije</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Samo diagnostika; popravilo se ne zažene</sys:String>
   <sys:String x:Key="Str_Sys_Close">Zapri</sys:String>

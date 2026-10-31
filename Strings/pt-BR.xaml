@@ -841,9 +841,9 @@
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. Vale apenas para os escopos verificados.</sys:String>
   <sys:String x:Key="Str_NativeLab_Name">Status de validação no laboratório nativo</sys:String>
   <sys:String x:Key="Str_NativeLab_Format">Laboratório nativo: {0}</sys:String>
-  <sys:String x:Key="Str_NativeLab_NotYetVerified">Ainda não verificado no laboratório nativo</sys:String>
-  <sys:String x:Key="Str_NativeLab_StaleEvidence">Ainda não verificado: as evidências nativas estão desatualizadas</sys:String>
-  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Ainda não verificado: as evidências nativas estão incompletas ou os testes falharam</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Use por sua conta e risco</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Use por sua conta e risco</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Use por sua conta e risco</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">Verificado no laboratório para os cenários registrados</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Somente diagnóstico; nenhum reparo é executado</sys:String>
   <sys:String x:Key="Str_Sys_Close">Fechar</sys:String>

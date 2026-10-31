@@ -19,15 +19,15 @@ internal static class CapabilityDesktopChecks
             Get<ComboBox>("MainWorkflow").SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == WorkflowKind.CommonProblems);
             Get<CheckBox>("CustomizeRecipes").IsChecked = true;
             Require(Get<TextBlock>("RecipeEffectsSummary").Text.Contains("Native lab:", StringComparison.Ordinal) &&
-                Get<TextBlock>("RecipeEffectsSummary").Text.Contains("Not yet verified", StringComparison.Ordinal),
+                Get<TextBlock>("RecipeEffectsSummary").Text.Contains("Use at your own risk", StringComparison.Ordinal),
                 "Recipe effect summaries must display the shared native lab label before selection or execution");
             Button repairs = Descendants(window).OfType<Button>().Single(button => Equals(button.Content, application.FindResource("Str_Advanced_Repairs")));
             repairs.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(Get<TextBox>("RepairPreview").Text.Contains("Native lab:", StringComparison.Ordinal), "Focused repair previews show the native lab label");
             Get<ComboBox>("RepairChoice").SelectedIndex = 1;
-            Require(Get<TextBox>("RepairPreview").Text.Contains("Not yet verified", StringComparison.Ordinal), "Changing the focused repair preserves its current label");
+            Require(Get<TextBox>("RepairPreview").Text.Contains("Use at your own risk", StringComparison.Ordinal), "Changing the focused repair preserves its current label");
             Get<ComboBox>("MainWorkflow").SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == WorkflowKind.ScheduledTasks);
-            Require(Get<TextBlock>("NativeCapabilityStatus").Text.Contains("Not yet verified", StringComparison.Ordinal) &&
+            Require(Get<TextBlock>("NativeCapabilityStatus").Text.Contains("Use at your own risk", StringComparison.Ordinal) &&
                 Get<TextBlock>("NativeCapabilityStatus").ToolTip is string status && status.Contains("command.task-register", StringComparison.Ordinal),
                 "Main workflow status maps dedicated task registration to the shared native capability");
             Get<Expander>("TaskDraftExpander").RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent));
@@ -42,7 +42,7 @@ internal static class CapabilityDesktopChecks
             Get<ComboBox>("MainWorkflow").SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == WorkflowKind.CommonProblems);
             Get<ComboBox>("MainWorkflow").SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == WorkflowKind.ScheduledTasks);
             Require(Get<TextBlock>("NativeCapabilityStatus").Text.StartsWith("Natives Testlabor:", StringComparison.Ordinal) &&
-                Get<TextBlock>("NativeCapabilityStatus").ToolTip is string localized && localized.Contains("Noch nicht", StringComparison.Ordinal),
+                Get<TextBlock>("NativeCapabilityStatus").ToolTip is string localized && localized.Contains("eigene Gefahr", StringComparison.Ordinal),
                 "Changing language must localize the visible native status and its tooltip together");
             Require(!window.IsVisible && new WindowInteropHelper(window).Handle == IntPtr.Zero,
                 "Capability desktop checks must never show a window or create a native handle");

@@ -84,6 +84,7 @@ public static partial class SignedInUser
 
     private static string? TryReadOwner(int processId)
     {
+        if (!OperatingSystem.IsWindows()) return null;
         const uint QueryLimitedInformation = 0x1000, TokenQuery = 0x0008;
         nint process = OpenProcess(QueryLimitedInformation, false, (uint)processId);
         if (process == 0) return null;

@@ -105,7 +105,7 @@ internal static class RepairCapabilityChecks
             int exit;
             try { Console.SetOut(output); exit = await CommandEngine.RunAsync(args); }
             finally { Console.SetOut(previous); }
-            Require(exit == 0 && output.ToString().Contains("Not yet verified", StringComparison.Ordinal), "Normal CLI catalogs expose native capability labels");
+            Require(exit == 0 && output.ToString().Contains("Use at your own risk", StringComparison.Ordinal), "Normal CLI catalogs expose native capability labels");
         }
         Console.WriteLine("PASS: shared repair capability inventory covers legacy, declarative and explicit mutation surfaces, validates retained native evidence, and labels CLI catalogs conservatively.");
     }

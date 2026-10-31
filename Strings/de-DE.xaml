@@ -842,9 +842,9 @@
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. Gilt nur für die geprüften Bereiche.</sys:String>
   <sys:String x:Key="Str_NativeLab_Name">Status der Funktionsprüfung im nativen Testlabor</sys:String>
   <sys:String x:Key="Str_NativeLab_Format">Natives Testlabor: {0}</sys:String>
-  <sys:String x:Key="Str_NativeLab_NotYetVerified">Noch nicht im nativen Testlabor geprüft</sys:String>
-  <sys:String x:Key="Str_NativeLab_StaleEvidence">Noch nicht geprüft: native Nachweise sind veraltet</sys:String>
-  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Noch nicht geprüft: native Nachweise sind unvollständig oder fehlgeschlagen</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Verwendung auf eigene Gefahr</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Verwendung auf eigene Gefahr</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Verwendung auf eigene Gefahr</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">Für die dokumentierten Szenarien im Labor geprüft</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Nur Diagnose; keine Reparatur wird ausgeführt</sys:String>
   <sys:String x:Key="Str_Sys_Close">Schließen</sys:String>

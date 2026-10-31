@@ -842,9 +842,9 @@
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. Yalnızca denetlenen kapsamlar için geçerlidir.</sys:String>
   <sys:String x:Key="Str_NativeLab_Name">Yerel laboratuvar yetenek doğrulama durumu</sys:String>
   <sys:String x:Key="Str_NativeLab_Format">Yerel laboratuvar: {0}</sys:String>
-  <sys:String x:Key="Str_NativeLab_NotYetVerified">Yerel laboratuvarda henüz doğrulanmadı</sys:String>
-  <sys:String x:Key="Str_NativeLab_StaleEvidence">Henüz doğrulanmadı: yerel kanıtlar güncel değil</sys:String>
-  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Henüz doğrulanmadı: yerel kanıtlar eksik veya test başarısız</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Kendi sorumluluğunuzda kullanın</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Kendi sorumluluğunuzda kullanın</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Kendi sorumluluğunuzda kullanın</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">Kaydedilen senaryolar için laboratuvarda doğrulandı</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Yalnızca tanılama; onarım başlatılmaz</sys:String>
   <sys:String x:Key="Str_Sys_Close">Kapat</sys:String>

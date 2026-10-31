@@ -841,9 +841,9 @@
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. Applies only to checked scopes.</sys:String>
   <sys:String x:Key="Str_NativeLab_Name">Native lab capability status</sys:String>
   <sys:String x:Key="Str_NativeLab_Format">Native lab: {0}</sys:String>
-  <sys:String x:Key="Str_NativeLab_NotYetVerified">Not yet verified in the native lab</sys:String>
-  <sys:String x:Key="Str_NativeLab_StaleEvidence">Not yet verified: native evidence is stale</sys:String>
-  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Not yet verified: native evidence is incomplete or failed</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Use at your own risk</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Use at your own risk</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Use at your own risk</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">Lab verified for the recorded scenarios</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Diagnostic only; no repair is dispatched</sys:String>
   <sys:String x:Key="Str_Sys_Close">Close</sys:String>

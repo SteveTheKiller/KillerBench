@@ -841,9 +841,9 @@
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. Chỉ áp dụng cho các phạm vi đã kiểm tra.</sys:String>
   <sys:String x:Key="Str_NativeLab_Name">Trạng thái xác minh chức năng trong phòng thử nghiệm gốc</sys:String>
   <sys:String x:Key="Str_NativeLab_Format">Phòng thử nghiệm gốc: {0}</sys:String>
-  <sys:String x:Key="Str_NativeLab_NotYetVerified">Chưa được xác minh trong phòng thử nghiệm gốc</sys:String>
-  <sys:String x:Key="Str_NativeLab_StaleEvidence">Chưa được xác minh: bằng chứng gốc đã cũ</sys:String>
-  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Chưa được xác minh: bằng chứng gốc chưa đầy đủ hoặc thử nghiệm thất bại</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Tự chịu rủi ro khi sử dụng</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Tự chịu rủi ro khi sử dụng</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Tự chịu rủi ro khi sử dụng</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">Đã xác minh trong phòng thử nghiệm cho các kịch bản đã ghi</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Chỉ chẩn đoán; không thực hiện sửa chữa</sys:String>
   <sys:String x:Key="Str_Sys_Close">Đóng</sys:String>

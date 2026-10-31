@@ -39,10 +39,8 @@ public static class RepairCapabilityInventory
     public static string Label(NativeCapabilityStatus status) => status switch
     {
         NativeCapabilityStatus.LabVerified => "Lab verified for the recorded scenarios",
-        NativeCapabilityStatus.StaleEvidence => "Not yet verified: native evidence is stale",
-        NativeCapabilityStatus.IncompleteEvidence => "Not yet verified: native evidence is incomplete or failed",
         NativeCapabilityStatus.DiagnosticOnly => "Diagnostic only; no repair is dispatched",
-        _ => "Not yet verified in the native lab"
+        _ => "Use at your own risk"
     };
 
     public static string Fingerprint<T>(T definition) => Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(definition, Capture.JsonOptions)));

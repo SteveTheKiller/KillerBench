@@ -842,9 +842,9 @@
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. Si applica solo agli ambiti controllati.</sys:String>
   <sys:String x:Key="Str_NativeLab_Name">Stato di convalida nel laboratorio nativo</sys:String>
   <sys:String x:Key="Str_NativeLab_Format">Laboratorio nativo: {0}</sys:String>
-  <sys:String x:Key="Str_NativeLab_NotYetVerified">Non ancora verificato nel laboratorio nativo</sys:String>
-  <sys:String x:Key="Str_NativeLab_StaleEvidence">Non ancora verificato: le prove native sono obsolete</sys:String>
-  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Non ancora verificato: le prove native sono incomplete o i test sono falliti</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Usare a proprio rischio</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Usare a proprio rischio</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Usare a proprio rischio</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">Verificato in laboratorio per gli scenari registrati</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Solo diagnostica; non viene eseguita alcuna riparazione</sys:String>
   <sys:String x:Key="Str_Sys_Close">Chiudi</sys:String>

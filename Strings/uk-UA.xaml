@@ -841,9 +841,9 @@
   <sys:String x:Key="Str_Output_CheckedScopes">{0}. Стосується лише перевірених областей.</sys:String>
   <sys:String x:Key="Str_NativeLab_Name">Стан перевірки функцій у нативній лабораторії</sys:String>
   <sys:String x:Key="Str_NativeLab_Format">Нативна лабораторія: {0}</sys:String>
-  <sys:String x:Key="Str_NativeLab_NotYetVerified">Ще не перевірено в нативній лабораторії</sys:String>
-  <sys:String x:Key="Str_NativeLab_StaleEvidence">Ще не перевірено: нативні дані застаріли</sys:String>
-  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Ще не перевірено: нативні дані неповні або тест не пройдено</sys:String>
+  <sys:String x:Key="Str_NativeLab_NotYetVerified">Використовуйте на власний ризик</sys:String>
+  <sys:String x:Key="Str_NativeLab_StaleEvidence">Використовуйте на власний ризик</sys:String>
+  <sys:String x:Key="Str_NativeLab_IncompleteEvidence">Використовуйте на власний ризик</sys:String>
   <sys:String x:Key="Str_NativeLab_LabVerified">Перевірено в лабораторії для записаних сценаріїв</sys:String>
   <sys:String x:Key="Str_NativeLab_DiagnosticOnly">Лише діагностика; виправлення не запускається</sys:String>
   <sys:String x:Key="Str_Sys_Close">Закрити</sys:String>
