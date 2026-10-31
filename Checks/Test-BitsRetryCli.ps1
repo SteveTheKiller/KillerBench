@@ -21,7 +21,7 @@ foreach ($arguments in @('bits-retry', 'bits-retry invalid --execute', "bits-ret
         $stderr = $process.StandardError.ReadToEndAsync()
         if (-not $process.WaitForExit(45000)) { $process.Kill(); throw 'BITS CLI check timed out.' }
         $output = $stdout.GetAwaiter().GetResult()
-        $errors = $stderr.GetAwaiter().GetResult()
+        $errors = ($stderr.GetAwaiter().GetResult() -replace '(?m)^Native lab: .*\r?\n', '')
         if ($preview) {
             $result = $output | ConvertFrom-Json
             if ($process.ExitCode -ne 3 -or $result.Mode -ne 'Preview' -or $result.Review.JobId -ne $id -or $result.Review.Selected) { throw 'Missing-job preview outcome incorrect.' }

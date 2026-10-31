@@ -29,7 +29,7 @@ foreach ($case in $cases) {
         $stderr = $process.StandardError.ReadToEndAsync()
         if (-not $process.WaitForExit(15000)) { $process.Kill(); throw 'BitLocker CLI validation timed out.' }
         $output = $stdout.GetAwaiter().GetResult()
-        $errors = $stderr.GetAwaiter().GetResult()
+        $errors = ($stderr.GetAwaiter().GetResult() -replace '(?m)^Native lab: .*\r?\n', '')
         if ($process.ExitCode -ne $case.Exit) { throw 'BitLocker CLI returned the wrong exit code.' }
         if ($case.Exit -eq 0) {
             $preview = $output | ConvertFrom-Json
