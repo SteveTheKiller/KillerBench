@@ -5,8 +5,23 @@ using KillerBench.Services;
 
 internal static class PortablePublicationChecks
 {
+    private static void HelperFitsCommandLine(string scratch)
+    {
+        string root = Path.Combine(scratch, "helper-size-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        string download = Path.Combine(root, "download.exe");
+        File.WriteAllBytes(download, [1]);
+        UpdateImagePublication.RememberVerified(download, new string('A', 64), new string('B', 40));
+        string script = UpdateImagePublication.Script(download, Path.Combine(root, "app", new string('x', 120), "KillerBench.exe"),
+            true, "https://github.com/SteveTheKiller/KillerBench/releases", "KillerBench", "1.0.0", "HKLM");
+        int length = ImmutablePowerShell.Arguments(script).Length;
+        Console.WriteLine("Update helper command length: " + length + " of 30000.");
+        if (length > 28_000) throw new Exception("The update helper has under 2,000 characters of margin: " + length);
+    }
+
     internal static void Run(string scratch)
     {
+        HelperFitsCommandLine(scratch);
         foreach (string mode in new[] { "held", "wrong-publisher", "unsigned", "swapped" })
         {
             string root = Path.Combine(scratch, "portable-" + mode + "-" + Guid.NewGuid().ToString("N"));
