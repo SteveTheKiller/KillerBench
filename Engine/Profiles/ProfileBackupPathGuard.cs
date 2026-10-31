@@ -8,7 +8,7 @@ namespace KillerBench.Engine.Profiles;
 /// links, so a string comparison of the two paths describes where the copy really goes.</summary>
 public static class ProfileBackupPathGuard
 {
-    private const uint MountPointTag = 0xA0000003;
+    private const uint MountPointTag = 0xA0000003, AppAliasTag = 0x8000001B;
 
     public static IDisposable Open(string source, string destination)
     {
@@ -24,16 +24,20 @@ public static class ProfileBackupPathGuard
         catch { lease.Dispose(); throw; }
     }
 
-    public static bool IsJunction(string path)
+    private static uint Tag(string path)
     {
         using var find = FindFirstFile(path, out FindData data);
-        if (find.IsInvalid) throw new Win32Exception(Marshal.GetLastWin32Error());
-        return (data.Attributes & (uint)FileAttributes.ReparsePoint) != 0 && data.Tag == MountPointTag;
+        if (find.IsInvalid) throw new IOException("A profile entry could not be inspected: error " + Marshal.GetLastWin32Error() + ".");
+        return (data.Attributes & (uint)FileAttributes.ReparsePoint) != 0 ? data.Tag : 0;
     }
 
-    /// <summary>True when every reparse entry under the profile is a junction, the one kind the copy
-    /// omits and verification can account for. Anything else stops the backup before it starts.</summary>
-    public static bool SourceSupported(string source, CancellationToken token)
+    /// <summary>Junctions and app execution aliases are links with no data of their own. The copy
+    /// omits them and verification accounts for them.</summary>
+    public static bool IsOmittedLink(string path) => Tag(path) is MountPointTag or AppAliasTag;
+
+    /// <summary>Why this profile cannot be backed up, or null when every reparse entry under it is
+    /// one the copy omits. Anything else stops the backup before it starts.</summary>
+    public static string? UnsupportedEntry(string source, CancellationToken token)
     {
         var folders = new Stack<string>();
         folders.Push(source);
@@ -46,12 +50,13 @@ public static class ProfileBackupPathGuard
                 var attributes = File.GetAttributes(entry);
                 if ((attributes & FileAttributes.ReparsePoint) != 0)
                 {
-                    if (!IsJunction(entry)) return false;
+                    if (!IsOmittedLink(entry))
+                        return "The profile contains a link or cloud placeholder this backup cannot preserve: " + Path.GetRelativePath(source, entry);
                 }
                 else if ((attributes & FileAttributes.Directory) != 0) folders.Push(entry);
             }
         }
-        return true;
+        return null;
     }
 
     private static IEnumerable<string> Ancestors(string path)

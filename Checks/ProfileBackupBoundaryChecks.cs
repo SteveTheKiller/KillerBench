@@ -20,7 +20,7 @@ internal static class ProfileBackupBoundaryChecks
         Junction(sourceAlias, Path.Combine(root, "Users"));
         ProfileSnapshot Target(string path) => new("S-1-5-21-1-2-3-1001", path, false, false, DateTimeOffset.UtcNow.AddDays(-120), false);
         IProfileBackupHost host = new WindowsProfileBackupHost();
-        bool Ready(string path, string destination) => host.BoundaryReadyAsync(Target(path), destination, default).GetAwaiter().GetResult();
+        bool Ready(string path, string destination) => host.BoundaryProblemAsync(Target(path), destination, default).GetAwaiter().GetResult() is null;
 
         if (!Ready(source, Path.Combine(backups, "new"))) throw new Exception("An ordinary separate backup destination was refused.");
         if (Ready(source, Path.Combine(alias, "new"))) throw new Exception("A destination ancestor redirected into the source was accepted.");

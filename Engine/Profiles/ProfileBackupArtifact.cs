@@ -239,7 +239,7 @@ public static class ProfileBackupArtifactVerifier
                 fileCount, totalBytes, manifestDigest, true);
             return new(receipt, true,
                 $"Verified {fileCount} source and backed-up files and {totalBytes} bytes against the fixed manifest. " +
-                (omitted.Count == 0 ? "" : $"Omitted {omitted.Count} {(omitted.Count == 1 ? "junction" : "junctions")}; a junction is a link, and anything it points to was not copied. ") +
+                (omitted.Count == 0 ? "" : $"Omitted {omitted.Count} junction or app alias {(omitted.Count == 1 ? "entry" : "entries")}; these are links, and anything they point to was not copied. ") +
                 "This does not prove ACL, alternate-stream, encrypted-file, application-state or restore behavior.");
         }
         catch (OperationCanceledException) { throw; }
@@ -316,7 +316,7 @@ public static class ProfileBackupArtifactVerifier
                 var attributes = File.GetAttributes(entry);
                 if ((attributes & FileAttributes.ReparsePoint) != 0)
                 {
-                    if (omittedJunctions is null || !ProfileBackupPathGuard.IsJunction(entry))
+                    if (omittedJunctions is null || !ProfileBackupPathGuard.IsOmittedLink(entry))
                         throw new IOException("A redirected entry was found while comparing the backup.");
                     omittedJunctions.Add(entry);
                     continue;

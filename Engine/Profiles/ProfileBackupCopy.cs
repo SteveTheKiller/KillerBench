@@ -8,12 +8,15 @@ public static class ProfileBackupCopy
         "/R:1", "/W:1", "/NFL", "/NDL", "/NJH", "/NJS", "/NP"
     ];
 
+    private const string AppAliasFolder = @"AppData\Local\Microsoft\WindowsApps";
+
     public static RepairStep CreateStep(ProfileSnapshot target, string destinationPath)
     {
         ArgumentNullException.ThrowIfNull(target);
         string destination = ProfileBackupExecution.ValidateDestination(target, destinationPath);
         string source = Path.GetFullPath(target.Path).TrimEnd('\\');
-        return new("robocopy.exe", [source, destination, .. FixedOptions], false);
+        // App execution aliases cannot be opened or copied; they all live in this one folder.
+        return new("robocopy.exe", [source, destination, .. FixedOptions, "/XD", Path.Combine(source, AppAliasFolder)], false);
     }
 
     public static bool Accepted(ToolResult result) => result is
@@ -56,18 +59,18 @@ public sealed class WindowsProfileBackupHost : IProfileBackupHost
         }
     }
 
-    public Task<bool> BoundaryReadyAsync(ProfileSnapshot target, string destinationPath, CancellationToken token)
+    public Task<string?> BoundaryProblemAsync(ProfileSnapshot target, string destinationPath, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         try
         {
             using var held = ProfileBackupPathGuard.Open(target.Path, destinationPath);
-            return Task.FromResult(ProfileBackupPathGuard.SourceSupported(Path.GetFullPath(target.Path).TrimEnd('\\'), token));
+            return Task.FromResult(ProfileBackupPathGuard.UnsupportedEntry(Path.GetFullPath(target.Path).TrimEnd('\\'), token));
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or ArgumentException or
             NotSupportedException or System.ComponentModel.Win32Exception)
         {
-            return Task.FromResult(false);
+            return Task.FromResult<string?>("The profile or backup path could not be checked: " + error.Message);
         }
     }
 
@@ -80,6 +83,8 @@ public sealed class WindowsProfileBackupHost : IProfileBackupHost
         string destination = step.Arguments[1];
         // Held through the copy: the final check and the native dispatch see the same folders.
         using var held = ProfileBackupPathGuard.Open(source, destination);
+        if (ProfileBackupPathGuard.UnsupportedEntry(source, token) is { } unsupported)
+            throw new InvalidOperationException(unsupported);
         if (!Directory.Exists(source) || (File.GetAttributes(source) & FileAttributes.ReparsePoint) != 0 ||
             Directory.Exists(destination) || File.Exists(destination))
             throw new InvalidOperationException("The exact source and absent destination are required before profile backup copying.");
