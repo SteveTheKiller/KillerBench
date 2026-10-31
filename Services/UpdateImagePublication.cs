@@ -116,6 +116,7 @@ $ErrorActionPreference = 'Stop'
 function Invoke-UpdateImagePublication {
     param($plan, $ops)
     $stageVerified = $false
+    $published = $false
     $parents = $null
     $image = $null
     try {
@@ -146,6 +147,7 @@ function Invoke-UpdateImagePublication {
         if ((& $ops.HashStream $image) -ne $plan.Hash) { throw 'The published image failed SHA-256 verification.' }
         if (-not (& $ops.Publisher $plan.Target $plan)) { throw 'The published image is not signed by the publisher.' }
         & $ops.Metadata $plan
+        $published = $true
     }
     catch {
         $failure = $_.Exception.ToString()
@@ -165,16 +167,23 @@ function Invoke-UpdateImagePublication {
         return $false
     }
     finally {
-        if ($null -ne $image) { $image.Dispose() }
-        if ($null -ne $parents) { $parents.Dispose() }
+        if (-not $published) {
+            if ($null -ne $image) { $image.Dispose() }
+            if ($null -ne $parents) { $parents.Dispose() }
+        }
     }
     foreach ($path in @($plan.Download, $plan.Staged, $plan.Backup, $plan.Restore, $plan.Report)) {
         try { & $ops.Delete $path } catch { }
     }
     # Reopening comes after the update is complete and cleaned up. It can fail on its own (an
     # administrator from another account, no desktop), and that must never report a finished
-    # update as failed or leave its backup behind (2026-10-28 review, DEP-002).
+    # update as failed or leave its backup behind (2026-10-28 review, DEP-002). The verified image
+    # and its parents stay held until the launch has created a process or definitively failed.
     try { & $ops.Relaunch $plan } catch { }
+    finally {
+        $image.Dispose()
+        $parents.Dispose()
+    }
     return $true
 }
 
