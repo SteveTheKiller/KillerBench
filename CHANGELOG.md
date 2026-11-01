@@ -74,6 +74,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 
 ### Desktop, accessibility and localization
 
+- Keyboard focus cues respect the theme, Windows contrast refreshes are coalesced and restore frame colors, and picker selections keep text and icons shadow-free.
 - The tray icon's menu opens from the pointer upward, out of the notification area, the same way as in every Killer app.
 - The About card fades in and out like the rest of the Killer Tools family.
 - The file picker's recent locations and places lists are named for screen readers.
