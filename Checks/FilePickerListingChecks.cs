@@ -56,6 +56,9 @@ internal static class FilePickerListingChecks
             picker.Close(); closeRelease.Set(); Pump(() => closing.IsCompleted);
             if (picker.IsDirectoryListingBusy || picker.Entries.Count != 0) throw new Exception("S008 closed dialog received stale publication.");
             NoPresentation(picker);
+            var hung = FileDialog.OnStaWorker(() => { Thread.Sleep(Timeout.Infinite); return 0; }, TimeSpan.FromMilliseconds(50));
+            Pump(() => hung.IsCompleted);
+            if (hung.Exception?.InnerException is not TimeoutException) throw new Exception("A hung picker probe was not abandoned at its timeout.");
             Console.WriteLine("PASS S008: real picker public navigation stays responsive, rejects stale and closed publications, and completes 513 rows without showing a window.");
         }
         finally { timer.Stop(); release.Set(); if (!picker.IsDirectoryListingBusy) picker.Close(); Directory.Delete(root, true); }
