@@ -28,6 +28,9 @@ internal static class InstallationOwnershipChecks
         string inventory = Entry(exe, "KillerBench.exe");
         File.WriteAllText(Path.Combine(owned, "payload.manifest"), inventory);
         InstallationOwnership.ValidateDestination(owned, ["KillerBench.exe"], exe, _ => true);
+        InstallationOwnership.ValidateDestination(owned, ["KillerBench.exe"], null, _ => true);
+        try { InstallationOwnership.ValidateDestination(owned, ["KillerBench.exe"], null, _ => false); throw new Exception("An untrusted retained installation was accepted."); }
+        catch (InvalidOperationException) { }
         string removed = Path.Combine(owned, "old-component.dll");
         File.WriteAllText(removed, "Verified prior payload component removed from the new package");
         File.WriteAllText(Path.Combine(owned, "payload.manifest"), inventory + Entry(removed, "old-component.dll"));

@@ -152,7 +152,9 @@ public static class InstallationOwnership
         if (File.Exists(root)) Refuse("The selected destination is a file.");
         if (!Directory.Exists(root) || Directory.GetFileSystemEntries(root).Length == 0) return;
         string executable = Path.Combine(root, "KillerBench.exe");
-        if (!RegistrationMatches(root, registeredExecutable) || !isTrustedProduct(executable))
+        // Uninstall keeps the application files, so an unregistered copy is judged by its signature and inventory.
+        bool registeredElsewhere = !string.IsNullOrWhiteSpace(registeredExecutable) && !RegistrationMatches(root, registeredExecutable);
+        if (registeredElsewhere || !isTrustedProduct(executable))
             Refuse("The nonempty destination is not a registered, trusted KillerBench installation.");
 
         var allowed = new HashSet<string>(trustedPayloadFiles.Select(Normalize), StringComparer.OrdinalIgnoreCase);
