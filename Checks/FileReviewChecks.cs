@@ -19,6 +19,8 @@ internal static class FileReviewChecks
             Require(duplicates.Complete && duplicates.Groups.Count == 1 && duplicates.Groups[0].Files.Count == 2 &&
                 File.Exists(first) && File.Exists(second) && File.Exists(unique),
                 "Duplicate review hashes matching files without deleting any file");
+            duplicates = await DuplicateFileReview.ScanAsync(root, maximumHashBytes: 1);
+            Require(!duplicates.Complete && duplicates.Groups.Count == 0, "Duplicate review reports its hashing budget as incomplete coverage");
             duplicates = await DuplicateFileReview.ScanAsync(root, maximumFiles: 2);
             Require(!duplicates.Complete, "Duplicate review reports its file cap as incomplete coverage");
             duplicates = await DuplicateFileReview.ScanAsync(root, minimumBytes: 100, maximumFiles: 1);

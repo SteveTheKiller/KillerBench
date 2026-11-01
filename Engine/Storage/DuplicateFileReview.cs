@@ -15,7 +15,7 @@ public static class DuplicateFileReview
 {
     public static Task<DuplicateFileReviewResult> ScanAsync(string root, long minimumBytes = 1,
         int maximumFiles = 10_000, CancellationToken token = default, IFileReviewDirectoryReader? directoryReader = null,
-        FileReviewTraversalLimits? traversalLimits = null) => Task.Run(async () =>
+        FileReviewTraversalLimits? traversalLimits = null, long maximumHashBytes = 100L * 1024 * 1024 * 1024) => Task.Run(async () =>
     {
         if (string.IsNullOrWhiteSpace(root)) throw new ArgumentException("Choose a folder to review.", nameof(root));
         ArgumentOutOfRangeException.ThrowIfNegative(minimumBytes);
@@ -49,12 +49,15 @@ public static class DuplicateFileReview
         catch (IOException) { complete = false; }
 
         var groups = new List<DuplicateFileGroup>();
+        long hashedBytes = 0;
         foreach (var lengthGroup in candidates.GroupBy(file => file.Length).Where(group => group.Count() > 1).OrderBy(group => group.Key))
         {
             var hashes = new Dictionary<string, List<DuplicateFile>>(StringComparer.Ordinal);
             foreach (var file in lengthGroup.OrderBy(file => file.FullName, StringComparer.OrdinalIgnoreCase))
             {
                 token.ThrowIfCancellationRequested();
+                if (file.Length > maximumHashBytes - hashedBytes) { complete = false; continue; }
+                hashedBytes += file.Length;
                 try
                 {
                     await using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read,
@@ -71,7 +74,7 @@ public static class DuplicateFileReview
         }
         string detail = complete
             ? "Exact SHA-256 duplicate review completed. Nothing was changed."
-            : "Duplicate review is incomplete because a file, directory, depth, pending-directory or elapsed-time limit, or inaccessible content, was encountered. Some content was omitted. Nothing was changed.";
+            : "Duplicate review is incomplete because a file, directory, depth, pending-directory, elapsed-time or hashing limit, or inaccessible content, was encountered. Some content was omitted. Nothing was changed.";
         return new DuplicateFileReviewResult(fullRoot, examined, complete, groups.AsReadOnly(), detail) { CandidateFiles = candidates.Count };
     }, token);
 }
