@@ -58,8 +58,10 @@ internal static class RecordPreservationChecks
                 File.WriteAllBytes(file, bytes);
                 Preferences.Load();
                 Preferences.Set("fixture", "value");
-                if (Preferences.Save() || !File.ReadAllBytes(file).SequenceEqual(bytes))
-                    throw new Exception("Save replaced a settings file this run could not read.");
+                if (!Preferences.Save() || !Directory.GetFiles(folder, "appearance.json.bad-*").Any(kept => File.ReadAllBytes(kept).SequenceEqual(bytes)))
+                    throw new Exception("An unreadable settings file must be kept aside and saving must recover.");
+                Preferences.Load();
+                if (Preferences.Get("fixture") != "value") throw new Exception("Saving did not recover after an unreadable settings file.");
             }
             File.Delete(file);
             Preferences.Load();

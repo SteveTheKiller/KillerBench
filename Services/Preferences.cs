@@ -9,8 +9,8 @@ internal static class Preferences
     private static Dictionary<string, string> values = [];
     internal static string? Get(string key) => values.GetValueOrDefault(key);
     internal static void Set(string key, string value) => values[key] = value;
-    /// <summary>True once the saved file was read, or there was none. A file that could not be read
-    /// stays false, so Save never overwrites preferences this run never saw.</summary>
+    /// <summary>True once the saved file was read, kept aside as unreadable, or there was none. A file
+    /// that could not be opened stays false, so Save never overwrites preferences this run never saw.</summary>
     internal static bool Loaded { get; private set; }
     internal static void Load()
     {
@@ -18,11 +18,18 @@ internal static class Preferences
         try
         {
             if (!File.Exists(FilePath)) { Loaded = true; return; }
-            if (new FileInfo(FilePath).Length >= 32_768) return;
-            values = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(FilePath)) ?? [];
+            if (new FileInfo(FilePath).Length >= 32_768) { KeepAside(); return; }
+            try { values = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(FilePath)) ?? []; }
+            catch (JsonException) { KeepAside(); return; }
             Loaded = true;
         }
-        catch (Exception e) when (e is IOException or UnauthorizedAccessException or JsonException) { }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
+    }
+    private static void KeepAside()
+    {
+        File.Move(FilePath, FilePath + ".bad-" + Guid.NewGuid().ToString("N"));
+        values = [];
+        Loaded = true;
     }
     internal static bool Save()
     {
