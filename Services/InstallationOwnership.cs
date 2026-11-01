@@ -231,6 +231,10 @@ public static class InstallationOwnership
         => !string.IsNullOrWhiteSpace(registeredExecutable) && string.Equals(
             Path.GetFullPath(Path.Combine(directory, "KillerBench.exe")), Path.GetFullPath(registeredExecutable), StringComparison.OrdinalIgnoreCase);
 
+    /// <summary>True when no per-user copy is registered, or the registered one was removed.</summary>
+    public static bool UserCopyCleared(string? registeredExecutable, Func<bool> remove)
+        => string.IsNullOrWhiteSpace(registeredExecutable) || remove();
+
     /// <summary>Removes matching installation metadata only. The installation directory is retained.</summary>
     public static bool UnregisterPreservingFiles(string directory, string? registeredExecutable, Action removeMetadata)
     {

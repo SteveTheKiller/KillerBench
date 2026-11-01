@@ -51,7 +51,10 @@ public partial class App
         }
         if (HasArgument(e, "/remove-user-install"))
         {
-            Shutdown(RemoveInstalledCopy(machine: false, UserInstallDir)
+            string? registered = null;
+            try { using var key = Registry.CurrentUser.OpenSubKey(RegistryKeyPath); registered = key?.GetValue("InstallPath") as string; }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException or System.Security.SecurityException) { registered = UserInstallDir; }
+            Shutdown(Services.InstallationOwnership.UserCopyCleared(registered, () => RemoveInstalledCopy(machine: false, UserInstallDir))
                 ? KillerFamily.Deployment.InstallerExitCodes.Success : KillerFamily.Deployment.InstallerExitCodes.Failure);
             return true;
         }

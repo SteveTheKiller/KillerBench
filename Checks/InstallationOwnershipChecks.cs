@@ -28,6 +28,9 @@ internal static class InstallationOwnershipChecks
         string inventory = Entry(exe, "KillerBench.exe");
         File.WriteAllText(Path.Combine(owned, "payload.manifest"), inventory);
         InstallationOwnership.ValidateDestination(owned, ["KillerBench.exe"], exe, _ => true);
+        if (!InstallationOwnership.UserCopyCleared(null, () => false) || !InstallationOwnership.UserCopyCleared("", () => false) ||
+            InstallationOwnership.UserCopyCleared(exe, () => false) || !InstallationOwnership.UserCopyCleared(exe, () => true))
+            throw new Exception("A machine install must pass when no user copy exists and report a registered copy it could not remove.");
         InstallationOwnership.ValidateDestination(owned, ["KillerBench.exe"], null, _ => true);
         try { InstallationOwnership.ValidateDestination(owned, ["KillerBench.exe"], null, _ => false); throw new Exception("An untrusted retained installation was accepted."); }
         catch (InvalidOperationException) { }
