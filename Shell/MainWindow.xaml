@@ -1070,23 +1070,28 @@
                   <ColumnDefinition Width="12"/>
                   <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0">
-                <CheckBox x:Name="AboutStartupUpdateCheck" FontSize="11" Click="AboutStartupUpdateCheck_Click"><TextBlock Text="{DynamicResource Str_About_StartupUpdateCheck}" TextWrapping="Wrap"/></CheckBox>
-                <Button x:Name="AboutUpdateButton" Visibility="Collapsed" Margin="0,12,0,0" HorizontalAlignment="Left" Style="{StaticResource OutlineButton}" Padding="14,7" Click="AboutUpdateButton_Click">
-                  <TextBlock x:Name="AboutUpdateText" FontSize="12" FontWeight="SemiBold" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
-                </Button>
-              </StackPanel>
-              <StackPanel Grid.Column="2">
-                <CheckBox x:Name="AboutShowShortcutsInMenus" FontSize="11"
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto"/>
+                  <RowDefinition Height="Auto"/>
+                  <RowDefinition Height="Auto"/>
+                  <RowDefinition Height="Auto"/>
+                  <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <CheckBox x:Name="AboutStartupUpdateCheck" Grid.Column="0" FontSize="11" Click="AboutStartupUpdateCheck_Click"><TextBlock Text="{DynamicResource Str_About_StartupUpdateCheck}" TextWrapping="Wrap"/></CheckBox>
+                <CheckBox x:Name="AboutShowShortcutsInMenus" Grid.Column="2" FontSize="11"
                           IsChecked="{Binding Source={x:Static kl:ShortcutHints.Current}, Path=Enabled, Mode=TwoWay}">
                   <TextBlock Text="{DynamicResource Str_About_ShowShortcutsInMenus}" TextWrapping="Wrap"/>
                 </CheckBox>
-                <TextBlock Text="{DynamicResource Str_About_KillerMcp}" Foreground="{DynamicResource TextBrush}" FontFamily="{DynamicResource UiFont}" FontSize="13" FontWeight="SemiBold" Margin="0,14,0,0" TextWrapping="Wrap"/>
-                <TextBlock Text="{DynamicResource Str_About_KillerMcpNote}" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,2,0,7"/>
-                <CheckBox x:Name="AgentSafeRepairsCheck" FontSize="11" Click="OnAgentRepairsChanged"><TextBlock Text="{DynamicResource Str_About_KillerMcpSafe}" TextWrapping="Wrap"/></CheckBox>
-                <CheckBox x:Name="AgentDisruptiveRepairsCheck" FontSize="11" Margin="0,6,0,0" Click="OnAgentRepairsChanged"><TextBlock Text="{DynamicResource Str_About_KillerMcpDisruptive}" TextWrapping="Wrap"/></CheckBox>
-                <TextBlock x:Name="AgentRepairLockBlock" Visibility="Collapsed" FontSize="11" TextWrapping="Wrap" Margin="0,8,0,0" Foreground="{DynamicResource MutedTextBrush}"><Run x:Name="AgentRepairLockRun"/><Run Text=" "/><Hyperlink Click="OnAgentRepairClearLock" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None"><Run Text="{DynamicResource Str_About_KillerMcpClearLock}"/></Hyperlink></TextBlock>
-              </StackPanel>
+                <Button x:Name="AboutUpdateButton" Grid.Row="1" Grid.ColumnSpan="3" Visibility="Collapsed" Margin="0,12,0,0" HorizontalAlignment="Left" Style="{StaticResource OutlineButton}" Padding="14,7" Click="AboutUpdateButton_Click">
+                  <TextBlock x:Name="AboutUpdateText" FontSize="12" FontWeight="SemiBold" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                </Button>
+                <StackPanel Grid.Row="2" Grid.ColumnSpan="3">
+                  <TextBlock Text="{DynamicResource Str_About_KillerMcp}" Foreground="{DynamicResource TextBrush}" FontFamily="{DynamicResource UiFont}" FontSize="13" FontWeight="SemiBold" Margin="0,14,0,0" TextWrapping="Wrap"/>
+                  <TextBlock Text="{DynamicResource Str_About_KillerMcpNote}" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,2,0,7"/>
+                </StackPanel>
+                <CheckBox x:Name="AgentSafeRepairsCheck" Grid.Row="3" Grid.Column="0" FontSize="11" Click="OnAgentRepairsChanged"><TextBlock Text="{DynamicResource Str_About_KillerMcpSafe}" TextWrapping="Wrap"/></CheckBox>
+                <CheckBox x:Name="AgentDisruptiveRepairsCheck" Grid.Row="3" Grid.Column="2" FontSize="11" Click="OnAgentRepairsChanged"><TextBlock Text="{DynamicResource Str_About_KillerMcpDisruptive}" TextWrapping="Wrap"/></CheckBox>
+                <TextBlock x:Name="AgentRepairLockBlock" Grid.Row="4" Grid.ColumnSpan="3" Visibility="Collapsed" FontSize="11" TextWrapping="Wrap" Margin="0,8,0,0" Foreground="{DynamicResource MutedTextBrush}"><Run x:Name="AgentRepairLockRun"/><Run Text=" "/><Hyperlink Click="OnAgentRepairClearLock" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None"><Run Text="{DynamicResource Str_About_KillerMcpClearLock}"/></Hyperlink></TextBlock>
               </Grid>
             </StackPanel>
           </Grid>
