@@ -31,7 +31,7 @@ KillerBench ships as `KillerBench.exe` and `killerbench-cli.exe`, each a single 
 
 ## Safety
 
-Native repair validation is still in progress. Read [How changes stay safe](https://killerbench.net/help.html#safety) before your first repair and keep a current backup before any change.
+KillerBench is free and you use it at your own risk. Read [How changes stay safe](https://killerbench.net/help.html#safety) before your first repair and keep a current backup before any change.
 
 ## License and source
 
