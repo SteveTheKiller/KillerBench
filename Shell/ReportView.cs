@@ -59,7 +59,7 @@ public partial class MainWindow
         lastReport = (result, title);
         ReportContent.Children.Clear();
         string reportTitle = title is null ? LocalizedText.Workflow(result.Kind) : LocalizeBitLockerResultText(LocalizeProfileResultText(title));
-        ReportContent.Children.Add(Heading(LocalizedText.Format(demo ? "Str_Report_DemoTitle" : "Str_Report_Title", reportTitle), 15));
+        ReportContent.Children.Add(Heading(LocalizedText.Format("Str_Report_Title", reportTitle), 15));
         ReportContent.Children.Add(Body(LocalizedStatus(result.Status) + " | " + result.StartedUtc.ToString("g"), 12, new Thickness(0, 0, 0, 14)));
 
         var summary = result.Summary;
@@ -77,8 +77,8 @@ public partial class MainWindow
 
         ReportContent.Children.Add(Heading(LocalizedText.Get("Str_Report_NextStep"), 13));
         ReportContent.Children.Add(Card(LocalizedText.Get("Str_Report_RecommendedNextStep"), "",
-            demo ? LocalizedText.Get(result.Status == "Demo repair simulated" ? "Str_Report_DemoRepairNextStep" : "Str_Report_DemoNextStep") : NextAction(result),
-            demo ? LocalizedText.Get("Str_Report_DemoNextAction") : LocalizedText.Get("Str_Report_NoActionStarts")));
+            NextAction(result),
+            LocalizedText.Get("Str_Report_NoActionStarts")));
         if (!demo)
         {
             if (HasRepairAvailable(result)) ReportContent.Children.Add(RepairNavigationButton(result));

@@ -35,8 +35,7 @@ public partial class MainWindow : Window
         ShowWelcome();
         if (App.DemoMode)
         {
-            ModeLabel.Text = Controls.LocalizedText.Get(App.ScreenshotMode ? "Str_Mode_DemoScreenshot" : "Str_Mode_DemoLive");
-            Report(Controls.LocalizedText.Get(App.ScreenshotMode ? "Str_Demo_ScreenshotActive" : "Str_Demo_Active"));
+            ModeLabel.Text = Controls.LocalizedText.Get("Str_Mode_Ended");
         }
         ApplyDisplay();
         SetDetailsOpen(false);

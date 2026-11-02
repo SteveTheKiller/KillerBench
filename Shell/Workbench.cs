@@ -110,7 +110,7 @@ public partial class MainWindow
         if (capture is not null && (selected.Source == "Windows Update capture" || capture.Sources.Any(s => ReferenceEquals(s.Evidence, selected))))
             ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Imported");
         if (workflowSummaries.TryGetValue(selected, out var demoWorkflow) && demoWorkflow.Machine == DemoWorkflow.MachineName)
-            ModeLabel.Text = Controls.LocalizedText.Get(App.ScreenshotMode ? "Str_Mode_DemoScreenshot" : "Str_Mode_DemoLive");
+            ModeLabel.Text = Controls.LocalizedText.Get("Str_Mode_Ended");
         SearchBox.Clear();
         if (!workflowSummaries.TryGetValue(selected, out _)) ClearWorkflowReport();
         ShowEvidence();

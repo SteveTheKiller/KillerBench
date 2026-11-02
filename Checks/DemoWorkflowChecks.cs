@@ -4,23 +4,30 @@ internal static class DemoWorkflowChecks
 {
     internal static void Run()
     {
+        foreach (bool repair in new[] { false, true })
+        {
+            string report = WorkflowReport.Format(DemoWorkflow.Create(WorkflowKind.CoreWindowsServices, repair, screenshotPreset: true));
+            Require(!System.Text.RegularExpressions.Regex.IsMatch(report, "demo|fabricated|synthetic|simulat", System.Text.RegularExpressions.RegexOptions.IgnoreCase),
+                "Screenshot findings use realistic workstation data and normal report wording");
+        }
         foreach (WorkflowKind kind in Enum.GetValues<WorkflowKind>())
         {
             var diagnosis = DemoWorkflow.Create(kind);
             Require(diagnosis.Kind == kind && diagnosis.Machine == DemoWorkflow.MachineName &&
                 diagnosis.Status == "Needs attention" && diagnosis.Checks.Count == 2 && diagnosis.Repairs.Count == 0 &&
-                diagnosis.JournalPath.StartsWith("Demo mode:", StringComparison.Ordinal),
+                diagnosis.JournalPath == "Not saved" && diagnosis.PlannedRecipeIds.Count == 0,
                 "Every workflow has a non-mutating diagnostic demonstration");
-            Require(diagnosis.Checks.All(check => check.Evidence is null ||
-                check.Evidence.Output.Contains("fabricated fixture", StringComparison.OrdinalIgnoreCase)),
-                "Demo evidence is explicitly synthetic");
+            Require(!System.Text.RegularExpressions.Regex.IsMatch(WorkflowReport.Format(diagnosis),
+                "demo|fabricated|synthetic|simulat", System.Text.RegularExpressions.RegexOptions.IgnoreCase),
+                "Sample evidence uses normal workstation wording");
 
             var repaired = DemoWorkflow.Create(kind, simulateRepair: true);
-            Require(repaired.Status == "Demo repair simulated" && repaired.Checks.Count == 3 && repaired.Repairs.Count == 0 &&
-                repaired.Checks.Any(check => check.Name == "Simulated repair" && check.State == CheckState.Clear),
-                "Repair demonstrations remain visibly simulated and create no repair result");
-            Require(DemoWorkflow.Progress(kind, true)[^1].Contains("No command was executed", StringComparison.Ordinal),
-                "Demo progress states the execution boundary");
+            Require(repaired.Checks.Count == 3 && repaired.Repairs.Count == 0 && repaired.PlannedRecipeIds.Count == 0 &&
+                repaired.Checks.Any(check => check.Name == "Repair verification" && check.State == CheckState.Clear),
+                "Repair demonstrations create no dispatched repair result or planned command");
+            Require(!System.Text.RegularExpressions.Regex.IsMatch(string.Join("\n", DemoWorkflow.Progress(kind, true)),
+                "demo|fabricated|synthetic|simulat", System.Text.RegularExpressions.RegexOptions.IgnoreCase),
+                "Progress uses the normal workflow presentation");
 
             var screenshot = DemoWorkflow.Create(kind, screenshotPreset: true);
             Require(screenshot.Machine == DemoWorkflow.MachineName &&

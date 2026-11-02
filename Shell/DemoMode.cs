@@ -17,7 +17,7 @@ public partial class MainWindow
         repairRunning = true;
         SetCaptureBusy(true);
         RepairPanel.IsEnabled = false;
-        ModeLabel.Text = Controls.LocalizedText.Get(simulateRepair ? "Str_Mode_DemoRepair" : "Str_Mode_DemoDiagnosis");
+        ModeLabel.Text = Controls.LocalizedText.Get("Str_Mode_InProgress");
         BeginWorkflowOutput(kind, demo: true);
         try
         {
@@ -28,15 +28,16 @@ public partial class MainWindow
                 if (!screenshotPreset) await Task.Delay(180, stop.Token);
             }
             var result = DemoWorkflow.Create(kind, simulateRepair, screenshotPreset: screenshotPreset);
+            AppendWorkflowOutput(WorkflowReport.Format(result));
             RegisterWorkflowResult(result, demo: true);
-            CaptureInfo.Text = result.Status + " | " + result.Checks.Count + " synthetic checks | 0 real repairs";
-            Report(Controls.LocalizedText.Format("Str_Demo_Finished", LocalizedStatus(result.Status)));
-            SetScanLight(simulateRepair ? "ready" : "attention", Controls.LocalizedText.Get(simulateRepair ? "Str_Report_DemoRepairNextStep" : "Str_Report_DemoNextAction"));
+            CaptureInfo.Text = result.Status + " | " + result.Checks.Count + " checks | " + result.Repairs.Count + " repairs";
+            Report(LocalizedStatus(result.Status));
+            SetScanLight(simulateRepair ? "ready" : "attention", NextAction(result));
         }
         catch (OperationCanceledException)
         {
-            AppendWorkflowOutput("Demo stopped. No machine state was changed.");
-            SetScanLight("incomplete", Controls.LocalizedText.Format("Str_Ui_Stopped", Controls.LocalizedText.Get("Str_LoadDemo")));
+            AppendWorkflowOutput("Operation stopped.");
+            SetScanLight("incomplete", Controls.LocalizedText.Format("Str_Ui_Stopped", Controls.LocalizedText.Workflow(kind)));
         }
         finally
         {
@@ -48,7 +49,7 @@ public partial class MainWindow
             SetCaptureBusy(false);
             RepairPanel.IsEnabled = true;
             RepairConsent.IsChecked = false;
-            ModeLabel.Text = Controls.LocalizedText.Get(screenshotPreset ? "Str_Mode_DemoScreenshot" : "Str_Mode_DemoLive");
+            ModeLabel.Text = Controls.LocalizedText.Get("Str_Mode_Ended");
             if (closeAfterOperation) Close();
         }
     }

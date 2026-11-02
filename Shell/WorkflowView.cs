@@ -18,9 +18,7 @@ public partial class MainWindow
             result = result with { Checks = [.. result.Checks, new WorkflowCheck(NativeCapabilityCheckName,CheckState.Information, NativeCapabilityDetails(result.Kind))] };
         string summary = WorkflowReport.Format(result);
         AppendWorkflowOutput("Workflow completed: " + result.Status + ". Read the Report view for findings and next actions.");
-        string source = demo
-            ? Controls.LocalizedText.Format("Str_Output_DemoSource", Controls.LocalizedText.Workflow(result.Kind))
-            : Controls.LocalizedText.Format("Str_Output_WorkflowSource", DateTime.Now.ToString("HHmmss"));
+        string source = Controls.LocalizedText.Format("Str_Output_WorkflowSource", result.StartedUtc.ToLocalTime().ToString("HHmmss"));
         var text = new TextEvidence(source, EvidenceBox.Text.Replace("\r\n", "\n").Split('\n'), false);
         reports.Add(text, Investigation.Analyze(text) with { Limitation = demo
             ? (result.Status == "Demo repair simulated"
@@ -331,12 +329,12 @@ public partial class MainWindow
         SourcesList.IsEnabled = false;
         SearchBox.IsEnabled = false;
         string demoTitle = demo ? WorkflowCatalog.All.Single(item => item.Kind == kind).Title : kind.ToString();
-        EvidenceTitle.Text = Controls.LocalizedText.Format(demo ? "Str_Output_DemoRunning" : "Str_Output_LiveRunning", Controls.LocalizedText.Workflow(kind));
+        EvidenceTitle.Text = Controls.LocalizedText.Format("Str_Output_LiveRunning", Controls.LocalizedText.Workflow(kind));
         EvidenceBox.Text = demo
-            ? $"{demoTitle} / SYNTHETIC DEMO\nMACHINE: {DemoWorkflow.MachineName}\n\nPreparing fabricated evidence...\n"
+            ? $"{demoTitle} / RUNNING\nTHIS PC: {DemoWorkflow.MachineName}\n\nPreparing checks...\n"
             : $"{kind} / RUNNING\nTHIS PC: {Environment.MachineName}\n\nStarting live checks...\n";
         if (!demo) EvidenceBox.Text += NativeCapabilityDetails(kind) + "\n\n";
-        CoverageLabel.Text = Controls.LocalizedText.Get(demo ? "Str_Output_DemoCoverage" : "Str_Output_LiveCoverage");
+        CoverageLabel.Text = Controls.LocalizedText.Get("Str_Output_LiveCoverage");
         // Live work streams in Raw output; the readable report takes over when the result is registered.
         ShowRawOutput();
     }

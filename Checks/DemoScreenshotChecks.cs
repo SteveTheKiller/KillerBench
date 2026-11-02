@@ -106,7 +106,7 @@ internal static class DemoScreenshotChecks
             var raw = (TextBox)window.FindName("EvidenceBox");
             var report = (StackPanel)window.FindName("ReportContent");
             Require(report.Children[0] is TextBlock initialHeading &&
-                initialHeading.Text == "Full system scan demo report" &&
+                initialHeading.Text == "Full system scan report" &&
                 window.FindName("ZoomViewport") is Grid { IsHitTestVisible: false } && !window.AllowDrop,
                 "Screenshot launch opens a finished, read-only synthetic report");
 
@@ -127,8 +127,11 @@ internal static class DemoScreenshotChecks
                 !raw.Text.Contains(Environment.MachineName, StringComparison.OrdinalIgnoreCase) &&
                 !raw.Text.Contains("Starting live checks", StringComparison.Ordinal),
                 "Raw demo output contains only the fictional machine");
-            Require(report.Children[0] is TextBlock heading && heading.Text.Contains("demo report", StringComparison.Ordinal),
-                "Readable report identifies the synthetic demonstration");
+            Require(report.Children[0] is TextBlock heading && heading.Text.EndsWith(" report", StringComparison.Ordinal) &&
+                !System.Text.RegularExpressions.Regex.IsMatch(raw.Text,
+                    "demo|fabricated|synthetic|simulat", System.Text.RegularExpressions.RegexOptions.IgnoreCase) &&
+                ((TextBlock)window.FindName("ModeLabel")).Text == "OPERATION ENDED",
+                "Screenshot reports and status use normal product wording");
             if (shot.Raw) Call(window, "ShowRawOutput");
             if (shot.OutputHidden) Call(window, "SetOutputOpen", false);
             if (shot.Shortcuts) Call(window, "OnShortcuts", window, new RoutedEventArgs());
