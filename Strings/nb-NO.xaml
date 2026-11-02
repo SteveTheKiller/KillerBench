@@ -10,7 +10,7 @@
   <sys:String x:Key="Str_AutomationProperties_Name_Evidence_sources">Beviskilder</sys:String>
   <sys:String x:Key="Str_Content_Load_sample">Last inn eksempel</sys:String>
   <sys:String x:Key="Str_Text_Sources_stay_in_this_session_only">Lagre et opptak for å beholde innsamlede bevis.</sys:String>
-  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Vis eller skjul kilder (F2)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Vis eller skjul resultater (F2)</sys:String>
   <sys:String x:Key="Str_ToolTip_Toggle_activity_log_F3">Vis eller skjul aktivitetsloggen (F3)</sys:String>
   <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">Hurtigtaster (F1)</sys:String>
   <sys:String x:Key="Str_ToolTip_Language">Språk</sys:String>
@@ -61,7 +61,7 @@
   <sys:String x:Key="Str_Shortcuts_GroupNav">NAVIGERING</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupFile">FIL</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupHelp">HJELP</sys:String>
-  <sys:String x:Key="Str_Shortcuts_ToggleSources">Vis eller skjul beviskilder</sys:String>
+  <sys:String x:Key="Str_Shortcuts_ToggleSources">Vis eller skjul resultater</sys:String>
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Vis eller skjul aktivitetsloggen</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Åpne bevis</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">Hurtigtaster</sys:String>
@@ -472,12 +472,12 @@
   <sys:String x:Key="Str_Advanced_All">Alle</sys:String>
   <sys:String x:Key="Str_Advanced_None">Ingen</sys:String>
   <sys:String x:Key="Str_Advanced_RepairEffects">Hva disse reparasjonene kan endre</sys:String>
-  <sys:String x:Key="Str_Advanced_Tools">Avansert: logger og manuelle reparasjoner</sys:String>
+  <sys:String x:Key="Str_Advanced_Tools">Windows Update-logger</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflow">Åpne arbeidsflyt</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflowTip">Gjennomgå en lagret arbeidsflytjournal uten å kjøre kontroller eller reparasjoner.</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">Arbeidsflyter</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">Reparasjoner</sys:String>
-  <sys:String x:Key="Str_Knowledge_Header">Kunnskapsreferanse</sys:String>
+  <sys:String x:Key="Str_Knowledge_Header">Slå opp kode</sys:String>
   <sys:String x:Key="Str_Knowledge_ContextTip">Navnerom for produkt eller feilkode fra pakken</sys:String>
   <sys:String x:Key="Str_Knowledge_CodeTip">En nøyaktig kode for oppslag, eller tekst å søke etter i den valgte konteksten</sys:String>
   <sys:String x:Key="Str_Knowledge_Lookup">Åpne pakken og slå opp kode</sys:String>
@@ -850,4 +850,12 @@
   <sys:String x:Key="Str_Dlg_Preview">Forhåndsvisning</sys:String>
   <sys:String x:Key="Str_Tray_Open">Åpne {0}</sys:String>
   <sys:String x:Key="Str_Tray_Exit">Avslutt</sys:String>
+  <sys:String x:Key="Str_Knowledge_Description">Slå opp koder fra Windows og Enhetsbehandling. Ingenting endres.</sys:String>
+  <sys:String x:Key="Str_Knowledge_CodeLabel">Windows-feilkode (0x80070005)</sys:String>
+  <sys:String x:Key="Str_Knowledge_DeviceLabel">Enhetsbehandling-kode (43)</sys:String>
+  <sys:String x:Key="Str_Knowledge_Run">Slå opp kode</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackHeader">Lokal referansepakke</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackDescription">Valgfri JSON-fil. Skriv kode eller tekst ovenfor og produkt nedenfor.</sys:String>
+  <sys:String x:Key="Str_Knowledge_ContextLabel">Produkt eller kontekst</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackActions">Pakkehandlinger</sys:String>
 </ResourceDictionary>

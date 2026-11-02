@@ -211,6 +211,7 @@ public partial class MainWindow : Window
     {
         if (workflowOutputActive) return;
         if (evidence is null) return;
+        SetOutputOpen(true);
         EvidenceTitle.Text = evidence.Source == "Synthetic demonstration" ? "Sample evidence" : Path.GetFileName(evidence.Source);
         if (historicalWorkflows.TryGetValue(evidence, out var historical))
         {

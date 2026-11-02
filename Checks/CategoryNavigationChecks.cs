@@ -113,7 +113,7 @@ internal static class CategoryNavigationChecks
             {
                 zoom.Invoke(window, [scale]);
                 Settle(window);
-                Require(Math.Abs(sidebar.ActualWidth - 160) < .1, "App zoom preserves the narrower sidebar width");
+                Require(Math.Abs(sidebar.ActualWidth * scale - 160) < 1, $"App zoom preserves navigation width: scale={scale}, width={sidebar.ActualWidth}, requested={sidebar.Width}");
             }
             zoom.Invoke(window, [1d]);
             // Enlarged interface uses fewer logical pixels and retains readable scrolling controls.
@@ -135,10 +135,10 @@ internal static class CategoryNavigationChecks
                 Require(sidebar.Width == savedWidth, "Saved sidebar width takes precedence over the new default");
             }
             sidebar.Width = 210;
-            typeof(KillerBench.Shell.MainWindow).GetMethod("OnSidebarGripCompleted", BindingFlags.Instance | BindingFlags.NonPublic)!
-                .Invoke(window, [window.FindName("SidebarGrip"), new System.Windows.Controls.Primitives.DragCompletedEventArgs(0, 0, false)]);
+            Require(((FrameworkElement)window.FindName("SidebarGrip")).Visibility == Visibility.Collapsed,
+                "Fixed navigation has no active collapse or resize grip");
             initializePanels.Invoke(window, []);
-            Require(sidebar.Width == 210, "Splitter-completed width remains the restored sidebar width");
+            Require(sidebar.Width == 230, "Layout restores the saved navigation width instead of a simulated drag");
             setPreference.Invoke(null, ["SidebarWidth", "160"]);
             Console.WriteLine("PASS: category layout at 800x500, 1025x700 and 1025x1200 across Dark, Light, Black and 98SE; 160-pixel default, both icon orientations, full labels, saved and splitter widths, threshold stability, minimum heights, keyboard and mouse-wheel overflow, 140-pixel sidebar, accessible names, selection, simulated hover, focus and 150% layout scale.");
             Console.WriteLine("Category render evidence: " + output);

@@ -20,7 +20,6 @@ public partial class MainWindow
     private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, WorkflowSourceIdentity> workflowSourceIdentities = [];
     private readonly Queue<SessionActivityEntry> activity = new();
     private bool shellReady;
-    private bool sourcesOpen = true;
     private double appScale = 1;
     private void InitializeShell()
     {
@@ -143,10 +142,7 @@ public partial class MainWindow
     }
     private void OnToggleSources(object sender, RoutedEventArgs e)
     {
-        sourcesOpen = !sourcesOpen;
-        LeftPanel.IsEnabled = sourcesOpen;
-        AnimateWidth(LeftPanel, sourcesOpen ? sidebarWidth / appScale : 0);
-        SidebarButton.Content = ((char)(sourcesOpen ? 0xE76B : 0xE76C)).ToString();
+        SetOutputOpen(TerminalPanel.Visibility != Visibility.Visible);
     }
     private void SetDetailsOpen(bool _) => DetailsPanel.Visibility = Visibility.Collapsed;
     private void OnToggleActivity(object sender, RoutedEventArgs e)
@@ -208,13 +204,14 @@ public partial class MainWindow
     }
     private void ApplyAppScale(double scale)
     {
-        if (shellReady && sourcesOpen) sidebarWidth = (double.IsNaN(LeftPanel.Width) ? LeftPanel.ActualWidth : LeftPanel.Width) * appScale;
+        if (shellReady) sidebarWidth = (double.IsNaN(LeftPanel.Width) ? LeftPanel.ActualWidth : LeftPanel.Width) * appScale;
         appScale = double.IsFinite(scale) ? Math.Clamp(Math.Round(scale, 3), 0.7, 2.5) : 1;
         ScaleHost.LayoutTransform = new ScaleTransform(appScale, appScale);
         SidebarRail.LayoutTransform = new ScaleTransform(1 / appScale, 1 / appScale);
-        LeftPanel.Width = sourcesOpen ? sidebarWidth / appScale : 0;
+        LeftPanel.Width = sidebarWidth / appScale;
         ScaleHost.ColumnDefinitions[1].Width = new GridLength(24 / appScale);
-        ContentPane.ColumnDefinitions[1].Width = new GridLength(24 / appScale);
+        ContentPane.ColumnDefinitions[1].Width = new GridLength(8 / appScale);
+        ContentPane.ColumnDefinitions[3].Width = new GridLength(24 / appScale);
         ContentPane.ColumnDefinitions[2].MinWidth = (appScale > 1 ? 200 : 300) / appScale;
         // Panes never scroll sideways at any zoom: content takes the viewport width and text wraps inside it.
         // A forced minimum content width wider than the viewport is what clipped text mid-word above 100%.

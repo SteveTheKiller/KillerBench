@@ -49,7 +49,7 @@
   <sys:String x:Key="Str_AutomationProperties_Name_Evidence_sources">Zdroje důkazů</sys:String>
   <sys:String x:Key="Str_Content_Load_sample">Načíst ukázku</sys:String>
   <sys:String x:Key="Str_Text_Sources_stay_in_this_session_only">Uložit snímek pro uchování shromážděných důkazů.</sys:String>
-  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Přepnout zdroje (F2)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Zobrazit nebo skrýt výstup (F2)</sys:String>
   <sys:String x:Key="Str_ToolTip_Toggle_activity_log_F3">Přepnout protokol činnosti (F3)</sys:String>
   <sys:String x:Key="Str_ToolTip_Choose_app_theme">Vybrat vzhled aplikace</sys:String>
   <sys:String x:Key="Str_Text_TEXT_LOG_INSPECTOR">PRACOVIŠTĚ WINDOWS UPDATE / PROTOKOLŮ</sys:String>
@@ -86,7 +86,7 @@
   <sys:String x:Key="Str_Content_Hide">Skrýt</sys:String>
   <sys:String x:Key="Str_Text_SESSION_ACTIVITY">AKTIVITA RELACE</sys:String>
   <sys:String x:Key="Str_AutomationProperties_Name_Session_activity_log">Protokol činnosti relace</sys:String>
-  <sys:String x:Key="Str_Shortcuts_ToggleSources">Přepnout zdroje důkazů</sys:String>
+  <sys:String x:Key="Str_Shortcuts_ToggleSources">Zobrazit nebo skrýt výstup</sys:String>
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Přepnout protokol činnosti</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Otevřít důkaz</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">O KillerBench</sys:String>
@@ -477,12 +477,12 @@
   <sys:String x:Key="Str_Advanced_ShowEvidenceAreas">Zobrazit jednotlivé oblasti důkazů</sys:String>
   <sys:String x:Key="Str_Advanced_RecipeChecks">Kontroly receptů</sys:String>
   <sys:String x:Key="Str_Advanced_RepairEffects">Co mohou tyto opravy změnit</sys:String>
-  <sys:String x:Key="Str_Advanced_Tools">Pokročilé: protokoly a ruční opravy</sys:String>
+  <sys:String x:Key="Str_Advanced_Tools">Protokoly Windows Update</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflow">Otevřít pracovní postup</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflowTip">Prohlédnout uložený deník pracovního postupu bez spouštění kontrol nebo oprav.</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">Pracovní postupy</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">Opravy</sys:String>
-  <sys:String x:Key="Str_Knowledge_Header">Znalostní reference</sys:String>
+  <sys:String x:Key="Str_Knowledge_Header">Vyhledat kód</sys:String>
   <sys:String x:Key="Str_Knowledge_ContextTip">Jmenný prostor produktu nebo kódu chyby z balíčku</sys:String>
   <sys:String x:Key="Str_Knowledge_CodeTip">Přesný kód pro vyhledání, nebo text k prohledání v rámci vybraného kontextu</sys:String>
   <sys:String x:Key="Str_Knowledge_Lookup">Otevřít balíček a vyhledat kód</sys:String>
@@ -851,4 +851,12 @@
   <sys:String x:Key="Str_Dlg_Preview">Náhled</sys:String>
   <sys:String x:Key="Str_Tray_Open">Otevřít {0}</sys:String>
   <sys:String x:Key="Str_Tray_Exit">Ukončit</sys:String>
+  <sys:String x:Key="Str_Knowledge_Description">Vyhledejte kódy Windows a Správce zařízení. Nic se nezmění.</sys:String>
+  <sys:String x:Key="Str_Knowledge_CodeLabel">Kód chyby Windows (0x80070005)</sys:String>
+  <sys:String x:Key="Str_Knowledge_DeviceLabel">Kód Správce zařízení (43)</sys:String>
+  <sys:String x:Key="Str_Knowledge_Run">Vyhledat kód</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackHeader">Místní referenční balíček</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackDescription">Volitelný soubor JSON. Nahoře zadejte kód či text, dole produkt.</sys:String>
+  <sys:String x:Key="Str_Knowledge_ContextLabel">Produkt nebo kontext</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackActions">Akce balíčku</sys:String>
 </ResourceDictionary>

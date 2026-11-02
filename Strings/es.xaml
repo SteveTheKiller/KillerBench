@@ -51,7 +51,7 @@
   <sys:String x:Key="Str_AutomationProperties_Name_Evidence_sources">Fuentes de evidencia</sys:String>
   <sys:String x:Key="Str_Content_Load_sample">Cargar muestra</sys:String>
   <sys:String x:Key="Str_Text_Sources_stay_in_this_session_only">Guarda una captura para conservar la evidencia recopilada.</sys:String>
-  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Alternar fuentes (F2)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Mostrar u ocultar resultados (F2)</sys:String>
   <sys:String x:Key="Str_ToolTip_Toggle_activity_log_F3">Alternar registro de actividad (F3)</sys:String>
   <sys:String x:Key="Str_ToolTip_Choose_app_theme">Elegir tema de la app</sys:String>
   <sys:String x:Key="Str_Text_TEXT_LOG_INSPECTOR">BANCO DE WINDOWS UPDATE / REGISTROS</sys:String>
@@ -88,7 +88,7 @@
   <sys:String x:Key="Str_Content_Hide">Ocultar</sys:String>
   <sys:String x:Key="Str_Text_SESSION_ACTIVITY">ACTIVIDAD DE SESIÓN</sys:String>
   <sys:String x:Key="Str_AutomationProperties_Name_Session_activity_log">Registro de actividad de sesión</sys:String>
-  <sys:String x:Key="Str_Shortcuts_ToggleSources">Alternar fuentes de evidencia</sys:String>
+  <sys:String x:Key="Str_Shortcuts_ToggleSources">Mostrar u ocultar resultados</sys:String>
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Alternar registro de actividad</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Abrir evidencia</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">Acerca de KillerBench</sys:String>
@@ -479,12 +479,12 @@
   <sys:String x:Key="Str_Advanced_RecipeChecks">Comprobaciones de receta</sys:String>
   <sys:String x:Key="Str_Advanced_All">Todo</sys:String>
   <sys:String x:Key="Str_Advanced_RepairEffects">Qué pueden cambiar estas reparaciones</sys:String>
-  <sys:String x:Key="Str_Advanced_Tools">Avanzado: registros y reparaciones manuales</sys:String>
+  <sys:String x:Key="Str_Advanced_Tools">Registros de Windows Update</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflow">Abrir flujo de trabajo</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflowTip">Revisa un diario de workflow guardado sin ejecutar comprobaciones ni reparaciones.</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">Workflows</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">Reparaciones</sys:String>
-  <sys:String x:Key="Str_Knowledge_Header">Referencia de conocimientos</sys:String>
+  <sys:String x:Key="Str_Knowledge_Header">Consultar código</sys:String>
   <sys:String x:Key="Str_Knowledge_ContextTip">Espacio de nombres de producto o código de error del paquete</sys:String>
   <sys:String x:Key="Str_Knowledge_CodeTip">Un código exacto para buscar, o texto para buscar dentro del contexto seleccionado</sys:String>
   <sys:String x:Key="Str_Knowledge_Lookup">Abrir paquete y buscar código</sys:String>
@@ -851,4 +851,12 @@
   <sys:String x:Key="Str_Dlg_Preview">Vista previa</sys:String>
   <sys:String x:Key="Str_Tray_Open">Abrir {0}</sys:String>
   <sys:String x:Key="Str_Tray_Exit">Salir</sys:String>
+  <sys:String x:Key="Str_Knowledge_Description">Consulta códigos de Windows y del Administrador de dispositivos. Sin cambios.</sys:String>
+  <sys:String x:Key="Str_Knowledge_CodeLabel">Código de error de Windows (0x80070005)</sys:String>
+  <sys:String x:Key="Str_Knowledge_DeviceLabel">Código del Administrador de dispositivos (43)</sys:String>
+  <sys:String x:Key="Str_Knowledge_Run">Consultar código</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackHeader">Paquete de referencia local</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackDescription">JSON opcional. Introduce arriba el código o texto y abajo el producto.</sys:String>
+  <sys:String x:Key="Str_Knowledge_ContextLabel">Producto o contexto</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackActions">Acciones del paquete</sys:String>
 </ResourceDictionary>

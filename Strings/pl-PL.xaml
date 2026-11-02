@@ -11,7 +11,7 @@
   <sys:String x:Key="Str_AutomationProperties_Name_Evidence_sources">Źródła dowodów</sys:String>
   <sys:String x:Key="Str_Content_Load_sample">Wczytaj próbkę</sys:String>
   <sys:String x:Key="Str_Text_Sources_stay_in_this_session_only">Zapisz przechwycenie, aby zachować zebrane dowody.</sys:String>
-  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Przełącz źródła (F2)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Pokaż lub ukryj wyniki (F2)</sys:String>
   <sys:String x:Key="Str_ToolTip_Toggle_activity_log_F3">Przełącz dziennik aktywności (F3)</sys:String>
   <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">Skróty klawiaturowe (F1)</sys:String>
   <sys:String x:Key="Str_ToolTip_Language">Język</sys:String>
@@ -62,7 +62,7 @@
   <sys:String x:Key="Str_Shortcuts_GroupNav">NAWIGACJA</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupFile">PLIK</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupHelp">POMOC</sys:String>
-  <sys:String x:Key="Str_Shortcuts_ToggleSources">Przełącz źródła dowodów</sys:String>
+  <sys:String x:Key="Str_Shortcuts_ToggleSources">Pokaż lub ukryj wyniki</sys:String>
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Przełącz dziennik aktywności</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Otwórz dowody</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">Skróty klawiaturowe</sys:String>
@@ -473,12 +473,12 @@
   <sys:String x:Key="Str_Advanced_All">Wszystkie</sys:String>
   <sys:String x:Key="Str_Advanced_None">Nic</sys:String>
   <sys:String x:Key="Str_Advanced_RepairEffects">Co mogą zmienić te naprawy</sys:String>
-  <sys:String x:Key="Str_Advanced_Tools">Zaawansowane: dzienniki i ręczne naprawy</sys:String>
+  <sys:String x:Key="Str_Advanced_Tools">Dzienniki Windows Update</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflow">Otwórz przepływ pracy</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflowTip">Przejrzyj zapisany dziennik przepływu pracy bez uruchamiania kontroli ani napraw.</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">Przepływy pracy</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">Naprawy</sys:String>
-  <sys:String x:Key="Str_Knowledge_Header">Odwołanie wiedzy</sys:String>
+  <sys:String x:Key="Str_Knowledge_Header">Wyszukaj kod</sys:String>
   <sys:String x:Key="Str_Knowledge_ContextTip">Przestrzeń nazw produktu lub kodu błędu z pakietu</sys:String>
   <sys:String x:Key="Str_Knowledge_CodeTip">Dokładny kod do wyszukania albo tekst do wyszukania w wybranym kontekście</sys:String>
   <sys:String x:Key="Str_Knowledge_Lookup">Otwórz pakiet i wyszukaj kod</sys:String>
@@ -851,4 +851,12 @@
   <sys:String x:Key="Str_Dlg_Preview">Podgląd</sys:String>
   <sys:String x:Key="Str_Tray_Open">Otwórz {0}</sys:String>
   <sys:String x:Key="Str_Tray_Exit">Zakończ</sys:String>
+  <sys:String x:Key="Str_Knowledge_Description">Sprawdź kody Windows i Menedżera urządzeń. Bez zmian.</sys:String>
+  <sys:String x:Key="Str_Knowledge_CodeLabel">Kod błędu Windows (0x80070005)</sys:String>
+  <sys:String x:Key="Str_Knowledge_DeviceLabel">Kod Menedżera urządzeń (43)</sys:String>
+  <sys:String x:Key="Str_Knowledge_Run">Wyszukaj kod</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackHeader">Lokalny pakiet referencyjny</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackDescription">Opcjonalny plik JSON. Powyżej kod lub tekst, poniżej produkt.</sys:String>
+  <sys:String x:Key="Str_Knowledge_ContextLabel">Produkt lub kontekst</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackActions">Działania pakietu</sys:String>
 </ResourceDictionary>

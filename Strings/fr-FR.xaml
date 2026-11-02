@@ -143,12 +143,12 @@
   <sys:String x:Key="Str_Advanced_RecipeChecks">Vérifications de recette</sys:String>
   <sys:String x:Key="Str_Advanced_All">Toutes</sys:String>
   <sys:String x:Key="Str_Advanced_RepairEffects">Ce que ces réparations peuvent changer</sys:String>
-  <sys:String x:Key="Str_Advanced_Tools">Avancé : journaux et réparations manuelles</sys:String>
+  <sys:String x:Key="Str_Advanced_Tools">Journaux Windows Update</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflow">Ouvrir un workflow</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflowTip">Examiner un journal de workflow enregistré sans exécuter de vérifications ou réparations.</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">Workflows</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">Réparations</sys:String>
-  <sys:String x:Key="Str_Knowledge_Header">Référence de connaissances</sys:String>
+  <sys:String x:Key="Str_Knowledge_Header">Rechercher un code</sys:String>
   <sys:String x:Key="Str_Knowledge_ContextTip">Espace de noms de produit ou de code d&apos;erreur du pack</sys:String>
   <sys:String x:Key="Str_Knowledge_CodeTip">Un code exact à rechercher, ou du texte à rechercher dans le contexte sélectionné</sys:String>
   <sys:String x:Key="Str_Knowledge_Lookup">Ouvrir le pack et rechercher le code</sys:String>
@@ -244,7 +244,7 @@
   <sys:String x:Key="Str_AutomationProperties_Name_Evidence_sources">Sources de preuves</sys:String>
   <sys:String x:Key="Str_Content_Load_sample">Charger un exemple</sys:String>
   <sys:String x:Key="Str_Text_Sources_stay_in_this_session_only">Enregistrez une capture pour conserver les preuves collectées.</sys:String>
-  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Afficher ou masquer les sources (F2)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Afficher ou masquer les résultats (F2)</sys:String>
   <sys:String x:Key="Str_ToolTip_Toggle_activity_log_F3">Afficher ou masquer le journal d&apos;activité (F3)</sys:String>
   <sys:String x:Key="Str_ToolTip_Choose_app_theme">Choisir le thème de l&apos;application</sys:String>
   <sys:String x:Key="Str_Text_TEXT_LOG_INSPECTOR">ATELIER WINDOWS UPDATE / JOURNAUX</sys:String>
@@ -280,7 +280,7 @@
   <sys:String x:Key="Str_Content_Hide">Masquer</sys:String>
   <sys:String x:Key="Str_Text_SESSION_ACTIVITY">ACTIVITÉ DE SESSION</sys:String>
   <sys:String x:Key="Str_AutomationProperties_Name_Session_activity_log">Journal d&apos;activité de session</sys:String>
-  <sys:String x:Key="Str_Shortcuts_ToggleSources">Afficher ou masquer les sources de preuves</sys:String>
+  <sys:String x:Key="Str_Shortcuts_ToggleSources">Afficher ou masquer les résultats</sys:String>
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Afficher ou masquer le journal d&apos;activité</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Ouvrir une preuve</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">À propos de KillerBench</sys:String>
@@ -851,4 +851,12 @@
   <sys:String x:Key="Str_Dlg_Preview">Aperçu</sys:String>
   <sys:String x:Key="Str_Tray_Open">Ouvrir {0}</sys:String>
   <sys:String x:Key="Str_Tray_Exit">Quitter</sys:String>
+  <sys:String x:Key="Str_Knowledge_Description">Consultez les codes Windows et du Gestionnaire de périphériques. Aucune modification.</sys:String>
+  <sys:String x:Key="Str_Knowledge_CodeLabel">Code d’erreur Windows (0x80070005)</sys:String>
+  <sys:String x:Key="Str_Knowledge_DeviceLabel">Code du Gestionnaire de périphériques (43)</sys:String>
+  <sys:String x:Key="Str_Knowledge_Run">Rechercher un code</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackHeader">Pack de référence local</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackDescription">Fichier JSON facultatif. Code ou texte au-dessus, produit ci-dessous.</sys:String>
+  <sys:String x:Key="Str_Knowledge_ContextLabel">Produit ou contexte</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackActions">Actions du pack</sys:String>
 </ResourceDictionary>

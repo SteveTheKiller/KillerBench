@@ -10,7 +10,7 @@
   <sys:String x:Key="Str_AutomationProperties_Name_Evidence_sources">Джерела даних</sys:String>
   <sys:String x:Key="Str_Content_Load_sample">Завантажити зразок</sys:String>
   <sys:String x:Key="Str_Text_Sources_stay_in_this_session_only">Збережіть знімок, щоб зберегти зібрані дані.</sys:String>
-  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Показати або сховати джерела (F2)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Показати або приховати результати (F2)</sys:String>
   <sys:String x:Key="Str_ToolTip_Toggle_activity_log_F3">Показати або сховати журнал дій (F3)</sys:String>
   <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">Сполучення клавіш (F1)</sys:String>
   <sys:String x:Key="Str_ToolTip_Language">Мова</sys:String>
@@ -61,7 +61,7 @@
   <sys:String x:Key="Str_Shortcuts_GroupNav">НАВІГАЦІЯ</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupFile">ФАЙЛ</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupHelp">ДОВІДКА</sys:String>
-  <sys:String x:Key="Str_Shortcuts_ToggleSources">Показати або сховати джерела даних</sys:String>
+  <sys:String x:Key="Str_Shortcuts_ToggleSources">Показати або приховати результати</sys:String>
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Показати або сховати журнал дій</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Відкрити дані</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">Сполучення клавіш</sys:String>
@@ -472,12 +472,12 @@
   <sys:String x:Key="Str_Advanced_All">Усі</sys:String>
   <sys:String x:Key="Str_Advanced_None">Жодної</sys:String>
   <sys:String x:Key="Str_Advanced_RepairEffects">Що можуть змінити ці виправлення</sys:String>
-  <sys:String x:Key="Str_Advanced_Tools">Додатково: журнали та ручні виправлення</sys:String>
+  <sys:String x:Key="Str_Advanced_Tools">Журнали Windows Update</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflow">Відкрити робочий процес</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflowTip">Переглянути збережений журнал робочого процесу без запуску перевірок чи виправлень.</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">Робочі процеси</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">Виправлення</sys:String>
-  <sys:String x:Key="Str_Knowledge_Header">Довідник знань</sys:String>
+  <sys:String x:Key="Str_Knowledge_Header">Знайти код</sys:String>
   <sys:String x:Key="Str_Knowledge_ContextTip">Простір імен продукту або кодів помилок із пакета</sys:String>
   <sys:String x:Key="Str_Knowledge_CodeTip">Точний код для пошуку або текст для пошуку у вибраному контексті</sys:String>
   <sys:String x:Key="Str_Knowledge_Lookup">Відкрити пакет і знайти код</sys:String>
@@ -850,4 +850,12 @@
   <sys:String x:Key="Str_Dlg_Preview">Попередній перегляд</sys:String>
   <sys:String x:Key="Str_Tray_Open">Відкрити {0}</sys:String>
   <sys:String x:Key="Str_Tray_Exit">Вийти</sys:String>
+  <sys:String x:Key="Str_Knowledge_Description">Пошук кодів Windows і Диспетчера пристроїв. Нічого не змінюється.</sys:String>
+  <sys:String x:Key="Str_Knowledge_CodeLabel">Код помилки Windows (0x80070005)</sys:String>
+  <sys:String x:Key="Str_Knowledge_DeviceLabel">Код Диспетчера пристроїв (43)</sys:String>
+  <sys:String x:Key="Str_Knowledge_Run">Знайти код</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackHeader">Локальний довідковий пакет</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackDescription">Необов’язковий файл JSON. Вище код або текст, нижче продукт.</sys:String>
+  <sys:String x:Key="Str_Knowledge_ContextLabel">Продукт або контекст</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackActions">Дії з пакетом</sys:String>
 </ResourceDictionary>

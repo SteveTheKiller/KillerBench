@@ -10,7 +10,7 @@
   <sys:String x:Key="Str_AutomationProperties_Name_Evidence_sources">Nguồn bằng chứng</sys:String>
   <sys:String x:Key="Str_Content_Load_sample">Tải mẫu</sys:String>
   <sys:String x:Key="Str_Text_Sources_stay_in_this_session_only">Lưu một ảnh chụp để giữ lại bằng chứng đã thu thập.</sys:String>
-  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Chuyển đổi nguồn (F2)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Hiện hoặc ẩn kết quả (F2)</sys:String>
   <sys:String x:Key="Str_ToolTip_Toggle_activity_log_F3">Chuyển đổi nhật ký hoạt động (F3)</sys:String>
   <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">Phím tắt (F1)</sys:String>
   <sys:String x:Key="Str_ToolTip_Language">Ngôn ngữ</sys:String>
@@ -61,7 +61,7 @@
   <sys:String x:Key="Str_Shortcuts_GroupNav">ĐIỀU HƯỚNG</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupFile">TỆP</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupHelp">TRỢ GIÚP</sys:String>
-  <sys:String x:Key="Str_Shortcuts_ToggleSources">Chuyển đổi nguồn bằng chứng</sys:String>
+  <sys:String x:Key="Str_Shortcuts_ToggleSources">Hiện hoặc ẩn kết quả</sys:String>
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Chuyển đổi nhật ký hoạt động</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Mở bằng chứng</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">Phím tắt</sys:String>
@@ -472,12 +472,12 @@
   <sys:String x:Key="Str_Advanced_All">Tất cả</sys:String>
   <sys:String x:Key="Str_Advanced_None">Không có</sys:String>
   <sys:String x:Key="Str_Advanced_RepairEffects">Những sửa chữa này có thể thay đổi gì</sys:String>
-  <sys:String x:Key="Str_Advanced_Tools">Nâng cao: nhật ký và sửa chữa thủ công</sys:String>
+  <sys:String x:Key="Str_Advanced_Tools">Nhật ký Windows Update</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflow">Mở quy trình làm việc</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflowTip">Xem lại nhật ký quy trình làm việc đã lưu mà không thực hiện kiểm tra hoặc sửa chữa.</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">Quy trình làm việc</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">Sửa chữa</sys:String>
-  <sys:String x:Key="Str_Knowledge_Header">Tham chiếu kiến thức</sys:String>
+  <sys:String x:Key="Str_Knowledge_Header">Tra cứu mã</sys:String>
   <sys:String x:Key="Str_Knowledge_ContextTip">Không gian tên sản phẩm hoặc mã lỗi từ gói</sys:String>
   <sys:String x:Key="Str_Knowledge_CodeTip">Một mã chính xác để tra cứu, hoặc văn bản để tìm kiếm trong ngữ cảnh đã chọn</sys:String>
   <sys:String x:Key="Str_Knowledge_Lookup">Mở gói và tra cứu mã</sys:String>
@@ -850,4 +850,12 @@
   <sys:String x:Key="Str_Dlg_Preview">Xem trước</sys:String>
   <sys:String x:Key="Str_Tray_Open">Mở {0}</sys:String>
   <sys:String x:Key="Str_Tray_Exit">Thoát</sys:String>
+  <sys:String x:Key="Str_Knowledge_Description">Tra cứu mã Windows và Trình quản lý Thiết bị. Không thay đổi gì.</sys:String>
+  <sys:String x:Key="Str_Knowledge_CodeLabel">Mã lỗi Windows (0x80070005)</sys:String>
+  <sys:String x:Key="Str_Knowledge_DeviceLabel">Mã Trình quản lý Thiết bị (43)</sys:String>
+  <sys:String x:Key="Str_Knowledge_Run">Tra cứu mã</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackHeader">Gói tham chiếu cục bộ</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackDescription">Tệp JSON tùy chọn. Nhập mã hoặc văn bản ở trên, sản phẩm ở dưới.</sys:String>
+  <sys:String x:Key="Str_Knowledge_ContextLabel">Sản phẩm hoặc ngữ cảnh</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackActions">Thao tác với gói</sys:String>
 </ResourceDictionary>

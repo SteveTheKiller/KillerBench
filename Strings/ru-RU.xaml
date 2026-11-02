@@ -43,7 +43,7 @@
   <sys:String x:Key="Str_AutomationProperties_Name_Evidence_sources">Источники доказательств</sys:String>
   <sys:String x:Key="Str_Content_Load_sample">Загрузить пример</sys:String>
   <sys:String x:Key="Str_Text_Sources_stay_in_this_session_only">Сохраните захват, чтобы не потерять собранные доказательства.</sys:String>
-  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Переключить источники (F2)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Показать или скрыть результаты (F2)</sys:String>
   <sys:String x:Key="Str_ToolTip_Toggle_activity_log_F3">Переключить журнал активности (F3)</sys:String>
   <sys:String x:Key="Str_ToolTip_Choose_app_theme">Выбрать тему приложения</sys:String>
   <sys:String x:Key="Str_Text_TEXT_LOG_INSPECTOR">WINDOWS UPDATE / РАБОЧЕЕ МЕСТО ЖУРНАЛОВ</sys:String>
@@ -82,7 +82,7 @@
   <sys:String x:Key="Str_Text_SESSION_ACTIVITY">АКТИВНОСТЬ СЕАНСА</sys:String>
   <sys:String x:Key="Str_AutomationProperties_Name_Session_activity_log">Журнал активности сеанса</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupHelp">СПРАВКА</sys:String>
-  <sys:String x:Key="Str_Shortcuts_ToggleSources">Переключить источники доказательств</sys:String>
+  <sys:String x:Key="Str_Shortcuts_ToggleSources">Показать или скрыть результаты</sys:String>
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Переключить журнал активности</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Открыть доказательства</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">О программе KillerBench</sys:String>
@@ -477,12 +477,12 @@
   <sys:String x:Key="Str_Advanced_RecipeChecks">Проверки рецепта</sys:String>
   <sys:String x:Key="Str_Advanced_All">Все</sys:String>
   <sys:String x:Key="Str_Advanced_RepairEffects">Что могут изменить эти исправления</sys:String>
-  <sys:String x:Key="Str_Advanced_Tools">Расширенные: журналы и ручные исправления</sys:String>
+  <sys:String x:Key="Str_Advanced_Tools">Журналы Windows Update</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflow">Открыть рабочий процесс</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflowTip">Просмотреть сохраненный журнал рабочего процесса без выполнения проверок или исправлений.</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">Рабочие процессы</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">Исправления</sys:String>
-  <sys:String x:Key="Str_Knowledge_Header">Справочник знаний</sys:String>
+  <sys:String x:Key="Str_Knowledge_Header">Найти код</sys:String>
   <sys:String x:Key="Str_Knowledge_ContextTip">Пространство имен продукта или кода ошибки из пакета</sys:String>
   <sys:String x:Key="Str_Knowledge_CodeTip">Точный код для поиска или текст для поиска в выбранном контексте</sys:String>
   <sys:String x:Key="Str_Knowledge_Lookup">Открыть пакет и найти код</sys:String>
@@ -851,4 +851,12 @@
   <sys:String x:Key="Str_Dlg_Preview">Предварительный просмотр</sys:String>
   <sys:String x:Key="Str_Tray_Open">Открыть {0}</sys:String>
   <sys:String x:Key="Str_Tray_Exit">Выход</sys:String>
+  <sys:String x:Key="Str_Knowledge_Description">Поиск кодов Windows и диспетчера устройств. Ничего не изменяется.</sys:String>
+  <sys:String x:Key="Str_Knowledge_CodeLabel">Код ошибки Windows (0x80070005)</sys:String>
+  <sys:String x:Key="Str_Knowledge_DeviceLabel">Код диспетчера устройств (43)</sys:String>
+  <sys:String x:Key="Str_Knowledge_Run">Найти код</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackHeader">Локальный справочный пакет</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackDescription">Необязательный файл JSON. Выше код или текст, ниже продукт.</sys:String>
+  <sys:String x:Key="Str_Knowledge_ContextLabel">Продукт или контекст</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackActions">Действия с пакетом</sys:String>
 </ResourceDictionary>

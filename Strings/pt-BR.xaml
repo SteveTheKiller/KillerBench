@@ -10,7 +10,7 @@
   <sys:String x:Key="Str_AutomationProperties_Name_Evidence_sources">Fontes de evidência</sys:String>
   <sys:String x:Key="Str_Content_Load_sample">Carregar exemplo</sys:String>
   <sys:String x:Key="Str_Text_Sources_stay_in_this_session_only">Salve uma captura para manter as evidências coletadas.</sys:String>
-  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Alternar fontes (F2)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Mostrar ou ocultar resultados (F2)</sys:String>
   <sys:String x:Key="Str_ToolTip_Toggle_activity_log_F3">Alternar log de atividades (F3)</sys:String>
   <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">Atalhos de teclado (F1)</sys:String>
   <sys:String x:Key="Str_ToolTip_Language">Idioma</sys:String>
@@ -61,7 +61,7 @@
   <sys:String x:Key="Str_Shortcuts_GroupNav">NAVEGAÇÃO</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupFile">ARQUIVO</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupHelp">AJUDA</sys:String>
-  <sys:String x:Key="Str_Shortcuts_ToggleSources">Alternar fontes de evidência</sys:String>
+  <sys:String x:Key="Str_Shortcuts_ToggleSources">Mostrar ou ocultar resultados</sys:String>
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Alternar log de atividades</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Abrir evidências</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">Atalhos de teclado</sys:String>
@@ -472,12 +472,12 @@
   <sys:String x:Key="Str_Advanced_All">Todas</sys:String>
   <sys:String x:Key="Str_Advanced_None">Nenhuma</sys:String>
   <sys:String x:Key="Str_Advanced_RepairEffects">O que esses reparos podem alterar</sys:String>
-  <sys:String x:Key="Str_Advanced_Tools">Avançado: logs e reparos manuais</sys:String>
+  <sys:String x:Key="Str_Advanced_Tools">Logs do Windows Update</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflow">Abrir fluxo de trabalho</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflowTip">Revisa um diário de fluxo de trabalho salvo sem executar verificações nem reparos.</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">Fluxos de trabalho</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">Reparos</sys:String>
-  <sys:String x:Key="Str_Knowledge_Header">Referência de conhecimento</sys:String>
+  <sys:String x:Key="Str_Knowledge_Header">Consultar código</sys:String>
   <sys:String x:Key="Str_Knowledge_ContextTip">Produto ou namespace de código de erro do pacote</sys:String>
   <sys:String x:Key="Str_Knowledge_CodeTip">Um código exato para consulta, ou texto para pesquisar dentro do contexto selecionado</sys:String>
   <sys:String x:Key="Str_Knowledge_Lookup">Abrir pacote e consultar código</sys:String>
@@ -850,4 +850,12 @@
   <sys:String x:Key="Str_Dlg_Preview">Visualização</sys:String>
   <sys:String x:Key="Str_Tray_Open">Abrir o {0}</sys:String>
   <sys:String x:Key="Str_Tray_Exit">Sair</sys:String>
+  <sys:String x:Key="Str_Knowledge_Description">Consulte códigos do Windows e do Gerenciador de Dispositivos. Nada é alterado.</sys:String>
+  <sys:String x:Key="Str_Knowledge_CodeLabel">Código de erro do Windows (0x80070005)</sys:String>
+  <sys:String x:Key="Str_Knowledge_DeviceLabel">Código do Gerenciador de Dispositivos (43)</sys:String>
+  <sys:String x:Key="Str_Knowledge_Run">Consultar código</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackHeader">Pacote de referência local</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackDescription">JSON opcional. Digite o código ou texto acima e o produto abaixo.</sys:String>
+  <sys:String x:Key="Str_Knowledge_ContextLabel">Produto ou contexto</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackActions">Ações do pacote</sys:String>
 </ResourceDictionary>

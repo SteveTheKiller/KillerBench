@@ -70,6 +70,7 @@ public partial class MainWindow
         MainAutoRepair.IsChecked = false;
         MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(w => w.Kind == category.Tools[0]);
         SynchronizeNavigation();
+        if (!workflowOutputActive && readCancellation is null) SetOutputOpen(false);
     }
 
     private void OnCategoryWorkflowSelected(object sender, SelectionChangedEventArgs e)
@@ -77,6 +78,7 @@ public partial class MainWindow
         if (synchronizingNavigation || refreshingLanguage || CategoryWorkflow.SelectedItem is not WorkflowDefinition workflow) return;
         MainAutoRepair.IsChecked = false;
         MainWorkflow.SelectedItem = workflow;
+        if (!workflowOutputActive && readCancellation is null) SetOutputOpen(false);
     }
 
     private void SynchronizeNavigation()
@@ -93,6 +95,8 @@ public partial class MainWindow
             KnowledgeTools.Visibility = category.Id is "Diagnostics" or "Devices" ? Visibility.Visible : Visibility.Collapsed;
             WindowsCodeAction.Visibility = category.Id == "Diagnostics" ? Visibility.Visible : Visibility.Collapsed;
             DeviceCodeAction.Visibility = category.Id == "Devices" ? Visibility.Visible : Visibility.Collapsed;
+            CodeLookupLabel.SetResourceReference(TextBlock.TextProperty,
+                category.Id == "Devices" ? "Str_Knowledge_DeviceLabel" : "Str_Knowledge_CodeLabel");
             CategoryWorkflow.ItemsSource = category.Tools.Select(kind => WorkflowCatalog.All.Single(w => w.Kind == kind)).ToArray();
             CategoryWorkflow.SelectedItem = workflow;
         }
@@ -105,5 +109,13 @@ public partial class MainWindow
         menu.PlacementTarget = button;
         menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
         menu.IsOpen = true;
+    }
+
+    private void OnLookupErrorCode(object sender, RoutedEventArgs e)
+    {
+        if (MainWorkflow.SelectedItem is WorkflowDefinition workflow && CategoryOf(workflow.Kind).Id == "Devices")
+            OnDeviceCodeLookup(sender, e);
+        else
+            OnWindowsCodeLookup(sender, e);
     }
 }

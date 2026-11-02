@@ -22,6 +22,7 @@ public partial class MainWindow
 
     private void SetOutputView()
     {
+        if (rawView || reportAvailable) SetOutputOpen(true);
         ReportPane.Visibility = !rawView && reportAvailable ? Visibility.Visible : Visibility.Collapsed;
         ConsolePane.Visibility = rawView ? Visibility.Visible : Visibility.Collapsed;
         ConsoleSearchPanel.Visibility = ConsolePane.Visibility;
@@ -40,6 +41,7 @@ public partial class MainWindow
 
     private void RenderNamedWorkflowReport(WorkflowResult result, string? title)
     {
+        SetOutputOpen(true);
         rawView = false;
         BuildWorkflowReport(result, title);
     }

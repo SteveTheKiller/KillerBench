@@ -11,7 +11,7 @@
   <sys:String x:Key="Str_AutomationProperties_Name_Evidence_sources">Дәлел көздері</sys:String>
   <sys:String x:Key="Str_Content_Load_sample">Үлгіні жүктеу</sys:String>
   <sys:String x:Key="Str_Text_Sources_stay_in_this_session_only">Жиналған дәлелдерді сақтау үшін түсірілімді сақтаңыз.</sys:String>
-  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Көздерді ауыстыру (F2)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Нәтижені көрсету немесе жасыру (F2)</sys:String>
   <sys:String x:Key="Str_ToolTip_Toggle_activity_log_F3">Әрекет журналын ауыстыру (F3)</sys:String>
   <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">Пернетақта тіркесімдері (F1)</sys:String>
   <sys:String x:Key="Str_ToolTip_Language">Тіл</sys:String>
@@ -62,7 +62,7 @@
   <sys:String x:Key="Str_Shortcuts_GroupNav">ШАРЛАУ</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupFile">ФАЙЛ</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupHelp">АНЫҚТАМА</sys:String>
-  <sys:String x:Key="Str_Shortcuts_ToggleSources">Дәлел көздерін ауыстыру</sys:String>
+  <sys:String x:Key="Str_Shortcuts_ToggleSources">Нәтижені көрсету немесе жасыру</sys:String>
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Әрекет журналын ауыстыру</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Дәлелді ашу</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">Пернетақта тіркесімдері</sys:String>
@@ -473,12 +473,12 @@
   <sys:String x:Key="Str_Advanced_All">Барлығы</sys:String>
   <sys:String x:Key="Str_Advanced_None">Жоқ</sys:String>
   <sys:String x:Key="Str_Advanced_RepairEffects">Бұл жөндеулер нені өзгерте алады</sys:String>
-  <sys:String x:Key="Str_Advanced_Tools">Кеңейтілген: журналдар және қолмен жөндеулер</sys:String>
+  <sys:String x:Key="Str_Advanced_Tools">Windows Update журналдары</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflow">Жұмыс ағынын ашу</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflowTip">Сақталған жұмыс ағыны журналын тексерулерді немесе жөндеулерді іске қоспай қарап шығу.</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">Жұмыс ағындары</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">Жөндеулер</sys:String>
-  <sys:String x:Key="Str_Knowledge_Header">Білім анықтамасы</sys:String>
+  <sys:String x:Key="Str_Knowledge_Header">Кодты іздеу</sys:String>
   <sys:String x:Key="Str_Knowledge_ContextTip">Пакеттен өнім немесе қате коды аттар кеңістігі</sys:String>
   <sys:String x:Key="Str_Knowledge_CodeTip">Іздеу үшін нақты код немесе таңдалған контексте іздеу үшін мәтін</sys:String>
   <sys:String x:Key="Str_Knowledge_Lookup">Пакетті ашу және кодты іздеу</sys:String>
@@ -851,4 +851,12 @@
   <sys:String x:Key="Str_Dlg_Preview">Алдын ала қарау</sys:String>
   <sys:String x:Key="Str_Tray_Open">{0} ашу</sys:String>
   <sys:String x:Key="Str_Tray_Exit">Шығу</sys:String>
+  <sys:String x:Key="Str_Knowledge_Description">Windows және Құрылғылар диспетчері кодтарын іздеу. Ештеңе өзгермейді.</sys:String>
+  <sys:String x:Key="Str_Knowledge_CodeLabel">Windows қате коды (0x80070005)</sys:String>
+  <sys:String x:Key="Str_Knowledge_DeviceLabel">Құрылғылар диспетчері коды (43)</sys:String>
+  <sys:String x:Key="Str_Knowledge_Run">Кодты іздеу</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackHeader">Жергілікті анықтамалық жинақ</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackDescription">Қосымша JSON файлы. Жоғарыда код не мәтін, төменде өнім.</sys:String>
+  <sys:String x:Key="Str_Knowledge_ContextLabel">Өнім немесе контекст</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackActions">Жинақ әрекеттері</sys:String>
 </ResourceDictionary>

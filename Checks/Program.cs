@@ -389,6 +389,21 @@ internal static class Program
         {
             window.Show();
             window.UpdateLayout();
+            Require(((Border)window.FindName("TerminalPanel")).Visibility == Visibility.Collapsed &&
+                ((Border)window.FindName("LeftPanel")).ActualWidth > 0,
+                "Tool browsing starts with fixed navigation and tucked-away output");
+            var outputToggle = (Button)window.FindName("SidebarButton");
+            outputToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(((Border)window.FindName("TerminalPanel")).Visibility == Visibility.Visible,
+                "Output toggle opens the retained output pane");
+            outputToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(((Border)window.FindName("TerminalPanel")).Visibility == Visibility.Collapsed &&
+                ((Border)window.FindName("LeftPanel")).IsEnabled,
+                "Output toggle never hides or disables category navigation");
+            Require(System.Windows.Controls.Grid.GetColumn((FrameworkElement)window.FindName("SidebarRail")) == 3 &&
+                ReferenceEquals(((FrameworkElement)window.FindName("SidebarRail")).Parent, window.FindName("ContentPane")) &&
+                System.Windows.Controls.Grid.GetColumn((FrameworkElement)window.FindName("TerminalPanel")) == 4,
+                "The complete rail stays between tool content and contextual output");
             RenderedTypographyChecks.VerifySubtitle(window);
             Require(window.Width == 1025 && window.Height == 700 && window.MinWidth == 800 && window.MinHeight == 500 &&
                 window.SizeToContent == SizeToContent.Manual, "Workbench window keeps its family window geometry");
@@ -458,7 +473,7 @@ internal static class Program
                 window.FindName("FirewallProfileApply") is CheckBox { Content: "Apply selected local profiles after fresh policy checks" },
                 "Security scan and Firewall profile controls resolve their localizable English resources");
             Require(window.FindName("RecipeSelectionPanel") is Expander { Header: "Choose checks (advanced)" } &&
-                window.FindName("AdvancedTools") is Expander { Header: "Advanced: logs and manual repairs" } &&
+                window.FindName("AdvancedTools") is Expander { Header: "Windows Update logs" } &&
                 window.FindName("KnowledgeSearchButton") is MenuItem { Header: "Open pack and search text" } &&
                 window.FindName("ConsoleViewButton") is Button { Content: "Raw output" } &&
                 window.FindName("RepairConsent") is CheckBox { Content: "Run this repair on this PC" },
@@ -649,6 +664,22 @@ internal static class Program
             Require(FindTextBlocks(window).Any(block => block.Text == "Time recovery check report") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("did not synchronize the clock", StringComparison.Ordinal)),
                 "Time recovery checks have a readable no-change report");
+            scopedCategories.SelectedIndex = 0;
+            ((Expander)window.FindName("KnowledgeTools")).IsExpanded = true;
+            window.UpdateLayout();
+            ((TextBox)window.FindName("KnowledgeCode")).Text = "0x5";
+            FindButtons(window).Single(button => Equals(button.Content, "Look up code")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            var lookupOutput = (TextBox)window.FindName("EvidenceBox");
+            Require(lookupOutput.Text.Contains("Code: 5 (0x5)", StringComparison.Ordinal) &&
+                ((FrameworkElement)window.FindName("TerminalPanel")).Visibility == Visibility.Visible,
+                "The primary code lookup opens its read-only result");
+            string retainedLookup = lookupOutput.Text;
+            scopedCategories.SelectedIndex = 1;
+            Require(((FrameworkElement)window.FindName("TerminalPanel")).Visibility == Visibility.Collapsed,
+                "Browsing tools hides inactive output");
+            ((Button)window.FindName("SidebarButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(((FrameworkElement)window.FindName("TerminalPanel")).Visibility == Visibility.Visible && lookupOutput.Text == retainedLookup,
+                "The divider chevron restores the previous result without rerunning it");
             Console.WriteLine("PASS: WPF workbench geometry, zoom containment, servicing monitor bounds and safe report navigation.");
             return 0;
         }
@@ -1212,9 +1243,9 @@ internal static class Program
             var consoleOrigin = consoleBank.TranslatePoint(new Point(), window);
             var rail = (FrameworkElement)window.FindName("SidebarRail");
             var railOrigin = rail.TranslatePoint(new Point(), window);
-            Require(railOrigin.X >= controlOrigin.X + controlBank.ActualWidth - 1 &&
-                railOrigin.X + rail.ActualWidth <= consoleOrigin.X + 1,
-                "Icon rail remains entirely between the tool sidebar and main pane");
+            Require(railOrigin.X >= consoleOrigin.X + consoleBank.ActualWidth - 1 &&
+                Grid.GetColumn(rail) == 3,
+                "Icon rail remains on the output edge of the main tool pane");
             Require(consoleOrigin.X >= controlOrigin.X + controlBank.ActualWidth && Math.Abs(consoleOrigin.Y - controlOrigin.Y) < 1,
                 "Control bank sits beside the console, not above it");
             var categories = (ListBox)window.FindName("CategoryList");

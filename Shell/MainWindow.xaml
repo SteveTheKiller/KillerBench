@@ -58,166 +58,8 @@
     <kl:UnclippedGrid x:Name="ScaleHost" Margin="4,4,4,0">
       <Grid.ColumnDefinitions><ColumnDefinition Width="{Binding ActualWidth, ElementName=LeftPanel}"/><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
       <Grid.RowDefinitions><RowDefinition Height="*"/></Grid.RowDefinitions>
-      <Grid x:Name="SidebarRail" Grid.Column="1" Panel.ZIndex="1">
-        <Button x:Name="SidebarButton" Style="{StaticResource RailButton}" Content="&#xE76B;" FontSize="12" VerticalAlignment="Top" Margin="2,10,0,0" Click="OnToggleSources" ToolTip="{DynamicResource Str_ToolTip_Toggle_sources_F2}"/>
-        <StackPanel Style="{StaticResource RailButtonHost}" VerticalAlignment="Bottom">
-          <Button x:Name="ActivityButton" Style="{StaticResource RailButton}" Content="&#xE756;" Click="OnToggleActivity" ToolTip="{DynamicResource Str_ToolTip_Toggle_activity_log_F3}" Margin="0,0,0,10"/>
-          <Button x:Name="ShortcutButton" Style="{StaticResource RailButton}" Content="?" FontFamily="Consolas" FontSize="18" Click="OnShortcuts" ToolTip="{DynamicResource Str_ToolTip_Keyboard_shortcuts_F1}" Margin="0,0,0,10"><Button.Template><ControlTemplate TargetType="Button"><Border Background="Transparent"><TextBlock Text="?" FontFamily="Segoe UI" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource TextBrush}" TextOptions.TextFormattingMode="Display" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Button.Template></Button>
-          <Button x:Name="LangButton" Style="{StaticResource RailButton}" Content="&#xF2B7;" Click="OnLanguages" ContextMenuOpening="RailMenu_Opening" ToolTip="{DynamicResource Str_ToolTip_Language}" Margin="0,0,0,10"><Button.ContextMenu><ContextMenu/></Button.ContextMenu></Button>
-<Button x:Name="ThemeButton" Style="{StaticResource RailButton}" Content="&#xE790;" Click="OnThemes" ContextMenuOpening="RailMenu_Opening" ToolTip="{DynamicResource Str_ToolTip_Choose_app_theme}" Margin="0,0,0,6"><Button.ContextMenu><ContextMenu x:Name="ThemeFlyout">
-                                
-                                <ContextMenu.Template>
-                                    <ControlTemplate TargetType="ContextMenu">
-                                        <Grid>
-                                            <Border Style="{StaticResource FlyoutCard}">
-                                                <Grid>
-                                                    <ItemsPresenter/>
-                                                    <Border Style="{StaticResource FlyoutGrain}"/>
-                                                </Grid>
-                                            </Border>
-                                            <Border IsHitTestVisible="False" Margin="22,18,22,26"
-                                                    BorderBrush="{DynamicResource BevelLightBrush}" BorderThickness="{DynamicResource BevelLightThickness}"/>
-                                            <Border IsHitTestVisible="False" Margin="22,18,22,26"
-                                                    BorderBrush="{DynamicResource BevelDarkBrush}"  BorderThickness="{DynamicResource BevelDarkThickness}"/>
-                                        </Grid>
-                                    </ControlTemplate>
-                                </ContextMenu.Template>
-                                <ContextMenu.ItemContainerStyle>
-                                    <Style TargetType="MenuItem" BasedOn="{StaticResource PanelMenuItem}"/>
-                                </ContextMenu.ItemContainerStyle>
-                                <!-- Hover rows sit 4px in from both menu edges: 12 left less the
-                                     row's -8, and 2 right plus the row's own 2. The theme column
-                                     fills the menu (*) so the hover reaches across when the menu
-                                     is wider than the list. -->
-                                <Grid Margin="12,10,2,10">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-
-                                <StackPanel x:Name="ThemeSubmenu" MinWidth="150" Grid.Column="0">
-                                    <RadioButton x:Name="ThemeDarkRadio"
-                                                 Content="{DynamicResource Str_Theme_Dark}"
-                                                 GroupName="ThemeGroup"
-                                                 Style="{StaticResource ThemeRadio}"
-                                                 Tag="Dark" Checked="OnThemeSelected"/>
-                                    <RadioButton x:Name="ThemeLightRadio"
-                                                 Content="{DynamicResource Str_Theme_Light}"
-                                                 GroupName="ThemeGroup"
-                                                 Style="{StaticResource ThemeRadio}"
-                                                 Tag="Light" Checked="OnThemeSelected"/>
-                                    <RadioButton x:Name="ThemeHCRadio"
-                                                 Content="{DynamicResource Str_Theme_Black}"
-                                                 GroupName="ThemeGroup"
-                                                 Style="{StaticResource ThemeRadio}"
-                                                 Tag="Black" Checked="OnThemeSelected"/>
-                                    <RadioButton x:Name="Theme98SERadio"
-                                                 Content="{DynamicResource Str_Theme_SE98}"
-                                                 GroupName="ThemeGroup"
-                                                 Style="{StaticResource ThemeRadio}"
-                                                 Tag="SE98" Checked="OnThemeSelected"/>
-                                    <RadioButton x:Name="ThemeBloodRadio"
-                                                 Content="{DynamicResource Str_Theme_Blood}"
-                                                 GroupName="ThemeGroup"
-                                                 Style="{StaticResource ThemeRadio}"
-                                                 Tag="Blood" Checked="OnThemeSelected"/>
-                                    <RadioButton x:Name="ThemeGreedRadio"
-                                                 Content="{DynamicResource Str_Theme_Greed}"
-                                                 GroupName="ThemeGroup"
-                                                 Style="{StaticResource ThemeRadio}"
-                                                 Tag="Greed" Checked="OnThemeSelected"/>
-                                    <RadioButton x:Name="ThemeCyanoticRadio"
-                                                 Content="{DynamicResource Str_Theme_Cyanotic}"
-                                                 GroupName="ThemeGroup"
-                                                 Style="{StaticResource ThemeRadio}"
-                                                 Tag="Cyanotic" Checked="OnThemeSelected"/>
-                                    <RadioButton x:Name="ThemeEctoplasmRadio"
-                                                 Content="{DynamicResource Str_Theme_Ectoplasm}"
-                                                 GroupName="ThemeGroup"
-                                                 Style="{StaticResource ThemeRadio}"
-                                                 Tag="Ectoplasm" Checked="OnThemeSelected"/>
-                                    <RadioButton x:Name="ThemeDecayRadio"
-                                                 Content="{DynamicResource Str_Theme_Decay}"
-                                                 GroupName="ThemeGroup"
-                                                 Style="{StaticResource ThemeRadio}"
-                                                 Tag="Decay" Checked="OnThemeSelected"/>
-                                    
-                                    <RadioButton x:Name="ThemeMalaiseRadio"
-                                                 Content="{DynamicResource Str_Theme_Malaise}"
-                                                 GroupName="ThemeGroup"
-                                                 Style="{StaticResource ThemeRadio}"
-                                                 Tag="Malaise" Checked="OnThemeSelected"/>
-                                    <RadioButton x:Name="ThemeSepulchreRadio"
-                                                 Content="{DynamicResource Str_Theme_Sepulchre}"
-                                                 GroupName="ThemeGroup"
-                                                 Style="{StaticResource ThemeRadio}"
-                                                 Tag="Sepulchre" Checked="OnThemeSelected"/>
-                                    <RadioButton x:Name="ThemeDeliriumRadio"
-                                                 Content="{DynamicResource Str_Theme_Delirium}"
-                                                 GroupName="ThemeGroup"
-                                                 Style="{StaticResource ThemeRadio}"
-                                                 Tag="Delirium" Checked="OnThemeSelected"/>
-                                    <RadioButton x:Name="ThemeMourningRadio"
-                                                 Content="{DynamicResource Str_Theme_Mourning}"
-                                                 GroupName="ThemeGroup"
-                                                 Style="{StaticResource ThemeRadio}"
-                                                 Tag="Mourning" Checked="OnThemeSelected"/>
-
-                                    
-                                    
-                                    
-                                    
-                                </StackPanel>
-                                    <Grid x:Name="AccentStripHost" Grid.Column="1" Width="0" ClipToBounds="True">
-                                        <Border Width="1" HorizontalAlignment="Left" Margin="0,6"
-                                                Background="{DynamicResource MenuBorderBrush}"/>
-                                        <Grid x:Name="AccentStrip" Margin="7,6,2,6">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="*"/><RowDefinition Height="*"/>
-                                                <RowDefinition Height="*"/><RowDefinition Height="*"/>
-                                                <RowDefinition Height="*"/><RowDefinition Height="*"/>
-                                                <RowDefinition Height="*"/><RowDefinition Height="*"/>
-                                            </Grid.RowDefinitions>
-                                            <Border x:Name="AccentStripDot0" Grid.Row="0" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
-                                            <Border x:Name="AccentStripDot1" Grid.Row="1" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
-                                            <Border x:Name="AccentStripDot2" Grid.Row="2" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
-                                            <Border x:Name="AccentStripDot3" Grid.Row="3" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
-                                            <Border x:Name="AccentStripDot4" Grid.Row="4" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
-                                            <Border x:Name="AccentStripDot5" Grid.Row="5" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
-                                            <Border x:Name="AccentStripDot6" Grid.Row="6" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
-                                            <Border x:Name="AccentStripDot7" Grid.Row="7" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0" MouseLeftButtonUp="OnAccentSelected"/>
-                                        </Grid>
-                                    </Grid>
-                                    <!-- Film Grain: one switch for the grain texture on every surface
-                                         (Services/FilmGrain.cs). Its own row under both columns, so the
-                                         accent strip still runs the height of the theme list only. -->
-                                    <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
-                                        <Border Height="1" Margin="0,0,9,8" Opacity="0.18" IsHitTestVisible="False"
-                                                Background="{DynamicResource TextBrush}">
-                                            <Border.OpacityMask>
-                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                                    <GradientStop Color="Transparent" Offset="0"/>
-                                                    <GradientStop Color="Black" Offset="0.15"/>
-                                                    <GradientStop Color="Black" Offset="0.85"/>
-                                                    <GradientStop Color="Transparent" Offset="1"/>
-                                                </LinearGradientBrush>
-                                            </Border.OpacityMask>
-                                        </Border>
-                                        <CheckBox x:Name="FilmGrainCheck" Content="{DynamicResource Str_Theme_FilmGrain}"
-                                                  Style="{StaticResource ThemeCheck}" Margin="0"
-                                                  Click="OnFilmGrain"/>
-                                    </StackPanel>
-                                </Grid>
-                            </ContextMenu></Button.ContextMenu></Button>
-        </StackPanel>
-      </Grid>
-      <Thumb x:Name="SidebarGrip" Grid.Column="1" Style="{StaticResource SidebarResizeGrip}" HorizontalAlignment="Left" Margin="0,34,0,0" DragStarted="OnSidebarGripStarted" DragDelta="OnSidebarGripDelta" DragCompleted="OnSidebarGripCompleted"/>
       <kl:UnclippedGrid Grid.ColumnSpan="3" x:Name="ContentPane" UseLayoutRounding="True">
-        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="24"/><ColumnDefinition Width="2*" MinWidth="300"/><ColumnDefinition Width="3*"/></Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="8"/><ColumnDefinition Width="2*" MinWidth="300"/><ColumnDefinition Width="24"/><ColumnDefinition Width="3*"/></Grid.ColumnDefinitions>
         <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
         <Border x:Name="LeftPanel" Width="160" Grid.RowSpan="2" Background="{DynamicResource SidebarPaneBrush}" Margin="0" ClipToBounds="True">
 <Grid>
@@ -282,6 +124,8 @@
                         VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{Binding Text, ElementName=CategoryTitle}">
             <ScrollViewer.Resources>
               <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                <Setter Property="MinHeight" Value="26"/>
+                <Setter Property="Margin" Value="0,2,12,2"/>
                 <Setter Property="ContentTemplate"><Setter.Value><DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap"/></DataTemplate></Setter.Value></Setter>
               </Style>
             </ScrollViewer.Resources>
@@ -393,14 +237,14 @@
             </StackPanel>
             <StackPanel x:Name="DepotSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="{DynamicResource Str_Depot_Description}" TextWrapping="Wrap"/>
-              <TextBlock Text="{DynamicResource Str_Common_Applications}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Common_Applications}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,12,0,6"/>
               <UniformGrid Columns="2">
                 <CheckBox x:Name="DepotMicrosoft365" Content="Microsoft 365"/><CheckBox x:Name="DepotOneDrive" Content="OneDrive"/>
                 <CheckBox x:Name="DepotTeams" Content="Teams"/><CheckBox x:Name="DepotChrome" Content="Chrome"/>
                 <CheckBox x:Name="DepotAcrobat" Content="Acrobat Reader"/><CheckBox x:Name="DepotZoom" Content="Zoom"/>
                 <CheckBox x:Name="DepotSevenZip" Content="7-Zip"/>
               </UniformGrid>
-              <TextBlock Text="{DynamicResource Str_Common_Configuration}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
+              <TextBlock Text="{DynamicResource Str_Common_Configuration}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,14,0,6"/>
               <StackPanel>
                 <CheckBox x:Name="DepotUpdates" Content="{DynamicResource Str_Depot_WindowsUpdates}"/><CheckBox x:Name="DepotComputerName" Content="{DynamicResource Str_Depot_ComputerName}"/>
                 <CheckBox x:Name="DepotLocalAdmin" Content="{DynamicResource Str_Depot_LocalAdministrator}"/><CheckBox x:Name="DepotAdminReview" Content="{DynamicResource Str_Depot_AdministratorReview}"/>
@@ -867,7 +711,7 @@
             </StackPanel>
             <Expander x:Name="RecipeSelectionPanel" Header="{DynamicResource Str_Advanced_ChooseChecks}" Foreground="{DynamicResource TextBrush}" Visibility="Collapsed" Margin="0,0,0,6">
               <StackPanel>
-                <CheckBox x:Name="CustomizeRecipes" Content="{DynamicResource Str_Advanced_SelectedRecipes}" Checked="OnRecipeSelectionChanged" Unchecked="OnRecipeSelectionChanged"/>
+                <CheckBox x:Name="CustomizeRecipes" Content="{DynamicResource Str_Advanced_SelectedRecipes}" Margin="0,4,0,4" Checked="OnRecipeSelectionChanged" Unchecked="OnRecipeSelectionChanged"/>
                 <CheckBox x:Name="FocusDiagnosticAreas" Content="{DynamicResource Str_Advanced_DiagnosticOnly}" Margin="0,4,0,4" Checked="OnDiagnosticAreasChanged" Unchecked="OnDiagnosticAreasChanged"/>
                 <CheckBox x:Name="ShowDetailedDiagnosticAreas" Content="{DynamicResource Str_Advanced_ShowEvidenceAreas}" Margin="14,0,0,4" Visibility="Collapsed"
                           Checked="OnDiagnosticDetailChanged" Unchecked="OnDiagnosticDetailChanged"/>
@@ -880,7 +724,7 @@
                               IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Mode=TwoWay}"/>
                   </DataTemplate></ListBox.ItemTemplate>
                 </ListBox>
-                <TextBlock x:Name="DiagnosticAreaSummary" TextWrapping="Wrap" Margin="0,4,0,4"/>
+                <TextBlock x:Name="DiagnosticAreaSummary" TextWrapping="Wrap" Visibility="Collapsed" Margin="0,6,0,6"/>
                 <DockPanel x:Name="RecipeActions" Margin="0,10,0,6" IsEnabled="{Binding IsChecked, ElementName=CustomizeRecipes}">
                   <TextBlock Text="{DynamicResource Str_Advanced_RecipeChecks}" VerticalAlignment="Center"/>
                   <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
@@ -903,7 +747,7 @@
                               IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Mode=TwoWay}"/>
                   </DataTemplate></ListBox.ItemTemplate>
                 </ListBox>
-                <TextBlock x:Name="RecipeSelectionSummary" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                <TextBlock x:Name="RecipeSelectionSummary" TextWrapping="Wrap" Margin="0,8,0,8"/>
                 <Expander Header="{DynamicResource Str_Advanced_RepairEffects}" Foreground="{DynamicResource TextBrush}" Margin="0,4,0,0">
                   <ScrollViewer MaxHeight="180" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <TextBlock x:Name="RecipeEffectsSummary" TextWrapping="Wrap"/>
@@ -913,7 +757,7 @@
             </Expander>
             <Expander x:Name="AdvancedTools" Header="{DynamicResource Str_Advanced_Tools}" Foreground="{DynamicResource MutedTextBrush}">
           <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-            <DockPanel Margin="0,0,0,6">
+            <DockPanel Visibility="Collapsed">
               <TextBlock Text="{DynamicResource Str_Text_TEXT_LOG_INSPECTOR}" FontFamily="{DynamicResource UiFont}" FontSize="11" VerticalAlignment="Center"/>
               <TextBlock x:Name="ModeLabel" Text="{DynamicResource Str_Text_SAMPLE_MODE}" Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource UiFont}" FontSize="11" HorizontalAlignment="Right"/>
             </DockPanel>
@@ -929,9 +773,15 @@
             </StackPanel>
           </Grid></Expander>
             <Expander x:Name="KnowledgeTools" Header="{DynamicResource Str_Knowledge_Header}" Foreground="{DynamicResource TextBrush}" Margin="0,12,0,0"><StackPanel Margin="0,8,0,0">
-              <TextBox x:Name="KnowledgeContext" AutomationProperties.Name="Knowledge product context" ToolTip="{DynamicResource Str_Knowledge_ContextTip}"/>
-              <TextBox x:Name="KnowledgeCode" AutomationProperties.Name="Knowledge code or search text" ToolTip="{DynamicResource Str_Knowledge_CodeTip}" Margin="0,8,0,8"/>
-              <Button Content="{DynamicResource Str_Knowledge_Header}" Click="OnWorkbenchMenu" HorizontalAlignment="Left"><Button.ContextMenu><ContextMenu>
+              <TextBlock Text="{DynamicResource Str_Knowledge_Description}" TextWrapping="Wrap" Margin="0,0,0,10" Foreground="{DynamicResource MutedTextBrush}"/>
+              <TextBlock x:Name="CodeLookupLabel" Text="{DynamicResource Str_Knowledge_CodeLabel}" Margin="0,0,0,4"/>
+              <TextBox x:Name="KnowledgeCode" AutomationProperties.Name="Knowledge code or search text" ToolTip="{DynamicResource Str_Knowledge_CodeTip}" Margin="0,0,0,8"/>
+              <Button Content="{DynamicResource Str_Knowledge_Run}" Click="OnLookupErrorCode" HorizontalAlignment="Left"/>
+              <Expander Header="{DynamicResource Str_Knowledge_PackHeader}" Foreground="{DynamicResource TextBrush}" Margin="0,14,0,0"><StackPanel Margin="0,8,0,0">
+              <TextBlock Text="{DynamicResource Str_Knowledge_PackDescription}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,8"/>
+              <TextBlock Text="{DynamicResource Str_Knowledge_ContextLabel}" Margin="0,0,0,4"/>
+              <TextBox x:Name="KnowledgeContext" AutomationProperties.Name="Knowledge product context" ToolTip="{DynamicResource Str_Knowledge_ContextTip}" Margin="0,0,0,8"/>
+              <Button Content="{DynamicResource Str_Knowledge_PackActions}" Click="OnWorkbenchMenu" HorizontalAlignment="Left"><Button.ContextMenu><ContextMenu>
                 <MenuItem Header="{DynamicResource Str_Knowledge_Lookup}" Click="OnKnowledgeLookup"/>
                 <MenuItem x:Name="KnowledgeSearchButton" Header="{DynamicResource Str_Knowledge_Search}" Tag="search" Click="OnKnowledgeLookup"/>
                 <MenuItem Header="{DynamicResource Str_Knowledge_Compare}" Click="OnKnowledgeCompare"/>
@@ -939,7 +789,7 @@
                 <MenuItem x:Name="WindowsCodeAction" Header="{DynamicResource Str_Knowledge_WindowsCode}" Click="OnWindowsCodeLookup"/>
                 <MenuItem x:Name="DeviceCodeAction" Header="{DynamicResource Str_Knowledge_DeviceCode}" Click="OnDeviceCodeLookup"/>
               </ContextMenu></Button.ContextMenu></Button>
-            </StackPanel></Expander></StackPanel></ScrollViewer>
+            </StackPanel></Expander></StackPanel></Expander></StackPanel></ScrollViewer>
         </Border></Grid>
 </Border>
           <Border x:Name="DetailsPanel" Grid.Column="1" Grid.RowSpan="2" Width="270" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Margin="4,0,0,0" ClipToBounds="True" Visibility="Collapsed">
@@ -970,13 +820,172 @@
           </Border></Grid>
 </Border>
         </kl:UnclippedGrid>
-        <Border x:Name="TerminalPanel" Grid.Column="3" Grid.RowSpan="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Margin="8,0,0,0" ClipToBounds="True">
+      <Grid x:Name="SidebarRail" Grid.Column="3" Panel.ZIndex="1">
+        <Button x:Name="SidebarButton" Style="{StaticResource RailButton}" Content="&#xE76B;" FontSize="12" VerticalAlignment="Top" Margin="0,10,0,0" Click="OnToggleSources" ToolTip="{DynamicResource Str_ToolTip_Toggle_sources_F2}"/>
+        <StackPanel Style="{StaticResource RailButtonHost}" VerticalAlignment="Bottom">
+          <Button x:Name="ActivityButton" Style="{StaticResource RailButton}" Content="&#xE756;" Click="OnToggleActivity" ToolTip="{DynamicResource Str_ToolTip_Toggle_activity_log_F3}" Margin="0,0,0,10"/>
+          <Button x:Name="ShortcutButton" Style="{StaticResource RailButton}" Content="?" FontFamily="Consolas" FontSize="18" Click="OnShortcuts" ToolTip="{DynamicResource Str_ToolTip_Keyboard_shortcuts_F1}" Margin="0,0,0,10"><Button.Template><ControlTemplate TargetType="Button"><Border Background="Transparent"><TextBlock Text="?" FontFamily="Segoe UI" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource TextBrush}" TextOptions.TextFormattingMode="Display" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Button.Template></Button>
+          <Button x:Name="LangButton" Style="{StaticResource RailButton}" Content="&#xF2B7;" Click="OnLanguages" ContextMenuOpening="RailMenu_Opening" ToolTip="{DynamicResource Str_ToolTip_Language}" Margin="0,0,0,10"><Button.ContextMenu><ContextMenu/></Button.ContextMenu></Button>
+<Button x:Name="ThemeButton" Style="{StaticResource RailButton}" Content="&#xE790;" Click="OnThemes" ContextMenuOpening="RailMenu_Opening" ToolTip="{DynamicResource Str_ToolTip_Choose_app_theme}" Margin="0,0,0,6"><Button.ContextMenu><ContextMenu x:Name="ThemeFlyout">
+
+                                <ContextMenu.Template>
+                                    <ControlTemplate TargetType="ContextMenu">
+                                        <Grid>
+                                            <Border Style="{StaticResource FlyoutCard}">
+                                                <Grid>
+                                                    <ItemsPresenter/>
+                                                    <Border Style="{StaticResource FlyoutGrain}"/>
+                                                </Grid>
+                                            </Border>
+                                            <Border IsHitTestVisible="False" Margin="22,18,22,26"
+                                                    BorderBrush="{DynamicResource BevelLightBrush}" BorderThickness="{DynamicResource BevelLightThickness}"/>
+                                            <Border IsHitTestVisible="False" Margin="22,18,22,26"
+                                                    BorderBrush="{DynamicResource BevelDarkBrush}"  BorderThickness="{DynamicResource BevelDarkThickness}"/>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </ContextMenu.Template>
+                                <ContextMenu.ItemContainerStyle>
+                                    <Style TargetType="MenuItem" BasedOn="{StaticResource PanelMenuItem}"/>
+                                </ContextMenu.ItemContainerStyle>
+                                <!-- Hover rows sit 4px in from both menu edges: 12 left less the
+                                     row's -8, and 2 right plus the row's own 2. The theme column
+                                     fills the menu (*) so the hover reaches across when the menu
+                                     is wider than the list. -->
+                                <Grid Margin="12,10,2,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                <StackPanel x:Name="ThemeSubmenu" MinWidth="150" Grid.Column="0">
+                                    <RadioButton x:Name="ThemeDarkRadio"
+                                                 Content="{DynamicResource Str_Theme_Dark}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Dark" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeLightRadio"
+                                                 Content="{DynamicResource Str_Theme_Light}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Light" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeHCRadio"
+                                                 Content="{DynamicResource Str_Theme_Black}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Black" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="Theme98SERadio"
+                                                 Content="{DynamicResource Str_Theme_SE98}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="SE98" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeBloodRadio"
+                                                 Content="{DynamicResource Str_Theme_Blood}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Blood" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeGreedRadio"
+                                                 Content="{DynamicResource Str_Theme_Greed}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Greed" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeCyanoticRadio"
+                                                 Content="{DynamicResource Str_Theme_Cyanotic}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Cyanotic" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeEctoplasmRadio"
+                                                 Content="{DynamicResource Str_Theme_Ectoplasm}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Ectoplasm" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeDecayRadio"
+                                                 Content="{DynamicResource Str_Theme_Decay}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Decay" Checked="OnThemeSelected"/>
+
+                                    <RadioButton x:Name="ThemeMalaiseRadio"
+                                                 Content="{DynamicResource Str_Theme_Malaise}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Malaise" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeSepulchreRadio"
+                                                 Content="{DynamicResource Str_Theme_Sepulchre}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Sepulchre" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeDeliriumRadio"
+                                                 Content="{DynamicResource Str_Theme_Delirium}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Delirium" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeMourningRadio"
+                                                 Content="{DynamicResource Str_Theme_Mourning}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="Mourning" Checked="OnThemeSelected"/>
+
+
+
+
+
+                                </StackPanel>
+                                    <Grid x:Name="AccentStripHost" Grid.Column="1" Width="0" ClipToBounds="True">
+                                        <Border Width="1" HorizontalAlignment="Left" Margin="0,6"
+                                                Background="{DynamicResource MenuBorderBrush}"/>
+                                        <Grid x:Name="AccentStrip" Margin="7,6,2,6">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/><RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/><RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/><RowDefinition Height="*"/>
+                                                <RowDefinition Height="*"/><RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <Border x:Name="AccentStripDot0" Grid.Row="0" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
+                                            <Border x:Name="AccentStripDot1" Grid.Row="1" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
+                                            <Border x:Name="AccentStripDot2" Grid.Row="2" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
+                                            <Border x:Name="AccentStripDot3" Grid.Row="3" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
+                                            <Border x:Name="AccentStripDot4" Grid.Row="4" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
+                                            <Border x:Name="AccentStripDot5" Grid.Row="5" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
+                                            <Border x:Name="AccentStripDot6" Grid.Row="6" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0,0,0,8" MouseLeftButtonUp="OnAccentSelected"/>
+                                            <Border x:Name="AccentStripDot7" Grid.Row="7" Style="{StaticResource AccentDot}" Width="26" Height="Auto" VerticalAlignment="Stretch" Margin="0" MouseLeftButtonUp="OnAccentSelected"/>
+                                        </Grid>
+                                    </Grid>
+                                    <!-- Film Grain: one switch for the grain texture on every surface
+                                         (Services/FilmGrain.cs). Its own row under both columns, so the
+                                         accent strip still runs the height of the theme list only. -->
+                                    <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
+                                        <Border Height="1" Margin="0,0,9,8" Opacity="0.18" IsHitTestVisible="False"
+                                                Background="{DynamicResource TextBrush}">
+                                            <Border.OpacityMask>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                    <GradientStop Color="Transparent" Offset="0"/>
+                                                    <GradientStop Color="Black" Offset="0.15"/>
+                                                    <GradientStop Color="Black" Offset="0.85"/>
+                                                    <GradientStop Color="Transparent" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Border.OpacityMask>
+                                        </Border>
+                                        <CheckBox x:Name="FilmGrainCheck" Content="{DynamicResource Str_Theme_FilmGrain}"
+                                                  Style="{StaticResource ThemeCheck}" Margin="0"
+                                                  Click="OnFilmGrain"/>
+                                    </StackPanel>
+                                </Grid>
+                            </ContextMenu></Button.ContextMenu></Button>
+        </StackPanel>
+      </Grid>
+      <Thumb x:Name="SidebarGrip" Grid.Column="3" Visibility="Collapsed" IsHitTestVisible="False"/>
+        <Border x:Name="TerminalPanel" Grid.Column="4" Grid.RowSpan="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Margin="0" ClipToBounds="True">
 <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
 <Border Padding="14">
           <ScrollViewer x:Name="OutputScroll" Style="{StaticResource OverlayScrollViewer}" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
           <Grid x:Name="OutputWorkspace">
             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <DockPanel Margin="0,0,0,8">
+              <Button DockPanel.Dock="Right" Style="{StaticResource RailButton}" Content="&#xE76C;" Click="OnToggleSources" ToolTip="{DynamicResource Str_ToolTip_Toggle_sources_F2}"/>
               <TextBlock x:Name="EvidenceTitle" Text="{DynamicResource Str_Text_Evidence}" FontFamily="{DynamicResource HeadingFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,8,0"/>
             </DockPanel>
             <DockPanel Grid.Row="1" Margin="0,0,0,8">

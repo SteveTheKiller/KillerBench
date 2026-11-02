@@ -43,9 +43,9 @@ public partial class MainWindow
     {
         var capabilities = CapabilitiesForWorkflow(kind);
         return capabilities.Count == 0
-            ? Controls.LocalizedText.Format("Str_NativeLab_Format", Controls.LocalizedText.Get("Str_NativeLab_DiagnosticOnly"))
-            : string.Join("\n", capabilities.Select(capability => Controls.LocalizedText.Format("Str_NativeLab_Format",
-                capability.Id + ": " + Controls.LocalizedText.Get("Str_NativeLab_" + capability.Status))));
+            ? Controls.LocalizedText.Get("Str_NativeLab_DiagnosticOnly")
+            : string.Join("\n", capabilities.Select(capability =>
+                capability.Id + ": " + Controls.LocalizedText.Get("Str_NativeLab_" + capability.Status)));
     }
 
     private void RefreshNativeCapabilityStatus()
@@ -54,14 +54,14 @@ public partial class MainWindow
         var capabilities = CapabilitiesForWorkflow(workflow.Kind);
         string[] labels = capabilities.Where(capability => capability.Status != Engine.Validation.NativeCapabilityStatus.DiagnosticOnly)
             .Select(capability => Controls.LocalizedText.Get("Str_NativeLab_" + capability.Status)).Distinct(StringComparer.Ordinal).ToArray();
-        NativeCapabilityStatus.Text = Controls.LocalizedText.Format("Str_NativeLab_Format", labels.Length == 0
-            ? Controls.LocalizedText.Get("Str_NativeLab_DiagnosticOnly") : string.Join("; ", labels));
+        NativeCapabilityStatus.Text = labels.Length == 0
+            ? Controls.LocalizedText.Get("Str_NativeLab_DiagnosticOnly") : string.Join("; ", labels);
         NativeCapabilityStatus.ToolTip = NativeCapabilityDetails(workflow.Kind);
         NativeCapabilityStatus.Visibility = Visibility.Visible;
     }
 
-    private static string NativeCapabilityLabel(string id) => Controls.LocalizedText.Format("Str_NativeLab_Format",
-        Controls.LocalizedText.Get("Str_NativeLab_" + (WindowsRepairCapabilities.Find(id)?.Status ?? Engine.Validation.NativeCapabilityStatus.NotYetVerified)));
+    private static string NativeCapabilityLabel(string id) =>
+        Controls.LocalizedText.Get("Str_NativeLab_" + (WindowsRepairCapabilities.Find(id)?.Status ?? Engine.Validation.NativeCapabilityStatus.NotYetVerified));
 
     private static string FocusedRepairPreview(RepairKind kind) => Repairs.Preview(kind) + "\n\n" +
         NativeCapabilityLabel(kind == RepairKind.SystemFiles ? "command.repair-sfc" : "command.repair-dism");

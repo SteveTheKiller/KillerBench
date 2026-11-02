@@ -11,6 +11,7 @@ public partial class MainWindow
     {
         if (DiagnosticAreaList is null || DiagnosticAreaSummary is null || FocusDiagnosticAreas is null || MainAutoRepair is null) return;
         bool focused = FocusDiagnosticAreas.IsChecked == true;
+        DiagnosticAreaSummary.Visibility = focused ? Visibility.Visible : Visibility.Collapsed;
         DiagnosticAreaList.Visibility = focused ? Visibility.Visible : Visibility.Collapsed;
         ShowDetailedDiagnosticAreas?.Visibility = focused ? Visibility.Visible : Visibility.Collapsed;
         if (focused && DiagnosticAreaList.ItemsSource is null)

@@ -46,7 +46,7 @@
   <sys:String x:Key="Str_AutomationProperties_Name_Evidence_sources">প্রমাণ উৎস</sys:String>
   <sys:String x:Key="Str_Content_Load_sample">নমুনা লোড করুন</sys:String>
   <sys:String x:Key="Str_Text_Sources_stay_in_this_session_only">সংগৃহীত প্রমাণ রাখতে একটি ক্যাপচার সংরক্ষণ করুন।</sys:String>
-  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">প্রমাণ উৎস দেখান বা লুকান (F2)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">আউটপুট দেখান বা লুকান (F2)</sys:String>
   <sys:String x:Key="Str_ToolTip_Toggle_activity_log_F3">কার্যক্রম লগ দেখান বা লুকান (F3)</sys:String>
   <sys:String x:Key="Str_ToolTip_Choose_app_theme">অ্যাপ থিম নির্বাচন করুন</sys:String>
   <sys:String x:Key="Str_Text_TEXT_LOG_INSPECTOR">উইন্ডোজ আপডেট / লগ ওয়ার্কবেঞ্চ</sys:String>
@@ -84,7 +84,7 @@
   <sys:String x:Key="Str_Content_Hide">লুকান</sys:String>
   <sys:String x:Key="Str_Text_SESSION_ACTIVITY">সেশন কার্যক্রম</sys:String>
   <sys:String x:Key="Str_AutomationProperties_Name_Session_activity_log">সেশন কার্যক্রম লগ</sys:String>
-  <sys:String x:Key="Str_Shortcuts_ToggleSources">প্রমাণ সূত্র টগল করুন</sys:String>
+  <sys:String x:Key="Str_Shortcuts_ToggleSources">আউটপুট দেখান বা লুকান</sys:String>
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">কার্যক্রম লগ টগল করুন</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">প্রমাণ খুলুন</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">KillerBench সম্পর্কে</sys:String>
@@ -479,12 +479,12 @@
   <sys:String x:Key="Str_Advanced_ShowEvidenceAreas">প্রমাণের প্রতিটি এলাকা আলাদাভাবে দেখান</sys:String>
   <sys:String x:Key="Str_Advanced_RecipeChecks">রেসিপি পরীক্ষা</sys:String>
   <sys:String x:Key="Str_Advanced_RepairEffects">এই মেরামতগুলো কী পরিবর্তন করতে পারে</sys:String>
-  <sys:String x:Key="Str_Advanced_Tools">উন্নত: লগস এবং ম্যানুয়াল মেরামত</sys:String>
+  <sys:String x:Key="Str_Advanced_Tools">Windows Update লগ</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflow">ওয়ার্কফ্লো খুলুন</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflowTip">পরীক্ষা বা মেরামত না চালিয়ে একটি সংরক্ষিত ওয়ার্কফ্লো জার্নাল পর্যালোচনা করুন।</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">কর্মপ্রবাহ</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">মেরামত</sys:String>
-  <sys:String x:Key="Str_Knowledge_Header">জ্ঞান রেফারেন্স</sys:String>
+  <sys:String x:Key="Str_Knowledge_Header">কোড খুঁজুন</sys:String>
   <sys:String x:Key="Str_Knowledge_ContextTip">প্যাক থেকে পণ্য বা ত্রুটি-কোড নেমস্পেস</sys:String>
   <sys:String x:Key="Str_Knowledge_CodeTip">লুকআপের জন্য একটি নির্দিষ্ট কোড, বা নির্বাচিত প্রসঙ্গে খোঁজার জন্য টেক্সট</sys:String>
   <sys:String x:Key="Str_Knowledge_Lookup">প্যাক খুলুন এবং কোডটি দেখুন</sys:String>
@@ -851,4 +851,12 @@
   <sys:String x:Key="Str_Dlg_Preview">পূর্বরূপ</sys:String>
   <sys:String x:Key="Str_Tray_Open">{0} খুলুন</sys:String>
   <sys:String x:Key="Str_Tray_Exit">প্রস্থান</sys:String>
+  <sys:String x:Key="Str_Knowledge_Description">Windows ও Device Manager কোড খুঁজুন। কোনো পরিবর্তন হবে না।</sys:String>
+  <sys:String x:Key="Str_Knowledge_CodeLabel">Windows ত্রুটি কোড (0x80070005)</sys:String>
+  <sys:String x:Key="Str_Knowledge_DeviceLabel">Device Manager কোড (43)</sys:String>
+  <sys:String x:Key="Str_Knowledge_Run">কোড খুঁজুন</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackHeader">স্থানীয় রেফারেন্স প্যাক</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackDescription">ঐচ্ছিক JSON প্যাক। উপরে কোড বা পাঠ্য, নিচে পণ্য লিখুন।</sys:String>
+  <sys:String x:Key="Str_Knowledge_ContextLabel">পণ্য বা প্রসঙ্গ</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackActions">প্যাকের কাজ</sys:String>
 </ResourceDictionary>

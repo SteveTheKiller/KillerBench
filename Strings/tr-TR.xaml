@@ -49,7 +49,7 @@
   <sys:String x:Key="Str_AutomationProperties_Name_Evidence_sources">Kanıt kaynakları</sys:String>
   <sys:String x:Key="Str_Content_Load_sample">Örnek yükle</sys:String>
   <sys:String x:Key="Str_Text_Sources_stay_in_this_session_only">Toplanan kanıtları saklamak için bir yakalama kaydedin.</sys:String>
-  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Kaynakları aç/kapat (F2)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Sonuçları göster veya gizle (F2)</sys:String>
   <sys:String x:Key="Str_ToolTip_Toggle_activity_log_F3">Etkinlik günlüğünü aç/kapat (F3)</sys:String>
   <sys:String x:Key="Str_ToolTip_Choose_app_theme">Uygulama temasını seç</sys:String>
   <sys:String x:Key="Str_Text_TEXT_LOG_INSPECTOR">WINDOWS UPDATE / GÜNLÜK TEZGAHI</sys:String>
@@ -86,7 +86,7 @@
   <sys:String x:Key="Str_Content_Hide">Gizle</sys:String>
   <sys:String x:Key="Str_Text_SESSION_ACTIVITY">OTURUM ETKİNLİĞİ</sys:String>
   <sys:String x:Key="Str_AutomationProperties_Name_Session_activity_log">Oturum etkinliği günlüğü</sys:String>
-  <sys:String x:Key="Str_Shortcuts_ToggleSources">Kanıt kaynaklarını aç/kapat</sys:String>
+  <sys:String x:Key="Str_Shortcuts_ToggleSources">Sonuçları göster veya gizle</sys:String>
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Etkinlik günlüğünü aç/kapat</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Kanıt aç</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">KillerBench hakkında</sys:String>
@@ -478,12 +478,12 @@
   <sys:String x:Key="Str_Advanced_ShowEvidenceAreas">Tekil kanıt alanlarını göster</sys:String>
   <sys:String x:Key="Str_Advanced_RecipeChecks">Tarif denetimleri</sys:String>
   <sys:String x:Key="Str_Advanced_RepairEffects">Bu onarımların değiştirebilecekleri</sys:String>
-  <sys:String x:Key="Str_Advanced_Tools">Gelişmiş: günlükler ve el ile onarımlar</sys:String>
+  <sys:String x:Key="Str_Advanced_Tools">Windows Update günlükleri</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflow">Workflow aç</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflowTip">Denetim veya onarım çalıştırmadan kaydedilmiş bir iş akışı günlüğünü incele.</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">Workflow'lar</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">Onarımlar</sys:String>
-  <sys:String x:Key="Str_Knowledge_Header">Bilgi başvurusu</sys:String>
+  <sys:String x:Key="Str_Knowledge_Header">Kodu ara</sys:String>
   <sys:String x:Key="Str_Knowledge_ContextTip">Paketten ürün veya hata kodu ad alanı</sys:String>
   <sys:String x:Key="Str_Knowledge_CodeTip">Arama için tam kod veya seçili bağlam içinde aranacak metin</sys:String>
   <sys:String x:Key="Str_Knowledge_Lookup">Paketi aç ve kodu ara</sys:String>
@@ -851,4 +851,12 @@
   <sys:String x:Key="Str_Dlg_Preview">Önizleme</sys:String>
   <sys:String x:Key="Str_Tray_Open">{0} uygulamasını aç</sys:String>
   <sys:String x:Key="Str_Tray_Exit">Çıkış</sys:String>
+  <sys:String x:Key="Str_Knowledge_Description">Windows ve Aygıt Yöneticisi kodlarını arayın. Hiçbir şey değiştirilmez.</sys:String>
+  <sys:String x:Key="Str_Knowledge_CodeLabel">Windows hata kodu (0x80070005)</sys:String>
+  <sys:String x:Key="Str_Knowledge_DeviceLabel">Aygıt Yöneticisi kodu (43)</sys:String>
+  <sys:String x:Key="Str_Knowledge_Run">Kodu ara</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackHeader">Yerel başvuru paketi</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackDescription">İsteğe bağlı JSON dosyası. Yukarıya kod veya metin, aşağıya ürün girin.</sys:String>
+  <sys:String x:Key="Str_Knowledge_ContextLabel">Ürün veya bağlam</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackActions">Paket işlemleri</sys:String>
 </ResourceDictionary>

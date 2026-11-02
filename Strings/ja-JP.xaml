@@ -48,7 +48,7 @@
   <sys:String x:Key="Str_AutomationProperties_Name_Evidence_sources">証拠ソース</sys:String>
   <sys:String x:Key="Str_Content_Load_sample">サンプルを読み込む</sys:String>
   <sys:String x:Key="Str_Text_Sources_stay_in_this_session_only">収集した証拠を保持するには、キャプチャを保存してください。</sys:String>
-  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">ソースの切り替え (F2)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">出力を表示または非表示 (F2)</sys:String>
   <sys:String x:Key="Str_ToolTip_Toggle_activity_log_F3">アクティビティログの切り替え (F3)</sys:String>
   <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">キーボードショートカット (F1)</sys:String>
   <sys:String x:Key="Str_ToolTip_Choose_app_theme">アプリのテーマを選択</sys:String>
@@ -87,7 +87,7 @@
   <sys:String x:Key="Str_Text_SESSION_ACTIVITY">セッション アクティビティ</sys:String>
   <sys:String x:Key="Str_AutomationProperties_Name_Session_activity_log">セッション アクティビティ ログ</sys:String>
   <sys:String x:Key="Str_Text_Keyboard_shortcuts">キーボードショートカット</sys:String>
-  <sys:String x:Key="Str_Shortcuts_ToggleSources">証拠ソースの表示切り替え</sys:String>
+  <sys:String x:Key="Str_Shortcuts_ToggleSources">出力を表示または非表示</sys:String>
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">アクティビティ ログの表示切り替え</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">証拠を開く</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">キーボードショートカット</sys:String>
@@ -478,12 +478,12 @@
   <sys:String x:Key="Str_Advanced_ShowEvidenceAreas">個別の証拠領域を表示</sys:String>
   <sys:String x:Key="Str_Advanced_RecipeChecks">レシピチェック</sys:String>
   <sys:String x:Key="Str_Advanced_RepairEffects">これらの修復で変更できる内容</sys:String>
-  <sys:String x:Key="Str_Advanced_Tools">上級者向け：ログと手動修復</sys:String>
+  <sys:String x:Key="Str_Advanced_Tools">Windows Update ログ</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflow">ワークフローを開く</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflowTip">チェックや修復を実行せずに保存したワークフロージャーナルを確認します。</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">ワークフロー</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">修復</sys:String>
-  <sys:String x:Key="Str_Knowledge_Header">ナレッジ リファレンス</sys:String>
+  <sys:String x:Key="Str_Knowledge_Header">コードを調べる</sys:String>
   <sys:String x:Key="Str_Knowledge_ContextTip">パックからの製品またはエラーコードの名前空間</sys:String>
   <sys:String x:Key="Str_Knowledge_CodeTip">検索用の正確なコード、または選択したコンテキスト内で検索するテキスト</sys:String>
   <sys:String x:Key="Str_Knowledge_Lookup">パックを開いてコードを参照</sys:String>
@@ -851,4 +851,12 @@
   <sys:String x:Key="Str_Dlg_Preview">プレビュー</sys:String>
   <sys:String x:Key="Str_Tray_Open">{0} を開く</sys:String>
   <sys:String x:Key="Str_Tray_Exit">終了</sys:String>
+  <sys:String x:Key="Str_Knowledge_Description">Windows やデバイス マネージャーのコードを調べます。設定は変更しません。</sys:String>
+  <sys:String x:Key="Str_Knowledge_CodeLabel">Windows エラー コード（例: 0x80070005）</sys:String>
+  <sys:String x:Key="Str_Knowledge_DeviceLabel">デバイス マネージャーのコード（例: 43）</sys:String>
+  <sys:String x:Key="Str_Knowledge_Run">コードを調べる</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackHeader">ローカル参照パック</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackDescription">任意の JSON ファイル。上にコードまたは検索語、下に製品を入力してください。</sys:String>
+  <sys:String x:Key="Str_Knowledge_ContextLabel">製品またはコンテキスト</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackActions">パックの操作</sys:String>
 </ResourceDictionary>

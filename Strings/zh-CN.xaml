@@ -48,7 +48,7 @@
   <sys:String x:Key="Str_AutomationProperties_Name_Evidence_sources">证据来源</sys:String>
   <sys:String x:Key="Str_Content_Load_sample">加载示例</sys:String>
   <sys:String x:Key="Str_Text_Sources_stay_in_this_session_only">保存捕获以保留收集的证据。</sys:String>
-  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">切换来源 (F2)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">显示或隐藏输出 (F2)</sys:String>
   <sys:String x:Key="Str_ToolTip_Toggle_activity_log_F3">切换活动日志 (F3)</sys:String>
   <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">键盘快捷键 (F1)</sys:String>
   <sys:String x:Key="Str_ToolTip_Choose_app_theme">选择应用主题</sys:String>
@@ -87,7 +87,7 @@
   <sys:String x:Key="Str_Text_SESSION_ACTIVITY">会话活动</sys:String>
   <sys:String x:Key="Str_AutomationProperties_Name_Session_activity_log">会话活动日志</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupHelp">帮助</sys:String>
-  <sys:String x:Key="Str_Shortcuts_ToggleSources">切换证据来源</sys:String>
+  <sys:String x:Key="Str_Shortcuts_ToggleSources">显示或隐藏输出</sys:String>
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">切换活动日志</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">打开证据</sys:String>
   <sys:String x:Key="Str_Shortcuts_About">关于 KillerBench</sys:String>
@@ -478,12 +478,12 @@
   <sys:String x:Key="Str_Advanced_ShowEvidenceAreas">显示各个证据区域</sys:String>
   <sys:String x:Key="Str_Advanced_RecipeChecks">方案检查</sys:String>
   <sys:String x:Key="Str_Advanced_RepairEffects">这些修复可能更改的内容</sys:String>
-  <sys:String x:Key="Str_Advanced_Tools">高级：日志和手动修复</sys:String>
+  <sys:String x:Key="Str_Advanced_Tools">Windows Update 日志</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflow">打开工作流程</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflowTip">在不运行检查或修复的情况下查看已保存的工作流程日志。</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">工作流程</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">修复</sys:String>
-  <sys:String x:Key="Str_Knowledge_Header">知识参考</sys:String>
+  <sys:String x:Key="Str_Knowledge_Header">查询代码</sys:String>
   <sys:String x:Key="Str_Knowledge_ContextTip">来自软件包的产品或错误代码命名空间</sys:String>
   <sys:String x:Key="Str_Knowledge_CodeTip">要查找的精确代码，或在选定上下文中搜索的文本</sys:String>
   <sys:String x:Key="Str_Knowledge_Lookup">打开软件包并查找代码</sys:String>
@@ -851,4 +851,12 @@
   <sys:String x:Key="Str_Dlg_Preview">预览</sys:String>
   <sys:String x:Key="Str_Tray_Open">打开 {0}</sys:String>
   <sys:String x:Key="Str_Tray_Exit">退出</sys:String>
+  <sys:String x:Key="Str_Knowledge_Description">查询 Windows 和设备管理器代码。不会更改任何设置。</sys:String>
+  <sys:String x:Key="Str_Knowledge_CodeLabel">Windows 错误代码（例如 0x80070005）</sys:String>
+  <sys:String x:Key="Str_Knowledge_DeviceLabel">设备管理器代码（例如 43）</sys:String>
+  <sys:String x:Key="Str_Knowledge_Run">查询代码</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackHeader">本地参考包</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackDescription">可选 JSON 文件。上方输入代码或搜索文本，下方输入产品名称。</sys:String>
+  <sys:String x:Key="Str_Knowledge_ContextLabel">产品或上下文</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackActions">参考包操作</sys:String>
 </ResourceDictionary>

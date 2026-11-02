@@ -10,7 +10,7 @@
   <sys:String x:Key="Str_AutomationProperties_Name_Evidence_sources">Viri dokazov</sys:String>
   <sys:String x:Key="Str_Content_Load_sample">Naloži primer</sys:String>
   <sys:String x:Key="Str_Text_Sources_stay_in_this_session_only">Shranite zajem, da ohranite zbrane dokaze.</sys:String>
-  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Pokaži ali skrij vire (F2)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Prikaži ali skrij rezultate (F2)</sys:String>
   <sys:String x:Key="Str_ToolTip_Toggle_activity_log_F3">Pokaži ali skrij dnevnik dejavnosti (F3)</sys:String>
   <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">Bližnjice na tipkovnici (F1)</sys:String>
   <sys:String x:Key="Str_ToolTip_Language">Jezik</sys:String>
@@ -61,7 +61,7 @@
   <sys:String x:Key="Str_Shortcuts_GroupNav">KRMARJENJE</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupFile">DATOTEKA</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupHelp">POMOČ</sys:String>
-  <sys:String x:Key="Str_Shortcuts_ToggleSources">Pokaži ali skrij vire dokazov</sys:String>
+  <sys:String x:Key="Str_Shortcuts_ToggleSources">Prikaži ali skrij rezultate</sys:String>
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Pokaži ali skrij dnevnik dejavnosti</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Odpri dokaze</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">Bližnjice na tipkovnici</sys:String>
@@ -472,12 +472,12 @@
   <sys:String x:Key="Str_Advanced_All">Vse</sys:String>
   <sys:String x:Key="Str_Advanced_None">Nič</sys:String>
   <sys:String x:Key="Str_Advanced_RepairEffects">Kaj lahko ta popravila spremenijo</sys:String>
-  <sys:String x:Key="Str_Advanced_Tools">Napredno: dnevniki in ročna popravila</sys:String>
+  <sys:String x:Key="Str_Advanced_Tools">Dnevniki Windows Update</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflow">Odpri potek dela</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflowTip">Preglej shranjeni dnevnik poteka dela brez izvajanja preverjanj ali popravil.</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">Poteki dela</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">Popravila</sys:String>
-  <sys:String x:Key="Str_Knowledge_Header">Zbirka znanja</sys:String>
+  <sys:String x:Key="Str_Knowledge_Header">Poišči kodo</sys:String>
   <sys:String x:Key="Str_Knowledge_ContextTip">Izdelek ali imenski prostor kode napake iz paketa</sys:String>
   <sys:String x:Key="Str_Knowledge_CodeTip">Točna koda za poizvedbo ali besedilo za iskanje v izbranem kontekstu</sys:String>
   <sys:String x:Key="Str_Knowledge_Lookup">Odpri paket in poišči kodo</sys:String>
@@ -850,4 +850,12 @@
   <sys:String x:Key="Str_Dlg_Preview">Predogled</sys:String>
   <sys:String x:Key="Str_Tray_Open">Odpri {0}</sys:String>
   <sys:String x:Key="Str_Tray_Exit">Izhod</sys:String>
+  <sys:String x:Key="Str_Knowledge_Description">Poiščite kode sistema Windows in upravitelja naprav. Brez sprememb.</sys:String>
+  <sys:String x:Key="Str_Knowledge_CodeLabel">Koda napake Windows (0x80070005)</sys:String>
+  <sys:String x:Key="Str_Knowledge_DeviceLabel">Koda upravitelja naprav (43)</sys:String>
+  <sys:String x:Key="Str_Knowledge_Run">Poišči kodo</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackHeader">Lokalni referenčni paket</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackDescription">Izbirna datoteka JSON. Zgoraj koda ali besedilo, spodaj izdelek.</sys:String>
+  <sys:String x:Key="Str_Knowledge_ContextLabel">Izdelek ali kontekst</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackActions">Dejanja paketa</sys:String>
 </ResourceDictionary>

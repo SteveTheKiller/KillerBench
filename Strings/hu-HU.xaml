@@ -11,7 +11,7 @@
   <sys:String x:Key="Str_AutomationProperties_Name_Evidence_sources">Bizonyítékforrások</sys:String>
   <sys:String x:Key="Str_Content_Load_sample">Minta betöltése</sys:String>
   <sys:String x:Key="Str_Text_Sources_stay_in_this_session_only">Mentse a rögzítést az összegyűjtött bizonyíték megtartásához.</sys:String>
-  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Források váltása (F2)</sys:String>
+  <sys:String x:Key="Str_ToolTip_Toggle_sources_F2">Kimenet megjelenítése vagy elrejtése (F2)</sys:String>
   <sys:String x:Key="Str_ToolTip_Toggle_activity_log_F3">Tevékenységnapló váltása (F3)</sys:String>
   <sys:String x:Key="Str_ToolTip_Keyboard_shortcuts_F1">Billentyűparancsok (F1)</sys:String>
   <sys:String x:Key="Str_ToolTip_Language">Nyelv</sys:String>
@@ -62,7 +62,7 @@
   <sys:String x:Key="Str_Shortcuts_GroupNav">NAVIGÁCIÓ</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupFile">FÁJL</sys:String>
   <sys:String x:Key="Str_Shortcuts_GroupHelp">SÚGÓ</sys:String>
-  <sys:String x:Key="Str_Shortcuts_ToggleSources">Bizonyítékforrások váltása</sys:String>
+  <sys:String x:Key="Str_Shortcuts_ToggleSources">Kimenet megjelenítése vagy elrejtése</sys:String>
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">Tevékenységnapló váltása</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">Bizonyíték megnyitása</sys:String>
   <sys:String x:Key="Str_Shortcuts_Show">Billentyűparancsok</sys:String>
@@ -473,12 +473,12 @@
   <sys:String x:Key="Str_Advanced_All">Mind</sys:String>
   <sys:String x:Key="Str_Advanced_None">Nincs</sys:String>
   <sys:String x:Key="Str_Advanced_RepairEffects">Mit módosíthatnak ezek a javítások</sys:String>
-  <sys:String x:Key="Str_Advanced_Tools">Speciális: naplók és kézi javítások</sys:String>
+  <sys:String x:Key="Str_Advanced_Tools">Windows Update-naplók</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflow">Munkafolyamat megnyitása</sys:String>
   <sys:String x:Key="Str_Advanced_OpenWorkflowTip">Mentett munkafolyamat-napló áttekintése ellenőrzések vagy javítások futtatása nélkül.</sys:String>
   <sys:String x:Key="Str_Advanced_Workflows">Munkafolyamatok</sys:String>
   <sys:String x:Key="Str_Advanced_Repairs">Javítások</sys:String>
-  <sys:String x:Key="Str_Knowledge_Header">Tudásreferencia</sys:String>
+  <sys:String x:Key="Str_Knowledge_Header">Kód keresése</sys:String>
   <sys:String x:Key="Str_Knowledge_ContextTip">Termék- vagy hibakód-névtér a csomagból</sys:String>
   <sys:String x:Key="Str_Knowledge_CodeTip">Pontos kód kereséshez, vagy szöveg a kiválasztott környezetben való kereséshez</sys:String>
   <sys:String x:Key="Str_Knowledge_Lookup">Csomag megnyitása és kód keresése</sys:String>
@@ -851,4 +851,12 @@
   <sys:String x:Key="Str_Dlg_Preview">Előnézet</sys:String>
   <sys:String x:Key="Str_Tray_Open">A(z) {0} megnyitása</sys:String>
   <sys:String x:Key="Str_Tray_Exit">Kilépés</sys:String>
+  <sys:String x:Key="Str_Knowledge_Description">Windows- és Eszközkezelő-kódok keresése. Semmi sem módosul.</sys:String>
+  <sys:String x:Key="Str_Knowledge_CodeLabel">Windows-hibakód (0x80070005)</sys:String>
+  <sys:String x:Key="Str_Knowledge_DeviceLabel">Eszközkezelő-kód (43)</sys:String>
+  <sys:String x:Key="Str_Knowledge_Run">Kód keresése</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackHeader">Helyi referenciacsomag</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackDescription">Opcionális JSON-fájl. Felül a kód vagy szöveg, alul a termék.</sys:String>
+  <sys:String x:Key="Str_Knowledge_ContextLabel">Termék vagy környezet</sys:String>
+  <sys:String x:Key="Str_Knowledge_PackActions">Csomagműveletek</sys:String>
 </ResourceDictionary>

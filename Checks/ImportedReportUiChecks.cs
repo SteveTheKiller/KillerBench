@@ -109,8 +109,8 @@ internal static class ImportedReportUiChecks
                 double before = sidebar.Width * scale;
                 grip.RaiseEvent(new System.Windows.Controls.Primitives.DragDeltaEventArgs(10, 0)
                     { RoutedEvent = System.Windows.Controls.Primitives.Thumb.DragDeltaEvent });
-                if (Math.Abs(sidebar.Width * scale - before - 10) > .1)
-                    throw new Exception("Sidebar resizing did not preserve pointer distance at " + percent + "%.");
+                if (Math.Abs(sidebar.Width * scale - before) > .1 || grip.Visibility != Visibility.Collapsed)
+                    throw new Exception("Fixed navigation changed width through its inactive grip at " + percent + "%.");
                 grip.RaiseEvent(new System.Windows.Controls.Primitives.DragDeltaEventArgs(-10, 0)
                     { RoutedEvent = System.Windows.Controls.Primitives.Thumb.DragDeltaEvent });
                 var export = (Button)window.FindName("ExportReportButton");

@@ -1,24 +1,16 @@
-using System.Globalization;
 using System.Windows;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using KillerBench.Services;
 
 namespace KillerBench.Shell;
 
-// Three-pane shell: section navigation on the left, the selected tool's options in the center, and its
-// output (readable report or raw log) in the wider pane on the right. The left sidebar resizes with the
-// family grip (KillerPDF's sidebar behavior): drag past the minimum and release to snap it closed.
+// Category navigation stays visible. The selected tool fills the workspace until output is needed.
 public partial class MainWindow
 {
     private const double SidebarDefaultWidth = 160;
     private const double SidebarMinOpen = 140;
     private const double SidebarMaxWidth = 360;
-    private const double PanelCloseBuffer = 36;
 
     private double sidebarWidth = SidebarDefaultWidth;
-    private bool sidebarDragOpening;
-    private bool sidebarWantClose;
     private bool rawView;
 
     private void InitializePanels()
@@ -26,6 +18,7 @@ public partial class MainWindow
         sidebarWidth = ReadNumber("SidebarWidth", SidebarDefaultWidth, SidebarMinOpen, SidebarMaxWidth);
         LeftPanel.Width = sidebarWidth / appScale;
         SetOutputView();
+        SetOutputOpen(false);
     }
 
     private void RefreshOutputButtons()
@@ -57,52 +50,21 @@ public partial class MainWindow
         SetOutputView();
     }
 
-    private void CollapseSidebar()
+    private void SetOutputOpen(bool open)
     {
-        sourcesOpen = false;
-        LeftPanel.IsEnabled = false;
-        AnimateWidth(LeftPanel, 0);
-        SidebarButton.Content = ((char)0xE76C).ToString();
-    }
-
-    private void OnSidebarGripStarted(object sender, DragStartedEventArgs e)
-    {
-        LeftPanel.BeginAnimation(WidthProperty, null);
-        sidebarWantClose = false;
-        if (sourcesOpen) return;
-        // Grabbing the grip while the sidebar is closed pulls it open from the rail.
-        sourcesOpen = true;
-        sidebarDragOpening = true;
-        LeftPanel.IsEnabled = true;
-        LeftPanel.Width = 0;
-        SidebarButton.Content = ((char)0xE76B).ToString();
-    }
-
-    private void OnSidebarGripDelta(object sender, DragDeltaEventArgs e)
-    {
-        double current = double.IsNaN(LeftPanel.Width) ? LeftPanel.ActualWidth : LeftPanel.Width;
-        double next = current + e.HorizontalChange / appScale;
-        if (sidebarDragOpening)
+        if (TerminalPanel is null) return;
+        bool wasOpen = TerminalPanel.Visibility == Visibility.Visible;
+        TerminalPanel.Visibility = open ? Visibility.Visible : Visibility.Collapsed;
+        ContentPane.ColumnDefinitions[4].Width = new System.Windows.GridLength(open ? 3 : 0, System.Windows.GridUnitType.Star);
+        SidebarButton.Tag = open ? "on" : null;
+        SidebarButton.Content = ((char)(open ? 0xE76C : 0xE76B)).ToString();
+        if (open && !wasOpen && IsVisible && System.Windows.SystemParameters.ClientAreaAnimation)
         {
-            LeftPanel.Width = Math.Clamp(next, 0, SidebarMaxWidth / appScale);
-            return;
+            var slide = new System.Windows.Media.TranslateTransform();
+            TerminalPanel.RenderTransform = slide;
+            slide.BeginAnimation(System.Windows.Media.TranslateTransform.XProperty,
+                new System.Windows.Media.Animation.DoubleAnimation(28, 0, TimeSpan.FromMilliseconds(150)));
         }
-        sidebarWantClose = Mouse.GetPosition(ScaleHost).X * appScale < SidebarMinOpen - PanelCloseBuffer;
-        LeftPanel.Width = Math.Clamp(next, SidebarMinOpen / appScale, SidebarMaxWidth / appScale);
     }
 
-    private void OnSidebarGripCompleted(object sender, DragCompletedEventArgs e)
-    {
-        sidebarDragOpening = false;
-        double width = (double.IsNaN(LeftPanel.Width) ? LeftPanel.ActualWidth : LeftPanel.Width) * appScale;
-        if (sidebarWantClose || width < SidebarMinOpen / 2)
-        {
-            sidebarWantClose = false;
-            CollapseSidebar();
-            return;
-        }
-        if (width < SidebarMinOpen) { width = SidebarMinOpen; LeftPanel.Width = width / appScale; }
-        sidebarWidth = width;
-        Preferences.Set("SidebarWidth", width.ToString(CultureInfo.InvariantCulture));
-    }
 }
