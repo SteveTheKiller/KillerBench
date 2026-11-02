@@ -144,20 +144,9 @@ public partial class MainWindow
     private void OpenFamilyMenu(ContextMenu menu, Button anchor)
     {
         menu.PlacementTarget = anchor;
-        menu.Placement = PlacementMode.Custom;
-        menu.HorizontalOffset = 0;
+        menu.Placement = PlacementMode.Right;
+        menu.HorizontalOffset = 4;
         menu.VerticalOffset = 0;
-        menu.CustomPopupPlacementCallback = (size, _, _) =>
-        {
-            var point = anchor.TranslatePoint(new Point(), this);
-            var railEdge = SidebarRail.TranslatePoint(new Point(), this);
-            var contentBottom = ZoomViewport.TranslatePoint(new Point(0, ZoomViewport.ActualHeight), this);
-            var halo = new Border { Style = (Style)FindResource("FlyoutCard") }.Margin;
-            const double inset = 8;
-            double x = railEdge.X - inset - point.X - size.Width + halo.Right;
-            double y = Math.Max(4 - point.Y, contentBottom.Y - point.Y - size.Height + halo.Bottom - inset);
-            return [new CustomPopupPlacement(new Point(x, y), PopupPrimaryAxis.None)];
-        };
         menu.IsOpen = true;
         if (SystemParameters.ClientAreaAnimation)
             menu.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(150)));

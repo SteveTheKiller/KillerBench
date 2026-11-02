@@ -402,7 +402,7 @@ internal static class Program
                 "Output toggle opens the retained output pane");
             window.UpdateLayout();
             var paneDivider = window.FindName("OutputDivider") as GridSplitter;
-            Require(paneDivider is { IsVisible: true }, "Open output exposes a grabbable divider");
+            Require(paneDivider is { IsVisible: true, ActualWidth: 8 }, "Open output exposes an eight-pixel grabbable divider");
             var dividerPoint = paneDivider!.TranslatePoint(new Point(paneDivider.ActualWidth / 2, paneDivider.ActualHeight / 2), window);
             DependencyObject? dividerHit = window.InputHitTest(dividerPoint) as DependencyObject;
             while (dividerHit is not null && !ReferenceEquals(dividerHit, paneDivider)) dividerHit = VisualTreeHelper.GetParent(dividerHit);
@@ -434,10 +434,10 @@ internal static class Program
             Require(((Border)window.FindName("TerminalPanel")).Visibility == Visibility.Collapsed &&
                 ((Border)window.FindName("LeftPanel")).IsEnabled,
                 "Output toggle never hides or disables category navigation");
-            Require(System.Windows.Controls.Grid.GetColumn((FrameworkElement)window.FindName("SidebarRail")) == 3 &&
+            Require(System.Windows.Controls.Grid.GetColumn((FrameworkElement)window.FindName("SidebarRail")) == 1 &&
                 ReferenceEquals(((FrameworkElement)window.FindName("SidebarRail")).Parent, window.FindName("ContentPane")) &&
                 System.Windows.Controls.Grid.GetColumn((FrameworkElement)window.FindName("TerminalPanel")) == 4,
-                "The complete rail stays between tool content and contextual output");
+                "The complete rail stays beside categories, separate from the output divider");
             RenderedTypographyChecks.VerifySubtitle(window);
             Require(window.Width == 1025 && window.Height == 700 && window.MinWidth == 800 && window.MinHeight == 500 &&
                 window.SizeToContent == SizeToContent.Manual, "Workbench window keeps its family window geometry");
@@ -542,11 +542,11 @@ internal static class Program
                 window.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
                 var menu = anchor.ContextMenu;
                 menu.UpdateLayout();
-                Require(menu.CustomPopupPlacementCallback(new Size(220, 400), anchor.RenderSize, new Point())[0].Point.X < -200,
-                    railMenuName + " requests leftward placement regardless of screen-edge fallback");
+                Require(menu.Placement == System.Windows.Controls.Primitives.PlacementMode.Right && ReferenceEquals(menu.PlacementTarget, anchor),
+                    railMenuName + " requests rightward placement from its own rail button");
                 var flyoutHalo = new Border { Style = (Style)window.FindResource("FlyoutCard") }.Margin;
-                Require(menu.IsOpen && menu.PointToScreen(new Point(menu.ActualWidth - flyoutHalo.Right, 0)).X <= anchor.PointToScreen(new Point()).X,
-                    railMenuName + " flyout opens to the left of the rail");
+                Require(menu.IsOpen && menu.PointToScreen(new Point(flyoutHalo.Left, 0)).X >= anchor.PointToScreen(new Point(anchor.ActualWidth, 0)).X,
+                    railMenuName + " flyout opens to the right of the rail");
                 menu.IsOpen = false;
             }
             window.Left = SystemParameters.VirtualScreenLeft - 2000;
@@ -1316,9 +1316,9 @@ internal static class Program
             var consoleOrigin = consoleBank.TranslatePoint(new Point(), window);
             var rail = (FrameworkElement)window.FindName("SidebarRail");
             var railOrigin = rail.TranslatePoint(new Point(), window);
-            Require(railOrigin.X >= consoleOrigin.X + consoleBank.ActualWidth - 1 &&
-                Grid.GetColumn(rail) == 3,
-                "Icon rail remains on the output edge of the main tool pane");
+            Require(railOrigin.X >= controlOrigin.X + controlBank.ActualWidth - 1 &&
+                railOrigin.X + rail.ActualWidth <= consoleOrigin.X + 1 && Grid.GetColumn(rail) == 1,
+                "Icon rail remains between categories and the main tool pane");
             Require(consoleOrigin.X >= controlOrigin.X + controlBank.ActualWidth && Math.Abs(consoleOrigin.Y - controlOrigin.Y) < 1,
                 "Control bank sits beside the console, not above it");
             var categories = (ListBox)window.FindName("CategoryList");

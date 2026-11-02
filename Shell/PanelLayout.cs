@@ -63,6 +63,7 @@ public partial class MainWindow
         }
         TerminalPanel.Visibility = open ? Visibility.Visible : Visibility.Collapsed;
         OutputDivider.Visibility = open ? Visibility.Visible : Visibility.Collapsed;
+        ContentPane.ColumnDefinitions[3].Width = new GridLength(open ? 8 / appScale : 0);
         ContentPane.ColumnDefinitions[4].MinWidth = open ? 200 / appScale : 0;
         if (open && !wasOpen)
         {
