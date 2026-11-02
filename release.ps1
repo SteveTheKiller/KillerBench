@@ -19,8 +19,9 @@
     6. Writes SHA256SUMS.txt, extracts release notes from the CHANGELOG, tags, and creates
        the GitHub release.
 
-    WinGet and Chocolatey are intentionally absent until KillerBench is published. Add them
-    from the KillerShell or KillerPDF scripts once the first release exists.
+    Publishing the GitHub release triggers the WinGet Release and Chocolatey Release workflows.
+    Each channel has one submission path and can be retried independently by release tag.
+    Microsoft Store submission remains separate until the Store product ID is available.
 
 .PARAMETER CertThumbprint
     Preferred. SHA1 thumbprint of the code-signing certificate (40 hex chars, no spaces).
@@ -725,6 +726,9 @@ try {
 
     Write-Host "`n==> Release $Tag published:" -ForegroundColor Green
     gh release view $Tag --json url --jq '.url'
+    Write-Host '    WinGet and Chocolatey submissions run in GitHub Actions. Check both workflows for their submission results.'
+    Write-Host '    Retry only a failed channel: gh workflow run winget-release.yml -f tag=vVERSION or gh workflow run chocolatey-release.yml -f tag=vVERSION'
+    Write-Host '    Microsoft Store submission is pending its Store product ID.'
     Write-Host "    killerbench.net does NOT auto-deploy. Drag bench-landing/ into Cloudflare Pages." -ForegroundColor Yellow
 } finally {
     Pop-Location

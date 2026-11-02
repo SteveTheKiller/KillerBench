@@ -1,0 +1,33 @@
+name: Chocolatey Release
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Published release tag, such as v1.0.1
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: chocolatey-${{ github.event.release.tag_name || inputs.tag }}
+  cancel-in-progress: false
+jobs:
+  submit:
+    if: github.repository == 'SteveTheKiller/KillerBench' && (github.event_name == 'workflow_dispatch' || !github.event.release.prerelease)
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
+          persist-credentials: false
+      - name: Verify, pack and submit published installer
+        shell: pwsh
+        env:
+          CHOCO_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+        run: |
+          if (-not $env:CHOCO_API_KEY) { throw 'CHOCOLATEY_API_KEY is not configured.' }
+          ./Packaging/Submit-Distribution.ps1 -Channel Chocolatey -ReleaseTag $env:RELEASE_TAG -OutputDirectory (Join-Path $env:RUNNER_TEMP 'chocolatey-submission') -Submit

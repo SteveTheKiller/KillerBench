@@ -48,6 +48,8 @@ Run validation once, then reuse the successful result for the dry run and releas
 
 The receipt is stored outside the repository under your scratch folder. It lasts 24 hours and requires identical source files and test binaries. Changed, missing or expired evidence stops reuse and asks for `-ChecksOnly` again. Commit and sync the source before the dry run. Packaging and signature verification still run for the artifacts being prepared. The final command signs and publishes; run it only when you intend to release.
 
+After a stable GitHub release is published, the WinGet Release and Chocolatey Release workflows submit that version using the existing repository secrets. They verify the published installer checksum and signing publisher. Dry runs and checks-only runs do not submit. Each workflow accepts a published tag through its manual Run workflow action for channel-only retries. WinGet requires the initial package to be merged upstream first. A successful upload is separate from WinGet review or Chocolatey validation and moderation. Store submission remains separate until its product ID is available.
+
 ## Dependencies and data safety
 
 Discuss new or replacement dependencies before adding them. Explain why they are needed, their license, maintenance status, platform support, size, native requirements, and security or update impact.
