@@ -3,6 +3,7 @@
 ## [1.0.1] - Unreleased
 
 - Demo runs and screenshots use realistic workstation findings and normal report labels.
+- Added the app icon to the Chocolatey package listing.
 
 ## [1.0.0] - 2026-11-02
 

@@ -8,6 +8,7 @@
     <owners>SteveTheKiller</owners>
     <copyright>Copyright (c) Steve the Killer</copyright>
     <projectUrl>https://killerbench.net</projectUrl>
+    <iconUrl>https://cdn.jsdelivr.net/gh/SteveTheKiller/KillerBench@v1.0.0/Assets/AppIcon.png</iconUrl>
     <packageSourceUrl>https://github.com/SteveTheKiller/KillerBench</packageSourceUrl>
     <projectSourceUrl>https://github.com/SteveTheKiller/KillerBench</projectSourceUrl>
     <licenseUrl>https://github.com/SteveTheKiller/KillerBench/blob/v1.0.0/LICENSE.txt</licenseUrl>
