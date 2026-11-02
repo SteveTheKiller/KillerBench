@@ -20,6 +20,7 @@ internal static class ProfileCancellationNativeAcceptanceChecks
 {
     private const string GuestParent = @"C:\KillerLab\bench-resume-20261101";
     private const string FileName = "synthetic-512MiB.bin";
+    private const string IdentityPropertyAccess = "Properties_.Item(name,0).Value";
     private sealed class BlockedException(string message, object? evidence = null) : Exception(message)
     { internal object? Evidence { get; } = evidence; }
     private sealed record NativeProcess(int? Pid, int? Parent, string? Executable, string? CommandLine, string? Created, string[] IncompleteFields)
@@ -60,7 +61,7 @@ internal static class ProfileCancellationNativeAcceptanceChecks
             await JsonSerializer.SerializeAsync(stream, new
             {
                 schemaVersion = 1, selected = 1, outcome, detail, evidence, processDiagnostics = diagnostics.Snapshot(),
-                baselineRobocopyCount = baseline.Length, syntheticDataOnly = true,
+                baselineRobocopyCount = baseline.Length, syntheticDataOnly = true, identityPropertyAccess = IdentityPropertyAccess,
                 cleanup = "Preserve all fixtures and evidence for coordinator snapshot restoration. No recursive cleanup or ACL relaxation."
             }, new JsonSerializerOptions { WriteIndented = true }).ConfigureAwait(false);
         Console.WriteLine(outcome.ToUpperInvariant() + ": profile cancellation: " + detail);
@@ -311,37 +312,28 @@ internal static class ProfileCancellationNativeAcceptanceChecks
                 bool supplementalRow = false;
                 try
                 {
-                    dynamic row = item;
                     if (rows.Count >= 64) throw new BlockedException("Robocopy management inventory exceeds its 64-process bound.");
                     var typed = new List<FieldDiagnostic>();
-                    var identity = ReadNativeProcessObserved(name => name switch
-                    {
-                        "ProcessId" => (object?)row.ProcessId,
-                        "ParentProcessId" => (object?)row.ParentProcessId,
-                        "ExecutablePath" => (object?)row.ExecutablePath,
-                        "CommandLine" => (object?)row.CommandLine,
-                        "CreationDate" => (object?)row.CreationDate,
-                        _ => throw new ArgumentOutOfRangeException(nameof(name))
-                    }, typed.Add);
+                    var identity = ReadNativeProcessObserved(name => ReadStandardProperty(item, name), typed.Add);
                     rows.Add(identity);
                     bool sample = !identity.Complete && diagnostics is not null && diagnostics.TryReserveSample();
-                    if (sample) diagnostics!.EmitPhase(DiagnosticPhase.DirectFieldsCollected, typed.ToArray());
+                    if (sample) diagnostics!.EmitPhase(DiagnosticPhase.IdentityFieldsCollected, typed.ToArray());
                     if (diagnostics is not null)
                     {
                         diagnostics.RecordOutcomes(typed.ToArray());
                         if (sample)
                         {
                             supplementalRow = supplementalQuery = true;
-                            diagnostics.EmitPhase(DiagnosticPhase.StandardGettersEnter);
-                            var standard = DiagnosticFields(name => ReadStandardProperty(item, name));
-                            diagnostics.EmitPhase(DiagnosticPhase.StandardGettersReturn);
+                            diagnostics.EmitPhase(DiagnosticPhase.ComparisonGettersEnter);
+                            var comparisonDirect = DiagnosticFields(name => ReadDirectProperty(item, name));
+                            diagnostics.EmitPhase(DiagnosticPhase.ComparisonGettersReturn);
                             diagnostics.CompleteSample(new
                             {
                                 elapsedMilliseconds = diagnostics.ElapsedMilliseconds,
                                 copyTaskIsCompleted = diagnostics.CopyTaskIsCompleted,
                                 strictComplete = identity.Complete,
-                                direct = typed.ToArray(),
-                                standard,
+                                authoritative = new { source = IdentityPropertyAccess, fields = typed.ToArray() },
+                                comparison = new { source = "direct dynamic property access", ownership = false, fields = comparisonDirect },
                                 correlation = Correlation(item),
                                 security = ReadSecurity(services)
                             });
@@ -557,7 +549,7 @@ internal static class ProfileCancellationNativeAcceptanceChecks
     private enum DiagnosticPhase
     {
         BeforeCopyControlEnter, BeforeCopyControlReturn, BeforeCopyInvocation, CopyTaskReturned, CopyAwaitSettled,
-        DirectFieldsCollected, StandardGettersEnter, StandardGettersReturn, NestedOwnControlEnter, NestedOwnControlReturn,
+        IdentityFieldsCollected, ComparisonGettersEnter, ComparisonGettersReturn, NestedOwnControlEnter, NestedOwnControlReturn,
         RowReleaseEnter, RowReleaseReturn, QueryReleaseEnter, QueryReleaseReturn, WatcherWaitEnter, WatcherWaitReturn,
         WatcherWaitCanceled, WatcherWaitTimeout, AfterCopyControlEnter, AfterCopyControlReturn,
         ControlDirectFieldsCollected, ControlStandardGettersEnter, ControlStandardGettersReturn, ControlReleaseEnter, ControlReleaseReturn,
