@@ -36,6 +36,18 @@ State which checks passed and which paths you could not test. Use fabricated or 
 
 Translation-only and documentation-only changes do not need a full application build unless they affect generated files or runtime behavior. Preserve resource keys and format placeholders, and follow the repository's translation guide when one exists.
 
+## Release verification
+
+Run validation once, then reuse the successful result for the dry run and release:
+
+```powershell
+.\release.ps1 -ChecksOnly
+.\release.ps1 -DryRun -SkipSign -UseVerifiedChecks
+.\release.ps1 -UseVerifiedChecks
+```
+
+The receipt is stored outside the repository under your scratch folder. It lasts 24 hours and requires identical source files and test binaries. Changed, missing or expired evidence stops reuse and asks for `-ChecksOnly` again. Commit and sync the source before the dry run. Packaging and signature verification still run for the artifacts being prepared. The final command signs and publishes; run it only when you intend to release.
+
 ## Dependencies and data safety
 
 Discuss new or replacement dependencies before adding them. Explain why they are needed, their license, maintenance status, platform support, size, native requirements, and security or update impact.

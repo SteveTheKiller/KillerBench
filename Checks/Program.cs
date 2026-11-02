@@ -44,7 +44,7 @@ internal static class Program
             }
             if (args is ["--only", "updater-merge-boundaries"])
             {
-                UpdaterMergeBoundaryChecks.Run(Path.GetTempPath());
+                UpdaterMergeBoundaryChecks.Run(CreateScratchDirectory());
                 return 0;
             }
             if (args is ["--only", "native-profile-acceptance"])
@@ -763,11 +763,14 @@ internal static class Program
         }
     }
 
+    private static string CreateScratchDirectory() => Directory.CreateDirectory(Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "scratch",
+        "KillerBench-checks-" + Guid.NewGuid().ToString("N"))).FullName;
+
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
     private static int RunChecks(bool includeUi, bool skipNonUi = false)
     {
-        string scratch = Path.Combine(Path.GetTempPath(), "KillerBench-checks-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(scratch);
+        string scratch = CreateScratchDirectory();
         string captureFixture = "";
         try
         {

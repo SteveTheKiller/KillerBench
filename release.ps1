@@ -5,7 +5,8 @@
 .DESCRIPTION
     1. Preflight: version sources, CHANGELOG date, ReleaseDate, translations, license copies,
        package vulnerabilities, and a clean default branch that matches origin.
-    2. Builds the solution in Release and runs the non-UI checks.
+    2. Builds the solution in Release and runs the non-UI checks, or reuses an exact matching
+       -ChecksOnly receipt with -UseVerifiedChecks.
     3. Builds the installer (KillerBench.exe) and portable (KillerBench-Portable.exe) packages with
        Packaging\build-packages.ps1, and publishes the CLI as a framework-dependent win-x64
        single-file executable. The installer checks for the .NET 10 Desktop Runtime; the portable
@@ -41,6 +42,14 @@
     (use after a completed normal run, so the signed executables are not rebuilt).
     Requires the existing source archive to match the commit being tagged.
 
+.PARAMETER ChecksOnly
+    Run translation, license, vulnerability, Release build and non-UI checks, then save a
+    24-hour verification receipt outside the repository. Does not sign, package or publish.
+
+.PARAMETER UseVerifiedChecks
+    Reuse a successful -ChecksOnly receipt for the exact source and test binaries. Works with
+    -DryRun and the real release. Missing, expired or mismatched evidence stops the release.
+
 .PARAMETER ArtifactPreflightOnly
     Read existing executable versions, signatures, and SHA256 hashes, then return without
     building, signing, changing files, invoking Git, or publishing.
@@ -65,6 +74,8 @@ param(
     [switch]$SkipSign,
     [switch]$DryRun,
     [switch]$PublishOnly,
+    [switch]$ChecksOnly,
+    [switch]$UseVerifiedChecks,
     [switch]$ArtifactPreflightOnly,
     [string]$ArtifactDirectory = "",
     [switch]$SourceDeltaOnly,
@@ -78,6 +89,9 @@ Set-StrictMode -Version Latest
 
 if ($SkipSign -and -not $DryRun) {
     throw "-SkipSign is only allowed with -DryRun. Unsigned artifacts cannot be published."
+}
+if ($ChecksOnly -and ($UseVerifiedChecks -or $PublishOnly -or $ArtifactPreflightOnly -or $SourceDeltaOnly -or $DryRun)) {
+    throw '-ChecksOnly cannot be combined with another release mode.'
 }
 
 $proj        = Join-Path $PSScriptRoot "KillerBench.csproj"
@@ -247,6 +261,9 @@ if ($ArtifactPreflightOnly) {
 }
 
 # --- 1. Release metadata preflight ---
+. (Join-Path $PSScriptRoot 'Checks/ReleaseCheckReceipt.ps1')
+$checkOutput = Join-Path $PSScriptRoot 'Checks/bin/Release/net10.0-windows'
+$checkReceipt = Join-Path ([Environment]::GetFolderPath('UserProfile')) ('scratch/KillerBench-release-checks/' + (Get-ReleaseCheckDigest @($PSScriptRoot)) + '.json')
 Write-Host "`n==> Release metadata preflight..." -ForegroundColor Cyan
 $csprojRaw = Get-Content -Path $proj -Raw
 if ($csprojRaw -notmatch '<Version>([0-9]+\.[0-9]+\.[0-9]+)</Version>') {
@@ -291,6 +308,7 @@ if ($releaseDate -ne $Matches[1]) {
 Write-Host "    Release date: $releaseDate"
 
 # --- 2. Git preflight ---
+if (-not $ChecksOnly) {
 Write-Host "`n==> Git preflight..." -ForegroundColor Cyan
 Push-Location $PSScriptRoot
 try {
@@ -302,11 +320,12 @@ try {
 } finally {
     Pop-Location
 }
+}
 
 if (-not $PublishOnly) {
 
 # --- 3. SimplySign preflight ---
-if (-not $SkipSign) {
+if (-not $SkipSign -and -not $ChecksOnly) {
     $ssProc = Get-Process -Name "SimplySignDesktop" -ErrorAction SilentlyContinue
     if (-not $ssProc) {
         Write-Host ""
@@ -320,6 +339,12 @@ if (-not $SkipSign) {
 }
 
 # --- 4. Translation parity ---
+if ($UseVerifiedChecks) {
+    Assert-ReleaseCheckReceipt $PSScriptRoot $checkOutput $checkReceipt
+    Write-Host "`n==> Reusing successful verification. Source and test binaries match; no test rerun." -ForegroundColor Green
+} else {
+    if ([IO.File]::Exists($checkReceipt)) { [IO.File]::Delete($checkReceipt) }
+    $sourceBeforeChecks = Get-ReleaseCheckSnapshot $PSScriptRoot $checkOutput
 # Every localization must carry the complete English key set with matching placeholders, or a
 # translation loads fine and then throws when string.Format is handed a value it dropped.
 Write-Host "`n==> Checking translations..." -ForegroundColor Cyan
@@ -389,9 +414,18 @@ Write-Host "`n==> Building the solution..." -ForegroundColor Cyan
 dotnet build $solution -c Release --nologo -v quiet
 if ($LASTEXITCODE -ne 0) { throw "Release build failed." }
 Write-Host "`n==> Running non-UI checks..." -ForegroundColor Cyan
+$beforeChecks = Get-ReleaseCheckSnapshot $PSScriptRoot $checkOutput
+if ($sourceBeforeChecks.SourceHash -ne $beforeChecks.SourceHash) { throw 'Release source changed during validation. Run checks again.' }
+Push-Location $PSScriptRoot
+try {
 dotnet run --project $checksProj -c Release --no-build
 if ($LASTEXITCODE -ne 0) { throw "Non-UI checks failed. Fix them before releasing." }
+} finally { Pop-Location }
+Save-ReleaseCheckReceipt $PSScriptRoot $checkOutput $checkReceipt $beforeChecks
 Write-Host "    Non-UI checks passed" -ForegroundColor Green
+Write-Host "    Verification receipt: $checkReceipt"
+}
+if ($ChecksOnly) { return }
 
 # --- 8. Build the installer and portable packages, and publish the CLI ---
 Write-Host "`n==> Building the installer and portable packages..." -ForegroundColor Cyan
