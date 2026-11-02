@@ -20,8 +20,10 @@ internal static class ProfileCancellationNativeAcceptanceChecks
 {
     private const string GuestParent = @"C:\KillerLab\bench-resume-20261101";
     private const string FileName = "synthetic-512MiB.bin";
-    private sealed class BlockedException(string message) : Exception(message);
-    private sealed record NativeProcess(int Pid, int Parent, string Executable, string CommandLine, string Created);
+    private sealed class BlockedException(string message, object? evidence = null) : Exception(message)
+    { internal object? Evidence { get; } = evidence; }
+    private sealed record NativeProcess(int? Pid, int? Parent, string? Executable, string? CommandLine, string? Created, string[] IncompleteFields)
+    { public bool Complete => IncompleteFields.Length == 0; }
 
     // The caller must use NativeAcceptancePackage.RunAsync to pin the package and runtime first.
     internal static async Task RunAsync()
@@ -29,24 +31,35 @@ internal static class ProfileCancellationNativeAcceptanceChecks
         string directory = RequireGuest();
         NativeProcess[] baseline = await Task.Run(QueryRobocopy).WaitAsync(TimeSpan.FromSeconds(10));
         if (baseline.Length != 0)
-            throw new BlockedException("Baseline contains Robocopy. No fixture writes or cancellation were performed.");
+            throw new BlockedException("Baseline contains Robocopy. " + IncompleteSummary(baseline) + " No fixture writes or cancellation were performed.");
         string root = Path.Combine(directory, "profile-cancellation-" + Guid.NewGuid().ToString("N"));
         CreateProtectedDirectory(root);
         string outcome = "Failed", detail = "The cancellation case did not finish.";
         object? evidence = null;
+        var diagnostics = new ProcessDiagnostics();
         try
         {
-            evidence = await ObserveCancellationAsync(root).ConfigureAwait(false);
+            evidence = await ObserveCancellationAsync(root, diagnostics).ConfigureAwait(false);
             outcome = "Passed";
             detail = "Cancellation was requested while the exact owned Robocopy was live; it had exited when CopyAsync returned.";
         }
-        catch (BlockedException error) { outcome = "Blocked"; detail = error.Message; }
-        catch (Exception error) { detail = error.GetType().Name + ": " + error.Message; }
+        catch (BlockedException error) { outcome = "Blocked"; detail = error.Message; evidence = error.Evidence; }
+        catch (Exception error)
+        {
+            detail = error.GetType().Name + ": " + error.Message;
+            string diagnostic = error.ToString();
+            evidence = new
+            {
+                hResult = error.HResult,
+                exception = diagnostic[..Math.Min(diagnostic.Length, 32768)],
+                exceptionTruncated = diagnostic.Length > 32768
+            };
+        }
         string report = Path.Combine(root, "cancellation-result.json");
         await using (var stream = new FileStream(report, FileMode.CreateNew, FileAccess.Write, FileShare.None))
             await JsonSerializer.SerializeAsync(stream, new
             {
-                schemaVersion = 1, selected = 1, outcome, detail, evidence,
+                schemaVersion = 1, selected = 1, outcome, detail, evidence, processDiagnostics = diagnostics.Snapshot(),
                 baselineRobocopyCount = baseline.Length, syntheticDataOnly = true,
                 cleanup = "Preserve all fixtures and evidence for coordinator snapshot restoration. No recursive cleanup or ACL relaxation."
             }, new JsonSerializerOptions { WriteIndented = true }).ConfigureAwait(false);
@@ -55,7 +68,7 @@ internal static class ProfileCancellationNativeAcceptanceChecks
         if (outcome != "Passed") throw new InvalidOperationException("Native cancellation acceptance did not pass: " + outcome + ": " + detail);
     }
 
-    private static async Task<object> ObserveCancellationAsync(string root)
+    private static async Task<object> ObserveCancellationAsync(string root, ProcessDiagnostics diagnostics)
     {
         string source = Path.Combine(root, "source"), destination = Path.Combine(root, "backup");
         CreateProtectedDirectory(source);
@@ -84,25 +97,45 @@ internal static class ProfileCancellationNativeAcceptanceChecks
         using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(60));
         using var watcherStop = new CancellationTokenSource();
         var watcherReady = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var copySettled = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         NativeProcess? observed = null;
         Process? heldProcess = null;
+        int incompleteObservations = 0;
+        var incompleteFields = new HashSet<string>(StringComparer.Ordinal);
+        void ObserveIncomplete(IEnumerable<NativeProcess> rows)
+        {
+            lock (incompleteFields)
+            {
+                foreach (var row in rows.Where(row => !row.Complete))
+                {
+                    incompleteObservations++;
+                    foreach (string field in row.IncompleteFields) incompleteFields.Add(field);
+                }
+            }
+        }
         bool liveAtCancellation = false, canceled = false, exitedAtReturn = false;
         Task watcher = Task.Run(async () =>
         {
+            diagnostics.CaptureControl("before-copy");
             watcherReady.TrySetResult();
+            try
+            {
             var watch = Stopwatch.StartNew();
             while (!watcherStop.IsCancellationRequested && watch.Elapsed < TimeSpan.FromSeconds(45))
             {
-                NativeProcess[] rows = QueryRobocopy();
+                NativeProcess[] rows = QueryRobocopy(diagnostics);
+                ObserveIncomplete(rows);
                 if (watcherStop.IsCancellationRequested) return;
                 foreach (var row in rows.Where(row => IsOwned(row, source, destination)))
                 {
-                    var process = Process.GetProcessById(row.Pid);
+                    var process = Process.GetProcessById(row.Pid!.Value);
                     try
                     {
                         _ = process.Handle;
                         // Bind the held PID to the same live management identity before canceling.
-                        if (process.HasExited || !QueryRobocopy().Any(current => current == row)) continue;
+                        var repeated = QueryRobocopy(diagnostics);
+                        ObserveIncomplete(repeated);
+                        if (process.HasExited || !repeated.Any(current => SameCompleteIdentity(current, row))) continue;
                         if (watcherStop.IsCancellationRequested) return;
                         heldProcess = process; process = null!;
                         observed = row;
@@ -116,6 +149,12 @@ internal static class ProfileCancellationNativeAcceptanceChecks
                 await Task.Delay(5, watcherStop.Token).ConfigureAwait(false);
             }
             if (!watcherStop.IsCancellationRequested) cancellation.Cancel();
+            }
+            finally
+            {
+                await copySettled.Task.ConfigureAwait(false);
+                diagnostics.CaptureControl("after-copy");
+            }
         });
         await watcherReady.Task.ConfigureAwait(false);
         Exception? copyError = null;
@@ -123,6 +162,7 @@ internal static class ProfileCancellationNativeAcceptanceChecks
         try
         {
             Task copy = host.CopyAsync(target, destination, null, cancellation.Token);
+            diagnostics.SetCopyTask(copy);
             try { await AwaitProtectedCopyAsync(copy, cancellation.Cancel, TimeSpan.FromSeconds(90)).ConfigureAwait(false); }
             catch (OperationCanceledException) { canceled = true; }
             catch (Exception error) { copyError = error; }
@@ -132,18 +172,33 @@ internal static class ProfileCancellationNativeAcceptanceChecks
         }
         finally
         {
+            copySettled.TrySetResult();
             watcherStop.Cancel();
             cancellation.Cancel();
             try { await watcher.WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false); }
             catch (OperationCanceledException) { }
-            catch (TimeoutException) { throw new BlockedException("The read-only management watcher did not finish within its bound. Containment is unverified; restore the snapshot after coordinator reconciliation."); }
+            catch (TimeoutException)
+            {
+                lock (incompleteFields)
+                {
+                    throw new BlockedException("The read-only management watcher did not finish within its bound. Containment is unverified; restore the snapshot after coordinator reconciliation. " +
+                        "Incomplete observations=" + incompleteObservations + "; fields=" + string.Join(",", incompleteFields.Order()),
+                        new { incompleteObservations, incompleteFields = incompleteFields.Order().ToArray() });
+                }
+            }
         }
         using var observedLease = heldProcess;
         if (copyError is not null) throw new InvalidOperationException("CopyAsync failed before cancellation acceptance could be established. Containment must be reviewed.", copyError);
         if (observed is null || !liveAtCancellation)
-            throw new BlockedException("No exact owned live Robocopy was observed before copying completed or the deadline. This timing-sensitive observation is not a pass.");
+            throw new BlockedException("No exact owned live Robocopy was observed before copying completed or the deadline. This timing-sensitive observation is not a pass. " +
+                "Incomplete observations=" + incompleteObservations + "; fields=" + string.Join(",", incompleteFields.Order()),
+                new { incompleteObservations, incompleteFields = incompleteFields.Order().ToArray() });
         Require(copyReturned && canceled && exitedAtReturn, "Cancellation did not throw OperationCanceledException after the observed process exited.");
-        var remaining = await Task.Run(QueryRobocopy).WaitAsync(TimeSpan.FromSeconds(10));
+        var remaining = await Task.Run(() => QueryRobocopy(diagnostics)).WaitAsync(TimeSpan.FromSeconds(10));
+        ObserveIncomplete(remaining);
+        if (remaining.Any(row => !row.Complete))
+            throw new BlockedException("Postflight cannot establish absence of owned Robocopy. " + IncompleteSummary(remaining),
+                new { incompleteObservations, incompleteFields = incompleteFields.Order().ToArray() });
         Require(!remaining.Any(row => IsOwned(row, source, destination)), "An exact owned Robocopy remains after CopyAsync returned.");
         string after = await HashAsync(file).ConfigureAwait(false);
         Require(before == after, "Cancellation changed the synthetic source bytes.");
@@ -158,6 +213,7 @@ internal static class ProfileCancellationNativeAcceptanceChecks
             bytes = 512L * 1024 * 1024, sourceSha256Before = before, sourceSha256After = after,
             observed, liveAtCancellation, exitedAtCopyReturn = exitedAtReturn,
             operationCanceled = canceled, remainingOwnedRobocopyCount = 0,
+            incompleteObservations, incompleteFields = incompleteFields.Order().ToArray(),
             completedProof = proof.Verified, receiptAbsent = true, partialRootDacl = dacl,
             observedProcessStartUtc = observedLease!.StartTime.ToUniversalTime()
         };
@@ -180,15 +236,62 @@ internal static class ProfileCancellationNativeAcceptanceChecks
 
     private static bool IsOwned(NativeProcess row, string source, string destination)
     {
-        if (row.Parent != Environment.ProcessId || !row.Executable.Equals(Path.Combine(Environment.SystemDirectory, "robocopy.exe"), StringComparison.OrdinalIgnoreCase)) return false;
-        string[] args = Arguments(row.CommandLine);
+        if (!row.Complete || row.Parent != Environment.ProcessId || !row.Executable!.Equals(Path.Combine(Environment.SystemDirectory, "robocopy.exe"), StringComparison.OrdinalIgnoreCase)) return false;
+        string[] args = Arguments(row.CommandLine!);
         return args.Length >= 4 && args[0].Equals(row.Executable, StringComparison.OrdinalIgnoreCase) &&
             Path.TrimEndingDirectorySeparator(Path.GetFullPath(args[1])).Equals(source, StringComparison.OrdinalIgnoreCase) &&
             Path.TrimEndingDirectorySeparator(Path.GetFullPath(args[2])).Equals(destination, StringComparison.OrdinalIgnoreCase) &&
             args[3] == FileName;
     }
 
-    private static NativeProcess[] QueryRobocopy()
+    private static bool SameCompleteIdentity(NativeProcess left, NativeProcess right) =>
+        left.Complete && right.Complete && left.Pid == right.Pid && left.Parent == right.Parent &&
+        left.Executable == right.Executable && left.CommandLine == right.CommandLine && left.Created == right.Created;
+
+    private static string IncompleteSummary(IEnumerable<NativeProcess> rows)
+    {
+        var incomplete = rows.Where(row => !row.Complete).ToArray();
+        return "Incomplete rows=" + incomplete.Length + "; fields=" +
+            string.Join(",", incomplete.SelectMany(row => row.IncompleteFields).Distinct().Order()) + ".";
+    }
+
+    private static NativeProcess ReadNativeProcess(Func<string, object?> read) => ReadNativeProcessObserved(read, null);
+
+    private static NativeProcess ReadNativeProcessObserved(Func<string, object?> read, Action<FieldDiagnostic>? observe)
+    {
+        var incomplete = new List<string>();
+        object? Field(string name)
+        {
+            try
+            {
+                object? value = read(name);
+                observe?.Invoke(DescribeField(name, value, null));
+                return value;
+            }
+            catch (Exception error) { observe?.Invoke(DescribeField(name, null, error)); incomplete.Add(name); return null; }
+        }
+        int? Number(string name)
+        {
+            object? value = Field(name);
+            int? result = value switch { int number when number > 0 => number, uint number when number is > 0 and <= int.MaxValue => (int)number, _ => null };
+            if (result is null && !incomplete.Contains(name)) incomplete.Add(name);
+            return result;
+        }
+        string? Text(string name, int maximum)
+        {
+            object? value = Field(name);
+            if (value is string text && text.Length > 0 && text.Length <= maximum) return text;
+            if (!incomplete.Contains(name)) incomplete.Add(name);
+            return null;
+        }
+        int? pid = Number("ProcessId"), parent = Number("ParentProcessId");
+        string? executable = Text("ExecutablePath", 32767), command = Text("CommandLine", 32767), created = Text("CreationDate", 64);
+        return new(pid, parent, executable, command, created, incomplete.ToArray());
+    }
+
+    private static NativeProcess[] QueryRobocopy() => QueryRobocopy(null);
+
+    private static NativeProcess[] QueryRobocopy(ProcessDiagnostics? diagnostics)
     {
         object? locator = null, services = null, result = null;
         var rows = new List<NativeProcess>();
@@ -203,10 +306,35 @@ internal static class ProfileCancellationNativeAcceptanceChecks
                 {
                     dynamic row = item;
                     if (rows.Count >= 64) throw new BlockedException("Robocopy management inventory exceeds its 64-process bound.");
-                    string command = (string?)row.CommandLine ?? "";
-                    if (command.Length > 32767) throw new BlockedException("A management command line exceeds its bound.");
-                    rows.Add(new(Convert.ToInt32(row.ProcessId), Convert.ToInt32(row.ParentProcessId),
-                        (string?)row.ExecutablePath ?? "", command, (string?)row.CreationDate ?? ""));
+                    var typed = new List<FieldDiagnostic>();
+                    var identity = ReadNativeProcessObserved(name => name switch
+                    {
+                        "ProcessId" => (object?)row.ProcessId,
+                        "ParentProcessId" => (object?)row.ParentProcessId,
+                        "ExecutablePath" => (object?)row.ExecutablePath,
+                        "CommandLine" => (object?)row.CommandLine,
+                        "CreationDate" => (object?)row.CreationDate,
+                        _ => throw new ArgumentOutOfRangeException(nameof(name))
+                    }, typed.Add);
+                    rows.Add(identity);
+                    if (diagnostics is not null)
+                    {
+                        diagnostics.RecordOutcomes(typed.ToArray());
+                        if (!identity.Complete && diagnostics.TryReserveSample())
+                        {
+                            diagnostics.CompleteSample(new
+                            {
+                                elapsedMilliseconds = diagnostics.ElapsedMilliseconds,
+                                copyTaskIsCompleted = diagnostics.CopyTaskIsCompleted,
+                                strictComplete = identity.Complete,
+                                direct = typed.ToArray(),
+                                standard = DiagnosticFields(name => ReadStandardProperty(item, name)),
+                                correlation = Correlation(item),
+                                security = ReadSecurity(services)
+                            });
+                            diagnostics.CaptureControl("first-incomplete");
+                        }
+                    }
                 }
                 finally { Release(item); }
             }
@@ -214,6 +342,174 @@ internal static class ProfileCancellationNativeAcceptanceChecks
         }
         finally { Release(result); Release(services); Release(locator); }
         static void Release(object? value) { if (value is not null && Marshal.IsComObject(value)) Marshal.FinalReleaseComObject(value); }
+    }
+
+    private sealed record FieldDiagnostic(string Field, string Outcome, string? ClrType, string? ExceptionType, string? HResult, string? Message, int? MessageLength);
+    private static readonly string[] DiagnosticFieldNames = ["ProcessId", "ParentProcessId", "ExecutablePath", "CommandLine", "CreationDate"];
+
+    private static FieldDiagnostic DescribeField(string name, object? value, Exception? error)
+    {
+        static string Bound(string text) => text[..Math.Min(text.Length, 128)];
+        if (error is not null)
+            return new(name, "getter-exception", null, Bound(error.GetType().FullName ?? error.GetType().Name),
+                "0x" + error.HResult.ToString("X8"),
+                error.Message is "Unspecified error" or "Unspecified error." ? error.Message : "Provider message omitted for privacy.",
+                Math.Min(error.Message.Length, 32768));
+        if (value is null) return new(name, "null", null, null, null, null, null);
+        if (value is DBNull) return new(name, "DBNull", typeof(DBNull).FullName, null, null, null, null);
+        string type = Bound(value.GetType().FullName ?? value.GetType().Name);
+        bool number = name is "ProcessId" or "ParentProcessId" or "ImpersonationLevel" or "AuthenticationLevel";
+        bool expectedType = number ? value is int or uint : value is string;
+        if (!expectedType) return new(name, "wrong-CLR-type", type, null, null, null, null);
+        bool valid = number
+            ? name is "ImpersonationLevel" or "AuthenticationLevel"
+                ? value is int level && level is >= 0 and <= 10 || value is uint unsignedLevel && unsignedLevel <= 10
+                : value is int id && id > 0 || value is uint unsigned && unsigned is > 0 and <= int.MaxValue
+            : value is string text && text.Length > 0 && text.Length <= (name == "CreationDate" ? 64 : 32767);
+        return new(name, valid ? "valid" : "invalid-value", type, null, null, null, null);
+    }
+
+    private static FieldDiagnostic[] DiagnosticFields(Func<string, object?> read) => DiagnosticFieldNames.Select(name =>
+    {
+        try { return DescribeField(name, read(name), null); }
+        catch (Exception error) { return DescribeField(name, null, error); }
+    }).ToArray();
+
+    private static object? ReadDirectProperty(dynamic row, string name) => name switch
+    {
+        "ProcessId" => (object?)row.ProcessId, "ParentProcessId" => (object?)row.ParentProcessId,
+        "ExecutablePath" => (object?)row.ExecutablePath, "CommandLine" => (object?)row.CommandLine,
+        "CreationDate" => (object?)row.CreationDate, _ => throw new ArgumentOutOfRangeException(nameof(name))
+    };
+
+    private static object? ReadStandardProperty(dynamic row, string name)
+    {
+        object? properties = null, property = null;
+        try { properties = row.Properties_; property = ((dynamic)properties).Item(name, 0); return ((dynamic)property).Value; }
+        finally { ReleaseDiagnostic(property); ReleaseDiagnostic(properties); }
+    }
+
+    private static void ReleaseDiagnostic(object? value)
+    {
+        try { if (value is not null && Marshal.IsComObject(value)) Marshal.FinalReleaseComObject(value); }
+        catch { /* Diagnostic-only COM release must not alter strict identity acceptance. */ }
+    }
+
+    private static object Correlation(dynamic row)
+    {
+        object? path = null;
+        try
+        {
+            path = row.Path_;
+            object? relative = ((dynamic)path).RelPath;
+            string? key = relative is string text && text.Length <= 128 &&
+                System.Text.RegularExpressions.Regex.IsMatch(text, "\\AWin32_Process\\.Handle=\"[0-9]{1,10}\"\\z") ? text : null;
+            return new { rowClass = "Win32_Process", relativePath = key, correlationOnly = true };
+        }
+        catch (Exception error) { return DescribeField("row-correlation", null, error); }
+        finally { ReleaseDiagnostic(path); }
+    }
+
+    private static object[] ReadSecurity(dynamic services)
+    {
+        object? security = null;
+        try
+        {
+            security = services.Security_;
+            return new[] { "ImpersonationLevel", "AuthenticationLevel" }.Select(name =>
+            {
+                try
+                {
+                    object? value = name == "ImpersonationLevel" ? (object?)((dynamic)security).ImpersonationLevel : (object?)((dynamic)security).AuthenticationLevel;
+                    int? level = value switch { int n when n is >= 0 and <= 10 => n, uint n when n <= 10 => (int)n, _ => null };
+                    return (object)new { typed = DescribeField(name, value, null), level };
+                }
+                catch (Exception error) { return DescribeField(name, null, error); }
+            }).ToArray();
+        }
+        catch (Exception error) { return [DescribeField("COM-security", null, error)]; }
+        finally { ReleaseDiagnostic(security); }
+    }
+
+    private static object OwnProcessControl()
+    {
+        object? locator = null, services = null, result = null;
+        try
+        {
+            locator = Activator.CreateInstance(Type.GetTypeFromProgID("WbemScripting.SWbemLocator", true)!);
+            services = ((dynamic)locator!).ConnectServer(".", @"root\cimv2");
+            result = ((dynamic)services).ExecQuery("SELECT ProcessId, ParentProcessId, ExecutablePath, CommandLine, CreationDate FROM Win32_Process WHERE ProcessId=" +
+                Environment.ProcessId.ToString(System.Globalization.CultureInfo.InvariantCulture), "WQL", 0);
+            object? observation = null;
+            int count = 0;
+            foreach (object item in (System.Collections.IEnumerable)result)
+            {
+                try
+                {
+                    if (++count > 1) throw new InvalidOperationException("Own-process diagnostic row bound exceeded.");
+                    observation = new { direct = DiagnosticFields(name => ReadDirectProperty(item, name)),
+                        standard = DiagnosticFields(name => ReadStandardProperty(item, name)), security = ReadSecurity(services) };
+                }
+                finally { ReleaseDiagnostic(item); }
+            }
+            return new { count, observation };
+        }
+        finally { ReleaseDiagnostic(result); ReleaseDiagnostic(services); ReleaseDiagnostic(locator); }
+    }
+
+    private sealed class ProcessDiagnostics
+    {
+        private readonly object gate = new();
+        private readonly Stopwatch elapsed = Stopwatch.StartNew();
+        private readonly Dictionary<string, int> counters = new(StringComparer.Ordinal);
+        private readonly List<object> samples = [];
+        private readonly Dictionary<string, object> controls = new(StringComparer.Ordinal);
+        private Task? copyTask;
+        private int reserved;
+        private bool countersTruncated, samplesTruncated;
+        internal long ElapsedMilliseconds => elapsed.ElapsedMilliseconds;
+        internal bool? CopyTaskIsCompleted => Volatile.Read(ref copyTask)?.IsCompleted;
+        internal void SetCopyTask(Task task) => Volatile.Write(ref copyTask, task);
+        internal void RecordOutcomes(FieldDiagnostic[] fields)
+        {
+            lock (gate)
+                foreach (var field in fields)
+                {
+                    string key = field.Field + ":" + field.Outcome + ":" + field.ClrType + ":" + field.ExceptionType + ":" + field.HResult;
+                    if (counters.TryGetValue(key, out int count))
+                    { if (count < int.MaxValue) counters[key] = count + 1; else countersTruncated = true; }
+                    else if (counters.Count < 64) counters[key] = 1;
+                    else countersTruncated = true;
+                }
+        }
+        internal bool TryReserveSample()
+        {
+            lock (gate)
+            {
+                if (reserved >= 3) { samplesTruncated = true; return false; }
+                reserved++; return true;
+            }
+        }
+        internal void CompleteSample(object sample) { lock (gate) { if (samples.Count < reserved) samples.Add(sample); } }
+        internal void CaptureControl(string stage)
+        {
+            lock (gate)
+            {
+                if (controls.ContainsKey(stage) || controls.Count >= 3) return;
+                controls[stage] = new { pending = true };
+            }
+            object observation;
+            try { observation = OwnProcessControl(); }
+            catch (Exception error) { observation = DescribeField("own-process-control", null, error); }
+            lock (gate) controls[stage] = new { elapsedMilliseconds = ElapsedMilliseconds, copyTaskIsCompleted = CopyTaskIsCompleted, observation };
+        }
+        internal object Snapshot()
+        {
+            lock (gate) return new { elapsedMilliseconds = ElapsedMilliseconds, copyTaskIsCompleted = CopyTaskIsCompleted,
+                samples = samples.ToArray(), sampleLimit = 3, samplesTruncated,
+                counters = counters.ToDictionary(item => item.Key, item => item.Value), counterKeyLimit = 64, countersTruncated,
+                ownProcessControls = controls.ToDictionary(item => item.Key, item => item.Value) };
+        }
     }
 
     private static string[] Arguments(string command)
