@@ -28,7 +28,7 @@ KillerBench is an all-in-one Windows diagnosis, repair and maintenance toolbox. 
 ### Diagnosis and workflows
 
 - Full system scan covers 49 diagnostic areas with selectable checks, numbered progress, readiness verdicts and a saved local journal. Focused diagnostics group results into 11 outcomes, with detailed evidence available through expert options.
-- Tools are organized into Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker, Privacy and Storage. The app opens on Diagnostics.
+- Tools are organized into Diagnostics, Repair, Updates, Devices, Network, Apps, Maintenance, Onboarding, Security, BitLocker, Privacy and Storage. Each section shows its own tools, with compact action menus and spaced checklists. The app opens on Diagnostics.
 - Common problems evaluates installed recipes in one session, expands prerequisites and limits collection time for each area.
 - Symptom triage connects Windows symptoms to targeted checks and reports what was repaired, ruled out or left unresolved. Versioned recipes describe effects, preservation limits, dependencies and restart requirements.
 - Workflows are available through the desktop app, Engine and CLI and operate on the local computer.

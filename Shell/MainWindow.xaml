@@ -14,7 +14,22 @@
         AllowDrop="True" Drop="OnDrop" PreviewDragOver="OnDragOver" PreviewKeyDown="OnKeyDown">
   <shell:WindowChrome.WindowChrome><shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0"/></shell:WindowChrome.WindowChrome>
   <Window.Resources>
-    <ResourceDictionary Source="/KillerBench;component/Controls/OverlayScrollViewer.xaml"/>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="/KillerBench;component/Controls/OverlayScrollViewer.xaml"/></ResourceDictionary.MergedDictionaries>
+      <Style x:Key="WorkbenchList" TargetType="ListBox">
+        <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBox">
+          <Border Background="{TemplateBinding Background}" Padding="4" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{DynamicResource PaneBorderBrush}">
+            <ScrollViewer Style="{StaticResource OverlayScrollViewer}" CanContentScroll="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><ItemsPresenter/></ScrollViewer>
+          </Border>
+        </ControlTemplate></Setter.Value></Setter>
+      </Style>
+      <Style x:Key="CheckRow" TargetType="ListBoxItem">
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+        <Setter Property="Padding" Value="6,6"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border Padding="{TemplateBinding Padding}" Background="Transparent"><ContentPresenter/></Border></ControlTemplate></Setter.Value></Setter>
+      </Style>
+    </ResourceDictionary>
   </Window.Resources>
   <Border x:Name="WindowEdgeBorder" BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="{DynamicResource WindowEdgeThickness}">
   <Grid x:Name="RootGrid">
@@ -280,6 +295,7 @@
               </ComboBox>
             </WrapPanel>
             <StackPanel x:Name="ServicingMonitorSettings" Visibility="Collapsed" Margin="0,0,0,8">
+              <StackPanel.Resources><Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}"><Setter Property="Margin" Value="0,3,0,3"/></Style></StackPanel.Resources>
               <TextBlock Text="{DynamicResource Str_Peek_Description}" TextWrapping="Wrap"/>
               <TextBlock Text="{DynamicResource Str_Peek_RefreshInterval}" Margin="0,6,0,4"/>
               <DockPanel>
@@ -653,7 +669,7 @@
                     <ComboBoxItem Content="{DynamicResource Str_Privacy_TurnOff}" Tag="Off"/>
                   </ComboBox>
                 </StackPanel>
-                <CheckBox x:Name="PrivacyClipboardHistoryApply" Content="{DynamicResource Str_Privacy_Apply}" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+                <CheckBox x:Name="PrivacyClipboardHistoryApply" Content="{DynamicResource Str_Privacy_Apply}" VerticalAlignment="Bottom" Margin="0,8,0,6"/>
               </WrapPanel>
               <WrapPanel Margin="0,6,0,0">
                 <StackPanel Margin="0,0,8,0">
@@ -670,7 +686,7 @@
                     <ComboBoxItem Content="{DynamicResource Str_Privacy_TurnOff}" Tag="Off"/>
                   </ComboBox>
                 </StackPanel>
-                <CheckBox x:Name="PrivacyBooleanApply" Content="{DynamicResource Str_Privacy_Apply}" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+                <CheckBox x:Name="PrivacyBooleanApply" Content="{DynamicResource Str_Privacy_Apply}" VerticalAlignment="Bottom" Margin="0,8,0,6"/>
               </WrapPanel>
               <TextBlock Text="{DynamicResource Str_Privacy_Boundary}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,8,0,0"/>
             </StackPanel>
@@ -858,21 +874,21 @@
                 <ListBox x:Name="DiagnosticAreaList" SelectionMode="Multiple" MaxHeight="180" Visibility="Collapsed"
                          Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextBrush}"
                          IsEnabled="{Binding IsChecked, ElementName=FocusDiagnosticAreas}" SelectionChanged="OnDiagnosticAreasChanged"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemContainerStyle="{StaticResource SourceItem}" AutomationProperties.Name="Diagnostic areas">
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" Style="{StaticResource WorkbenchList}" ItemContainerStyle="{StaticResource CheckRow}" AutomationProperties.Name="Diagnostic areas">
                   <ListBox.ItemTemplate><DataTemplate>
                     <CheckBox Content="{Binding Title}" ToolTip="{Binding Description}"
                               IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Mode=TwoWay}"/>
                   </DataTemplate></ListBox.ItemTemplate>
                 </ListBox>
                 <TextBlock x:Name="DiagnosticAreaSummary" TextWrapping="Wrap" Margin="0,4,0,4"/>
-                <DockPanel Margin="0,2,0,2" IsEnabled="{Binding IsChecked, ElementName=CustomizeRecipes}">
+                <DockPanel x:Name="RecipeActions" Margin="0,10,0,6" IsEnabled="{Binding IsChecked, ElementName=CustomizeRecipes}">
                   <TextBlock Text="{DynamicResource Str_Advanced_RecipeChecks}" VerticalAlignment="Center"/>
                   <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
                     <Button Content="{DynamicResource Str_Advanced_All}" Padding="8,2" Margin="4,0,0,0" Click="OnSelectAllRecipes" AutomationProperties.Name="Select all recipe checks"/>
                     <Button Content="{DynamicResource Str_Advanced_None}" Padding="8,2" Margin="4,0,0,0" Click="OnClearRecipes" AutomationProperties.Name="Clear recipe checks"/>
                   </StackPanel>
                 </DockPanel>
-                <ListBox x:Name="RecipeSelectionList" Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextBrush}" SelectionMode="Multiple" MaxHeight="180" IsEnabled="{Binding IsChecked, ElementName=CustomizeRecipes}" SelectionChanged="OnRecipeSelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemContainerStyle="{StaticResource SourceItem}" AutomationProperties.Name="Recipe checks">
+                <ListBox x:Name="RecipeSelectionList" Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextBrush}" SelectionMode="Multiple" MaxHeight="240" IsEnabled="{Binding IsChecked, ElementName=CustomizeRecipes}" SelectionChanged="OnRecipeSelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Style="{StaticResource WorkbenchList}" ItemContainerStyle="{StaticResource CheckRow}" AutomationProperties.Name="Recipe checks">
                   <ListBox.GroupStyle>
                     <GroupStyle>
                       <GroupStyle.HeaderTemplate>
@@ -906,25 +922,24 @@
               <TextBox x:Name="PathBox" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Text_log_path}" ToolTip="{DynamicResource Str_ToolTip_Paste_a_text_log_path_or_drop_a_file_into_the_window}" VerticalContentAlignment="Center"/>
             </DockPanel>
             <StackPanel Grid.Row="2" Margin="0,6,0,0">
-              <WrapPanel>
+              <WrapPanel Margin="0,6,0,6">
                 <Button x:Name="ScanButton" Content="{DynamicResource Str_ScanUpdate}" Style="{StaticResource OutlineButton}" Click="OnScan" ToolTip="{DynamicResource Str_ScanUpdateTip}" Margin="0,0,6,0"/>
-                <Button x:Name="OpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture" Margin="0,0,6,0"/>
-                <Button Content="{DynamicResource Str_Advanced_OpenWorkflow}" Click="OnOpenWorkflowJournal" Margin="0,0,6,0" ToolTip="{DynamicResource Str_Advanced_OpenWorkflowTip}"/>
-                <Button x:Name="SaveCaptureButton" Content="{DynamicResource Str_SaveCapture}" Click="OnSaveCapture" IsEnabled="False"/>
-                <Button Content="{DynamicResource Str_Advanced_Workflows}" Click="OnWorkflows" Margin="6,0,0,0"/>
-                <Button Content="{DynamicResource Str_Advanced_Repairs}" Click="OnRepairs" Margin="6,0,0,0"/>
               </WrapPanel>
               <TextBlock x:Name="CaptureInfo" Text="{DynamicResource Str_CaptureScope}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
-              <TextBlock Text="{DynamicResource Str_Knowledge_Header}" Margin="0,10,0,4" Foreground="{DynamicResource PrimaryBrush}"/>
-              <TextBox x:Name="KnowledgeContext" AutomationProperties.Name="Knowledge product context" ToolTip="{DynamicResource Str_Knowledge_ContextTip}"/>
-              <TextBox x:Name="KnowledgeCode" AutomationProperties.Name="Knowledge code or search text" ToolTip="{DynamicResource Str_Knowledge_CodeTip}" Margin="0,4,0,4"/>
-              <Button Content="{DynamicResource Str_Knowledge_Lookup}" Click="OnKnowledgeLookup" HorizontalAlignment="Left"/>
-              <Button x:Name="KnowledgeSearchButton" Content="{DynamicResource Str_Knowledge_Search}" Tag="search" Click="OnKnowledgeLookup" HorizontalAlignment="Left" Margin="0,4,0,0"/>
-              <Button Content="{DynamicResource Str_Knowledge_Compare}" Click="OnKnowledgeCompare" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Knowledge_CompareTip}"/>
-              <Button Content="{DynamicResource Str_Knowledge_WindowsCode}" Click="OnWindowsCodeLookup" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Knowledge_WindowsCodeTip}"/>
-              <Button Content="{DynamicResource Str_Knowledge_DeviceCode}" Click="OnDeviceCodeLookup" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Knowledge_DeviceCodeTip}"/>
             </StackPanel>
-          </Grid></Expander></StackPanel></ScrollViewer>
+          </Grid></Expander>
+            <Expander x:Name="KnowledgeTools" Header="{DynamicResource Str_Knowledge_Header}" Foreground="{DynamicResource TextBrush}" Margin="0,12,0,0"><StackPanel Margin="0,8,0,0">
+              <TextBox x:Name="KnowledgeContext" AutomationProperties.Name="Knowledge product context" ToolTip="{DynamicResource Str_Knowledge_ContextTip}"/>
+              <TextBox x:Name="KnowledgeCode" AutomationProperties.Name="Knowledge code or search text" ToolTip="{DynamicResource Str_Knowledge_CodeTip}" Margin="0,8,0,8"/>
+              <Button Content="{DynamicResource Str_Knowledge_Header}" Click="OnWorkbenchMenu" HorizontalAlignment="Left"><Button.ContextMenu><ContextMenu>
+                <MenuItem Header="{DynamicResource Str_Knowledge_Lookup}" Click="OnKnowledgeLookup"/>
+                <MenuItem x:Name="KnowledgeSearchButton" Header="{DynamicResource Str_Knowledge_Search}" Tag="search" Click="OnKnowledgeLookup"/>
+                <MenuItem Header="{DynamicResource Str_Knowledge_Compare}" Click="OnKnowledgeCompare"/>
+                <Separator/>
+                <MenuItem x:Name="WindowsCodeAction" Header="{DynamicResource Str_Knowledge_WindowsCode}" Click="OnWindowsCodeLookup"/>
+                <MenuItem x:Name="DeviceCodeAction" Header="{DynamicResource Str_Knowledge_DeviceCode}" Click="OnDeviceCodeLookup"/>
+              </ContextMenu></Button.ContextMenu></Button>
+            </StackPanel></Expander></StackPanel></ScrollViewer>
         </Border></Grid>
 </Border>
           <Border x:Name="DetailsPanel" Grid.Column="1" Grid.RowSpan="2" Width="270" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Margin="4,0,0,0" ClipToBounds="True" Visibility="Collapsed">
@@ -988,8 +1003,19 @@
             <Expander Grid.Row="5" Header="{DynamicResource Str_Session_Sources}" Foreground="{DynamicResource TextBrush}" Margin="0,8,0,0">
                 <Grid Height="140">
                   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-                  <DockPanel><Button DockPanel.Dock="Right" Content="{DynamicResource Str_Session_LoadSample}" Click="OnSample"/><TextBlock x:Name="SessionLabel" VerticalAlignment="Center"/></DockPanel>
-                  <ListBox x:Name="SourcesList" Grid.Row="1" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" SelectionChanged="OnSourceSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Evidence_sources}"/>
+                  <DockPanel>
+                    <Button DockPanel.Dock="Right" Content="{DynamicResource Str_Session_Sources}" Click="OnWorkbenchMenu" Margin="8,0,0,6"><Button.ContextMenu><ContextMenu>
+                      <MenuItem x:Name="OpenCaptureButton" Header="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture"/>
+                      <MenuItem x:Name="SaveCaptureButton" Header="{DynamicResource Str_SaveCapture}" Click="OnSaveCapture" IsEnabled="False"/>
+                      <MenuItem Header="{DynamicResource Str_Advanced_OpenWorkflow}" Click="OnOpenWorkflowJournal"/>
+                      <MenuItem Header="{DynamicResource Str_Session_LoadSample}" Click="OnSample"/>
+                      <Separator/>
+                      <MenuItem x:Name="WorkflowActions" Header="{DynamicResource Str_Advanced_Workflows}" Click="OnWorkflows"/>
+                      <MenuItem x:Name="RepairActions" Header="{DynamicResource Str_Advanced_Repairs}" Click="OnRepairs"/>
+                    </ContextMenu></Button.ContextMenu></Button>
+                    <TextBlock x:Name="SessionLabel" VerticalAlignment="Center"/>
+                  </DockPanel>
+                  <ListBox x:Name="SourcesList" Grid.Row="1" Style="{StaticResource WorkbenchList}" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" SelectionChanged="OnSourceSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Evidence_sources}"/>
                   <Border x:Name="SourceFadeTop" Style="{StaticResource SidebarFadeTop}" IsHitTestVisible="False"/>
                   <Border x:Name="SourceFadeBottom" Style="{StaticResource SidebarFadeBottom}" IsHitTestVisible="False"/>
                 </Grid>

@@ -459,7 +459,7 @@ internal static class Program
                 "Security scan and Firewall profile controls resolve their localizable English resources");
             Require(window.FindName("RecipeSelectionPanel") is Expander { Header: "Choose checks (advanced)" } &&
                 window.FindName("AdvancedTools") is Expander { Header: "Advanced: logs and manual repairs" } &&
-                window.FindName("KnowledgeSearchButton") is Button { Content: "Open pack and search text" } &&
+                window.FindName("KnowledgeSearchButton") is MenuItem { Header: "Open pack and search text" } &&
                 window.FindName("ConsoleViewButton") is Button { Content: "Raw output" } &&
                 window.FindName("RepairConsent") is CheckBox { Content: "Run this repair on this PC" },
                 "Advanced selection, knowledge, session and repair controls resolve their localizable English resources");
@@ -469,6 +469,21 @@ internal static class Program
                 window.FindName("AboutStartupUpdateCheck") is CheckBox { Content: TextBlock { Text: "Check for updates on startup" } } &&
                 window.FindName("AboutUpdateButton") is Button { Visibility: Visibility.Collapsed },
                 "Shell status and About controls resolve their localizable English resources");
+            var scopedCategories = (ListBox)window.FindName("CategoryList");
+            for (int category = 0; category < scopedCategories.Items.Count; category++)
+            {
+                scopedCategories.SelectedIndex = category;
+                Require(((Expander)window.FindName("AdvancedTools")).Visibility ==
+                    (category == 2 ? Visibility.Visible : Visibility.Collapsed),
+                    "Update log tools appear only in Updates, category " + category);
+                Require(((Expander)window.FindName("KnowledgeTools")).Visibility ==
+                    (category is 0 or 3 ? Visibility.Visible : Visibility.Collapsed),
+                    "Reference tools stay in Diagnostics and Devices, category " + category);
+                Require(((MenuItem)window.FindName("DeviceCodeAction")).Visibility ==
+                    (category == 3 ? Visibility.Visible : Visibility.Collapsed),
+                    "Device codes appear only in Devices, category " + category);
+            }
+            scopedCategories.SelectedIndex = 0;
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "Windows Maintenance Workbench",
                 "Desktop subtitle identifies the full maintenance scope");
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
@@ -527,7 +542,7 @@ internal static class Program
                 "Browser extension inventory appears in Apps without repair controls");
             ((Expander)window.FindName("AdvancedTools")).IsExpanded = true;
             window.UpdateLayout();
-            FindButtons(window).Single(button => Equals(button.Content, "Workflows")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ((MenuItem)window.FindName("WorkflowActions")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
             var workflowChoices = (ComboBox)window.FindName("RepairChoice");
             var workflowPreview = (TextBox)window.FindName("RepairPreview");
             var workflowConsent = (CheckBox)window.FindName("RepairConsent");
@@ -1824,10 +1839,10 @@ internal static class Program
             var advanced = (Expander)window.FindName("AdvancedTools");
             advanced.IsExpanded = true;
             window.UpdateLayout();
-            var windowsLookup = FindButtons(window).Single(b => Equals(b.Content, "Look up Windows system code"));
+            var windowsLookup = (MenuItem)window.FindName("WindowsCodeAction");
             var knowledgeCode = (TextBox)window.FindName("KnowledgeCode");
             string beforeLookup = text.Text;
-            ((Button)window.FindName("KnowledgeSearchButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ((MenuItem)window.FindName("KnowledgeSearchButton")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
             Require(text.Text == beforeLookup, "Empty reference search preserves evidence without opening a picker");
             var referenceDay = new DateOnly(2026, 9, 13);
             var searchEntry = new KnowledgeEntry("fixture", "5", "Fixture title", "Fixture explanation", "https://example.com/reference", referenceDay, "Fixture product");
@@ -1841,18 +1856,18 @@ internal static class Program
             var emptySearch = (TextEvidence)formatSearch.Invoke(null, [searchCatalog, "fixture", "absent", new KnowledgeSearchResult(0, [])])!;
             Require(!emptySearch.Truncated && emptySearch.Lines.Any(line => line.Contains("No reference text matches")), "Empty reference search is explicit");
             knowledgeCode.Text = "not-a-code";
-            windowsLookup.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            windowsLookup.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
             Require(text.Text == beforeLookup, "Invalid Windows code preserves existing evidence");
             knowledgeCode.Text = "0x5";
-            windowsLookup.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            windowsLookup.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
             Require(text.Text.Contains("Code: 5 (0x5)") && text.Text.Contains("WINDOWS SYSTEM MESSAGE"),
                 "Windows lookup button replaces sample with code reference");
             knowledgeCode.Text = "0x80240034";
-            windowsLookup.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            windowsLookup.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
             Require(text.Text.Contains("WINDOWS UPDATE RESULT CODE") && text.Text.Contains("WU_E_DOWNLOAD_FAILED") &&
                 text.Text.Contains("BITS"), "Windows lookup adds the shared Windows Update reference and diagnostic route");
             knowledgeCode.Text = "0xFFFFFFFF";
-            windowsLookup.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            windowsLookup.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
             Require(text.Text.Contains("No system message found for this code."), "Unknown Windows code is explicitly unresolved");
             knowledgeCode.Clear();
             advanced.IsExpanded = false;
@@ -1896,7 +1911,7 @@ internal static class Program
             ((Button)window.FindName("OpenButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             for (int attempt = 0; attempt < 60 && ((TextBlock)window.FindName("EvidenceTitle")).Text != "Windows Update capture"; attempt++) Pump();
             Require(((TextBlock)window.FindName("EvidenceTitle")).Text == "Windows Update capture", "Saved capture opens through app workflow");
-            Require(((Button)window.FindName("SaveCaptureButton")).IsEnabled, "Capture save available");
+            Require(((MenuItem)window.FindName("SaveCaptureButton")).IsEnabled, "Capture save available");
             var captureFindings = (StackPanel)window.FindName("FindingCards");
             Require(FindButtons(captureFindings).Count(b => Equals(b.Content, "Show evidence")) == 2, "Capture overview groups CBS and event findings");
             FindButtons(captureFindings).Single(b => Equals(b.Tag, "KB-CBS-001")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -1912,7 +1927,7 @@ internal static class Program
             var panel = new Border { Style = (Style)window.FindResource("Panel") };
             window.UpdateLayout();
             Require(ReferenceEquals(panel.BorderBrush, window.FindResource("PaneBorderBrush")), "Pane uses family border resource");
-            FindButtons(window).Single(b => Equals(b.Content, "Repairs")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ((MenuItem)window.FindName("RepairActions")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
             Pump();
             Require(!((Button)window.FindName("RepairRun")).IsEnabled, "Repair requires explicit consent");
             Require(((TextBox)window.FindName("RepairPreview")).Text.Contains("TARGET: THIS PC") && ((TextBox)window.FindName("RepairPreview")).Text.Contains("/RestoreHealth"), "Repair preview names target and action");
@@ -1920,7 +1935,7 @@ internal static class Program
             ((ComboBox)window.FindName("RepairChoice")).SelectedIndex = 1;
             Require(((CheckBox)window.FindName("RepairConsent")).IsChecked == false, "Changing action clears consent");
             Capture(window, Path.Combine(scratch, "repairs.png"));
-            FindButtons(window).Single(b => Equals(b.Content, "Workflows")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ((MenuItem)window.FindName("WorkflowActions")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
             Pump();
             Require(((Button)window.FindName("RepairRun")).IsEnabled && ((ComboBox)window.FindName("RepairChoice")).Items.Count == Enum.GetValues<WorkflowKind>().Length, "All workflows support diagnosis without repair consent");
             var mainChoices = (ComboBox)window.FindName("MainWorkflow");

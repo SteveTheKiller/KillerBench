@@ -56,6 +56,9 @@ public partial class MainWindow
     private void OnRecipeSelectionChanged(object sender, RoutedEventArgs e)
     {
         if (RecipeSelectionSummary is null || RecipeSelectionList is null || CustomizeRecipes is null) return;
+        bool showRecipes = CustomizeRecipes.IsChecked == true && FocusDiagnosticAreas?.IsChecked != true;
+        RecipeSelectionList.Visibility = showRecipes ? Visibility.Visible : Visibility.Collapsed;
+        RecipeActions.Visibility = RecipeSelectionList.Visibility;
         if (FocusDiagnosticAreas?.IsChecked == true)
         {
             RecipeSelectionSummary.Text = "Recipe checks are excluded from this focused diagnostic run.";

@@ -1,3 +1,4 @@
+using System.Windows;
 using System.Windows.Controls;
 using KillerBench.Controls;
 using KillerBench.Engine;
@@ -88,9 +89,21 @@ public partial class MainWindow
             CategoryList.SelectedItem = category;
             CategoryTitle.Text = category.Title;
             CategoryDescription.Text = category.Description;
+            AdvancedTools.Visibility = category.Id == "Updates" ? Visibility.Visible : Visibility.Collapsed;
+            KnowledgeTools.Visibility = category.Id is "Diagnostics" or "Devices" ? Visibility.Visible : Visibility.Collapsed;
+            WindowsCodeAction.Visibility = category.Id == "Diagnostics" ? Visibility.Visible : Visibility.Collapsed;
+            DeviceCodeAction.Visibility = category.Id == "Devices" ? Visibility.Visible : Visibility.Collapsed;
             CategoryWorkflow.ItemsSource = category.Tools.Select(kind => WorkflowCatalog.All.Single(w => w.Kind == kind)).ToArray();
             CategoryWorkflow.SelectedItem = workflow;
         }
         finally { synchronizingNavigation = false; }
+    }
+
+    private void OnWorkbenchMenu(object sender, System.Windows.RoutedEventArgs e)
+    {
+        if (sender is not Button { ContextMenu: { } menu } button) return;
+        menu.PlacementTarget = button;
+        menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+        menu.IsOpen = true;
     }
 }
