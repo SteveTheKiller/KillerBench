@@ -161,24 +161,29 @@ internal static class ProfileCancellationNativeAcceptanceChecks
         bool copyReturned = false;
         try
         {
+            diagnostics.EmitPhase(DiagnosticPhase.BeforeCopyInvocation);
             Task copy = host.CopyAsync(target, destination, null, cancellation.Token);
             diagnostics.SetCopyTask(copy);
+            diagnostics.EmitPhase(DiagnosticPhase.CopyTaskReturned);
             try { await AwaitProtectedCopyAsync(copy, cancellation.Cancel, TimeSpan.FromSeconds(90)).ConfigureAwait(false); }
             catch (OperationCanceledException) { canceled = true; }
             catch (Exception error) { copyError = error; }
             copyReturned = copyError is not TimeoutException;
             // Observe termination before any subsequent hashing, artifact reading or delay.
             exitedAtReturn = heldProcess is not null && heldProcess.HasExited;
+            diagnostics.EmitPhase(DiagnosticPhase.CopyAwaitSettled);
         }
         finally
         {
             copySettled.TrySetResult();
             watcherStop.Cancel();
             cancellation.Cancel();
-            try { await watcher.WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false); }
-            catch (OperationCanceledException) { }
+            diagnostics.EmitPhase(DiagnosticPhase.WatcherWaitEnter);
+            try { await watcher.WaitAsync(TimeSpan.FromSeconds(10)).ConfigureAwait(false); diagnostics.EmitPhase(DiagnosticPhase.WatcherWaitReturn); }
+            catch (OperationCanceledException) { diagnostics.EmitPhase(DiagnosticPhase.WatcherWaitCanceled); }
             catch (TimeoutException)
             {
+                diagnostics.EmitPhase(DiagnosticPhase.WatcherWaitTimeout);
                 lock (incompleteFields)
                 {
                     throw new BlockedException("The read-only management watcher did not finish within its bound. Containment is unverified; restore the snapshot after coordinator reconciliation. " +
@@ -295,6 +300,7 @@ internal static class ProfileCancellationNativeAcceptanceChecks
     {
         object? locator = null, services = null, result = null;
         var rows = new List<NativeProcess>();
+        bool supplementalQuery = false;
         try
         {
             locator = Activator.CreateInstance(Type.GetTypeFromProgID("WbemScripting.SWbemLocator", throwOnError: true)!);
@@ -302,6 +308,7 @@ internal static class ProfileCancellationNativeAcceptanceChecks
             result = ((dynamic)services).ExecQuery("SELECT ProcessId, ParentProcessId, ExecutablePath, CommandLine, CreationDate FROM Win32_Process WHERE Name='robocopy.exe'", "WQL", 0);
             foreach (object item in (System.Collections.IEnumerable)result)
             {
+                bool supplementalRow = false;
                 try
                 {
                     dynamic row = item;
@@ -317,18 +324,24 @@ internal static class ProfileCancellationNativeAcceptanceChecks
                         _ => throw new ArgumentOutOfRangeException(nameof(name))
                     }, typed.Add);
                     rows.Add(identity);
+                    bool sample = !identity.Complete && diagnostics is not null && diagnostics.TryReserveSample();
+                    if (sample) diagnostics!.EmitPhase(DiagnosticPhase.DirectFieldsCollected, typed.ToArray());
                     if (diagnostics is not null)
                     {
                         diagnostics.RecordOutcomes(typed.ToArray());
-                        if (!identity.Complete && diagnostics.TryReserveSample())
+                        if (sample)
                         {
+                            supplementalRow = supplementalQuery = true;
+                            diagnostics.EmitPhase(DiagnosticPhase.StandardGettersEnter);
+                            var standard = DiagnosticFields(name => ReadStandardProperty(item, name));
+                            diagnostics.EmitPhase(DiagnosticPhase.StandardGettersReturn);
                             diagnostics.CompleteSample(new
                             {
                                 elapsedMilliseconds = diagnostics.ElapsedMilliseconds,
                                 copyTaskIsCompleted = diagnostics.CopyTaskIsCompleted,
                                 strictComplete = identity.Complete,
                                 direct = typed.ToArray(),
-                                standard = DiagnosticFields(name => ReadStandardProperty(item, name)),
+                                standard,
                                 correlation = Correlation(item),
                                 security = ReadSecurity(services)
                             });
@@ -336,11 +349,21 @@ internal static class ProfileCancellationNativeAcceptanceChecks
                         }
                     }
                 }
-                finally { Release(item); }
+                finally
+                {
+                    if (supplementalRow) diagnostics!.EmitPhase(DiagnosticPhase.RowReleaseEnter);
+                    Release(item);
+                    if (supplementalRow) diagnostics!.EmitPhase(DiagnosticPhase.RowReleaseReturn);
+                }
             }
             return rows.ToArray();
         }
-        finally { Release(result); Release(services); Release(locator); }
+        finally
+        {
+            if (supplementalQuery) diagnostics!.EmitPhase(DiagnosticPhase.QueryReleaseEnter);
+            Release(result); Release(services); Release(locator);
+            if (supplementalQuery) diagnostics!.EmitPhase(DiagnosticPhase.QueryReleaseReturn);
+        }
         static void Release(object? value) { if (value is not null && Marshal.IsComObject(value)) Marshal.FinalReleaseComObject(value); }
     }
 
@@ -431,7 +454,7 @@ internal static class ProfileCancellationNativeAcceptanceChecks
         finally { ReleaseDiagnostic(security); }
     }
 
-    private static object OwnProcessControl()
+    private static object OwnProcessControl(ProcessDiagnostics diagnostics)
     {
         object? locator = null, services = null, result = null;
         try
@@ -447,10 +470,19 @@ internal static class ProfileCancellationNativeAcceptanceChecks
                 try
                 {
                     if (++count > 1) throw new InvalidOperationException("Own-process diagnostic row bound exceeded.");
-                    observation = new { direct = DiagnosticFields(name => ReadDirectProperty(item, name)),
-                        standard = DiagnosticFields(name => ReadStandardProperty(item, name)), security = ReadSecurity(services) };
+                    var direct = DiagnosticFields(name => ReadDirectProperty(item, name));
+                    diagnostics.EmitPhase(DiagnosticPhase.ControlDirectFieldsCollected, direct);
+                    diagnostics.EmitPhase(DiagnosticPhase.ControlStandardGettersEnter);
+                    var standard = DiagnosticFields(name => ReadStandardProperty(item, name));
+                    diagnostics.EmitPhase(DiagnosticPhase.ControlStandardGettersReturn);
+                    observation = new { direct, standard, security = ReadSecurity(services) };
                 }
-                finally { ReleaseDiagnostic(item); }
+                finally
+                {
+                    diagnostics.EmitPhase(DiagnosticPhase.ControlReleaseEnter);
+                    ReleaseDiagnostic(item);
+                    diagnostics.EmitPhase(DiagnosticPhase.ControlReleaseReturn);
+                }
             }
             return new { count, observation };
         }
@@ -460,6 +492,7 @@ internal static class ProfileCancellationNativeAcceptanceChecks
     private sealed class ProcessDiagnostics
     {
         private readonly object gate = new();
+        private readonly PhaseEvidence phaseEvidence = new(Console.Out);
         private readonly Stopwatch elapsed = Stopwatch.StartNew();
         private readonly Dictionary<string, int> counters = new(StringComparer.Ordinal);
         private readonly List<object> samples = [];
@@ -470,6 +503,7 @@ internal static class ProfileCancellationNativeAcceptanceChecks
         internal long ElapsedMilliseconds => elapsed.ElapsedMilliseconds;
         internal bool? CopyTaskIsCompleted => Volatile.Read(ref copyTask)?.IsCompleted;
         internal void SetCopyTask(Task task) => Volatile.Write(ref copyTask, task);
+        internal void EmitPhase(DiagnosticPhase phase, FieldDiagnostic[]? fields = null) => phaseEvidence.Emit(phase, ElapsedMilliseconds, CopyTaskIsCompleted, fields);
         internal void RecordOutcomes(FieldDiagnostic[] fields)
         {
             lock (gate)
@@ -499,8 +533,16 @@ internal static class ProfileCancellationNativeAcceptanceChecks
                 controls[stage] = new { pending = true };
             }
             object observation;
-            try { observation = OwnProcessControl(); }
+            var phases = stage switch
+            {
+                "before-copy" => (DiagnosticPhase.BeforeCopyControlEnter, DiagnosticPhase.BeforeCopyControlReturn),
+                "after-copy" => (DiagnosticPhase.AfterCopyControlEnter, DiagnosticPhase.AfterCopyControlReturn),
+                _ => (DiagnosticPhase.NestedOwnControlEnter, DiagnosticPhase.NestedOwnControlReturn)
+            };
+            EmitPhase(phases.Item1);
+            try { observation = OwnProcessControl(this); }
             catch (Exception error) { observation = DescribeField("own-process-control", null, error); }
+            finally { EmitPhase(phases.Item2); }
             lock (gate) controls[stage] = new { elapsedMilliseconds = ElapsedMilliseconds, copyTaskIsCompleted = CopyTaskIsCompleted, observation };
         }
         internal object Snapshot()
@@ -508,8 +550,53 @@ internal static class ProfileCancellationNativeAcceptanceChecks
             lock (gate) return new { elapsedMilliseconds = ElapsedMilliseconds, copyTaskIsCompleted = CopyTaskIsCompleted,
                 samples = samples.ToArray(), sampleLimit = 3, samplesTruncated,
                 counters = counters.ToDictionary(item => item.Key, item => item.Value), counterKeyLimit = 64, countersTruncated,
-                ownProcessControls = controls.ToDictionary(item => item.Key, item => item.Value) };
+                ownProcessControls = controls.ToDictionary(item => item.Key, item => item.Value), phaseEvidence = phaseEvidence.Snapshot() };
         }
+    }
+
+    private enum DiagnosticPhase
+    {
+        BeforeCopyControlEnter, BeforeCopyControlReturn, BeforeCopyInvocation, CopyTaskReturned, CopyAwaitSettled,
+        DirectFieldsCollected, StandardGettersEnter, StandardGettersReturn, NestedOwnControlEnter, NestedOwnControlReturn,
+        RowReleaseEnter, RowReleaseReturn, QueryReleaseEnter, QueryReleaseReturn, WatcherWaitEnter, WatcherWaitReturn,
+        WatcherWaitCanceled, WatcherWaitTimeout, AfterCopyControlEnter, AfterCopyControlReturn,
+        ControlDirectFieldsCollected, ControlStandardGettersEnter, ControlStandardGettersReturn, ControlReleaseEnter, ControlReleaseReturn,
+        PhaseEvidenceTruncated
+    }
+
+    private sealed class PhaseEvidence(TextWriter writer)
+    {
+        private readonly object gate = new();
+        private int writes, bytes, lostWrites;
+        private bool truncated;
+        internal void Emit(DiagnosticPhase phase, long elapsedMilliseconds, bool? copyTaskIsCompleted, FieldDiagnostic[]? fields)
+        {
+            lock (gate)
+            {
+                if (truncated) return;
+                try
+                {
+                    string line = JsonSerializer.Serialize(new
+                    {
+                        phase = phase.ToString(), elapsedMilliseconds, copyTaskIsCompleted, lostWrites,
+                        typed = fields?.Take(5).Select(field => new { field.Field, field.Outcome, field.ClrType, field.ExceptionType, field.HResult }).ToArray()
+                    });
+                    int length = Encoding.UTF8.GetByteCount(line + Environment.NewLine);
+                    if (writes >= 63 || bytes + length > 16384 - 256)
+                    {
+                        truncated = true;
+                        line = JsonSerializer.Serialize(new { phase = DiagnosticPhase.PhaseEvidenceTruncated.ToString(), elapsedMilliseconds, copyTaskIsCompleted, lostWrites });
+                        length = Encoding.UTF8.GetByteCount(line + Environment.NewLine);
+                    }
+                    if (writes >= 64 || bytes + length > 16384) { truncated = true; return; }
+                    writes++; bytes += length;
+                    writer.WriteLine(line);
+                    writer.Flush();
+                }
+                catch { lostWrites++; }
+            }
+        }
+        internal object Snapshot() { lock (gate) return new { writes, utf8Bytes = bytes, lostWrites, truncated, maximumWrites = 64, maximumUtf8Bytes = 16384 }; }
     }
 
     private static string[] Arguments(string command)
