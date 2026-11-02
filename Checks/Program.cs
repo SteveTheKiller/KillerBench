@@ -414,6 +414,19 @@ internal static class Program
             outputToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             window.UpdateLayout();
             Require(Math.Abs(toolPane.ActualWidth - resizedWidth) < 1, "Reopening output retains the chosen pane split");
+            var outputGrid = (Grid)window.FindName("ContentPane");
+            outputGrid.ColumnDefinitions[4].Width = new GridLength(220);
+            window.UpdateLayout();
+            var exportIcon = (Button)window.FindName("ExportReportButton");
+            Require(exportIcon.ActualWidth <= 28 && System.Windows.Automation.AutomationProperties.GetName(exportIcon) == "Export report",
+                "Export is an accessible icon button in the output heading");
+            var readableButton = (Button)window.FindName("ReportViewButton");
+            var rawButton = (Button)window.FindName("ConsoleViewButton");
+            var readableBounds = readableButton.TransformToAncestor(window).TransformBounds(new Rect(readableButton.RenderSize));
+            var rawBounds = rawButton.TransformToAncestor(window).TransformBounds(new Rect(rawButton.RenderSize));
+            Require(!readableBounds.IntersectsWith(rawBounds), "Output view buttons reflow without colliding in a narrow pane");
+            Require(FindButtons((FrameworkElement)window.FindName("TerminalPanel")).All(button => !Equals(button.Content, ((char)0xE76C).ToString())),
+                "Only the divider rail retains the output chevron");
             outputToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(((Border)window.FindName("TerminalPanel")).Visibility == Visibility.Collapsed &&
                 ((Border)window.FindName("LeftPanel")).IsEnabled,
@@ -724,6 +737,19 @@ internal static class Program
             ((Button)window.FindName("SidebarButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(((FrameworkElement)window.FindName("TerminalPanel")).Visibility == Visibility.Visible && lookupOutput.Text == retainedLookup,
                 "The divider chevron restores the previous result without rerunning it");
+            rawButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            window.UpdateLayout();
+            Require(lookupOutput.TextWrapping == TextWrapping.Wrap && lookupOutput.ExtentWidth <= lookupOutput.ViewportWidth + 1,
+                "Raw output wraps within the resized pane");
+            string outputCaptures = Path.Combine(Path.GetTempPath(), "KillerBench-output-layout-" + Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(outputCaptures);
+            Thread.Sleep(180);
+            window.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+            Capture(window, Path.Combine(outputCaptures, "narrow-raw.png"));
+            readableButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            window.UpdateLayout();
+            Capture(window, Path.Combine(outputCaptures, "narrow-report.png"));
+            Console.WriteLine("Output layout evidence: " + outputCaptures);
             Console.WriteLine("PASS: WPF workbench geometry, zoom containment, servicing monitor bounds and safe report navigation.");
             return 0;
         }

@@ -229,7 +229,7 @@ public partial class MainWindow
     }
     private void UpdateScaledWorkspaceWidths()
     {
-        OutputWorkspace.Width = double.NaN;
+        OutputWorkspace.Width = Math.Max(0, OutputScroll.ActualWidth);
         if (ToolScroll.Content is FrameworkElement content) content.Width = double.NaN;
     }
     private bool HandleShellKey(KeyEventArgs e)

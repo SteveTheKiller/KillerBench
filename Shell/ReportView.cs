@@ -63,7 +63,12 @@ public partial class MainWindow
         ReportContent.Children.Add(Body(LocalizedStatus(result.Status) + " | " + result.StartedUtc.ToString("g"), 12, new Thickness(0, 0, 0, 14)));
 
         var summary = result.Summary;
-        var metrics = new System.Windows.Controls.Primitives.UniformGrid { Rows = 1, Columns = 4, Margin = new Thickness(0, 0, -8, 14) };
+        var metrics = new System.Windows.Controls.Primitives.UniformGrid { Columns = 4, Margin = new Thickness(0, 0, -8, 14) };
+        metrics.SizeChanged += (_, _) =>
+        {
+            int columns = Math.Clamp((int)(metrics.ActualWidth / 120), 1, 4);
+            if (metrics.Columns != columns) metrics.Columns = columns;
+        };
         AddMetric(metrics, LocalizedText.Get("Str_Report_NeedsReview"), summary.ReviewItems);
         AddMetric(metrics, LocalizedText.Get("Str_Report_VerifiedRepairs"), summary.VerifiedRepairs);
         AddMetric(metrics, LocalizedText.Get("Str_Report_Incomplete"), summary.Incomplete);

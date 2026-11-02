@@ -986,18 +986,16 @@
 <Border Padding="14">
           <ScrollViewer x:Name="OutputScroll" Style="{StaticResource OverlayScrollViewer}" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
           <Grid x:Name="OutputWorkspace">
+            <Grid.Resources><DataTemplate x:Key="OutputViewLabel"><TextBlock Text="{Binding}" TextWrapping="Wrap"/></DataTemplate></Grid.Resources>
             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <DockPanel Margin="0,0,0,8">
-              <Button DockPanel.Dock="Right" Style="{StaticResource RailButton}" Content="&#xE76C;" Click="OnToggleSources" ToolTip="{DynamicResource Str_ToolTip_Toggle_sources_F2}"/>
+              <Button x:Name="ExportReportButton" DockPanel.Dock="Right" Style="{StaticResource RailButton}" Content="&#xEDE1;" Click="OnExportReport" ToolTip="{DynamicResource Str_ExportContents}" AutomationProperties.Name="{DynamicResource Str_ExportReport}"/>
               <TextBlock x:Name="EvidenceTitle" Text="{DynamicResource Str_Text_Evidence}" FontFamily="{DynamicResource HeadingFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,8,0"/>
             </DockPanel>
-            <DockPanel Grid.Row="1" Margin="0,0,0,8">
-              <Button x:Name="ExportReportButton" DockPanel.Dock="Right" VerticalAlignment="Center" Content="{DynamicResource Str_ExportReport}" Click="OnExportReport" ToolTip="{DynamicResource Str_ExportContents}"/>
-              <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <Button x:Name="ReportViewButton" Style="{StaticResource ViewToolbarButton}" Content="{DynamicResource Str_Session_ReadableReport}" Click="OnReportView" Padding="9,4" ToolTip="{DynamicResource Str_Session_ReadableReportTip}" AutomationProperties.Name="Show readable report"/>
-                <Button x:Name="ConsoleViewButton" Style="{StaticResource ViewToolbarButton}" Content="{DynamicResource Str_Session_RawOutput}" Click="OnConsoleView" Padding="9,4" Margin="6,0,0,0" ToolTip="{DynamicResource Str_Session_RawOutputTip}" AutomationProperties.Name="Show raw technical output"/>
-              </StackPanel>
-            </DockPanel>
+            <WrapPanel x:Name="OutputViewButtons" Grid.Row="1" Margin="0,0,0,2">
+              <Button x:Name="ReportViewButton" Style="{StaticResource ViewToolbarButton}" Content="{DynamicResource Str_Session_ReadableReport}" ContentTemplate="{StaticResource OutputViewLabel}" MaxWidth="{Binding ActualWidth, ElementName=OutputViewButtons}" Click="OnReportView" Padding="9,4" Margin="0,0,0,6" ToolTip="{DynamicResource Str_Session_ReadableReportTip}" AutomationProperties.Name="Show readable report"/>
+              <Button x:Name="ConsoleViewButton" Style="{StaticResource ViewToolbarButton}" Content="{DynamicResource Str_Session_RawOutput}" ContentTemplate="{StaticResource OutputViewLabel}" MaxWidth="{Binding ActualWidth, ElementName=OutputViewButtons}" Click="OnConsoleView" Padding="9,4" Margin="0,0,0,6" ToolTip="{DynamicResource Str_Session_RawOutputTip}" AutomationProperties.Name="Show raw technical output"/>
+            </WrapPanel>
             <DockPanel x:Name="ConsoleSearchPanel" Grid.Row="2" Margin="0,0,0,6" Visibility="Collapsed">
               <Button DockPanel.Dock="Right" Content="{DynamicResource Str_Content_FIND}" Click="OnFind" ToolTip="{DynamicResource Str_ToolTip_Filter_evidence_lines_Enter_in_search}" Margin="4,0,0,0"/>
               <TextBox x:Name="SearchBox" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Filter_evidence}" ToolTip="{DynamicResource Str_ToolTip_Filter_loaded_lines_Clear_to_show_all_lines}" VerticalContentAlignment="Center" KeyDown="OnSearchKey"/>
