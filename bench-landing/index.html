@@ -8,19 +8,19 @@
 <meta name="darkreader-lock">
 <title data-i18n="page_index_title">KillerBench | Diagnostic Workbench</title>
 <link rel="canonical" href="https://killerbench.net/">
-<meta name="description" data-i18n-content="page_index_description" content="KillerBench is a Windows diagnostic and repair workbench in development. Diagnose first, follow the evidence, and fix only what the evidence proves, all on the local computer.">
+<meta name="description" data-i18n-content="page_index_description" content="KillerBench is a Windows diagnostics, repair and maintenance toolbox. Download the installer or portable edition, review diagnostic evidence, and explicitly confirm supported repairs.">
 <link rel="icon" type="image/x-icon" href="brand/kb-icon.ico">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://killerbench.net/">
 <meta property="og:title" data-i18n-content="page_index_title" content="KillerBench | Diagnostic Workbench">
-<meta property="og:description" data-i18n-content="page_index_description" content="KillerBench is a Windows diagnostic and repair workbench in development. Diagnose first, follow the evidence, and fix only what the evidence proves, all on the local computer.">
+<meta property="og:description" data-i18n-content="page_index_description" content="KillerBench is a Windows diagnostics, repair and maintenance toolbox. Download the installer or portable edition, review diagnostic evidence, and explicitly confirm supported repairs.">
 <meta property="og:image" content="https://killerbench.net/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:type" content="image/png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" data-i18n-content="page_index_title" content="KillerBench | Diagnostic Workbench">
-<meta name="twitter:description" data-i18n-content="page_index_description" content="KillerBench is a Windows diagnostic and repair workbench in development. Diagnose first, follow the evidence, and fix only what the evidence proves, all on the local computer.">
+<meta name="twitter:description" data-i18n-content="page_index_description" content="KillerBench is a Windows diagnostics, repair and maintenance toolbox. Download the installer or portable edition, review diagnostic evidence, and explicitly confirm supported repairs.">
 <meta name="twitter:image" content="https://killerbench.net/og-image.png">
 <script defer src="https://koya.thekiller.net/script.js" data-website-id="6ad2af59-e807-4cfd-82b9-e108920096cf"></script>
 <link rel="stylesheet" href="kb.css?v=2">
@@ -49,11 +49,13 @@
 
 /* Call to action (flat) */
 .hero-cta { display: flex; flex-direction: column; align-items: stretch; gap: 10px; flex: 0 1 360px; }
-.cta-row { display: flex; flex-direction: column; gap: 12px; max-width: 360px; }
+.cta-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; max-width: 360px; }
+.cta-row .download-btn:first-child { grid-column: 1 / -1; }
+.cta-row .download-btn:not(:first-child) { min-width: 0; padding: 14px 8px; gap: 7px; font-size: 13px; text-align: center; }
 .download-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: var(--btn); color: var(--btn-text); font-size: 15px; font-weight: 700; padding: 14px 28px; border-radius: 6px; box-shadow: 0 8px 20px rgba(0,0,0,0.35); transition: filter 0.15s, transform 0.1s, box-shadow 0.15s; }
 .download-btn:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 12px 28px rgba(0,0,0,0.5); color: var(--btn-text); }
 .download-btn:active { transform: translateY(1px); }
-.download-btn svg { width: 18px; height: 18px; fill: currentColor; }
+.download-btn svg { width: 18px; height: 18px; fill: currentColor; flex-shrink: 0; }
 .gh-btn { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; border: 1.5px solid var(--accent); color: var(--accent); background: transparent; font-size: 15px; font-weight: 700; padding: 12.5px 24px; border-radius: 6px; transition: background 0.15s, color 0.15s; }
 .gh-btn:hover { background: color-mix(in srgb, var(--text) 16%, transparent); color: var(--accent); }
 .gh-btn svg { width: 18px; height: 18px; fill: currentColor; }
@@ -167,15 +169,19 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <div class="hero-grid">
 <div class="hero-cta">
 <div class="cta-row">
-<a href="help.html" class="download-btn"><svg viewBox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v16H6.5a.5.5 0 0 0 0 1H20v3H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/></svg><span data-i18n="cta_guide">Read the guide</span></a>
+<a href="https://killerbench.net/download" class="download-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3h2v10l3-3 1.4 1.4L12 16.8l-5.4-5.4L8 10l3 3V3zM4 17h2v3h12v-3h2v5H4z"/></svg><span data-i18n="cta_install">Download installer</span></a>
+<a href="https://github.com/SteveTheKiller/KillerBench/releases/download/v1.0.0/KillerBench-Portable.exe" class="download-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3h2v10l3-3 1.4 1.4L12 16.8l-5.4-5.4L8 10l3 3V3zM4 17h2v3h12v-3h2v5H4z"/></svg><span data-i18n="cta_portable">Download portable</span></a>
+<a href="https://github.com/SteveTheKiller/KillerBench/releases/download/v1.0.0/killerbench-cli.exe" class="download-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3h2v10l3-3 1.4 1.4L12 16.8l-5.4-5.4L8 10l3 3V3zM4 17h2v3h12v-3h2v5H4z"/></svg><span data-i18n="cta_cli">Download CLI</span></a>
 </div>
 <a href="https://github.com/SteveTheKiller/KillerBench" class="gh-btn" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.29 3.44 9.77 8.2 11.36.6.11.82-.26.82-.58v-2.04c-3.34.72-4.04-1.61-4.04-1.61-.55-1.38-1.34-1.75-1.34-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.31 3.5 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.11-3.17 0 0 1.01-.32 3.3 1.23A11.5 11.5 0 0112 6.8c1.02 0 2.05.14 3 .4 2.29-1.55 3.3-1.23 3.3-1.23.65 1.65.24 2.87.12 3.17.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58A12 12 0 0024 12.5C24 5.87 18.63.5 12 .5z"/></svg><span data-i18n="gh_btn">Source on GitHub</span></a>
 </div>
 <div class="hero-info">
 <div class="row"><span class="k" data-i18n="ui_version">version</span>&nbsp;<span class="v">KillerBench v1.0.0</span></div>
-<div class="row"><span class="k" data-i18n="ui_status">status</span>&nbsp;<span class="v" data-i18n="ui_in_development">In development</span></div>
+<div class="row"><span class="k" data-i18n="ui_released">released</span>&nbsp;<span class="v">2026-11-02</span></div>
+<div class="row"><span class="k" data-i18n="ui_size">size</span>&nbsp;<span class="v">13.00 MB exe</span></div>
 <div class="row"><span class="k" data-i18n="ui_platform">platform</span>&nbsp;<span class="v">Windows 10/11 x64</span></div>
-<p class="note" data-i18n="hero_note">KillerBench is in development. Public downloads are not available yet. Native repair validation is still in progress.</p>
+<div class="row"><span class="k">sha256</span>&nbsp;<span class="v hash">c15cb2262efb7a44cac78c67ae182a3c3<br>c0b9867cbb9c4fa58704d4dfd43b1ea</span></div>
+<p class="note" data-i18n="hero_note">The installer requires .NET 10 Desktop Runtime for Windows x64. The portable edition includes its runtime. The separate CLI requires .NET 10 Runtime for Windows x64.</p>
 </div>
 </div>
 <div class="hero-blurbs">
@@ -247,7 +253,7 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <span data-i18n="shot_certs">Certificate expiration, Greed theme - at 120% app zoom</span>
 </div>
 
-<script src="kb-i18n.js?v=4"></script>
+<script src="kb-i18n.js?v=5"></script>
 <script src="kb.js?v=1"></script>
 <script src="feature-carousel.js?v=4"></script>
 <script>

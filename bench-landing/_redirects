@@ -1,8 +1,7 @@
 # Cloudflare Pages redirects.
 #
 # /download is the stable, memorable link to the newest release asset, the same alias the other
-# Killer app sites carry. It depends on the release asset staying named KillerBench.exe. It will
-# 404 until the first public release exists.
+# Killer app sites carry. It depends on the release asset staying named KillerBench.exe.
 #
 # 302, not 301: a permanent redirect would be cached by browsers and proxies, and the target is
 # only "permanent" until the next release. 302 keeps the alias re-resolving.

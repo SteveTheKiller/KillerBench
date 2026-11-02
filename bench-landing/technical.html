@@ -140,7 +140,7 @@
 <table class="spec-table"><thead><tr><th data-i18n="t1157">Layer</th><th data-i18n="t1158">Responsibility</th></tr></thead><tbody><tr><td data-i18n="t1159">Capability collectors</td><td data-i18n="t1160">Read bounded Windows state for one exact scope</td></tr><tr><td data-i18n="t1161">Evidence parsers</td><td data-i18n="t1162">Validate shape, identity, completeness and limits</td></tr><tr><td data-i18n="t1163">Diagnostic interpretation</td><td data-i18n="t1164">Convert evidence into explicit workflow states</td></tr><tr><td data-i18n="t1165">Workflow orchestration</td><td data-i18n="t1166">Combine checks, progress, recipes and journals</td></tr><tr><td data-i18n="t1167">Repair coordinators</td><td data-i18n="t1168">Recheck eligibility, prepare, change, verify and reconcile</td></tr><tr><td data-i18n="t1102">Reports</td><td data-i18n="t1169">Present problems, actions, results and limitations</td></tr><tr><td data-i18n="t1105">Knowledge packs</td><td data-i18n="t1170">Resolve versioned reference data without changing logic</td></tr></tbody></table>
 <p data-i18n="t1171">Collectors fail closed when identity is ambiguous, output is malformed, a limit is exceeded, or required authority cannot be inspected. The Engine targets Windows today and is not cross-platform. The <a href="engine/index.html">Engine developer guide</a> covers the API, the CLI and embedding the Engine in another .NET host.</p>
 </div><div class="tech-sec" id="development-status"><h2 data-i18n="t229">Development status</h2>
-<p data-i18n="t1172">KillerBench is in development and there is no public download yet. Repair coverage is still expanding, and native repair validation is still in progress. A successful build or simulated check does not establish native repair behavior. Disposable Windows virtual machines are used to validate each native change across Windows versions and failure states. See <a href="help.html#safety">How changes stay safe</a> for the full safety model.</p>
+<p data-i18n="t1172">KillerBench 1.0.0 is available. Repair coverage continues to expand. A successful build or simulated check does not establish native repair behavior. Disposable Windows virtual machines are used to validate native changes. See <a href="help.html#safety">How changes stay safe</a> for the safety model.</p>
 </div></div><div class="tech-column"><div class="tech-sec" id="install-folders-and-data"><h2 data-i18n="t1086">Install, folders and data</h2>
 <p data-i18n="t1173">KillerBench ships in two forms. The installer is the standard download and supports a per-user or an all-users installation. The portable edition carries its own .NET runtime and runs without installation.</p>
 <p data-i18n="t1174">KillerBench runs with the rights of the account that started it. It does not elevate itself. Start it with <strong>Run as administrator</strong> when protected evidence, such as BitLocker protectors, or a repair needs administrator access. Elevation never selects or approves a repair.</p>
@@ -187,7 +187,7 @@
 </footer>
 <div class="egg-toast" id="eggToast"></div>
 
-<script src="kb-i18n.js?v=4"></script>
+<script src="kb-i18n.js?v=5"></script>
 <script src="kb.js?v=1"></script>
 <script>
 (function(){
