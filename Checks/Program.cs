@@ -1,6 +1,7 @@
 using System.IO;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -396,6 +397,23 @@ internal static class Program
             outputToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(((Border)window.FindName("TerminalPanel")).Visibility == Visibility.Visible,
                 "Output toggle opens the retained output pane");
+            window.UpdateLayout();
+            var paneDivider = window.FindName("OutputDivider") as GridSplitter;
+            Require(paneDivider is { IsVisible: true }, "Open output exposes a grabbable divider");
+            var dividerPoint = paneDivider!.TranslatePoint(new Point(paneDivider.ActualWidth / 2, paneDivider.ActualHeight / 2), window);
+            DependencyObject? dividerHit = window.InputHitTest(dividerPoint) as DependencyObject;
+            while (dividerHit is not null && !ReferenceEquals(dividerHit, paneDivider)) dividerHit = VisualTreeHelper.GetParent(dividerHit);
+            Require(ReferenceEquals(dividerHit, paneDivider), "The center handle receives drag input beside the rail buttons");
+            var toolPane = (FrameworkElement)window.FindName("ConsoleBank");
+            double beforeResize = toolPane.ActualWidth;
+            paneDivider!.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(window), 0, Key.Right) { RoutedEvent = Keyboard.KeyDownEvent });
+            window.UpdateLayout();
+            Require(toolPane.ActualWidth > beforeResize, "The divider resizes the adjacent panes through keyboard input");
+            double resizedWidth = toolPane.ActualWidth;
+            outputToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            outputToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            window.UpdateLayout();
+            Require(Math.Abs(toolPane.ActualWidth - resizedWidth) < 1, "Reopening output retains the chosen pane split");
             outputToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(((Border)window.FindName("TerminalPanel")).Visibility == Visibility.Collapsed &&
                 ((Border)window.FindName("LeftPanel")).IsEnabled,
@@ -499,6 +517,32 @@ internal static class Program
                     "Device codes appear only in Devices, category " + category);
             }
             scopedCategories.SelectedIndex = 0;
+            window.Left = SystemParameters.VirtualScreenLeft + 100;
+            window.UpdateLayout();
+            foreach (string railMenuName in new[] { "ThemeButton", "LangButton" })
+            {
+                var anchor = (Button)window.FindName(railMenuName);
+                anchor.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                window.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+                var menu = anchor.ContextMenu;
+                menu.UpdateLayout();
+                Require(menu.CustomPopupPlacementCallback(new Size(220, 400), anchor.RenderSize, new Point())[0].Point.X < -200,
+                    railMenuName + " requests leftward placement regardless of screen-edge fallback");
+                var flyoutHalo = new Border { Style = (Style)window.FindResource("FlyoutCard") }.Margin;
+                Require(menu.IsOpen && menu.PointToScreen(new Point(menu.ActualWidth - flyoutHalo.Right, 0)).X <= anchor.PointToScreen(new Point()).X,
+                    railMenuName + " flyout opens to the left of the rail");
+                menu.IsOpen = false;
+            }
+            window.Left = SystemParameters.VirtualScreenLeft - 2000;
+            var workspace = (FrameworkElement)window.FindName("ScaleHost");
+            foreach (double insetScale in new[] { .7, 1d, 1.5, 2.5 })
+            {
+                typeof(KillerBench.Shell.MainWindow).GetMethod("ApplyAppScale", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [insetScale]);
+                window.UpdateLayout();
+                double rightInset = ((FrameworkElement)window.FindName("ZoomViewport")).ActualWidth - workspace.TranslatePoint(new Point(workspace.ActualWidth, 0), (UIElement)window.FindName("ZoomViewport")).X;
+                Require(Math.Abs(rightInset - 8) <= 1.01, $"Eight-pixel right inset allows pixel rounding at scale {insetScale}: {rightInset}");
+            }
+            typeof(KillerBench.Shell.MainWindow).GetMethod("ApplyAppScale", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [1d]);
             Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "Windows Maintenance Workbench",
                 "Desktop subtitle identifies the full maintenance scope");
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
@@ -1541,6 +1585,8 @@ internal static class Program
             {
                 zoomMethod.Invoke(window, [scale]);
                 Pump();
+                Require(Math.Abs(zoomViewport.ActualWidth - zoomHost.TranslatePoint(new Point(zoomHost.ActualWidth, 0), zoomViewport).X - 8) <= 1.01,
+                    "Eight-pixel right inset remains fixed at interface scale " + scale);
                 Require(Math.Abs(zoomHost.LayoutTransform.Value.M11 - scale) < .001 && Math.Abs(((TextBox)window.FindName("EvidenceBox")).FontSize - ((Slider)window.FindName("SizeSlider")).Value) < 0.001 &&
                     new Size(titleIcon.ActualWidth, titleIcon.ActualHeight) == stableTitleIconSize && Math.Abs(controlBank.Width * scale - 160) < 0.1 && Math.Abs(controlBank.ActualWidth - controlBank.Width) <= 1,
                     "Zoom scales content without squeezing the sidebar or moving titlebar controls. Scale=" + scale + ", transform=" + zoomHost.LayoutTransform.Value.M11 + ", sidebar=" + controlBank.ActualWidth + ", font=" + ((TextBox)window.FindName("EvidenceBox")).FontSize + ", slider=" + ((Slider)window.FindName("SizeSlider")).Value);

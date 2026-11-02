@@ -12,6 +12,8 @@ public partial class MainWindow
 
     private double sidebarWidth = SidebarDefaultWidth;
     private bool rawView;
+    private GridLength toolPaneWidth = new(2, GridUnitType.Star);
+    private GridLength outputPaneWidth = new(3, GridUnitType.Star);
 
     private void InitializePanels()
     {
@@ -54,8 +56,20 @@ public partial class MainWindow
     {
         if (TerminalPanel is null) return;
         bool wasOpen = TerminalPanel.Visibility == Visibility.Visible;
+        if (!open && wasOpen)
+        {
+            toolPaneWidth = ContentPane.ColumnDefinitions[2].Width;
+            outputPaneWidth = ContentPane.ColumnDefinitions[4].Width;
+        }
         TerminalPanel.Visibility = open ? Visibility.Visible : Visibility.Collapsed;
-        ContentPane.ColumnDefinitions[4].Width = new System.Windows.GridLength(open ? 3 : 0, System.Windows.GridUnitType.Star);
+        OutputDivider.Visibility = open ? Visibility.Visible : Visibility.Collapsed;
+        ContentPane.ColumnDefinitions[4].MinWidth = open ? 200 / appScale : 0;
+        if (open && !wasOpen)
+        {
+            ContentPane.ColumnDefinitions[2].Width = toolPaneWidth;
+            ContentPane.ColumnDefinitions[4].Width = outputPaneWidth;
+        }
+        else if (!open) ContentPane.ColumnDefinitions[4].Width = new GridLength(0, GridUnitType.Star);
         SidebarButton.Tag = open ? "on" : null;
         SidebarButton.Content = ((char)(open ? 0xE76C : 0xE76B)).ToString();
         if (open && !wasOpen && IsVisible && System.Windows.SystemParameters.ClientAreaAnimation)
