@@ -24,6 +24,60 @@ public static class ProfileBackupPathGuard
         catch { lease.Dispose(); throw; }
     }
 
+    internal static Lease OpenTree(string source, string destination, CancellationToken token)
+    {
+        var lease = new Lease();
+        try
+        {
+            foreach (string path in Ancestors(source).Concat(Ancestors(destination)).Distinct(StringComparer.OrdinalIgnoreCase)) lease.Pin(path);
+            void Capture(string root, bool allowOmissions)
+            {
+                var folders = new Stack<string>();
+                var rootHandle = lease.Pin(root);
+                if (!allowOmissions) lease.DestinationRoot = rootHandle;
+                folders.Push(root);
+                int entries = 0;
+                while (folders.Count != 0)
+                {
+                    token.ThrowIfCancellationRequested();
+                    foreach (string entry in Directory.EnumerateFileSystemEntries(folders.Pop()))
+                    {
+                        token.ThrowIfCancellationRequested();
+                        if (++entries > 100_000) throw new IOException("The protected profile comparison exceeds its entry limit.");
+                        var attributes = File.GetAttributes(entry);
+                        if ((attributes & FileAttributes.ReparsePoint) != 0)
+                        {
+                            if (allowOmissions && IsOmittedLink(entry)) continue;
+                            throw new IOException("A profile comparison entry is redirected.");
+                        }
+                        bool directory = (attributes & FileAttributes.Directory) != 0;
+                        lease.Pin(entry, directory);
+                        if (directory) folders.Push(entry);
+                    }
+                }
+            }
+            Capture(source, true);
+            Capture(destination, false);
+            return lease;
+        }
+        catch { lease.Dispose(); throw; }
+    }
+
+    internal static FileStream OpenFile(string path, long maximumBytes)
+    {
+        var handle = CreateFile(path, 0x80000000, 1, IntPtr.Zero, 3, 0x42200000, IntPtr.Zero);
+        if (handle.IsInvalid) { handle.Dispose(); throw new IOException("The exact profile file could not be opened."); }
+        try
+        {
+            if (!GetFileInformationByHandle(handle, out var info) || (info.Attributes & 0x410) != 0)
+                throw new IOException("The exact profile file is unavailable or redirected.");
+            var stream = new FileStream(handle, FileAccess.Read, 65_536, isAsync: true);
+            if (stream.Length > maximumBytes) { stream.Dispose(); throw new InvalidDataException("The profile file exceeds its size bound."); }
+            return stream;
+        }
+        catch { handle.Dispose(); throw; }
+    }
+
     private static uint Tag(string path)
     {
         using var find = FindFirstFile(path, out FindData data);
@@ -35,15 +89,23 @@ public static class ProfileBackupPathGuard
     /// omits them and verification accounts for them.</summary>
     public static bool IsOmittedLink(string path) => Tag(path) is MountPointTag or AppAliasTag;
 
-    /// <summary>Why this profile cannot be backed up, or null when every reparse entry under it is
-    /// one the copy omits. Anything else stops the backup before it starts.</summary>
-    public static string? UnsupportedEntry(string source, CancellationToken token)
+    /// <summary>Returns the exact supported links excluded from a copy, without traversing them.</summary>
+    public static IReadOnlyList<string> OmittedLinks(string source, CancellationToken token)
+        => OmittedLinks(source, token, rejectEncrypted: false);
+
+    internal static IReadOnlyList<string> OmittedLinks(string source, CancellationToken token, bool rejectEncrypted)
     {
+        var omitted = new List<string>();
         var folders = new Stack<string>();
         folders.Push(source);
         while (folders.Count > 0)
         {
+            token.ThrowIfCancellationRequested();
             string folder = folders.Pop();
+            if (rejectEncrypted && (File.GetAttributes(folder) & FileAttributes.Encrypted) != 0)
+                throw new IOException("Protected profile backup does not support EFS-encrypted entries. No files were copied.");
+            if ((File.GetAttributes(folder) & FileAttributes.ReparsePoint) != 0)
+                throw new IOException("A redirected profile directory was found while planning the backup.");
             foreach (string entry in Directory.EnumerateFileSystemEntries(folder))
             {
                 token.ThrowIfCancellationRequested();
@@ -51,12 +113,30 @@ public static class ProfileBackupPathGuard
                 if ((attributes & FileAttributes.ReparsePoint) != 0)
                 {
                     if (!IsOmittedLink(entry))
-                        return "The profile contains a link or cloud placeholder this backup cannot preserve: " + Path.GetRelativePath(source, entry);
+                        throw new IOException("The profile contains a link or cloud placeholder this backup cannot preserve: " + Path.GetRelativePath(source, entry));
+                    omitted.Add(entry);
                 }
-                else if ((attributes & FileAttributes.Directory) != 0) folders.Push(entry);
+                else
+                {
+                    if (rejectEncrypted && (attributes & FileAttributes.Encrypted) != 0)
+                        throw new IOException("Protected profile backup does not support EFS-encrypted entries. No files were copied.");
+                    if ((attributes & FileAttributes.Directory) != 0) folders.Push(entry);
+                }
             }
         }
-        return null;
+        return omitted;
+    }
+
+    /// <summary>Why this profile cannot be backed up, or null when links are supported omissions
+    /// and no EFS-encrypted entries are present. Unsupported entries stop the copy before it starts.</summary>
+    public static string? UnsupportedEntry(string source, CancellationToken token)
+    {
+        try
+        {
+            _ = OmittedLinks(source, token, rejectEncrypted: true);
+            return null;
+        }
+        catch (IOException error) { return error.Message; }
     }
 
     private static IEnumerable<string> Ancestors(string path)
@@ -67,19 +147,31 @@ public static class ProfileBackupPathGuard
         return parents;
     }
 
-    private sealed class Lease : IDisposable
+    internal sealed class Lease : IDisposable
     {
         private readonly List<SafeFileHandle> handles = [];
+        internal SafeFileHandle DestinationRoot = null!;
 
-        internal void Pin(string path)
+        internal void PermitPublication(string destination)
+        {
+            // The caller already owns a nondeletable artifact in this root. It cannot become empty
+            // and acquire a reparse point while its directory sharing permits the final rename.
+            var previous = DestinationRoot;
+            DestinationRoot = Pin(destination, share: 3);
+            previous.Dispose();
+        }
+
+        internal SafeFileHandle Pin(string path, bool directory = true, uint share = 1)
         {
             // Read access without delete sharing: a rename or swap of a held folder then fails.
-            var handle = CreateFile(path, 0x80000000, 3, IntPtr.Zero, 3, 0x02200000, IntPtr.Zero);
+            var handle = CreateFile(path, 0x80000000, share, IntPtr.Zero, 3, 0x02200000, IntPtr.Zero);
             if (handle.IsInvalid) { int code = Marshal.GetLastWin32Error(); handle.Dispose(); throw new Win32Exception(code); }
             handles.Add(handle);
             if (!GetFileInformationByHandle(handle, out FileInformation information)) throw new Win32Exception(Marshal.GetLastWin32Error());
-            if ((information.Attributes & (uint)FileAttributes.ReparsePoint) != 0 || (information.Attributes & (uint)FileAttributes.Directory) == 0)
+            if ((information.Attributes & (uint)FileAttributes.ReparsePoint) != 0 ||
+                ((information.Attributes & (uint)FileAttributes.Directory) != 0) != directory)
                 throw new IOException("A backup path folder is redirected.");
+            return handle;
         }
 
         public void Dispose()

@@ -45,7 +45,7 @@ internal static class ValidationReportCommands
             string report = extension.Equals(".html", StringComparison.OrdinalIgnoreCase)
                 ? NativeValidationReport.BuildHtml(capabilities, theme, accent)
                 : NativeValidationReport.BuildText(capabilities);
-            await File.WriteAllTextAsync(output, report);
+            await ReportFilePublication.WriteAsync(output, _ => Task.FromResult(report), overwrite);
             Console.WriteLine(Path.GetFullPath(output));
             return 0;
         }

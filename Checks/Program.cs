@@ -11,6 +11,17 @@ internal static class Program
     [STAThread]
     private static int Main(string[] args)
     {
+        if (ProfileBoundaryProcess.TryRun(args)) return 0;
+        if (args is ["--only", "native-profile-metadata"])
+        {
+            NativeAcceptancePackage.RunAsync(ProfileMetadataNativeAcceptanceChecks.RunAsync).GetAwaiter().GetResult();
+            return 0;
+        }
+        if (args is ["--only", "native-profile-cancellation"])
+        {
+            NativeAcceptancePackage.RunAsync(ProfileCancellationNativeAcceptanceChecks.RunAsync).GetAwaiter().GetResult();
+            return 0;
+        }
         // The family theme engine loads its palettes by application-relative pack URIs, which
         // resolve against the app assembly only when it is the resource assembly; and every
         // harness takes the app's theme hooks and first-run defaults, as App.OnStartup does.
@@ -20,6 +31,57 @@ internal static class Program
         WindowsEngine.Register();
         try
         {
+            if (args is ["--only", "cli-documentation"])
+            {
+                CliDocumentationChecks.Run();
+                return 0;
+            }
+            if (args is ["--only", "queued-relaunch"])
+            {
+                QueuedRelaunchChecks.Run(Path.GetTempPath());
+                return 0;
+            }
+            if (args is ["--only", "updater-merge-boundaries"])
+            {
+                UpdaterMergeBoundaryChecks.Run(Path.GetTempPath());
+                return 0;
+            }
+            if (args is ["--only", "native-profile-acceptance"])
+            {
+                ProfileNativeAcceptanceChecks.RunAsync(Path.GetTempPath()).GetAwaiter().GetResult();
+                return 0;
+            }
+            if (args is ["--only", "native-task-acceptance"])
+            {
+                ScheduledTaskNativeAcceptanceChecks.RunAsync(Path.GetTempPath()).GetAwaiter().GetResult();
+                return 0;
+            }
+            if (args is ["--only", "profile-acl"])
+            {
+                ProfileInclusionChecks.RunAsync().GetAwaiter().GetResult();
+                BitLockerAclChecks.RunAsync().GetAwaiter().GetResult();
+                return 0;
+            }
+            if (args is ["--only", "task-verification-boundary"])
+            {
+                TaskVerificationBoundaryChecks.Run();
+                return 0;
+            }
+            if (args is ["--only", "bounded-reads"])
+            {
+                BoundedReadChecks.RunAsync(Path.GetTempPath()).GetAwaiter().GetResult();
+                return 0;
+            }
+            if (args is ["--only", "report-publication"])
+            {
+                ReportFilePublicationChecks.RunAsync(Path.GetTempPath()).GetAwaiter().GetResult();
+                return 0;
+            }
+            if (args is ["--only", "recovery-record-validation"])
+            {
+                RecoveryRecordValidationChecks.RunAsync(Path.GetTempPath()).GetAwaiter().GetResult();
+                return 0;
+            }
             if (args is ["--only", "desktop-state"]) return DesktopOperationStateChecks.Run(args);
             if (args is ["--only", "capability-desktop"]) return CapabilityDesktopChecks.Run();
             if (args is ["--only", "picker-no-window"]) return FilePickerListingChecks.Run();
@@ -600,6 +662,9 @@ internal static class Program
             MemoryDiagnosticRecoveryChecks.RunAsync(scratch).GetAwaiter().GetResult();
             RepairCapabilityChecks.RunAsync(scratch).GetAwaiter().GetResult();
             GoalUncertaintyChecks.RunAsync().GetAwaiter().GetResult();
+            CliCapabilitiesChecks.RunAsync().GetAwaiter().GetResult();
+            CliDocumentationChecks.Run();
+            CliDebloatRecoveryChecks.RunAsync(scratch).GetAwaiter().GetResult();
             WindowsMtuDispatchChecks.RunAsync().GetAwaiter().GetResult();
             MutationDispatchChecks.RunAsync().GetAwaiter().GetResult();
             DriveLetterTargetChecks.RunAsync().GetAwaiter().GetResult();
@@ -816,7 +881,15 @@ internal static class Program
             ActivityExportChecks.Run();
             WorkflowReportExportChecks.Run();
             ServiceInventoryChecks.Run();
+            ReportFilePublicationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            RecoveryRecordValidationChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            TaskVerificationBoundaryChecks.Run();
+            BoundedReadChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            ProfileInclusionChecks.RunAsync().GetAwaiter().GetResult();
+            BitLockerAclChecks.RunAsync().GetAwaiter().GetResult();
             ServiceBinaryChecks.Run();
+            QueuedRelaunchChecks.Run(scratch);
+            UpdaterMergeBoundaryChecks.Run(scratch);
             ServicePathQuotingChecks.Run();
             ServiceLogonChecks.Run();
             ServiceStartupConfigurationChecks.Run();

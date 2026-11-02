@@ -148,7 +148,7 @@ internal static class ProfileRemovalChecks
             File.Exists(Path.Combine(canceledArtifactFolder, ProfileBackupArtifactVerifier.ReceiptFileName)))
             throw new Exception("Canceled profile backup artifact creation published a fixed artifact");
 
-        foreach (string mode in new[] { "success", "final-loaded", "incomplete", "destination-exists" })
+        foreach (string mode in new[] { "success", "final-loaded", "incomplete", "destination-exists", "verify-missing", "verify-null", "verify-stall" })
         {
             string backupFolder = Path.Combine(scratch, "profile-backup-execution-" + mode);
             string destination = Path.Combine(scratch, "profile-backup-copy-" + mode);
@@ -157,14 +157,15 @@ internal static class ProfileRemovalChecks
             var backupHost = new BackupFixture(mode, backupTarget, sourceFolder, backupStop);
             var updates = new ProgressFixture();
             var result = await ProfileBackupExecution.RunAsync(backupTarget, 90, destination, backupFolder,
-                backupHost, updates, TimeSpan.FromSeconds(10), token: backupStop.Token);
-            string expected = mode == "success" ? "Backup verified" : mode is "final-loaded" or "destination-exists" ? "Blocked" : "Needs review";
-            int expectedCopies = mode is "success" or "incomplete" ? 1 : 0;
+                backupHost, updates, TimeSpan.FromSeconds(10), token: backupStop.Token).WaitAsync(TimeSpan.FromSeconds(3));
+            string expected = mode == "verify-stall" ? "Stopped" : mode == "success" ? "Backup verified" : mode is "final-loaded" or "destination-exists" ? "Blocked" : "Needs review";
+            int expectedCopies = mode is "success" or "incomplete" || mode.StartsWith("verify-", StringComparison.Ordinal) ? 1 : 0;
             if (result.Status != expected || backupHost.CopyCalls != expectedCopies ||
-                File.Exists(Path.Combine(backupFolder, "pending-backup.json")) != (mode == "incomplete") ||
+                File.Exists(Path.Combine(backupFolder, "pending-backup.json")) != (mode == "incomplete" || mode.StartsWith("verify-", StringComparison.Ordinal)) ||
                 (mode == "success" && (result.Verification?.Verified != true || !updates.Messages.Contains("Backup verified"))))
                 throw new Exception("Guarded profile backup execution outcome mismatch: " + mode);
         }
+        Console.WriteLine("PASS: backup verification retains pending evidence for missing operations, null evidence and canceled stalled providers.");
 
         string recoveryFolder = Path.Combine(scratch, "profile-backup-execution-recovery");
         string recoveryDestination = Path.Combine(scratch, "profile-backup-copy-recovery");
@@ -350,6 +351,14 @@ internal static class ProfileRemovalChecks
 
         public Task<bool> DestinationAbsentAsync(string destinationPath, CancellationToken token) =>
             Task.FromResult(mode != "destination-exists" && !Directory.Exists(destinationPath));
+
+        public Task<ProfileBackupVerification> VerifyAsync(ProfileSnapshot selected, string destinationPath, CancellationToken token)
+        {
+            if (mode == "verify-missing") return null!;
+            if (mode == "verify-null") return Task.FromResult<ProfileBackupVerification>(null!);
+            if (mode == "verify-stall") { stop.Cancel(); return new TaskCompletionSource<ProfileBackupVerification>().Task; }
+            return ProfileBackupArtifactWriter.CreateForExistingCopyAsync(selected, destinationPath, token: token);
+        }
 
         public Task CopyAsync(ProfileSnapshot selected, string destinationPath, IProgress<string>? progress,
             CancellationToken token)

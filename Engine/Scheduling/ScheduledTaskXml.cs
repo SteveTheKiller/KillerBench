@@ -77,7 +77,7 @@ public static class ScheduledTaskXml
                 requested.Root.Name == XName.Get("Task", Namespace) && observed.Root.Name == requested.Root.Name &&
                 MatchesElement(requested.Root, observed.Root);
         }
-        catch (XmlException) { return false; }
+        catch (Exception error) when (error is XmlException or FormatException or ArgumentException) { return false; }
     }
 
     private static XDocument Read(string xml)
@@ -96,12 +96,13 @@ public static class ScheduledTaskXml
     private static bool MatchesElement(XElement requested, XElement observed)
     {
         if (requested.Name != observed.Name) return false;
+        if (observed.Attributes().Any(attribute => !attribute.IsNamespaceDeclaration && requested.Attribute(attribute.Name) is null)) return false;
         foreach (var attribute in requested.Attributes())
             if (!string.Equals(attribute.Value, observed.Attribute(attribute.Name)?.Value, StringComparison.Ordinal)) return false;
         var expectedChildren = requested.Elements().ToArray();
         var actualChildren = observed.Elements().ToArray();
-        bool exactChildren = requested.Name.LocalName is "Actions" or "Triggers" or "Principals";
-        if (exactChildren && actualChildren.Length != expectedChildren.Length) return false;
+        foreach (var extra in actualChildren.Where(actual => !expectedChildren.Any(expected => expected.Name == actual.Name)))
+            if (!IsAddedDefault(requested, extra) || actualChildren.Count(actual => actual.Name == extra.Name) != 1) return false;
         foreach (var group in expectedChildren.GroupBy(element => element.Name))
         {
             var expected = group.ToArray();
@@ -113,8 +114,14 @@ public static class ScheduledTaskXml
         }
         if (expectedChildren.Length != 0) return true;
         if (requested.Name.LocalName == "StartBoundary")
-            return XmlConvert.ToDateTime(requested.Value, XmlDateTimeSerializationMode.Unspecified) ==
-                XmlConvert.ToDateTime(observed.Value, XmlDateTimeSerializationMode.Unspecified);
+        {
+            var expectedTime = XmlConvert.ToDateTime(requested.Value, XmlDateTimeSerializationMode.RoundtripKind);
+            var actualTime = XmlConvert.ToDateTime(observed.Value, XmlDateTimeSerializationMode.RoundtripKind);
+            // Floating local schedules follow Windows time-zone rules; fixed offsets do not.
+            if (expectedTime.Kind == DateTimeKind.Unspecified || actualTime.Kind == DateTimeKind.Unspecified)
+                return expectedTime.Kind == actualTime.Kind && expectedTime == actualTime;
+            return XmlConvert.ToDateTimeOffset(requested.Value).EqualsExact(XmlConvert.ToDateTimeOffset(observed.Value));
+        }
         return string.Equals(requested.Value, observed.Value, StringComparison.Ordinal);
     }
 
@@ -123,10 +130,33 @@ public static class ScheduledTaskXml
         // Only these emitted schema defaults may disappear. Disabled task Enabled remains required.
         XNamespace ns = Namespace;
         if (child.HasAttributes || child.HasElements) return false;
+        if (parent.Name == ns + "Exec" && parent.Parent?.Name == ns + "Actions" && parent.Parent?.Parent?.Name == ns + "Task")
+            return child.Name == ns + "Arguments" && child.Value.Length == 0;
         if (parent.Name == ns + "Settings" && parent.Parent?.Name == ns + "Task")
             return child.Name == ns + "StartWhenAvailable" && child.Value == "false";
         return (parent.Name == ns + "BootTrigger" || parent.Name == ns + "CalendarTrigger") &&
             parent.Parent?.Name == ns + "Triggers" && parent.Parent?.Parent?.Name == ns + "Task" &&
             child.Name == ns + "Enabled" && child.Value == "true";
+    }
+
+    private static bool IsAddedDefault(XElement parent, XElement child)
+    {
+        XNamespace ns = Namespace;
+        if (parent.Name != ns + "Settings" || parent.Parent?.Name != ns + "Task" || child.HasAttributes) return false;
+        // Windows materializes these schema defaults during a disabled definition round-trip.
+        // No additional triggers, actions, principal fields or nondefault settings are accepted.
+        if (child.Name == ns + "IdleSettings")
+            return child.Elements().Count() == 2 && child.Nodes().All(node => node is XElement || node is XText text && string.IsNullOrWhiteSpace(text.Value)) &&
+                child.Elements().All(element => !element.HasAttributes && !element.HasElements) &&
+                child.Elements(ns + "StopOnIdleEnd").Count() == 1 && child.Element(ns + "StopOnIdleEnd")!.Value == "true" &&
+                child.Elements(ns + "RestartOnIdle").Count() == 1 && child.Element(ns + "RestartOnIdle")!.Value == "false";
+        if (child.HasElements) return false;
+        return child.Name.LocalName switch
+        {
+            "AllowHardTerminate" => child.Name.Namespace == ns && child.Value == "true",
+            "RunOnlyIfNetworkAvailable" or "Hidden" or "RunOnlyIfIdle" or "WakeToRun" => child.Name.Namespace == ns && child.Value == "false",
+            "Priority" => child.Name.Namespace == ns && child.Value == "7",
+            _ => false
+        };
     }
 }

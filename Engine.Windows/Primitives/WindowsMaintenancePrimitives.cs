@@ -148,7 +148,8 @@ public sealed class WindowsRetainFolderFilesAction : IActionPrimitive
             token.ThrowIfCancellationRequested();
             if (source.EnumerateFiles(target.Filter).Any())
                 return Task.FromResult(new ActionResult(moved > 0, false, "moved " + moved + ", failed " + failed + ", retained under " + retained,
-                    "Matching files remain in the source; retention is incomplete. Inspect source and retained files before retrying."));
+                    "Matching files remain in the source; retention is incomplete. Inspect source and retained files before retrying." +
+                    (failures.Count == 0 ? "" : " " + string.Join(" ", failures.Distinct()))));
         }
         catch (OperationCanceledException)
         {

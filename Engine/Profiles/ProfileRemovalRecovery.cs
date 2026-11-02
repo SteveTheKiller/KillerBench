@@ -9,7 +9,8 @@ public static class ProfileRemovalRecovery
 
     private static readonly JsonSerializerOptions StrictJson = new(Capture.JsonOptions)
     {
-        RespectRequiredConstructorParameters = true
+        RespectRequiredConstructorParameters = true,
+        RespectNullableAnnotations = true
     };
 
     public static Task<bool> TryResolveAsync(string folder, CancellationToken token = default) =>

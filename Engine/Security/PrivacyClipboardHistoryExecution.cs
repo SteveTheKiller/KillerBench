@@ -12,6 +12,7 @@ public sealed record PrivacyClipboardHistoryResult(PrivacyChangeOutcome Outcome,
     string Detail, string? JournalPath = null, PrivacyClipboardHistoryEvidence? Before = null,
     ToolResult? Command = null, PrivacyClipboardHistoryEvidence? After = null)
 {
+    [System.Text.Json.Serialization.JsonRequired]
     public string Machine { get; init; } = Environment.MachineName;
     public int GetExitCode() => Outcome switch
     {
@@ -41,7 +42,8 @@ public static class PrivacyClipboardHistoryExecution
     public const string Effects = "Changes Clipboard history for the account running KillerBench. Turning it off does not clear existing clipboard history. Clipboard sync is a separate setting. Machine policy is preserved.";
     private static readonly JsonSerializerOptions StrictJson = new(Capture.JsonOptions)
     {
-        RespectRequiredConstructorParameters = true
+        RespectRequiredConstructorParameters = true,
+        RespectNullableAnnotations = true
     };
 
     public static async Task<PrivacyClipboardHistoryResult> RunAsync(bool requestedEnabled, bool execute,

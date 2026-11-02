@@ -21,9 +21,11 @@ public static class BrowserExtensionReview
         ], token);
     }
 
-    public static BrowserExtensionReviewResult Read(IReadOnlyList<BrowserExtensionRoot> roots, CancellationToken token = default)
+    public static BrowserExtensionReviewResult Read(IReadOnlyList<BrowserExtensionRoot> roots, CancellationToken token = default,
+        Func<string, IEnumerable<string>>? enumerateDirectories = null)
     {
         ArgumentNullException.ThrowIfNull(roots);
+        enumerateDirectories ??= Directory.EnumerateDirectories;
         if (roots.Count == 0 || roots.Count > 16 || roots.Any(root => string.IsNullOrWhiteSpace(root.Browser) || string.IsNullOrWhiteSpace(root.Path) || !Path.IsPathFullyQualified(root.Path)))
             throw new ArgumentException("Browser roots must be a bounded list with names and absolute paths.", nameof(roots));
         var found = new List<BrowserExtensionIdentity>(); bool complete = true;
@@ -33,34 +35,38 @@ public static class BrowserExtensionReview
             try
             {
                 if (!Directory.Exists(root.Path) || (File.GetAttributes(root.Path) & FileAttributes.ReparsePoint) != 0) { if (Directory.Exists(root.Path)) complete = false; continue; }
-                IEnumerable<string> profiles = root.Layout == BrowserExtensionLayout.Chromium
-                    ? Directory.EnumerateDirectories(root.Path).Where(path => Path.GetFileName(path) == "Default" || Path.GetFileName(path).StartsWith("Profile ", StringComparison.Ordinal))
-                    : Directory.EnumerateDirectories(root.Path);
+                IEnumerable<string> profiles = BoundedDirectories(root.Path, 16, 1024, root.Layout == BrowserExtensionLayout.Chromium
+                    ? path => Path.GetFileName(path) == "Default" || Path.GetFileName(path).StartsWith("Profile ", StringComparison.Ordinal)
+                    : _ => true, enumerateDirectories, token, ref complete);
                 int profileCount = 0;
                 foreach (string profile in profiles.OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
                 {
                     token.ThrowIfCancellationRequested();
                     if (found.Count >= 1024) { complete = false; break; }
                     if (profileCount++ >= 16) { complete = false; break; }
-                    if ((File.GetAttributes(profile) & FileAttributes.ReparsePoint) != 0) { complete = false; continue; }
-                    if (root.Layout == BrowserExtensionLayout.Firefox)
+                    try
                     {
-                        ReadFirefoxProfile(root.Browser, profile, found, ref complete, token);
-                        continue;
+                        if ((File.GetAttributes(profile) & FileAttributes.ReparsePoint) != 0) { complete = false; continue; }
+                        if (root.Layout == BrowserExtensionLayout.Firefox)
+                        {
+                            ReadFirefoxProfile(root.Browser, profile, found, ref complete, token);
+                            continue;
+                        }
+                        string extensions = Path.Combine(profile, "Extensions");
+                        if (!Directory.Exists(extensions) || (File.GetAttributes(extensions) & FileAttributes.ReparsePoint) != 0) { if (Directory.Exists(extensions)) complete = false; continue; }
+                        int extensionsFound = 0;
+                        foreach (string id in BoundedDirectories(extensions, 256, 256, _ => true, enumerateDirectories, token, ref complete))
+                        {
+                            token.ThrowIfCancellationRequested();
+                            if (extensionsFound++ >= 256) { complete = false; break; }
+                            if ((File.GetAttributes(id) & FileAttributes.ReparsePoint) != 0) { complete = false; continue; }
+                            string value = Path.GetFileName(id);
+                            if (value.Length != 32 || value.Any(character => character is < 'a' or > 'p')) continue;
+                            if (found.Count >= 1024) { complete = false; break; }
+                            found.Add(new(root.Browser, Path.GetFileName(profile), value));
+                        }
                     }
-                    string extensions = Path.Combine(profile, "Extensions");
-                    if (!Directory.Exists(extensions) || (File.GetAttributes(extensions) & FileAttributes.ReparsePoint) != 0) { if (Directory.Exists(extensions)) complete = false; continue; }
-                    int extensionsFound = 0;
-                    foreach (string id in Directory.EnumerateDirectories(extensions).OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
-                    {
-                        token.ThrowIfCancellationRequested();
-                        if (extensionsFound++ >= 256) { complete = false; break; }
-                        if ((File.GetAttributes(id) & FileAttributes.ReparsePoint) != 0) { complete = false; continue; }
-                        string value = Path.GetFileName(id);
-                        if (value.Length != 32 || value.Any(character => character is < 'a' or > 'p')) continue;
-                        if (found.Count >= 1024) { complete = false; break; }
-                        found.Add(new(root.Browser, Path.GetFileName(profile), value));
-                    }
+                    catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException) { complete = false; }
                 }
             }
             catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException) { complete = false; }
@@ -68,6 +74,30 @@ public static class BrowserExtensionReview
         return new([.. found.OrderBy(item => item.Browser).ThenBy(item => item.Profile).ThenBy(item => item.ExtensionId)], complete,
             (complete ? "" : "Coverage is incomplete because profiles or identities exceeded review limits or content was inaccessible or invalid. ") +
             "Read-only browser extension identity review. Browser history, credentials, extension settings, manifest content, commands and policy values were excluded. Presence does not prove enablement, trust, ownership or safe removal. No browser or policy changed.");
+    }
+
+    private static IReadOnlyList<string> BoundedDirectories(string path, int maximumMatches, int maximumEntries,
+        Func<string, bool> matches, Func<string, IEnumerable<string>> enumerate, CancellationToken token, ref bool complete)
+    {
+        var entries = new List<string>();
+        using var iterator = enumerate(path).GetEnumerator();
+        int examined = 0;
+        while (true)
+        {
+            token.ThrowIfCancellationRequested();
+            bool moved;
+            try { moved = iterator.MoveNext(); }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+            { complete = false; break; }
+            if (!moved) break;
+            token.ThrowIfCancellationRequested();
+            if (examined++ >= maximumEntries) { complete = false; break; }
+            if (!matches(iterator.Current)) continue;
+            if (entries.Count >= maximumMatches) { complete = false; break; }
+            entries.Add(iterator.Current);
+        }
+        entries.Sort(StringComparer.OrdinalIgnoreCase);
+        return entries;
     }
 
     private static void ReadFirefoxProfile(string browser, string profile, List<BrowserExtensionIdentity> found,
@@ -78,15 +108,30 @@ public static class BrowserExtensionReview
         if ((File.GetAttributes(file) & FileAttributes.ReparsePoint) != 0) { complete = false; return; }
         var info = new FileInfo(file);
         if (info.Length > 4 * 1024 * 1024) { complete = false; return; }
-        using JsonDocument document = JsonDocument.Parse(File.ReadAllBytes(file));
-        if (!document.RootElement.TryGetProperty("addons", out JsonElement addons) || addons.ValueKind != JsonValueKind.Array)
+        using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read);
+        const int maximumBytes = 4 * 1024 * 1024;
+        if (stream.Length > maximumBytes) { complete = false; return; }
+        using var content = new MemoryStream();
+        byte[] buffer = new byte[16_384];
+        int read;
+        while (content.Length <= maximumBytes)
+        {
+            token.ThrowIfCancellationRequested();
+            read = stream.Read(buffer, 0, (int)Math.Min(buffer.Length, maximumBytes + 1 - content.Length));
+            if (read == 0) break;
+            content.Write(buffer, 0, read);
+        }
+        if (content.Length > maximumBytes) { complete = false; return; }
+        using JsonDocument document = JsonDocument.Parse(content.GetBuffer().AsMemory(0, (int)content.Length));
+        if (document.RootElement.ValueKind != JsonValueKind.Object ||
+            !document.RootElement.TryGetProperty("addons", out JsonElement addons) || addons.ValueKind != JsonValueKind.Array)
         { complete = false; return; }
         int count = 0;
         foreach (JsonElement addon in addons.EnumerateArray())
         {
             token.ThrowIfCancellationRequested();
             if (count++ >= 256) { complete = false; break; }
-            if (!addon.TryGetProperty("id", out JsonElement id) || id.ValueKind != JsonValueKind.String) { complete = false; continue; }
+            if (addon.ValueKind != JsonValueKind.Object || !addon.TryGetProperty("id", out JsonElement id) || id.ValueKind != JsonValueKind.String) { complete = false; continue; }
             string? value = id.GetString();
             if (string.IsNullOrWhiteSpace(value) || value.Length > 512 || found.Any(item => item.Browser == browser && item.Profile == Path.GetFileName(profile) && item.ExtensionId == value))
             { complete = false; continue; }

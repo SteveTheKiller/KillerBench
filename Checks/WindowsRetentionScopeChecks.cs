@@ -32,6 +32,7 @@ internal static class WindowsRetentionScopeChecks
             await CheckInPlaceRedirectionAsync(root);
             await CheckCreationRedirectionAsync(root);
             await CheckSourceFileRedirectionAsync(root);
+            await CheckFailureExplanationAsync(root);
             string? secondVolumeRoot = Environment.GetEnvironmentVariable("KILLERBENCH_RETENTION_SECOND_VOLUME");
             if (string.IsNullOrWhiteSpace(secondVolumeRoot))
                 Console.WriteLine("PENDING: cross-volume retention refusal requires an owned fixture root on a second disposable volume; native retention supports same-volume moves only.");
@@ -42,6 +43,23 @@ internal static class WindowsRetentionScopeChecks
             RemoveJunctions(root);
             Directory.Delete(root, true);
         }
+    }
+
+    internal static async Task CheckFailureExplanationAsync(string root)
+    {
+        string source = Path.Combine(root, "failure-explanation-source");
+        string destination = Path.Combine(root, "failure-explanation-retained");
+        Directory.CreateDirectory(source);
+        string sentinel = Path.Combine(source, "selected.txt");
+        await File.WriteAllTextAsync(sentinel, "selected synthetic bytes");
+        var result = await new WindowsRetainFolderFilesAction(_ => (source, "*"), () => destination,
+            (_, _) => throw new IOException("Private fixture path must remain hidden."))
+            .ExecuteAsync(Target(), TimeSpan.FromSeconds(10), null, CancellationToken.None);
+        if (result.Succeeded || result.Dispatched || result.Error?.Contains("A file was unavailable or could not be retained.", StringComparison.Ordinal) != true ||
+            result.Error.Contains("Private fixture", StringComparison.Ordinal) || !result.Raw.Contains("moved 0, failed 1", StringComparison.Ordinal) ||
+            await File.ReadAllTextAsync(sentinel) != "selected synthetic bytes" || Directory.EnumerateFiles(destination, "*", SearchOption.AllDirectories).Any())
+            throw new Exception("An incomplete retention result lost its safe failure explanation or changed selected bytes: " + result.Error);
+        Console.WriteLine("PASS: incomplete retention preserves its safe failure reason, exact counts and untouched source bytes; move provider substituted.");
     }
 
     private static async Task CheckDestinationAndAncestorsAsync(string root)

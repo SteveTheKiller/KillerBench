@@ -29,7 +29,7 @@ internal static class PackCommands
                 string path = Path.GetFullPath(args[3]);
                 if (File.Exists(path)) { Console.Error.WriteLine("Output exists; choose a new path."); return 2; }
                 Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-                await File.WriteAllTextAsync(path, RecipePackJson.Serialize(pack)).ConfigureAwait(false);
+                await ReportFilePublication.WriteAsync(path, _ => Task.FromResult(RecipePackJson.Serialize(pack))).ConfigureAwait(false);
                 Console.WriteLine("Exported " + pack.Recipes.Count + " recipes to " + path);
                 return 0;
             }

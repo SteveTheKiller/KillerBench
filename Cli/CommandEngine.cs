@@ -7,7 +7,7 @@ public static class CommandEngine
 {
     public static string[] CommandNames =>
     [
-        "pack", "symptom", "validate-native", "servicing-monitor", "task-definition",
+        "capabilities", "pack", "symptom", "validate-native", "servicing-monitor", "task-definition",
         "restore-point", "restore-point-recover", "defender-scan", "defender-scan-recover", "diagnostic-scopes",
         "workflows", "workflow-options", "validation-plan", "validation-record", "validation-coverage",
         "validation-report", "workflow-journal", "workflow-report", "investigate-batch", "knowledge-compare",
@@ -60,7 +60,7 @@ public static class CommandEngine
         "bluetooth-company", "printer-check", "printer-list", "printer-repair", "print-job-list",
         "print-job-cancel", "print-job-cancel-recover", "default-printer-set", "default-printer-set-recover", "time-plan",
         "time-verify", "time-recover", "time-configure", "profiles", "orca-review",
-        "orca-cache-reset", "orca-cache-reset-recover", "depot-review", "depot-verify-installer", "debloat-review",
+        "orca-cache-reset", "orca-cache-reset-recover", "depot-review", "depot-verify-installer", "debloat-review", "debloat-recover",
         "cleanup", "privacy-plan", "privacy-clipboard-history", "privacy-clipboard-history-recover", "privacy-clipboard-history-undo",
         "privacy-setting", "privacy-setting-recover", "privacy-setting-undo", "bitlocker-plan", "bitlocker-protectors",
         "bitlocker-backup", "bitlocker-backup-recover", "bitlocker-resume", "bitlocker-resume-recover", "bitlocker-escrow",
@@ -72,6 +72,18 @@ public static class CommandEngine
 
     public static async Task<int> RunAsync(string[] args)
     {
+        if (args.Length > 0 && args[0] == "capabilities")
+        {
+            if (args.Length > 2 || (args.Length == 2 && args[1] != "--json"))
+            { Console.Error.WriteLine("Usage: capabilities [--json] (supported command names only; no diagnostics or repairs)"); return 2; }
+            Console.WriteLine(JsonSerializer.Serialize(new
+            {
+                SchemaVersion = 1,
+                Version = typeof(CommandEngine).Assembly.GetName().Version?.ToString() ?? "unknown",
+                Commands = CommandNames.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray()
+            }, Capture.JsonOptions));
+            return 0;
+        }
         WindowsEngine.Register();
         if (args.Length > 0 && args[0] is not ("workflow" or "symptom" or "pack"))
             CapabilityOutput.WriteLabels(WindowsRepairCapabilities.ForCommand(args));
@@ -202,6 +214,7 @@ public static class CommandEngine
         if (args.Length > 0 && args[0] == "depot-review") return await DepotCommands.RunAsync(args);
         if (args.Length > 0 && args[0] == "depot-verify-installer") return await DepotInstallerCommands.RunAsync(args);
         if (args.Length > 0 && args[0] == "debloat-review") return await DebloatCommands.RunAsync(args);
+        if (args.Length > 0 && args[0] == "debloat-recover") return await DebloatRecoveryCommands.RunAsync(args);
 
         if (args.Length > 0 && args[0] == "cleanup") return CleanupCommands.Run(args);
         if (args.Length > 0 && args[0] == "privacy-plan") return PrivacyCommands.Run(args);
@@ -334,6 +347,7 @@ public static class CommandEngine
             Console.WriteLine("killerbench validation-coverage RECORD.json [...] (summarize current-version native VM evidence; no diagnostics or repairs)");
             Console.WriteLine("killerbench validation-report OUTPUT.html|OUTPUT.txt RECORD.json [...] [--theme THEME] [--accent ACCENT] [--overwrite] (local current-version VM coverage report)");
             Console.WriteLine("killerbench workflows (list installed workflow keys and titles; no scan or repair)");
+            Console.WriteLine("killerbench capabilities [--json] (versioned command discovery; no diagnostics or repairs)");
             Console.WriteLine("killerbench dhcp-check (read-only missing or expired DHCP lease eligibility; JSON evidence, no renewal)");
             Console.WriteLine("killerbench dhcp-renew [--execute] (preview by default; exact missing or expired connected physical DHCP leases only)");
             Console.WriteLine("killerbench dhcp-renew-recover (read-only reconciliation without requesting another lease)");
@@ -354,6 +368,7 @@ public static class CommandEngine
             Console.WriteLine("killerbench depot-review [application and configuration selections] [--json] (review only; no provisioning)");
             Console.WriteLine("killerbench depot-verify-installer onedrive|teams|chrome|acrobat|zoom|7zip FULL_PATH (read-only Authenticode and vendor-signer check; nothing is run)");
             Console.WriteLine("killerbench debloat-review --area AREA [--area AREA ...] [--all-profiles] [--json] (review only; no system changes)");
+            Console.WriteLine("killerbench debloat-recover power-plan|power-timers|hibernation --folder PATH [--json] (reconcile pending evidence without repeating changes; resolved local records may be archived)");
             Console.WriteLine("killerbench delivery-optimization (read-only Delivery Optimization service state; JSON evidence)");
             Console.WriteLine("killerbench delivery-optimization-activity (privacy-bounded current job counts and byte totals; no transfer identities or changes)");
             Console.WriteLine("killerbench delivery-optimization-policy (read-only classic and Policy CSP settings; sensitive values and provider identities excluded)");

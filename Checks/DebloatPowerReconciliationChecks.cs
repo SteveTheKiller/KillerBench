@@ -52,6 +52,20 @@ internal static class DebloatPowerReconciliationChecks
         Require(rejected.Outcome == DebloatPowerReconciliationOutcome.Inconclusive && File.Exists(malformed),
             "Malformed or conflicting pending records remain retained and never dispatch a command");
 
+        string nullFolder = Path.Combine(root, "null-request");
+        await DebloatPowerTimerExecution.RunAsync(request, true, nullFolder, new TimerHost([before, before]) { FailAt = 1 });
+        string nullPending = Path.Combine(nullFolder, "debloat-power-timers.pending.json");
+        var nullRecord = System.Text.Json.Nodes.JsonNode.Parse(await File.ReadAllTextAsync(nullPending))!.AsObject();
+        nullRecord["request"] = null;
+        await File.WriteAllTextAsync(nullPending, nullRecord.ToJsonString());
+        byte[] invalidBytes = await File.ReadAllBytesAsync(nullPending);
+        var nullHost = new TimerHost([]);
+        var nullResult = await DebloatPowerReconciliation.RunTimersAsync(nullFolder, nullHost);
+        byte[] retainedBytes = await File.ReadAllBytesAsync(nullPending);
+        Require(nullResult.Outcome == DebloatPowerReconciliationOutcome.Inconclusive && nullHost.Reads == 0 &&
+            invalidBytes.SequenceEqual(retainedBytes),
+            "An explicit null power request is retained without provider calls or an escaping exception");
+
         string foreignFolder = Path.Combine(root, "foreign-machine");
         await DebloatPowerTimerExecution.RunAsync(request, true, foreignFolder, new TimerHost([before, before]) { FailAt = 1 });
         string foreignPending = Path.Combine(foreignFolder, "debloat-power-timers.pending.json");

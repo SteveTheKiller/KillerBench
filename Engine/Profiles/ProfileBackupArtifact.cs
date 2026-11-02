@@ -11,7 +11,8 @@ public sealed record ProfileBackupArtifact(
     DateTimeOffset CompletedUtc,
     long FileCount,
     long TotalBytes,
-    string ManifestSha256);
+    string ManifestSha256,
+    IReadOnlyList<string>? OmittedLinks = null);
 
 public sealed record ProfileBackupManifestEntry(string RelativePath, long Length, string Sha256);
 
@@ -24,8 +25,15 @@ public static class ProfileBackupArtifactWriter
     private const int MaximumManifestLineCharacters = 65_536;
     private static readonly JsonSerializerOptions CompactJson = new(Capture.JsonOptions) { WriteIndented = false };
 
-    public static async Task<ProfileBackupVerification> CreateForExistingCopyAsync(ProfileSnapshot target, string destinationPath,
-        DateTimeOffset? completedUtc = null, CancellationToken token = default)
+    public static Task<ProfileBackupVerification> CreateForExistingCopyAsync(ProfileSnapshot target, string destinationPath,
+        DateTimeOffset? completedUtc = null, CancellationToken token = default) =>
+        CreateAsync(target, destinationPath, completedUtc, false, token);
+
+    internal static Task<ProfileBackupVerification> CreateForProtectedCopyAsync(ProfileSnapshot target, string destinationPath,
+        CancellationToken token) => CreateAsync(target, destinationPath, null, true, token);
+
+    private static async Task<ProfileBackupVerification> CreateAsync(ProfileSnapshot target, string destinationPath,
+        DateTimeOffset? completedUtc, bool protectedDestination, CancellationToken token)
     {
         ArgumentNullException.ThrowIfNull(target);
         token.ThrowIfCancellationRequested();
@@ -50,12 +58,17 @@ public static class ProfileBackupArtifactWriter
 
         string manifestTemporary = manifestPath + ".creating-" + Guid.NewGuid().ToString("N");
         string receiptTemporary = receiptPath + ".creating-" + Guid.NewGuid().ToString("N");
+        FileStream? manifestStream = null, receiptStream = null;
+        bool manifestPublished = false, receiptPublished = false;
         try
         {
+            using var held = protectedDestination ? null : ProfileBackupPathGuard.OpenTree(target.Path, destination, token);
+            var omitted = new List<string>();
+            _ = ProfileBackupArtifactVerifier.EnumerateRelativeFiles(Path.GetFullPath(target.Path).TrimEnd('\\'), null, null, token, omitted);
             long fileCount = 0;
             long totalBytes = 0;
-            await using (var stream = new FileStream(manifestTemporary, FileMode.CreateNew, FileAccess.Write, FileShare.None, 65_536,
-                FileOptions.Asynchronous | FileOptions.SequentialScan))
+            manifestStream = RecoveryRecordFiles.CreateNew(manifestTemporary);
+            var stream = manifestStream;
             await using (var writer = new StreamWriter(stream, new System.Text.UTF8Encoding(false), 65_536, leaveOpen: true))
             {
                 foreach (string filePath in EnumerateFiles(destination, manifestTemporary, receiptTemporary, token))
@@ -80,26 +93,33 @@ public static class ProfileBackupArtifactWriter
             }
 
             string manifestDigest;
-            await using (var manifest = new FileStream(manifestTemporary, FileMode.Open, FileAccess.Read, FileShare.Read, 65_536,
-                FileOptions.Asynchronous | FileOptions.SequentialScan))
-                manifestDigest = Convert.ToHexString(await SHA256.HashDataAsync(manifest, token).ConfigureAwait(false));
+            manifestStream.Position = 0;
+            manifestDigest = Convert.ToHexString(await SHA256.HashDataAsync(manifestStream, token).ConfigureAwait(false));
             var artifact = new ProfileBackupArtifact(1, target.Sid, target.Path, destination,
-                completedUtc ?? DateTimeOffset.UtcNow, fileCount, totalBytes, manifestDigest);
-            await File.WriteAllTextAsync(receiptTemporary, JsonSerializer.Serialize(artifact, Capture.JsonOptions),
-                new System.Text.UTF8Encoding(false), token).ConfigureAwait(false);
-            File.Move(manifestTemporary, manifestPath);
-            File.Move(receiptTemporary, receiptPath);
-            return await ProfileBackupArtifactVerifier.VerifyAsync(target, receiptPath, token: token).ConfigureAwait(false);
+                completedUtc ?? DateTimeOffset.UtcNow, fileCount, totalBytes, manifestDigest, omitted);
+            receiptStream = RecoveryRecordFiles.CreateNew(receiptTemporary);
+            await JsonSerializer.SerializeAsync(receiptStream, artifact, Capture.JsonOptions, token).ConfigureAwait(false);
+            await receiptStream.FlushAsync(token).ConfigureAwait(false);
+            token.ThrowIfCancellationRequested();
+            held?.PermitPublication(destination);
+            RecoveryRecordFiles.Archive(manifestStream, manifestPath, parent: held?.DestinationRoot);
+            manifestPublished = true;
+            RecoveryRecordFiles.Archive(receiptStream, receiptPath, parent: held?.DestinationRoot);
+            receiptPublished = true;
+            manifestStream.Position = 0;
+            receiptStream.Position = 0;
+            return await ProfileBackupArtifactVerifier.VerifyCoreAsync(target, receiptPath, null, true, token,
+                receiptStream, manifestStream).ConfigureAwait(false);
         }
         catch (OperationCanceledException) { throw; }
-        catch (Exception error) when (error is IOException or UnauthorizedAccessException or NotSupportedException or ArgumentException or OverflowException)
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or NotSupportedException or ArgumentException or OverflowException or System.ComponentModel.Win32Exception)
         {
             return Failed("The backup artifact could not be created: " + error.GetType().Name + ".");
         }
         finally
         {
-            TryDeleteOwnTemporary(manifestTemporary);
-            TryDeleteOwnTemporary(receiptTemporary);
+            CloseOwned(manifestStream, manifestPublished);
+            CloseOwned(receiptStream, receiptPublished);
         }
     }
 
@@ -128,10 +148,12 @@ public static class ProfileBackupArtifactWriter
     private static bool IsReparsePoint(string path) =>
         (File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0;
 
-    private static void TryDeleteOwnTemporary(string path)
+    private static void CloseOwned(FileStream? stream, bool published)
     {
-        try { if (File.Exists(path)) File.Delete(path); }
+        if (stream is null) return;
+        try { if (!published) RecoveryRecordFiles.DeleteOwned(stream); }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException) { }
+        finally { stream.Dispose(); }
     }
 
     private static ProfileBackupVerification Failed(string detail) => new(null, false, detail);
@@ -150,8 +172,12 @@ public static class ProfileBackupArtifactVerifier
         RespectRequiredConstructorParameters = true
     };
 
-    public static async Task<ProfileBackupVerification> VerifyAsync(ProfileSnapshot target, string receiptPath,
-        DateTimeOffset? now = null, CancellationToken token = default)
+    public static Task<ProfileBackupVerification> VerifyAsync(ProfileSnapshot target, string receiptPath,
+        DateTimeOffset? now = null, CancellationToken token = default) => VerifyCoreAsync(target, receiptPath, now, false, token);
+
+    internal static async Task<ProfileBackupVerification> VerifyCoreAsync(ProfileSnapshot target, string receiptPath,
+        DateTimeOffset? now, bool protectedDestination, CancellationToken token,
+        FileStream? heldReceipt = null, FileStream? heldManifest = null)
     {
         ArgumentNullException.ThrowIfNull(target);
         token.ThrowIfCancellationRequested();
@@ -162,7 +188,9 @@ public static class ProfileBackupArtifactVerifier
 
         try
         {
-            using var receiptStream = OpenBoundedFile(normalizedReceipt, MaximumReceiptBytes);
+            using var parents = protectedDestination ? null : ProfileBackupPathGuard.Open(target.Path, normalizedReceipt);
+            using var receiptStream = heldReceipt ?? OpenBoundedFile(normalizedReceipt, MaximumReceiptBytes);
+            if (receiptStream.Length > MaximumReceiptBytes) return Failed("The backup receipt exceeds its size bound.");
             using var json = await JsonDocument.ParseAsync(receiptStream, cancellationToken: token).ConfigureAwait(false);
             if (!UniqueFields(json.RootElement)) return Failed("The backup receipt contains ambiguous fields.");
             var artifact = json.RootElement.Deserialize<ProfileBackupArtifact>(StrictJson);
@@ -177,8 +205,11 @@ public static class ProfileBackupArtifactVerifier
                 !normalizedReceipt.Equals(Path.Combine(destination, ReceiptFileName), StringComparison.OrdinalIgnoreCase))
                 return Failed("The backup source, destination or fixed receipt location is unavailable.");
 
+            using var held = protectedDestination ? null : ProfileBackupPathGuard.OpenTree(source, destination, token);
+
             string manifestPath = Path.Combine(destination, ManifestFileName);
-            using var manifest = OpenBoundedFile(manifestPath, MaximumManifestBytes);
+            using var manifest = heldManifest ?? OpenBoundedFile(manifestPath, MaximumManifestBytes);
+            if (manifest.Length > MaximumManifestBytes) return Failed("The backup manifest exceeds its size bound.");
             string manifestDigest = Convert.ToHexString(await SHA256.HashDataAsync(manifest, token).ConfigureAwait(false));
             if (!manifestDigest.Equals(artifact.ManifestSha256, StringComparison.OrdinalIgnoreCase))
                 return Failed("The backup manifest digest does not match the receipt.");
@@ -231,6 +262,12 @@ public static class ProfileBackupArtifactVerifier
             var omitted = new List<string>();
             var sourcePaths = EnumerateRelativeFiles(source, null, null, token, omitted);
             var destinationPaths = EnumerateRelativeFiles(destination, normalizedReceipt, manifestPath, token);
+            var recordedOmissions = artifact.OmittedLinks ?? [];
+            var omissionSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            if (recordedOmissions.Count > MaximumFiles || recordedOmissions.Any(path =>
+                !TryResolveEntry(source, path, out _) || !omissionSet.Add(path.Replace('/', '\\'))) ||
+                !omissionSet.SetEquals(omitted))
+                return Failed("The source link omissions do not match the backup receipt.");
             if (fileCount != artifact.FileCount || totalBytes != artifact.TotalBytes ||
                 !sourcePaths.SetEquals(relativePaths) || !destinationPaths.SetEquals(relativePaths) ||
                 IsReparsePoint(source) || IsReparsePoint(destination) || IsReparsePoint(normalizedReceipt) || IsReparsePoint(manifestPath))
@@ -243,7 +280,7 @@ public static class ProfileBackupArtifactVerifier
                 "This does not prove ACL, alternate-stream, encrypted-file, application-state or restore behavior.");
         }
         catch (OperationCanceledException) { throw; }
-        catch (Exception error) when (error is IOException or UnauthorizedAccessException or NotSupportedException or ArgumentException or JsonException or OverflowException)
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or NotSupportedException or ArgumentException or JsonException or OverflowException or System.ComponentModel.Win32Exception)
         {
             return Failed("The backup artifact could not be verified: " + error.GetType().Name + ".");
         }
@@ -252,10 +289,7 @@ public static class ProfileBackupArtifactVerifier
     private static FileStream OpenBoundedFile(string path, long maximumBytes)
     {
         if (!File.Exists(path) || IsReparsePoint(path)) throw new IOException("Required artifact is unavailable or redirected.");
-        var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 65_536,
-            FileOptions.Asynchronous | FileOptions.SequentialScan);
-        if (stream.Length < 0 || stream.Length > maximumBytes) { stream.Dispose(); throw new InvalidDataException("Artifact size is outside its bound."); }
-        return stream;
+        return ProfileBackupPathGuard.OpenFile(path, maximumBytes);
     }
 
     private static bool TryNormalizeLocalFile(string? path, out string normalized)
@@ -299,7 +333,7 @@ public static class ProfileBackupArtifactVerifier
         return false;
     }
 
-    private static HashSet<string> EnumerateRelativeFiles(string root, string? excludedFile1, string? excludedFile2,
+    internal static HashSet<string> EnumerateRelativeFiles(string root, string? excludedFile1, string? excludedFile2,
         CancellationToken token, List<string>? omittedJunctions = null)
     {
         var relativePaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -318,7 +352,8 @@ public static class ProfileBackupArtifactVerifier
                 {
                     if (omittedJunctions is null || !ProfileBackupPathGuard.IsOmittedLink(entry))
                         throw new IOException("A redirected entry was found while comparing the backup.");
-                    omittedJunctions.Add(entry);
+                    if (omittedJunctions.Count >= MaximumFiles) throw new InvalidDataException("The omitted link set is too large.");
+                    omittedJunctions.Add(Path.GetRelativePath(root, entry).Replace('/', '\\'));
                     continue;
                 }
                 if ((attributes & FileAttributes.Directory) != 0) folders.Push(entry);

@@ -218,7 +218,7 @@ internal static class WorkflowCommands
         string report = extension.Equals(".html", StringComparison.OrdinalIgnoreCase)
             ? WorkflowReportExport.BuildHtml(result, includeRepairs ? WorkflowReportScope.DiagnosticsAndRepairs : WorkflowReportScope.Diagnostics)
             : WorkflowReportExport.BuildText(result, includeRepairs ? WorkflowReportScope.DiagnosticsAndRepairs : WorkflowReportScope.Diagnostics);
-        await File.WriteAllTextAsync(reportPath, report).ConfigureAwait(false);
+        await ReportFilePublication.WriteAsync(reportPath, _ => Task.FromResult(report)).ConfigureAwait(false);
         Console.Error.WriteLine("Readable report saved: " + Path.GetFullPath(reportPath));
     }
 

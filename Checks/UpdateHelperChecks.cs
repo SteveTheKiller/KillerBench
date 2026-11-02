@@ -24,7 +24,7 @@ $ops.Publisher = { param($path, $plan)
 
     internal static void Run(string scratch)
     {
-        string root = Path.Combine(scratch, "update-helper");
+        string root = Path.Combine(Path.GetFullPath(scratch), "update-helper");
         Directory.CreateDirectory(root);
         PortableLauncherCases(root);
         byte[] installer = File.ReadAllBytes(Path.Combine(Environment.SystemDirectory, "cmd.exe"));
@@ -35,7 +35,7 @@ $ops.Publisher = { param($path, $plan)
             "A verified, publisher-signed installer runs from the staged copy, relaunches and cleans up: " + ran);
 
         var swapped = Case(root, "swapped", [.. installer, 0], hash, "Microsoft");
-        Require(swapped.Exit != 0 && !swapped.InstallerRan && !swapped.Relaunched && swapped.ReleasesOpened && swapped.StageEmpty,
+        Require(swapped.Exit != 0 && !swapped.InstallerRan && swapped.Relaunched && swapped.ReleasesOpened && swapped.StageEmpty,
             "A download replaced after verification is refused before anything runs: " + swapped);
 
         var unsigned = Case(root, "wrong-publisher", installer, hash, "Fixture Publisher That Did Not Sign This");
@@ -43,9 +43,10 @@ $ops.Publisher = { param($path, $plan)
             "An installer not signed by the publisher is refused at the execution boundary: " + unsigned);
         var failed = Case(root, "installer-failed", installer, hash, "Microsoft", "/d /c exit 3");
         string failedReport = failed.Download + ".update-failure.txt";
-        Require(failed.Exit != 0 && !failed.Relaunched && failed.ReleasesOpened && File.Exists(failed.Download) && File.Exists(failedReport)
-            && File.ReadAllText(failedReport).Contains("Download: " + failed.Download, StringComparison.Ordinal),
-            "An installer that exits nonzero keeps the verified download the failure report names: " + failed);
+        Require(failed.Exit != 0 && failed.Relaunched && failed.ReleasesOpened && File.Exists(failed.Download) && File.Exists(failedReport)
+            && File.ReadAllText(failedReport).Contains("Download: " + failed.Download, StringComparison.Ordinal)
+            && File.ReadAllText(failedReport).Contains("The installer exited with code 3.", StringComparison.Ordinal),
+            "A failed installer reopens the unchanged verified target and retains its original failure and download: " + failed);
         Console.WriteLine("PASS: the installed-copy update helper rechecks SHA-256 and publisher from a held staged copy, refuses a swapped download, runs only the verified image and keeps the download when the installer fails.");
 
         // The wait for the portable launcher has a deadline, so a launcher that never exits cannot hold the helper forever.
@@ -129,6 +130,9 @@ $ops.Publisher = { param($path, $plan)
         Directory.CreateDirectory(folder);
         string path = Path.Combine(folder, "download.exe");
         File.WriteAllBytes(path, download);
+        string target = Path.Combine(folder, "fixture-app.exe");
+        File.Copy(Path.Combine(Environment.SystemDirectory, "cmd.exe"), target);
+        string targetHash = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(target)));
         UpdateImagePublication.RememberVerified(path, hash, Signer);
         string marker = Path.Combine(folder, "installer-ran.txt");
         string relaunched = Path.Combine(folder, "relaunched.txt");
@@ -136,13 +140,36 @@ $ops.Publisher = { param($path, $plan)
         string stage = Path.Combine(folder, "stage");
         // Relaunch and the releases page are recorded instead of opened; everything else is the production helper.
         string overrides = "$plan.Signer = '" + signer.Replace("'", "''") + "'\n" + CatalogPublisher + "\n" +
-            "$ops.Relaunch = { param($plan) [IO.File]::WriteAllText('" + relaunched + "', 'yes') }\n" +
+            """
+$ops.VerifiedTargetThumb = { param($path, $signer)
+    $signature = Get-AuthenticodeSignature -LiteralPath $path
+    if ($signature.Status -ne [Management.Automation.SignatureStatus]::Valid -or $null -eq $signature.SignerCertificate -or
+        $signature.SignerCertificate.Subject.IndexOf($signer, [StringComparison]::OrdinalIgnoreCase) -lt 0) {
+        throw 'The installed fixture publisher could not be verified.'
+    }
+    $signature.SignerCertificate.Thumbprint
+}
+$catalogPublisher = $ops.Publisher
+$ops.Publisher = { param($path, $plan)
+    (& $catalogPublisher $path $plan) -and
+        (Get-AuthenticodeSignature -LiteralPath $path).SignerCertificate.Thumbprint -eq $plan.Thumb
+}
+$plan.Thumb = (Get-AuthenticodeSignature -LiteralPath $plan.Target).SignerCertificate.Thumbprint
+""" + "\n" +
+            "$ops.Relaunch = { param($plan)\n" +
+            "if ($plan.Target -ne '" + target.Replace("'", "''") + "' -or $plan.Hash -ne '" + targetHash + "' -or " +
+            "$plan.Thumb -ne (& $ops.VerifiedTargetThumb $plan.Target $plan.Signer)) { throw 'The relaunch identity differs from the owned target.' }\n" +
+            "$write = $null; try { $write = [IO.File]::Open($plan.Target, 'Open', 'Write', 'ReadWrite') } catch [IO.IOException] { }\n" +
+            "if ($null -ne $write) { $write.Dispose(); throw 'The target was not held during relaunch.' }\n" +
+            "[IO.File]::WriteAllText('" + relaunched.Replace("'", "''") + "', 'yes') }\n" +
             "$ops.Releases = { param($url) [IO.File]::WriteAllText('" + releases + "', $url) }";
         string script = UpdateImagePublication.Installer(path, arguments ?? "/d /c type nul > \"" + marker + "\"", false,
-            "fixture-app.exe", stage, "https://example.invalid/releases", overrides);
+            target, stage, "https://example.invalid/releases", overrides);
         using var process = Process.Start(Helper(script)) ?? throw new Exception("The update helper did not start.");
         if (!process.WaitForExit(60_000)) { process.Kill(true); throw new Exception("The update helper did not finish."); }
         bool stageEmpty = !Directory.Exists(stage) || Directory.GetFileSystemEntries(stage).Length == 0;
+        Require(Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(target))) == targetHash,
+            "The fixture installer leaves the original installed target unchanged");
         return new(process.ExitCode, File.Exists(marker), File.Exists(relaunched), File.Exists(releases), stageEmpty, path);
     }
 

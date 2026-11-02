@@ -10,6 +10,8 @@ public interface IProfileBackupHost
     Task<bool> ReadyAsync(CancellationToken token);
     Task<bool> DestinationAbsentAsync(string destinationPath, CancellationToken token);
     Task CopyAsync(ProfileSnapshot target, string destinationPath, IProgress<string>? progress, CancellationToken token);
+    Task<ProfileBackupVerification> VerifyAsync(ProfileSnapshot target, string destinationPath, CancellationToken token) =>
+        ProfileBackupArtifactWriter.CreateForExistingCopyAsync(target, destinationPath, token: token);
     Task<string?> BoundaryProblemAsync(ProfileSnapshot target, string destinationPath, CancellationToken token) => Task.FromResult<string?>(null);
 }
 
@@ -116,8 +118,10 @@ public static class ProfileBackupExecution
             await copy.WaitAsync(token).ConfigureAwait(false);
             token.ThrowIfCancellationRequested();
             Record("Copy provider completed; verifying source and destination");
-            var verification = await ProfileBackupArtifactWriter.CreateForExistingCopyAsync(target, destination,
-                token: token).ConfigureAwait(false);
+            var verify = host.VerifyAsync(target, destination, token) ??
+                throw new InvalidOperationException("Profile verification provider returned no operation.");
+            var verification = await verify.WaitAsync(token).ConfigureAwait(false) ??
+                throw new InvalidOperationException("Profile verification provider returned no evidence.");
             if (!verification.Verified)
             {
                 Record("Backup verification incomplete", verification);

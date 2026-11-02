@@ -9,10 +9,9 @@ internal static class ProfileBackupCopyChecks
         const string destination = @"D:\KillerBenchBackups\Fixture";
         RepairStep step = ProfileBackupCopy.CreateStep(target, destination);
         string[] required = ["/E", "/COPYALL", "/DCOPY:DAT", "/B", "/EFSRAW", "/XJ", "/SL", "/R:1", "/W:1", "/NFL", "/NDL", "/NJH", "/NJS", "/NP"];
-        if (step.Tool != "robocopy.exe" || step.Verification || step.Arguments.Length != required.Length + 4 ||
+        if (step.Tool != "robocopy.exe" || step.Verification || step.Arguments.Length != required.Length + 2 ||
             step.Arguments[0] != target.Path || step.Arguments[1] != destination ||
-            !step.Arguments.Skip(2).Take(required.Length).SequenceEqual(required) ||
-            step.Arguments[^2] != "/XD" || step.Arguments[^1] != @"C:\Users\Fixture\AppData\Local\Microsoft\WindowsApps")
+            !step.Arguments.Skip(2).SequenceEqual(required))
             throw new Exception("The native profile backup command is not the fixed bounded plan");
 
         foreach (int exitCode in Enumerable.Range(0, 8))

@@ -15,7 +15,8 @@ public static class DebloatPowerReconciliation
 {
     private static readonly JsonSerializerOptions StrictJson = new(Capture.JsonOptions)
     {
-        RespectRequiredConstructorParameters = true
+        RespectRequiredConstructorParameters = true,
+        RespectNullableAnnotations = true
     };
 
     public static Task<DebloatPowerReconciliationResult> RunPlanAsync(string folder,

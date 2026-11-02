@@ -135,6 +135,7 @@ public sealed record PrivacyBooleanResult(PrivacyChangeOutcome Outcome, string S
     string Detail, string? JournalPath = null, PrivacyBooleanEvidence? Before = null, ToolResult? Command = null,
     PrivacyBooleanEvidence? After = null)
 {
+    [System.Text.Json.Serialization.JsonRequired]
     public string Machine { get; init; } = Environment.MachineName;
     public int GetExitCode() => Outcome is PrivacyChangeOutcome.Preview or PrivacyChangeOutcome.Verified ? 0 :
         Outcome == PrivacyChangeOutcome.Stopped ? 130 : 3;
@@ -153,7 +154,11 @@ public interface IPrivacyBooleanSettingHost
 
 public static class PrivacyBooleanSettingExecution
 {
-    private static readonly JsonSerializerOptions StrictJson = new(Capture.JsonOptions) { RespectRequiredConstructorParameters = true };
+    private static readonly JsonSerializerOptions StrictJson = new(Capture.JsonOptions)
+    {
+        RespectRequiredConstructorParameters = true,
+        RespectNullableAnnotations = true
+    };
 
     public static async Task<PrivacyBooleanResult> RunAsync(PrivacyBooleanSettingDefinition definition, bool requestedEnabled,
         bool execute, string journalFolder, IPrivacyBooleanSettingHost host, IProgress<string>? progress = null,
@@ -256,7 +261,8 @@ public static class PrivacyBooleanSettingExecution
         {
             var pending = await ReadAsync<Pending>(pendingPath, token).ConfigureAwait(false);
             if (pending.Schema != 1 || pending.SettingKey != definition.Key || !CurrentMachine(pending.Machine) ||
-                pending.StartedUtc == default || pending.TargetValuePresent && pending.TargetValue is not (0 or 1) ||
+                pending.StartedUtc == default || string.IsNullOrWhiteSpace(pending.JournalPath) ||
+                pending.TargetValuePresent && pending.TargetValue is not (0 or 1) ||
                 !pending.TargetValuePresent && pending.TargetValue is not null || Blocker(definition, pending.Before, pending.TargetValuePresent && pending.TargetValue == 1) is not null)
                 throw new InvalidDataException("Pending privacy-setting record is invalid.");
             Report(progress, "Rechecking " + definition.Title + " without repeating the change.");
