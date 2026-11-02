@@ -35,7 +35,7 @@ public partial class MainWindow
         string level = !safe ? "off" : AgentDisruptiveRepairsCheck.IsChecked == true ? "all" : "safe";
         if (!WriteAgentRepairLevel(level))
         {
-            Report("The KillerMCP repair setting could not be saved.");
+            Report(Controls.LocalizedText.Get("Str_Bpa_AgentSaveFailed"));
             RefreshAgentRepairSettings();
         }
     }
@@ -45,11 +45,11 @@ public partial class MainWindow
         try
         {
             if (File.Exists(AgentRepairLockPath)) File.Delete(AgentRepairLockPath);
-            Report("KillerMCP repair lock cleared.");
+            Report(Controls.LocalizedText.Get("Str_Bpa_AgentLockCleared"));
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException)
         {
-            Report("The KillerMCP repair lock could not be cleared: " + error.Message);
+            Report(Controls.LocalizedText.Format("Str_Ui_Error", Controls.LocalizedText.Get("Str_About_KillerMcpClearLock"), error.Message));
         }
         RefreshAgentRepairLock();
     }
@@ -103,7 +103,7 @@ public partial class MainWindow
         {
             var file = new FileInfo(AgentRepairLockPath);
             if (!file.Exists) return null;
-            if (file.Length > AgentRepairFileLimit) return "an unreadable repair";
+            if (file.Length > AgentRepairFileLimit) return Controls.LocalizedText.Get("Str_Bpa_UnreadableRepair");
             using var document = JsonDocument.Parse(File.ReadAllText(file.FullName));
             var root = document.RootElement;
             foreach (var name in new[] { "Title", "Action" })
@@ -111,11 +111,11 @@ public partial class MainWindow
                 if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty(name, out var value)
                     && value.ValueKind == JsonValueKind.String && value.GetString() is { Length: > 0 and <= 200 } text) return text;
             }
-            return "an unknown repair";
+            return Controls.LocalizedText.Get("Str_Bpa_UnknownRepair");
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException)
         {
-            return File.Exists(AgentRepairLockPath) ? "an unreadable repair" : null;
+            return File.Exists(AgentRepairLockPath) ? Controls.LocalizedText.Get("Str_Bpa_UnreadableRepair") : null;
         }
     }
 }

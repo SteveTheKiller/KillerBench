@@ -89,26 +89,26 @@ public partial class MainWindow
             if (remove < 0) remove = 0;
             sources.RemoveAt(remove);
             SourcesList.Items.RemoveAt(remove);
-            Report("Oldest source removed from the display limit. Original file and saved capture unchanged.");
+            Report(Controls.LocalizedText.Get("Str_Ui_SourceRemoved"));
         }
         sources.Add(item);
         SourcesList.Items.Add(new ListBoxItem
         {
-            Content = new TextBlock { Text = item.Source == "Synthetic demonstration" ? "Sample evidence" : Path.GetFileName(item.Source), TextTrimming = TextTrimming.CharacterEllipsis },
+            Content = new TextBlock { Text = item.Source == "Synthetic demonstration" ? Controls.LocalizedText.Get("Str_Content_Load_sample") : Path.GetFileName(item.Source), TextTrimming = TextTrimming.CharacterEllipsis },
             ToolTip = identity is null ? item.Source : item.Source + "\nResult ID: " + identity.Id, Tag = item
         });
         SourcesList.SelectedIndex = sources.Count - 1;
-        SessionLabel.Text = $"{sources.Count} source{(sources.Count == 1 ? "" : "s")}";
+        SessionLabel.Text = Controls.LocalizedText.Format("Str_Session_SourceCount", sources.Count);
     }
 
     private void OnSourceSelected(object sender, SelectionChangedEventArgs e)
     {
         if (SourcesList.SelectedItem is not ListBoxItem { Tag: TextEvidence selected }) return;
         evidence = selected;
-        ModeLabel.Text = selected.Source == "Synthetic demonstration" ? "SAMPLE MODE" :
-            Path.GetExtension(selected.Source).ToLowerInvariant() is ".evtx" or ".xml" ? "IMPORTED EVENTS / RULES EVALUATED" : "IMPORTED TEXT / RULES EVALUATED";
+        ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty,
+            selected.Source == "Synthetic demonstration" ? "Str_Text_SAMPLE_MODE" : "Str_Mode_Imported");
         if (capture is not null && (selected.Source == "Windows Update capture" || capture.Sources.Any(s => ReferenceEquals(s.Evidence, selected))))
-            ModeLabel.Text = "CAPTURED EVIDENCE / RULES EVALUATED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Imported");
         if (workflowSummaries.TryGetValue(selected, out var demoWorkflow) && demoWorkflow.Machine == DemoWorkflow.MachineName)
             ModeLabel.Text = Controls.LocalizedText.Get(App.ScreenshotMode ? "Str_Mode_DemoScreenshot" : "Str_Mode_DemoLive");
         SearchBox.Clear();
@@ -200,7 +200,7 @@ public partial class MainWindow
     {
         ApplyAppScale(scale);
         Preferences.Set("AppScale", appScale.ToString(CultureInfo.InvariantCulture));
-        StatusLabel.Text = $"Interface zoom: {appScale:P0}";
+        StatusLabel.Text = Controls.LocalizedText.Get("Str_Shortcuts_AppZoom") + ": " + appScale.ToString("P0");
     }
     private void ApplyAppScale(double scale)
     {

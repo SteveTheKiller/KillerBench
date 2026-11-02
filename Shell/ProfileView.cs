@@ -8,11 +8,84 @@ public partial class MainWindow
     private ProfileInventoryResult? profileInventory;
     private ProfileDependencyResult? profileDependenciesResult;
 
+    private static readonly (string Source, string Key)[] ProfileResultText =
+    [
+        ("The existing copy was verified and its fixed verification files were created. No profile was copied or removed.", "Str_ProfileResult_ArtifactVerified"),
+        ("The copied backup was not verified. Existing files were preserved and no profile was copied or removed.", "Str_ProfileResult_ExistingCopyUnverified"),
+        ("No profile was removed. Verification does not prove restore behavior or every copied profile attribute.", "Str_ProfileResult_VerifiedBoundary"),
+        ("Profile backup stopped. The destination and pending evidence were preserved. No profile was removed.", "Str_ProfileResult_CopyStopped"),
+        ("The selected unloaded profile was copied and its regular-file set and contents were verified.", "Str_ProfileResult_CopyVerified"),
+        ("The destination and pending evidence were preserved, and the source profile was not removed.", "Str_ProfileResult_DestinationPreserved"),
+        ("Fresh eligibility or destination checks blocked the backup before a verified copy completed.", "Str_ProfileResult_Blocked"),
+        ("The existing copy and live source were verified. No profile was copied or removed.", "Str_ProfileResult_ExistingCopyVerified"),
+        ("The pending backup was verified and archived. No copy or removal was retried.", "Str_ProfileResult_RecoveryVerified"),
+        ("Refresh the selected profile evidence before attempting another verification.", "Str_ProfileResult_RefreshBeforeVerification"),
+        ("No profile was removed. Existing backup and pending evidence were preserved.", "Str_ProfileResult_IncompleteBoundary"),
+        ("Confirm the destination and profile evidence, then try the backup again.", "Str_ProfileResult_ConfirmDestination"),
+        ("Confirm the source and copied backup paths, then try verification again.", "Str_ProfileResult_ConfirmPaths"),
+        ("Profile backup verification stopped. No profile was copied or removed.", "Str_ProfileResult_VerificationStopped"),
+        ("Confirm the saved backup evidence, then run the recovery check again.", "Str_ProfileResult_ConfirmRecovery"),
+        ("Run the review again when the selected profile evidence is available.", "Str_ProfileResult_ReviewWhenAvailable"),
+        ("The selected profile is no longer eligible for backup verification.", "Str_ProfileResult_Ineligible"),
+        ("Use Check interrupted backup when the saved evidence is available.", "Str_ProfileResult_CheckInterruptedWhenAvailable"),
+        ("No backup files were created and no profile was copied or removed.", "Str_ProfileResult_NoFilesCreated"),
+        ("Profile backup recovery stopped. No copy or removal was retried.", "Str_ProfileResult_RecoveryStopped"),
+        ("The backup remains unresolved. No copy or removal was retried.", "Str_ProfileResult_RecoveryUnresolved"),
+        ("Check the copied backup again when its evidence is available.", "Str_ProfileResult_CheckCopyWhenAvailable"),
+        ("Use Check interrupted backup before attempting another copy.", "Str_ProfileResult_CheckInterruptedFirst"),
+        ("Snapshot review passed. No profile deletion was authorized.", "Str_ProfileResult_ReviewPassed"),
+        ("This is a review only. No profile was copied or removed.", "Str_ProfileResult_ReviewBoundary"),
+        ("Confirm the selected profile and try the review again.", "Str_ProfileResult_ConfirmReview"),
+        ("The profile review did not produce complete evidence.", "Str_ProfileResult_ReviewIncomplete"),
+        ("Profile backup stopped with verification incomplete.", "Str_ProfileResult_CopyVerificationStopped"),
+        ("The backup did not reach verified completion.", "Str_ProfileResult_Incomplete"),
+        ("Profile review stopped. No profiles changed.", "Str_ProfileResult_ReviewStopped"),
+        ("The source profile was not removed.", "Str_ProfileResult_SourcePreserved"),
+        ("The copy was not verified.", "Str_ProfileResult_CopyUnverified"),
+        ("Change boundary", "Str_ProfileResult_ChangeBoundary"),
+    ];
+
+    private static string LocalizeProfileResultText(string text)
+    {
+        foreach (var (source, key) in ProfileResultText)
+            text = text.Replace(source, Controls.LocalizedText.Get(key), StringComparison.Ordinal);
+        foreach (var (source, key) in new[]
+        {
+            ("Profile backup recovery", "Str_Profile_CheckInterrupted"),
+            ("Backup recovery", "Str_Profile_CheckInterrupted"),
+            ("Profile backup verification", "Str_Profile_VerifyBackup"),
+            ("Backup verification", "Str_Profile_VerifyBackup"),
+            ("Profile backup artifact", "Str_Profile_CreateVerification"),
+            ("Profile backup copy", "Str_Profile_CopyVerify"),
+            ("Profile backup", "Str_Profile_BackupHeader"),
+            ("Profile snapshot review", "Str_Profile_PreviewSelected"),
+            ("Profile review", "Str_Profile_PreviewSelected"),
+            ("Review", "Str_Profile_PreviewSelected")
+        })
+        {
+            if (text == source + " stopped.")
+                return Controls.LocalizedText.Get(key) + ": " + Controls.LocalizedText.Get("Str_ProfileResult_Stopped");
+            if (text == source + " unavailable.")
+                return Controls.LocalizedText.Get(key) + ": " + Controls.LocalizedText.Get("Str_ProfileResult_Unavailable");
+            if (text.StartsWith(source + " unavailable: ", StringComparison.Ordinal))
+                return Controls.LocalizedText.Get(key) + ": " + Controls.LocalizedText.Get("Str_ProfileResult_Unavailable") + " " + text[(source.Length + " unavailable: ".Length)..];
+            if (text == source + " verified")
+                return Controls.LocalizedText.Get(key) + ": " + Controls.LocalizedText.Get("Str_Tkp_Verified");
+            if (text == source + " requires review" || text == source + " requires attention")
+                return Controls.LocalizedText.Get(key) + ": " + Controls.LocalizedText.Get("Str_Status_NeedsAttention");
+            if (text == source + " complete")
+                return Controls.LocalizedText.Get(key) + ": " + Controls.LocalizedText.Get("Str_ProfileResult_Complete");
+            if (text == source) return Controls.LocalizedText.Get(key);
+        }
+        return text.Replace(" Journal: ", " " + Controls.LocalizedText.Get("Str_ProfileResult_Journal") + ": ", StringComparison.Ordinal);
+    }
+
+
     private void OnBrowseProfileBackup(object sender, RoutedEventArgs e)
     {
         var picker = new Controls.FileDialog(Controls.FileDialogMode.Folder)
         {
-            Title = "Choose the existing copied profile backup",
+            Title = Controls.LocalizedText.Get("Str_Profile_BackupPathTip"),
             Multiselect = false,
             HideFilesInFolderMode = true,
             AcceptHighlightedFolder = true
@@ -29,11 +102,11 @@ public partial class MainWindow
     private async void OnCopyProfileBackup(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
-        if (profileInventory is null) { Report("Run Profiles first."); return; }
+        if (profileInventory is null) { Report(Controls.LocalizedText.Format("Str_Ui_RunFirst", Controls.LocalizedText.Workflow(WorkflowKind.Profiles))); return; }
         var selected = ProfileSelection.SelectedItems.Cast<ProfileSnapshot>().ToArray();
-        if (selected.Length != 1) { Report("Select exactly one reviewed profile."); return; }
+        if (selected.Length != 1) { Report(Controls.LocalizedText.Format("Str_Ui_SelectOne", Controls.LocalizedText.Workflow(WorkflowKind.Profiles))); return; }
         string destination = ProfileBackupPath.Text.Trim();
-        if (destination.Length == 0) { Report("Type a new local NTFS backup folder that does not exist."); return; }
+        if (destination.Length == 0) { Report(Controls.LocalizedText.Get("Str_Profile_BackupDescription")); return; }
         using var stop = new CancellationTokenSource();
         BeginProfileBackupOperation(stop, "PROFILE BACKUP / COPY AND VERIFY");
         repairRunning = true;
@@ -58,22 +131,22 @@ public partial class MainWindow
                 : "The backup did not reach verified completion. The destination and pending evidence were preserved, and the source profile was not removed.";
             ShowProfileBackupIncomplete("Profile backup copy", note + " Journal: " + result.JournalPath,
                 "Use Check interrupted backup before attempting another copy.");
-            Report(note);
-            SetScanLight("attention", note);
+            Report(LocalizeProfileResultText(note));
+            SetScanLight("attention", LocalizeProfileResultText(note));
         }
         catch (OperationCanceledException)
         {
             ShowProfileBackupIncomplete("Profile backup copy",
                 "Profile backup stopped. The destination and pending evidence were preserved. No profile was removed.",
                 "Use Check interrupted backup before attempting another copy.");
-            SetScanLight("incomplete", "Profile backup stopped with verification incomplete.");
+            SetScanLight("incomplete", LocalizeProfileResultText("Profile backup stopped with verification incomplete."));
         }
         catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException or InvalidOperationException or
             NotSupportedException or TimeoutException or ArgumentException)
         {
             ShowProfileBackupIncomplete("Profile backup copy", "Profile backup unavailable: " + error.Message,
                 "Confirm the destination and profile evidence, then try the backup again.");
-            SetScanLight("incomplete", "Profile backup unavailable.");
+            SetScanLight("incomplete", LocalizeProfileResultText("Profile backup unavailable."));
         }
         finally
         {
@@ -101,14 +174,14 @@ public partial class MainWindow
             ShowProfileBackupIncomplete("Profile backup recovery",
                 "Profile backup recovery stopped. No copy or removal was retried.",
                 "Use Check interrupted backup when the saved evidence is available.");
-            SetScanLight("incomplete", "Backup recovery stopped.");
+            SetScanLight("incomplete", LocalizeProfileResultText("Backup recovery stopped."));
         }
         catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException or InvalidOperationException or
             NotSupportedException or TimeoutException or ArgumentException)
         {
             ShowProfileBackupIncomplete("Profile backup recovery", "Profile backup recovery unavailable: " + error.Message,
                 "Confirm the saved backup evidence, then run the recovery check again.");
-            SetScanLight("incomplete", "Backup recovery unavailable.");
+            SetScanLight("incomplete", LocalizeProfileResultText("Backup recovery unavailable."));
         }
         finally { EndProfileBackupOperation(); }
     }
@@ -116,11 +189,11 @@ public partial class MainWindow
     private async Task RunProfileBackupVerificationAsync(bool createArtifact)
     {
         if (readCancellation is not null) return;
-        if (profileInventory is null) { Report("Run Profiles first."); return; }
+        if (profileInventory is null) { Report(Controls.LocalizedText.Format("Str_Ui_RunFirst", Controls.LocalizedText.Workflow(WorkflowKind.Profiles))); return; }
         var selected = ProfileSelection.SelectedItems.Cast<ProfileSnapshot>().Select(profile => profile.Sid).ToArray();
-        if (selected.Length != 1) { Report("Select exactly one reviewed profile."); return; }
+        if (selected.Length != 1) { Report(Controls.LocalizedText.Format("Str_Ui_SelectOne", Controls.LocalizedText.Workflow(WorkflowKind.Profiles))); return; }
         string destination = ProfileBackupPath.Text.Trim();
-        if (destination.Length == 0) { Report("Choose the existing copied profile backup folder."); return; }
+        if (destination.Length == 0) { Report(Controls.LocalizedText.Get("Str_Profile_BackupPathTip")); return; }
         using var stop = new CancellationTokenSource();
         BeginProfileBackupOperation(stop, createArtifact ? "PROFILE BACKUP / CREATE VERIFICATION" : "PROFILE BACKUP / VERIFY");
         try
@@ -133,8 +206,8 @@ public partial class MainWindow
                 string blockers = plan.Blockers.Count == 0 ? "The selected profile is no longer eligible for backup verification." : string.Join("\n", plan.Blockers);
                 ShowProfileBackupIncomplete("Profile backup verification", blockers + " No backup files were created and no profile was copied or removed.",
                     "Refresh the selected profile evidence before attempting another verification.");
-                Report("Profile backup verification blocked by fresh profile evidence.");
-                SetScanLight("attention", "Profile backup verification blocked.");
+                Report(Controls.LocalizedText.Get("Str_Profile_VerifyBackup") + ": " + Controls.LocalizedText.Get("Str_Recipe_Deferred"));
+                SetScanLight("attention", Controls.LocalizedText.Get("Str_Recipe_Deferred"));
                 return;
             }
 
@@ -163,14 +236,14 @@ public partial class MainWindow
             ShowProfileBackupIncomplete("Profile backup verification",
                 "Profile backup verification stopped. No profile was copied or removed.",
                 "Check the copied backup again when its evidence is available.");
-            SetScanLight("incomplete", "Backup verification stopped.");
+            SetScanLight("incomplete", LocalizeProfileResultText("Backup verification stopped."));
         }
         catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException or InvalidOperationException or
             NotSupportedException or TimeoutException or ArgumentException)
         {
             ShowProfileBackupIncomplete("Profile backup verification", "Profile backup verification unavailable: " + error.Message,
                 "Confirm the source and copied backup paths, then try verification again.");
-            SetScanLight("incomplete", "Backup verification unavailable.");
+            SetScanLight("incomplete", LocalizeProfileResultText("Backup verification unavailable."));
         }
         finally { EndProfileBackupOperation(); }
     }
@@ -189,7 +262,7 @@ public partial class MainWindow
              new WorkflowCheck("Change boundary", CheckState.Information,
                 "No profile was removed. Verification does not prove restore behavior or every copied profile attribute.")], [],
             "Profile backup verification result. No profile removal was requested."), title);
-        SetScanLight(result.Verified ? "ready" : "attention", note);
+        SetScanLight(result.Verified ? "ready" : "attention", LocalizeProfileResultText(note));
     }
 
     private void ShowProfileBackupIncomplete(string title, string detail, string nextStep)
@@ -219,7 +292,8 @@ public partial class MainWindow
         readCancellation = stop;
         SetCaptureBusy(true);
         RepairPanel.IsEnabled = false;
-        ModeLabel.Text = mode;
+        ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty,
+            mode.Contains("RECOVERY", StringComparison.Ordinal) ? "Str_Mode_CheckingRecovery" : "Str_Mode_InProgress");
         BeginWorkflowOutput(WorkflowKind.Profiles);
     }
 
@@ -231,7 +305,7 @@ public partial class MainWindow
         SearchBox.IsEnabled = true;
         SetCaptureBusy(false);
         RepairPanel.IsEnabled = true;
-        ModeLabel.Text = "PROFILE BACKUP CHECK ENDED";
+        ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Ended");
         if (closeAfterOperation) Close();
     }
 
@@ -241,7 +315,7 @@ public partial class MainWindow
     private async void OnPreviewProfiles(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
-        if (profileInventory is null) { Report("Run Profiles first."); return; }
+        if (profileInventory is null) { Report(Controls.LocalizedText.Format("Str_Ui_RunFirst", Controls.LocalizedText.Workflow(WorkflowKind.Profiles))); return; }
         var selected = ProfileSelection.SelectedItems.Cast<ProfileSnapshot>().Select(p => p.Sid).ToArray();
         try { ProfilePlanning.ValidateSelection(selected); }
         catch (ArgumentException error) { Report(error.Message); return; }
@@ -268,21 +342,21 @@ public partial class MainWindow
                 [new WorkflowCheck("Profile snapshot review", plan.ReviewPassed ? CheckState.Information : CheckState.Unknown, reviewDetail),
                  new WorkflowCheck("Change boundary", CheckState.Information,
                     "This is a review only. No profile was copied or removed.")], [], journal), "Profile review");
-            Report("Profile plan saved: " + journal + ". No profiles changed.");
-            SetScanLight(plan.ReviewPassed ? "ready" : "incomplete", "Profile review only. No profiles changed.");
+            Report(Controls.LocalizedText.Format("Str_Ui_Saved", Controls.LocalizedText.Get("Str_Profile_PreviewSelected"), journal));
+            SetScanLight(plan.ReviewPassed ? "ready" : "incomplete", Controls.LocalizedText.Get("Str_Profile_PreviewSelected"));
         }
         catch (ArgumentException error) { Report(error.Message); }
         catch (OperationCanceledException)
         {
             ShowProfileReviewIncomplete("Profile review stopped. No profiles changed.",
                 "Run the review again when the selected profile evidence is available.");
-            SetScanLight("incomplete", "Review stopped.");
+            SetScanLight("incomplete", LocalizeProfileResultText("Review stopped."));
         }
         catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException or InvalidOperationException or NotSupportedException or TimeoutException)
         {
             ShowProfileReviewIncomplete("Profile review unavailable: " + error.Message,
                 "Confirm the selected profile and try the review again.");
-            SetScanLight("incomplete", "Review unavailable.");
+            SetScanLight("incomplete", LocalizeProfileResultText("Review unavailable."));
         }
         finally
         {
@@ -292,7 +366,7 @@ public partial class MainWindow
             SearchBox.IsEnabled = true;
             SetCaptureBusy(false);
             RepairPanel.IsEnabled = true;
-            ModeLabel.Text = "PROFILE REVIEW ENDED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Ended");
             if (closeAfterOperation) Close();
         }
     }

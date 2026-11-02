@@ -225,7 +225,7 @@ public partial class MainWindow
                     StorageVolumeChoice.ItemsSource = new[] { selected };
                     StorageVolumeChoice.SelectedIndex = 0;
                 }
-                Report("Drive list unavailable. Previous selection retained: " + error.Message);
+                Report(Controls.LocalizedText.Format("Str_Ui_Error", Controls.LocalizedText.Get("Str_Storage_Volume"), error.Message));
             }
         }
         ComponentCleanupSettings?.Visibility =components ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
@@ -347,7 +347,7 @@ public partial class MainWindow
         Report(message);
         string output = message.Replace("\r\n", "\n").Replace('\r', '\n').Trim('\0', '\uFEFF', '\n');
         if (EvidenceBox.Text.Length + output.Length > 100_000)
-            EvidenceBox.Text = "Earlier live output omitted from display.\n" + EvidenceBox.Text[^Math.Min(50_000, EvidenceBox.Text.Length)..];
+            EvidenceBox.Text = Controls.LocalizedText.Get("Str_Ui_LiveOutputTrimmed") + "\n" + EvidenceBox.Text[^Math.Min(50_000, EvidenceBox.Text.Length)..];
         EvidenceBox.AppendText(output + "\n");
         EvidenceBox.ScrollToEnd();
     }
@@ -382,13 +382,13 @@ public partial class MainWindow
         }
         if (macePackageReconciliationRequested && kind != WorkflowKind.Mace)
         {
-            Report("Microsoft app removal reconciliation is available only from the Microsoft app removal workflow.");
+            Report(Controls.LocalizedText.Format("Str_Ui_RunFirst", Controls.LocalizedText.Workflow(WorkflowKind.Mace)));
             return;
         }
         if (macePackageRemovalRequested && (kind != WorkflowKind.Mace ||
             MacePackageSelection.SelectedItem is not MacePackageChoice || MacePackageRemovalConsent.IsChecked != true))
         {
-            Report("The separate app removal control requires one selected package and its confirmation.");
+            Report(Controls.LocalizedText.Format("Str_Ui_SelectOne", Controls.LocalizedText.Get("Str_Mace_PackagePlan")) + " " + Controls.LocalizedText.Format("Str_Ui_ConfirmFirst", Controls.LocalizedText.Get("Str_Mace_RemovalConsent")));
             return;
         }
         var orcaOptions = new OrcaReviewOptions(
@@ -457,17 +457,17 @@ public partial class MainWindow
             catch (ArgumentException error) { Report(error.Message); return; }
         }
         int debloatAction = kind == WorkflowKind.Debloat ? DebloatActionChoice.SelectedIndex : 0;
-        if (debloatAction is < 0 or > 3) { Report("Choose a valid declutter action."); return; }
+        if (debloatAction is < 0 or > 3) { Report(Controls.LocalizedText.Format("Str_Ui_SelectOne", Controls.LocalizedText.Get("Str_Debloat_GoAction"))); return; }
         if (debloatAction == 1 && debloatOptions.Areas != DebloatAreas.HighPerformancePower)
-        { Report("High performance activation requires High performance power as the only selected area."); return; }
+        { Report(Controls.LocalizedText.Format("Str_Ui_OnlyArea", Controls.LocalizedText.Get("Str_Debloat_HighPerformance"))); return; }
         if (debloatAction == 2 && (debloatOptions.Areas != DebloatAreas.SleepAndDisplayTimers || debloatOptions.PowerRequest is null))
-        { Report("Power timer changes require Sleep and display timers as the only selected area."); return; }
+        { Report(Controls.LocalizedText.Format("Str_Ui_OnlyArea", Controls.LocalizedText.Get("Str_Debloat_Timers"))); return; }
         if (debloatAction == 3 && debloatOptions.Areas != DebloatAreas.Hibernation)
-        { Report("Disabling hibernation requires Hibernation as the only selected area."); return; }
+        { Report(Controls.LocalizedText.Format("Str_Ui_OnlyArea", Controls.LocalizedText.Get("Str_Debloat_Hibernation"))); return; }
         bool includeProvisioned = IncludeProvisionedPackages.IsChecked == true;
         CommonDiagnosticScope[]? diagnosticScopes = kind == WorkflowKind.CommonProblems && FocusDiagnosticAreas.IsChecked == true
             ? [.. DiagnosticAreaList.SelectedItems.Cast<DiagnosticArea>().Select(area => area.Scope)] : null;
-        if (diagnosticScopes is { Length: 0 }) { Report("Select at least one diagnostic area before selecting Run diagnosis."); return; }
+        if (diagnosticScopes is { Length: 0 }) { Report(Controls.LocalizedText.Format("Str_Ui_SelectAtLeastOne", Controls.LocalizedText.Get("Str_Advanced_DiagnosticOnly"))); return; }
         string[]? selectedRecipes = kind == WorkflowKind.CommonProblems && CustomizeRecipes.IsChecked == true
             ? [.. RecipeSelectionList.SelectedItems.Cast<RepairRecipe>().Select(recipe => recipe.Id)] : null;
         string? selectedQueue = kind == WorkflowKind.Printing ? PrinterQueues.SelectedItem as string : null;
@@ -477,7 +477,7 @@ public partial class MainWindow
                 ? job : null;
         bool cancelPrintJob = selectedPrintJob is not null && PrintJobCancelConsent.IsChecked == true;
         if (selectedPrintJob is not null && !cancelPrintJob)
-        { Report("Confirm cancellation of the exact selected print job, or clear the job selection."); return; }
+        { Report(Controls.LocalizedText.Format("Str_Ui_ConfirmFirst", Controls.LocalizedText.Get("Str_Print_CancelSelected"))); return; }
         string? msiProductCode = null;
         if (kind == WorkflowKind.Installer && !string.IsNullOrWhiteSpace(InstallerProductCode.Text))
         {
@@ -515,7 +515,7 @@ public partial class MainWindow
         if (kind == WorkflowKind.Cleanup)
         {
             if (previousWindowsRemoval && cleanupOptions.Targets != CleanupTargets.None)
-            { Report("Previous Windows installation removal must run separately from file and cache cleanup."); return; }
+            { Report(Controls.LocalizedText.Get("Str_Cleanup_Boundary")); return; }
             try { if (!previousWindowsRemoval) cleanupOptions.Validate(); }
             catch (ArgumentException error) { Report(error.Message); return; }
         }
@@ -527,7 +527,7 @@ public partial class MainWindow
             .. FirewallPrivateProfile.IsChecked == true ? [FirewallProfileTarget.Private] : Array.Empty<FirewallProfileTarget>(),
             .. FirewallPublicProfile.IsChecked == true ? [FirewallProfileTarget.Public] : Array.Empty<FirewallProfileTarget>()
         ];
-        if (applyFirewallProfiles && firewallTargets.Length == 0) { Report("Choose at least one firewall profile before applying the change."); return; }
+        if (applyFirewallProfiles && firewallTargets.Length == 0) { Report(Controls.LocalizedText.Format("Str_Ui_SelectAtLeastOne", Controls.LocalizedText.Workflow(WorkflowKind.FirewallServices))); return; }
         string? networkLookupHost = null;
         var networkTimeout = TimeSpan.FromSeconds(NetworkTimeoutSeconds.Value);
         if (kind == WorkflowKind.Network && !string.IsNullOrWhiteSpace(NetworkLookupHost.Text))
@@ -538,7 +538,7 @@ public partial class MainWindow
         (string Host, int Port)? networkEndpoint = null;
         if (kind == WorkflowKind.Network && (!string.IsNullOrWhiteSpace(NetworkTcpHost.Text) || !string.IsNullOrWhiteSpace(NetworkTcpPort.Text)))
         {
-            if (!int.TryParse(NetworkTcpPort.Text, out int port)) { Report("Enter a TCP port from 1 through 65535."); return; }
+            if (!int.TryParse(NetworkTcpPort.Text, out int port)) { Report(Controls.LocalizedText.Get("Str_Ui_TcpPortRange")); return; }
             try
             {
                 string destination = NetworkTcpHost.Text.Trim();
@@ -645,8 +645,7 @@ public partial class MainWindow
         repairRunning = true;
         SetCaptureBusy(true);
         RepairPanel.IsEnabled = false;
-        ModeLabel.Text = restorePointRequest is not null ? "SYSTEM RESTORE / PREPARE POINT" : renameComputer ? "COMPUTER NAME / GUARDED RENAME" : previousWindowsRemoval ? "CLEANUP / PREVIOUS WINDOWS" : applyTime ? "TIME / APPLY CUSTOM SOURCE" : applyFirewallProfiles ? "FIREWALL / ENABLE PROFILES" : enableEventChannel ? "EVENT LOG / ENABLE CHANNEL" :
-            applyPrivacyClipboardHistory ? "PRIVACY / CLIPBOARD HISTORY" : applyPrivacyBoolean ? "PRIVACY / GUARDED SETTING" : rebuildSearchIndex ? "SEARCH / GUARDED INDEX REBUILD" : debloatAction > 0 ? "DECLUTTER / GUARDED POWER CHANGE" : autoRepair ? "WORKFLOW / AUTOMATIC REPAIR" : "WORKFLOW / DIAGNOSE";
+        ModeLabel.Text = Controls.LocalizedText.Workflow(kind) + " / " + Controls.LocalizedText.Get("Str_Mode_InProgress");
         BeginWorkflowOutput(kind);
         try
         {
@@ -1043,7 +1042,7 @@ public partial class MainWindow
                 AppendWorkflowOutput(readOnlyOutput);
                 RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Printing, Environment.MachineName, DateTimeOffset.UtcNow,
                     "Selected printer check completed", [check], [], "Read-only selected-printer check. No change journal was created."), "Selected printer");
-                SetScanLight(check.State == CheckState.Clear ? "ready" : "incomplete", "Selected queue settings only.");
+                SetScanLight(check.State == CheckState.Clear ? "ready" : "incomplete", Controls.LocalizedText.Get("Str_Ui_ReadOnlyResult"));
                 return;
             }
             if (kind == WorkflowKind.TimeService && timeOptions.Source != TimeSourceMode.Existing)
@@ -1090,7 +1089,7 @@ public partial class MainWindow
                 RegisterWorkflowResult(new WorkflowResult(WorkflowKind.TimeService, Environment.MachineName, DateTimeOffset.UtcNow,
                     "Windows Time source preview", [TimeConfigurationDiagnostics.AssessSelection(timeOptions, preview.Environment, plan)], [],
                     "Read-only time-source preview. No change journal was created."), "Windows Time source");
-                SetScanLight(plan.ReviewPassed ? "ready" : "incomplete", "Preview only. No settings changed.");
+                SetScanLight(plan.ReviewPassed ? "ready" : "incomplete", Controls.LocalizedText.Get("Str_Ui_ReadOnlyResult"));
                 return;
             }
             if (kind == WorkflowKind.AvailableUpdates)
@@ -1103,8 +1102,8 @@ public partial class MainWindow
                 if (!windowsSelected && !thirdPartySelected)
                 {
                     workflowOutputActive = false;
-                    Report("Select software updates, drivers or third-party apps before selecting Run diagnosis.");
-                    SetScanLight("attention", "No update category was selected.");
+                    Report(Controls.LocalizedText.Get("Str_Update_Software") + " / " + Controls.LocalizedText.Get("Str_Update_Drivers") + " / " + Controls.LocalizedText.Get("Str_Update_ThirdParty"));
+                    SetScanLight("attention", Controls.LocalizedText.Format("Str_Ui_SelectAtLeastOne", Controls.LocalizedText.Workflow(WorkflowKind.AvailableUpdates)));
                     return;
                 }
                 UpdateSearchResult? discovery = null;
@@ -1136,7 +1135,7 @@ public partial class MainWindow
                 string status = incomplete ? "Update discovery incomplete" : "Update discovery completed";
                 RegisterWorkflowResult(new WorkflowResult(WorkflowKind.AvailableUpdates, Environment.MachineName, DateTimeOffset.UtcNow,
                     status, checks, [], "Read-only update discovery. No update installation journal was created."), "Available updates");
-                SetScanLight(incomplete ? "incomplete" : "ready", "Update discovery ended. No installation performed.");
+                SetScanLight(incomplete ? "incomplete" : "ready", Controls.LocalizedText.Get("Str_Ui_ReadOnlyResult"));
                 return;
             }
             if (restorePointRequest is not null)
@@ -1467,7 +1466,7 @@ public partial class MainWindow
                 SetScanLight(msiRepair.Outcome == MsiRepairOutcome.Verified ? "ready" : "attention", msiRepair.Detail);
                 return;
             }
-            CaptureInfo.Text = result.Status + " | " + result.Checks.Count + " checks | " + result.Repairs.Count + " repairs";
+            CaptureInfo.Text = Controls.LocalizedText.Format("Str_Ui_WorkflowCounts", LocalizedStatus(result.Status), result.Checks.Count, result.Repairs.Count);
             Report(result.Status + ". Journal: " + result.JournalPath);
             SetScanLight(result.GetExitCode() == 0 ? "ready" : result.Status == "Needs attention" ? "attention" : "incomplete", Controls.LocalizedText.Format("Str_Output_CheckedScopes", LocalizedStatus(result.Status)));
         }
@@ -1500,7 +1499,7 @@ public partial class MainWindow
             CleanupRemove.IsChecked = false;
             PrivacyClipboardHistoryApply.IsChecked = false;
             PrivacyBooleanApply.IsChecked = false;
-            ModeLabel.Text = "WORKFLOW ENDED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Ended");
             if (closeAfterOperation) Close();
         }
     }

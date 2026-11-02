@@ -11,7 +11,7 @@ public partial class MainWindow
         using var stop = new CancellationTokenSource(TimeSpan.FromMinutes(2));
         readCancellation = stop;
         SetCaptureBusy(true);
-        ModeLabel.Text = "DEFENDER / OVERVIEW";
+        ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_InProgress");
         BeginWorkflowOutput(WorkflowKind.Defender);
         AppendWorkflowOutput("Reading Defender protection, scan timing and aggregate threat history. No scan or security setting will change.");
         try
@@ -33,7 +33,7 @@ public partial class MainWindow
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or OperationCanceledException or TimeoutException)
         {
             AppendWorkflowOutput("Defender overview could not complete: " + error.Message);
-            SetScanLight("incomplete", "Defender overview is incomplete.");
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Ui_UnverifiedResult"));
         }
         finally
         {
@@ -42,7 +42,7 @@ public partial class MainWindow
             SourcesList.IsEnabled = true;
             SearchBox.IsEnabled = true;
             SetCaptureBusy(false);
-            ModeLabel.Text = "WORKFLOW ENDED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Ended");
             if (closeAfterOperation) Close();
         }
     }
@@ -64,7 +64,8 @@ public partial class MainWindow
         // A confirmed request holds close and self-update until its immediate outcome is recorded; the scan itself may continue in Defender.
         repairRunning = execute;
         SetCaptureBusy(true);
-        ModeLabel.Text = execute ? "DEFENDER SCAN / STARTING" : "DEFENDER SCAN / PREVIEW";
+        ModeLabel.Text = Controls.LocalizedText.Workflow(WorkflowKind.Defender) + " / " +
+            Controls.LocalizedText.Get(execute ? "Str_Mode_InProgress" : "Str_Dlg_Preview");
         BeginWorkflowOutput(WorkflowKind.Defender);
         DefenderScanType type = SelectedDefenderScan();
         AppendWorkflowOutput("Checking " + type + " scan eligibility. No exclusion or policy setting will change.");
@@ -96,12 +97,12 @@ public partial class MainWindow
         catch (OperationCanceledException)
         {
             AppendWorkflowOutput("Defender scan operation stopped. Review any retained recovery record before another request.");
-            SetScanLight("incomplete", "Defender scan operation stopped. Completion is unverified.");
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Ui_UnverifiedResult"));
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or TimeoutException)
         {
             AppendWorkflowOutput("Defender scan operation could not complete: " + error.Message);
-            SetScanLight("incomplete", "Defender scan completion is unverified.");
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Ui_UnverifiedResult"));
         }
         finally
         {
@@ -112,7 +113,7 @@ public partial class MainWindow
             SearchBox.IsEnabled = true;
             SetCaptureBusy(false);
             DefenderScanConsent.IsChecked = false;
-            ModeLabel.Text = "WORKFLOW ENDED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Ended");
             if (closeAfterOperation) Close();
         }
     }
@@ -123,7 +124,7 @@ public partial class MainWindow
         using var stop = new CancellationTokenSource(TimeSpan.FromMinutes(1));
         readCancellation = stop;
         SetCaptureBusy(true);
-        ModeLabel.Text = "DEFENDER SCAN / RECOVERY";
+        ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_CheckingRecovery");
         BeginWorkflowOutput(WorkflowKind.Defender);
         try
         {
@@ -147,7 +148,7 @@ public partial class MainWindow
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or OperationCanceledException or TimeoutException)
         {
             AppendWorkflowOutput("Defender scan recovery could not complete: " + error.Message);
-            SetScanLight("incomplete", "Defender scan recovery is incomplete.");
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Ui_UnverifiedResult"));
         }
         finally
         {
@@ -156,7 +157,7 @@ public partial class MainWindow
             SourcesList.IsEnabled = true;
             SearchBox.IsEnabled = true;
             SetCaptureBusy(false);
-            ModeLabel.Text = "WORKFLOW ENDED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Ended");
         }
     }
 }

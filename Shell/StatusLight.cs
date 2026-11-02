@@ -35,6 +35,7 @@ public partial class MainWindow
         ScanLight.Opacity = 1;
         string color = state switch { "running" => "#E0A317", "attention" => "#D0453A", "incomplete" => "#E0A317", _ => "#3FA95F" };
         ScanLight.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
+        ScanLight.Tag = state;
         ScanLight.ToolTip = detail;
         System.Windows.Automation.AutomationProperties.SetName(ScanLight, detail);
         if (state == "running" && SystemParameters.ClientAreaAnimation)

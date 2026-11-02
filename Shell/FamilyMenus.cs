@@ -85,7 +85,7 @@ public partial class MainWindow
             var accent = order[i];
             var colors = accent == Accent.Green ? palette : new ResourceDictionary { Source = new Uri($"pack://application:,,,/KillerBench;component/Themes/Accents/{family}/{accent}.xaml") };
             dots[i].Tag = accent;
-            dots[i].ToolTip = accent.ToString();
+            dots[i].SetResourceReference(FrameworkElement.ToolTipProperty, "Str_Accent_" + accent);
             // Each pill shows its accent the way a selection does (KillerNotes): the palette's own
             // SelectionBg gradient. 98SE keeps its flat Win98 swatches.
             dots[i].Background = ThemeManager.Current == Theme.SE98

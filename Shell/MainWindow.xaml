@@ -39,7 +39,7 @@
       <Border Background="{DynamicResource TitleBarBrush}" IsHitTestVisible="False"/>
       <Border Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>
       <StackPanel x:Name="LogoBar" Orientation="Horizontal" Margin="{DynamicResource TitleLogoMargin}" VerticalAlignment="Center" PreviewMouseWheel="OnAppScale" ToolTip="{DynamicResource Str_ToolTip_Scroll_here_to_resize_the_interface}">
-        <icons:AppIcon x:Name="TitlebarIcon" Width="{DynamicResource TitleIconSize}" Height="{DynamicResource TitleIconSize}" Margin="{DynamicResource TitleIconMargin}" RenderOptions.BitmapScalingMode="NearestNeighbor" AutomationProperties.Name="KillerBench icon. Scroll to zoom the interface."/>
+        <icons:AppIcon x:Name="TitlebarIcon" Width="{DynamicResource TitleIconSize}" Height="{DynamicResource TitleIconSize}" Margin="{DynamicResource TitleIconMargin}" RenderOptions.BitmapScalingMode="NearestNeighbor" AutomationProperties.Name="{DynamicResource Str_ToolTip_Scroll_here_to_resize_the_interface}"/>
         <Grid Margin="0,-18,0,-22" VerticalAlignment="Center"><Grid.RenderTransform><TranslateTransform Y="-5"/></Grid.RenderTransform>
           <TextBlock Margin="1,2,0,0" IsHitTestVisible="False" Opacity="{DynamicResource WordmarkShadowOpacity}" FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}" Visibility="{DynamicResource WordmarkVisibility}"><TextBlock.Effect><BlurEffect Radius="3"/></TextBlock.Effect><Run Text="Killer" Foreground="#D8000000"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Bench" FontSize="{DynamicResource TitleWordmarkBoldSize}" Foreground="#D8000000"/></TextBlock>
           <TextBlock Margin="1,2,0,0" IsHitTestVisible="False" Opacity="{DynamicResource WordmarkAccentShadowOpacity}" FontFamily="{DynamicResource WordmarkFont}" FontSize="{DynamicResource TitleWordmarkSize}" Visibility="{DynamicResource WordmarkVisibility}"><TextBlock.Effect><BlurEffect Radius="3"/></TextBlock.Effect><Run Text="Killer" Foreground="Transparent"/><Run FontFamily="{DynamicResource WordmarkAccentFont}" Text="Bench" FontSize="{DynamicResource TitleWordmarkBoldSize}" Foreground="#D8000000"/></TextBlock>
@@ -68,7 +68,7 @@
         <a11y:Glyph Text="&#xE90F;" FontFamily="Segoe MDL2 Assets" FontSize="16" Margin="0,0,6,0" Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center"/>
         <TextBlock x:Name="SidebarHeading" Text="{DynamicResource Str_Shell_Tools}" Foreground="{DynamicResource PrimaryBrush}" FontFamily="{DynamicResource HeadingFont}" FontSize="20" TextTrimming="CharacterEllipsis"/>
       </StackPanel>
-      <ListBox x:Name="CategoryList" Margin="0" Background="Transparent" BorderThickness="0" SelectionChanged="OnCategorySelected" AutomationProperties.Name="Tool categories" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
+      <ListBox x:Name="CategoryList" Margin="0" Background="Transparent" BorderThickness="0" SelectionChanged="OnCategorySelected" AutomationProperties.Name="{DynamicResource Str_Shell_Tools}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
         <ListBox.Resources><icons:TallCategoryConverter x:Key="TallCategory"/></ListBox.Resources>
         <ListBox.ItemTemplate><DataTemplate>
           <DockPanel x:Name="CategoryLabel" VerticalAlignment="Center">
@@ -134,7 +134,7 @@
             <TextBlock x:Name="CategoryDescription" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,8"/>
             <WrapPanel Margin="0,0,0,6">
               <ComboBox x:Name="MainWorkflow" ItemsSource="{x:Static workflows:WorkflowCatalog.All}" DisplayMemberPath="Title" SelectedIndex="0" Visibility="Collapsed" SelectionChanged="OnWorkflowOptionsChanged"/>
-              <ComboBox x:Name="CategoryWorkflow" Width="250" AutomationProperties.Name="Tool in selected category" Margin="0,0,8,0" SelectionChanged="OnCategoryWorkflowSelected">
+              <ComboBox x:Name="CategoryWorkflow" Width="250" AutomationProperties.Name="{DynamicResource Str_Advanced_Workflows}" Margin="0,0,8,0" SelectionChanged="OnCategoryWorkflowSelected">
                 <ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Converter={x:Static icons:WorkflowTitleConverter.Instance}}"/></DataTemplate></ComboBox.ItemTemplate>
               </ComboBox>
             </WrapPanel>
@@ -169,17 +169,17 @@
             </StackPanel>
             <StackPanel x:Name="AppPackageSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="{DynamicResource Str_Packages_Description}" TextWrapping="Wrap"/>
-              <ComboBox x:Name="AppPackageScopeChoice" SelectedIndex="0" Margin="0,6,0,0" SelectionChanged="OnAppPackageScopeChanged" AutomationProperties.Name="Package inventory account scope">
+              <ComboBox x:Name="AppPackageScopeChoice" SelectedIndex="0" Margin="0,6,0,0" SelectionChanged="OnAppPackageScopeChanged" AutomationProperties.Name="{DynamicResource Str_Common_AccountScope}">
                 <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/>
                 <ComboBoxItem Content="{DynamicResource Str_Scope_AllUsers}"/>
               </ComboBox>
-              <ComboBox x:Name="AppPackageSelection" DisplayMemberPath="Name" Margin="0,6,0,6" AutomationProperties.Name="Registered package to review"/>
+              <ComboBox x:Name="AppPackageSelection" DisplayMemberPath="Name" Margin="0,6,0,6" AutomationProperties.Name="{DynamicResource Str_Packages_ReviewSelected}"/>
               <CheckBox x:Name="IncludeProvisionedPackages" Content="{DynamicResource Str_Packages_IncludeProvisioned}" ToolTip="{DynamicResource Str_Packages_IncludeProvisionedTip}" Margin="0,0,0,6"/>
               <Button Content="{DynamicResource Str_Packages_ReviewSelected}" Click="OnReviewAppPackage" HorizontalAlignment="Left"/>
             </StackPanel>
             <StackPanel x:Name="InstalledApplicationSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="{DynamicResource Str_Apps_Description}" TextWrapping="Wrap"/>
-              <ComboBox x:Name="InstalledApplicationScopeChoice" SelectedIndex="0" SelectionChanged="OnApplicationScopeChanged" Margin="0,6,0,0" AutomationProperties.Name="Installed application registry scope">
+              <ComboBox x:Name="InstalledApplicationScopeChoice" SelectedIndex="0" SelectionChanged="OnApplicationScopeChanged" Margin="0,6,0,0" AutomationProperties.Name="{DynamicResource Str_Common_AccountScope}">
                 <ComboBoxItem Content="{DynamicResource Str_Scope_MachineWide}"/>
                 <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/>
               </ComboBox>
@@ -194,7 +194,7 @@
             </StackPanel>
             <StackPanel x:Name="MaceSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="{DynamicResource Str_Mace_Description}" TextWrapping="Wrap"/>
-              <ComboBox x:Name="MaceScopeChoice" SelectedIndex="0" Margin="0,6,0,6" AutomationProperties.Name="Microsoft app removal account scope" SelectionChanged="OnMaceOptionChanged">
+              <ComboBox x:Name="MaceScopeChoice" SelectedIndex="0" Margin="0,6,0,6" AutomationProperties.Name="{DynamicResource Str_Common_AccountScope}" SelectionChanged="OnMaceOptionChanged">
                 <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/><ComboBoxItem Content="{DynamicResource Str_Scope_AllUsersAndNew}"/>
               </ComboBox>
               <TextBlock Text="{DynamicResource Str_Common_Applications}" Foreground="{DynamicResource MutedTextBrush}"/>
@@ -209,7 +209,7 @@
               <CheckBox x:Name="MaceRestoreFolders" Content="{DynamicResource Str_Mace_RestoreFolders}" Checked="OnMaceOptionChanged" Unchecked="OnMaceOptionChanged"/>
               <TextBlock Text="{DynamicResource Str_Mace_ReviewBoundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
               <TextBlock Text="{DynamicResource Str_Mace_PackagePlan}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,8,0,0"/>
-              <ComboBox x:Name="MacePackageSelection" DisplayMemberPath="Label" Margin="0,4,0,4" AutomationProperties.Name="Supported app removal package candidate" SelectionChanged="OnMacePackageSelectionChanged"/>
+              <ComboBox x:Name="MacePackageSelection" DisplayMemberPath="Label" Margin="0,4,0,4" AutomationProperties.Name="{DynamicResource Str_Mace_PackagePlan}" SelectionChanged="OnMacePackageSelectionChanged"/>
               <Button x:Name="MaceReviewPackage" Content="{DynamicResource Str_Mace_CheckPackage}" Click="OnReviewMacePackage" IsEnabled="False" HorizontalAlignment="Left"/>
               <TextBlock x:Name="MacePackageHint" Text="{DynamicResource Str_Mace_PackageHint}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
               <TextBlock Text="{DynamicResource Str_Mace_DestructiveRemoval}" Foreground="{DynamicResource DangerRed}" Margin="0,8,0,0"/>
@@ -220,10 +220,10 @@
             </StackPanel>
             <StackPanel x:Name="OrcaSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="{DynamicResource Str_Orca_Description}" TextWrapping="Wrap"/>
-              <ComboBox x:Name="OrcaModeChoice" SelectedIndex="2" Margin="0,6,0,4" AutomationProperties.Name="Outlook edition" SelectionChanged="OnOrcaOptionChanged">
+              <ComboBox x:Name="OrcaModeChoice" SelectedIndex="2" Margin="0,6,0,4" AutomationProperties.Name="{DynamicResource Str_Common_OutlookEdition}" SelectionChanged="OnOrcaOptionChanged">
                 <ComboBoxItem Content="{DynamicResource Str_Orca_NewOutlook}"/><ComboBoxItem Content="{DynamicResource Str_Orca_ClassicOutlook}"/><ComboBoxItem Content="{DynamicResource Str_Common_Both}"/>
               </ComboBox>
-              <ComboBox x:Name="OrcaScopeChoice" SelectedIndex="0" Margin="0,0,0,6" AutomationProperties.Name="Outlook reset account scope" SelectionChanged="OnOrcaOptionChanged">
+              <ComboBox x:Name="OrcaScopeChoice" SelectedIndex="0" Margin="0,0,0,6" AutomationProperties.Name="{DynamicResource Str_Common_AccountScope}" SelectionChanged="OnOrcaOptionChanged">
                 <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/><ComboBoxItem Content="{DynamicResource Str_Scope_AllUsers}"/>
               </ComboBox>
               <TextBlock Text="{DynamicResource Str_Orca_ResetAreas}" Foreground="{DynamicResource MutedTextBrush}"/>
@@ -257,7 +257,7 @@
             </StackPanel>
             <StackPanel x:Name="DebloatSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="{DynamicResource Str_Debloat_Description}" TextWrapping="Wrap"/>
-              <ComboBox x:Name="DebloatScopeChoice" SelectedIndex="0" Margin="0,6,0,4" AutomationProperties.Name="Declutter user scope">
+              <ComboBox x:Name="DebloatScopeChoice" SelectedIndex="0" Margin="0,6,0,4" AutomationProperties.Name="{DynamicResource Str_Common_AccountScope}">
                 <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/><ComboBoxItem Content="{DynamicResource Str_Scope_AllProfiles}"/>
               </ComboBox>
               <StackPanel>
@@ -271,7 +271,7 @@
                 <CheckBox x:Name="DebloatLenovo" Content="{DynamicResource Str_Debloat_LenovoSoftware}"/><CheckBox x:Name="DebloatThirdParty" Content="{DynamicResource Str_Debloat_ThirdPartyApps}"/>
                 <CheckBox x:Name="DebloatVendorData" Content="{DynamicResource Str_Debloat_VendorData}"/>
               </StackPanel>
-              <ComboBox x:Name="DebloatOfficeCulture" SelectedIndex="0" Margin="0,6,0,0" IsEnabled="{Binding IsChecked, ElementName=DebloatOfficeLanguages}" AutomationProperties.Name="Office language to retain">
+              <ComboBox x:Name="DebloatOfficeCulture" SelectedIndex="0" Margin="0,6,0,0" IsEnabled="{Binding IsChecked, ElementName=DebloatOfficeLanguages}" AutomationProperties.Name="{DynamicResource Str_Debloat_ChooseOfficeLanguage}">
                 <ComboBoxItem Content="{DynamicResource Str_Debloat_ChooseOfficeLanguage}" Tag=""/>
                 <ComboBoxItem Content="{DynamicResource Str_Language_EnglishUnitedStates}" Tag="en-us"/><ComboBoxItem Content="{DynamicResource Str_Language_EnglishUnitedKingdom}" Tag="en-gb"/>
                 <ComboBoxItem Content="{DynamicResource Str_Language_French}" Tag="fr-fr"/><ComboBoxItem Content="{DynamicResource Str_Language_German}" Tag="de-de"/><ComboBoxItem Content="{DynamicResource Str_Language_Spanish}" Tag="es-es"/>
@@ -283,13 +283,13 @@
                 <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                 <TextBlock Grid.ColumnSpan="2" Text="{DynamicResource Str_Debloat_TimerHelp}" Foreground="{DynamicResource MutedTextBrush}"/>
-                <ComboBox x:Name="DebloatSleepAc" Grid.Row="1" Grid.Column="0" SelectedIndex="0" Margin="0,4,3,0" AutomationProperties.Name="Sleep timeout on AC"><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepAcNever}" Tag="0"/><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepAc15}" Tag="15"/><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepAc30}" Tag="30"/><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepAc60}" Tag="60"/><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepAc120}" Tag="120"/></ComboBox>
-                <ComboBox x:Name="DebloatSleepDc" Grid.Row="1" Grid.Column="1" SelectedIndex="3" Margin="3,4,0,0" AutomationProperties.Name="Sleep timeout on battery"><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepBatteryNever}" Tag="0"/><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepBattery15}" Tag="15"/><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepBattery30}" Tag="30"/><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepBattery60}" Tag="60"/><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepBattery120}" Tag="120"/></ComboBox>
-                <ComboBox x:Name="DebloatDisplayAc" Grid.Row="2" Grid.Column="0" SelectedIndex="3" Margin="0,4,3,0" AutomationProperties.Name="Display timeout on AC"><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayAcNever}" Tag="0"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayAc15}" Tag="15"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayAc30}" Tag="30"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayAc60}" Tag="60"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayAc120}" Tag="120"/></ComboBox>
-                <ComboBox x:Name="DebloatDisplayDc" Grid.Row="2" Grid.Column="1" SelectedIndex="1" Margin="3,4,0,0" AutomationProperties.Name="Display timeout on battery"><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBatteryNever}" Tag="0"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery15}" Tag="15"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery30}" Tag="30"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery60}" Tag="60"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery120}" Tag="120"/></ComboBox>
+                <ComboBox x:Name="DebloatSleepAc" Grid.Row="1" Grid.Column="0" SelectedIndex="0" Margin="0,4,3,0" AutomationProperties.Name="{DynamicResource Str_Debloat_SleepAcLabel}"><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepAcNever}" Tag="0"/><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepAc15}" Tag="15"/><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepAc30}" Tag="30"/><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepAc60}" Tag="60"/><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepAc120}" Tag="120"/></ComboBox>
+                <ComboBox x:Name="DebloatSleepDc" Grid.Row="1" Grid.Column="1" SelectedIndex="3" Margin="3,4,0,0" AutomationProperties.Name="{DynamicResource Str_Debloat_SleepBatteryLabel}"><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepBatteryNever}" Tag="0"/><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepBattery15}" Tag="15"/><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepBattery30}" Tag="30"/><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepBattery60}" Tag="60"/><ComboBoxItem Content="{DynamicResource Str_Debloat_SleepBattery120}" Tag="120"/></ComboBox>
+                <ComboBox x:Name="DebloatDisplayAc" Grid.Row="2" Grid.Column="0" SelectedIndex="3" Margin="0,4,3,0" AutomationProperties.Name="{DynamicResource Str_Debloat_DisplayAcLabel}"><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayAcNever}" Tag="0"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayAc15}" Tag="15"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayAc30}" Tag="30"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayAc60}" Tag="60"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayAc120}" Tag="120"/></ComboBox>
+                <ComboBox x:Name="DebloatDisplayDc" Grid.Row="2" Grid.Column="1" SelectedIndex="1" Margin="3,4,0,0" AutomationProperties.Name="{DynamicResource Str_Debloat_DisplayBatteryLabel}"><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBatteryNever}" Tag="0"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery15}" Tag="15"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery30}" Tag="30"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery60}" Tag="60"/><ComboBoxItem Content="{DynamicResource Str_Debloat_DisplayBattery120}" Tag="120"/></ComboBox>
               </Grid>
               <TextBlock Text="{DynamicResource Str_Debloat_GoAction}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0"/>
-              <ComboBox x:Name="DebloatActionChoice" SelectedIndex="0" AutomationProperties.Name="Declutter action">
+              <ComboBox x:Name="DebloatActionChoice" SelectedIndex="0" AutomationProperties.Name="{DynamicResource Str_Debloat_GoAction}">
                 <ComboBoxItem Content="{DynamicResource Str_Debloat_ActionReview}"/>
                 <ComboBoxItem Content="{DynamicResource Str_Debloat_ActionHighPerformance}"/>
                 <ComboBoxItem Content="{DynamicResource Str_Debloat_ActionTimers}"/>
@@ -299,10 +299,10 @@
             </StackPanel>
             <StackPanel x:Name="BitsSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <TextBlock Text="{DynamicResource Str_Bits_Description}" TextWrapping="Wrap"/>
-              <ComboBox x:Name="BitsScopeChoice" SelectedIndex="0" SelectionChanged="OnBitsScopeChanged" Margin="0,6,0,6" AutomationProperties.Name="BITS account scope">
+              <ComboBox x:Name="BitsScopeChoice" SelectedIndex="0" SelectionChanged="OnBitsScopeChanged" Margin="0,6,0,6" AutomationProperties.Name="{DynamicResource Str_Common_AccountScope}">
                 <ComboBoxItem Content="{DynamicResource Str_Scope_RunningAccount}"/><ComboBoxItem Content="{DynamicResource Str_Scope_AllUsers}"/>
               </ComboBox>
-              <ComboBox x:Name="BitsSelection" SelectionChanged="OnBitsSelectionChanged" Margin="0,0,0,6" AutomationProperties.Name="Exact BITS job to review"/>
+              <ComboBox x:Name="BitsSelection" SelectionChanged="OnBitsSelectionChanged" Margin="0,0,0,6" AutomationProperties.Name="{DynamicResource Str_Bits_Review}"/>
               <Button Content="{DynamicResource Str_Bits_Review}" Click="OnReviewBitsJob" HorizontalAlignment="Left"/>
               <Button Content="{DynamicResource Str_Bits_Observe}" Click="OnObserveBitsJob" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Bits_ObserveTip}"/>
               <TextBlock Text="{DynamicResource Str_Bits_RetryWarning}" TextWrapping="Wrap" Margin="0,6,0,4"/>
@@ -312,10 +312,10 @@
             </StackPanel>
             <StackPanel x:Name="PrinterSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <Button Content="{DynamicResource Str_Print_FindPrinters}" Click="OnDiscoverPrinters" HorizontalAlignment="Left"/>
-              <ComboBox x:Name="PrinterQueues" Margin="0,6,0,6" SelectionChanged="OnPrinterSelectionChanged" AutomationProperties.Name="Local printer queue"/>
+              <ComboBox x:Name="PrinterQueues" Margin="0,6,0,6" SelectionChanged="OnPrinterSelectionChanged" AutomationProperties.Name="{DynamicResource Str_Print_FindPrinters}"/>
               <CheckBox x:Name="PrinterMakeDefault" Content="{DynamicResource Str_Print_RepairDefault}" IsEnabled="False" Margin="0,0,0,6" Click="OnPrinterDefaultChanged"/>
               <Button Content="{DynamicResource Str_Print_FindBlockedJobs}" Click="OnDiscoverPrintJobs" HorizontalAlignment="Left"/>
-              <ComboBox x:Name="PrintJobChoice" Margin="0,6,0,6" SelectionChanged="OnPrintJobSelectionChanged" AutomationProperties.Name="Exact blocked print job"/>
+              <ComboBox x:Name="PrintJobChoice" Margin="0,6,0,6" SelectionChanged="OnPrintJobSelectionChanged" AutomationProperties.Name="{DynamicResource Str_Print_FindBlockedJobs}"/>
               <CheckBox x:Name="PrintJobCancelConsent" Content="{DynamicResource Str_Print_CancelSelected}" IsEnabled="False" Margin="0,0,0,6" Click="OnPrintJobCancelChanged"/>
               <Button Content="{DynamicResource Str_Print_CheckInterrupted}" Click="OnRecoverPrintJobCancellation" HorizontalAlignment="Left" Margin="0,0,0,6"/>
               <Button Content="{DynamicResource Str_Print_GeneralChecks}" Click="OnGeneralPrinting" HorizontalAlignment="Left" Margin="0,0,0,6"/>
@@ -325,22 +325,22 @@
               <TextBlock Text="{DynamicResource Str_Installer_OptionalApp}"/>
               <StackPanel Orientation="Horizontal" Margin="0,4,0,4">
                 <Button x:Name="FindMsiProductsButton" Content="{DynamicResource Str_Installer_FindApps}" Click="OnFindMsiProducts" Margin="0,0,6,0"/>
-                <ComboBox x:Name="InstallerProductScopeChoice" SelectedIndex="0" Width="120" SelectionChanged="OnInstallerProductScopeChanged" AutomationProperties.Name="MSI application registry scope">
+                <ComboBox x:Name="InstallerProductScopeChoice" SelectedIndex="0" Width="120" SelectionChanged="OnInstallerProductScopeChanged" AutomationProperties.Name="{DynamicResource Str_Common_AccountScope}">
                   <ComboBoxItem Content="{DynamicResource Str_Scope_ThisPc}"/><ComboBoxItem Content="{DynamicResource Str_Scope_ThisAccount}"/>
                 </ComboBox>
               </StackPanel>
-              <ComboBox x:Name="InstallerProductChoice" Margin="0,0,0,4" SelectionChanged="OnInstallerProductSelected" AutomationProperties.Name="Installed MSI application"/>
+              <ComboBox x:Name="InstallerProductChoice" Margin="0,0,0,4" SelectionChanged="OnInstallerProductSelected" AutomationProperties.Name="{DynamicResource Str_Installer_OptionalApp}"/>
               <TextBlock Text="{DynamicResource Str_Installer_ProductCode}"/>
-              <TextBox x:Name="InstallerProductCode" Margin="0,4,0,4" MaxLength="38" AutomationProperties.Name="Optional braced MSI product code" ToolTip="{DynamicResource Str_Installer_ProductCodeTip}"/>
+              <TextBox x:Name="InstallerProductCode" Margin="0,4,0,4" MaxLength="38" AutomationProperties.Name="{DynamicResource Str_Installer_ProductCode}" ToolTip="{DynamicResource Str_Installer_ProductCodeTip}"/>
               <TextBlock Text="{DynamicResource Str_Installer_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
             </StackPanel>
             <StackPanel x:Name="TimeSettings" Visibility="Collapsed" Margin="0,0,0,6">
-              <ComboBox x:Name="TimeSourceChoice" SelectedIndex="0" Width="240" HorizontalAlignment="Left" SelectionChanged="OnWorkflowOptionsChanged" AutomationProperties.Name="Time source">
+              <ComboBox x:Name="TimeSourceChoice" SelectedIndex="0" Width="240" HorizontalAlignment="Left" SelectionChanged="OnWorkflowOptionsChanged" AutomationProperties.Name="{DynamicResource Str_Common_TimeSource}">
                 <ComboBoxItem Content="{DynamicResource Str_Time_KeepSource}"/>
                 <ComboBoxItem Content="{DynamicResource Str_Time_DomainHierarchy}"/>
                   <ComboBoxItem Content="{DynamicResource Str_Time_CustomPeers}"/>
               </ComboBox>
-                <TextBox x:Name="TimePeers" Width="340" HorizontalAlignment="Left" TextChanged="OnTimePeersChanged" AutomationProperties.Name="NTP peers separated by spaces" ToolTip="{DynamicResource Str_Time_PeersTip}"/>
+                <TextBox x:Name="TimePeers" Width="340" HorizontalAlignment="Left" TextChanged="OnTimePeersChanged" AutomationProperties.Name="{DynamicResource Str_Time_PeersTip}" ToolTip="{DynamicResource Str_Time_PeersTip}"/>
                 <CheckBox x:Name="TimeApply" Content="{DynamicResource Str_Time_Apply}" Margin="0,6,0,6"/>
                 <Button x:Name="TimeRecoverButton" Content="{DynamicResource Str_Time_CheckInterrupted}" Click="OnRecoverTime" HorizontalAlignment="Left" Margin="0,0,0,6" ToolTip="{DynamicResource Str_Time_CheckInterruptedTip}"/>
                 <TextBlock Text="{DynamicResource Str_Time_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
@@ -361,7 +361,7 @@
                   <TextBlock Text="{DynamicResource Str_Profile_BackupDescription}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
                   <DockPanel Margin="0,5,0,4" LastChildFill="True">
                     <Button Content="{DynamicResource Str_Profile_Browse}" Click="OnBrowseProfileBackup" DockPanel.Dock="Right" Margin="5,0,0,0"/>
-                    <TextBox x:Name="ProfileBackupPath" AutomationProperties.Name="Profile backup folder" ToolTip="{DynamicResource Str_Profile_BackupPathTip}"/>
+                    <TextBox x:Name="ProfileBackupPath" AutomationProperties.Name="{DynamicResource Str_Profile_BackupPathTip}" ToolTip="{DynamicResource Str_Profile_BackupPathTip}"/>
                   </DockPanel>
                   <WrapPanel>
                     <Button x:Name="CopyProfileBackupButton" Content="{DynamicResource Str_Profile_CopyVerify}" Click="OnCopyProfileBackup" Margin="0,0,5,4" ToolTip="{DynamicResource Str_Profile_CopyVerifyTip}"/>
@@ -391,11 +391,11 @@
               </WrapPanel>
               <WrapPanel Margin="0,6,0,0">
                 <TextBlock Text="{DynamicResource Str_Cleanup_MinimumAge}" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                <Slider x:Name="CleanupAge" Minimum="1" Maximum="365" Value="7" TickFrequency="1" IsSnapToTickEnabled="True" Width="180" AutomationProperties.Name="Minimum cleanup age in days"/>
+                <Slider x:Name="CleanupAge" Minimum="1" Maximum="365" Value="7" TickFrequency="1" IsSnapToTickEnabled="True" Width="180" AutomationProperties.Name="{DynamicResource Str_Cleanup_MinimumAge}"/>
                 <TextBlock Text="{Binding Value, ElementName=CleanupAge, StringFormat={}{0:0}}" VerticalAlignment="Center" Margin="8,0,0,0"/>
               </WrapPanel>
               <TextBlock Text="{DynamicResource Str_Cleanup_MaximumFiles}" Margin="0,6,0,0"/>
-              <WrapPanel><Slider x:Name="CleanupLimit" Minimum="100" Maximum="10000" Value="100" TickFrequency="100" IsSnapToTickEnabled="True" Width="180" AutomationProperties.Name="Maximum cleanup files per target"/>
+              <WrapPanel><Slider x:Name="CleanupLimit" Minimum="100" Maximum="10000" Value="100" TickFrequency="100" IsSnapToTickEnabled="True" Width="180" AutomationProperties.Name="{DynamicResource Str_Cleanup_MaximumFiles}"/>
                 <TextBlock Text="{Binding Value, ElementName=CleanupLimit, StringFormat={}{0:N0}}" VerticalAlignment="Center" Margin="8,0,0,0"/></WrapPanel>
               <TextBlock Text="{DynamicResource Str_Cleanup_PreviousWindows}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,8,0,0"/>
               <CheckBox x:Name="CleanupPreviousWindows" Content="{DynamicResource Str_Cleanup_RemovePreviousWindows}" Checked="OnPreviousWindowsChanged" Unchecked="OnPreviousWindowsChanged" ToolTip="{DynamicResource Str_Cleanup_RemovePreviousWindowsTip}"/>
@@ -405,7 +405,7 @@
             </StackPanel>
             <StackPanel x:Name="UpdateSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="{DynamicResource Str_Update_Source}"/>
-              <ComboBox x:Name="UpdateSourceChoice" SelectedIndex="0" AutomationProperties.Name="Update source" Margin="0,0,0,4">
+              <ComboBox x:Name="UpdateSourceChoice" SelectedIndex="0" AutomationProperties.Name="{DynamicResource Str_Update_Source}" Margin="0,0,0,4">
                 <ComboBoxItem Content="{DynamicResource Str_Update_ConfiguredSource}"/>
                 <ComboBoxItem Content="{DynamicResource Str_Update_WindowsUpdate}"/>
                 <ComboBoxItem Content="{DynamicResource Str_Update_MicrosoftUpdate}"/>
@@ -430,12 +430,12 @@
               <Expander Header="{DynamicResource Str_Update_SelectAfterDiscovery}" Foreground="{DynamicResource TextBrush}" Margin="0,4,0,0">
                 <StackPanel>
                   <TextBlock Text="{DynamicResource Str_Update_FilterTitles}"/>
-                  <TextBox x:Name="UpdateTitleFilter" MaxLength="256" TextChanged="OnUpdateFilterChanged" AutomationProperties.Name="Filter update titles"/>
+                  <TextBox x:Name="UpdateTitleFilter" MaxLength="256" TextChanged="OnUpdateFilterChanged" AutomationProperties.Name="{DynamicResource Str_Update_FilterTitles}"/>
                   <CheckBox x:Name="UpdateDownloadedOnly" Content="{DynamicResource Str_Update_DownloadedOnly}" Checked="OnUpdateFilterChanged" Unchecked="OnUpdateFilterChanged" Margin="0,4,0,4"/>
                   <TextBlock Text="{DynamicResource Str_Update_Product}"/>
-                  <ComboBox x:Name="UpdateProductFilter" DisplayMemberPath="Name" SelectedValuePath="Id" SelectionChanged="OnUpdateFilterChanged" AutomationProperties.Name="Update product" ToolTip="{DynamicResource Str_Update_ProductTip}" Margin="0,0,0,4"/>
+                  <ComboBox x:Name="UpdateProductFilter" DisplayMemberPath="Name" SelectedValuePath="Id" SelectionChanged="OnUpdateFilterChanged" AutomationProperties.Name="{DynamicResource Str_Update_Product}" ToolTip="{DynamicResource Str_Update_ProductTip}" Margin="0,0,0,4"/>
                   <TextBlock Text="{DynamicResource Str_Update_Classification}"/>
-                  <ComboBox x:Name="UpdateClassificationFilter" DisplayMemberPath="Name" SelectedValuePath="Id" SelectionChanged="OnUpdateFilterChanged" AutomationProperties.Name="Update classification" Margin="0,0,0,4"/>
+                  <ComboBox x:Name="UpdateClassificationFilter" DisplayMemberPath="Name" SelectedValuePath="Id" SelectionChanged="OnUpdateFilterChanged" AutomationProperties.Name="{DynamicResource Str_Update_Classification}" Margin="0,0,0,4"/>
                   <TextBlock x:Name="UpdateFilterCount" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
                   <ListBox x:Name="AvailableUpdateList" SelectionChanged="OnUpdateSelectionChanged" SelectionMode="Multiple" DisplayMemberPath="Title" MaxHeight="160" MinHeight="40" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}"/>
                   <WrapPanel Margin="0,4,0,0">
@@ -452,9 +452,9 @@
               <Expander x:Name="ThirdPartyUpdateSection" Header="{DynamicResource Str_Update_SelectThirdParty}" Foreground="{DynamicResource TextBrush}" Margin="0,6,0,0">
                 <StackPanel>
                   <TextBlock x:Name="ThirdPartyUpdateCount" Text="{DynamicResource Str_Update_ThirdPartyPrompt}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
-                  <ListBox x:Name="ThirdPartyUpdateList" SelectionChanged="OnThirdPartyUpdateSelectionChanged" SelectionMode="Single" DisplayMemberPath="Name" MaxHeight="120" MinHeight="40" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" AutomationProperties.Name="Third-party application update candidates"/>
+                  <ListBox x:Name="ThirdPartyUpdateList" SelectionChanged="OnThirdPartyUpdateSelectionChanged" SelectionMode="Single" DisplayMemberPath="Name" MaxHeight="120" MinHeight="40" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" AutomationProperties.Name="{DynamicResource Str_Update_SelectThirdParty}"/>
                   <TextBlock Text="{DynamicResource Str_Update_TargetVersion}" Margin="0,4,0,0"/>
-                  <ComboBox x:Name="ThirdPartyUpdateVersion" SelectionChanged="OnThirdPartyUpdateSelectionChanged" AutomationProperties.Name="Third-party application target version"/>
+                  <ComboBox x:Name="ThirdPartyUpdateVersion" SelectionChanged="OnThirdPartyUpdateSelectionChanged" AutomationProperties.Name="{DynamicResource Str_Update_TargetVersion}"/>
                   <CheckBox x:Name="ThirdPartyUpdateAgreements" Content="{DynamicResource Str_Update_AcceptAgreements}" Checked="OnThirdPartyUpdateSelectionChanged" Unchecked="OnThirdPartyUpdateSelectionChanged" Margin="0,5,0,0"/>
                   <WrapPanel Margin="0,4,0,0">
                     <Button x:Name="ThirdPartyUpdatePreview" Content="{DynamicResource Str_Update_PreviewSelected}" IsEnabled="False" Click="OnPreviewThirdPartyUpdate"/>
@@ -473,7 +473,7 @@
                 <CheckBox x:Name="SecurityVirtualization" Content="{DynamicResource Str_Security_Virtualization}" IsChecked="True"/>
               </WrapPanel>
               <TextBlock Text="{DynamicResource Str_Security_GoAction}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,8,0,3"/>
-              <ComboBox x:Name="DefenderScanChoice" SelectedIndex="0" SelectionChanged="OnDefenderScanOptionChanged" AutomationProperties.Name="Microsoft Defender scan action">
+              <ComboBox x:Name="DefenderScanChoice" SelectedIndex="0" SelectionChanged="OnDefenderScanOptionChanged" AutomationProperties.Name="{DynamicResource Str_Workflow_Defender}">
                 <ComboBoxItem Content="{DynamicResource Str_Security_DiagnosisOnly}" Tag="None"/>
                 <ComboBoxItem Content="{DynamicResource Str_Security_QuickScan}" Tag="Quick"/>
                 <ComboBoxItem Content="{DynamicResource Str_Security_FullScan}" Tag="Full"/>
@@ -497,17 +497,17 @@
             </StackPanel>
             <StackPanel x:Name="PrivacySettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="{DynamicResource Str_Privacy_Description}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,0,0,4"/>
-              <ListBox x:Name="PrivacyAreas" ItemsSource="{x:Static security:PrivacyCatalog.All}" SelectionMode="Multiple" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" MaxHeight="140" Margin="0,4,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="Privacy areas to inspect">
+              <ListBox x:Name="PrivacyAreas" ItemsSource="{x:Static security:PrivacyCatalog.All}" SelectionMode="Multiple" Background="Transparent" Foreground="{DynamicResource TextBrush}" BorderThickness="0" MaxHeight="140" Margin="0,4,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Privacy_Description}">
                 <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="Margin" Value="0,0,8,6"/><Setter Property="Focusable" Value="False"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><ContentPresenter/></ControlTemplate></Setter.Value></Setter></Style></ListBox.ItemContainerStyle>
                 <ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
                 <ListBox.ItemTemplate><DataTemplate>
-                  <CheckBox Content="{Binding Title}" ToolTip="{Binding Impact}" Width="170" IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Mode=TwoWay}"/>
+                  <CheckBox Content="{Binding Converter={x:Static icons:PrivacyTextConverter.Instance}}" ToolTip="{Binding Converter={x:Static icons:PrivacyTextConverter.Instance}, ConverterParameter=Impact}" Width="170" IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Mode=TwoWay}"/>
                 </DataTemplate></ListBox.ItemTemplate>
               </ListBox>
               <WrapPanel Margin="0,4,0,0">
                 <StackPanel Margin="0,0,8,0">
                   <TextBlock Text="{DynamicResource Str_Privacy_ClipboardHistory}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,2"/>
-                  <ComboBox x:Name="PrivacyClipboardHistoryChoice" SelectedIndex="0" Width="170" SelectionChanged="OnPrivacyClipboardHistoryChanged" AutomationProperties.Name="Clipboard history action">
+                  <ComboBox x:Name="PrivacyClipboardHistoryChoice" SelectedIndex="0" Width="170" SelectionChanged="OnPrivacyClipboardHistoryChanged" AutomationProperties.Name="{DynamicResource Str_Privacy_ClipboardHistory}">
                     <ComboBoxItem Content="{DynamicResource Str_Privacy_InspectOnly}" Tag="Inspect"/>
                     <ComboBoxItem Content="{DynamicResource Str_Privacy_TurnOn}" Tag="On"/>
                     <ComboBoxItem Content="{DynamicResource Str_Privacy_TurnOff}" Tag="Off"/>
@@ -518,13 +518,13 @@
               <WrapPanel Margin="0,6,0,0">
                 <StackPanel Margin="0,0,8,0">
                   <TextBlock Text="{DynamicResource Str_Privacy_Setting}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,2"/>
-                  <ComboBox x:Name="PrivacyBooleanSettingChoice" ItemsSource="{x:Static security:PrivacyBooleanSettingCatalog.All}" SelectedIndex="0" Width="170" SelectionChanged="OnPrivacyBooleanSettingChanged" AutomationProperties.Name="Privacy setting">
-                    <ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis"/></DataTemplate></ComboBox.ItemTemplate>
+                  <ComboBox x:Name="PrivacyBooleanSettingChoice" ItemsSource="{x:Static security:PrivacyBooleanSettingCatalog.All}" SelectedIndex="0" Width="170" SelectionChanged="OnPrivacyBooleanSettingChanged" AutomationProperties.Name="{DynamicResource Str_Privacy_Setting}">
+                    <ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Converter={x:Static icons:PrivacyTextConverter.Instance}}" TextTrimming="CharacterEllipsis"/></DataTemplate></ComboBox.ItemTemplate>
                   </ComboBox>
                 </StackPanel>
                 <StackPanel Margin="0,0,8,0">
                   <TextBlock Text="{DynamicResource Str_Privacy_Action}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,2"/>
-                  <ComboBox x:Name="PrivacyBooleanActionChoice" SelectedIndex="0" Width="120" SelectionChanged="OnPrivacyBooleanSettingChanged" AutomationProperties.Name="Privacy setting action">
+                  <ComboBox x:Name="PrivacyBooleanActionChoice" SelectedIndex="0" Width="120" SelectionChanged="OnPrivacyBooleanSettingChanged" AutomationProperties.Name="{DynamicResource Str_Privacy_Action}">
                     <ComboBoxItem Content="{DynamicResource Str_Privacy_InspectOnly}" Tag="Inspect"/>
                     <ComboBoxItem Content="{DynamicResource Str_Privacy_TurnOn}" Tag="On"/>
                     <ComboBoxItem Content="{DynamicResource Str_Privacy_TurnOff}" Tag="Off"/>
@@ -537,26 +537,26 @@
             <StackPanel x:Name="BitLockerSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="{DynamicResource Str_BitLocker_Description}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,0,0,4"/>
               <WrapPanel>
-                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_Volume}"/><TextBox x:Name="BitLockerVolume" Text="C:" TextChanged="OnBitLockerBackupChanged" Width="60" AutomationProperties.Name="BitLocker volume"/></StackPanel>
-                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_Operation}"/><ComboBox x:Name="BitLockerOperationChoice" ItemsSource="{x:Static bitlocker:BitLockerChoices.Operations}" SelectedIndex="0" SelectionChanged="OnBitLockerBackupChanged" Width="160" AutomationProperties.Name="BitLocker operation"><ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Converter={x:Static icons:ChoiceLabelConverter.Instance}}"/></DataTemplate></ComboBox.ItemTemplate></ComboBox></StackPanel>
-                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_Encryption}"/><ComboBox x:Name="BitLockerEncryptionChoice" ItemsSource="{x:Static bitlocker:BitLockerChoices.EncryptionMethods}" SelectedIndex="2" Width="140" AutomationProperties.Name="BitLocker encryption method"><ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Converter={x:Static icons:ChoiceLabelConverter.Instance}}"/></DataTemplate></ComboBox.ItemTemplate></ComboBox></StackPanel>
-                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_RecoveryBackup}"/><ComboBox x:Name="BitLockerDestination" ItemsSource="{x:Static bitlocker:BitLockerChoices.Destinations}" SelectedIndex="0" SelectionChanged="OnBitLockerBackupChanged" Width="160" AutomationProperties.Name="Recovery backup destination"><ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Converter={x:Static icons:ChoiceLabelConverter.Instance}}"/></DataTemplate></ComboBox.ItemTemplate></ComboBox></StackPanel>
+                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_Volume}"/><TextBox x:Name="BitLockerVolume" Text="C:" TextChanged="OnBitLockerBackupChanged" Width="60" AutomationProperties.Name="{DynamicResource Str_BitLocker_Volume}"/></StackPanel>
+                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_Operation}"/><ComboBox x:Name="BitLockerOperationChoice" ItemsSource="{x:Static bitlocker:BitLockerChoices.Operations}" SelectedIndex="0" SelectionChanged="OnBitLockerBackupChanged" Width="160" AutomationProperties.Name="{DynamicResource Str_BitLocker_Operation}"><ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Converter={x:Static icons:ChoiceLabelConverter.Instance}}"/></DataTemplate></ComboBox.ItemTemplate></ComboBox></StackPanel>
+                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_Encryption}"/><ComboBox x:Name="BitLockerEncryptionChoice" ItemsSource="{x:Static bitlocker:BitLockerChoices.EncryptionMethods}" SelectedIndex="2" Width="140" AutomationProperties.Name="{DynamicResource Str_BitLocker_Encryption}"><ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Converter={x:Static icons:ChoiceLabelConverter.Instance}}"/></DataTemplate></ComboBox.ItemTemplate></ComboBox></StackPanel>
+                <StackPanel Margin="0,0,8,4"><TextBlock Text="{DynamicResource Str_BitLocker_RecoveryBackup}"/><ComboBox x:Name="BitLockerDestination" ItemsSource="{x:Static bitlocker:BitLockerChoices.Destinations}" SelectedIndex="0" SelectionChanged="OnBitLockerBackupChanged" Width="160" AutomationProperties.Name="{DynamicResource Str_BitLocker_RecoveryBackup}"><ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Converter={x:Static icons:ChoiceLabelConverter.Instance}}"/></DataTemplate></ComboBox.ItemTemplate></ComboBox></StackPanel>
                 <CheckBox x:Name="BitLockerUsedSpace" Content="{DynamicResource Str_BitLocker_UsedSpace}" VerticalAlignment="Center"/>
               </WrapPanel>
               <TextBlock Text="{DynamicResource Str_BitLocker_BackupFile}"/>
               <DockPanel>
-                <Button DockPanel.Dock="Right" Content="{DynamicResource Str_BitLocker_Browse}" Click="OnChooseRecoveryBackup" Margin="4,0,0,0" AutomationProperties.Name="Choose recovery backup file"/>
-                <TextBox x:Name="BitLockerBackupPath" TextChanged="OnBitLockerBackupChanged" ToolTip="{DynamicResource Str_BitLocker_BackupPathTip}" AutomationProperties.Name="Recovery backup file path"/>
+                <Button DockPanel.Dock="Right" Content="{DynamicResource Str_BitLocker_Browse}" Click="OnChooseRecoveryBackup" Margin="4,0,0,0" AutomationProperties.Name="{DynamicResource Str_BitLocker_BackupFile}"/>
+                <TextBox x:Name="BitLockerBackupPath" TextChanged="OnBitLockerBackupChanged" ToolTip="{DynamicResource Str_BitLocker_BackupPathTip}" AutomationProperties.Name="{DynamicResource Str_BitLocker_BackupFile}"/>
               </DockPanel>
               <Button Content="{DynamicResource Str_BitLocker_FindProtectors}" Click="OnFindRecoveryProtectors" Margin="0,4,0,4"/>
-              <ComboBox x:Name="BitLockerProtectorChoice" SelectionChanged="OnBitLockerBackupChanged" AutomationProperties.Name="Existing recovery protector"/>
+              <ComboBox x:Name="BitLockerProtectorChoice" SelectionChanged="OnBitLockerBackupChanged" AutomationProperties.Name="{DynamicResource Str_BitLocker_FindProtectors}"/>
               <CheckBox x:Name="BitLockerBackupConsent" Content="{DynamicResource Str_BitLocker_BackupConsent}" Margin="0,4,0,4"/>
               <CheckBox x:Name="BitLockerEncryptConsent" Content="{DynamicResource Str_BitLocker_EncryptConsent}" Click="OnBitLockerEncryptConsentChanged" Margin="0,0,0,4"/>
               <CheckBox x:Name="BitLockerResumeConsent" Content="{DynamicResource Str_BitLocker_ResumeConsent}" Click="OnBitLockerResumeConsentChanged" Margin="0,0,0,4"/>
               <Expander x:Name="BitLockerActionsExpander" Header="{DynamicResource Str_BitLocker_MoreActions}" Foreground="{DynamicResource TextBrush}" Margin="0,4,0,6">
                 <StackPanel Margin="0,6,0,0">
                   <TextBlock Text="{DynamicResource Str_BitLocker_Action}"/>
-                  <ComboBox x:Name="BitLockerActionChoice" SelectedIndex="0" SelectionChanged="OnBitLockerActionChanged" AutomationProperties.Name="BitLocker action">
+                  <ComboBox x:Name="BitLockerActionChoice" SelectedIndex="0" SelectionChanged="OnBitLockerActionChanged" AutomationProperties.Name="{DynamicResource Str_BitLocker_Action}">
                     <ComboBoxItem Content="{DynamicResource Str_BitLocker_ActionAutoUnlock}" Tag="auto-unlock"/>
                     <ComboBoxItem Content="{DynamicResource Str_BitLocker_ActionAddTpm}" Tag="protector-tpm"/>
                     <ComboBoxItem Content="{DynamicResource Str_BitLocker_ActionAddRecovery}" Tag="protector-recovery"/>
@@ -602,7 +602,7 @@
                   <TextBlock Text="{DynamicResource Str_Task_StartDate}" Margin="0,6,0,0"/>
                   <TextBox x:Name="TaskDraftStartDate" ToolTip="{DynamicResource Str_Task_StartDateTip}"/>
                   <Button Content="{DynamicResource Str_Task_ExportXml}" Click="OnExportTaskXml" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Task_ExportXmlTip}"/>
-                  <CheckBox x:Name="TaskRegistrationConsent" Content="{DynamicResource Str_Task_RegisterConsent}" Margin="0,8,0,0" Checked="OnTaskRegistrationConsentChanged" Unchecked="OnTaskRegistrationConsentChanged" AutomationProperties.Name="Allow disabled task registration"/>
+                  <CheckBox x:Name="TaskRegistrationConsent" Content="{DynamicResource Str_Task_RegisterConsent}" Margin="0,8,0,0" Checked="OnTaskRegistrationConsentChanged" Unchecked="OnTaskRegistrationConsentChanged" AutomationProperties.Name="{DynamicResource Str_Task_RegisterConsent}"/>
                   <Button x:Name="TaskRegistrationButton" Content="{DynamicResource Str_Task_PreviewRegistration}" Click="OnRegisterTaskDraft" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Task_PreviewRegistrationTip}"/>
                   <Button x:Name="TaskRegistrationRecoveryButton" Content="{DynamicResource Str_Task_CheckInterrupted}" Click="OnRecoverTaskRegistration" HorizontalAlignment="Left" Margin="0,4,0,0" ToolTip="{DynamicResource Str_Task_CheckInterruptedTip}"/>
                 </StackPanel>
@@ -613,39 +613,39 @@
             </StackPanel>
             <StackPanel x:Name="EventLogSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="{DynamicResource Str_EventLog_Channel}" Margin="0,0,0,4"/>
-              <ComboBox x:Name="EventChannelChoice" SelectedIndex="0" SelectionChanged="OnEventChannelOptionChanged" AutomationProperties.Name="Diagnostic event channel">
+              <ComboBox x:Name="EventChannelChoice" SelectedIndex="0" SelectionChanged="OnEventChannelOptionChanged" AutomationProperties.Name="{DynamicResource Str_EventLog_Channel}">
                 <ComboBoxItem Content="{DynamicResource Str_EventLog_System}" Tag="System"/>
                 <ComboBoxItem Content="{DynamicResource Str_EventLog_Application}" Tag="Application"/>
                 <ComboBoxItem Content="{DynamicResource Str_EventLog_Setup}" Tag="Setup"/>
                 <ComboBoxItem Content="{DynamicResource Str_EventLog_WindowsUpdate}" Tag="Microsoft-Windows-WindowsUpdateClient/Operational"/>
               </ComboBox>
-              <CheckBox x:Name="EventChannelEnableConsent" Content="{DynamicResource Str_EventLog_Enable}" Margin="0,4,0,0" Checked="OnEventChannelOptionChanged" Unchecked="OnEventChannelOptionChanged" AutomationProperties.Name="Enable selected diagnostic event channel"/>
+              <CheckBox x:Name="EventChannelEnableConsent" Content="{DynamicResource Str_EventLog_Enable}" Margin="0,4,0,0" Checked="OnEventChannelOptionChanged" Unchecked="OnEventChannelOptionChanged" AutomationProperties.Name="{DynamicResource Str_EventLog_Enable}"/>
               <TextBlock Text="{DynamicResource Str_EventLog_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="NetworkSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="{DynamicResource Str_Network_Hostname}" Margin="0,0,0,4"/>
-              <TextBox x:Name="NetworkLookupHost" AutomationProperties.Name="Optional hostname to resolve"/>
+              <TextBox x:Name="NetworkLookupHost" AutomationProperties.Name="{DynamicResource Str_Network_Hostname}"/>
               <TextBlock Text="{DynamicResource Str_Network_DnsBoundary}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
               <TextBlock Text="{DynamicResource Str_Network_Destination}" Margin="0,8,0,4"/>
-              <TextBox x:Name="NetworkTcpHost" AutomationProperties.Name="Optional TCP hostname or IP address"/>
+              <TextBox x:Name="NetworkTcpHost" AutomationProperties.Name="{DynamicResource Str_Network_Destination}"/>
               <TextBlock Text="{DynamicResource Str_Network_Port}" Margin="0,6,0,4"/>
-              <TextBox x:Name="NetworkTcpPort" AutomationProperties.Name="TCP destination port"/>
+              <TextBox x:Name="NetworkTcpPort" AutomationProperties.Name="{DynamicResource Str_Network_Port}"/>
               <TextBlock Text="{DynamicResource Str_Network_ConnectionBoundary}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
               <TextBlock Text="{DynamicResource Str_Network_Timeout}" Margin="0,8,0,4"/>
               <DockPanel>
                 <TextBlock DockPanel.Dock="Right" Text="{Binding Value, ElementName=NetworkTimeoutSeconds, StringFormat={}{0:0}}" Margin="8,0,0,0"/>
-                <Slider x:Name="NetworkTimeoutSeconds" Minimum="1" Maximum="60" Value="10" TickFrequency="1" IsSnapToTickEnabled="True" AutomationProperties.Name="Network timeout in seconds"/>
+                <Slider x:Name="NetworkTimeoutSeconds" Minimum="1" Maximum="60" Value="10" TickFrequency="1" IsSnapToTickEnabled="True" AutomationProperties.Name="{DynamicResource Str_Network_Timeout}"/>
               </DockPanel>
             </StackPanel>
             <StackPanel x:Name="AudioSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="{DynamicResource Str_Audio_EndpointScope}" Margin="0,0,0,4"/>
-              <ComboBox x:Name="AudioDirectionChoice" SelectedIndex="0" SelectionChanged="OnWorkflowOptionsChanged" AutomationProperties.Name="Audio endpoint direction">
+              <ComboBox x:Name="AudioDirectionChoice" SelectedIndex="0" SelectionChanged="OnWorkflowOptionsChanged" AutomationProperties.Name="{DynamicResource Str_Audio_EndpointScope}">
                 <ComboBoxItem Content="{DynamicResource Str_Audio_InputOutput}" Tag="All"/>
                 <ComboBoxItem Content="{DynamicResource Str_Audio_Output}" Tag="Output"/>
                 <ComboBoxItem Content="{DynamicResource Str_Audio_Input}" Tag="Input"/>
               </ComboBox>
               <TextBlock Text="{DynamicResource Str_Audio_WindowsRole}" Margin="0,6,0,4"/>
-              <ComboBox x:Name="AudioRoleChoice" SelectedIndex="0" SelectionChanged="OnWorkflowOptionsChanged" AutomationProperties.Name="Audio endpoint role">
+              <ComboBox x:Name="AudioRoleChoice" SelectedIndex="0" SelectionChanged="OnWorkflowOptionsChanged" AutomationProperties.Name="{DynamicResource Str_Audio_WindowsRole}">
                 <ComboBoxItem Content="{DynamicResource Str_Audio_AllRoles}" Tag="All"/>
                 <ComboBoxItem Content="{DynamicResource Str_Audio_Console}" Tag="Console"/>
                 <ComboBoxItem Content="{DynamicResource Str_Audio_Multimedia}" Tag="Multimedia"/>
@@ -654,11 +654,11 @@
               <TextBlock Text="{DynamicResource Str_Audio_Boundary}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
             </StackPanel>
             <StackPanel x:Name="SystemRestoreSettings" Visibility="Collapsed" Margin="0,0,0,6">
-              <CheckBox x:Name="SystemRestoreCreate" Content="{DynamicResource Str_Restore_Prepare}" Margin="0,0,0,6" AutomationProperties.Name="Prepare one System Restore point" Checked="OnSystemRestoreOptionChanged" Unchecked="OnSystemRestoreOptionChanged"/>
+              <CheckBox x:Name="SystemRestoreCreate" Content="{DynamicResource Str_Restore_Prepare}" Margin="0,0,0,6" AutomationProperties.Name="{DynamicResource Str_Restore_Prepare}" Checked="OnSystemRestoreOptionChanged" Unchecked="OnSystemRestoreOptionChanged"/>
               <TextBlock Text="{DynamicResource Str_Restore_Description}"/>
-              <TextBox x:Name="SystemRestoreDescription" Text="{DynamicResource Str_Restore_DefaultDescription}" MaxLength="64" IsEnabled="{Binding IsChecked, ElementName=SystemRestoreCreate}" TextChanged="OnSystemRestoreDescriptionChanged" AutomationProperties.Name="Restore point description"/>
+              <TextBox x:Name="SystemRestoreDescription" Text="{DynamicResource Str_Restore_DefaultDescription}" MaxLength="64" IsEnabled="{Binding IsChecked, ElementName=SystemRestoreCreate}" TextChanged="OnSystemRestoreDescriptionChanged" AutomationProperties.Name="{DynamicResource Str_Restore_Description}"/>
               <TextBlock Text="{DynamicResource Str_Restore_Reason}" Margin="0,6,0,4"/>
-              <ComboBox x:Name="SystemRestoreReasonChoice" SelectedIndex="0" IsEnabled="{Binding IsChecked, ElementName=SystemRestoreCreate}" SelectionChanged="OnSystemRestoreReasonChanged" AutomationProperties.Name="Restore point reason">
+              <ComboBox x:Name="SystemRestoreReasonChoice" SelectedIndex="0" IsEnabled="{Binding IsChecked, ElementName=SystemRestoreCreate}" SelectionChanged="OnSystemRestoreReasonChanged" AutomationProperties.Name="{DynamicResource Str_Restore_Reason}">
                 <ComboBoxItem Content="{DynamicResource Str_Restore_SystemSettings}" Tag="ModifySettings"/>
                 <ComboBoxItem Content="{DynamicResource Str_Restore_ApplicationInstall}" Tag="ApplicationInstall"/>
                 <ComboBoxItem Content="{DynamicResource Str_Restore_DriverInstall}" Tag="DeviceDriverInstall"/>
@@ -667,17 +667,17 @@
             </StackPanel>
             <StackPanel x:Name="StorageSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="{DynamicResource Str_Storage_Volume}"/>
-              <ComboBox x:Name="StorageVolumeChoice" AutomationProperties.Name="Filesystem check volume"/>
+              <ComboBox x:Name="StorageVolumeChoice" AutomationProperties.Name="{DynamicResource Str_Storage_Volume}"/>
               <TextBlock Text="{DynamicResource Str_Storage_Description}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
-              <CheckBox x:Name="StorageRepairReview" Content="{DynamicResource Str_Storage_RepairReview}" Margin="0,8,0,4" AutomationProperties.Name="Review filesystem repair eligibility" Checked="OnStorageRepairConsentChanged" Unchecked="OnStorageRepairConsentChanged"/>
-              <ComboBox x:Name="StorageRepairModeChoice" SelectedIndex="0" IsEnabled="{Binding IsChecked, ElementName=StorageRepairReview}" AutomationProperties.Name="Filesystem repair mode" SelectionChanged="OnStorageRepairModeChanged">
+              <CheckBox x:Name="StorageRepairReview" Content="{DynamicResource Str_Storage_RepairReview}" Margin="0,8,0,4" AutomationProperties.Name="{DynamicResource Str_Storage_RepairReview}" Checked="OnStorageRepairConsentChanged" Unchecked="OnStorageRepairConsentChanged"/>
+              <ComboBox x:Name="StorageRepairModeChoice" SelectedIndex="0" IsEnabled="{Binding IsChecked, ElementName=StorageRepairReview}" AutomationProperties.Name="{DynamicResource Str_Storage_RepairReview}" SelectionChanged="OnStorageRepairModeChanged">
                 <ComboBoxItem Content="{DynamicResource Str_Storage_SpotRepair}" Tag="SpotFix"/>
                 <ComboBoxItem Content="{DynamicResource Str_Storage_OfflineRepair}" Tag="OfflineScanAndFix"/>
               </ComboBox>
-              <CheckBox x:Name="StorageAllowDismount" Content="{DynamicResource Str_Storage_AllowDismount}" Margin="0,4,0,0" IsEnabled="{Binding IsChecked, ElementName=StorageRepairReview}" AutomationProperties.Name="Allow non-system volume dismount during repair" Checked="OnStorageRepairConsentChanged" Unchecked="OnStorageRepairConsentChanged"/>
-              <CheckBox x:Name="StorageBackupConfirmed" Content="{DynamicResource Str_Storage_BackupConfirmed}" Margin="0,4,0,0" IsEnabled="{Binding IsChecked, ElementName=StorageRepairReview}" AutomationProperties.Name="Confirm filesystem repair backup" Checked="OnStorageRepairConsentChanged" Unchecked="OnStorageRepairConsentChanged"/>
-              <CheckBox x:Name="StorageOptimizationReview" Content="{DynamicResource Str_Storage_OptimizationReview}" Margin="0,8,0,4" AutomationProperties.Name="Analyze drive optimization" Checked="OnStorageOptimizationChanged" Unchecked="OnStorageOptimizationChanged"/>
-              <ComboBox x:Name="StorageOptimizationModeChoice" SelectedIndex="0" IsEnabled="{Binding IsChecked, ElementName=StorageOptimizationReview}" AutomationProperties.Name="Drive optimization method" SelectionChanged="OnStorageOptimizationModeChanged">
+              <CheckBox x:Name="StorageAllowDismount" Content="{DynamicResource Str_Storage_AllowDismount}" Margin="0,4,0,0" IsEnabled="{Binding IsChecked, ElementName=StorageRepairReview}" AutomationProperties.Name="{DynamicResource Str_Storage_AllowDismount}" Checked="OnStorageRepairConsentChanged" Unchecked="OnStorageRepairConsentChanged"/>
+              <CheckBox x:Name="StorageBackupConfirmed" Content="{DynamicResource Str_Storage_BackupConfirmed}" Margin="0,4,0,0" IsEnabled="{Binding IsChecked, ElementName=StorageRepairReview}" AutomationProperties.Name="{DynamicResource Str_Storage_BackupConfirmed}" Checked="OnStorageRepairConsentChanged" Unchecked="OnStorageRepairConsentChanged"/>
+              <CheckBox x:Name="StorageOptimizationReview" Content="{DynamicResource Str_Storage_OptimizationReview}" Margin="0,8,0,4" AutomationProperties.Name="{DynamicResource Str_Storage_OptimizationReview}" Checked="OnStorageOptimizationChanged" Unchecked="OnStorageOptimizationChanged"/>
+              <ComboBox x:Name="StorageOptimizationModeChoice" SelectedIndex="0" IsEnabled="{Binding IsChecked, ElementName=StorageOptimizationReview}" AutomationProperties.Name="{DynamicResource Str_Storage_OptimizationReview}" SelectionChanged="OnStorageOptimizationModeChanged">
                 <ComboBoxItem Content="{DynamicResource Str_Storage_WindowsRecommended}" Tag="Recommended"/>
                 <ComboBoxItem Content="{DynamicResource Str_Storage_Retrim}" Tag="ReTrim"/>
                 <ComboBoxItem Content="{DynamicResource Str_Storage_Defragment}" Tag="Defragment"/>
@@ -688,7 +688,7 @@
                   <TextBlock Text="{DynamicResource Str_FileReview_Description}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
                   <DockPanel Margin="0,5,0,4" LastChildFill="True">
                     <Button Content="{DynamicResource Str_FileReview_Browse}" Click="OnBrowseFileReviewFolder" DockPanel.Dock="Right" Margin="5,0,0,0"/>
-                    <TextBox x:Name="FileReviewFolder" AutomationProperties.Name="Folder to review for duplicate and large files" ToolTip="{DynamicResource Str_FileReview_FolderTip}"/>
+                    <TextBox x:Name="FileReviewFolder" AutomationProperties.Name="{DynamicResource Str_FileReview_FolderTip}" ToolTip="{DynamicResource Str_FileReview_FolderTip}"/>
                   </DockPanel>
                   <WrapPanel>
                     <Button x:Name="ReviewDuplicatesButton" Content="{DynamicResource Str_FileReview_Duplicates}" Click="OnReviewDuplicates" Margin="0,0,6,0" ToolTip="{DynamicResource Str_FileReview_DuplicatesTip}"/>
@@ -699,7 +699,7 @@
             </StackPanel>
             <StackPanel x:Name="ComputerNameSettings" Visibility="Collapsed" Margin="0,0,0,6">
               <TextBlock Text="{DynamicResource Str_ComputerName_Proposed}"/>
-              <TextBox x:Name="ProposedComputerName" MaxLength="63" TextChanged="OnProposedComputerNameChanged" AutomationProperties.Name="Proposed computer name"/>
+              <TextBox x:Name="ProposedComputerName" MaxLength="63" TextChanged="OnProposedComputerNameChanged" AutomationProperties.Name="{DynamicResource Str_ComputerName_Proposed}"/>
               <CheckBox x:Name="ComputerRenameConsent" Content="{DynamicResource Str_ComputerName_Rename}" Margin="0,4,0,0"/>
               <TextBlock Text="{DynamicResource Str_ComputerName_Boundary}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
             </StackPanel>
@@ -718,7 +718,7 @@
                 <ListBox x:Name="DiagnosticAreaList" SelectionMode="Multiple" MaxHeight="180" Visibility="Collapsed"
                          Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextBrush}"
                          IsEnabled="{Binding IsChecked, ElementName=FocusDiagnosticAreas}" SelectionChanged="OnDiagnosticAreasChanged"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" Style="{StaticResource WorkbenchList}" ItemContainerStyle="{StaticResource CheckRow}" AutomationProperties.Name="Diagnostic areas">
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" Style="{StaticResource WorkbenchList}" ItemContainerStyle="{StaticResource CheckRow}" AutomationProperties.Name="{DynamicResource Str_Advanced_DiagnosticOnly}">
                   <ListBox.ItemTemplate><DataTemplate>
                     <CheckBox Content="{Binding Title}" ToolTip="{Binding Description}"
                               IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Mode=TwoWay}"/>
@@ -728,11 +728,11 @@
                 <DockPanel x:Name="RecipeActions" Margin="0,10,0,6" IsEnabled="{Binding IsChecked, ElementName=CustomizeRecipes}">
                   <TextBlock Text="{DynamicResource Str_Advanced_RecipeChecks}" VerticalAlignment="Center"/>
                   <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                    <Button Content="{DynamicResource Str_Advanced_All}" Padding="8,2" Margin="4,0,0,0" Click="OnSelectAllRecipes" AutomationProperties.Name="Select all recipe checks"/>
-                    <Button Content="{DynamicResource Str_Advanced_None}" Padding="8,2" Margin="4,0,0,0" Click="OnClearRecipes" AutomationProperties.Name="Clear recipe checks"/>
+                    <Button Content="{DynamicResource Str_Advanced_All}" Padding="8,2" Margin="4,0,0,0" Click="OnSelectAllRecipes" AutomationProperties.Name="{DynamicResource Str_Advanced_All}"/>
+                    <Button Content="{DynamicResource Str_Advanced_None}" Padding="8,2" Margin="4,0,0,0" Click="OnClearRecipes" AutomationProperties.Name="{DynamicResource Str_Advanced_None}"/>
                   </StackPanel>
                 </DockPanel>
-                <ListBox x:Name="RecipeSelectionList" Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextBrush}" SelectionMode="Multiple" MaxHeight="240" IsEnabled="{Binding IsChecked, ElementName=CustomizeRecipes}" SelectionChanged="OnRecipeSelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Style="{StaticResource WorkbenchList}" ItemContainerStyle="{StaticResource CheckRow}" AutomationProperties.Name="Recipe checks">
+                <ListBox x:Name="RecipeSelectionList" Background="{DynamicResource BackgroundBrush}" Foreground="{DynamicResource TextBrush}" SelectionMode="Multiple" MaxHeight="240" IsEnabled="{Binding IsChecked, ElementName=CustomizeRecipes}" SelectionChanged="OnRecipeSelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Style="{StaticResource WorkbenchList}" ItemContainerStyle="{StaticResource CheckRow}" AutomationProperties.Name="{DynamicResource Str_Advanced_RecipeChecks}">
                   <ListBox.GroupStyle>
                     <GroupStyle>
                       <GroupStyle.HeaderTemplate>
@@ -775,12 +775,12 @@
             <Expander x:Name="KnowledgeTools" Header="{DynamicResource Str_Knowledge_Header}" Foreground="{DynamicResource TextBrush}" Margin="0,12,0,0"><StackPanel Margin="0,8,0,0">
               <TextBlock Text="{DynamicResource Str_Knowledge_Description}" TextWrapping="Wrap" Margin="0,0,0,10" Foreground="{DynamicResource MutedTextBrush}"/>
               <TextBlock x:Name="CodeLookupLabel" Text="{DynamicResource Str_Knowledge_CodeLabel}" Margin="0,0,0,4"/>
-              <TextBox x:Name="KnowledgeCode" AutomationProperties.Name="Knowledge code or search text" ToolTip="{DynamicResource Str_Knowledge_CodeTip}" Margin="0,0,0,8"/>
+              <TextBox x:Name="KnowledgeCode" AutomationProperties.Name="{DynamicResource Str_Knowledge_CodeTip}" ToolTip="{DynamicResource Str_Knowledge_CodeTip}" Margin="0,0,0,8"/>
               <Button Content="{DynamicResource Str_Knowledge_Run}" Click="OnLookupErrorCode" HorizontalAlignment="Left"/>
               <Expander Header="{DynamicResource Str_Knowledge_PackHeader}" Foreground="{DynamicResource TextBrush}" Margin="0,14,0,0"><StackPanel Margin="0,8,0,0">
               <TextBlock Text="{DynamicResource Str_Knowledge_PackDescription}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,8"/>
               <TextBlock Text="{DynamicResource Str_Knowledge_ContextLabel}" Margin="0,0,0,4"/>
-              <TextBox x:Name="KnowledgeContext" AutomationProperties.Name="Knowledge product context" ToolTip="{DynamicResource Str_Knowledge_ContextTip}" Margin="0,0,0,8"/>
+              <TextBox x:Name="KnowledgeContext" AutomationProperties.Name="{DynamicResource Str_Knowledge_ContextLabel}" ToolTip="{DynamicResource Str_Knowledge_ContextTip}" Margin="0,0,0,8"/>
               <Button Content="{DynamicResource Str_Knowledge_PackActions}" Click="OnWorkbenchMenu" HorizontalAlignment="Left"><Button.ContextMenu><ContextMenu>
                 <MenuItem Header="{DynamicResource Str_Knowledge_Lookup}" Click="OnKnowledgeLookup"/>
                 <MenuItem x:Name="KnowledgeSearchButton" Header="{DynamicResource Str_Knowledge_Search}" Tag="search" Click="OnKnowledgeLookup"/>
@@ -799,7 +799,7 @@
               <StackPanel Width="236" HorizontalAlignment="Left" Margin="8">
                 <TextBlock Text="{DynamicResource Str_Text_INSPECTOR}" Style="{StaticResource SectionLabel}"/>
                 <StackPanel x:Name="RepairPanel" Visibility="Collapsed" Margin="0,0,0,12">
-                  <ComboBox x:Name="RepairChoice" SelectedIndex="0" SelectionChanged="OnRepairChoice" AutomationProperties.Name="Repair action">
+                  <ComboBox x:Name="RepairChoice" SelectedIndex="0" SelectionChanged="OnRepairChoice" AutomationProperties.Name="{DynamicResource Str_Advanced_Repairs}">
                     <ComboBoxItem Content="{DynamicResource Str_Repair_ComponentStore}"/><ComboBoxItem Content="{DynamicResource Str_Repair_SystemFiles}"/>
                   </ComboBox>
                   <TextBox x:Name="RepairPreview" IsReadOnly="True" TextWrapping="Wrap" MaxHeight="250" VerticalScrollBarVisibility="Auto" Margin="0,8,0,8"/>
@@ -993,8 +993,8 @@
               <TextBlock x:Name="EvidenceTitle" Text="{DynamicResource Str_Text_Evidence}" FontFamily="{DynamicResource HeadingFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,8,0"/>
             </DockPanel>
             <WrapPanel x:Name="OutputViewButtons" Grid.Row="1" Margin="0,0,0,2">
-              <Button x:Name="ReportViewButton" Style="{StaticResource ViewToolbarButton}" Content="{DynamicResource Str_Session_ReadableReport}" ContentTemplate="{StaticResource OutputViewLabel}" MaxWidth="{Binding ActualWidth, ElementName=OutputViewButtons}" Click="OnReportView" Padding="9,4" Margin="0,0,0,6" ToolTip="{DynamicResource Str_Session_ReadableReportTip}" AutomationProperties.Name="Show readable report"/>
-              <Button x:Name="ConsoleViewButton" Style="{StaticResource ViewToolbarButton}" Content="{DynamicResource Str_Session_RawOutput}" ContentTemplate="{StaticResource OutputViewLabel}" MaxWidth="{Binding ActualWidth, ElementName=OutputViewButtons}" Click="OnConsoleView" Padding="9,4" Margin="0,0,0,6" ToolTip="{DynamicResource Str_Session_RawOutputTip}" AutomationProperties.Name="Show raw technical output"/>
+              <Button x:Name="ReportViewButton" Style="{StaticResource ViewToolbarButton}" Content="{DynamicResource Str_Session_ReadableReport}" ContentTemplate="{StaticResource OutputViewLabel}" MaxWidth="{Binding ActualWidth, ElementName=OutputViewButtons}" Click="OnReportView" Padding="9,4" Margin="0,0,0,6" ToolTip="{DynamicResource Str_Session_ReadableReportTip}" AutomationProperties.Name="{DynamicResource Str_Session_ReadableReport}"/>
+              <Button x:Name="ConsoleViewButton" Style="{StaticResource ViewToolbarButton}" Content="{DynamicResource Str_Session_RawOutput}" ContentTemplate="{StaticResource OutputViewLabel}" MaxWidth="{Binding ActualWidth, ElementName=OutputViewButtons}" Click="OnConsoleView" Padding="9,4" Margin="0,0,0,6" ToolTip="{DynamicResource Str_Session_RawOutputTip}" AutomationProperties.Name="{DynamicResource Str_Session_RawOutput}"/>
             </WrapPanel>
             <DockPanel x:Name="ConsoleSearchPanel" Grid.Row="2" Margin="0,0,0,6" Visibility="Collapsed">
               <Button DockPanel.Dock="Right" Content="{DynamicResource Str_Content_FIND}" Click="OnFind" ToolTip="{DynamicResource Str_ToolTip_Filter_evidence_lines_Enter_in_search}" Margin="4,0,0,0"/>

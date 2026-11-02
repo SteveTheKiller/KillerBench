@@ -31,12 +31,12 @@ public partial class MainWindow
             RegisterWorkflowResult(result, demo: true);
             CaptureInfo.Text = result.Status + " | " + result.Checks.Count + " synthetic checks | 0 real repairs";
             Report(Controls.LocalizedText.Format("Str_Demo_Finished", LocalizedStatus(result.Status)));
-            SetScanLight(simulateRepair ? "ready" : "attention", result.Status + ". Synthetic demonstration only.");
+            SetScanLight(simulateRepair ? "ready" : "attention", Controls.LocalizedText.Get(simulateRepair ? "Str_Report_DemoRepairNextStep" : "Str_Report_DemoNextAction"));
         }
         catch (OperationCanceledException)
         {
             AppendWorkflowOutput("Demo stopped. No machine state was changed.");
-            SetScanLight("incomplete", "Synthetic demonstration stopped.");
+            SetScanLight("incomplete", Controls.LocalizedText.Format("Str_Ui_Stopped", Controls.LocalizedText.Get("Str_LoadDemo")));
         }
         finally
         {

@@ -34,36 +34,45 @@ internal static class DemoScreenshotChecks
         KillerBench.Services.ThemeManager.GetSetting = _ => null;
         KillerBench.Services.ThemeManager.SetSetting = (_, _) => { };
 
-        string output = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "bench-landing", "screenshots"));
-        Require(Directory.Exists(output), "Landing screenshot folder exists: " + output);
+        string output = Environment.GetEnvironmentVariable("KILLERBENCH_SCREENSHOT_OUTPUT") ??
+            Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "bench-landing", "screenshots"));
+        Directory.CreateDirectory(output);
         var dark = KillerBench.Services.Theme.Dark;
         var light = KillerBench.Services.Theme.Light;
         var black = KillerBench.Services.Theme.Black;
         var A = (KillerBench.Services.Accent a) => (KillerBench.Services.Accent?)a;
         var shots = new Shot[]
         {
-            new("01.png", WorkflowKind.CommonProblems, dark, A(KillerBench.Services.Accent.Yellow)),
+            new("01.png", WorkflowKind.CommonProblems, dark, A(KillerBench.Services.Accent.Yellow), Width: 1600, Height: 1000),
             new("02.png", WorkflowKind.WindowsUpdate, KillerBench.Services.Theme.Delirium, null),
-            new("03.png", WorkflowKind.Network, light, A(KillerBench.Services.Accent.Orange), Grain: false),
-            new("04.png", WorkflowKind.Printing, KillerBench.Services.Theme.SE98, null),
-            new("05.png", WorkflowKind.CoreWindowsServices, KillerBench.Services.Theme.Malaise, null, Scale: 1.1, Repair: true),
-            new("06.png", WorkflowKind.CommonProblems, black, A(KillerBench.Services.Accent.Teal), Raw: true),
-            new("07.png", WorkflowKind.Defender, KillerBench.Services.Theme.Sepulchre, null, Collapse: true),
-            new("08.png", WorkflowKind.Depot, KillerBench.Services.Theme.Mourning, null),
-            new("09.png", WorkflowKind.Storage, KillerBench.Services.Theme.Ectoplasm, null, Scale: 0.9),
-            new("10.png", WorkflowKind.BitLocker, light, A(KillerBench.Services.Accent.Green), Grain: false),
-            new("11.png", WorkflowKind.CommonProblems, dark, A(KillerBench.Services.Accent.Blue), Shortcuts: true),
-            new("12.png", WorkflowKind.Certificates, KillerBench.Services.Theme.Greed, null, Scale: 1.2)
+            new("03.png", WorkflowKind.Network, light, A(KillerBench.Services.Accent.Orange), Grain: false, Width: 1280, Height: 800, PixelScale: 2),
+            new("04.png", WorkflowKind.Printing, KillerBench.Services.Theme.SE98, null, Scale: 1.25, Width: 1280, Height: 850, PixelScale: 2),
+            new("05.png", WorkflowKind.CoreWindowsServices, KillerBench.Services.Theme.Malaise, null, Scale: 1.1, Repair: true, Width: 1600, Height: 1000),
+            new("06.png", WorkflowKind.CommonProblems, black, A(KillerBench.Services.Accent.Teal), Raw: true, Width: 1920, Height: 1080, PixelScale: 2),
+            new("07.png", WorkflowKind.Defender, KillerBench.Services.Theme.Sepulchre, null, OutputHidden: true, Height: 1000),
+            new("08.png", WorkflowKind.Depot, KillerBench.Services.Theme.Mourning, null, Height: 1000),
+            new("09.png", WorkflowKind.Storage, KillerBench.Services.Theme.Ectoplasm, null, Scale: 0.9, Width: 1280, Height: 850, PixelScale: 2),
+            new("10.png", WorkflowKind.BitLocker, light, A(KillerBench.Services.Accent.Green), Grain: false, Height: 960),
+            new("11.png", WorkflowKind.CommonProblems, dark, A(KillerBench.Services.Accent.Blue), Shortcuts: true, Width: 1280),
+            new("12.png", WorkflowKind.Certificates, KillerBench.Services.Theme.Greed, null, Scale: 1.2, Width: 1920, Height: 1080),
+            new("matrix-privacy.png", WorkflowKind.Privacy, KillerBench.Services.Theme.Cyanotic, null, Scale: 1.25, OutputHidden: true, Height: 1000),
+            new("matrix-maintenance.png", WorkflowKind.Cleanup, KillerBench.Services.Theme.Blood, null, Scale: 1.5, Width: 1600, Height: 1000),
+            new("matrix-devices.png", WorkflowKind.DeviceProblems, KillerBench.Services.Theme.Decay, null, Scale: 2, Width: 1920, Height: 1080),
+            new("matrix-small.png", WorkflowKind.CommonProblems, dark, A(KillerBench.Services.Accent.Blue), Scale: .7, Width: 800, Height: 500),
+            new("matrix-zoom250.png", WorkflowKind.InstalledApps, light, A(KillerBench.Services.Accent.Purple), Scale: 2.5, Width: 1920, Height: 1080)
         };
         foreach (var shot in shots) RenderShot(shot, output);
         KillerBench.Services.ThemeManager.Apply(dark);
-        Console.WriteLine("PASS: twelve synthetic screenshots rendered on an isolated desktop: " + output);
+        File.WriteAllText(Path.Combine(output, "capture-manifest.json"), System.Text.Json.JsonSerializer.Serialize(shots,
+            new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+        Console.WriteLine("PASS: twelve gallery images plus five size, zoom and tool variants rendered without a cursor: " + output);
         application.Shutdown();
         return 0;
     }
 
     private sealed record Shot(string File, WorkflowKind Kind, KillerBench.Services.Theme Theme, KillerBench.Services.Accent? Accent,
-        double Scale = 1, bool Grain = true, bool Raw = false, bool Collapse = false, bool Shortcuts = false, bool Repair = false);
+        double Scale = 1, bool Grain = true, bool Raw = false, bool OutputHidden = false, bool Shortcuts = false, bool Repair = false,
+        double Width = 1440, double Height = 900, double PixelScale = 1);
 
     private static readonly BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
 
@@ -81,17 +90,17 @@ internal static class DemoScreenshotChecks
             ShowInTaskbar = false,
             Left = SystemParameters.VirtualScreenLeft - 2000,
             Top = SystemParameters.VirtualScreenTop,
-            Width = 1440,
-            Height = 900,
-            MaxWidth = 1440,
-            MaxHeight = 900
+            Width = shot.Width,
+            Height = shot.Height,
+            MaxWidth = shot.Width,
+            MaxHeight = shot.Height
         };
         bool grainToggled = false;
         try
         {
             window.Show();
-            window.Width = 1440;
-            window.Height = 900;
+            window.Width = shot.Width;
+            window.Height = shot.Height;
             Settle(window);
             var workflowPicker = (ComboBox)window.FindName("MainWorkflow");
             var raw = (TextBox)window.FindName("EvidenceBox");
@@ -103,13 +112,6 @@ internal static class DemoScreenshotChecks
 
             if (!shot.Grain) { Call(window, "ToggleFilmGrain"); grainToggled = true; }
             if (shot.Scale != 1) Call(window, "ApplyAppScale", shot.Scale);
-            if (shot.Collapse)
-            {
-                Call(window, "CollapseSidebar");
-                var left = (FrameworkElement)window.FindName("LeftPanel");
-                left.BeginAnimation(FrameworkElement.WidthProperty, null);
-                left.Width = 0;
-            }
             Settle(window);
 
             workflowPicker.SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == shot.Kind);
@@ -128,11 +130,16 @@ internal static class DemoScreenshotChecks
             Require(report.Children[0] is TextBlock heading && heading.Text.Contains("demo report", StringComparison.Ordinal),
                 "Readable report identifies the synthetic demonstration");
             if (shot.Raw) Call(window, "ShowRawOutput");
+            if (shot.OutputHidden) Call(window, "SetOutputOpen", false);
             if (shot.Shortcuts) Call(window, "OnShortcuts", window, new RoutedEventArgs());
+            Thread.Sleep(180);
             Settle(window);
-            Require(Math.Abs(window.ActualWidth - 1440) < 0.5 && Math.Abs(window.ActualHeight - 900) < 0.5,
-                "Screenshot window is exactly 1440 by 900, was " + window.ActualWidth + "x" + window.ActualHeight);
-            Capture(window, Path.Combine(output, shot.File));
+            Require(Math.Abs(window.ActualWidth - shot.Width) < 0.5 && Math.Abs(window.ActualHeight - shot.Height) < 0.5,
+                "Screenshot window matches its requested size, was " + window.ActualWidth + "x" + window.ActualHeight);
+            Require(((FrameworkElement)window.FindName("LeftPanel")).ActualWidth > 0,
+                "Every screenshot retains the fixed category navigation");
+            Capture(window, Path.Combine(output, shot.File), shot.PixelScale);
+            Console.WriteLine(shot.File + ": " + shot.Width + "x" + shot.Height + ", zoom " + shot.Scale + ", pixel scale " + shot.PixelScale);
         }
         finally
         {
@@ -150,11 +157,11 @@ internal static class DemoScreenshotChecks
         }
     }
 
-    private static void Capture(FrameworkElement visual, string path)
+    private static void Capture(FrameworkElement visual, string path, double pixelScale)
     {
         visual.UpdateLayout();
-        var bitmap = new RenderTargetBitmap((int)Math.Ceiling(visual.ActualWidth),
-            (int)Math.Ceiling(visual.ActualHeight), 96, 96, PixelFormats.Pbgra32);
+        var bitmap = new RenderTargetBitmap((int)Math.Ceiling(visual.ActualWidth * pixelScale),
+            (int)Math.Ceiling(visual.ActualHeight * pixelScale), 96 * pixelScale, 96 * pixelScale, PixelFormats.Pbgra32);
         bitmap.Render(visual);
         var encoder = new PngBitmapEncoder();
         encoder.Frames.Add(BitmapFrame.Create(bitmap));

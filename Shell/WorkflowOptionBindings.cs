@@ -171,6 +171,7 @@ public partial class MainWindow
         }
 
         control.ToolTip ??= option.Description;
-        AutomationProperties.SetHelpText(control, option.Description);
+        System.Windows.Data.BindingOperations.SetBinding(control, AutomationProperties.HelpTextProperty,
+            new System.Windows.Data.Binding(nameof(FrameworkElement.ToolTip)) { Source = control });
     }
 }

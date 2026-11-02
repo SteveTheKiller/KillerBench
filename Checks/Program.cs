@@ -183,6 +183,7 @@ internal static class Program
             if (args.Length == 0) return RunChecks(includeUi: false);
             if (args is ["--isolated-ui"]) return RunChecks(includeUi: true);
             if (args is ["--isolated-ui-smoke"]) return RunUiSmoke();
+            if (args is ["--isolated-localization-ui"]) return LocalizationDesktopChecks.Run();
             if (args is ["--isolated-category-ui"]) return CategoryNavigationChecks.Run();
             if (args is ["--isolated-dialog-smoke"]) return RunDialogSmoke();
             if (args is ["--isolated-demo-screenshots"]) return DemoScreenshotChecks.Run();
@@ -222,6 +223,8 @@ internal static class Program
             }
             if (args is ["--only", "ui-smoke"])
                 return IsolatedDesktop.Run("--isolated-ui-smoke");
+            if (args is ["--only", "ui-localization"])
+                return IsolatedDesktop.Run("--isolated-localization-ui");
             if (args is ["--only", "ui-category"])
                 return IsolatedDesktop.Run("--isolated-category-ui");
             if (args is ["--only", "dialog-smoke"])
@@ -1538,7 +1541,8 @@ internal static class Program
                         window.UpdateLayout();
                         Capture(window, Path.Combine(scratch, "recipe-selection.png"));
                         choices.UnselectAll();
-                        Require(effects.Text == "No recipe checks selected.", "Empty selection clears the repair-effects review");
+                        Require(effects.Text == (string)window.FindResource("Str_Advanced_NoRecipes") &&
+                            !effects.Text.Contains(Repairs.Plan(RepairKind.SystemFiles).Effects), "Empty selection clears the repair-effects review");
                         toggle.IsChecked = false;
                         Require(effects.Text.Contains("waiting print jobs"), "Full recipe review restores all action effects");
                         effectsPanel.IsExpanded = false;

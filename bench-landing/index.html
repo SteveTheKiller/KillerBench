@@ -239,7 +239,7 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <span data-i18n="shot_printing">Printing, 98SE theme - print queue and spooler checks beside the printer tools</span>
 <span data-i18n="shot_repair">Simulated repair of Core Windows services, Malaise theme - at 110% app zoom</span>
 <span data-i18n="shot_raw">Raw output, Black theme with the teal accent - the full system scan log</span>
-<span data-i18n="shot_defender">Microsoft Defender, Sepulchre theme - with the tools sidebar collapsed</span>
+<span data-i18n="shot_defender">Microsoft Defender, Sepulchre theme with output hidden while browsing security tools</span>
 <span data-i18n="shot_onboarding">Onboarding, Mourning theme - application and configuration groups for a new computer</span>
 <span data-i18n="shot_storage">Storage, Ectoplasm theme - volume checks and drive maintenance at 90% app zoom</span>
 <span data-i18n="shot_bitlocker">BitLocker, Light theme with the green accent - protection, recovery key backup and encryption options, Film Grain off</span>
@@ -247,7 +247,7 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
 <span data-i18n="shot_certs">Certificate expiration, Greed theme - at 120% app zoom</span>
 </div>
 
-<script src="kb-i18n.js?v=2"></script>
+<script src="kb-i18n.js?v=3"></script>
 <script src="kb.js?v=1"></script>
 <script src="feature-carousel.js?v=4"></script>
 <script>
@@ -265,7 +265,7 @@ html[data-theme="light"] .blurb h3, html[data-theme="light"] .feature-card h3 { 
   var lastTrigger = null;
   var background = [];
 
-  function file(n) { return 'screenshots/' + (n < 10 ? '0' : '') + n + '.png'; }
+  function file(n) { return 'screenshots/' + (n < 10 ? '0' : '') + n + '.png?v=20261102-final'; }
   function descriptionFor(n) {
     var caption = document.querySelector('[data-i18n="' + screenshots[n - 1] + '"]');
     return caption ? caption.textContent : '';

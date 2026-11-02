@@ -10,15 +10,15 @@ public partial class MainWindow
     private async void OnKnowledgeCompare(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
-        var beforePicker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Title = "Choose the current knowledge pack", Filter = "Knowledge JSON (*.json)|*.json", CheckFileExists = true };
+        var beforePicker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Title = Controls.LocalizedText.Get("Str_Tkp_CurrentPack"), Filter = "JSON (*.json)|*.json", CheckFileExists = true };
         if (beforePicker.ShowDialog(this) != true) return;
-        var afterPicker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Title = "Choose the candidate knowledge pack", Filter = "Knowledge JSON (*.json)|*.json", CheckFileExists = true };
+        var afterPicker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Title = Controls.LocalizedText.Get("Str_Tkp_CandidatePack"), Filter = "JSON (*.json)|*.json", CheckFileExists = true };
         if (afterPicker.ShowDialog(this) != true) return;
         using var stop = new CancellationTokenSource(TimeSpan.FromSeconds(45));
         readCancellation = stop;
         SetCaptureBusy(true);
-        SetScanLight("running", "Comparing local knowledge packs.");
-        Report("Comparing current and candidate knowledge packs...");
+        SetScanLight("running", Controls.LocalizedText.Get("Str_Knowledge_Compare"));
+        Report(Controls.LocalizedText.Format("Str_Ui_Reading", Controls.LocalizedText.Get("Str_Knowledge_Compare")));
         try
         {
             var comparison = await Task.Run(async () =>
@@ -49,18 +49,18 @@ public partial class MainWindow
                 lines.Add("");
             }
             RegisterSource(new TextEvidence("Pack comparison: " + comparison.PackId, [.. lines], comparison.Truncated));
-            Report("Knowledge comparison ready. Source files preserved; no pack installed.");
-            SetScanLight("incomplete", "Reference comparison only; machine health was not assessed.");
+            Report(Controls.LocalizedText.Get("Str_Tkp_CompareReady"));
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Tkp_ReferenceOnly"));
         }
         catch (OperationCanceledException)
         {
-            Report("Knowledge comparison stopped or timed out.");
-            SetScanLight("incomplete", "Knowledge comparison did not complete.");
+            Report(Controls.LocalizedText.Format("Str_Ui_Stopped", Controls.LocalizedText.Get("Str_Knowledge_Compare")));
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Recipe_Stopped"));
         }
         catch (Exception error) when (error is InvalidDataException or IOException or UnauthorizedAccessException or JsonException or ArgumentException)
         {
-            Report("Knowledge comparison unavailable: " + error.Message);
-            SetScanLight("incomplete", "Knowledge comparison did not complete.");
+            Report(Controls.LocalizedText.Format("Str_Ui_Error", Controls.LocalizedText.Get("Str_Knowledge_Compare"), error.Message));
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Recipe_Stopped"));
         }
         finally
         {
@@ -78,7 +78,7 @@ public partial class MainWindow
         if (!uint.TryParse(hex ? raw[2..] : raw,
             hex ? System.Globalization.NumberStyles.AllowHexSpecifier : System.Globalization.NumberStyles.None,
             System.Globalization.CultureInfo.InvariantCulture, out uint code))
-        { Report("Enter a decimal or 0x hexadecimal Windows system code."); return; }
+        { Report(Controls.LocalizedText.Get("Str_Tkp_EnterWindowsCode")); return; }
         var result = WindowsErrorReference.Lookup(code);
         var lines = new List<string> { "WINDOWS SYSTEM MESSAGE", "Code: " + code + " (0x" + code.ToString("X") + ")",
             result.Message ?? "No system message found for this code.", "Source: " + result.Source, result.Limitation };
@@ -93,15 +93,15 @@ public partial class MainWindow
                 "Next: " + update.DiagnosticScope, "Source: " + WindowsUpdateErrorCatalog.SourceUrl,
                 "Reference only. The code does not identify the failing update, prove current update state or authorize repair."]);
         RegisterSource(new TextEvidence("Win32 code: " + code, [.. lines], false));
-        Report(result.Message is null ? "No Windows system message found." : "Windows system reference loaded. No diagnostic verdict.");
-        SetScanLight("incomplete", "Reference only; machine health was not assessed.");
+        Report(Controls.LocalizedText.Get(result.Message is null ? "Str_Tkp_NoWindowsMessage" : "Str_Tkp_WindowsLoaded"));
+        SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Tkp_ReferenceOnly"));
     }
 
     private void OnDeviceCodeLookup(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
         if (!DeviceProblemCodeCatalog.TryParse(KnowledgeCode.Text, out uint code))
-        { Report("Enter an unsigned decimal or 0x hexadecimal Device Manager code."); return; }
+        { Report(Controls.LocalizedText.Get("Str_Tkp_EnterDeviceCode")); return; }
         var entry = DeviceProblemCodeCatalog.Find(code);
         RegisterSource(new TextEvidence("Device Manager code: " + code,
             [
@@ -113,9 +113,8 @@ public partial class MainWindow
                 "Restart may resolve this reported state: " + (entry.RestartMayResolve ? "Yes" : "No"),
                 "Reference only. Current device state was not inspected and no repair was selected."
             ], false));
-        Report(entry.Symbol == "CM_PROB_UNKNOWN" ? "Unknown Device Manager code retained for review." :
-            "Device Manager reference loaded. No diagnostic verdict.");
-        SetScanLight("incomplete", "Reference only; machine health was not assessed.");
+        Report(Controls.LocalizedText.Get(entry.Symbol == "CM_PROB_UNKNOWN" ? "Str_Tkp_DeviceUnknown" : "Str_Tkp_DeviceLoaded"));
+        SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Tkp_ReferenceOnly"));
     }
 
     private async void OnKnowledgeLookup(object sender, RoutedEventArgs e)
@@ -124,15 +123,15 @@ public partial class MainWindow
         string context = KnowledgeContext.Text.Trim(), code = KnowledgeCode.Text.Trim();
         bool search = sender is System.Windows.FrameworkElement { Tag: "search" };
         if (context.Length == 0 || code.Length == 0)
-        { Report("Enter a product context and code or search text before opening a reference pack."); return; }
-        var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Title = "Open local knowledge pack", Filter = "Knowledge JSON (*.json)|*.json", CheckFileExists = true };
+        { Report(Controls.LocalizedText.Get("Str_Tkp_EnterContext")); return; }
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Title = Controls.LocalizedText.Get("Str_Tkp_OpenPack"), Filter = "JSON (*.json)|*.json", CheckFileExists = true };
         if (picker.ShowDialog(this) != true) return;
         using var stop = new CancellationTokenSource();
         readCancellation = stop;
         SetCaptureBusy(true);
         try
         {
-            Report("Reading local knowledge reference...");
+            Report(Controls.LocalizedText.Format("Str_Ui_Reading", Controls.LocalizedText.Get("Str_Knowledge_Header")));
             var catalog = await Task.Run(() => KnowledgeCatalog.ReadFileAsync(picker.FileName, stop.Token));
             sessionKnowledgeCatalogs.AddOrReplace(catalog);
             if (search)
@@ -140,8 +139,8 @@ public partial class MainWindow
                 var matches = await Task.Run(() => catalog.Search(context, code, token: stop.Token));
                 stop.Token.ThrowIfCancellationRequested();
                 RegisterSource(FormatKnowledgeSearch(catalog, context, code, matches));
-                Report($"Reference search: {matches.Matches.Count} of {matches.TotalMatches} matches displayed. {catalog.PackId} joined {sessionKnowledgeCatalogs.Count} session knowledge pack(s).");
-                SetScanLight("incomplete", "Reference search only; machine health was not assessed.");
+                Report(Controls.LocalizedText.Format("Str_Tkp_SearchReady", matches.Matches.Count, matches.TotalMatches, catalog.PackId, sessionKnowledgeCatalogs.Count));
+                SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Tkp_ReferenceOnly"));
                 return;
             }
             var entry = catalog.Find(context, code);
@@ -160,13 +159,11 @@ public partial class MainWindow
                     "Device match and package compatibility have not been checked. No download or installation performed."]);
             lines.Add("Local reference only. Publisher signature has not been verified. This match does not diagnose the machine or authorize a repair.");
             RegisterSource(new TextEvidence("Reference: " + context + " / " + code, [.. lines], false));
-            Report(entry is null
-                ? $"No contextual reference found. {catalog.PackId} joined {sessionKnowledgeCatalogs.Count} session knowledge pack(s)."
-                : $"Reference loaded. {catalog.PackId} joined {sessionKnowledgeCatalogs.Count} session knowledge pack(s).");
-            SetScanLight("incomplete", "Reference lookup only; machine health was not assessed.");
+            Report(Controls.LocalizedText.Format(entry is null ? "Str_Tkp_ReferenceMissing" : "Str_Tkp_ReferenceLoaded", catalog.PackId, sessionKnowledgeCatalogs.Count));
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Tkp_ReferenceOnly"));
         }
         catch (Exception error) when (error is InvalidDataException or IOException or UnauthorizedAccessException or JsonException or ArgumentException or OperationCanceledException)
-        { Report("Knowledge lookup unavailable: " + error.Message); }
+        { Report(Controls.LocalizedText.Format("Str_Ui_Error", Controls.LocalizedText.Get("Str_Knowledge_Header"), error.Message)); }
         finally { readCancellation = null; SetCaptureBusy(false); }
     }
 

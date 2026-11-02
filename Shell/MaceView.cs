@@ -64,7 +64,7 @@ public partial class MainWindow
         if (readCancellation is not null) return;
         if (maceReview is null || MacePackageSelection.SelectedItem is not MacePackageChoice selected)
         {
-            Report("Run Microsoft app removal, then select a supported package candidate.");
+            Report(Controls.LocalizedText.Get("Str_Mace_PackageHint"));
             return;
         }
         MacePackageRemovalEligibility eligibility = MacePackageRemoval.Evaluate(maceReview, selected.Identity);
@@ -98,9 +98,9 @@ public partial class MainWindow
             return;
         }
         var confirmation = new ConfirmDialog(
-            "Remove this exact current-account package?",
-            selected.Identity + "\n\nKillerBench will repeat the safeguard review, record the request, send one removal request, and verify the package inventory. It will not retry automatically.",
-            "Remove package") { Owner = this };
+            Controls.LocalizedText.Get("Str_Ui_RemovePackageConfirm"),
+            selected.Identity + "\n\n" + Controls.LocalizedText.Get("Str_Ui_RemovePackageDetail"),
+            Controls.LocalizedText.Get("Str_Mace_RemovePackage")) { Owner = this };
         confirmation.ShowDialog();
         if (!confirmation.Confirmed) return;
         macePackageRemovalRequested = true;

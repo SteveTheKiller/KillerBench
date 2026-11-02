@@ -15,7 +15,7 @@ public partial class MainWindow
         TimeApply.IsChecked = false;
         SetCaptureBusy(true);
         RepairPanel.IsEnabled = false;
-        ModeLabel.Text = "TIME / RECOVERY CHECK";
+        ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_CheckingRecovery");
         BeginWorkflowOutput(WorkflowKind.TimeService);
         try
         {
@@ -46,7 +46,7 @@ public partial class MainWindow
                     "No time source or clock setting was changed, and no pending change was retried.")], [],
                 "Incomplete read-only time recovery check. No retry was requested."), "Time recovery check");
             Report(detail);
-            SetScanLight("incomplete", "Recovery check incomplete. No change retried.");
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Ui_UnverifiedResult") + " " + Controls.LocalizedText.Get("Str_Ui_NoRetry"));
         }
         finally
         {
@@ -57,7 +57,7 @@ public partial class MainWindow
             SearchBox.IsEnabled = true;
             SetCaptureBusy(false);
             RepairPanel.IsEnabled = true;
-            ModeLabel.Text = "TIME RECOVERY ENDED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Ended");
             if (closeAfterOperation) Close();
         }
     }

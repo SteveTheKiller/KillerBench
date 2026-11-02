@@ -12,8 +12,8 @@ public partial class MainWindow
         var snapshot = activity.ToArray();
         var picker = new Controls.FileDialog(Controls.FileDialogMode.Save)
         {
-            Title = "Export retained session activity (up to 150 entries)",
-            Filter = "Text file (*.txt)|*.txt|CSV file (*.csv)|*.csv|HTML page (*.html)|*.html",
+            Title = Controls.LocalizedText.Get("Str_ExportActivityHint"),
+            Filter = "TXT (*.txt)|*.txt|CSV (*.csv)|*.csv|HTML (*.html)|*.html",
             DefaultExt = ".txt", AddExtension = true, OverwritePrompt = true,
             FileName = "KillerBench-activity-" + DateTime.Now.ToString("yyyyMMdd-HHmmss")
         };
@@ -26,7 +26,7 @@ public partial class MainWindow
             Report($"Exported {snapshot.Length} retained activity entries: {picker.FileName}");
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
-        { Report("Activity export failed: " + error.Message); }
+        { Report(Controls.LocalizedText.Format("Str_Ui_Error", Controls.LocalizedText.Get("Str_ExportActivityHint"), error.Message)); }
         finally { ExportActivityButton.IsEnabled = true; }
     }
 }

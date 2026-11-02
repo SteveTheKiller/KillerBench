@@ -1,6 +1,7 @@
 using System.IO;
 using System.Windows;
 using KillerBench.Engine;
+using L = KillerBench.Controls.LocalizedText;
 
 namespace KillerBench.Shell;
 
@@ -14,7 +15,7 @@ public partial class MainWindow
         PrintJobChoice.SelectedIndex = -1;
         PrintJobCancelConsent.IsChecked = false;
         MainAutoRepair.IsChecked = false;
-        Report("General printing checks selected. Automatic repair is off.");
+        Report(L.Get("Str_Tkp_GeneralPrinting"));
     }
 
     private void OnPrinterSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -54,24 +55,24 @@ public partial class MainWindow
         string? selectedQueue = PrinterQueues.SelectedItem as string;
         try
         {
-            Report("Discovering local printer queues...");
+            Report(L.Format("Str_Ui_Reading", L.Get("Str_Print_FindPrinters")));
             var snapshot = await Task.Run(() => PrinterDiagnostics.DiscoverAsync(token: stop.Token));
             if (snapshot is not null)
             {
                 if (selectedQueue is not null && !snapshot.Queues.ContainsKey(selectedQueue))
                 {
-                    Report("The selected printer is no longer available. Selection retained to prevent switching scope; the Run button will recheck it.");
+                    Report(L.Get("Str_Tkp_PrinterMissing"));
                     return;
                 }
                 PrinterQueues.ItemsSource = snapshot.Queues.Keys.Order(StringComparer.OrdinalIgnoreCase).ToArray();
                 if (selectedQueue is not null)
                     PrinterQueues.SelectedItem = snapshot.Queues.Keys.Single(name => string.Equals(name, selectedQueue, StringComparison.OrdinalIgnoreCase));
             }
-            Report(snapshot is null ? "Printer discovery unavailable. No settings changed." : $"{snapshot.Queues.Count} local queues found. Select one for an offline-setting check.");
+            Report(snapshot is null ? L.Get("Str_Tkp_PrinterUnavailable") : L.Format("Str_Tkp_PrintersFound", snapshot.Queues.Count));
         }
-        catch (OperationCanceledException) { Report("Printer discovery stopped. No settings changed."); }
+        catch (OperationCanceledException) { Report(L.Format("Str_Ui_Error", L.Format("Str_Ui_Stopped", L.Get("Str_Print_FindPrinters")), L.Get("Str_Tkp_PrinterUnavailable"))); }
         catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException or InvalidOperationException or NotSupportedException)
-        { Report("Printer discovery unavailable: " + error.Message); }
+        { Report(L.Format("Str_Ui_Error", L.Get("Str_Print_FindPrinters"), error.Message)); }
         finally { readCancellation = null; SetCaptureBusy(false); }
     }
 
@@ -83,20 +84,20 @@ public partial class MainWindow
         SetCaptureBusy(true);
         try
         {
-            Report("Finding print jobs currently reported as Error or Blocked...");
+            Report(L.Format("Str_Ui_Reading", L.Get("Str_Print_FindBlockedJobs")));
             BeginWorkflowOutput(WorkflowKind.Printing);
             ToolResult evidence = await Task.Run(() => PrintJobDiagnostics.CaptureAsync(token: stop.Token));
             PrintJobInventory? inventory = PrintJobDiagnostics.ReadInventory(evidence);
             if (inventory is not { Complete: true })
             {
-                const string incompleteStatus = "Complete print-job evidence is unavailable. No cancellation is available.";
+                string incompleteStatus = L.Get("Str_Tkp_JobsIncomplete");
                 RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Printing, Environment.MachineName, DateTimeOffset.UtcNow,
                     incompleteStatus,
-                    [new WorkflowCheck("Print-job evidence", CheckState.Unknown,
-                        "The print-job list was incomplete or could not be read. No cancellation candidate was made available.", Evidence: evidence),
-                     new WorkflowCheck("Change boundary", CheckState.Information,
-                        "No print job was canceled, restarted, paused, resumed, or otherwise changed.")], [],
-                    "Read-only print-job discovery. No cancellation journal was written."), "Blocked print job review");
+                    [new WorkflowCheck(L.Get("Str_Print_FindBlockedJobs"), CheckState.Unknown,
+                        L.Get("Str_Tkp_JobsIncomplete"), Evidence: evidence),
+                     new WorkflowCheck(L.Get("Str_Report_ScopeAndLimits"), CheckState.Information,
+                        L.Get("Str_Tkp_PrintNoChange"))], [],
+                    L.Get("Str_Tkp_PrintNoJournal")), L.Get("Str_Print_FindBlockedJobs"));
                 Report(incompleteStatus);
                 return;
             }
@@ -104,33 +105,38 @@ public partial class MainWindow
                 .OrderBy(job => job.QueueName, StringComparer.OrdinalIgnoreCase).ThenBy(job => job.JobId)
                 .Select(job => new System.Windows.Controls.ComboBoxItem
                 {
-                    Content = job.QueueName + " | Job " + job.JobId + " | Status " + job.StatusMask,
+                    Content = L.Format("Str_Tkp_JobItem", job.QueueName, job.JobId, job.StatusMask),
                     Tag = job
                 }).ToArray();
             PrintJobChoice.ItemsSource = items;
             PrintJobChoice.SelectedIndex = -1;
             PrintJobCancelConsent.IsChecked = false;
             PrintJobCancelConsent.IsEnabled = false;
-            string status = items.Length == 0
+            string rawStatus = items.Length == 0
                 ? "No visible print job is currently reported as Error or Blocked. No job changed."
                 : items.Length + " cancellation candidate(s) found. Select one, confirm the exact cancellation, then select Run diagnosis.";
-            AppendWorkflowOutput("PRINT JOB REVIEW\n" + status + "\nCandidates: " +
-                (items.Length == 0 ? "None" : string.Join("; ", items.Select(item => item.Content?.ToString()))));
+            AppendWorkflowOutput("PRINT JOB REVIEW\n" + rawStatus + "\nCandidates: " +
+                (items.Length == 0 ? "None" : string.Join("; ", items.Select(item =>
+                {
+                    var job = (PrintJobSnapshot)item.Tag;
+                    return job.QueueName + " | Job " + job.JobId + " | Status " + job.StatusMask;
+                }))));
+            string status = items.Length == 0 ? L.Get("Str_Tkp_JobsNone") : L.Format("Str_Tkp_JobsCandidates", items.Length);
             RegisterWorkflowResult(new WorkflowResult(WorkflowKind.Printing, Environment.MachineName, DateTimeOffset.UtcNow,
                 status,
-                [new WorkflowCheck("Print-job evidence", CheckState.Clear,
-                    "A complete bounded snapshot of current print jobs was collected.", Evidence: evidence),
-                 new WorkflowCheck("Cancellation candidates", items.Length == 0 ? CheckState.Clear : CheckState.Attention,
-                    items.Length == 0 ? "No visible Error or Blocked print job was reported in this snapshot." : items.Length + " exact Error or Blocked print job candidate" + (items.Length == 1 ? " was" : "s were") + " retained for review. Select one in the Printing controls before any cancellation can be considered."),
-                 new WorkflowCheck("Change boundary", CheckState.Information,
-                    "No print job was canceled, restarted, paused, resumed, or otherwise changed.")], [],
-                "Read-only print-job discovery. No cancellation journal was written."), "Blocked print job review");
+                [new WorkflowCheck(L.Get("Str_Print_FindBlockedJobs"), CheckState.Clear,
+                    L.Get("Str_Tkp_JobsSnapshot"), Evidence: evidence),
+                 new WorkflowCheck(L.Get("Str_Print_CancelSelected"), items.Length == 0 ? CheckState.Clear : CheckState.Attention,
+                    status),
+                 new WorkflowCheck(L.Get("Str_Report_ScopeAndLimits"), CheckState.Information,
+                    L.Get("Str_Tkp_PrintNoChange"))], [],
+                L.Get("Str_Tkp_PrintNoJournal")), L.Get("Str_Print_FindBlockedJobs"));
             Report(status);
         }
-        catch (OperationCanceledException) { Report("Print-job discovery stopped. No job changed."); }
+        catch (OperationCanceledException) { Report(L.Format("Str_Ui_Error", L.Format("Str_Ui_Stopped", L.Get("Str_Print_FindBlockedJobs")), L.Get("Str_Tkp_PrintNoChange"))); }
         catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException or
             InvalidOperationException or NotSupportedException)
-        { Report("Print-job discovery unavailable: " + error.Message); }
+        { Report(L.Format("Str_Ui_Error", L.Get("Str_Print_FindBlockedJobs"), error.Message)); }
         finally { readCancellation = null; SetCaptureBusy(false); }
     }
 
@@ -152,16 +158,16 @@ public partial class MainWindow
                 "\n\nCancellation was not repeated.";
             bool verified = result.Outcome is PrintJobCancellationOutcome.Verified or
                 PrintJobCancellationOutcome.NotApplied or PrintJobCancellationOutcome.NoPending;
-            RegisterGuardedActionReport(WorkflowKind.Printing, "Print job cancellation",
-                "Print job cancellation recovery / " + result.Outcome, output, result.Detail,
+            RegisterGuardedActionReport(WorkflowKind.Printing, L.Get("Str_Print_CancelSelected"),
+                L.Format("Str_Ui_Error", L.Get("Str_Print_CheckInterrupted"), result.Outcome), output, result.Detail,
                 result.RecordPath ?? "No operation record created.", verified,
-                "Confirm the queue is clear or resubmit the document before making another print change.");
-            SetScanLight(verified ? "ready" : "incomplete", result.Detail);
+                L.Get("Str_Tkp_PrintNext"));
+            SetScanLight(verified ? "ready" : "incomplete", L.Format("Str_Ui_Error", L.Get("Str_Print_CheckInterrupted"), result.Detail));
         }
-        catch (OperationCanceledException) { Report("Print-job recovery stopped. Cancellation was not repeated."); }
+        catch (OperationCanceledException) { Report(L.Format("Str_Ui_Error", L.Format("Str_Ui_Stopped", L.Get("Str_Print_CheckInterrupted")), L.Get("Str_Tkp_CancellationNotRepeated"))); }
         catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException or
             InvalidOperationException or NotSupportedException)
-        { Report("Print-job recovery unavailable: " + error.Message); }
+        { Report(L.Format("Str_Ui_Error", L.Get("Str_Print_CheckInterrupted"), error.Message)); }
         finally { readCancellation = null; SetCaptureBusy(false); }
     }
 }

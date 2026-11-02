@@ -26,14 +26,14 @@ public partial class MainWindow
         if (readCancellation is not null) return;
         MainAutoRepair.IsChecked = false;
         MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(workflow => workflow.Kind == WorkflowKind.BrowserExtensions);
-        Report("Browser extensions selected. Press GO to create a read-only report.");
+        Report(Controls.LocalizedText.Workflow(WorkflowKind.BrowserExtensions) + ". " + Controls.LocalizedText.Get("Str_Apps_ReviewExtensionsTip"));
     }
 
     private async void OnReviewApplicationFolders(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
         string folderName = ApplicationFolderName.Text.Trim();
-        if (folderName.Length == 0) { Report("Enter one exact application folder name to review."); return; }
+        if (folderName.Length == 0) { Report(Controls.LocalizedText.Get("Str_Apps_FolderName") + ". " + Controls.LocalizedText.Get("Str_Apps_FolderNameTip")); return; }
         using var stop = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         readCancellation = stop;
         ReviewApplicationFoldersButton.IsEnabled = false;
@@ -72,7 +72,7 @@ public partial class MainWindow
     private async void OnSaveApplicationInventory(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null || applicationInventory is not { } inventory) return;
-        var picker = new Controls.FileDialog(Controls.FileDialogMode.Save) { Filter = "Application inventory JSON|*.json", DefaultExt = ".json", FileName = "applications-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".json", OverwritePrompt = true };
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Save) { Filter = Controls.LocalizedText.Workflow(WorkflowKind.InstalledApps) + " (JSON)|*.json", DefaultExt = ".json", FileName = "applications-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".json", OverwritePrompt = true };
         if (picker.ShowDialog(this) != true) return;
         using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         readCancellation = cancellation;
@@ -81,11 +81,11 @@ public partial class MainWindow
         try
         {
             await Task.Run(() => ApplicationInventoryFiles.SaveAsync(inventory, picker.FileName, overwrite: true, token: cancellation.Token));
-            Report("Application inventory saved: " + picker.FileName + ". Collection coverage is retained.");
+            Report(Controls.LocalizedText.Format("Str_Ui_Saved", Controls.LocalizedText.Get("Str_Apps_SaveInventory"), picker.FileName));
         }
-        catch (OperationCanceledException) { Report("Inventory save stopped or timed out."); }
+        catch (OperationCanceledException) { Report(Controls.LocalizedText.Format("Str_Ui_Stopped", Controls.LocalizedText.Workflow(WorkflowKind.InstalledApps))); }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
-        { Report("Cannot save inventory: " + error.Message); }
+        { Report(Controls.LocalizedText.Format("Str_Ui_Error", Controls.LocalizedText.Workflow(WorkflowKind.InstalledApps), error.Message)); }
         finally
         {
             readCancellation = null;
@@ -97,13 +97,13 @@ public partial class MainWindow
     private async void OnCompareApplicationInventories(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
-        var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Filter = "Application inventory JSON|*.json", Title = "Choose BEFORE inventory" };
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Filter = Controls.LocalizedText.Workflow(WorkflowKind.InstalledApps) + " (JSON)|*.json", Title = Controls.LocalizedText.Get("Str_Ui_BeforeInventory") };
         if (picker.ShowDialog(this) != true) return;
         string before = picker.FileName;
         var afterPicker = new Controls.FileDialog(Controls.FileDialogMode.Open)
         {
-            Filter = "Application inventory JSON|*.json",
-            Title = "Choose AFTER inventory",
+            Filter = Controls.LocalizedText.Workflow(WorkflowKind.InstalledApps) + " (JSON)|*.json",
+            Title = Controls.LocalizedText.Get("Str_Ui_AfterInventory"),
             InitialDirectory = Path.GetDirectoryName(before) ?? ""
         };
         if (afterPicker.ShowDialog(this) != true) return;
@@ -154,14 +154,14 @@ public partial class MainWindow
             EvidenceTitle.Text = previousTitle;
             EvidenceBox.Text = previousEvidence;
             CoverageLabel.Text = previousCoverage;
-            Report("Inventory comparison stopped or timed out.");
+            Report(Controls.LocalizedText.Format("Str_Ui_Stopped", Controls.LocalizedText.Workflow(WorkflowKind.InstalledApps)));
         }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or JsonException or InvalidOperationException or KeyNotFoundException or ArgumentException or NotSupportedException or FormatException)
         {
             EvidenceTitle.Text = previousTitle;
             EvidenceBox.Text = previousEvidence;
             CoverageLabel.Text = previousCoverage;
-            Report("Cannot compare inventories: " + error.Message);
+            Report(Controls.LocalizedText.Format("Str_Ui_Error", Controls.LocalizedText.Workflow(WorkflowKind.InstalledApps), error.Message));
         }
         finally
         {

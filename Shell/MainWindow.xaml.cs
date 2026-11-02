@@ -48,7 +48,7 @@ public partial class MainWindow : Window
             e.Cancel = true;
             closeAfterOperation = true;
             OnCancel(this, new RoutedEventArgs());
-            Report("Closing after the active operation stops. An actual repair must finish its current command.");
+            Report(Controls.LocalizedText.Get("Str_Ui_CloseWaiting"));
         };
         // After the first paint, so an update offer never lands before the window (Shell\Updates.cs).
         Loaded += (_, _) => Dispatcher.BeginInvoke(new Action(CheckForUpdatesOnStartup),
@@ -126,6 +126,11 @@ public partial class MainWindow : Window
         }
         SynchronizeNavigation();
         UpdateMainActionLabel();
+        RefreshRecipeSelectionText();
+        RefreshUpdateActions();
+        RefreshThirdPartyUpdateActions();
+        RefreshNativeCapabilityStatus();
+        RefreshPrivacyLanguage();
         RefreshWorkflowReportLanguage();
     }
 
@@ -145,11 +150,11 @@ public partial class MainWindow : Window
             "",
             "DISPLAY READY / LOAD DEMO TO TRY LOG INVESTIGATION"
         ], false);
-        ModeLabel.Text = "SAMPLE MODE";
+        ModeLabel.Text = Controls.LocalizedText.Get("Str_Text_SAMPLE_MODE");
         RegisterSource(evidence);
         SearchBox.Clear();
         ShowEvidence();
-        Report("Synthetic sample loaded. No system scan performed.");
+        Report(Controls.LocalizedText.Get("Str_Ui_SampleLoaded"));
     }
 
     private async Task OpenEvidenceAsync()
@@ -160,20 +165,20 @@ public partial class MainWindow : Window
         { await OpenCaptureAsync(path); return; }
         if (path.Length == 0)
         {
-            var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Filter = "Logs and event files|*.log;*.txt;*.evtx;*.xml|All files|*.*", Title = "Open evidence", Multiselect = true };
+            var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Filter = "LOG, TXT, EVTX, XML|*.log;*.txt;*.evtx;*.xml|" + Controls.LocalizedText.Get("Str_Dlg_AllFiles") + "|*.*", Title = Controls.LocalizedText.Get("Str_Shortcuts_OpenEvidence"), Multiselect = true };
             if (picker.ShowDialog(this) != true) return;
             if (picker.FileNames.Length > 1) { await OpenEvidenceBatchAsync(picker.FileNames); return; }
             path = picker.FileName;
             PathBox.Text = path;
         }
-        if (!File.Exists(path)) { StatusLabel.Text = "Enter an existing local text-log path."; return; }
+        if (!File.Exists(path)) { StatusLabel.Text = Controls.LocalizedText.Get("Str_Ui_ExistingLogPath"); return; }
         bool archive = Path.GetExtension(path).Equals(".evtx", StringComparison.OrdinalIgnoreCase);
         bool eventXml = Path.GetExtension(path).Equals(".xml", StringComparison.OrdinalIgnoreCase);
         using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(15));
         readCancellation = cancellation;
         OpenButton.IsEnabled = false;
         CancelButton.IsEnabled = true;
-        Report(archive ? "Reading saved events. Newest 200 records, no date filter; 15-second time limit." : "Reading text evidence. Maximum 1,000,000 characters; 15-second time limit.");
+        Report(Controls.LocalizedText.Get(archive ? "Str_Ui_EventsReading" : "Str_Ui_LogReading"));
         try
         {
             var loaded = await Task.Run(async () =>
@@ -190,15 +195,15 @@ public partial class MainWindow : Window
             });
             evidence = loaded;
             RegisterSource(loaded);
-            ModeLabel.Text = archive || eventXml ? "IMPORTED EVENTS / RULES EVALUATED" : "IMPORTED TEXT / RULES EVALUATED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Imported");
             SearchBox.Clear();
             ShowEvidence();
             OnFindingsTab(this, new RoutedEventArgs());
-            Report("Imported: " + loaded.Source);
+            Report(Controls.LocalizedText.Format("Str_Ui_ImportedSource", loaded.Source));
         }
-        catch (OperationCanceledException) { Report("Read stopped or timed out. Previous evidence retained."); }
+        catch (OperationCanceledException) { Report(Controls.LocalizedText.Get("Str_Ui_ReadStopped")); }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
-        { Report("Cannot open evidence: " + error.Message); }
+        { Report(Controls.LocalizedText.Format("Str_Ui_Error", Controls.LocalizedText.Get("Str_Shortcuts_OpenEvidence"), error.Message)); }
         finally
         {
             readCancellation = null;
@@ -212,33 +217,36 @@ public partial class MainWindow : Window
         if (workflowOutputActive) return;
         if (evidence is null) return;
         SetOutputOpen(true);
-        EvidenceTitle.Text = evidence.Source == "Synthetic demonstration" ? "Sample evidence" : Path.GetFileName(evidence.Source);
+        EvidenceTitle.Text = evidence.Source == "Synthetic demonstration" ? Controls.LocalizedText.Get("Str_Text_Evidence") : Path.GetFileName(evidence.Source);
         if (historicalWorkflows.TryGetValue(evidence, out var historical))
         {
-            ModeLabel.Text = "SAVED WORKFLOW / HISTORICAL";
+            ModeLabel.Text = Controls.LocalizedText.Get("Str_Mode_Historical");
             EvidenceBox.Text = evidence.Excerpt(SearchBox.Text, out int historicalMatches);
-            CoverageLabel.Text = $"Recorded status: {historical.RecordedStatus} | {historicalMatches:N0} matching lines. No current-health verdict.";
+            CoverageLabel.Text = Controls.LocalizedText.Format("Str_Ui_HistoricalCoverage", LocalizedStatus(historical.RecordedStatus), historicalMatches);
             SourceInfo.Text = historical.Source + "\n\n" + WorkflowJournalSnapshot.Scope;
             shownReport = null;
             FindingCards.Children.Clear();
-            FindingsSummary.Text = "Saved workflow record. Diagnostic rules were not rerun against the journal text.\n" + WorkflowJournalSnapshot.Scope;
+            FindingsSummary.Text = Controls.LocalizedText.Get("Str_Ui_SavedWorkflow") + "\n" + WorkflowJournalSnapshot.Scope;
             return;
         }
-        SourceInfo.Text = $"{evidence.Source}\n\n{evidence.Lines.Length:N0} loaded lines\n" + (evidence.Truncated ? "Partial source: input limit reached" : "Source read completed") + "\n\nEvidence inspection only";
+        SourceInfo.Text = evidence.Source + "\n\n" + Controls.LocalizedText.Format("Str_Ui_LoadedLines", evidence.Lines.Length) + "\n" +
+            Controls.LocalizedText.Get(evidence.Truncated ? "Str_Ui_SourcePartial" : "Str_Ui_SourceComplete") + "\n\n" +
+            Controls.LocalizedText.Get("Str_RecordedEvidence");
         var investigation = reports.GetValue(evidence, item => Investigation.Analyze(item));
         var analysis = investigation.Codes;
-        SourceInfo.Text += $"\n\n{analysis.Observations.Count} distinct code observations\n" +
-            string.Join("\n", analysis.Observations.Select(code => $"{code.Code}: {code.Occurrences} occurrences (line {code.Evidence[0].LineNumber})")) +
-            (analysis.ObservationsTruncated ? "\nAnalysis limited." : "") + $"\n\nFormat: {investigation.Format}\n{investigation.ParsedLines} parsed entries.\n{investigation.Limitation}";
+        SourceInfo.Text += "\n\n" + Controls.LocalizedText.Format("Str_Ui_CodeObservations", analysis.Observations.Count) + "\n" +
+            string.Join("\n", analysis.Observations.Select(code => Controls.LocalizedText.Format("Str_Ui_CodeOccurrence", code.Code, code.Occurrences, code.Evidence[0].LineNumber))) +
+            (analysis.ObservationsTruncated ? "\n" + Controls.LocalizedText.Get("Str_Ui_AnalysisLimited") : "") + "\n\n" + investigation.Format + "\n" +
+            Controls.LocalizedText.Format("Str_Ui_EvidenceCounts", investigation.ParsedLines, investigation.LinesAnalyzed) + "\n" + investigation.Limitation;
         RefreshFindings(investigation);
         EvidenceBox.Text = evidence.Excerpt(SearchBox.Text, out int matches);
-        CoverageLabel.Text = $"{matches:N0} matching lines in loaded portion. " +
-            (investigation.Partial ? "PARTIAL ANALYSIS. " : "") + $"{investigation.Findings.Count} findings. No current-health verdict.";
+        CoverageLabel.Text = Controls.LocalizedText.Format("Str_Ui_EvidenceCoverage", matches, investigation.Findings.Count) +
+            (investigation.Partial ? " " + Controls.LocalizedText.Get("Str_Ui_PartialEvidence") : "");
         if (workflowSummaries.TryGetValue(evidence, out var workflow))
         {
             CoverageLabel.Text = Controls.LocalizedText.Format("Str_Output_WorkflowCoverage", LocalizedStatus(workflow.Status), workflow.Checks.Count(check => check.Name != NativeCapabilityCheckName),workflow.Repairs.Count, matches.ToString("N0"));
             SourceInfo.Text = $"{evidence.Source}\n\nWorkflow: {workflow.Kind}\nOutcome: {workflow.Status}\nJournal: {workflow.JournalPath}\n\n" +
-                "Recorded workflow results. Filtering report lines does not change the outcome or rerun diagnostics.";
+                Controls.LocalizedText.Get("Str_Ui_RecordedWorkflow");
         }
     }
 
@@ -255,7 +263,7 @@ public partial class MainWindow : Window
     private void OnCancel(object sender, RoutedEventArgs e)
     {
         readCancellation?.Cancel();
-        Report("Stop requested. Diagnostic checks stop now; an actual repair finishes its current command.");
+        Report(Controls.LocalizedText.Get("Str_Ui_StopRequested"));
         CancelButton.IsEnabled = false;
     }
     private void OnDisplayChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => ApplyDisplay();

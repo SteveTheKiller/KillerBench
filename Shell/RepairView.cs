@@ -79,7 +79,7 @@ public partial class MainWindow
         SetCaptureBusy(true);
         RepairPanel.IsEnabled = false;
         RepairChoice.IsEnabled = false;
-        ModeLabel.Text = "REPAIR / THIS PC";
+        ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_InProgress");
         BeginWorkflowOutput(workflowKind);
         AppendWorkflowOutput("Repair requested for this PC. Stop waits for the current command; it does not kill servicing.");
         try
@@ -138,7 +138,7 @@ public partial class MainWindow
             RepairPanel.IsEnabled = true;
             RepairChoice.IsEnabled = true;
             RepairConsent.IsChecked = false;
-            ModeLabel.Text = "REPAIR SESSION ENDED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Ended");
             if (closeAfterOperation) Close();
         }
     }

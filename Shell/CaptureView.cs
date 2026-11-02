@@ -44,8 +44,8 @@ public partial class MainWindow
         UpdateSettings.IsEnabled = !busy;
         DebloatSettings.IsEnabled = !busy;
         if (!busy) OnWorkflowOptionsChanged(this, null);
-        if (busy) SetScanLight("running", "Working. Stop waits for the current servicing command.");
-        else if (ScanLight.ToolTip is string tip && tip.StartsWith("Working.")) SetScanLight("incomplete", "Operation ended. Review the result.");
+        if (busy) SetScanLight("running", Controls.LocalizedText.Get("Str_Ui_Working"));
+        else if (ScanLight.Tag as string == "running") SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Ui_EndedReview"));
         ScanButton.IsEnabled = !busy;
         OpenCaptureButton.IsEnabled = !busy;
         SaveCaptureButton.IsEnabled = !busy && capture is not null;
@@ -64,8 +64,8 @@ public partial class MainWindow
         using var stop = new CancellationTokenSource(TimeSpan.FromMinutes(2));
         readCancellation = stop;
         SetCaptureBusy(true);
-        ModeLabel.Text = "COLLECTING / READ ONLY";
-        Report("Windows Update scan: CBS, Panther and recent events. No repairs. Stop keeps completed sources.");
+        ModeLabel.Text = Controls.LocalizedText.Get("Str_Mode_Collecting");
+        Report(Controls.LocalizedText.Get("Str_CaptureScope"));
         try
         {
             var progress = new Progress<string>(Report);
@@ -73,18 +73,18 @@ public partial class MainWindow
             // Keep completed collection even after Stop; analysis of bounded snapshots needs no live reads.
             var analyzed = await Task.Run(() => collected.Sources.Where(s => s.Evidence is not null).ToDictionary(s => s.Evidence!, s => Capture.Analyze(s)));
             ApplyCapture(collected, analyzed, null);
-            SetScanLight(analyzed.Values.Any(r => r.Findings.Count > 0) ? "attention" : "incomplete", "Capture finished. Historical logs do not establish current health.");
-            Report((collected.Partial ? "Partial capture ready. Review source coverage." : "Capture ready.") + " Save capture to keep its evidence.");
+            SetScanLight(analyzed.Values.Any(r => r.Findings.Count > 0) ? "attention" : "incomplete", Controls.LocalizedText.Get("Str_RecordedEvidence"));
+            Report(Controls.LocalizedText.Get(collected.Partial ? "Str_Ui_CapturePartial" : "Str_Ui_CaptureReady"));
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or NotSupportedException)
-        { Report("Cannot collect: " + error.Message); }
+        { Report(Controls.LocalizedText.Format("Str_Ui_Error", Controls.LocalizedText.Get("Str_OpenCapture"), error.Message)); }
         finally { readCancellation = null; SetCaptureBusy(false); }
     }
 
     private async void OnOpenCapture(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
-        var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Filter = "KillerBench capture|*.kbench|JSON capture|*.json", Title = "Open saved capture" };
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Filter = "KillerBench (*.kbench)|*.kbench|JSON (*.json)|*.json", Title = Controls.LocalizedText.Get("Str_OpenCapture") };
         if (picker.ShowDialog(this) != true) return;
         await OpenCaptureAsync(picker.FileName);
     }
@@ -104,11 +104,11 @@ public partial class MainWindow
                 return (session, analyzed);
             });
             ApplyCapture(loaded.session, loaded.analyzed, Path.GetFullPath(path));
-            Report("Opened saved evidence. Findings evaluated with installed rules; no machine scan performed.");
+            Report(Controls.LocalizedText.Get("Str_Ui_CaptureLoaded"));
         }
-        catch (OperationCanceledException) { Report("Open stopped. Previous session retained."); }
+        catch (OperationCanceledException) { Report(Controls.LocalizedText.Get("Str_Ui_ReadStopped")); }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
-        { Report("Cannot open capture: " + error.Message); }
+        { Report(Controls.LocalizedText.Format("Str_Ui_Error", Controls.LocalizedText.Get("Str_OpenCapture"), error.Message)); }
         finally { readCancellation = null; SetCaptureBusy(false); }
     }
 
@@ -149,15 +149,15 @@ public partial class MainWindow
     {
         if (capture is null || readCancellation is not null) return;
         var saved = capture;
-        var picker = new Controls.FileDialog(Controls.FileDialogMode.Save) { Filter = "KillerBench capture|*.kbench", FileName = "KillerBench-capture.kbench", Title = "Save capture including machine identity, source paths and raw evidence" };
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Save) { Filter = "KillerBench (*.kbench)|*.kbench", FileName = "KillerBench-capture.kbench", Title = Controls.LocalizedText.Get("Str_Ui_CaptureSaveTitle") };
         if (picker.ShowDialog(this) != true) return;
         try
         {
             await Capture.SaveAsync(saved, picker.FileName);
             capturePath = Path.GetFullPath(picker.FileName);
-            Report("Capture saved locally with raw evidence and machine metadata: " + picker.FileName);
+            Report(Controls.LocalizedText.Format("Str_Ui_Saved", Controls.LocalizedText.Get("Str_Ui_CaptureSaveTitle"), picker.FileName));
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
-        { Report("Cannot save capture: " + error.Message); }
+        { Report(Controls.LocalizedText.Format("Str_Ui_Error", Controls.LocalizedText.Get("Str_OpenCapture"), error.Message)); }
     }
 }

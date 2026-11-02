@@ -58,7 +58,7 @@ public partial class MainWindow
         reportAvailable = true;
         lastReport = (result, title);
         ReportContent.Children.Clear();
-        string reportTitle = title ?? LocalizedText.Workflow(result.Kind);
+        string reportTitle = title is null ? LocalizedText.Workflow(result.Kind) : LocalizeBitLockerResultText(LocalizeProfileResultText(title));
         ReportContent.Children.Add(Heading(LocalizedText.Format(demo ? "Str_Report_DemoTitle" : "Str_Report_Title", reportTitle), 15));
         ReportContent.Children.Add(Body(LocalizedStatus(result.Status) + " | " + result.StartedUtc.ToString("g"), 12, new Thickness(0, 0, 0, 14)));
 
@@ -97,7 +97,7 @@ public partial class MainWindow
         if (problems.Length == 0 && reviewRecipes.Length == 0)
             ReportContent.Children.Add(Body(LocalizedText.Get("Str_Report_NoProblem"), 12, new Thickness(0, 0, 0, 12)));
         foreach (var check in problems.Take(visibleProblems))
-            ReportContent.Children.Add(Card(check.Name, LocalizedText.Choice(check.EffectiveState), check.Detail,
+            ReportContent.Children.Add(Card(DisplayReportCheckName(check.Name), LocalizedText.Choice(check.EffectiveState), result.Kind is WorkflowKind.Profiles or WorkflowKind.BitLocker ? LocalizeBitLockerResultText(LocalizeProfileResultText(check.Detail)) : check.Detail,
                 check.Repair is null ? LocalizedText.Get("Str_Report_ReviewEvidence") : Repairs.Plan(check.Repair.Value).Effects));
 
         int visibleRecipes = Math.Min(reviewRecipes.Length, maximumVisibleReviewItems - visibleProblems);
@@ -118,7 +118,7 @@ public partial class MainWindow
             ReportContent.Children.Add(Heading(LocalizedText.Get("Str_Report_CollectedInformation"), 13));
             const int maximumVisibleInformationItems = 12;
             foreach (var check in information.Take(maximumVisibleInformationItems))
-                ReportContent.Children.Add(Card(check.Name, LocalizedText.Choice(CheckState.Information), check.Detail,
+                ReportContent.Children.Add(Card(DisplayReportCheckName(check.Name), LocalizedText.Choice(CheckState.Information), result.Kind is WorkflowKind.Profiles or WorkflowKind.BitLocker ? LocalizeBitLockerResultText(LocalizeProfileResultText(check.Detail)) : check.Detail,
                     LocalizedText.Get("Str_Report_EvidenceOnly")));
             if (information.Length > maximumVisibleInformationItems)
                 ReportContent.Children.Add(Body(LocalizedText.Format("Str_Report_MoreInformation", information.Length - maximumVisibleInformationItems), 12, new Thickness(0, 0, 0, 12), "MutedTextBrush"));
@@ -128,9 +128,9 @@ public partial class MainWindow
         if (result.Actions.Count == 0 && result.Repairs.Count == 0)
             ReportContent.Children.Add(Body(LocalizedText.Get("Str_Report_NoRepair"), 12, new Thickness(0, 0, 0, 12)));
         foreach (var action in result.Actions)
-            ReportContent.Children.Add(Card(action.Name, action.Status, action.Detail, action.NextAction));
+            ReportContent.Children.Add(Card(LocalizeBitLockerResultText(action.Name), LocalizedStatus(action.Status), action.Detail, LocalizeBitLockerResultText(LocalizeProfileResultText(LocalizeReportGuidance(action.NextAction)))));
         foreach (var repair in result.Repairs)
-            ReportContent.Children.Add(Card(Repairs.Plan(repair.Kind).Title, repair.Status,
+            ReportContent.Children.Add(Card(Repairs.Plan(repair.Kind).Title, LocalizedStatus(repair.Status),
                 Repairs.IsVerified(repair) ? LocalizedText.Get("Str_Report_RepairVerified") : LocalizedText.Get("Str_Report_RepairNotVerified"),
                 repair.RequiresRestart ? LocalizedText.Get("Str_Report_RestartThenRerun") : LocalizedText.Get("Str_Report_TestFeature")));
 
@@ -323,7 +323,7 @@ public partial class MainWindow
         "No issues detected in checked scopes" => LocalizedText.Get("Str_Status_NoIssues"),
         "Repairs verified in checked scopes" => LocalizedText.Get("Str_Status_RepairsVerified"),
         "Restart required; run this workflow again after restarting to verify" => LocalizedText.Get("Str_Status_RestartRequired"),
-        _ => status
+        _ => LocalizeBitLockerResultText(LocalizeProfileResultText(status))
     };
 
     private static int ReviewPriority(CheckState state) => state switch
@@ -345,5 +345,56 @@ public partial class MainWindow
         _ => 6
     };
 
-    private static string NextAction(WorkflowResult result) => WorkflowReport.NextAction(result);
+    private static readonly (string Source, string Key)[] ReportGuidance =
+    [
+        ("Restart when convenient, then run this workflow again to verify and continue.", "Str_Guidance_Restart"),
+        ("Review the saved journal before starting another repair; the previous operation may be incomplete.", "Str_Guidance_Interrupted"),
+        ("Open an administrator terminal and rerun this workflow to complete its checks.", "Str_Guidance_AdminCli"),
+        ("Run KillerBench as administrator, then select this check and select Run diagnosis again.", "Str_Guidance_Admin"),
+        ("Review the new results before enabling repairs.", "Str_Guidance_ReviewBeforeRepairs"),
+        ("This workflow performs checks only; no repair or deletion is selected.", "Str_Guidance_ChecksOnly"),
+        ("Choose the exact repair target and required options, review its effects, then confirm that specific repair. The generic automatic-repair switch will not run it.", "Str_Guidance_ExactRepair"),
+        ("Rerun this workflow with --auto-repair to run eligible repairs.", "Str_Guidance_AutoCli"),
+        ("Select Run recommended cleanup, then select Run repair to perform the recommended maintenance.", "Str_Guidance_Cleanup"),
+        ("Select Auto-repair confirmed issues, then select Run repair to run eligible repairs.", "Str_Guidance_Auto"),
+        ("Review the reported device ID and configuration code in Device Manager. Use its hardware IDs to locate an approved vendor driver; a code alone does not prove hardware failure.", "Str_Guidance_DeviceAttention"),
+        ("Device evidence is incomplete. Resolve the reported collection problem and repeat this check before deciding whether a driver or device needs attention.", "Str_Guidance_DeviceIncomplete"),
+        ("No active fault requiring attention was identified in the collected device evidence. Review any absent devices and test the affected hardware directly; undetected devices remain outside this snapshot.", "Str_Guidance_DeviceClear"),
+        ("No device was enabled, reset or given a different driver.", "Str_Guidance_DeviceNoChange"),
+        ("Use the reported device name, ID and code to review its connection and approved driver in Device Manager. Missing driver inventory is not proof that a driver is absent.", "Str_Guidance_InputAttention"),
+        ("No configuration fault was reported in the collected scopes. Test the affected keyboard, mouse or HID function directly.", "Str_Guidance_InputClear"),
+        ("No input was captured and no device reset or driver change was performed.", "Str_Guidance_InputNoChange"),
+        ("Review each flagged Defender control in Windows Security and compare it with the intended endpoint-security policy. Confirm the active security product and policy owner before changing anything.", "Str_Guidance_DefenderAttention"),
+        ("No Defender control in this overview needs immediate review. Compare the retained settings with the intended endpoint-security policy.", "Str_Guidance_DefenderClear"),
+        ("No scan, remediation, exclusion, policy or security setting was changed.", "Str_Guidance_DefenderNoChange"),
+        ("Review the unresolved findings below. No broader repair has been selected automatically.", "Str_Guidance_Findings"),
+        ("Review the returned update list. Installation is not enabled by this discovery workflow.", "Str_Guidance_Updates"),
+        ("Review the estimate before selecting permanent removal. Preview did not remove files.", "Str_Guidance_CleanupPreview"),
+        ("Review the selected privacy snapshots. Recorded values do not prove effective permissions. No privacy settings were changed.", "Str_Guidance_Privacy"),
+        ("Review the selected volume and backup options. This inspection did not back up keys or change encryption.", "Str_Guidance_BitLocker"),
+        ("Review the profile ages and exclusions. Age alone does not authorize deletion. Verify backups and account dependencies before any future removal.", "Str_Guidance_Profiles"),
+        ("Review the proposed name and environment notes. Confirm organizational naming policy, name availability and application dependencies before planning a rename. This review made no changes.", "Str_Guidance_ComputerName"),
+        ("Review the component-store recommendation below. Reclaimed space was not measured.", "Str_Guidance_Component"),
+        ("Review the matching machine registry entries. This inventory does not verify installed executables, user installations or update policy. No Foxit settings were changed.", "Str_Guidance_Foxit"),
+        ("Review full task paths and reported principals. Inventory does not verify actions, triggers, permissions or execution success. No tasks were started or changed.", "Str_Guidance_Tasks"),
+        ("The selected checks finished. Test the affected feature to confirm normal operation.", "Str_Guidance_Finished"),
+        ("This workflow is still running. Wait for its final result before planning another repair.", "Str_Guidance_Wait"),
+        ("A command timed out. Confirm that the previous work has ended, then repeat the checks before selecting another repair.", "Str_Guidance_Timeout"),
+        ("Some checks could not determine a result. Review the incomplete evidence below and repeat those checks before selecting a repair.", "Str_Guidance_Incomplete"),
+    ];
+
+    private static string LocalizeReportGuidance(string text)
+    {
+        foreach (var (source, key) in ReportGuidance)
+        {
+            if (text.Contains(source, StringComparison.Ordinal))
+                text = text.Replace(source, LocalizedText.Get(key), StringComparison.Ordinal);
+        }
+        return text;
+    }
+
+    private static string DisplayReportCheckName(string name) =>
+        name == NativeCapabilityCheckName ? LocalizedText.Get("Str_NativeLab_Name") : LocalizeBitLockerResultText(LocalizeProfileResultText(name));
+
+    private static string NextAction(WorkflowResult result) => LocalizeBitLockerResultText(LocalizeReportGuidance(WorkflowReport.NextAction(result)));
 }

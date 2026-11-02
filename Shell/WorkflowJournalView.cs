@@ -27,12 +27,12 @@ public partial class MainWindow
     private async void OnOpenWorkflowJournal(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
-        var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Title = "Open saved workflow", Filter = "Workflow journal (*.json)|*.json", CheckFileExists = true };
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Title = Controls.LocalizedText.Get("Str_Advanced_OpenWorkflow"), Filter = Controls.LocalizedText.Get("Str_Advanced_Workflows") + " (JSON)|*.json", CheckFileExists = true };
         if (picker.ShowDialog(this) != true) return;
         using var stop = new CancellationTokenSource(TimeSpan.FromSeconds(15));
         readCancellation = stop;
         SetCaptureBusy(true);
-        Report("Reading saved workflow. No checks or repairs will run.");
+        Report(Controls.LocalizedText.Format("Str_Ui_Reading", Controls.LocalizedText.Get("Str_Advanced_Workflows")));
         try
         {
             var review = await Task.Run(() => WorkflowJournalReview.ReadAsync(picker.FileName, stop.Token), stop.Token);
@@ -49,10 +49,10 @@ public partial class MainWindow
             workflowReportTitles.Add(source, "Saved workflow");
             RegisterSource(source);
             ShowEvidence();
-            ModeLabel.Text = "SAVED WORKFLOW / HISTORICAL";
+            ModeLabel.Text = Controls.LocalizedText.Get("Str_Mode_Historical");
             RenderNamedWorkflowReport(report, "Saved workflow");
             SetOutputView();
-            Report("Saved workflow loaded. Recorded outcomes have not been reverified.");
+            Report(Controls.LocalizedText.Get("Str_Ui_SavedWorkflow"));
         }
         catch (Exception error) when (error is OperationCanceledException or IOException or InvalidDataException or
             UnauthorizedAccessException or ArgumentException or InvalidOperationException or NotSupportedException)
@@ -63,7 +63,7 @@ public partial class MainWindow
         {
             readCancellation = null;
             SetCaptureBusy(false);
-            SetScanLight("incomplete", "Historical workflow review does not establish current health.");
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Tkp_ReferenceOnly"));
             if (closeAfterOperation) Close();
         }
     }

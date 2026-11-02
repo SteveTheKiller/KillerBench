@@ -15,7 +15,7 @@ public partial class MainWindow
         FindMsiProductsButton.IsEnabled = false;
         CancelButton.IsEnabled = true;
         InstallerProductChoice.ItemsSource = null;
-        Report("Reading installed MSI application registrations...");
+        Report(Controls.LocalizedText.Format("Str_Ui_Reading", Controls.LocalizedText.Workflow(WorkflowKind.Installer)));
         try
         {
             var scope = InstallerProductScopeChoice.SelectedIndex == 1
@@ -24,15 +24,15 @@ public partial class MainWindow
             var candidates = MsiProductDiagnostics.SelectCandidates(inventory);
             InstallerProductChoice.ItemsSource = candidates;
             Report(candidates.Count == 0
-                ? "No named MSI product-code registrations were found in the selected scope. You can still enter an exact product code."
-                : candidates.Count + " installed MSI applications found. Choose one, then press GO to diagnose it.");
+                ? Controls.LocalizedText.Get("Str_Ui_MsiNone")
+                : Controls.LocalizedText.Format("Str_Ui_MsiFound", candidates.Count));
             SetScanLight(inventory.Complete ? "ready" : "incomplete",
-                inventory.Complete ? "MSI application list ready. No package changed." : "The MSI application list may be incomplete. No package changed.");
+                Controls.LocalizedText.Get(inventory.Complete ? "Str_Ui_ReadOnlyResult" : "Str_Ui_DiscoveryIncomplete"));
         }
-        catch (OperationCanceledException) { Report("MSI application discovery stopped or timed out."); }
+        catch (OperationCanceledException) { Report(Controls.LocalizedText.Format("Str_Ui_Stopped", Controls.LocalizedText.Workflow(WorkflowKind.Installer))); }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or
             InvalidOperationException or NotSupportedException or TimeoutException or System.ComponentModel.Win32Exception or System.Security.SecurityException)
-        { Report("Cannot read MSI applications: " + error.Message); }
+        { Report(Controls.LocalizedText.Format("Str_Ui_Error", Controls.LocalizedText.Workflow(WorkflowKind.Installer), error.Message)); }
         finally
         {
             readCancellation = null;

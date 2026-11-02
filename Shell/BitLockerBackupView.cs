@@ -13,8 +13,8 @@ public partial class MainWindow
         if (readCancellation is not null) return;
         var picker = new Controls.FileDialog(Controls.FileDialogMode.Save)
         {
-            Title = "Choose a new recovery backup file outside the protected volume",
-            Filter = "Text files (*.txt)|*.txt", DefaultExt = ".txt", AddExtension = true,
+            Title = Controls.LocalizedText.Get("Str_BitLocker_BackupPathTip"),
+            Filter = "TXT (*.txt)|*.txt", DefaultExt = ".txt", AddExtension = true,
             CheckPathExists = true, OverwritePrompt = false
         };
         if (picker.ShowDialog(this) != true) return;
@@ -23,14 +23,14 @@ public partial class MainWindow
             new BitLockerOptions(BitLockerVolume.Text.Trim(), BitLockerOperation.BackupRecovery,
                 Backup: RecoveryDestination.File, BackupFile: picker.FileName).Validate();
             if (File.Exists(picker.FileName) || Directory.Exists(picker.FileName))
-            { Report("Choose a new backup filename. Existing files are preserved."); return; }
+            { Report(Controls.LocalizedText.Get("Str_Bpa_NewBackupFile")); return; }
             BitLockerBackupPath.Text = picker.FileName;
             BitLockerDestination.SelectedItem = RecoveryDestination.File;
             BitLockerBackupConsent.IsChecked = false;
-            Report("Backup destination selected. No recovery information written.");
+            Report(Controls.LocalizedText.Get("Str_Bpa_BackupSelected"));
         }
         catch (Exception error) when (error is ArgumentException or IOException or UnauthorizedAccessException or NotSupportedException)
-        { Report("Choose an available new file outside the protected volume."); }
+        { Report(Controls.LocalizedText.Get("Str_BitLocker_BackupPathTip") + " " + Controls.LocalizedText.Get("Str_Bpa_NewBackupFile")); }
     }
 
     private void OnBitLockerBackupChanged(object sender, RoutedEventArgs e)
@@ -67,7 +67,7 @@ public partial class MainWindow
         string volume = BitLockerVolume.Text.Trim();
         try { new BitLockerOptions(volume).Validate(); }
         catch (ArgumentException error) { Report(error.Message); return; }
-        if (!WindowsState.IsAdministrator()) { Report("Run as administrator to inspect recovery protectors."); return; }
+        if (!WindowsState.IsAdministrator()) { Report(Controls.LocalizedText.Get("Str_Ui_AdminRequired")); return; }
         await RunBitLockerOperationAsync(async token =>
         {
             AppendWorkflowOutput("Reading recovery protector identities. Passwords are not displayed.");
@@ -87,8 +87,8 @@ public partial class MainWindow
         if (options.Operation != BitLockerOperation.BackupRecovery || options.Backup != RecoveryDestination.File ||
             !string.Equals(protectorVolume, options.Volume, StringComparison.OrdinalIgnoreCase) ||
             BitLockerProtectorChoice.SelectedItem is not Guid protector)
-        { Report("Choose BackupRecovery, File and a discovered protector for the selected volume."); return; }
-        if (!WindowsState.IsAdministrator()) { Report("Run as administrator to back up recovery information."); return; }
+        { Report(Controls.LocalizedText.Format("Str_Bpa_ChooseBackupOptions", Controls.LocalizedText.Choice(BitLockerOperation.BackupRecovery))); return; }
+        if (!WindowsState.IsAdministrator()) { Report(Controls.LocalizedText.Get("Str_Ui_AdminRequired")); return; }
         BitLockerBackupConsent.IsChecked = false;
         await RunBitLockerOperationAsync(async token =>
         {
@@ -121,7 +121,7 @@ public partial class MainWindow
     private async Task RunBitLockerResumeAsync(BitLockerOptions options)
     {
         if (options.Operation != BitLockerOperation.ResumeProtection)
-        { Report("Select ResumeProtection before confirming the protection change."); return; }
+        { Report(Controls.LocalizedText.Format("Str_Ui_SelectOne", Controls.LocalizedText.Choice(BitLockerOperation.ResumeProtection))); return; }
         BitLockerResumeConsent.IsChecked = false;
         await RunBitLockerOperationAsync(async token =>
         {
@@ -162,8 +162,8 @@ public partial class MainWindow
         if (options.Operation != BitLockerOperation.Encrypt || options.Backup != RecoveryDestination.File ||
             !string.Equals(protectorVolume, options.Volume, StringComparison.OrdinalIgnoreCase) ||
             BitLockerProtectorChoice.SelectedItem is not Guid protector)
-        { Report("Choose Encrypt, File and a discovered recovery-password protector for the selected volume."); return; }
-        if (!WindowsState.IsAdministrator()) { Report("Run as administrator to start BitLocker encryption."); return; }
+        { Report(Controls.LocalizedText.Format("Str_Bpa_ChooseBackupOptions", Controls.LocalizedText.Choice(BitLockerOperation.Encrypt))); return; }
+        if (!WindowsState.IsAdministrator()) { Report(Controls.LocalizedText.Get("Str_Ui_AdminRequired")); return; }
         BitLockerEncryptConsent.IsChecked = false;
         await RunBitLockerOperationAsync(async token =>
         {
@@ -210,7 +210,7 @@ public partial class MainWindow
         SetCaptureBusy(true);
         BitLockerSettings.IsEnabled = false;
         BeginWorkflowOutput(WorkflowKind.BitLocker);
-        ModeLabel.Text = "BITLOCKER / SELECTED OPERATION";
+        ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_InProgress");
         try
         {
             var result = await operation(stop.Token);
@@ -220,7 +220,7 @@ public partial class MainWindow
                 RegisterGuardedActionReport(WorkflowKind.BitLocker, result.ReportTitle, result.ActionName,
                     string.Join("\n", new[] { result.Detail }.Concat(result.Lines)), result.Detail, result.Journal,
                     result.Verified, result.NextAction);
-                SetScanLight(result.Verified ? "ready" : "incomplete", result.Detail);
+                SetScanLight(result.Verified ? "ready" : "incomplete", LocalizeBitLockerResultText(result.Detail));
                 return;
             }
             AppendWorkflowOutput(string.Join("\n", new[] { result.Detail }.Concat(result.Lines)));
@@ -229,7 +229,7 @@ public partial class MainWindow
                 [new WorkflowCheck("BitLocker recovery protectors", result.Verified ? CheckState.Information : CheckState.Unknown, result.Detail)], [],
                 "Read-only BitLocker protector discovery. No recovery password or machine setting was changed."),
                 "BitLocker recovery protectors");
-            SetScanLight(result.Verified ? "ready" : "incomplete", result.Detail);
+            SetScanLight(result.Verified ? "ready" : "incomplete", LocalizeBitLockerResultText(result.Detail));
         }
         catch (Exception error) when (error is OperationCanceledException or IOException or InvalidDataException or UnauthorizedAccessException or
             InvalidOperationException or NotSupportedException or TimeoutException or System.Security.SecurityException or System.ComponentModel.Win32Exception)
@@ -239,7 +239,7 @@ public partial class MainWindow
             RegisterWorkflowResult(new WorkflowResult(WorkflowKind.BitLocker, Environment.MachineName, DateTimeOffset.UtcNow,
                 "BitLocker operation not completed", [new WorkflowCheck("BitLocker operation", CheckState.Unknown, detail)], [],
                 "Review the retained console output and any BitLocker operation journal before retrying."), "BitLocker operation");
-            SetScanLight("incomplete", detail);
+            SetScanLight("incomplete", LocalizeBitLockerResultText(detail));
             protectorVolume = null;
             BitLockerProtectorChoice.ItemsSource = null;
         }
@@ -257,7 +257,7 @@ public partial class MainWindow
             SourcesList.IsEnabled = true;
             SearchBox.IsEnabled = true;
             SetCaptureBusy(false);
-            ModeLabel.Text = "BITLOCKER OPERATION ENDED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Ended");
             if (closeAfterOperation) Close();
         }
     }

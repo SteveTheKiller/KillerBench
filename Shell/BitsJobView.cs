@@ -41,7 +41,7 @@ public partial class MainWindow
     {
         if (readCancellation is not null) return;
         if (bitsInventory is null || BitsSelection.SelectedItem is not Guid id)
-        { Report("Run Background transfers, then select an exact job to review."); return; }
+        { Report(Controls.LocalizedText.Format("Str_Ui_RunFirst", Controls.LocalizedText.Workflow(WorkflowKind.BackgroundTransfers)) + " " + Controls.LocalizedText.Get("Str_Bits_Review")); return; }
         var review = BitsJobReview.Review(bitsInventory, id);
         var selected = review.Selected;
         string text = "BITS JOB REVIEW / RETAINED SNAPSHOT\n" + id + "\nScope: " + review.Scope +
@@ -68,7 +68,7 @@ public partial class MainWindow
     {
         if (readCancellation is not null) return;
         if (BitsSelection.SelectedItem is not Guid id)
-        { Report("Run Background transfers, then select an exact job to observe."); return; }
+        { Report(Controls.LocalizedText.Format("Str_Ui_RunFirst", Controls.LocalizedText.Workflow(WorkflowKind.BackgroundTransfers)) + " " + Controls.LocalizedText.Get("Str_Bits_Observe")); return; }
         bool allUsers = BitsScopeChoice.SelectedIndex == 1;
         BitsRetryConsent.IsChecked = false;
         using var stop = new CancellationTokenSource(TimeSpan.FromSeconds(95));
@@ -76,16 +76,16 @@ public partial class MainWindow
         SetCaptureBusy(true);
         BitsSettings.IsEnabled = false;
         BeginWorkflowOutput(WorkflowKind.BackgroundTransfers);
-        ModeLabel.Text = "SELECTED TRANSFER / OBSERVATION";
+        ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_InProgress");
         try
         {
             int collected = 0;
             var progress = new Progress<string>(AppendWorkflowOutput);
             var result = await Task.Run(() => BitsObservation.ObserveAsync(id, async token =>
             {
-                ((IProgress<string>)progress).Report($"Reading transfer snapshot {++collected} of 2. No job changes.");
+                ((IProgress<string>)progress).Report(Controls.LocalizedText.Get("Str_Bits_ObserveTip") + " (" + ++collected + "/2)");
                 var inventory = await BitsDiagnostics.ReadAsync(allUsers, token);
-                if (collected == 1) ((IProgress<string>)progress).Report("First snapshot captured. Waiting five seconds before the second observation.");
+                if (collected == 1) ((IProgress<string>)progress).Report(Controls.LocalizedText.Get("Str_Bits_ObserveTip"));
                 return inventory;
             }, TimeSpan.FromSeconds(5), stop.Token));
             stop.Token.ThrowIfCancellationRequested();
@@ -116,7 +116,7 @@ public partial class MainWindow
             RegisterWorkflowResult(new WorkflowResult(WorkflowKind.BackgroundTransfers, Environment.MachineName, DateTimeOffset.UtcNow,
                 status, checks, [], "Read-only two-snapshot transfer observation. No retry journal was written."), "Background transfer observation");
             Report(status);
-            SetScanLight("incomplete", "Observation only. Transfer completion and machine health remain unverified.");
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Ui_UnverifiedResult") + " " + Controls.LocalizedText.Get("Str_Tkp_ReferenceOnly"));
         }
         catch (Exception error) when (error is OperationCanceledException or System.IO.IOException or System.IO.InvalidDataException or UnauthorizedAccessException or NotSupportedException or InvalidOperationException)
         {
@@ -138,7 +138,7 @@ public partial class MainWindow
             SourcesList.IsEnabled = true;
             SearchBox.IsEnabled = true;
             SetCaptureBusy(false);
-            ModeLabel.Text = "TRANSFER OBSERVATION ENDED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Ended");
             if (closeAfterOperation) Close();
         }
     }
@@ -147,7 +147,7 @@ public partial class MainWindow
     {
         if (readCancellation is not null) return;
         if (!BitsRetryButton.IsEnabled || BitsRetryConsent.IsChecked != true || bitsInventory is not { } inventory || BitsSelection.SelectedItem is not Guid id)
-        { Report("Select a transfer, review it, then check the retry option."); return; }
+        { Report(Controls.LocalizedText.Get("Str_Bits_RetryAvailability")); return; }
         BitsRetryConsent.IsChecked = false;
         using var stop = new CancellationTokenSource(TimeSpan.FromSeconds(90));
         readCancellation = stop;
@@ -155,7 +155,7 @@ public partial class MainWindow
         SetCaptureBusy(true);
         BitsSettings.IsEnabled = false;
         BeginWorkflowOutput(WorkflowKind.BackgroundTransfers);
-        ModeLabel.Text = "SELECTED TRANSFER / RETRY";
+        ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_InProgress");
         string folder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "BitsRetry");
         try
         {
@@ -163,7 +163,7 @@ public partial class MainWindow
             string pending = System.IO.Path.Combine(folder, id.ToString("N") + ".pending.json");
             if (System.IO.File.Exists(pending))
             {
-                ModeLabel.Text = "SELECTED TRANSFER / RECOVERY";
+                ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_CheckingRecovery");
                 var recovery = await Task.Run(() => BitsRetryReconciliation.RunAsync(folder, id,
                     new WindowsBitsRetryHost(), progress: progress, token: stop.Token));
                 RegisterGuardedActionReport(WorkflowKind.BackgroundTransfers, "Background transfer retry",
@@ -195,7 +195,7 @@ public partial class MainWindow
                 string.Join("\n", new[] { "BITS RETRY / OUTCOME UNVERIFIED", "Selected transfer: " + id, detail,
                     "Journal: " + folder, "A request may still be active. Review the saved attempt and owning application before another retry. Application completion remains unverified." }),
                 detail, folder, false, "Review the saved attempt and owning application before another retry.");
-            SetScanLight("incomplete", "Retry outcome unverified. Review retained evidence.");
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Ui_UnverifiedResult"));
         }
         finally
         {
@@ -207,7 +207,7 @@ public partial class MainWindow
             SourcesList.IsEnabled = true;
             SearchBox.IsEnabled = true;
             SetCaptureBusy(false);
-            ModeLabel.Text = "TRANSFER RETRY ENDED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Ended");
             if (closeAfterOperation) Close();
         }
     }

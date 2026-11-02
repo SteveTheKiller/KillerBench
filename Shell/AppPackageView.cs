@@ -23,7 +23,7 @@ public partial class MainWindow
     {
         if (readCancellation is not null) return;
         if (appPackageInventory is null || AppPackageSelection.SelectedItem is not AppPackage selected)
-        { Report("Run App packages, then select a package to review."); return; }
+        { Report(Controls.LocalizedText.Format("Str_Ui_RunFirst", Controls.LocalizedText.Workflow(WorkflowKind.AppPackages)) + " " + Controls.LocalizedText.Get("Str_Packages_ReviewSelected")); return; }
         var review = AppPackageReview.Review(appPackageInventory, selected.FullName);
         string text = "PACKAGE REVIEW / RETAINED SNAPSHOT\n" + review.SelectedFullName +
             "\nScope: " + review.Scope + "\n\n" + string.Join("\n", review.ReviewItems) +

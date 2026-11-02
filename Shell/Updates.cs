@@ -18,7 +18,7 @@ public partial class MainWindow : IAboutRepairHold
     bool IAboutRepairHold.HoldUpdateForRepair()
     {
         if (!repairRunning) return false;
-        Report("The update waits until the running repair finishes. Open About to update afterward.");
+        Report(Controls.LocalizedText.Get("Str_Ui_UpdateWaits"));
         return true;
     }
 }

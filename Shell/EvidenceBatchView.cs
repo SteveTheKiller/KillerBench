@@ -9,13 +9,13 @@ public partial class MainWindow
     {
         if (readCancellation is not null) return;
         if (paths.Length > 12 || paths.Any(path => System.IO.Path.GetExtension(path).Equals(".kbench", StringComparison.OrdinalIgnoreCase)))
-        { Report("Choose up to 12 evidence files. Open saved captures separately."); return; }
+        { Report(Controls.LocalizedText.Get("Str_Ui_BatchLimit")); return; }
         using var stop = new CancellationTokenSource(TimeSpan.FromMinutes(3));
         readCancellation = stop;
         SetCaptureBusy(true);
         int loaded = 0, failed = 0;
         var imported = new List<InvestigationReport>();
-        Report($"Importing {paths.Length} evidence files. Each file has a 15-second limit.");
+        Report(Controls.LocalizedText.Format("Str_Ui_BatchStarting", paths.Length));
         try
         {
             await Task.Run(async () =>
@@ -29,30 +29,30 @@ public partial class MainWindow
                             imported.Add(report);
                             RegisterSource(source);
                             loaded++;
-                            Report("Imported: " + source.Source);
+                            Report(Controls.LocalizedText.Format("Str_Ui_ImportedSource", source.Source));
                         }
-                        else { failed++; Report("Import failed: " + item.Path + ". " + item.Error); }
+                        else { failed++; Report(Controls.LocalizedText.Format("Str_Ui_ImportFailed", item.Path, item.Error)); }
                     });
             }, stop.Token);
             if (loaded > 0)
             {
                 var (overview, summary) = EvidenceBatch.Summarize(imported, failed);
                 workflowSummaries.Add(overview, summary);
-                workflowReportTitles.Add(overview, "Imported evidence");
+                workflowReportTitles.Add(overview, Controls.LocalizedText.Get("Str_Ui_ImportedReport"));
                 RegisterSource(overview);
-                RenderNamedWorkflowReport(summary, "Imported evidence");
+                RenderNamedWorkflowReport(summary, Controls.LocalizedText.Get("Str_Ui_ImportedReport"));
                 SetOutputView();
                 OnFindingsTab(this, new RoutedEventArgs());
             }
-            Report($"Batch import finished: {loaded} loaded, {failed} failed. Source files unchanged.");
+            Report(Controls.LocalizedText.Format("Str_Ui_BatchFinished", loaded, failed));
         }
         catch (OperationCanceledException)
-        { Report($"Batch import stopped: {loaded} loaded, {failed} failed. Successfully loaded evidence retained."); }
+        { Report(Controls.LocalizedText.Format("Str_Ui_BatchStopped", loaded, failed)); }
         finally
         {
             readCancellation = null;
             SetCaptureBusy(false);
-            SetScanLight("incomplete", "Imported evidence only; no current-health assessment.");
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_RecordedEvidence"));
         }
     }
 }

@@ -10,7 +10,10 @@ public partial class MainWindow
     private ThirdPartyUpdateResult? thirdPartyUpdateResult;
     private UpdateSearchResult? classificationSource;
     private bool updatingUpdateFilters;
-    private sealed record UpdateClassificationChoice(Guid? Id, string Name);
+    private sealed record UpdateClassificationChoice(Guid? Id, string Label)
+    {
+        public string Name => Id is null ? Controls.LocalizedText.Get("Str_Advanced_All") : Label;
+    }
 
     private static string UpdateStoreFolder() => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "UpdateDataStoreReset");
@@ -27,8 +30,8 @@ public partial class MainWindow
         ThirdPartyUpdateAgreements.IsChecked = false;
         ThirdPartyUpdateCount.Text = result is null ? Controls.LocalizedText.Get("Str_Update_ThirdPartyPrompt") :
             result.ProviderAvailable && result.Complete
-                ? $"{result.Candidates.Count} exact update candidates from {result.Scanned} installed packages."
-                : "Third-party discovery is incomplete. Review its evidence and select Run diagnosis again before installation.";
+                ? Controls.LocalizedText.Format("Str_Ui_UpdateCandidates", result.Candidates.Count, result.Scanned)
+                : Controls.LocalizedText.Get("Str_Ui_DiscoveryIncomplete");
         RefreshThirdPartyUpdateActions();
     }
 
@@ -57,7 +60,7 @@ public partial class MainWindow
         if (ThirdPartyUpdatePreview is null || ThirdPartyUpdateInstall is null || ThirdPartyUpdateStatus is null) return;
         ThirdPartyUpdatePreview.IsEnabled = false;
         ThirdPartyUpdateInstall.IsEnabled = false;
-        ThirdPartyUpdateStatus.Text = "One exact package, source and version per operation. No automatic restart.";
+        ThirdPartyUpdateStatus.Text = Controls.LocalizedText.Get("Str_Update_ThirdPartyBoundary");
         if (thirdPartyUpdateResult is null || !TrySelectedThirdPartyUpdate(out var selection) || selection is null) return;
         try
         {
@@ -65,7 +68,7 @@ public partial class MainWindow
             ThirdPartyUpdatePreview.IsEnabled = true;
             ThirdPartyUpdateInstall.IsEnabled = plan.Eligible && ThirdPartyUpdateAgreements.IsChecked == true;
             ThirdPartyUpdateStatus.Text = plan.Eligible
-                ? "Ready to preview. Installation requires explicit agreement acceptance and repeats discovery before changing the app."
+                ? Controls.LocalizedText.Get("Str_Ui_RecheckBeforeAction") + " " + Controls.LocalizedText.Get("Str_Update_AcceptAgreements")
                 : string.Join(" ", plan.Blockers.Take(2));
         }
         catch (ArgumentException error) { ThirdPartyUpdateStatus.Text = error.Message; }
@@ -81,13 +84,12 @@ public partial class MainWindow
         UpdateStoreRecoveryConsent.IsEnabled = eligible && !pending;
         UpdateStoreResetButton.IsEnabled = eligible && !pending;
         UpdateStoreReconcileButton.IsEnabled = pending;
-        UpdateStoreResetButton.Content = UpdateStoreRecoveryConsent.IsChecked == true ? "Run recovery" : "Preview recovery";
+        UpdateStoreResetButton.Content = Controls.LocalizedText.Get(UpdateStoreRecoveryConsent.IsChecked == true ? "Str_Ui_RunRecovery" : "Str_Update_PreviewRecovery");
         UpdateStoreRecoveryStatus.Text = pending
-            ? "A prepared recovery needs verification. Check it before another database recovery."
+            ? Controls.LocalizedText.Get("Str_Ui_PendingRecovery")
             : eligible
-                ? "The current search found " + WindowsUpdateErrorCatalog.Find(availableUpdateResult!.FailureHResult!.Value)?.Symbol +
-                    ". Preview the retained-store recovery, then select the confirmation only if you want to run it."
-                : "Run Available updates to establish current recovery eligibility.";
+                ? Controls.LocalizedText.Format("Str_Ui_EvidenceFound", WindowsUpdateErrorCatalog.Find(availableUpdateResult!.FailureHResult!.Value)?.Symbol)
+                : Controls.LocalizedText.Format("Str_Ui_RunFirst", Controls.LocalizedText.Workflow(WorkflowKind.AvailableUpdates));
     }
 
     private void OnUpdateStoreRecoveryConsentChanged(object sender, RoutedEventArgs e) => RefreshUpdateStoreRecovery();
@@ -101,7 +103,7 @@ public partial class MainWindow
         if (UpdatePreviewButton is null || UpdateInstallButton is null || UpdateSelectionStatus is null || UpdateAllowRestart is null || UpdateAllowFeatureUpgrade is null || UpdateInstallConsent is null) return;
         UpdatePreviewButton.IsEnabled = availableUpdateResult is not null && AvailableUpdateList.SelectedItems.Count > 0;
         UpdateInstallButton.IsEnabled = false;
-        UpdateSelectionStatus.Text = "Select updates to review their installation requirements.";
+        UpdateSelectionStatus.Text = Controls.LocalizedText.Get("Str_Update_SelectionStatus");
         if (!UpdatePreviewButton.IsEnabled) return;
         try
         {
@@ -110,8 +112,9 @@ public partial class MainWindow
                 new(UpdateAllowRestart.IsChecked == true, UpdateAllowFeatureUpgrade.IsChecked == true));
             UpdateInstallButton.IsEnabled = plan.Eligible && UpdateInstallConsent.IsChecked == true;
             UpdateSelectionStatus.Text = plan.Eligible ? UpdateInstallConsent.IsChecked == true
-                ? $"{plan.Updates.Count} selected. Planning passed; installation rechecks prerequisites."
-                : $"{plan.Updates.Count} selected. Planning passed. Confirm installation on this computer before installing." :
+                ? Controls.LocalizedText.Format("Str_Ui_SelectedReady", plan.Updates.Count)
+                : Controls.LocalizedText.Format("Str_Ui_SelectedReady", plan.Updates.Count) + " " +
+                    Controls.LocalizedText.Format("Str_Ui_ConfirmFirst", Controls.LocalizedText.Get("Str_Update_InstallConsent")) :
                 string.Join(" ", plan.Updates.SelectMany(update => update.Blockers).Distinct().Take(2));
         }
         catch (Exception error) when (error is ArgumentException or FormatException)
@@ -127,10 +130,10 @@ public partial class MainWindow
             try
             {
                 classificationSource = availableUpdateResult;
-                UpdateClassificationFilter.ItemsSource = new[] { new UpdateClassificationChoice(null, "All classifications") }
+                UpdateClassificationFilter.ItemsSource = new[] { new UpdateClassificationChoice(null, "") }
                     .Concat((availableUpdateResult?.GetClassifications() ?? []).Select(category => new UpdateClassificationChoice(Guid.Parse(category.Id), category.Name))).ToArray();
                 UpdateClassificationFilter.SelectedIndex = 0;
-                UpdateProductFilter.ItemsSource = new[] { new UpdateClassificationChoice(null, "All products") }
+                UpdateProductFilter.ItemsSource = new[] { new UpdateClassificationChoice(null, "") }
                     .Concat((availableUpdateResult?.GetProducts() ?? []).Select(product => new UpdateClassificationChoice(Guid.Parse(product.Id), product.Name))).ToArray();
                 UpdateProductFilter.SelectedIndex = 0;
             }
@@ -143,11 +146,11 @@ public partial class MainWindow
                 (UpdateClassificationFilter.SelectedItem as UpdateClassificationChoice)?.Id,
                 (UpdateProductFilter.SelectedItem as UpdateClassificationChoice)?.Id) ?? [];
             AvailableUpdateList.ItemsSource = visible;
-            UpdateFilterCount.Text = availableUpdateResult is null ? "Run discovery to see available updates." :
-                $"Showing {visible.Count} of {availableUpdateResult.Updates.Count}. " +
-                (availableUpdateResult.Partial ? "Discovery is incomplete. Search again before planning installation." :
-                    visible.Count == 0 ? "No updates match these filters. This does not verify that Windows is fully updated." :
-                    "Select updates after filtering.");
+            UpdateFilterCount.Text = availableUpdateResult is null ? Controls.LocalizedText.Format("Str_Ui_RunFirst", Controls.LocalizedText.Workflow(WorkflowKind.AvailableUpdates)) :
+                Controls.LocalizedText.Format("Str_Ui_ShowingCount", visible.Count, availableUpdateResult.Updates.Count) + " " +
+                (availableUpdateResult.Partial ? Controls.LocalizedText.Get("Str_Ui_DiscoveryIncomplete") :
+                    visible.Count == 0 ? Controls.LocalizedText.Get("Str_Ui_NoUpdatesMatch") :
+                    Controls.LocalizedText.Get("Str_Update_SelectionStatus"));
         }
         catch (ArgumentException error)
         {
@@ -162,7 +165,7 @@ public partial class MainWindow
     {
         if (readCancellation is not null) return;
         if (availableUpdateResult is null)
-        { Report("Run Available updates again before recovery."); return; }
+        { Report(Controls.LocalizedText.Format("Str_Ui_RunFirst", Controls.LocalizedText.Workflow(WorkflowKind.AvailableUpdates))); return; }
         if (!UpdateDataStoreReset.IsEligible(availableUpdateResult, out string reason))
         { Report(reason); return; }
         bool execute = UpdateStoreRecoveryConsent.IsChecked == true;
@@ -172,7 +175,8 @@ public partial class MainWindow
         SetCaptureBusy(true);
         RepairPanel.IsEnabled = false;
         BeginWorkflowOutput(WorkflowKind.AvailableUpdates);
-        ModeLabel.Text = execute ? "WINDOWS UPDATE / DATABASE RECOVERY" : "WINDOWS UPDATE / RECOVERY PREVIEW";
+        ModeLabel.Text = Controls.LocalizedText.Get("Str_Update_DatabaseRecovery") + " / " +
+            Controls.LocalizedText.Get(execute ? "Str_Mode_InProgress" : "Str_Dlg_Preview");
         try
         {
             var progress = new Progress<string>(AppendWorkflowOutput);
@@ -206,13 +210,13 @@ public partial class MainWindow
         catch (OperationCanceledException)
         {
             AppendWorkflowOutput("Recovery stopped. Check the pending operation before another attempt.");
-            SetScanLight("incomplete", "Windows Update database recovery was not verified.");
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Ui_UnverifiedResult"));
         }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or
             InvalidOperationException or NotSupportedException or System.ComponentModel.Win32Exception or System.Security.SecurityException)
         {
             AppendWorkflowOutput("Recovery unavailable: " + error.Message);
-            SetScanLight("incomplete", "Windows Update database recovery was not verified.");
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Ui_UnverifiedResult"));
         }
         finally
         {
@@ -223,7 +227,7 @@ public partial class MainWindow
             RepairPanel.IsEnabled = true;
             UpdateStoreRecoveryConsent.IsChecked = false;
             ApplyUpdateFilter();
-            ModeLabel.Text = "UPDATE DATABASE RECOVERY ENDED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Ended");
             if (closeAfterOperation) Close();
         }
     }
@@ -236,7 +240,7 @@ public partial class MainWindow
         SetCaptureBusy(true);
         RepairPanel.IsEnabled = false;
         BeginWorkflowOutput(WorkflowKind.AvailableUpdates);
-        ModeLabel.Text = "WINDOWS UPDATE / CHECKING RECOVERY";
+        ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_CheckingRecovery");
         try
         {
             var progress = new Progress<string>(AppendWorkflowOutput);
@@ -265,7 +269,7 @@ public partial class MainWindow
             System.ComponentModel.Win32Exception or System.Security.SecurityException)
         {
             AppendWorkflowOutput("Recovery check unavailable: " + error.Message);
-            SetScanLight("incomplete", "Windows Update database recovery remains unverified.");
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Ui_UnverifiedResult"));
         }
         finally
         {
@@ -274,7 +278,7 @@ public partial class MainWindow
             SetCaptureBusy(false);
             RepairPanel.IsEnabled = true;
             RefreshUpdateStoreRecovery();
-            ModeLabel.Text = "UPDATE DATABASE RECOVERY CHECK ENDED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Ended");
             if (closeAfterOperation) Close();
         }
     }
@@ -287,7 +291,7 @@ public partial class MainWindow
         SetCaptureBusy(true);
         RepairPanel.IsEnabled = false;
         BeginWorkflowOutput(WorkflowKind.AvailableUpdates);
-        ModeLabel.Text = "CHECKING INTERRUPTED UPDATE";
+        ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_CheckingRecovery");
         AppendWorkflowOutput("Checking the recorded update and restart state. No installation or retry will run.");
         string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Updates");
         string outcome = "Recovery outcome unavailable. Review retained records before another installation attempt.";
@@ -312,13 +316,13 @@ public partial class MainWindow
         {
             outcome = "Update recovery check stopped. Verification is incomplete; review the pending record before another attempt.";
             AppendWorkflowOutput(outcome);
-            SetScanLight("incomplete", "Recovery check stopped.");
+            SetScanLight("incomplete", Controls.LocalizedText.Format("Str_Ui_Stopped", Controls.LocalizedText.Get("Str_Update_CheckRecovery")));
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or NotSupportedException or System.ComponentModel.Win32Exception)
         {
             outcome = "Recovery check unavailable: " + error.Message;
             AppendWorkflowOutput(outcome);
-            SetScanLight("incomplete", "Recovery was not verified.");
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Ui_UnverifiedResult"));
         }
         finally
         {
@@ -335,7 +339,7 @@ public partial class MainWindow
             SearchBox.IsEnabled = true;
             SetCaptureBusy(false);
             RepairPanel.IsEnabled = true;
-            ModeLabel.Text = "RECOVERY CHECK ENDED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Ended");
             if (closeAfterOperation) Close();
         }
     }
@@ -343,9 +347,9 @@ public partial class MainWindow
     private async void OnInstallUpdates(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
-        if (availableUpdateResult is null) { Report("Run Available updates first."); return; }
+        if (availableUpdateResult is null) { Report(Controls.LocalizedText.Format("Str_Ui_RunFirst", Controls.LocalizedText.Workflow(WorkflowKind.AvailableUpdates))); return; }
         if (UpdateInstallConsent.IsChecked != true)
-        { Report("Confirm installation of the selected Windows updates on this computer before installation."); return; }
+        { Report(Controls.LocalizedText.Format("Str_Ui_ConfirmFirst", Controls.LocalizedText.Get("Str_Update_InstallConsent"))); return; }
         var selections = AvailableUpdateList.SelectedItems.Cast<AvailableUpdate>().Select(u => new UpdateSelection(Guid.Parse(u.Id), u.Revision)).ToArray();
         var options = new UpdateInstallOptions(UpdateAllowRestart.IsChecked == true, UpdateAllowFeatureUpgrade.IsChecked == true);
         var search = availableUpdateResult.Options;
@@ -361,7 +365,7 @@ public partial class MainWindow
         SetCaptureBusy(true);
         RepairPanel.IsEnabled = false;
         BeginWorkflowOutput(WorkflowKind.AvailableUpdates);
-        ModeLabel.Text = "INSTALLING SELECTED UPDATES";
+        ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_InProgress");
         string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Updates");
         try
         {
@@ -385,7 +389,7 @@ public partial class MainWindow
                 restartRequired ? "Restart required" : result.Status, checks, [], result.JournalPath)
             { Actions = [action] }, "Windows Update installation");
             Report(result.Status + ". Journal: " + result.JournalPath);
-            SetScanLight(result.GetExitCode() == 0 ? "ready" : "incomplete", result.Status + ". Review the update report.");
+            SetScanLight(result.GetExitCode() == 0 ? "ready" : "incomplete", LocalizedStatus(result.Status) + ". " + Controls.LocalizedText.Get("Str_Report_ReviewOutcome"));
         }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or
             InvalidOperationException or NotSupportedException or OperationCanceledException or ArgumentException or
@@ -401,7 +405,7 @@ public partial class MainWindow
                  new WorkflowCheck("Change boundary", CheckState.Information,
                     "The exact installation outcome could not be established. No automatic retry was requested.")], [], folder)
             { Actions = [action] }, "Windows Update installation");
-            SetScanLight("incomplete", "Update outcome unverified. Review the retained session result.");
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Ui_UnverifiedResult"));
         }
         finally
         {
@@ -415,7 +419,7 @@ public partial class MainWindow
             SetCaptureBusy(false);
             RepairPanel.IsEnabled = true;
             UpdateInstallConsent.IsChecked = false;
-            ModeLabel.Text = "UPDATE OPERATION ENDED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Ended");
             if (closeAfterOperation) Close();
         }
     }
@@ -423,7 +427,7 @@ public partial class MainWindow
     private void OnPreviewUpdates(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
-        if (availableUpdateResult is null) { Report("Run Available updates first."); return; }
+        if (availableUpdateResult is null) { Report(Controls.LocalizedText.Format("Str_Ui_RunFirst", Controls.LocalizedText.Workflow(WorkflowKind.AvailableUpdates))); return; }
         try
         {
             var selected = AvailableUpdateList.SelectedItems.Cast<AvailableUpdate>().Select(u => new UpdateSelection(Guid.Parse(u.Id), u.Revision)).ToArray();
@@ -449,7 +453,7 @@ public partial class MainWindow
     {
         if (readCancellation is not null) return;
         if (thirdPartyUpdateResult is null || !TrySelectedThirdPartyUpdate(out var selection) || selection is null)
-        { Report("Run third-party discovery and select one application version first."); return; }
+        { Report(Controls.LocalizedText.Get("Str_Update_ThirdPartyPrompt") + " " + Controls.LocalizedText.Format("Str_Ui_SelectOne", Controls.LocalizedText.Get("Str_Update_TargetVersion"))); return; }
         try
         {
             var plan = ThirdPartyUpdatePlanning.Create(thirdPartyUpdateResult, selection);
@@ -476,9 +480,9 @@ public partial class MainWindow
     {
         if (readCancellation is not null) return;
         if (thirdPartyUpdateResult is null || !TrySelectedThirdPartyUpdate(out var selection) || selection is null)
-        { Report("Run third-party discovery and select one application version first."); return; }
+        { Report(Controls.LocalizedText.Get("Str_Update_ThirdPartyPrompt") + " " + Controls.LocalizedText.Format("Str_Ui_SelectOne", Controls.LocalizedText.Get("Str_Update_TargetVersion"))); return; }
         if (ThirdPartyUpdateAgreements.IsChecked != true)
-        { Report("Accept the selected package and source agreements before installation."); return; }
+        { Report(Controls.LocalizedText.Format("Str_Ui_ConfirmFirst", Controls.LocalizedText.Get("Str_Update_AcceptAgreements"))); return; }
         try
         {
             if (!ThirdPartyUpdatePlanning.Create(thirdPartyUpdateResult, selection).Eligible)
@@ -491,7 +495,7 @@ public partial class MainWindow
         SetCaptureBusy(true);
         RepairPanel.IsEnabled = false;
         BeginWorkflowOutput(WorkflowKind.AvailableUpdates);
-        ModeLabel.Text = "UPDATING SELECTED APPLICATION";
+        ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_InProgress");
         try
         {
             var progress = new Progress<string>(AppendWorkflowOutput);
@@ -512,7 +516,7 @@ public partial class MainWindow
                     "KillerBench did not request an automatic reboot.")], [], result.JournalPath)
             { Actions = [action] }, "Application update");
             Report(result.Status + ". Journal: " + result.JournalPath);
-            SetScanLight(result.GetExitCode() == 0 ? "ready" : "incomplete", result.Status + ". Review the application update result.");
+            SetScanLight(result.GetExitCode() == 0 ? "ready" : "incomplete", LocalizedStatus(result.Status) + ". " + Controls.LocalizedText.Get("Str_Report_ReviewOutcome"));
         }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or
             InvalidOperationException or NotSupportedException or OperationCanceledException or ArgumentException or
@@ -528,7 +532,7 @@ public partial class MainWindow
                  new WorkflowCheck("Change boundary", CheckState.Information,
                     "The exact update outcome could not be established. No automatic retry was requested.")], [], ThirdPartyUpdateFolder())
             { Actions = [action] }, "Application update");
-            SetScanLight("incomplete", "Application update outcome is unverified. Check the interrupted operation before another attempt.");
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Ui_UnverifiedResult") + " " + Controls.LocalizedText.Get("Str_Update_CheckInterruptedAppTip"));
         }
         finally
         {
@@ -540,7 +544,7 @@ public partial class MainWindow
             SearchBox.IsEnabled = true;
             SetCaptureBusy(false);
             RepairPanel.IsEnabled = true;
-            ModeLabel.Text = "APPLICATION UPDATE ENDED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Ended");
             if (closeAfterOperation) Close();
         }
     }
@@ -553,7 +557,7 @@ public partial class MainWindow
         SetCaptureBusy(true);
         RepairPanel.IsEnabled = false;
         BeginWorkflowOutput(WorkflowKind.AvailableUpdates);
-        ModeLabel.Text = "CHECKING APPLICATION UPDATE";
+        ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_CheckingRecovery");
         AppendWorkflowOutput("Checking the exact installed version. No application update or retry will run.");
         try
         {
@@ -579,7 +583,7 @@ public partial class MainWindow
             System.ComponentModel.Win32Exception or System.Security.SecurityException)
         {
             AppendWorkflowOutput("Application update recovery unavailable: " + error.Message);
-            SetScanLight("incomplete", "Application update recovery remains unverified.");
+            SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Ui_UnverifiedResult"));
         }
         finally
         {
@@ -589,7 +593,7 @@ public partial class MainWindow
             SearchBox.IsEnabled = true;
             SetCaptureBusy(false);
             RepairPanel.IsEnabled = true;
-            ModeLabel.Text = "APPLICATION UPDATE CHECK ENDED";
+            ModeLabel.SetResourceReference(System.Windows.Controls.TextBlock.TextProperty, "Str_Mode_Ended");
             if (closeAfterOperation) Close();
         }
     }

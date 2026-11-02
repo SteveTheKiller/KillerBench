@@ -9,7 +9,7 @@ public partial class MainWindow
 {
     private void OnBrowseFileReviewFolder(object sender, RoutedEventArgs e)
     {
-        var picker = new Controls.FileDialog(Controls.FileDialogMode.Folder) { Title = "Choose one local folder to review", Multiselect = false, HideFilesInFolderMode = true, AcceptHighlightedFolder = true };
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Folder) { Title = Controls.LocalizedText.Get("Str_FileReview_FolderTip"), Multiselect = false, HideFilesInFolderMode = true, AcceptHighlightedFolder = true };
         if (picker.ShowDialog(this) == true) FileReviewFolder.Text = picker.FileName;
     }
 
@@ -23,14 +23,14 @@ public partial class MainWindow
     {
         if (readCancellation is not null) return;
         string folder = FileReviewFolder.Text.Trim().Trim('"');
-        if (folder.Length == 0) { Report("Choose one local folder to review."); return; }
+        if (folder.Length == 0) { Report(Controls.LocalizedText.Get("Str_FileReview_FolderTip")); return; }
         using var stop = new CancellationTokenSource();
         readCancellation = stop;
         ReviewDuplicatesButton.IsEnabled = false;
         ReviewLargeFilesButton.IsEnabled = false;
         CancelButton.IsEnabled = true;
         BeginWorkflowOutput(WorkflowKind.Storage);
-        SetScanLight("running", "Reviewing the selected folder. No files are changed.");
+        SetScanLight("running", Controls.LocalizedText.Format("Str_Ui_Reading", Controls.LocalizedText.Get("Str_FileReview_Header")));
         AppendWorkflowOutput(duplicates ? "Reviewing duplicate files without changing them..." : "Reviewing large files without changing them...");
         try
         {
