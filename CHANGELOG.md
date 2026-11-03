@@ -9,11 +9,10 @@
 - Saved workflow and validation reports write their timestamps the same way on every Windows region, so Thai and Finnish settings no longer give years like 2569 or times like 14.30.
 - The disk-busy and shadow-storage checks read the decimal comma that Windows tools print on German, Finnish and other regions, instead of reporting no samples or unrecognized sizes.
 - A per-user update reopens KillerBench even when antivirus or a locked-down PowerShell stops the update helper from loading.
-- An update started from an administrator's copy reopens KillerBench at normal rights. An update that is applied but cannot record its version in the registry now finishes and reopens instead of reporting failure, and putting the previous copy back after a failed update retries a busy file and survives a leftover from an earlier attempt.
-- Update downloads stream to disk with a size cap and an overall deadline, a download refused by its checksum or signature is reported apart from a network failure, and the update check reads only the release's own fields, so release notes that quote them cannot confuse it.
+- An update started from an administrator's copy reopens KillerBench at normal rights. An update that is applied but cannot record its version in the registry now finishes and reopens instead of reporting failure.
+- Update downloads stream to disk with a size cap and an overall deadline, and the update check reads only the release's own fields, so release notes that quote them cannot confuse it.
 - Updating KillerBench no longer removes a relaunch another Killer app scheduled for its own update.
 - The file picker no longer stalls on a disconnected network folder when it opens, a relative or malformed path typed in the path box is refused instead of being looked up against the wrong folder, a pattern such as *.log typed in the name box filters the list, and a full path typed in the name box can be accepted even when the shown folder failed to list.
-- The close button on tabs sits as far from the right edge as the icon does from the left.
 
 ### Changed
 
