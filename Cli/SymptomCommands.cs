@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using KillerBench.Engine;
 using KillerBench.Engine.Core;
@@ -46,7 +47,7 @@ internal static class SymptomCommands
                 using var stop = new CancellationTokenSource();
                 Console.CancelKeyPress += (_, e) => { e.Cancel = true; stop.Cancel(); };
                 string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KillerBench", "Triage");
-                var journal = new FileRecipeJournal(Path.Combine(folder, "triage-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss") + "-" + Guid.NewGuid().ToString("N")[..8] + ".jsonl"));
+                var journal = new FileRecipeJournal(Path.Combine(folder, "triage-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture) + "-" + Guid.NewGuid().ToString("N")[..8] + ".jsonl"));
                 var runner = new GoalRunner(catalog, WindowsPacks.All(), WindowsPrimitiveLibrary.Create(), journal);
                 var options = new GoalRunOptions
                 {

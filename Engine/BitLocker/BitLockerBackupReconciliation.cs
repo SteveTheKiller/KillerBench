@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 
 namespace KillerBench.Engine.BitLocker;
@@ -79,7 +80,7 @@ public static class BitLockerBackupReconciliation
             BitLockerBackupReconciliationOutcome.Missing => "The selected backup file is absent. The failed attempt was archived without writing a file; choose a destination before another explicit attempt.",
             _ => "The selected file does not match the current exact recovery protector or restricted access requirements. The attempt was archived without changing the file."
         };
-        string archive = Path.Combine(root, "backup-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
+        string archive = Path.Combine(root, "backup-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) +
             "-" + Guid.NewGuid().ToString("N") + ".json");
         var result = new BitLockerBackupReconciliationResult(outcome, detail, pendingPath, archive);
         await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);

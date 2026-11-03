@@ -2,7 +2,19 @@
 
 ## [1.0.1] - Unreleased
 
+1.0.1 keeps saved reports and the disk-busy and shadow-storage checks correct on every Windows region, and refreshes the demo and Chocolatey listing.
+
+### Fixed
+
+- Saved workflow and validation reports write their timestamps the same way on every Windows region, so Thai and Finnish settings no longer give years like 2569 or times like 14.30.
+- The disk-busy and shadow-storage checks read the decimal comma that Windows tools print on German, Finnish and other regions, instead of reporting no samples or unrecognized sizes.
+
+### Changed
+
 - Demo runs and screenshots use realistic workstation findings and normal report labels.
+
+### Added
+
 - Added the app icon to the Chocolatey package listing.
 
 ## [1.0.0] - 2026-11-02

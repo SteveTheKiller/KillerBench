@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -34,7 +35,7 @@ internal static class HResultMessageCsvGenerator
             if (message.Length is 0 or > 4096) continue;
             string code = "0x" + result.ToString("X8", System.Globalization.CultureInfo.InvariantCulture);
             string applies = "HRESULT message identifier from the installed Windows system message table, verified " +
-                verifiedOn.ToString("yyyy-MM-dd") + ". Not automatically equivalent to Win32, NTSTATUS, bugcheck, installer, update or vendor codes.";
+                verifiedOn.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + ". Not automatically equivalent to Win32, NTSTATUS, bugcheck, installer, update or vendor codes.";
             Append(csv, "hresult", code, "HRESULT " + code, message, SourceUrl, applies);
             entries++;
         }

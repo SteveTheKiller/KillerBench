@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Globalization;
 using System.Text.Json;
 
 namespace KillerBench.Engine.Printing;
@@ -319,7 +320,7 @@ public static class PrintJobCancellation
     private static async Task<PrintJobCancellationResult> FinishAsync(PrintJobCancellationResult result,
         string root, bool resolve)
     {
-        string journal = Path.Combine(root, "print-job-cancel-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
+        string journal = Path.Combine(root, "print-job-cancel-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) +
             "-" + Guid.NewGuid().ToString("N") + ".json");
         await JournalPersistence.WriteAsync(journal, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         string pending = Path.Combine(root, PendingName);

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 
 namespace KillerBench.Engine.Updates;
@@ -120,7 +121,7 @@ public static class UpdateDataStoreResetReconciliation
                 detail = "The prior store remains retained, the replacement store exists, required services are restored, and a fresh Windows Update search completed. No reset was repeated and no update was installed.";
             }
 
-            string archivePath = Path.Combine(root, "update-store-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
+            string archivePath = Path.Combine(root, "update-store-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) +
                 "-" + Guid.NewGuid().ToString("N") + ".json");
             var result = new UpdateDataStoreReconciliationResult(outcome, detail, pendingPath, pending, search, services, archivePath);
             await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);

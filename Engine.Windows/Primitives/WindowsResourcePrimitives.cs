@@ -75,7 +75,7 @@ public sealed class WindowsTopMemoryProbe : IProbePrimitive
 /// <summary>Samples total physical disk busy time through typeperf. Value is the average percent over the sample.</summary>
 public sealed partial class WindowsDiskBusyProbe : IProbePrimitive
 {
-    [GeneratedRegex("^\"[^\"]+\",\"([0-9.]+)\"$", RegexOptions.CultureInvariant)]
+    [GeneratedRegex("^\"[^\"]+\",\"([0-9]+(?:[.,][0-9]+)?)\"$", RegexOptions.CultureInvariant)]
     private static partial Regex SamplePattern();
 
     public string Name => "disk.busy-percent";
@@ -90,6 +90,10 @@ public sealed partial class WindowsDiskBusyProbe : IProbePrimitive
         return Interpret(result);
     }
 
+    /// <summary>Reads a number the Windows tools printed with the user's region: text with a '.' is invariant, anything else follows the current culture.</summary>
+    internal static bool TryParseToolNumber(string text, out double value) =>
+        double.TryParse(text, NumberStyles.Float, text.Contains('.') ? CultureInfo.InvariantCulture : CultureInfo.CurrentCulture, out value);
+
     public static PrimitiveResult Interpret(ToolResult result)
     {
         ArgumentNullException.ThrowIfNull(result);
@@ -101,7 +105,7 @@ public sealed partial class WindowsDiskBusyProbe : IProbePrimitive
         foreach (string line in result.Output.Split('\n'))
         {
             var match = SamplePattern().Match(line.Trim());
-            if (match.Success && double.TryParse(match.Groups[1].Value, NumberStyles.Float, CultureInfo.InvariantCulture, out double value)) values.Add(value);
+            if (match.Success && TryParseToolNumber(match.Groups[1].Value, out double value)) values.Add(value);
         }
         if (values.Count == 0) return PrimitiveResult.Unavailable("typeperf output held no samples.");
         double average = Math.Min(100, values.Average());
@@ -186,7 +190,7 @@ public sealed partial class WindowsShadowStorageProbe : IProbePrimitive
     [GeneratedRegex(@"(?m)^\s*Maximum Shadow Copy Storage space:\s*(.+?)\s*$", RegexOptions.CultureInvariant)]
     private static partial Regex MaximumStoragePattern();
 
-    [GeneratedRegex(@"^([0-9]+(?:\.[0-9]+)?)\s*(bytes|KB|MB|GB|TB)", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"^([0-9]+(?:[.,][0-9]+)?)\s*(bytes|KB|MB|GB|TB)", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
     private static partial Regex SizePattern();
 
     public string Name => "vss.shadowstorage-percent";
@@ -232,7 +236,7 @@ public sealed partial class WindowsShadowStorageProbe : IProbePrimitive
     {
         bytes = 0;
         var match = SizePattern().Match(text);
-        if (!match.Success || !double.TryParse(match.Groups[1].Value, NumberStyles.Float, CultureInfo.InvariantCulture, out double number)) return false;
+        if (!match.Success || !WindowsDiskBusyProbe.TryParseToolNumber(match.Groups[1].Value, out double number)) return false;
         double scale = match.Groups[2].Value.ToUpperInvariant() switch { "KB" => 1024, "MB" => 1048576, "GB" => 1073741824, "TB" => 1099511627776, _ => 1 };
         bytes = number * scale;
         return true;

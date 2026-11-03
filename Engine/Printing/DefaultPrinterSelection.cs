@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text.Json;
 
@@ -295,7 +296,7 @@ public static class DefaultPrinterSelection
 
     private static async Task<DefaultPrinterSelectionResult> FinishAsync(DefaultPrinterSelectionResult result, string root, bool resolve)
     {
-        string journal = Path.Combine(root, "default-printer-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
+        string journal = Path.Combine(root, "default-printer-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) +
             "-" + Guid.NewGuid().ToString("N") + ".json");
         await JournalPersistence.WriteAsync(journal, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         string pending = Path.Combine(root, PendingName);

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 
 namespace KillerBench.Engine.Services;
@@ -158,7 +159,7 @@ public static class BitsRetryReconciliation
         string detail, string root, string pendingPath, BitsRetryPendingRecord pending, BitsInventoryResult first,
         BitsInventoryResult second, FileStream stream, CancellationToken token)
     {
-        string archivePath = Path.Combine(root, "bits-retry-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
+        string archivePath = Path.Combine(root, "bits-retry-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) +
             "-" + Guid.NewGuid().ToString("N") + ".json");
         var result = new BitsRetryReconciliationResult(pending.JobId, outcome, detail, pendingPath, pending, first, second, archivePath);
         await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);

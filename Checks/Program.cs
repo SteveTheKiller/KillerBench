@@ -199,6 +199,11 @@ internal static class Program
                 WorkflowReportExportChecks.Run();
                 return 0;
             }
+            if (args is ["--only", "culture-formats"])
+            {
+                CultureFormatChecks.Run();
+                return 0;
+            }
             if (args is ["--only", "workflow-options"])
             {
                 WorkflowOptionCatalogChecks.Run();
@@ -1007,6 +1012,7 @@ internal static class Program
             BitsRetryReconciliationChecks.RunAsync(scratch).GetAwaiter().GetResult();
             ActivityExportChecks.Run();
             WorkflowReportExportChecks.Run();
+            CultureFormatChecks.Run();
             ServiceInventoryChecks.Run();
             ReportFilePublicationChecks.RunAsync(scratch).GetAwaiter().GetResult();
             RecoveryRecordValidationChecks.RunAsync(scratch).GetAwaiter().GetResult();

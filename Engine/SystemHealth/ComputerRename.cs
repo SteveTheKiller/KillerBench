@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 
 namespace KillerBench.Engine.SystemHealth;
@@ -261,7 +262,7 @@ public static class ComputerRename
         string record = pendingPath;
         if (outcome is ComputerRenameOutcome.Verified or ComputerRenameOutcome.NotChanged)
         {
-            record = Path.Combine(root, "computer-rename-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") + ".json");
+            record = Path.Combine(root, "computer-rename-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) + ".json");
             await JournalPersistence.WriteAsync(record, JsonSerializer.Serialize(new { Outcome = outcome, Pending = pending, Current = context, Restart = restart }, Capture.JsonOptions), token: token).ConfigureAwait(false);
             File.Move(pendingPath, record + ".prepared.json");
         }

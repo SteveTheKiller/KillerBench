@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 
 namespace KillerBench.Engine.Security;
@@ -177,7 +178,7 @@ public static class DefenderScanExecution
     private static string Label(DefenderScanType type) => type == DefenderScanType.Quick ? "quick" : "full";
     private static async Task ResolveAsync(string path, CancellationToken token)
     {
-        string resolved = path.Replace(".pending.json", ".resolved-" + DateTimeOffset.UtcNow.ToString("yyyyMMddHHmmss") + ".json", StringComparison.Ordinal);
+        string resolved = path.Replace(".pending.json", ".resolved-" + DateTimeOffset.UtcNow.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture) + ".json", StringComparison.Ordinal);
         await Task.Run(() => File.Move(path, resolved, false), token).ConfigureAwait(false);
     }
 }

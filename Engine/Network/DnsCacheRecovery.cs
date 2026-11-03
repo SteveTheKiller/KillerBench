@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net.Sockets;
 using System.Text.Json;
 
@@ -193,7 +194,7 @@ public sealed class DnsCacheRecoveryJournal(string directory) : IDnsCacheRecover
         {
             if (pendingPath is null || result.JournalPath != pendingPath)
                 throw new InvalidOperationException("No matching DNS cache operation belongs to this journal.");
-            string completed = Path.Combine(root, "dns-cache-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") + "-" + Guid.NewGuid().ToString("N") + ".json");
+            string completed = Path.Combine(root, "dns-cache-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) + "-" + Guid.NewGuid().ToString("N") + ".json");
             await JournalPersistence.WriteAsync(completed, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
             if (!result.FlushDispatched || result.Outcome is not (DnsCacheRecoveryOutcome.Uncertain or DnsCacheRecoveryOutcome.Stopped))
                 File.Move(pendingPath, completed + ".prepared.json");

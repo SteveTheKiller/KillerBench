@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 
 namespace KillerBench.Engine.Network;
@@ -86,7 +87,7 @@ public static class DnsCacheReconciliation
         string detail = resolved
             ? "The exact hostname now resolves. The interrupted operation was reconciled without repeating the cache flush. Service reachability remains untested."
             : "The exact hostname still reports HostNotFound or NoData. The interrupted operation was reconciled without repeating the cache flush; review authoritative records and resolver health.";
-        string archivePath = Path.Combine(root, "dns-cache-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
+        string archivePath = Path.Combine(root, "dns-cache-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) +
             "-" + Guid.NewGuid().ToString("N") + ".json");
         var result = new DnsCacheReconciliationResult(outcome, detail, pendingPath, pending, current, archivePath);
         await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);

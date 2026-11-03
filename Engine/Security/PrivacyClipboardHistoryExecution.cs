@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using Microsoft.Win32;
 
@@ -279,7 +280,7 @@ public static class PrivacyClipboardHistoryExecution
                 "Current Clipboard history differs from both the requested and original values. The pending record was retained.", pendingPath);
 
             string archivePath = Path.Combine(root, "privacy-clipboard-history-reconciliation-" +
-                DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") + "-" + Guid.NewGuid().ToString("N") + ".json");
+                DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) + "-" + Guid.NewGuid().ToString("N") + ".json");
             var result = new PrivacyClipboardHistoryReconciliationResult(outcome, detail, pendingPath, archivePath);
             await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
             File.Move(pendingPath, archivePath + ".prepared.json");

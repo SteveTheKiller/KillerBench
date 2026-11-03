@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -31,7 +32,7 @@ internal static class WindowsMessageCsvGenerator
             if (message.Length is 0 or > 4096) continue;
             string source = SourceUrl(code);
             string applies = "Win32 system error return value from the installed Windows message table, verified " +
-                verifiedOn.ToString("yyyy-MM-dd") + ". Not automatically equivalent to HRESULT, NTSTATUS, installer, update or vendor codes.";
+                verifiedOn.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + ". Not automatically equivalent to HRESULT, NTSTATUS, installer, update or vendor codes.";
             Append(csv, "win32", code.ToString(System.Globalization.CultureInfo.InvariantCulture),
                 "Windows system error " + code.ToString(System.Globalization.CultureInfo.InvariantCulture), message, source, applies);
             entries++;

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Text;
 
@@ -53,7 +54,7 @@ public static class NativeValidationReport
                 string status = record?.Outcome.ToString() ?? "Missing";
                 sb.Append("<tr data-status='").Append(status).Append("'><td>").Append(E(plan.Title)).Append("<div class='muted'>").Append(E(plan.RecipeId)).Append(" v").Append(plan.RecipeVersion)
                     .Append("</div></td><td>").Append(E(scenario.Title)).Append("<div class='muted'>").Append(E(scenario.Id)).Append("</div></td><td>").Append(E(scenario.ExpectedOutcome))
-                    .Append("</td><td class='status ").Append(status).Append("'>").Append(status).Append("</td><td>").Append(record is null ? string.Empty : E(record.RecordedUtc.ToString("yyyy-MM-dd HH:mm:ss zzz"))).AppendLine("</td></tr>");
+                    .Append("</td><td class='status ").Append(status).Append("'>").Append(status).Append("</td><td>").Append(record is null ? string.Empty : E(record.RecordedUtc.ToString("yyyy-MM-dd HH:mm:ss zzz", CultureInfo.InvariantCulture))).AppendLine("</td></tr>");
             }
         sb.AppendLine("</tbody></table></section><p class='footer'>Generated locally by KillerBench. No validation data was uploaded.</p></main><script>");
         sb.Append("var T=").Append('[').Append(string.Join(',', Palettes.Select(p => "['" + p.Key + "','" + p.Label + "','" + DotColor(p.Background) + "']"))).AppendLine("];var A=[['red','#DD504B'],['orange','#E8962C'],['green','#1EA54C'],['teal','#1FB8A8'],['blue','#50AEE8'],['purple','#B982E3']];var th=document.getElementById('themes'),ah=document.getElementById('accents'),custom={dark:1,light:1,black:1,se98:1};function accent(k){var a=A.find(function(x){return x[0]===k})||A[1];document.documentElement.style.setProperty('--accent',a[1]);Array.from(ah.children).forEach(function(b){b.className=b.dataset.key===a[0]?'active':''})}function theme(k){document.documentElement.className='theme-'+k;document.getElementById('accentrow').style.display=custom[k]?'flex':'none';if(custom[k])accent('" + accent + "');Array.from(th.children).forEach(function(b){b.className=b.dataset.key===k?'active':''})}T.forEach(function(t){var b=document.createElement('button');b.title=t[1];b.dataset.key=t[0];b.style.background=t[2];b.onclick=function(){theme(t[0])};th.appendChild(b)});A.forEach(function(a){var b=document.createElement('button');b.title=a[0];b.dataset.key=a[0];b.style.background=a[1];b.onclick=function(){accent(a[0])};ah.appendChild(b)});theme('" + theme + "');var q=document.getElementById('search'),s=document.getElementById('status');function filter(){var text=q.value.toLowerCase(),status=s.value;Array.from(document.querySelectorAll('#rows tr')).forEach(function(r){r.hidden=(status&&r.dataset.status!==status)||(text&&!r.textContent.toLowerCase().includes(text))})}q.oninput=filter;s.onchange=filter;</script></body></html>");
@@ -76,7 +77,7 @@ public static class NativeValidationReport
                 records.TryGetValue(scenario.Id, out var record);
                 sb.AppendLine().Append(plan.RecipeId).Append(" / ").Append(scenario.Id).Append(" [").Append(record?.Outcome.ToString() ?? "Missing").AppendLine("]")
                     .AppendLine(scenario.ExpectedOutcome);
-                if (record is not null) sb.AppendLine("Recorded: " + record.RecordedUtc.ToString("yyyy-MM-dd HH:mm:ss zzz"));
+                if (record is not null) sb.AppendLine("Recorded: " + record.RecordedUtc.ToString("yyyy-MM-dd HH:mm:ss zzz", CultureInfo.InvariantCulture));
             }
         sb.AppendLine().AppendLine("Generated locally by KillerBench. No validation data was uploaded.");
         return sb.ToString();

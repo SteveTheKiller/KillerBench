@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 
 namespace KillerBench.Engine.Automation;
@@ -202,7 +203,7 @@ public static class MacePackageRemoval
                 ? "The exact package remains registered. The pending record was archived without repeating removal."
                 : "The exact package is absent from complete fresh inventory. The pending record was archived without repeating removal.";
             string archive = Path.Combine(root, "mace-package-removal-reconciliation-" +
-                DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") + "-" + Guid.NewGuid().ToString("N") + ".json");
+                DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) + "-" + Guid.NewGuid().ToString("N") + ".json");
             var result = new MacePackageRemovalReconciliationResult(outcome, detail, pendingPath, archive);
             await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
             File.Move(pendingPath, archive + ".prepared.json");
@@ -223,7 +224,7 @@ public static class MacePackageRemoval
         CancellationToken token)
     {
         string archive = Path.Combine(root, "mace-package-removal-" +
-            DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") + "-" + Guid.NewGuid().ToString("N") + ".json");
+            DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) + "-" + Guid.NewGuid().ToString("N") + ".json");
         var result = new MacePackageRemovalResult(outcome, detail, archive);
         await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
         File.Move(pendingPath, archive + ".prepared.json");

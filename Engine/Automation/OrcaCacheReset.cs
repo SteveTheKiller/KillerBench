@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 
 namespace KillerBench.Engine.Automation;
@@ -130,7 +131,7 @@ public static class OrcaCacheReset
                 return new(OrcaCacheResetOutcome.Blocked,
                     "A retained cache destination already exists. No Outlook cache changed.");
 
-        string journalPath = Path.Combine(root, "orca-cache-reset-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
+        string journalPath = Path.Combine(root, "orca-cache-reset-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) +
             "-" + operationId + ".json");
         var pending = new OrcaCachePendingRecord(1, operationId, DateTimeOffset.UtcNow, Environment.MachineName,
             options.Mode, journalPath, plans);
@@ -231,7 +232,7 @@ public static class OrcaCacheReset
             if (outcome == OrcaCacheReconciliationOutcome.Inconclusive)
                 return new(outcome,
                     "Only part of the cache set appears retained. The pending record was retained and no move was repeated.", pendingPath, pending);
-            string archive = Path.Combine(root, "orca-cache-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
+            string archive = Path.Combine(root, "orca-cache-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) +
                 "-" + Guid.NewGuid().ToString("N") + ".json");
             string detail = outcome == OrcaCacheReconciliationOutcome.Verified
                 ? "Every selected cache source is absent and every exact retained directory exists. The pending record was archived without repeating a move."
@@ -313,7 +314,7 @@ public static class OrcaCacheReset
     private static async Task<OrcaCacheResetResult> CloseWithoutMutationAsync(string root, string pendingPath,
         OrcaCachePendingRecord pending, OrcaCacheResetOutcome outcome, string detail, CancellationToken token)
     {
-        string archive = Path.Combine(root, "orca-cache-reset-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
+        string archive = Path.Combine(root, "orca-cache-reset-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) +
             "-" + Guid.NewGuid().ToString("N") + ".blocked.json");
         var result = new OrcaCacheResetResult(outcome, detail, archive, pending.Targets);
         await JournalPersistence.WriteAsync(archive, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);

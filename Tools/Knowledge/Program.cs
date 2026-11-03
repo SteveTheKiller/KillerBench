@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using KillerBench.Engine;
 
@@ -38,7 +39,7 @@ try
     if (windowsMessages)
     {
         if (!int.TryParse(args[1], out int firstCode) || !int.TryParse(args[2], out int lastCode) ||
-            !DateOnly.TryParseExact(args[3], "yyyy-MM-dd", out DateOnly verifiedOn))
+            !DateOnly.TryParseExact(args[3], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly verifiedOn))
             throw new ArgumentException("Windows message generation requires decimal bounds and an exact YYYY-MM-DD verification date.");
         var generated = WindowsMessageCsvGenerator.Build(firstCode, lastCode, verifiedOn, token: stop.Token);
         outputPath = args[4];
@@ -57,7 +58,7 @@ try
     if (ntStatusMessages)
     {
         if (!TryParseStatus(args[1], out uint firstStatus) || !TryParseStatus(args[2], out uint lastStatus) ||
-            !DateOnly.TryParseExact(args[3], "yyyy-MM-dd", out DateOnly verifiedOn))
+            !DateOnly.TryParseExact(args[3], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly verifiedOn))
             throw new ArgumentException("NTSTATUS message generation requires exact 0x plus eight-hex-digit bounds and an exact YYYY-MM-DD verification date.");
         var generated = NtStatusMessageCsvGenerator.Build(firstStatus, lastStatus, verifiedOn, token: stop.Token);
         outputPath = args[4];
@@ -76,7 +77,7 @@ try
     if (hResultMessages)
     {
         if (!TryParseStatus(args[1], out uint firstResult) || !TryParseStatus(args[2], out uint lastResult) ||
-            !DateOnly.TryParseExact(args[3], "yyyy-MM-dd", out DateOnly verifiedOn))
+            !DateOnly.TryParseExact(args[3], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly verifiedOn))
             throw new ArgumentException("HRESULT message generation requires exact 0x plus eight-hex-digit bounds and an exact YYYY-MM-DD verification date.");
         var generated = HResultMessageCsvGenerator.Build(firstResult, lastResult, verifiedOn, token: stop.Token);
         outputPath = args[4];
@@ -94,7 +95,7 @@ try
     }
     if (bluetoothImport)
     {
-        if (!long.TryParse(args[2], out long revision) || !DateOnly.TryParseExact(args[3], "yyyy-MM-dd", out DateOnly publishedOn))
+        if (!long.TryParse(args[2], out long revision) || !DateOnly.TryParseExact(args[3], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly publishedOn))
             throw new ArgumentException("Bluetooth company identifier import requires a positive revision and an exact YYYY-MM-DD publication date.");
         var imported = await BluetoothCompanyIdentifierImporter.BuildAsync(args[1], revision, publishedOn, args[4], stop.Token);
         outputPath = args[5];
@@ -103,7 +104,7 @@ try
     }
     else if (uefiImport)
     {
-        if (!long.TryParse(args[3], out long revision) || !DateOnly.TryParseExact(args[4], "yyyy-MM-dd", out DateOnly publishedOn))
+        if (!long.TryParse(args[3], out long revision) || !DateOnly.TryParseExact(args[4], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly publishedOn))
             throw new ArgumentException("UEFI vendor ID import requires a positive revision and an exact YYYY-MM-DD publication date.");
         var imported = await UefiVendorIdImporter.BuildAsync(args[1], args[2], revision, publishedOn, args[5], stop.Token);
         outputPath = args[6];
@@ -112,7 +113,7 @@ try
     }
     else if (bugCheckImport)
     {
-        if (!long.TryParse(args[2], out long revision) || !DateOnly.TryParseExact(args[3], "yyyy-MM-dd", out DateOnly publishedOn))
+        if (!long.TryParse(args[2], out long revision) || !DateOnly.TryParseExact(args[3], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly publishedOn))
             throw new ArgumentException("Bug-check import requires a positive revision and an exact YYYY-MM-DD publication date.");
         var imported = await BugCheckMarkdownImporter.BuildAsync(args[1], revision, publishedOn, args[4], stop.Token);
         outputPath = args[5];
@@ -121,7 +122,7 @@ try
     }
     else if (usbImport)
     {
-        if (!long.TryParse(args[2], out long revision) || !DateOnly.TryParseExact(args[3], "yyyy-MM-dd", out DateOnly publishedOn))
+        if (!long.TryParse(args[2], out long revision) || !DateOnly.TryParseExact(args[3], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly publishedOn))
             throw new ArgumentException("USB ID import requires a positive revision and an exact YYYY-MM-DD publication date.");
         var imported = await UsbIdsImporter.BuildAsync(args[1], revision, publishedOn, args[4], stop.Token);
         outputPath = args[5];
@@ -130,7 +131,7 @@ try
     }
     else if (pciImport)
     {
-        if (!long.TryParse(args[2], out long revision) || !DateOnly.TryParseExact(args[3], "yyyy-MM-dd", out DateOnly publishedOn))
+        if (!long.TryParse(args[2], out long revision) || !DateOnly.TryParseExact(args[3], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly publishedOn))
             throw new ArgumentException("PCI ID import requires a positive revision and an exact YYYY-MM-DD publication date.");
         var imported = await PciIdsImporter.BuildAsync(args[1], revision, publishedOn, args[4], stop.Token);
         outputPath = args[5];
@@ -139,7 +140,7 @@ try
     }
     else if (referenceImport)
     {
-        if (!long.TryParse(args[3], out long revision) || !DateOnly.TryParseExact(args[4], "yyyy-MM-dd", out DateOnly publishedOn))
+        if (!long.TryParse(args[3], out long revision) || !DateOnly.TryParseExact(args[4], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly publishedOn))
             throw new ArgumentException("Reference import requires a positive revision and an exact YYYY-MM-DD publication date.");
         var imported = await ReferenceCsvImporter.BuildAsync(args[1], args[2], revision, publishedOn, args[5], stop.Token);
         outputPath = args[6];
@@ -148,7 +149,7 @@ try
     }
     else if (driverImport)
     {
-        if (!long.TryParse(args[3], out long revision) || !DateOnly.TryParseExact(args[4], "yyyy-MM-dd", out DateOnly publishedOn))
+        if (!long.TryParse(args[3], out long revision) || !DateOnly.TryParseExact(args[4], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly publishedOn))
             throw new ArgumentException("Driver import requires a positive revision and an exact YYYY-MM-DD publication date.");
         var imported = await DriverReferenceImporter.BuildAsync(args[1], args[2], revision, publishedOn, args[5], stop.Token);
         outputPath = args[6];
@@ -157,7 +158,7 @@ try
     }
     else if (ieeeImport)
     {
-        if (!long.TryParse(args[4], out long revision) || !DateOnly.TryParseExact(args[5], "yyyy-MM-dd", out DateOnly publishedOn))
+        if (!long.TryParse(args[4], out long revision) || !DateOnly.TryParseExact(args[5], "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly publishedOn))
             throw new ArgumentException("IEEE import requires a positive revision and an exact YYYY-MM-DD publication date.");
         var imported = await IeeeOuiImporter.BuildAsync(args[1], args[2], args[3], revision, publishedOn, args[6], stop.Token);
         outputPath = args[7];

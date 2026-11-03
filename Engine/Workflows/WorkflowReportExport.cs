@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Text;
 
@@ -79,7 +80,7 @@ public static class WorkflowReportExport
         bool imported = importedFrom is not null;
         Metric(sb, imported ? "Recorded status" : "Status", result.Status); Metric(sb, "Problems", problemChecks.Length.ToString()); Metric(sb, imported ? "Recorded repairs" : "Verified repairs", summary.VerifiedRepairs.ToString()); Metric(sb, "Incomplete", summary.Incomplete.ToString());
         sb.Append("</div><p><b>Machine:</b> ").Append(E(result.Machine)).Append("<br/><b>Workflow:</b> ").Append(E(Humanize(result.Kind.ToString())))
-            .Append("<br/><b>Started:</b> ").Append(E(result.StartedUtc.ToString("yyyy-MM-dd HH:mm:ss zzz"))).AppendLine("</p></section>");
+            .Append("<br/><b>Started:</b> ").Append(E(result.StartedUtc.ToString("yyyy-MM-dd HH:mm:ss zzz", CultureInfo.InvariantCulture))).AppendLine("</p></section>");
         if (imported) sb.Append("<section class='panel notice'><h2>Recorded history</h2><p>").Append(E(RecordedNotice)).Append(" Source: ").Append(E(importedFrom)).AppendLine("</p></section>");
         sb.Append("<section class='panel notice'><h2>Start here</h2><p>").Append(E(nextAction)).AppendLine("</p></section>");
         sb.AppendLine("<section class='panel notice'><h2>Scope and limitations</h2><p>This report covers only the checks selected for this workflow. A clear result does not prove overall computer health. Historical evidence does not by itself prove a current fault or authorize a repair.</p></section>");
@@ -130,7 +131,7 @@ public static class WorkflowReportExport
         sb.AppendLine("KILLERBENCH " + (scope == WorkflowReportScope.Diagnostics ? "DIAGNOSTIC REPORT" : "DIAGNOSTIC AND REPAIR REPORT"));
         if (imported) sb.AppendLine("RECORDED HISTORY").AppendLine(RecordedNotice + " Source: " + importedFrom).AppendLine();
         sb.AppendLine((imported ? "Recorded status: " : "Status: ") + result.Status).AppendLine("Machine: " + result.Machine).AppendLine("Workflow: " + Humanize(result.Kind.ToString()))
-            .AppendLine("Started: " + result.StartedUtc.ToString("yyyy-MM-dd HH:mm:ss zzz"));
+            .AppendLine("Started: " + result.StartedUtc.ToString("yyyy-MM-dd HH:mm:ss zzz", CultureInfo.InvariantCulture));
         sb.AppendLine().AppendLine("START HERE").AppendLine(nextAction);
         sb.AppendLine().AppendLine("SCOPE AND LIMITATIONS").AppendLine("This report covers only the checks selected for this workflow. Historical evidence does not prove a current fault or authorize a repair.");
         var verdicts = result.Checks.Where(IsReadinessVerdict).ToArray();

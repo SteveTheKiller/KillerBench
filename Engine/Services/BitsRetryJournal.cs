@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 
 namespace KillerBench.Engine.Services;
@@ -66,7 +67,7 @@ public sealed class BitsRetryJournal(string directory) : IBitsRetryJournal
             if (result.Before?.Evidence != activeEvidence || result.Request is not null ||
                 result.Outcome is not (BitsRetryOutcome.Blocked or BitsRetryOutcome.Stopped))
                 throw new InvalidDataException("Only an exact no-request result can abandon retry preparation.");
-            string archive = Path.Combine(root, "bits-retry-no-request-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
+            string archive = Path.Combine(root, "bits-retry-no-request-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) +
                 "-" + Guid.NewGuid().ToString("N") + ".json");
             await PersistAsync(archive, JsonSerializer.SerializeToUtf8Bytes(result, Capture.JsonOptions), token).ConfigureAwait(false);
             File.Move(Path.Combine(root, result.JobId.ToString("N") + ".pending.json"), archive + ".prepared.json");

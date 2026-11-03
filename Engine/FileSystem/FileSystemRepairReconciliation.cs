@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 
 namespace KillerBench.Engine.FileSystem;
@@ -112,7 +113,7 @@ public static class FileSystemRepairReconciliation
         string detail = verified
             ? "A fresh read-only check reported no filesystem problems. The interrupted operation was reconciled without repeating repair. Physical media health remains untested."
             : "The exact volume still reports filesystem errors. Current evidence was archived without repeating repair; review it before another explicit attempt.";
-        string archivePath = Path.Combine(root, "filesystem-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
+        string archivePath = Path.Combine(root, "filesystem-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) +
             "-" + Guid.NewGuid().ToString("N") + ".json");
         var result = new FileSystemRepairReconciliationResult(outcome, detail, pendingPath, pending, state, current, archivePath);
         await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);

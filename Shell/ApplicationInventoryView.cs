@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -72,7 +73,7 @@ public partial class MainWindow
     private async void OnSaveApplicationInventory(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null || applicationInventory is not { } inventory) return;
-        var picker = new Controls.FileDialog(Controls.FileDialogMode.Save) { Filter = Controls.LocalizedText.Workflow(WorkflowKind.InstalledApps) + " (JSON)|*.json", DefaultExt = ".json", FileName = "applications-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".json", OverwritePrompt = true };
+        var picker = new Controls.FileDialog(Controls.FileDialogMode.Save) { Filter = Controls.LocalizedText.Workflow(WorkflowKind.InstalledApps) + " (JSON)|*.json", DefaultExt = ".json", FileName = "applications-" + DateTime.Now.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture) + ".json", OverwritePrompt = true };
         if (picker.ShowDialog(this) != true) return;
         using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         readCancellation = cancellation;

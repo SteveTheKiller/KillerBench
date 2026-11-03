@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 
 namespace KillerBench.Engine.Installation;
@@ -126,7 +127,7 @@ public static class InstallerRegistrationRepairReconciliation
             ? InstallerRegistrationRepairReconciliationOutcome.Verified
             : InstallerRegistrationRepairReconciliationOutcome.NotRepaired;
         string archivePath = Path.Combine(root, "installer-registration-reconciliation-" +
-            DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") + "-" +
+            DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) + "-" +
             Guid.NewGuid().ToString("N") + ".json");
         var result = new InstallerRegistrationRepairReconciliationResult(outcome, detail, pendingPath,
             pending, registration, activity, restart, archivePath);

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Principal;
 using System.Text.Json;
 
@@ -107,7 +108,7 @@ public static class SearchIndexRebuild
         if (!ValidIndex(index)) return Blocked("The exact Windows Search index directory could not be safely identified, is absent, or is a reparse point.");
 
         string operationId = Guid.NewGuid().ToString("N");
-        string retainedPath = IndexPath + ".KillerBench." + DateTimeOffset.UtcNow.ToString("yyyyMMddHHmmss") + "." + operationId[..8];
+        string retainedPath = IndexPath + ".KillerBench." + DateTimeOffset.UtcNow.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture) + "." + operationId[..8];
         var record = new SearchIndexRebuildPendingRecord(1, operationId, DateTimeOffset.UtcNow, Environment.MachineName,
             IndexPath, retainedPath, service.Running, service.StartMode, "Prepared");
         Directory.CreateDirectory(directory);

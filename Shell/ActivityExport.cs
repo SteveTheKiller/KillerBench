@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -15,7 +16,7 @@ public partial class MainWindow
             Title = Controls.LocalizedText.Get("Str_ExportActivityHint"),
             Filter = "TXT (*.txt)|*.txt|CSV (*.csv)|*.csv|HTML (*.html)|*.html",
             DefaultExt = ".txt", AddExtension = true, OverwritePrompt = true,
-            FileName = "KillerBench-activity-" + DateTime.Now.ToString("yyyyMMdd-HHmmss")
+            FileName = "KillerBench-activity-" + DateTime.Now.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture)
         };
         if (picker.ShowDialog(this) != true) return;
         ExportActivityButton.IsEnabled = false;

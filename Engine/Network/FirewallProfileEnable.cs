@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 
 namespace KillerBench.Engine.Network;
@@ -212,7 +213,7 @@ public static class FirewallProfileEnable
 
     private static async Task<FirewallProfileEnableResult> FinishAsync(FirewallProfileEnableResult result, string root, bool resolve)
     {
-        string journal = Path.Combine(root, "firewall-profile-enable-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") + "-" + Guid.NewGuid().ToString("N") + ".json");
+        string journal = Path.Combine(root, "firewall-profile-enable-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) + "-" + Guid.NewGuid().ToString("N") + ".json");
         await JournalPersistence.WriteAsync(journal, JsonSerializer.Serialize(result, Capture.JsonOptions), token: CancellationToken.None).ConfigureAwait(false);
         string pending = Path.Combine(root, PendingName);
         if (resolve && File.Exists(pending)) File.Move(pending, journal + ".prepared.json");

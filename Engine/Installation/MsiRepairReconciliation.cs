@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 
 namespace KillerBench.Engine.Installation;
@@ -97,7 +98,7 @@ public static class MsiRepairReconciliation
             ? "The exact product now reports a local or default installed state. The interrupted repair was reconciled without repeating it. Application functionality and user settings remain untested."
             : "The exact product does not report a verified local or default installed state. Current evidence was archived without repeating the repair; review the MSI log before another explicit attempt.";
         var outcome = verified ? MsiRepairReconciliationOutcome.Verified : MsiRepairReconciliationOutcome.NotRepaired;
-        string archivePath = Path.Combine(root, "msi-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") +
+        string archivePath = Path.Combine(root, "msi-reconciliation-" + DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) +
             "-" + Guid.NewGuid().ToString("N") + ".json");
         var result = new MsiRepairReconciliationResult(outcome, detail, pendingPath, pending, product, activity, restart, archivePath);
         await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);

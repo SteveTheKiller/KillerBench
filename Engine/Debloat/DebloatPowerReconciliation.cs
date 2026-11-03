@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 
 namespace KillerBench.Engine.Debloat;
@@ -103,7 +104,7 @@ public static class DebloatPowerReconciliation
         if (inspected.Outcome == DebloatPowerReconciliationOutcome.Inconclusive)
             return new(inspected.Outcome, inspected.Detail, pendingPath);
         string archivePath = Path.Combine(root, "debloat-" + archiveName + "-reconciliation-" +
-            DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff") + "-" + Guid.NewGuid().ToString("N") + ".json");
+            DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmssfff", CultureInfo.InvariantCulture) + "-" + Guid.NewGuid().ToString("N") + ".json");
         var result = new DebloatPowerReconciliationResult(inspected.Outcome, inspected.Detail, pendingPath, archivePath);
         await JournalPersistence.WriteAsync(archivePath, JsonSerializer.Serialize(result, Capture.JsonOptions), token: token).ConfigureAwait(false);
         File.Move(pendingPath, archivePath + ".prepared.json");
