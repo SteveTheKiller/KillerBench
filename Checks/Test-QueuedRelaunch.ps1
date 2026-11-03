@@ -11,6 +11,8 @@ if ($start -lt 0) { $start = $source.IndexOf('function Start-KillerUpdatedApp {'
 if ($start -lt 0) { throw 'Production relaunch function was not found.' }
 $end = $source.IndexOf('""";', $start, [StringComparison]::Ordinal)
 $function = $source.Substring($start, $end - $start)
+# The app fills its task-name prefix in at runtime (UpdateImagePublication.TaskPrefix); do the same here.
+$function = $function.Replace('__KILLER_TASK_PREFIX__', 'KillerUpdate-KillerBench-')
 $script:waits = 0
 $script:requests = 0
 $script:deletes = 0
@@ -201,7 +203,7 @@ foreach ($case in @('fresh', 'idle', 'queued', 'running', 'unknown', 'query-fail
     }
     $date = if ($case -eq 'fresh') { (Get-Date).AddMinutes(-1) } else { (Get-Date).AddMinutes(-10) }
     $old = [pscustomobject]@{
-        Name=('KillerUpdate-fixture-' + $case); State=3; Running=$running; FailQuery=($case -eq 'query-failure')
+        Name=('KillerUpdate-KillerBench-fixture-' + $case); State=3; Running=$running; FailQuery=($case -eq 'query-failure')
         Definition=[pscustomobject]@{RegistrationInfo=[pscustomobject]@{Date=$date.ToString('s')}}
     }
     $old | Add-Member ScriptMethod GetInstances { param($flags) if ($this.FailQuery) { throw 'Fixture instance enumeration unavailable' }; return @($this.Running) }

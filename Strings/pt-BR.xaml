@@ -587,6 +587,7 @@
   <sys:String x:Key="Str_Dlg_NoPreview">Nenhuma visualização disponível</sys:String>
   <sys:String x:Key="Str_Dlg_NoSuchFile">Esse arquivo não existe.</sys:String>
   <sys:String x:Key="Str_Dlg_NoSuchFolder">Essa pasta não existe.</sys:String>
+  <sys:String x:Key="Str_Dlg_InvalidPath">Digite um nome de arquivo ou caminho válido.</sys:String>
   <sys:String x:Key="Str_Dlg_OverwriteMsg">Substituir {0}?</sys:String>
   <sys:String x:Key="Str_Menu_PinPlace">Fixar nos locais</sys:String>
   <sys:String x:Key="Str_Menu_UnpinPlace">Remover dos locais</sys:String>

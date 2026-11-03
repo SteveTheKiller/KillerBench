@@ -1352,7 +1352,7 @@ internal static class Program
             Pump();
             Require(shortcuts.Visibility == Visibility.Visible &&
                 ((StackPanel)window.FindName("ShortcutListHost")).Children.OfType<Grid>().Count() == 8 &&
-                ((Button)window.FindName("ShortcutButton")).ToolTip?.ToString() == "Keyboard shortcuts (F1)",
+                ((Button)window.FindName("ShortcutButton")).ToolTip?.ToString() == KillerFamily.Layout.ShortcutHints.WithHint("Keyboard shortcuts", "F1"),
                 "Shortcut list and rail tooltip come from the shared binding table");
             ((Button)window.FindName("ShortcutMapButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();

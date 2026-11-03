@@ -51,7 +51,7 @@ public partial class MainWindow
             radio.IsChecked = Enum.TryParse<Theme>((string)radio.Tag, out var theme) && theme == ThemeManager.Current;
         syncingTheme = false;
         FilmGrainCheck.IsChecked = FilmGrain.Enabled;
-        FilmGrainCheck.ToolTip = Resource("Str_Theme_FilmGrain") + " (Alt+Shift+G)";
+        FilmGrainCheck.ToolTip = KillerFamily.Layout.ShortcutHints.WithHint(Resource("Str_Theme_FilmGrain"), "Alt+Shift+G");
         UpdateAccentStrip(false);
         OpenFamilyMenu(ThemeFlyout, ThemeButton);
     }

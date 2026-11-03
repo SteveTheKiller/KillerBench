@@ -45,7 +45,7 @@ public partial class MainWindow
 
     private void InitializeShortcuts()
     {
-        ShortcutButton.ToolTip = Label(ShortcutBindings.Single(binding => binding.Keys == "F1")) + " (F1)";
+        ShortcutButton.ToolTip = KillerFamily.Layout.ShortcutHints.WithHint(Label(ShortcutBindings.Single(binding => binding.Keys == "F1")), "F1");
         ApplyShortcutView(Preferences.Get("ShortcutsMapView") == "1");
     }
 
