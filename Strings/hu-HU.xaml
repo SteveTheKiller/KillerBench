@@ -1267,4 +1267,8 @@
   <sys:String x:Key="Str_BitResult_RestartReconcile">Indítsa újra a Windowst, térjen vissza ehhez a jelentéshez, és egyeztesse a kiválasztott művelet állapotát.</sys:String>
   <sys:String x:Key="Str_BitResult_ReviewJournal">Újrapróbálkozás előtt tekintse át a helyi módosítási naplót és az aktuális állapotot.</sys:String>
   <sys:String x:Key="Str_Ui_ExportEarlierReport">Korábbi jelentés exportálása: {0}</sys:String>
+    <sys:String x:Key="Str_Scroll_Up">Görgetés felfelé</sys:String>
+    <sys:String x:Key="Str_Scroll_Down">Görgetés lefelé</sys:String>
+    <sys:String x:Key="Str_Scroll_Left">Görgetés balra</sys:String>
+    <sys:String x:Key="Str_Scroll_Right">Görgetés jobbra</sys:String>
 </ResourceDictionary>

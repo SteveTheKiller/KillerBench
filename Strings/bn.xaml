@@ -1267,4 +1267,8 @@
   <sys:String x:Key="Str_BitResult_RestartReconcile">Windows পুনরায় চালু করে এই রিপোর্টে ফিরে বেছে নেওয়া কাজের অবস্থা মিলিয়ে নিন।</sys:String>
   <sys:String x:Key="Str_BitResult_ReviewJournal">আবার চেষ্টার আগে স্থানীয় পরিবর্তনের জার্নাল ও বর্তমান অবস্থা দেখুন।</sys:String>
   <sys:String x:Key="Str_Ui_ExportEarlierReport">আগের প্রতিবেদন রপ্তানি করুন: {0}</sys:String>
+    <sys:String x:Key="Str_Scroll_Up">উপরে স্ক্রল করুন</sys:String>
+    <sys:String x:Key="Str_Scroll_Down">নিচে স্ক্রল করুন</sys:String>
+    <sys:String x:Key="Str_Scroll_Left">বাঁয়ে স্ক্রল করুন</sys:String>
+    <sys:String x:Key="Str_Scroll_Right">ডানে স্ক্রল করুন</sys:String>
 </ResourceDictionary>

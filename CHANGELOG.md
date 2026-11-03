@@ -6,6 +6,7 @@
 
 ### Fixed
 
+- The file picker loads icons and picture previews in the background, refreshes overwritten previews, and restores its position on any monitor. Scrollbar buttons have localized screen-reader names.
 - Saved workflow and validation reports write their timestamps the same way on every Windows region, so Thai and Finnish settings no longer give years like 2569 or times like 14.30.
 - The disk-busy and shadow-storage checks read the decimal comma that Windows tools print on German, Finnish and other regions, instead of reporting no samples or unrecognized sizes.
 - A per-user update reopens KillerBench even when antivirus or a locked-down PowerShell stops the update helper from loading.

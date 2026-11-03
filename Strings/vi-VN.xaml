@@ -1266,4 +1266,8 @@
   <sys:String x:Key="Str_BitResult_RestartReconcile">Khởi động lại Windows, quay lại báo cáo này và đối chiếu thao tác đã chọn.</sys:String>
   <sys:String x:Key="Str_BitResult_ReviewJournal">Xem nhật ký thay đổi cục bộ và trạng thái hiện tại trước khi thử lại.</sys:String>
   <sys:String x:Key="Str_Ui_ExportEarlierReport">Xuất báo cáo trước đó: {0}</sys:String>
+    <sys:String x:Key="Str_Scroll_Up">Cuộn lên</sys:String>
+    <sys:String x:Key="Str_Scroll_Down">Cuộn xuống</sys:String>
+    <sys:String x:Key="Str_Scroll_Left">Cuộn sang trái</sys:String>
+    <sys:String x:Key="Str_Scroll_Right">Cuộn sang phải</sys:String>
 </ResourceDictionary>

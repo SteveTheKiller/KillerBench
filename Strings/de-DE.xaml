@@ -1267,4 +1267,8 @@
   <sys:String x:Key="Str_BitResult_RestartReconcile">Starten Sie Windows neu, kehren Sie zu diesem Bericht zurück und gleichen Sie den ausgewählten Vorgang ab.</sys:String>
   <sys:String x:Key="Str_BitResult_ReviewJournal">Prüfen Sie vor einem erneuten Versuch das lokale Änderungsjournal und den aktuellen Zustand.</sys:String>
   <sys:String x:Key="Str_Ui_ExportEarlierReport">Früheren Bericht exportieren: {0}</sys:String>
+    <sys:String x:Key="Str_Scroll_Up">Nach oben scrollen</sys:String>
+    <sys:String x:Key="Str_Scroll_Down">Nach unten scrollen</sys:String>
+    <sys:String x:Key="Str_Scroll_Left">Nach links scrollen</sys:String>
+    <sys:String x:Key="Str_Scroll_Right">Nach rechts scrollen</sys:String>
 </ResourceDictionary>

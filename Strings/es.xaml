@@ -1267,4 +1267,8 @@
   <sys:String x:Key="Str_BitResult_RestartReconcile">Reinicia Windows, vuelve a este informe y concilia la operación seleccionada.</sys:String>
   <sys:String x:Key="Str_BitResult_ReviewJournal">Revisa el diario local de cambios y el estado actual antes de reintentar.</sys:String>
   <sys:String x:Key="Str_Ui_ExportEarlierReport">Exportar informe anterior: {0}</sys:String>
+    <sys:String x:Key="Str_Scroll_Up">Desplazar hacia arriba</sys:String>
+    <sys:String x:Key="Str_Scroll_Down">Desplazar hacia abajo</sys:String>
+    <sys:String x:Key="Str_Scroll_Left">Desplazar hacia la izquierda</sys:String>
+    <sys:String x:Key="Str_Scroll_Right">Desplazar hacia la derecha</sys:String>
 </ResourceDictionary>

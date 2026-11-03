@@ -1267,4 +1267,8 @@
   <sys:String x:Key="Str_BitResult_RestartReconcile">Перезагрузите Windows, вернитесь к этому отчёту и сверьте состояние выбранной операции.</sys:String>
   <sys:String x:Key="Str_BitResult_ReviewJournal">Перед повторной попыткой просмотрите локальный журнал изменений и текущее состояние.</sys:String>
   <sys:String x:Key="Str_Ui_ExportEarlierReport">Экспортировать предыдущий отчет: {0}</sys:String>
+    <sys:String x:Key="Str_Scroll_Up">Прокрутить вверх</sys:String>
+    <sys:String x:Key="Str_Scroll_Down">Прокрутить вниз</sys:String>
+    <sys:String x:Key="Str_Scroll_Left">Прокрутить влево</sys:String>
+    <sys:String x:Key="Str_Scroll_Right">Прокрутить вправо</sys:String>
 </ResourceDictionary>

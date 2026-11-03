@@ -1267,4 +1267,8 @@
   <sys:String x:Key="Str_BitResult_RestartReconcile">Windows’u yeniden başlatın, bu rapora dönün ve seçilen işlemi uzlaştırın.</sys:String>
   <sys:String x:Key="Str_BitResult_ReviewJournal">Yeniden denemeden yerel değişiklik günlüğünü ve geçerli durumu inceleyin.</sys:String>
   <sys:String x:Key="Str_Ui_ExportEarlierReport">Önceki raporu dışa aktar: {0}</sys:String>
+    <sys:String x:Key="Str_Scroll_Up">Yukarı kaydır</sys:String>
+    <sys:String x:Key="Str_Scroll_Down">Aşağı kaydır</sys:String>
+    <sys:String x:Key="Str_Scroll_Left">Sola kaydır</sys:String>
+    <sys:String x:Key="Str_Scroll_Right">Sağa kaydır</sys:String>
 </ResourceDictionary>

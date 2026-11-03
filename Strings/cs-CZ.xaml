@@ -1267,4 +1267,8 @@
   <sys:String x:Key="Str_BitResult_RestartReconcile">Restartujte Windows, vraťte se k této zprávě a vyhodnoťte stav vybrané operace.</sys:String>
   <sys:String x:Key="Str_BitResult_ReviewJournal">Před opakováním zkontrolujte místní žurnál změn a aktuální stav.</sys:String>
   <sys:String x:Key="Str_Ui_ExportEarlierReport">Exportovat předchozí zprávu: {0}</sys:String>
+    <sys:String x:Key="Str_Scroll_Up">Posunout nahoru</sys:String>
+    <sys:String x:Key="Str_Scroll_Down">Posunout dolů</sys:String>
+    <sys:String x:Key="Str_Scroll_Left">Posunout doleva</sys:String>
+    <sys:String x:Key="Str_Scroll_Right">Posunout doprava</sys:String>
 </ResourceDictionary>

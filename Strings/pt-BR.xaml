@@ -1266,4 +1266,8 @@
   <sys:String x:Key="Str_BitResult_RestartReconcile">Reinicie o Windows, volte a este relatório e reconcilie a operação selecionada.</sys:String>
   <sys:String x:Key="Str_BitResult_ReviewJournal">Revise o diário local de alterações e o estado atual antes de tentar novamente.</sys:String>
   <sys:String x:Key="Str_Ui_ExportEarlierReport">Exportar relatório anterior: {0}</sys:String>
+    <sys:String x:Key="Str_Scroll_Up">Rolar para cima</sys:String>
+    <sys:String x:Key="Str_Scroll_Down">Rolar para baixo</sys:String>
+    <sys:String x:Key="Str_Scroll_Left">Rolar para a esquerda</sys:String>
+    <sys:String x:Key="Str_Scroll_Right">Rolar para a direita</sys:String>
 </ResourceDictionary>

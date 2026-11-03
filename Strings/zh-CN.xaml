@@ -1267,4 +1267,8 @@
   <sys:String x:Key="Str_BitResult_RestartReconcile">重启 Windows，然后返回此报告并核对所选操作。</sys:String>
   <sys:String x:Key="Str_BitResult_ReviewJournal">重试前，请检查本地更改日志和当前状态。</sys:String>
   <sys:String x:Key="Str_Ui_ExportEarlierReport">导出之前的报告：{0}</sys:String>
+    <sys:String x:Key="Str_Scroll_Up">向上滚动</sys:String>
+    <sys:String x:Key="Str_Scroll_Down">向下滚动</sys:String>
+    <sys:String x:Key="Str_Scroll_Left">向左滚动</sys:String>
+    <sys:String x:Key="Str_Scroll_Right">向右滚动</sys:String>
 </ResourceDictionary>

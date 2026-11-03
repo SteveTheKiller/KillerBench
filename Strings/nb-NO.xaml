@@ -1266,4 +1266,8 @@
   <sys:String x:Key="Str_BitResult_RestartReconcile">Start Windows på nytt, gå tilbake til rapporten og avstem den valgte operasjonen.</sys:String>
   <sys:String x:Key="Str_BitResult_ReviewJournal">Gjennomgå den lokale endringsjournalen og gjeldende tilstand før nytt forsøk.</sys:String>
   <sys:String x:Key="Str_Ui_ExportEarlierReport">Eksporter tidligere rapport: {0}</sys:String>
+    <sys:String x:Key="Str_Scroll_Up">Rull opp</sys:String>
+    <sys:String x:Key="Str_Scroll_Down">Rull ned</sys:String>
+    <sys:String x:Key="Str_Scroll_Left">Rull til venstre</sys:String>
+    <sys:String x:Key="Str_Scroll_Right">Rull til høyre</sys:String>
 </ResourceDictionary>
