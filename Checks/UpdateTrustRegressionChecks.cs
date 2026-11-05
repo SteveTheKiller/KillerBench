@@ -110,6 +110,7 @@ internal static class UpdateTrustRegressionChecks
         foreach (var (first, retry, trusted) in new[]
         {
             (0u, 0u, true), (0x80092013u, 0u, true), (0x80092013u, 0x800B0101u, false),
+            (0x800B010Eu, 0u, true), (0x800B010Eu, 0x800B0101u, false),
             (0x800B010Cu, 0u, false), (0x80096010u, 0u, false),
         })
         {
@@ -119,7 +120,7 @@ internal static class UpdateTrustRegressionChecks
             Require(result == trusted, $"Trust result for {first:X} then {retry:X}");
             // WTD_REVOKE_WHOLECHAIN first; the retry is WTD_REVOKE_NONE with cache-only retrieval.
             Require(calls[0] == (1u, 0x80u), "The first check asks for whole-chain revocation");
-            Require(calls.Count == (first == 0x80092013u ? 2 : 1), "Only an offline revocation server retries");
+            Require(calls.Count == (first == 0x80092013u || first == 0x800B010Eu ? 2 : 1), "Only an unreachable revocation server retries");
             if (calls.Count == 2) Require(calls[1] == (0u, 0x1010u), "The retry is cache-only");
         }
     }
