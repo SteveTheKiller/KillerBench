@@ -16,7 +16,7 @@ internal static class QueuedRelaunchChecks
         string overrides = string.Join("\n", Enumerable.Range(0, 100).Select(i => "$fixture" + i + " = 'operation " + i + "'"));
         foreach (string script in new[]
         {
-            UpdateImagePublication.Script(download, target, true, "https://example.invalid", "Fixture", "1.0.0", "HKLM", overrides: overrides),
+            UpdateImagePublication.Script(download, target, true, "https://example.invalid", "Fixture", "1.0.0", "HKLM", overrides: overrides, originalHash: new string('C', 64)),
             UpdateImagePublication.Installer(download, "/S", true, target, Path.Combine(folder, "stage"), "https://example.invalid", overrides)
         })
         {

@@ -13,7 +13,7 @@ internal static class PortablePublicationChecks
         File.WriteAllBytes(download, [1]);
         UpdateImagePublication.RememberVerified(download, new string('A', 64), new string('B', 40));
         string script = UpdateImagePublication.Script(download, Path.Combine(root, "app", new string('x', 120), "KillerBench.exe"),
-            true, "https://github.com/SteveTheKiller/KillerBench/releases", "KillerBench", "1.0.0", "HKLM");
+            true, "https://github.com/SteveTheKiller/KillerBench/releases", "KillerBench", "1.0.0", "HKLM", originalHash: new string('C', 64));
         int length = ImmutablePowerShell.Arguments(script).Length;
         Console.WriteLine("Update helper command length: " + length + " of 30000.");
         if (length > 28_000) throw new Exception("The update helper has under 2,000 characters of margin: " + length);
@@ -43,8 +43,14 @@ $ops.Relaunch = { param($plan)
             // Replace only the launch boundary and the fixture publisher (cmd.exe is catalog-signed by Microsoft).
             // The hash checks, parent pins and held image run as shipped.
             string signer = mode == "wrong-publisher" ? "$plan.Signer = 'Not The Publisher'\n" : "$plan.Signer = 'Microsoft'\n";
+            // The helper records the installed copy before the app closes, so a stand-in has to exist. It carries
+            // no signature, so its certificate identity is replaced too.
+            byte[] installed = [9, 8, 7];
+            File.WriteAllBytes(target, installed);
+            string identity = "$ops.VerifiedTargetThumb = { param($path, $signer) '" + UpdateHelperChecks.Signer + "' }\n";
             string script = UpdateImagePublication.Script(download, target, false, "https://example.invalid", "Fixture",
-                overrides: signer + UpdateHelperChecks.CatalogPublisher + "\n" + hook);
+                overrides: signer + identity + UpdateHelperChecks.CatalogPublisher + "\n" + hook,
+                originalHash: Convert.ToHexString(SHA256.HashData(installed)));
             if (mode == "swapped") File.AppendAllText(download, "changed after verification");
             var start = UpdateHelperChecks.Helper(script);
             start.RedirectStandardError = true;

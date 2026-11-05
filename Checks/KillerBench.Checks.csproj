@@ -21,5 +21,8 @@
   <ItemGroup><Compile Include="../Services/Preferences.cs" Link="Preferences.cs" /></ItemGroup>
   <ItemGroup><Compile Include="../Services/UpdateImagePublication.cs" Link="UpdateImagePublication.cs" /></ItemGroup>
   <ItemGroup><Compile Include="../Services/ExecutableDeployment.cs" Link="ExecutableDeployment.cs" /></ItemGroup>
+  <ItemGroup><Compile Include="../Services/ReleaseIdentity.cs" Link="ReleaseIdentity.cs" /></ItemGroup>
+  <ItemGroup><Compile Include="../Services/CodeSignature.cs" Link="CodeSignature.cs" /></ItemGroup>
+  <ItemGroup><Compile Include="../Services/InstallerExitCodes.cs" Link="InstallerExitCodes.cs" /></ItemGroup>
   <ItemGroup><Compile Include="../Packaging/KillerLauncher/InstallerPrerequisitePolicy.cs" Link="InstallerPrerequisitePolicy.cs" /></ItemGroup>
 </Project>

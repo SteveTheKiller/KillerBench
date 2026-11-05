@@ -147,7 +147,6 @@ namespace KillerLauncher
 
         internal static int Install(bool machine, bool desktop, string? destinationOverride = null)
         {
-            using var installLease = KillerFamily.Deployment.InstallerExitCodes.Acquire(ProductName);
             if (!IsTrustedForInstall(CurrentExecutablePath()))
                 throw new System.Security.SecurityException(
                     LauncherStrings.Get("SignatureInvalid"));
@@ -170,6 +169,9 @@ namespace KillerLauncher
             string destination = !string.IsNullOrWhiteSpace(testRoot)
                 ? Path.GetFullPath(testRoot)
                 : ValidateInstallDirectory(destinationOverride ?? DefaultInstallDirectory(machine));
+            // The same per-folder lease the update helpers take, so an install and an update of one
+            // folder never publish over each other.
+            using var installLease = KillerFamily.Deployment.InstallerExitCodes.Acquire(ProductName, destination);
             ValidateInstallOwnership(destination, machine);
             if (string.IsNullOrWhiteSpace(testRoot))
                 CloseInstalledCopies(machine

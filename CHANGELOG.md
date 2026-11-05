@@ -4,6 +4,10 @@
 
 1.0.1 keeps saved reports and the disk-busy and shadow-storage checks correct on every Windows region, makes updates and the file picker recover from more failures, and refreshes the demo and Chocolatey listing.
 
+### Security
+
+- An all-users install can apply later updates. The elevated update compared the certificate's full name against part of it and refused every release. Update signatures must now carry the exact publisher name and pass a revocation check, falling back to an offline check only when the revocation server cannot be reached. Update metadata downloads are capped at 1 MB, and an install and an update of one folder lock each other out.
+
 ### Fixed
 
 - The file picker loads icons and picture previews in the background, refreshes overwritten previews, and restores its position on any monitor. Scrollbar buttons have localized screen-reader names.

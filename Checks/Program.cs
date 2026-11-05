@@ -42,6 +42,11 @@ internal static class Program
                 QueuedRelaunchChecks.Run(Path.GetTempPath());
                 return 0;
             }
+            if (args is ["--only", "update-trust"])
+            {
+                UpdateTrustRegressionChecks.Run();
+                return 0;
+            }
             if (args is ["--only", "updater-merge-boundaries"])
             {
                 UpdaterMergeBoundaryChecks.Run(CreateScratchDirectory());
@@ -828,6 +833,7 @@ internal static class Program
             NativeScenarioRunnerChecks.RunAsync().GetAwaiter().GetResult();
             DemoWorkflowChecks.Run();
             ReleaseUpdateChecks.Run();
+            UpdateTrustRegressionChecks.Run();
             InvestigationChecks.Run();
             ServicingLogChecks.RunAsync(scratch).GetAwaiter().GetResult();
             ServicingActivityMonitorChecks.RunAsync().GetAwaiter().GetResult();

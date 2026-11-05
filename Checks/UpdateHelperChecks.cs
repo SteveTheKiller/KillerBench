@@ -65,7 +65,7 @@ $ops.Publisher = { param($path, $plan)
         File.WriteAllBytes(portableDownload, installer);
         UpdateImagePublication.RememberVerified(portableDownload, hash, Signer);
         string portable = UpdateImagePublication.Script(portableDownload, Path.Combine(root, "KillerBench-Portable.exe"), false,
-            "https://example.invalid/releases", "KillerBench");
+            "https://example.invalid/releases", "KillerBench", originalHash: new string('C', 64));
         // The real launch must fit; the parse runs from a file so its wrapper cannot hit the limit itself.
         ImmutablePowerShell.Arguments(portable);
         string portableScript = Path.Combine(root, "portable-helper.ps1");

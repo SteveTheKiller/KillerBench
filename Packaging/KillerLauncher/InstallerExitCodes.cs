@@ -62,6 +62,31 @@ namespace KillerFamily.Deployment
             value.IndexOfAny(PathSeparators) >= 0;
 #endif
 
+        /// <summary>The install lock scoped to one target folder, so a per-user and an all-users
+        /// install serialize per directory instead of blocking each other. The folder is hashed to
+        /// keep the mutex name short and free of path characters.</summary>
+        internal static IDisposable Acquire(string product, string directory)
+            => Acquire(ScopedProduct(product, directory));
+
+        internal static string MutexName(string product, string directory)
+            => @"Global\KillerTools-Install-" + ScopedProduct(product, directory);
+
+        private static string ScopedProduct(string product, string directory)
+        {
+            if (string.IsNullOrWhiteSpace(product) || ContainsPathSeparator(product))
+                throw new ArgumentException("A product name is required.", nameof(product));
+            string scope = Path.GetFullPath(directory).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).ToUpperInvariant();
+            byte[] scopeBytes = System.Text.Encoding.UTF8.GetBytes(scope);
+#if NET8_0_OR_GREATER
+            string token = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(scopeBytes));
+#else
+            string token;
+            using (var sha = System.Security.Cryptography.SHA256.Create())
+                token = BitConverter.ToString(sha.ComputeHash(scopeBytes)).Replace("-", "");
+#endif
+            return product + "-" + token;
+        }
+
         internal static IDisposable Acquire(string product)
         {
             if (string.IsNullOrWhiteSpace(product) || ContainsPathSeparator(product))

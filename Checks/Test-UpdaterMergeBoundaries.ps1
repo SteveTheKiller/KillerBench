@@ -14,7 +14,8 @@ if ($parseErrors.Count -ne 0) { throw 'The actual emitted publication artifact d
 $body = $ast.Find({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq 'Invoke-UpdateImagePublication' }, $true)
 $opsAst = $ast.Find({ param($node) $node -is [Management.Automation.Language.AssignmentStatementAst] -and $node.Left.Extent.Text -eq '$ops' }, $true)
 $planAst = $ast.Find({ param($node) $node -is [Management.Automation.Language.AssignmentStatementAst] -and $node.Left.Extent.Text -eq '$plan' }, $true)
-$dispatch = $ast.EndBlock.Statements | Where-Object { $_ -is [Management.Automation.Language.IfStatementAst] -and $_.Extent.Text.StartsWith('if (Invoke-UpdateImagePublication $plan $ops)') } | Select-Object -Last 1
+# The per-user helper takes the install lease first, so its dispatch sits inside that try block.
+$dispatch = $ast.FindAll({ param($node) $node -is [Management.Automation.Language.IfStatementAst] -and $node.Extent.Text.StartsWith('if (Invoke-UpdateImagePublication $plan $ops)') }, $true) | Select-Object -Last 1
 if ($null -eq $body -or $null -eq $opsAst -or $null -eq $planAst -or $null -eq $dispatch) { throw 'The emitted publication core/plan/operations/dispatch were not found.' }
 Invoke-Expression $body.Extent.Text
 Invoke-Expression $planAst.Extent.Text
