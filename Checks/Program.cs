@@ -37,6 +37,11 @@ internal static class Program
                 CliDocumentationChecks.Run();
                 return 0;
             }
+            if (args is ["--only", "focus-ring-styles"])
+            {
+                KeyboardFocusRingStyleChecks.Run();
+                return 0;
+            }
             if (args is ["--only", "queued-relaunch"])
             {
                 QueuedRelaunchChecks.Run(Path.GetTempPath());
@@ -801,6 +806,7 @@ internal static class Program
             GoalUncertaintyChecks.RunAsync().GetAwaiter().GetResult();
             CliCapabilitiesChecks.RunAsync().GetAwaiter().GetResult();
             CliDocumentationChecks.Run();
+            KeyboardFocusRingStyleChecks.Run();
             CliDebloatRecoveryChecks.RunAsync(scratch).GetAwaiter().GetResult();
             WindowsMtuDispatchChecks.RunAsync().GetAwaiter().GetResult();
             MutationDispatchChecks.RunAsync().GetAwaiter().GetResult();
