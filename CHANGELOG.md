@@ -25,6 +25,7 @@
 ### Changed
 
 - Demo runs and screenshots use realistic workstation findings and normal report labels.
+- Single-line text fields are as tall as the dropdowns beside them, so form rows line up instead of the text boxes standing oversized.
 
 ### Added
 
