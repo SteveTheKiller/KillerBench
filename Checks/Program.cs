@@ -42,6 +42,11 @@ internal static class Program
                 KeyboardFocusRingStyleChecks.Run();
                 return 0;
             }
+            if (args is ["--only", "outline-caption"])
+            {
+                OutlineButtonCaptionChecks.Run();
+                return 0;
+            }
             if (args is ["--only", "queued-relaunch"])
             {
                 QueuedRelaunchChecks.Run(Path.GetTempPath());
@@ -807,6 +812,7 @@ internal static class Program
             CliCapabilitiesChecks.RunAsync().GetAwaiter().GetResult();
             CliDocumentationChecks.Run();
             KeyboardFocusRingStyleChecks.Run();
+            OutlineButtonCaptionChecks.Run();
             CliDebloatRecoveryChecks.RunAsync(scratch).GetAwaiter().GetResult();
             WindowsMtuDispatchChecks.RunAsync().GetAwaiter().GetResult();
             MutationDispatchChecks.RunAsync().GetAwaiter().GetResult();
