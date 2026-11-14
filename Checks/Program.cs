@@ -13,6 +13,11 @@ internal static class Program
     private static int Main(string[] args)
     {
         if (ProfileBoundaryProcess.TryRun(args)) return 0;
+        if (args is ["--only", "restore-point-cli-parsing"])
+        {
+            SystemRestoreCommandParsingChecks.RunAsync().GetAwaiter().GetResult();
+            return 0;
+        }
         if (args is ["--only", "native-profile-metadata"])
         {
             NativeAcceptancePackage.RunAsync(ProfileMetadataNativeAcceptanceChecks.RunAsync).GetAwaiter().GetResult();

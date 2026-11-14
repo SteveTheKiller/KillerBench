@@ -1,9 +1,10 @@
+using System.IO;
 using System.Text.Json;
 using KillerBench.Engine;
 
 internal static class SystemRestoreCommands
 {
-    internal static async Task<int> RunAsync(string[] args)
+    internal static async Task<int> RunAsync(string[] args, ISystemRestoreCreationHost? creationHost = null, string? journalFolder = null)
     {
         bool recover = args[0] == "restore-point-recover";
         if (recover && args.Length != 1)
@@ -13,9 +14,9 @@ internal static class SystemRestoreCommands
         Console.CancelKeyPress += cancel;
         try
         {
-            string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            string folder = journalFolder ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "KillerBench", "SystemRestore");
-            var host = new WindowsSystemRestoreCreationHost();
+            var host = creationHost ?? new WindowsSystemRestoreCreationHost();
             SystemRestoreCreationResult result;
             if (recover)
                 result = await SystemRestoreCreation.ReconcileAsync(folder, host, new Progress(), stop.Token);
@@ -23,9 +24,9 @@ internal static class SystemRestoreCommands
             {
                 if (args.Length is < 2 or > 4)
                     throw new ArgumentException("Use restore-point DESCRIPTION [ModifySettings|ApplicationInstall|DeviceDriverInstall] [--execute].");
-                bool execute = args.Contains("--execute", StringComparer.Ordinal);
-                var values = args.Skip(2).Where(value => value != "--execute").ToArray();
-                if (values.Length > 1 || args.Skip(1).Count(value => value == "--execute") > 1)
+                bool execute = args.Length >= 3 && args[^1] == "--execute";
+                var values = args.Skip(2).Take(args.Length - 2 - (execute ? 1 : 0)).ToArray();
+                if (values.Length > 1)
                     throw new ArgumentException("Use one optional reason and one optional --execute switch.");
                 var reason = values.Length == 0 ? SystemRestorePointReason.ModifySettings :
                     Enum.Parse<SystemRestorePointReason>(values[0], ignoreCase: true);
