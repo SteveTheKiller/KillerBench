@@ -26,6 +26,7 @@
 
 - Demo runs and screenshots use realistic workstation findings and normal report labels.
 - Single-line text fields are as tall as the dropdowns beside them, so form rows line up instead of the text boxes standing oversized.
+- The copyright at the right end of the footer ends 8 px before the corner grip, the same gap in every Killer app, and the grip's dots line up with the other apps' grips.
 
 ### Added
 
