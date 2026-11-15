@@ -776,18 +776,20 @@
               <TextBlock Text="{DynamicResource Str_Knowledge_Description}" TextWrapping="Wrap" Margin="0,0,0,10" Foreground="{DynamicResource MutedTextBrush}"/>
               <TextBlock x:Name="CodeLookupLabel" Text="{DynamicResource Str_Knowledge_CodeLabel}" Margin="0,0,0,4"/>
               <TextBox x:Name="KnowledgeCode" AutomationProperties.Name="{DynamicResource Str_Knowledge_CodeTip}" ToolTip="{DynamicResource Str_Knowledge_CodeTip}" Margin="0,0,0,8"/>
-              <Button Content="{DynamicResource Str_Knowledge_Run}" Click="OnLookupErrorCode" HorizontalAlignment="Left"/>
+              <Button x:Name="KnowledgeRunButton" Content="{DynamicResource Str_Knowledge_Run}" Click="OnLookupErrorCode" HorizontalAlignment="Left"/>
               <Expander Header="{DynamicResource Str_Knowledge_PackHeader}" Foreground="{DynamicResource TextBrush}" Margin="0,14,0,0"><StackPanel Margin="0,8,0,0">
               <TextBlock Text="{DynamicResource Str_Knowledge_PackDescription}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,8"/>
               <TextBlock Text="{DynamicResource Str_Knowledge_ContextLabel}" Margin="0,0,0,4"/>
               <TextBox x:Name="KnowledgeContext" AutomationProperties.Name="{DynamicResource Str_Knowledge_ContextLabel}" ToolTip="{DynamicResource Str_Knowledge_ContextTip}" Margin="0,0,0,8"/>
-              <Button Content="{DynamicResource Str_Knowledge_PackActions}" Click="OnWorkbenchMenu" HorizontalAlignment="Left"><Button.ContextMenu><ContextMenu>
-                <MenuItem Header="{DynamicResource Str_Knowledge_Lookup}" Click="OnKnowledgeLookup"/>
-                <MenuItem x:Name="KnowledgeSearchButton" Header="{DynamicResource Str_Knowledge_Search}" Tag="search" Click="OnKnowledgeLookup"/>
-                <MenuItem Header="{DynamicResource Str_Knowledge_Compare}" Click="OnKnowledgeCompare"/>
-                <Separator/>
-                <MenuItem x:Name="WindowsCodeAction" Header="{DynamicResource Str_Knowledge_WindowsCode}" Click="OnWindowsCodeLookup"/>
-                <MenuItem x:Name="DeviceCodeAction" Header="{DynamicResource Str_Knowledge_DeviceCode}" Click="OnDeviceCodeLookup"/>
+              <Button Content="{DynamicResource Str_Knowledge_PackActions}" Click="OnWorkbenchMenu" HorizontalAlignment="Left"><Button.ContextMenu><ContextMenu Style="{StaticResource CardMenu}">
+                <!-- A family card: title, then a row per action with its icon. The Windows and
+                     device code rows that sat here ran the same lookup as the Run button above. -->
+                <MenuItem Style="{StaticResource CardSlot}" AutomationProperties.Name="{DynamicResource Str_Knowledge_PackHeader}">
+                  <MenuItem.Header><TextBlock Text="{DynamicResource Str_Knowledge_PackHeader}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" TextTrimming="CharacterEllipsis" Margin="4,2,4,6"/></MenuItem.Header>
+                </MenuItem>
+                <MenuItem Header="{DynamicResource Str_Knowledge_Lookup}" Icon="&#xE82D;" Click="OnKnowledgeLookup"/>
+                <MenuItem x:Name="KnowledgeSearchButton" Header="{DynamicResource Str_Knowledge_Search}" Icon="&#xE721;" Tag="search" Click="OnKnowledgeLookup"/>
+                <MenuItem Header="{DynamicResource Str_Knowledge_Compare}" Icon="&#xE8AB;" Click="OnKnowledgeCompare"/>
               </ContextMenu></Button.ContextMenu></Button>
             </StackPanel></Expander></StackPanel></Expander></StackPanel></ScrollViewer>
         </Border></Grid>
@@ -1014,14 +1016,17 @@
                 <Grid Height="140">
                   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
                   <DockPanel>
-                    <Button DockPanel.Dock="Right" Content="{DynamicResource Str_Session_Sources}" Click="OnWorkbenchMenu" Margin="8,0,0,6"><Button.ContextMenu><ContextMenu>
-                      <MenuItem x:Name="OpenCaptureButton" Header="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture"/>
-                      <MenuItem x:Name="SaveCaptureButton" Header="{DynamicResource Str_SaveCapture}" Click="OnSaveCapture" IsEnabled="False"/>
-                      <MenuItem Header="{DynamicResource Str_Advanced_OpenWorkflow}" Click="OnOpenWorkflowJournal"/>
-                      <MenuItem Header="{DynamicResource Str_Session_LoadSample}" Click="OnSample"/>
+                    <Button DockPanel.Dock="Right" Content="{DynamicResource Str_Session_Sources}" Click="OnWorkbenchMenu" Margin="8,0,0,6"><Button.ContextMenu><ContextMenu Style="{StaticResource CardMenu}">
+                      <MenuItem Style="{StaticResource CardSlot}" AutomationProperties.Name="{DynamicResource Str_Session_Sources}">
+                        <MenuItem.Header><TextBlock Text="{DynamicResource Str_Session_Sources}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" TextTrimming="CharacterEllipsis" Margin="4,2,4,6"/></MenuItem.Header>
+                      </MenuItem>
+                      <MenuItem x:Name="OpenCaptureButton" Header="{DynamicResource Str_OpenCapture}" Icon="&#xE8E5;" Click="OnOpenCapture"/>
+                      <MenuItem x:Name="SaveCaptureButton" Header="{DynamicResource Str_SaveCapture}" Icon="&#xE74E;" Click="OnSaveCapture" IsEnabled="False"/>
+                      <MenuItem Header="{DynamicResource Str_Advanced_OpenWorkflow}" Icon="&#xE81C;" Click="OnOpenWorkflowJournal"/>
+                      <MenuItem Header="{DynamicResource Str_Session_LoadSample}" Icon="&#xE8A5;" Click="OnSample"/>
                       <Separator/>
-                      <MenuItem x:Name="WorkflowActions" Header="{DynamicResource Str_Advanced_Workflows}" Click="OnWorkflows"/>
-                      <MenuItem x:Name="RepairActions" Header="{DynamicResource Str_Advanced_Repairs}" Click="OnRepairs"/>
+                      <MenuItem x:Name="WorkflowActions" Header="{DynamicResource Str_Advanced_Workflows}" Icon="&#xE768;" Click="OnWorkflows"/>
+                      <MenuItem x:Name="RepairActions" Header="{DynamicResource Str_Advanced_Repairs}" Icon="&#xE90F;" Click="OnRepairs"/>
                     </ContextMenu></Button.ContextMenu></Button>
                     <TextBlock x:Name="SessionLabel" VerticalAlignment="Center"/>
                   </DockPanel>

@@ -1,0 +1,5 @@
+SYNTHETIC DEMO. No customer or machine evidence is included.
+2026-09-12 11:00:00, Info                  SP     Starting synthetic setup session
+2026-09-12 11:00:01, Error                 MIG    Synthetic migration operation failed: 0x80070005
+2026-09-12 11:00:02, Error                 SP     Synthetic operation did not complete
+2026-09-12 11:00:03, Info                  SP     End of synthetic capture. Final setup outcome unknown.

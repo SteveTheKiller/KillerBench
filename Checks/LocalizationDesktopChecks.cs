@@ -46,13 +46,13 @@ internal static class LocalizationDesktopChecks
                 Require(AutomationProperties.GetName((Button)window.FindName("ExportReportButton")) == (string)window.FindResource("Str_ExportReport"), "Export accessible label follows " + locale);
                 ((Expander)window.FindName("KnowledgeTools")).IsExpanded = true;
                 ((TextBox)window.FindName("KnowledgeCode")).Text = "not-a-code";
-                ((MenuItem)window.FindName("WindowsCodeAction")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                ((Button)window.FindName("KnowledgeRunButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 string status = ((TextBlock)window.FindName("StatusLabel")).Text;
                 Require(status == (string)window.FindResource("Str_Tkp_EnterWindowsCode"), "Windows code validation follows " + locale);
                 Require(locale.ToString() == "EnUS" || status != englishInvalidCode, "Non-English validation does not silently fall back in " + locale);
                 categories.SelectedIndex = 3;
                 ((TextBox)window.FindName("KnowledgeCode")).Text = "-1";
-                ((MenuItem)window.FindName("DeviceCodeAction")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                ((Button)window.FindName("KnowledgeRunButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 Require(((TextBlock)window.FindName("StatusLabel")).Text == (string)window.FindResource("Str_Tkp_EnterDeviceCode"), "Device code validation follows " + locale);
                 var report = new WorkflowResult(WorkflowKind.Privacy, "LANGUAGE-FIXTURE", DateTimeOffset.UtcNow,
                     "No issues detected in checked scopes", [new("Fixture", CheckState.Clear, "Read-only fixture")], [], "read-only");

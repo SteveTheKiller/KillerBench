@@ -558,9 +558,6 @@ internal static class Program
                 Require(((Expander)window.FindName("KnowledgeTools")).Visibility ==
                     (category is 0 or 3 ? Visibility.Visible : Visibility.Collapsed),
                     "Reference tools stay in Diagnostics and Devices, category " + category);
-                Require(((MenuItem)window.FindName("DeviceCodeAction")).Visibility ==
-                    (category == 3 ? Visibility.Visible : Visibility.Collapsed),
-                    "Device codes appear only in Devices, category " + category);
             }
             scopedCategories.SelectedIndex = 0;
             window.Left = SystemParameters.VirtualScreenLeft + 100;
@@ -1983,7 +1980,7 @@ internal static class Program
             var advanced = (Expander)window.FindName("AdvancedTools");
             advanced.IsExpanded = true;
             window.UpdateLayout();
-            var windowsLookup = (MenuItem)window.FindName("WindowsCodeAction");
+            var windowsLookup = (Button)window.FindName("KnowledgeRunButton");
             var knowledgeCode = (TextBox)window.FindName("KnowledgeCode");
             string beforeLookup = text.Text;
             ((MenuItem)window.FindName("KnowledgeSearchButton")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
@@ -2000,25 +1997,27 @@ internal static class Program
             var emptySearch = (TextEvidence)formatSearch.Invoke(null, [searchCatalog, "fixture", "absent", new KnowledgeSearchResult(0, [])])!;
             Require(!emptySearch.Truncated && emptySearch.Lines.Any(line => line.Contains("No reference text matches")), "Empty reference search is explicit");
             knowledgeCode.Text = "not-a-code";
-            windowsLookup.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            windowsLookup.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(text.Text == beforeLookup, "Invalid Windows code preserves existing evidence");
             knowledgeCode.Text = "0x5";
-            windowsLookup.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            windowsLookup.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(text.Text.Contains("Code: 5 (0x5)") && text.Text.Contains("WINDOWS SYSTEM MESSAGE"),
                 "Windows lookup button replaces sample with code reference");
             knowledgeCode.Text = "0x80240034";
-            windowsLookup.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            windowsLookup.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(text.Text.Contains("WINDOWS UPDATE RESULT CODE") && text.Text.Contains("WU_E_DOWNLOAD_FAILED") &&
                 text.Text.Contains("BITS"), "Windows lookup adds the shared Windows Update reference and diagnostic route");
             knowledgeCode.Text = "0xFFFFFFFF";
-            windowsLookup.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            windowsLookup.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(text.Text.Contains("No system message found for this code."), "Unknown Windows code is explicitly unresolved");
             knowledgeCode.Clear();
             advanced.IsExpanded = false;
             ((Button)window.FindName("DemoButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             for (int attempt = 0; attempt < 30 && ((TextBlock)window.FindName("EvidenceTitle")).Text != "CBS.log"; attempt++) Pump();
-            Require(FindButtons((StackPanel)window.FindName("ReportContent")).Count(b => Equals(b.Content, "Show evidence")) == 2 &&
-                ((Border)window.FindName("ReportPane")).IsVisible, "Demo import visibly populates two findings");
+            int demoFindings = FindButtons((StackPanel)window.FindName("ReportContent")).Count(b => Equals(b.Content, "Show evidence"));
+            bool reportShown = ((Border)window.FindName("ReportPane")).IsVisible;
+            Require(demoFindings == 2 && reportShown,
+                $"Demo import visibly populates two findings (found {demoFindings}, report pane visible: {reportShown}, evidence title: {((TextBlock)window.FindName("EvidenceTitle")).Text})");
             Require(((StackPanel)window.FindName("FindingsPanel")).Visibility == Visibility.Visible, "Findings opens after import");
             window.UpdateLayout();
             var findingCards = (StackPanel)window.FindName("ReportContent");

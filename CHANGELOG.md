@@ -27,6 +27,8 @@
 - Demo runs and screenshots use realistic workstation findings and normal report labels.
 - Single-line text fields are as tall as the dropdowns beside them, so form rows line up instead of the text boxes standing oversized.
 - The copyright at the right end of the footer ends 8 px before the corner grip, the same gap in every Killer app, and the grip's dots line up with the other apps' grips.
+- Every context menu and flyout is a family card with an icon on each row: the text box menu, the knowledge pack and sources menus, and the file picker's sort and pin menus. The rail menus open from the corner of the content pane, and the knowledge pack menu drops its two lookup rows that repeated the Run button.
+- A translation file that fails to load reports through the family dialog instead of a plain Windows message box.
 
 ### Added
 

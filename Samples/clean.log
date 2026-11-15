@@ -1,0 +1,5 @@
+SYNTHETIC NEGATIVE CASE. No customer or machine evidence is included.
+2026-09-12 10:42:00, Info                  CBS    Starting synthetic session
+2026-09-12 10:42:01, Info                  CBS    Reference code 0x800f081f in informational text
+2026-09-12 10:42:02, Info                  CBS    Synthetic operation completed
+An unrelated sentence containing error or 0x80073712 should not produce a diagnostic finding.

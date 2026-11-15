@@ -107,8 +107,8 @@ public partial class MainWindow
         RingAccentStrip();
     }
 
-    // The ring marks the chosen accent and follows the mouse, and the pill under the mouse lifts
-    // a little (KillerNotes). 98SE swatches stay flat.
+    // The ring marks the chosen accent and follows the mouse, and the pill under the mouse grows
+    // a little (KillerNotes). No shadow under a swatch: it is a button face. 98SE stays flat.
     private void RingAccentStrip()
     {
         var ring = (Brush)FindResource("TextBrush");
@@ -125,10 +125,6 @@ public partial class MainWindow
                 scale.BeginAnimation(ScaleTransform.ScaleYProperty,
                     new DoubleAnimation(pop ? 1.03 : 1, TimeSpan.FromMilliseconds(100)));
             }
-            dot.Effect = pop
-                ? new System.Windows.Media.Effects.DropShadowEffect
-                { Color = Colors.Black, BlurRadius = 4, ShadowDepth = 1, Opacity = 0.25 }
-                : null;
         }
     }
     private void OnAccentKey(object sender, KeyEventArgs e)
@@ -141,12 +137,12 @@ public partial class MainWindow
         if (sender is Border { Tag: Accent accent })
         { ThemeManager.ApplyAccent(ThemeManager.Current, accent); UpdateAccentStrip(false); e.Handled = true; }
     }
+    // Theme and language are the big rail menus, so they open in the content pane's corner
+    // whatever button opens them (FlyoutPlacement).
     private void OpenFamilyMenu(ContextMenu menu, Button anchor)
     {
-        menu.PlacementTarget = anchor;
-        menu.Placement = PlacementMode.Right;
-        menu.HorizontalOffset = 4;
-        menu.VerticalOffset = 0;
+        Controls.FlyoutPlacement.UsePane(ContentPane);
+        Controls.FlyoutPlacement.Attach(menu, null);
         menu.IsOpen = true;
         if (SystemParameters.ClientAreaAnimation)
             menu.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(150)));

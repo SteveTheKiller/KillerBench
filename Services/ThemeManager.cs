@@ -35,9 +35,31 @@ namespace KillerBench.Services
 
         /// <summary>Killer Sans UI (Killer Sans scaled to Segoe UI proportions) with the Segoe fallback stack.</summary>
         private static readonly string AssemblyName = typeof(ThemeManager).Assembly.GetName().Name!;
-        internal static readonly FontFamily KillerSansUiStack = new(new Uri($"pack://application:,,,/{AssemblyName};component/"), "./Fonts/#Killer Sans UI, Segoe UI, Microsoft JhengHei UI, Nirmala UI");
+        /// <summary>The interface language the font stacks are built for, a culture name such as "zh-CN".</summary>
+        internal static string UiLanguage { get; private set; } = "en-US";
+        internal static FontFamily KillerSansUiStack { get; private set; } = UiStack(UiLanguage);
         internal static readonly FontFamily KillerSansFont = new(new Uri("pack://application:,,,/"), "./Fonts/#Killer Sans");
-        internal static readonly FontFamily LacquerHeadingStack = new(new Uri("pack://application:,,,/"), "./Fonts/#Lacquer, ./Fonts/#Killer Sans UI, Segoe UI, Microsoft JhengHei UI, Nirmala UI");
+        internal static FontFamily LacquerHeadingStack { get; private set; } = HeadingStack(UiLanguage);
+
+        private static FontFamily UiStack(string language) =>
+            new(new Uri($"pack://application:,,,/{AssemblyName};component/"), UiFontStack.For(language));
+        private static FontFamily HeadingStack(string language) =>
+            new(new Uri("pack://application:,,,/"), UiFontStack.Heading(language));
+
+        /// <summary>
+        /// Builds the font stacks for an interface language and republishes the theme when they
+        /// change, so every font resource bound with DynamicResource follows. A language that keeps
+        /// the same stack republishes nothing.
+        /// </summary>
+        internal static void SetUiLanguage(string language)
+        {
+            bool changed = UiFontStack.For(language) != UiFontStack.For(UiLanguage);
+            UiLanguage = language;
+            if (!changed) return;
+            KillerSansUiStack = UiStack(language);
+            LacquerHeadingStack = HeadingStack(language);
+            LoadDict(_current);
+        }
         /// <summary>
         /// Read a corner radius out of the live theme. For code-built controls, which cannot use a
         /// DynamicResource and so had their radii as C# literals - the exact bug that kept the
@@ -491,7 +513,9 @@ namespace KillerBench.Services
             SetIfAbsent("DialogButtonsMargin", new Thickness(16, 12, 16, 16));
             SetIfAbsent("DialogContentMargin", new Thickness(0));
             SetIfAbsent("DialogOuterBorderThickness", new Thickness(1));
-            SetIfAbsent("DialogTitleBarPadding", new Thickness(6, 0, 14, 0));
+            // Right 2: the card themes' close X has no visible face, so it reads against the card's
+            // corner and sits as far in from the right edge as down from the top (16 px).
+            SetIfAbsent("DialogTitleBarPadding", new Thickness(6, 0, 2, 0));
             SetIfAbsent("DialogFieldMargin", new Thickness(16, 12, 16, 0));
             // 10, the halo every dialog already reserved for its drop shadow. 98SE sets 0: it
             // casts no shadow, and an invisible 10px gutter would put the resize grab outside
@@ -713,7 +737,6 @@ namespace KillerBench.Services
             // toolbar buttons that should be bare until hover use BareButton (Controls.xaml).
             SetIfAbsent("OutlineFaceBrush", Transparent);          // rest FILL
             Mirror("OutlineRestBrush", "OutlineBtnBrush");         // rest EDGE
-            SetIfAbsent("OutlineLiftRestVisibility", Visibility.Visible);   // resting shadow
             Mirror("OutlineTextBrush", "OutlineBtnBrush");         // rest TEXT
             Mirror("OutlineHoverBrush", "OutlineBtnBrush");        // hover FILL
             // OutlineHoverTextBrush is set AFTER the accent overlay, next to OnOutlineBtnBrush -
@@ -1038,6 +1061,9 @@ namespace KillerBench.Services
                 // A 1px MDL2 stroke disappears against a gray button face at 16px.
                 combined["CaptionGlyphWeight"] = flat ? FontWeights.Bold : FontWeights.Normal;
 
+                // ...and at 10px the X fills a 98SE face edge to edge, which reads as off center.
+                combined["CaptionGlyphSize"] = flat ? 8.0 : 10.0;
+
                 // The About card only gets a caption band when the theme asks for one; 0 keeps
                 // every other theme's card at the exact layout it already had.
                 combined["AboutCaptionHeight"] = flat ? combined["DialogTitleBarHeight"] : 0.0;
@@ -1057,6 +1083,14 @@ namespace KillerBench.Services
                 combined["AboutCloseGlyph"] = flat ? "\uE8BB" : "\u2715";
                 combined["AboutCloseFont"]  = flat ? new System.Windows.Media.FontFamily("Segoe MDL2 Assets")
                                                    : new System.Windows.Media.FontFamily("Segoe UI");
+                // 8 on 98SE: the 16x14 caption button has a 2 px bevel all round, and at the old
+                // 11 the bold X filled the whole face, jammed against the left highlight and the
+                // bottom shadow. 8 draws it centered with the bevel clear, the Win98 proportion.
+                combined["AboutCloseFontSize"] = flat ? 8.0 : 11.0;
+                // Segoe UI draws U+2715 1.5 px below the middle of its line box, and the button
+                // centers the line box, so the card themes' X sat low in its 28x26 slot. A 3 px
+                // bottom margin lifts the centered glyph by 1.5. The MDL2 X on 98SE needs none.
+                combined["AboutCloseGlyphMargin"] = flat ? new Thickness(0) : new Thickness(0, 0, 0, 3);
                 combined["AboutCloseFg"] = flat ? combined["CaptionCloseBrush"] : combined["MutedTextBrush"];
                 if (flat) combined["AboutCloseHoverFg"] = combined["CaptionCloseBrush"];
                 else
@@ -1323,6 +1357,9 @@ namespace KillerBench.Services
                     || combined["MenuHoverBrush"] is not SolidColorBrush hoverFill
                 ? combined["ComboHighlightTextBrush"]
                 : Frozen(ColorContrast.ReadableOn(hoverAccent.Color, hoverFill.Color, 4.5));
+            // Options that sit on the hover fill without being picked (a card segment's other choices) keep the
+            // plain menu text color; the accent marks only the picked one.
+            combined["MenuTrackTextBrush"] = ColorContrast.MenuTrackText(combined);
 
             // A dialog's caption band. TRANSPARENT by default, so the band shows the card's own
             // face and is invisible - the family look, where a dialog title blends into the

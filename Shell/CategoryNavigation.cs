@@ -93,8 +93,6 @@ public partial class MainWindow
             CategoryDescription.Text = category.Description;
             AdvancedTools.Visibility = category.Id == "Updates" ? Visibility.Visible : Visibility.Collapsed;
             KnowledgeTools.Visibility = category.Id is "Diagnostics" or "Devices" ? Visibility.Visible : Visibility.Collapsed;
-            WindowsCodeAction.Visibility = category.Id == "Diagnostics" ? Visibility.Visible : Visibility.Collapsed;
-            DeviceCodeAction.Visibility = category.Id == "Devices" ? Visibility.Visible : Visibility.Collapsed;
             CodeLookupLabel.SetResourceReference(TextBlock.TextProperty,
                 category.Id == "Devices" ? "Str_Knowledge_DeviceLabel" : "Str_Knowledge_CodeLabel");
             CategoryWorkflow.ItemsSource = category.Tools.Select(kind => WorkflowCatalog.All.Single(w => w.Kind == kind)).ToArray();
