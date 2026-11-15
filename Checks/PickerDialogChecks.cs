@@ -46,11 +46,10 @@ internal static class PickerDialogChecks
                 "Open picker permits multiple file selection");
             var tree = (TreeView)dialog.FindName("FolderTreeCtl");
             var treeScroll = FindDescendant<ScrollViewer>(tree);
-            Require(VirtualizingStackPanel.GetIsVirtualizing(tree) &&
-                    VirtualizingStackPanel.GetVirtualizationMode(tree) == VirtualizationMode.Recycling &&
-                    treeScroll?.CanContentScroll == true &&
-                    ScrollViewer.GetCanContentScroll(list),
-                "Picker lists stay virtualized when a folder contains many entries");
+            // The family picker scrolls by pixel, not by row, in both the folder tree and the file list.
+            Require(!ScrollViewer.GetCanContentScroll(tree) && treeScroll?.CanContentScroll != true &&
+                    !ScrollViewer.GetCanContentScroll(list),
+                "Picker folder tree and file list scroll smoothly by pixel");
             Capture(dialog, Path.Combine(scratch, "open-dark.png"));
             ((Button)dialog.FindName("CaptionCloseButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         });
@@ -123,10 +122,16 @@ internal static class PickerDialogChecks
                     (string)dialog.FindResource("Str_Dlg_FileType"),
                     "Save picker file name and file type fields are named by their visible labels");
                 Capture(dialog, Path.Combine(scratch, "save-dark.png"));
-                dialog.Dispatcher.BeginInvoke(new Action(() =>
+                // The picker checks for the existing file off the UI thread, so the prompt arrives
+                // a moment after Save. Wait for it rather than assuming one dispatcher pass.
+                var started = DateTime.UtcNow;
+                var poll = new DispatcherTimer(DispatcherPriority.Normal, dialog.Dispatcher) { Interval = TimeSpan.FromMilliseconds(50) };
+                poll.Tick += (_, _) =>
                 {
                     var confirm = Application.Current.Windows.OfType<ConfirmDialog>()
                         .FirstOrDefault(window => window.IsVisible);
+                    if (confirm is null && DateTime.UtcNow - started < TimeSpan.FromSeconds(5)) return;
+                    poll.Stop();
                     if (confirm is not null)
                     {
                         overwritePromptSeen = true;
@@ -136,7 +141,8 @@ internal static class PickerDialogChecks
                     {
                         if (dialog.IsVisible) dialog.Close();
                     }), DispatcherPriority.Normal);
-                }), DispatcherPriority.Normal);
+                };
+                poll.Start();
                 ((Button)dialog.FindName("AcceptButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             });
             Require(overwritePromptSeen && saveResult != true && File.ReadAllText(existing) == "original",

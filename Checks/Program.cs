@@ -365,10 +365,25 @@ internal static class Program
                 Pump();
                 Require(dialog.FindName("RootBorder") is KillerBench.Controls.PickerBorder { Child.Clip: not null },
                     "Dialog content is clipped to the card corners");
-                Require(dialog.FindName("CancelButton") is Button { IsDefault: true, IsCancel: true },
-                    "Cancel is the default keyboard action");
+                Require(dialog.FindName("OkButton") is Button { IsDefault: true } &&
+                        dialog.FindName("CancelButton") is Button { IsDefault: false, IsCancel: true },
+                    "Enter answers OK and Esc answers Cancel");
+                dialog.DefaultToCancel();
+                Require(dialog.FindName("OkButton") is Button { IsDefault: false } &&
+                        dialog.FindName("CancelButton") is Button { IsDefault: true, IsCancel: true },
+                    "DefaultToCancel moves Enter to Cancel");
                 Capture(dialog, Path.Combine(captures, theme + ".png"));
-                ((Button)dialog.FindName("CloseButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                // The family close is an unnamed OverlayCloseButton; find it by its spoken name.
+                string closeName = (string)dialog.FindResource("Str_Sys_Close");
+                Button? FindClose(DependencyObject node)
+                {
+                    if (node is Button b && System.Windows.Automation.AutomationProperties.GetName(b) == closeName) return b;
+                    for (int i = 0; i < VisualTreeHelper.GetChildrenCount(node); i++)
+                        if (FindClose(VisualTreeHelper.GetChild(node, i)) is Button found) return found;
+                    return null;
+                }
+                (FindClose(dialog) ?? throw new Exception("Dialog has a close button"))
+                    .RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 Require(!dialog.Confirmed && !dialog.IsVisible, "Close never confirms removal");
             }
             var cancel = new KillerBench.Controls.ConfirmDialog("Confirm", "Fixture", "Remove") { Owner = owner };
