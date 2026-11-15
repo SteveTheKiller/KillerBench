@@ -47,6 +47,11 @@ internal static class Program
                 KeyboardFocusRingStyleChecks.Run();
                 return 0;
             }
+            if (args is ["--only", "dialog-caption-close"])
+            {
+                DialogCaptionCloseChecks.Run();
+                return 0;
+            }
             if (args is ["--only", "outline-caption"])
             {
                 OutlineButtonCaptionChecks.Run();
