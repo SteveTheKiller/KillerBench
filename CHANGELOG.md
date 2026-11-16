@@ -11,6 +11,7 @@
 
 ### Fixed
 
+- The Mourning theme highlights selections in its original peach with dark text again, instead of pink.
 - Invalid captures show a controlled error, and report exports preserve open evidence and existing files when saving fails or the destination changes.
 - Storage reviews refuse redirected roots and retain their directory boundary. Browser extension reviews disclose which account they cover.
 - Saved workflow exports retain detailed checks and repairs with historical labels, and HTML reports support every current accent.
