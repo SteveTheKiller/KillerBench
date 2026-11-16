@@ -27,8 +27,8 @@ jobs:
         shell: pwsh
         run: |
           $path = Join-Path $env:RUNNER_TEMP 'komac.exe'
-          Invoke-WebRequest 'https://github.com/russellbanks/Komac/releases/download/v2.16.0/komac-2.16.0-x86_64-pc-windows-msvc.exe' -OutFile $path
-          if ((Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash -ne 'BDC45BAF028F750DA7519CC8A5F2EAB5DFEF46DFE88650EEB0D0A9BF51446E4F') { throw 'Komac hash verification failed.' }
+          Invoke-WebRequest 'https://github.com/russellbanks/Komac/releases/download/v2.17.2/komac-2.17.2-x86_64-pc-windows-msvc.exe' -OutFile $path
+          if ((Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash -ne '38A5A53B2291E959157A46A9ED2F20C1C66E9E238666780519650FCC8D37AD58') { throw 'Komac hash verification failed.' }
           Add-Content -LiteralPath $env:GITHUB_PATH -Value $env:RUNNER_TEMP
       - name: Submit published installer to WinGet
         shell: pwsh
