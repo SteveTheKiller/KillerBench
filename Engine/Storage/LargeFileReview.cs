@@ -21,10 +21,11 @@ public static class LargeFileReview
         var results = new List<LargeFile>();
         int examined = 0;
         bool complete = true;
+        using var boundary = new FileReviewBoundary();
         try
         {
             foreach (string path in FileReviewDirectoryWalker.Files(fullRoot,
-                directoryReader ?? SystemFileReviewDirectoryReader.Instance, token, () => complete = false, traversalLimits ?? new FileReviewTraversalLimits()))
+                directoryReader ?? SystemFileReviewDirectoryReader.Instance, token, () => complete = false, traversalLimits ?? new FileReviewTraversalLimits(), boundary))
             {
                 token.ThrowIfCancellationRequested();
                 if (examined >= maximumFiles) { complete = false; break; }

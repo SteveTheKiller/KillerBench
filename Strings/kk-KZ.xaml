@@ -1271,4 +1271,22 @@
     <sys:String x:Key="Str_Scroll_Down">Төмен айналдыру</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Солға айналдыру</sys:String>
     <sys:String x:Key="Str_Scroll_Right">Оңға айналдыру</sys:String>
+  <sys:String x:Key="Str_PackageReview_Title">Пакеттерді шолу (сақталған сурет)</sys:String>
+  <sys:String x:Key="Str_PackageReview_Scope">Ауқым: {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_Dependents">Тәуелді пакеттер</sys:String>
+  <sys:String x:Key="Str_PackageReview_None">Бұл суретте ешқайсысы хабарланбаған.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Refresh">Тізімді жаңарту үшін {0} әрекетін қайта таңдаңыз. Ешбір пакет өзгертілмеді.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Item">Пакетті шолу тармағы {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_DependentCount">Хабарланған тәуелді пакеттер: {0}. Кез келген әрекет алдында бастапқы шығыс деректерін қарап шығыңыз.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Incomplete">Пакеттер суретін шолу толық емес. Ешбір пакет өзгертілмеді.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Reviewed">Пакеттер суреті қаралды. Пакеттерді жою қолжетімді емес және оған рұқсат берілмеген.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Journal">Пакеттер суретін тек оқуға арналған шолу. Журнал жазылмады.</sys:String>
+  <sys:String x:Key="Str_About_UpdateRejected">Жаңартуды тексеру мүмкін болмады, сондықтан ол жойылды. Ештеңе орнатылмады. Қайталап көруге болады.</sys:String>
+  <sys:String x:Key="Str_About_UpdateHandoffFailed">Жаңартуды бастау мүмкін болмады. KillerBench әлі ашық. Қайталап көруге болады.</sys:String>
+  <sys:String x:Key="Str_About_UpdateElevationCanceled">Жаңарту Windows рұқсат сұрау терезесінде тоқтатылды. Ештеңе орнатылмады. Қайталап көруге болады.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_ChooseAgain">Сақтау алдында экспорттау орнын қайта таңдаңыз.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_Changed">Экспорттау орны расталғаннан кейін өзгерді. Сақтау алдында оны қайта таңдаңыз.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_TooLarge">Бар мақсатты файл 128 MiB қайта жазу шегінен асады. Жаңа файл атауын таңдаңыз.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_NotPublished">Экспорт жарияланбады. Алдыңғы файл мына жерде сақталған: {0}</sys:String>
+  <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Жаңа есеп сақталды. Алдыңғы файл мына жерде сақталған: {0}</sys:String>
 </ResourceDictionary>

@@ -1271,4 +1271,22 @@
     <sys:String x:Key="Str_Scroll_Down">Scorri verso il basso</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Scorri a sinistra</sys:String>
     <sys:String x:Key="Str_Scroll_Right">Scorri a destra</sys:String>
+  <sys:String x:Key="Str_PackageReview_Title">Revisione pacchetti (istantanea conservata)</sys:String>
+  <sys:String x:Key="Str_PackageReview_Scope">Ambito: {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_Dependents">Pacchetti dipendenti</sys:String>
+  <sys:String x:Key="Str_PackageReview_None">Nessuno segnalato in questa istantanea.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Refresh">Seleziona di nuovo {0} per aggiornare l’inventario. Nessun pacchetto è stato modificato.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Item">Elemento di revisione del pacchetto {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_DependentCount">Pacchetti dipendenti segnalati: {0}. Esamina l’output grezzo prima di qualsiasi azione.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Incomplete">La revisione dell’istantanea dei pacchetti è incompleta. Nessun pacchetto è stato modificato.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Reviewed">Istantanea dei pacchetti esaminata. La rimozione dei pacchetti non è disponibile né autorizzata.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Journal">Revisione in sola lettura dell’istantanea dei pacchetti. Nessun registro è stato scritto.</sys:String>
+  <sys:String x:Key="Str_About_UpdateRejected">Non è stato possibile verificare l’aggiornamento, che è stato scartato. Non è stato installato nulla. Puoi riprovare.</sys:String>
+  <sys:String x:Key="Str_About_UpdateHandoffFailed">Non è stato possibile avviare l’aggiornamento. KillerBench è ancora aperto. Puoi riprovare.</sys:String>
+  <sys:String x:Key="Str_About_UpdateElevationCanceled">L’aggiornamento è stato annullato alla richiesta di autorizzazione di Windows. Non è stato installato nulla. Puoi riprovare.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_ChooseAgain">Scegli di nuovo la destinazione di esportazione prima di salvare.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_Changed">La destinazione di esportazione è cambiata dopo la conferma. Sceglila di nuovo prima di salvare.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_TooLarge">Il file di destinazione esistente supera il limite di sovrascrittura di 128 MiB. Scegli un nuovo nome file.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_NotPublished">L’esportazione non è stata pubblicata. Il file precedente è conservato in: {0}</sys:String>
+  <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Il nuovo rapporto è stato salvato. Il file precedente è conservato in: {0}</sys:String>
 </ResourceDictionary>

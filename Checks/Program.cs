@@ -37,6 +37,46 @@ internal static class Program
         WindowsEngine.Register();
         try
         {
+            if (args is ["--only", "file-open-link"])
+            {
+                FileReviewLinkOpenChecks.Run();
+                return 0;
+            }
+            if (args is ["--only", "export-failure-localization"])
+            {
+                ExportFailureLocalizationChecks.RunAsync(CreateScratchDirectory()).GetAwaiter().GetResult();
+                return 0;
+            }
+            if (args is ["--only", "desktop-export-publication"])
+            {
+                DesktopExportChecks.RunPublicationAsync(CreateScratchDirectory()).GetAwaiter().GetResult();
+                return 0;
+            }
+            if (args is ["--only", "redirected-root"])
+            {
+                StorageRedirectedRootChecks.RunAsync().GetAwaiter().GetResult();
+                return 0;
+            }
+            if (args is ["--only", "about-update"]) return IsolatedDesktop.Run("--isolated-about-update");
+            if (args is ["--isolated-about-update"]) return AboutUpdateIntegrationChecks.Run();
+            if (args is ["--only", "desktop-export"]) return IsolatedDesktop.Run("--isolated-desktop-export");
+            if (args is ["--isolated-desktop-export"]) return DesktopExportChecks.Run(CreateScratchDirectory());
+            if (args is ["--only", "review-scope"])
+            {
+                string scratch = CreateScratchDirectory();
+                StorageReviewScopeChecks.RunAsync(scratch).GetAwaiter().GetResult();
+                BrowserAccountScopeChecks.Run(scratch);
+                return 0;
+            }
+            if (args is ["--only", "capture-boundary"]) return IsolatedDesktop.Run("--isolated-capture-boundary");
+            if (args is ["--isolated-capture-boundary"]) return CaptureBoundaryChecks.RunDesktop(CreateScratchDirectory());
+            if (args is ["--only", "capture-boundary-cli"])
+            {
+                CaptureBoundaryChecks.RunCliAsync(CreateScratchDirectory()).GetAwaiter().GetResult();
+                return 0;
+            }
+            if (args is ["--only", "shared-kit"]) return IsolatedDesktop.Run("--isolated-shared-kit");
+            if (args is ["--isolated-shared-kit"]) return SharedKitChecks.Run();
             if (args is ["--only", "cli-documentation"])
             {
                 CliDocumentationChecks.Run();
@@ -443,6 +483,24 @@ internal static class Program
         {
             window.Show();
             window.UpdateLayout();
+            string expectedFooter = "v" + typeof(KillerBench.App).Assembly.GetName().Version!.ToString(3);
+            ShortcutCommandChecks.Run(window);
+            TextMenuChecks.Run(window);
+            foreach (string textBoxName in new[] { "PathBox", "EvidenceBox", "ActivityLog", "SearchBox" })
+            {
+                var box = (TextBox)window.FindName(textBoxName);
+                box.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, Environment.TickCount, MouseButton.Right)
+                    { RoutedEvent = UIElement.PreviewMouseRightButtonDownEvent });
+                Require(box.ContextMenu is { } textMenu && textMenu.Items.OfType<MenuItem>().Any(item =>
+                    ReferenceEquals(item.Command, ApplicationCommands.Copy)),
+                    textBoxName + " exposes the family text context menu");
+            }
+            foreach (var footerTheme in new[] { KillerBench.Services.Theme.Light, KillerBench.Services.Theme.Black })
+            {
+                KillerBench.Services.ThemeManager.Apply(footerTheme);
+                Require(((TextBlock)window.FindName("ThemeStatus")).Text == expectedFooter,
+                    "Footer retains the running version after theme changes");
+            }
             Require(((Border)window.FindName("TerminalPanel")).Visibility == Visibility.Collapsed &&
                 ((Border)window.FindName("LeftPanel")).ActualWidth > 0,
                 "Tool browsing starts with fixed navigation and tucked-away output");
@@ -489,8 +547,13 @@ internal static class Program
                 System.Windows.Controls.Grid.GetColumn((FrameworkElement)window.FindName("TerminalPanel")) == 4,
                 "The complete rail stays beside categories, separate from the output divider");
             RenderedTypographyChecks.VerifySubtitle(window);
-            Require(window.Width == 1025 && window.Height == 700 && window.MinWidth == 800 && window.MinHeight == 500 &&
-                window.SizeToContent == SizeToContent.Manual, "Workbench window keeps its family window geometry");
+            var windowDpi = VisualTreeHelper.GetDpi(window);
+            Require(!WithinPixelRounding(1025 + 1 / windowDpi.DpiScaleX, 1025, windowDpi.DpiScaleX),
+                "Window geometry rejects a whole physical pixel of displacement");
+            Require(WithinPixelRounding(window.Width, 1025, windowDpi.DpiScaleX) &&
+                WithinPixelRounding(window.Height, 700, windowDpi.DpiScaleY) && window.MinWidth == 800 && window.MinHeight == 500 &&
+                window.SizeToContent == SizeToContent.Manual,
+                $"Workbench window keeps its family window geometry within native pixel rounding: {window.Width:R} x {window.Height:R}, minimum {window.MinWidth:R} x {window.MinHeight:R}, {window.SizeToContent}, DPI {windowDpi.DpiScaleX:R}.");
             Require(window.FindName("ZoomViewport") is FrameworkElement { ClipToBounds: true },
                 "Zoom content remains clipped to the workbench window");
             Require(window.FindName("ServicingMonitorSamples") is Slider { Minimum: 1, Maximum: 120, Value: 3 },
@@ -582,6 +645,7 @@ internal static class Program
             scopedCategories.SelectedIndex = 0;
             window.Left = SystemParameters.VirtualScreenLeft + 100;
             window.UpdateLayout();
+            RailMenuGeometryChecks.Run(window);
             foreach (string railMenuName in new[] { "ThemeButton", "LangButton" })
             {
                 var anchor = (Button)window.FindName(railMenuName);
@@ -589,11 +653,14 @@ internal static class Program
                 window.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
                 var menu = anchor.ContextMenu;
                 menu.UpdateLayout();
-                Require(menu.Placement == System.Windows.Controls.Primitives.PlacementMode.Right && ReferenceEquals(menu.PlacementTarget, anchor),
-                    railMenuName + " requests rightward placement from its own rail button");
-                var flyoutHalo = new Border { Style = (Style)window.FindResource("FlyoutCard") }.Margin;
-                Require(menu.IsOpen && menu.PointToScreen(new Point(flyoutHalo.Left, 0)).X >= anchor.PointToScreen(new Point(anchor.ActualWidth, 0)).X,
-                    railMenuName + " flyout opens to the right of the rail");
+                Require(menu.IsOpen && menu.Placement == System.Windows.Controls.Primitives.PlacementMode.Custom,
+                    railMenuName + " uses the family pane placement");
+                var card = (FrameworkElement)VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(menu, 0), 0);
+                var pane = (FrameworkElement)window.FindName("ContentPane");
+                Point cardOrigin = card.PointToScreen(new Point());
+                Point paneOrigin = pane.PointToScreen(new Point());
+                Require(Math.Abs(cardOrigin.X - paneOrigin.X - 8 * VisualTreeHelper.GetDpi(window).DpiScaleX) <= 2,
+                    railMenuName + " visible card starts eight layout units inside the content pane: " + cardOrigin + ", pane " + paneOrigin);
                 menu.IsOpen = false;
             }
             window.Left = SystemParameters.VirtualScreenLeft - 2000;
@@ -726,7 +793,7 @@ internal static class Program
                 [new("Package review item 1", CheckState.Information, "Windows reports this package as non-removable."),
                  new("Dependent packages", CheckState.Information, "No dependent packages were reported in this retained snapshot.")], [], "read-only");
             typeof(KillerBench.Shell.MainWindow).GetMethod("RenderNamedWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [packageReport, "Package snapshot review"]);
-            Require(FindTextBlocks(window).Any(block => block.Text == "Package snapshot review report") &&
+            Require(FindTextBlocks(window).Any(block => block.Text == string.Format((string)window.FindResource("Str_Report_Title"), window.FindResource("Str_PackageReview_Title"))) &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("No package removal is available or authorized", StringComparison.Ordinal)),
                 "Selected package reviews have a readable report without a removal action");
             var transferReport = new WorkflowResult(WorkflowKind.BackgroundTransfers, "smoke", DateTimeOffset.UtcNow,
@@ -800,6 +867,8 @@ internal static class Program
             window.UpdateLayout();
             Capture(window, Path.Combine(outputCaptures, "narrow-report.png"));
             Console.WriteLine("Output layout evidence: " + outputCaptures);
+            PickerRecoveryAcceptanceChecks.Run(window);
+            PackageReviewLocalizationChecks.Run(window);
             Console.WriteLine("PASS: WPF workbench geometry, zoom containment, servicing monitor bounds and safe report navigation.");
             return 0;
         }
@@ -811,7 +880,8 @@ internal static class Program
     }
 
     private static string CreateScratchDirectory() => Directory.CreateDirectory(Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "scratch",
+        Environment.GetEnvironmentVariable("KILLERBENCH_CHECKS_OUTPUT") ??
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "scratch"),
         "KillerBench-checks-" + Guid.NewGuid().ToString("N"))).FullName;
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
@@ -969,7 +1039,10 @@ internal static class Program
             InstalledApplicationChecks.Run();
             ApplicationFolderReviewChecks.Run();
             BrowserExtensionReviewChecks.Run(scratch);
+            BrowserAccountScopeChecks.Run(scratch);
             FileReviewChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            StorageReviewScopeChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            DesktopExportChecks.RunPublicationAsync(scratch).GetAwaiter().GetResult();
             MacePlanningChecks.Run();
             MacePackageRemovalChecks.RunAsync(scratch).GetAwaiter().GetResult();
             OrcaPlanningChecks.Run();
@@ -1185,6 +1258,7 @@ internal static class Program
             KnowledgeUpdateChecks.RunAsync(scratch).GetAwaiter().GetResult();
             KnowledgeHttpSourceChecks.RunAsync().GetAwaiter().GetResult();
             captureFixture = CaptureChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            CaptureBoundaryChecks.RunCliAsync(scratch).GetAwaiter().GetResult();
             RepairChecks.RunAsync(scratch).GetAwaiter().GetResult();
             WorkflowChecks.RunAsync(scratch).GetAwaiter().GetResult();
             FullSystemScanChecks.RunAsync(scratch).GetAwaiter().GetResult();
@@ -1391,13 +1465,13 @@ internal static class Program
             ((Button)window.FindName("ShortcutListButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
             Require(shortcuts.Visibility == Visibility.Visible &&
-                ((StackPanel)window.FindName("ShortcutListHost")).Children.OfType<Grid>().Count() == 8 &&
+                ((StackPanel)window.FindName("ShortcutListHost")).Children.OfType<Grid>().Count() == 13 &&
                 ((Button)window.FindName("ShortcutButton")).ToolTip?.ToString() == KillerFamily.Layout.ShortcutHints.WithHint("Keyboard shortcuts", "F1"),
                 "Shortcut list and rail tooltip come from the shared binding table");
             ((Button)window.FindName("ShortcutMapButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
             Require(((StackPanel)window.FindName("ShortcutMapHost")).Visibility == Visibility.Visible &&
-                ((StackPanel)window.FindName("ShortcutKeyboardRows")).Children.Count == 5 &&
+                ((StackPanel)window.FindName("ShortcutKeyboardRows")).Children.Count == 6 &&
                 ((Button)window.FindName("ShortcutMapButton")).Tag?.ToString() == "on",
                 "Keyboard view renders the shared bindings and records the selected view");
             ((Button)window.FindName("ShortcutCtrlButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -1515,7 +1589,7 @@ internal static class Program
                         setInventory.Invoke(window, [inventory]);
                         ((ComboBox)window.FindName("AppPackageSelection")).SelectedIndex = 0;
                         FindButtons(window).Single(button => Equals(button.Content, "Review selected package")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                        Require(text.Text.Contains("Fixture_1") && text.Text.Contains("non-removable") && text.Text.Contains("RETAINED SNAPSHOT"),
+                        Require(text.Text.Contains("Fixture_1") && text.Text.Contains("non-removable") && text.Text.Contains((string)window.FindResource("Str_PackageReview_Title")),
                             "Selected package review retains exact identity, protection and snapshot limitations");
                         Capture(window, Path.Combine(scratch, "package-review.png"));
                         ((ComboBox)window.FindName("AppPackageScopeChoice")).SelectedIndex = 1;
@@ -1659,8 +1733,12 @@ internal static class Program
             Capture(window, Path.Combine(scratch, "simple-start.png"));
             var titleIcon = (Image)window.FindName("TitlebarIcon");
             Require(window.Icon is not null && titleIcon.Source is not null, "Window and titlebar use packaged icon resources");
-            Require(Math.Abs(titleIcon.ActualWidth - 27) < .1 && Math.Abs(titleIcon.ActualHeight - 27) < .1 &&
-                Equals(window.FindResource("TitleIconSize"), 27d), "Titlebar retains its approved 27-pixel family icon size");
+            var titleDpi = VisualTreeHelper.GetDpi(titleIcon);
+            Require(titleIcon.Width == 27 && titleIcon.Height == 27 &&
+                WithinPixelRounding(titleIcon.ActualWidth, 27, titleDpi.DpiScaleX) &&
+                WithinPixelRounding(titleIcon.ActualHeight, 27, titleDpi.DpiScaleY) &&
+                Equals(window.FindResource("TitleIconSize"), 27d),
+                $"Titlebar retains its approved family icon size: {titleIcon.ActualWidth:R} x {titleIcon.ActualHeight:R}, resource {window.FindResource("TitleIconSize")}, DPI {VisualTreeHelper.GetDpi(titleIcon).DpiScaleX:R}.");
             var stableTitleIconSize = new Size(titleIcon.ActualWidth, titleIcon.ActualHeight);
             var zoomHost = (FrameworkElement)window.FindName("ScaleHost");
             var zoomViewport = (Grid)window.FindName("ZoomViewport");
@@ -2300,6 +2378,9 @@ internal static class Program
         for (int index = 0; index < children; index++)
             foreach (TextBlock nested in FindTextBlocks(VisualTreeHelper.GetChild(parent, index))) yield return nested;
     }
+
+    private static bool WithinPixelRounding(double actual, double intended, double scale) =>
+        Math.Abs(actual - intended) * scale <= 0.500001;
 
     private static void Require(bool condition, string message)
     { if (!condition) throw new Exception(message); }

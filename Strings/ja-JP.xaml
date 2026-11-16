@@ -1271,4 +1271,22 @@
     <sys:String x:Key="Str_Scroll_Down">下へスクロール</sys:String>
     <sys:String x:Key="Str_Scroll_Left">左へスクロール</sys:String>
     <sys:String x:Key="Str_Scroll_Right">右へスクロール</sys:String>
+  <sys:String x:Key="Str_PackageReview_Title">パッケージの確認（保存されたスナップショット）</sys:String>
+  <sys:String x:Key="Str_PackageReview_Scope">対象範囲: {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_Dependents">依存パッケージ</sys:String>
+  <sys:String x:Key="Str_PackageReview_None">このスナップショットでは報告されていません。</sys:String>
+  <sys:String x:Key="Str_PackageReview_Refresh">{0} をもう一度選択してインベントリを更新してください。パッケージは変更されていません。</sys:String>
+  <sys:String x:Key="Str_PackageReview_Item">パッケージ確認項目 {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_DependentCount">報告された依存パッケージ数: {0}。操作する前に生の出力を確認してください。</sys:String>
+  <sys:String x:Key="Str_PackageReview_Incomplete">パッケージのスナップショットの確認は不完全です。パッケージは変更されていません。</sys:String>
+  <sys:String x:Key="Str_PackageReview_Reviewed">パッケージのスナップショットを確認しました。パッケージの削除は利用できず、許可もされていません。</sys:String>
+  <sys:String x:Key="Str_PackageReview_Journal">パッケージのスナップショットの読み取り専用の確認です。ジャーナルは書き込まれていません。</sys:String>
+  <sys:String x:Key="Str_About_UpdateRejected">更新を検証できなかったため、破棄しました。何もインストールされていません。もう一度お試しいただけます。</sys:String>
+  <sys:String x:Key="Str_About_UpdateHandoffFailed">更新を開始できませんでした。KillerBench は開いたままです。もう一度お試しいただけます。</sys:String>
+  <sys:String x:Key="Str_About_UpdateElevationCanceled">Windows のアクセス許可の確認画面で更新がキャンセルされました。何もインストールされていません。もう一度お試しいただけます。</sys:String>
+  <sys:String x:Key="Str_ExportFailure_ChooseAgain">保存する前に、エクスポート先をもう一度選択してください。</sys:String>
+  <sys:String x:Key="Str_ExportFailure_Changed">確認後にエクスポート先が変更されました。保存する前にもう一度選択してください。</sys:String>
+  <sys:String x:Key="Str_ExportFailure_TooLarge">既存の保存先ファイルは上書きの上限128 MiBを超えています。新しいファイル名を選択してください。</sys:String>
+  <sys:String x:Key="Str_ExportFailure_NotPublished">エクスポートは公開されませんでした。以前のファイルは次の場所に保持されています: {0}</sys:String>
+  <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">新しいレポートを保存しました。以前のファイルは次の場所に保持されています: {0}</sys:String>
 </ResourceDictionary>

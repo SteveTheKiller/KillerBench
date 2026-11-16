@@ -27,20 +27,39 @@ internal static class BoundedReadChecks
             foreach (string change in new[] { "shrink", "replace", "rewrite" })
             {
                 File.WriteAllBytes(first, [1, 2]); File.WriteAllBytes(second, [1, 2]);
+                string mutationPhase = "start";
+                IOException? mutationFailure = null;
                 result = await DuplicateFileReview.ScanAsync(root, directoryReader: new MutatingReader([first, second], () =>
                 {
+                    try
+                    {
                     DateTime created = File.GetCreationTimeUtc(first), modified = File.GetLastWriteTimeUtc(first);
                     if (change == "replace")
                     {
                         string replacement = Path.Combine(root, "replacement");
+                        mutationPhase = "create replacement";
                         File.WriteAllBytes(replacement, [1, 2]);
+                        mutationPhase = "move replacement";
                         File.Move(replacement, first, true);
+                        mutationPhase = "restore timestamps";
                         File.SetCreationTimeUtc(first, created); File.SetLastWriteTimeUtc(first, modified);
                     }
                     else if (change == "shrink") File.WriteAllBytes(first, [1]);
                     else { File.WriteAllBytes(first, [3, 4]); File.SetLastWriteTimeUtc(first, modified.AddSeconds(5)); }
+                    }
+                    catch (IOException error) { mutationFailure = error; throw; }
                 }));
-                Require(!result.Complete && result.Groups.Count == 0, "Changed candidate must remain incomplete: " + change);
+                if (change == "replace" && mutationPhase == "move replacement" && mutationFailure is not null &&
+                    (mutationFailure.HResult & 0xffff) == 32)
+                {
+                    Require(!result.Complete && File.Exists(Path.Combine(root, "replacement")) &&
+                        File.ReadAllBytes(first).SequenceEqual(new byte[] { 1, 2 }) &&
+                        result.Groups.Count == 1 && result.Groups[0].Files.Count == 2 && result.Groups[0].Length == 2,
+                        "A blocked replacement retains unchanged duplicates and the explicit incomplete enumeration outcome.");
+                    continue;
+                }
+                Require(!result.Complete && result.Groups.Count == 0,
+                    $"Changed candidate must remain incomplete: {change}, complete={result.Complete}, groups={result.Groups.Count}, candidates={result.CandidateFiles}, phase={mutationPhase}, failure={mutationFailure?.Message}.");
             }
             using (var canceled = new CancellationTokenSource())
             {

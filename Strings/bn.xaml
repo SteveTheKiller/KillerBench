@@ -1271,4 +1271,22 @@
     <sys:String x:Key="Str_Scroll_Down">নিচে স্ক্রল করুন</sys:String>
     <sys:String x:Key="Str_Scroll_Left">বাঁয়ে স্ক্রল করুন</sys:String>
     <sys:String x:Key="Str_Scroll_Right">ডানে স্ক্রল করুন</sys:String>
+  <sys:String x:Key="Str_PackageReview_Title">প্যাকেজ পর্যালোচনা (সংরক্ষিত স্ন্যাপশট)</sys:String>
+  <sys:String x:Key="Str_PackageReview_Scope">পরিধি: {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_Dependents">নির্ভরশীল প্যাকেজ</sys:String>
+  <sys:String x:Key="Str_PackageReview_None">এই স্ন্যাপশটে কিছু রিপোর্ট করা হয়নি।</sys:String>
+  <sys:String x:Key="Str_PackageReview_Refresh">ইনভেন্টরি হালনাগাদ করতে আবার {0} নির্বাচন করুন। কোনো প্যাকেজ পরিবর্তন হয়নি।</sys:String>
+  <sys:String x:Key="Str_PackageReview_Item">প্যাকেজ পর্যালোচনার বিষয় {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_DependentCount">রিপোর্ট করা নির্ভরশীল প্যাকেজ: {0}। কোনো কাজের আগে অপরিশোধিত আউটপুট পর্যালোচনা করুন।</sys:String>
+  <sys:String x:Key="Str_PackageReview_Incomplete">প্যাকেজ স্ন্যাপশট পর্যালোচনা অসম্পূর্ণ। কোনো প্যাকেজ পরিবর্তন হয়নি।</sys:String>
+  <sys:String x:Key="Str_PackageReview_Reviewed">প্যাকেজ স্ন্যাপশট পর্যালোচনা করা হয়েছে। প্যাকেজ অপসারণ উপলব্ধ বা অনুমোদিত নয়।</sys:String>
+  <sys:String x:Key="Str_PackageReview_Journal">শুধু-পঠন প্যাকেজ স্ন্যাপশট পর্যালোচনা। কোনো জার্নাল লেখা হয়নি।</sys:String>
+  <sys:String x:Key="Str_About_UpdateRejected">আপডেটটি যাচাই করা যায়নি এবং বাতিল করা হয়েছে। কিছুই ইনস্টল করা হয়নি। আপনি আবার চেষ্টা করতে পারেন।</sys:String>
+  <sys:String x:Key="Str_About_UpdateHandoffFailed">আপডেট শুরু করা যায়নি। KillerBench এখনো খোলা আছে। আপনি আবার চেষ্টা করতে পারেন।</sys:String>
+  <sys:String x:Key="Str_About_UpdateElevationCanceled">Windows-এর অনুমতি চাওয়ার সময় আপডেট বাতিল করা হয়েছে। কিছুই ইনস্টল করা হয়নি। আপনি আবার চেষ্টা করতে পারেন।</sys:String>
+  <sys:String x:Key="Str_ExportFailure_ChooseAgain">সংরক্ষণের আগে রপ্তানির গন্তব্য আবার বেছে নিন।</sys:String>
+  <sys:String x:Key="Str_ExportFailure_Changed">নিশ্চিত করার পরে রপ্তানির গন্তব্য পরিবর্তিত হয়েছে। সংরক্ষণের আগে সেটি আবার বেছে নিন।</sys:String>
+  <sys:String x:Key="Str_ExportFailure_TooLarge">বিদ্যমান গন্তব্যের আকার 128 MiB ওভাররাইট সীমা ছাড়িয়েছে। নতুন ফাইলের নাম বেছে নিন।</sys:String>
+  <sys:String x:Key="Str_ExportFailure_NotPublished">রপ্তানি প্রকাশ করা হয়নি। আগের ফাইলটি এখানে রাখা আছে: {0}</sys:String>
+  <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">নতুন প্রতিবেদন সংরক্ষিত হয়েছে। আগের ফাইলটি এখানে রাখা আছে: {0}</sys:String>
 </ResourceDictionary>

@@ -1159,7 +1159,7 @@
                             Style="{StaticResource OverlayScrollViewer}" Margin="-24,0,-24,0" Padding="24,0,24,0"
                             Visibility="{Binding Visibility, ElementName=ShortcutMapHost}">
               <StackPanel x:Name="ShortcutMapHost" Visibility="Collapsed">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10"><Button x:Name="ShortcutBaseButton" Content="{DynamicResource Str_Shortcuts_Base}" Click="OnShortcutBase" Margin="0,0,6,0"/><Button x:Name="ShortcutCtrlButton" Content="{DynamicResource Str_Shortcuts_Ctrl}" Click="OnShortcutCtrl" Margin="0,0,6,0"/><Button x:Name="ShortcutAltShiftButton" Content="ALT+SHIFT" Click="OnShortcutAltShift"/></StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10"><Button x:Name="ShortcutBaseButton" Content="{DynamicResource Str_Shortcuts_Base}" Click="OnShortcutBase" Margin="0,0,6,0"/><Button x:Name="ShortcutCtrlButton" Content="{DynamicResource Str_Shortcuts_Ctrl}" Click="OnShortcutCtrl" Margin="0,0,6,0"/><Button x:Name="ShortcutCtrlShiftButton" Content="CTRL+SHIFT" Click="OnShortcutCtrlShift" Margin="0,0,6,0"/><Button x:Name="ShortcutAltShiftButton" Content="ALT+SHIFT" Click="OnShortcutAltShift"/></StackPanel>
                 <StackPanel x:Name="ShortcutKeyboardRows"/>
               </StackPanel>
               </ScrollViewer>

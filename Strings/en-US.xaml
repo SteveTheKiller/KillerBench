@@ -1270,4 +1270,22 @@
     <sys:String x:Key="Str_Scroll_Down">Scroll down</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Scroll left</sys:String>
     <sys:String x:Key="Str_Scroll_Right">Scroll right</sys:String>
+  <sys:String x:Key="Str_PackageReview_Title">Package review (retained snapshot)</sys:String>
+  <sys:String x:Key="Str_PackageReview_Scope">Scope: {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_Dependents">Dependent packages</sys:String>
+  <sys:String x:Key="Str_PackageReview_None">None reported in this snapshot.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Refresh">Select {0} again to refresh inventory. No packages changed.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Item">Package review item {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_DependentCount">Dependent packages reported: {0}. Review Raw output before any action.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Incomplete">Package snapshot review is incomplete. No package was changed.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Reviewed">Package snapshot reviewed. No package removal is available or authorized.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Journal">Read-only package snapshot review. No journal was written.</sys:String>
+  <sys:String x:Key="Str_About_UpdateRejected">The update could not be verified and was discarded. Nothing was installed. You can try again.</sys:String>
+  <sys:String x:Key="Str_About_UpdateHandoffFailed">The update could not start. KillerBench is still open. You can try again.</sys:String>
+  <sys:String x:Key="Str_About_UpdateElevationCanceled">The update was canceled at the Windows permission prompt. Nothing was installed. You can try again.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_ChooseAgain">Choose the export destination again before saving.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_Changed">The export destination changed after confirmation. Choose it again before saving.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_TooLarge">The existing destination exceeds the 128 MiB overwrite limit. Choose a new filename.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_NotPublished">The export was not published. The prior file is retained at: {0}</sys:String>
+  <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">The new report was saved. The prior file is retained at: {0}</sys:String>
 </ResourceDictionary>

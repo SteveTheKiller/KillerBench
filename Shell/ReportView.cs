@@ -58,7 +58,7 @@ public partial class MainWindow
         reportAvailable = true;
         lastReport = (result, title);
         ReportContent.Children.Clear();
-        string reportTitle = title is null ? LocalizedText.Workflow(result.Kind) : LocalizeBitLockerResultText(LocalizeProfileResultText(title));
+        string reportTitle = title is null ? LocalizedText.Workflow(result.Kind) : LocalizePackageReviewText(LocalizeBitLockerResultText(LocalizeProfileResultText(title)));
         ReportContent.Children.Add(Heading(LocalizedText.Format("Str_Report_Title", reportTitle), 15));
         ReportContent.Children.Add(Body(LocalizedStatus(result.Status) + " | " + result.StartedUtc.ToString("g"), 12, new Thickness(0, 0, 0, 14)));
 
@@ -97,7 +97,7 @@ public partial class MainWindow
         if (problems.Length == 0 && reviewRecipes.Length == 0)
             ReportContent.Children.Add(Body(LocalizedText.Get("Str_Report_NoProblem"), 12, new Thickness(0, 0, 0, 12)));
         foreach (var check in problems.Take(visibleProblems))
-            ReportContent.Children.Add(Card(DisplayReportCheckName(check.Name), LocalizedText.Choice(check.EffectiveState), result.Kind is WorkflowKind.Profiles or WorkflowKind.BitLocker ? LocalizeBitLockerResultText(LocalizeProfileResultText(check.Detail)) : check.Detail,
+            ReportContent.Children.Add(Card(DisplayReportCheckName(check.Name), LocalizedText.Choice(check.EffectiveState), result.Kind is WorkflowKind.Profiles or WorkflowKind.BitLocker ? LocalizeBitLockerResultText(LocalizeProfileResultText(check.Detail)) : result.Kind == WorkflowKind.AppPackages ? LocalizePackageReviewText(check.Detail) : check.Detail,
                 check.Repair is null ? LocalizedText.Get("Str_Report_ReviewEvidence") : Repairs.Plan(check.Repair.Value).Effects));
 
         int visibleRecipes = Math.Min(reviewRecipes.Length, maximumVisibleReviewItems - visibleProblems);
@@ -118,7 +118,7 @@ public partial class MainWindow
             ReportContent.Children.Add(Heading(LocalizedText.Get("Str_Report_CollectedInformation"), 13));
             const int maximumVisibleInformationItems = 12;
             foreach (var check in information.Take(maximumVisibleInformationItems))
-                ReportContent.Children.Add(Card(DisplayReportCheckName(check.Name), LocalizedText.Choice(CheckState.Information), result.Kind is WorkflowKind.Profiles or WorkflowKind.BitLocker ? LocalizeBitLockerResultText(LocalizeProfileResultText(check.Detail)) : check.Detail,
+                ReportContent.Children.Add(Card(DisplayReportCheckName(check.Name), LocalizedText.Choice(CheckState.Information), result.Kind is WorkflowKind.Profiles or WorkflowKind.BitLocker ? LocalizeBitLockerResultText(LocalizeProfileResultText(check.Detail)) : result.Kind == WorkflowKind.AppPackages ? LocalizePackageReviewText(check.Detail) : check.Detail,
                     LocalizedText.Get("Str_Report_EvidenceOnly")));
             if (information.Length > maximumVisibleInformationItems)
                 ReportContent.Children.Add(Body(LocalizedText.Format("Str_Report_MoreInformation", information.Length - maximumVisibleInformationItems), 12, new Thickness(0, 0, 0, 12), "MutedTextBrush"));
@@ -323,7 +323,7 @@ public partial class MainWindow
         "No issues detected in checked scopes" => LocalizedText.Get("Str_Status_NoIssues"),
         "Repairs verified in checked scopes" => LocalizedText.Get("Str_Status_RepairsVerified"),
         "Restart required; run this workflow again after restarting to verify" => LocalizedText.Get("Str_Status_RestartRequired"),
-        _ => LocalizeBitLockerResultText(LocalizeProfileResultText(status))
+        _ => LocalizePackageReviewText(LocalizeBitLockerResultText(LocalizeProfileResultText(status)))
     };
 
     private static int ReviewPriority(CheckState state) => state switch
@@ -394,7 +394,7 @@ public partial class MainWindow
     }
 
     private static string DisplayReportCheckName(string name) =>
-        name == NativeCapabilityCheckName ? LocalizedText.Get("Str_NativeLab_Name") : LocalizeBitLockerResultText(LocalizeProfileResultText(name));
+        name == NativeCapabilityCheckName ? LocalizedText.Get("Str_NativeLab_Name") : LocalizePackageReviewText(LocalizeBitLockerResultText(LocalizeProfileResultText(name)));
 
     private static string NextAction(WorkflowResult result) => LocalizeBitLockerResultText(LocalizeReportGuidance(WorkflowReport.NextAction(result)));
 }

@@ -1270,4 +1270,22 @@
     <sys:String x:Key="Str_Scroll_Down">Прокрутити вниз</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Прокрутити ліворуч</sys:String>
     <sys:String x:Key="Str_Scroll_Right">Прокрутити праворуч</sys:String>
+  <sys:String x:Key="Str_PackageReview_Title">Огляд пакетів (збережений знімок)</sys:String>
+  <sys:String x:Key="Str_PackageReview_Scope">Область: {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_Dependents">Залежні пакети</sys:String>
+  <sys:String x:Key="Str_PackageReview_None">У цьому знімку не повідомлено про жоден.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Refresh">Виберіть {0} ще раз, щоб оновити інвентаризацію. Пакети не змінено.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Item">Пункт огляду пакета {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_DependentCount">Залежних пакетів у звіті: {0}. Перед будь-якою дією перегляньте вихідні дані.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Incomplete">Огляд знімка пакетів неповний. Жоден пакет не змінено.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Reviewed">Знімок пакетів переглянуто. Видалення пакетів недоступне й не дозволене.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Journal">Огляд знімка пакетів лише для читання. Журнал не записано.</sys:String>
+  <sys:String x:Key="Str_About_UpdateRejected">Не вдалося перевірити оновлення, тому його відкинуто. Нічого не встановлено. Можна спробувати ще раз.</sys:String>
+  <sys:String x:Key="Str_About_UpdateHandoffFailed">Не вдалося запустити оновлення. KillerBench залишається відкритим. Можна спробувати ще раз.</sys:String>
+  <sys:String x:Key="Str_About_UpdateElevationCanceled">Оновлення скасовано у вікні запиту дозволу Windows. Нічого не встановлено. Можна спробувати ще раз.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_ChooseAgain">Перед збереженням виберіть місце експорту ще раз.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_Changed">Місце експорту змінилося після підтвердження. Перед збереженням виберіть його ще раз.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_TooLarge">Розмір наявного цільового файлу перевищує межу перезаписування 128 MiB. Виберіть нове ім’я файлу.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_NotPublished">Експорт не опубліковано. Попередній файл збережено тут: {0}</sys:String>
+  <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Новий звіт збережено. Попередній файл збережено тут: {0}</sys:String>
 </ResourceDictionary>

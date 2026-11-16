@@ -15,6 +15,7 @@ public partial class MainWindow : Window
 
     public MainWindow()
     {
+        Controls.TextInputMenu.Register();
         InitializeComponent();
         InitializeTaskDraftConsent();
         if (!Engine.ReleaseFeatures.ThirdPartyUpdates)

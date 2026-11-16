@@ -1271,4 +1271,22 @@
     <sys:String x:Key="Str_Scroll_Down">向下捲動</sys:String>
     <sys:String x:Key="Str_Scroll_Left">向左捲動</sys:String>
     <sys:String x:Key="Str_Scroll_Right">向右捲動</sys:String>
+  <sys:String x:Key="Str_PackageReview_Title">套件檢視（保留的快照）</sys:String>
+  <sys:String x:Key="Str_PackageReview_Scope">範圍：{0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_Dependents">相依套件</sys:String>
+  <sys:String x:Key="Str_PackageReview_None">此快照中未回報任何相依套件。</sys:String>
+  <sys:String x:Key="Str_PackageReview_Refresh">再次選取{0}以重新整理清單。未變更任何套件。</sys:String>
+  <sys:String x:Key="Str_PackageReview_Item">套件檢視項目 {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_DependentCount">回報的相依套件數：{0}。執行任何操作之前，請檢視原始輸出。</sys:String>
+  <sys:String x:Key="Str_PackageReview_Incomplete">套件快照檢視不完整。未變更任何套件。</sys:String>
+  <sys:String x:Key="Str_PackageReview_Reviewed">已檢視套件快照。套件移除無法使用，也未獲授權。</sys:String>
+  <sys:String x:Key="Str_PackageReview_Journal">套件快照的唯讀檢視。未寫入日誌。</sys:String>
+  <sys:String x:Key="Str_About_UpdateRejected">無法驗證更新，已將其捨棄。未安裝任何內容。您可以再試一次。</sys:String>
+  <sys:String x:Key="Str_About_UpdateHandoffFailed">無法啟動更新。KillerBench 仍保持開啟。您可以再試一次。</sys:String>
+  <sys:String x:Key="Str_About_UpdateElevationCanceled">已在 Windows 權限提示處取消更新。未安裝任何內容。您可以再試一次。</sys:String>
+  <sys:String x:Key="Str_ExportFailure_ChooseAgain">儲存前請重新選取匯出目的地。</sys:String>
+  <sys:String x:Key="Str_ExportFailure_Changed">確認後匯出目的地已變更。儲存前請重新選取。</sys:String>
+  <sys:String x:Key="Str_ExportFailure_TooLarge">現有目的地檔案超過128 MiB的覆寫限制。請選擇新的檔案名稱。</sys:String>
+  <sys:String x:Key="Str_ExportFailure_NotPublished">匯出未發佈。先前的檔案保留在：{0}</sys:String>
+  <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">新報告已儲存。先前的檔案保留在：{0}</sys:String>
 </ResourceDictionary>

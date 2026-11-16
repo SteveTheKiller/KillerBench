@@ -49,7 +49,7 @@ internal static class FileReviewChecks
             reader.ReparseDirectories.Add(link);
             large = await LargeFileReview.ScanAsync(root, minimumBytes: 4, directoryReader: reader);
             Require(!large.Complete && large.Files.Any(file => file.Path == first) && large.Files.Any(file => file.Path == accessible),
-                "Large-file review must report inaccessible descendants and preserve accessible siblings");
+                "Large-file review must report inaccessible descendants and preserve accessible siblings. Complete=" + large.Complete + ", files=" + string.Join(",", large.Files.Select(file => Path.GetFileName(file.Path))));
             duplicates = await DuplicateFileReview.ScanAsync(root, directoryReader: reader);
             Require(!duplicates.Complete && duplicates.Groups.Any(group => group.Files.Any(file => file.Path == first)
                 && group.Files.Any(file => file.Path == second) && group.Files.Any(file => file.Path == accessible)),
@@ -163,7 +163,10 @@ internal static class FileReviewChecks
         {
             string relative = Path.GetRelativePath(root, directory);
             int currentDepth = relative == "." ? 0 : relative.Split(Path.DirectorySeparatorChar).Length;
-            return currentDepth < depth ? [Path.Combine(directory, "child")] : [];
+            if (currentDepth >= depth) return [];
+            string child = Path.Combine(directory, "child");
+            Directory.CreateDirectory(child);
+            return [child];
         }
     }
 
@@ -174,7 +177,12 @@ internal static class FileReviewChecks
         public IEnumerable<string> EnumerateDirectories(string directory, EnumerationOptions options)
         {
             if (++DirectoriesRead != 1) yield break;
-            for (int index = 0; index < children; index++) yield return Path.Combine(directory, index.ToString());
+            for (int index = 0; index < children; index++)
+            {
+                string child = Path.Combine(directory, index.ToString());
+                Directory.CreateDirectory(child);
+                yield return child;
+            }
         }
     }
 

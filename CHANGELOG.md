@@ -2,14 +2,21 @@
 
 ## [1.0.1] - Unreleased
 
-1.0.1 keeps saved reports and the disk-busy and shadow-storage checks correct on every Windows region, makes updates and the file picker recover from more failures, and refreshes the demo and Chocolatey listing.
+1.0.1 protects captures and report exports, makes review scope clearer, and improves keyboard access, translations and update recovery.
 
 ### Security
 
+- Update signer details now come from the signature verification itself, and the install lock has explicit access permissions.
 - An all-users install can apply later updates. The elevated update compared the certificate's full name against part of it and refused every release. Update signatures must now carry the exact publisher name and pass a revocation check, falling back to an offline check only when the revocation server cannot be reached. Update metadata downloads are capped at 1 MB, and an install and an update of one folder lock each other out.
 
 ### Fixed
 
+- Invalid captures show a controlled error, and report exports preserve open evidence and existing files when saving fails or the destination changes.
+- Storage reviews refuse redirected roots and retain their directory boundary. Browser extension reviews disclose which account they cover.
+- Saved workflow exports retain detailed checks and repairs with historical labels, and HTML reports support every current accent.
+- Update failures explain verification rejection, denied launch and canceled elevation while keeping retry available.
+- Package reviews, license links and distribution requirements now match the app across all supported languages. The footer retains the running version after theme changes.
+- Picked up current shared file-picker, update recovery, and 98SE caption fixes.
 - The file picker loads icons and picture previews in the background, refreshes overwritten previews, and restores its position on any monitor. Scrollbar buttons have localized screen-reader names.
 - Saved workflow and validation reports write their timestamps the same way on every Windows region, so Thai and Finnish settings no longer give years like 2569 or times like 14.30.
 - The disk-busy and shadow-storage checks read the decimal comma that Windows tools print on German, Finnish and other regions, instead of reporting no samples or unrecognized sizes.
@@ -24,6 +31,8 @@
 
 ### Changed
 
+- Added capture, export and evidence-search shortcuts, with matching tooltips, menus, keyboard maps and translated Help tables. Text fields and dialogs use the family context menu with mouse and keyboard access.
+- Updated the WinGet submission tool to Komac 2.17.2.
 - Demo runs and screenshots use realistic workstation findings and normal report labels.
 - Single-line text fields are as tall as the dropdowns beside them, so form rows line up instead of the text boxes standing oversized.
 - The copyright at the right end of the footer ends 8 px before the corner grip, the same gap in every Killer app, and the grip's dots line up with the other apps' grips.

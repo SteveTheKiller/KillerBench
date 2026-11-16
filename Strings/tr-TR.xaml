@@ -1271,4 +1271,22 @@
     <sys:String x:Key="Str_Scroll_Down">Aşağı kaydır</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Sola kaydır</sys:String>
     <sys:String x:Key="Str_Scroll_Right">Sağa kaydır</sys:String>
+  <sys:String x:Key="Str_PackageReview_Title">Paket incelemesi (saklanan anlık görüntü)</sys:String>
+  <sys:String x:Key="Str_PackageReview_Scope">Kapsam: {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_Dependents">Bağımlı paketler</sys:String>
+  <sys:String x:Key="Str_PackageReview_None">Bu anlık görüntüde hiçbiri bildirilmedi.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Refresh">Envanteri yenilemek için {0} seçeneğini yeniden seçin. Hiçbir paket değiştirilmedi.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Item">Paket inceleme öğesi {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_DependentCount">Bildirilen bağımlı paketler: {0}. Herhangi bir işlemden önce Ham çıktıyı inceleyin.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Incomplete">Paket anlık görüntüsü incelemesi eksik. Hiçbir paket değiştirilmedi.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Reviewed">Paket anlık görüntüsü incelendi. Paket kaldırma kullanılamaz ve yetkilendirilmemiştir.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Journal">Salt okunur paket anlık görüntüsü incelemesi. Günlük yazılmadı.</sys:String>
+  <sys:String x:Key="Str_About_UpdateRejected">Güncelleme doğrulanamadı ve atıldı. Hiçbir şey yüklenmedi. Yeniden deneyebilirsiniz.</sys:String>
+  <sys:String x:Key="Str_About_UpdateHandoffFailed">Güncelleme başlatılamadı. KillerBench hâlâ açık. Yeniden deneyebilirsiniz.</sys:String>
+  <sys:String x:Key="Str_About_UpdateElevationCanceled">Güncelleme, Windows izin isteminde iptal edildi. Hiçbir şey yüklenmedi. Yeniden deneyebilirsiniz.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_ChooseAgain">Kaydetmeden önce dışa aktarma hedefini yeniden seçin.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_Changed">Dışa aktarma hedefi onaydan sonra değişti. Kaydetmeden önce yeniden seçin.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_TooLarge">Mevcut hedef dosya 128 MiB üzerine yazma sınırını aşıyor. Yeni bir dosya adı seçin.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_NotPublished">Dışa aktarma yayımlanmadı. Önceki dosya şu konumda korundu: {0}</sys:String>
+  <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Yeni rapor kaydedildi. Önceki dosya şu konumda korundu: {0}</sys:String>
 </ResourceDictionary>

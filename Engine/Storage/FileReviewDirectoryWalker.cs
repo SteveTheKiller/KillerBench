@@ -36,7 +36,7 @@ internal sealed class SystemFileReviewDirectoryReader : IFileReviewDirectoryRead
 internal static class FileReviewDirectoryWalker
 {
     internal static IEnumerable<string> Files(string root, IFileReviewDirectoryReader reader, CancellationToken token,
-        Action incomplete, FileReviewTraversalLimits limits)
+        Action incomplete, FileReviewTraversalLimits limits, FileReviewBoundary boundary)
     {
         limits.Validate();
         var elapsed = Stopwatch.StartNew();
@@ -48,15 +48,24 @@ internal static class FileReviewDirectoryWalker
             token.ThrowIfCancellationRequested();
             if (!WithinTime() || visited >= limits.MaximumDirectories) { incomplete(); yield break; }
             visited++;
+            bool held = false;
+            try { boundary.Hold(current.Path); held = true; }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException or System.Security.SecurityException) { incomplete(); }
+            if (!held) continue;
             var options = new EnumerationOptions { RecurseSubdirectories = false, IgnoreInaccessible = false,
                 AttributesToSkip = FileAttributes.ReparsePoint, ReturnSpecialDirectories = false };
             foreach (string child in Read(() => reader.EnumerateDirectories(current.Path, options), token, incomplete, WithinTime))
             {
+                if (!FileReviewBoundary.IsDirectChild(current.Path, child)) { incomplete(); continue; }
                 if (current.Depth >= limits.MaximumDepth || pending.Count >= limits.MaximumPendingDirectories)
                 { incomplete(); break; }
                 pending.Push((child, current.Depth + 1));
             }
-            foreach (string file in Read(() => reader.EnumerateFiles(current.Path, options), token, incomplete, WithinTime)) yield return file;
+            foreach (string file in Read(() => reader.EnumerateFiles(current.Path, options), token, incomplete, WithinTime))
+            {
+                if (!FileReviewBoundary.IsDirectChild(current.Path, file)) { incomplete(); continue; }
+                yield return file;
+            }
         }
 
         bool WithinTime() => elapsed.Elapsed < limits.MaximumDuration;

@@ -1271,4 +1271,22 @@
     <sys:String x:Key="Str_Scroll_Down">Nach unten scrollen</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Nach links scrollen</sys:String>
     <sys:String x:Key="Str_Scroll_Right">Nach rechts scrollen</sys:String>
+  <sys:String x:Key="Str_PackageReview_Title">Paketprüfung (gespeicherte Momentaufnahme)</sys:String>
+  <sys:String x:Key="Str_PackageReview_Scope">Umfang: {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_Dependents">Abhängige Pakete</sys:String>
+  <sys:String x:Key="Str_PackageReview_None">In dieser Momentaufnahme wurden keine gemeldet.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Refresh">Wählen Sie erneut {0}, um das Inventar zu aktualisieren. Keine Pakete wurden geändert.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Item">Paketprüfpunkt {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_DependentCount">Gemeldete abhängige Pakete: {0}. Prüfen Sie vor jeder Aktion die Rohausgabe.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Incomplete">Die Prüfung der Paketmomentaufnahme ist unvollständig. Kein Paket wurde geändert.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Reviewed">Paketmomentaufnahme geprüft. Eine Paketentfernung ist weder verfügbar noch autorisiert.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Journal">Schreibgeschützte Prüfung der Paketmomentaufnahme. Es wurde kein Journal geschrieben.</sys:String>
+  <sys:String x:Key="Str_About_UpdateRejected">Das Update konnte nicht verifiziert werden und wurde verworfen. Es wurde nichts installiert. Sie können es erneut versuchen.</sys:String>
+  <sys:String x:Key="Str_About_UpdateHandoffFailed">Das Update konnte nicht gestartet werden. KillerBench ist weiterhin geöffnet. Sie können es erneut versuchen.</sys:String>
+  <sys:String x:Key="Str_About_UpdateElevationCanceled">Das Update wurde bei der Windows-Berechtigungsabfrage abgebrochen. Es wurde nichts installiert. Sie können es erneut versuchen.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_ChooseAgain">Wählen Sie das Exportziel vor dem Speichern erneut aus.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_Changed">Das Exportziel wurde nach der Bestätigung geändert. Wählen Sie es vor dem Speichern erneut aus.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_TooLarge">Die vorhandene Zieldatei überschreitet die Überschreibgrenze von 128 MiB. Wählen Sie einen neuen Dateinamen.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_NotPublished">Der Export wurde nicht veröffentlicht. Die vorherige Datei bleibt hier erhalten: {0}</sys:String>
+  <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Der neue Bericht wurde gespeichert. Die vorherige Datei bleibt hier erhalten: {0}</sys:String>
 </ResourceDictionary>

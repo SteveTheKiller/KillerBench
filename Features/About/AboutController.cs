@@ -63,6 +63,7 @@ namespace KillerBench.Features.About
         partial void AfterUpdateHandoff(bool started);
 
         private readonly IAboutHost _host;
+        private readonly IAboutUpdateOperations _updates;
 
         /// <summary>Tag of the newer release found by the check, null when there is nothing to
         /// install.</summary>
@@ -76,11 +77,16 @@ namespace KillerBench.Features.About
         private static bool _startupCheckStarted;
         private bool _updating;
 
-        internal AboutController(IAboutHost host) => _host = host;
+        internal AboutController(IAboutHost host, IAboutUpdateOperations? updates = null)
+        {
+            _host = host;
+            _updates = updates ?? SystemAboutUpdateOperations.Instance;
+        }
 
         /// <summary>Reads the running exe's signature. WinVerifyTrust checks revocation over the network,
         /// which a firewall that drops that traffic can stall for many seconds. Tests replace it.</summary>
         internal static Func<(bool valid, string subject, string thumb)> ReadSigner { get; set; } = () => CodeSignature.GetSignerInfo();
+
         internal static bool StartupCheckEnabled => ThemeManager.GetSetting(StartupCheckSetting) != "0";
 
         /// <summary>Saves the startup check choice from either the About checkbox or the prompt.</summary>
@@ -119,7 +125,7 @@ namespace KillerBench.Features.About
             SkipStartupCheck(ref skip);
             if (_startupCheckStarted || skip || !StartupCheckEnabled) return;
             _startupCheckStarted = true;
-            var tag = await UpdateService.CheckAsync(AppInfo.AssemblyVersion);
+            var tag = await _updates.CheckAsync(AppInfo.AssemblyVersion);
             if (tag is null || _updating) return;
 
             _updateTag          = tag;
@@ -209,7 +215,7 @@ namespace KillerBench.Features.About
         /// <summary>Shows the update button if a newer release exists. Silent when offline.</summary>
         private async void CheckForUpdate()
         {
-            var tag = await UpdateService.CheckAsync(AppInfo.AssemblyVersion);
+            var tag = await _updates.CheckAsync(AppInfo.AssemblyVersion);
             if (tag is null || _updating) return;
 
             _updateTag          = tag;
@@ -248,7 +254,16 @@ namespace KillerBench.Features.About
             string? newExe;
             try
             {
-                newExe = await UpdateService.DownloadAsync(tag!);
+                newExe = await _updates.DownloadAsync(tag!);
+            }
+            catch (UpdateVerificationException ex)
+            {
+                // The download arrived but was refused, so the releases page is no remedy: say so.
+                _updating           = false;
+                _host.UpdateEnabled = true;
+                _host.UpdateText    = string.Format(_host.Loc("Str_About_UpdateAvailable"), tag);
+                UpdateNotVerified(ex);
+                return;
             }
             catch
             {
@@ -281,8 +296,8 @@ namespace KillerBench.Features.About
             // Off the UI thread: the machine path waits while the elevated helper hashes, stages and
             // verifies the release, which takes seconds.
             string version = tag!.TrimStart('v', 'V');
-            try { await System.Threading.Tasks.Task.Run(() => UpdateService.StartSwap(newExe, version)); }
-            catch
+            try { await System.Threading.Tasks.Task.Run(() => _updates.StartSwap(newExe, version)); }
+            catch (Exception ex)
             {
                 AfterUpdateHandoff(false);
                 UpdateShutdownCanceled();
@@ -290,6 +305,7 @@ namespace KillerBench.Features.About
                 _updating           = false;
                 _host.UpdateEnabled = true;
                 _host.UpdateText    = string.Format(_host.Loc("Str_About_UpdateAvailable"), tag);
+                UpdateHandoffFailed(ex);
                 return;
             }
             // From here the helper is waiting for this process to exit and will replace its exe,
@@ -304,5 +320,13 @@ namespace KillerBench.Features.About
             }
             catch { /* The helper finishes once the app does close. */ }
         }
+
+        /// <summary>Tells the user a downloaded update was refused by its checksum or signature. Each app
+        /// implements it in its own AboutController.Extras.cs; an app that does not still compiles.</summary>
+        partial void UpdateNotVerified(Exception failure);
+
+        /// <summary>Tells the user the update could not start, which a declined UAC prompt also lands on.
+        /// Each app implements it in its own AboutController.Extras.cs; an app that does not still compiles.</summary>
+        partial void UpdateHandoffFailed(Exception failure);
     }
 }

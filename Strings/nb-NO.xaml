@@ -1270,4 +1270,22 @@
     <sys:String x:Key="Str_Scroll_Down">Rull ned</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Rull til venstre</sys:String>
     <sys:String x:Key="Str_Scroll_Right">Rull til høyre</sys:String>
+  <sys:String x:Key="Str_PackageReview_Title">Pakkegjennomgang (lagret øyeblikksbilde)</sys:String>
+  <sys:String x:Key="Str_PackageReview_Scope">Omfang: {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_Dependents">Avhengige pakker</sys:String>
+  <sys:String x:Key="Str_PackageReview_None">Ingen rapportert i dette øyeblikksbildet.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Refresh">Velg {0} igjen for å oppdatere oversikten. Ingen pakker ble endret.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Item">Pakkegjennomgangspunkt {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_DependentCount">Rapporterte avhengige pakker: {0}. Se gjennom råutdata før enhver handling.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Incomplete">Gjennomgangen av pakkeøyeblikksbildet er ufullstendig. Ingen pakke ble endret.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Reviewed">Pakkeøyeblikksbildet er gjennomgått. Fjerning av pakker er verken tilgjengelig eller godkjent.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Journal">Skrivebeskyttet gjennomgang av pakkeøyeblikksbildet. Ingen journal ble skrevet.</sys:String>
+  <sys:String x:Key="Str_About_UpdateRejected">Oppdateringen kunne ikke verifiseres og ble forkastet. Ingenting ble installert. Du kan prøve igjen.</sys:String>
+  <sys:String x:Key="Str_About_UpdateHandoffFailed">Oppdateringen kunne ikke starte. KillerBench er fortsatt åpen. Du kan prøve igjen.</sys:String>
+  <sys:String x:Key="Str_About_UpdateElevationCanceled">Oppdateringen ble avbrutt ved Windows-forespørselen om tillatelse. Ingenting ble installert. Du kan prøve igjen.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_ChooseAgain">Velg eksportmålet på nytt før du lagrer.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_Changed">Eksportmålet ble endret etter bekreftelsen. Velg det på nytt før du lagrer.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_TooLarge">Den eksisterende målfilen overskrider grensen på 128 MiB for overskriving. Velg et nytt filnavn.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_NotPublished">Eksporten ble ikke publisert. Den forrige filen er bevart her: {0}</sys:String>
+  <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Den nye rapporten ble lagret. Den forrige filen er bevart her: {0}</sys:String>
 </ResourceDictionary>

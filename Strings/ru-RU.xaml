@@ -1271,4 +1271,22 @@
     <sys:String x:Key="Str_Scroll_Down">Прокрутить вниз</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Прокрутить влево</sys:String>
     <sys:String x:Key="Str_Scroll_Right">Прокрутить вправо</sys:String>
+  <sys:String x:Key="Str_PackageReview_Title">Обзор пакетов (сохраненный снимок)</sys:String>
+  <sys:String x:Key="Str_PackageReview_Scope">Область: {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_Dependents">Зависимые пакеты</sys:String>
+  <sys:String x:Key="Str_PackageReview_None">В этом снимке не обнаружены.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Refresh">Выберите {0} еще раз, чтобы обновить инвентаризацию. Пакеты не изменены.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Item">Пункт обзора пакета {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_DependentCount">Зависимых пакетов в отчете: {0}. Перед любым действием изучите необработанный вывод.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Incomplete">Обзор снимка пакетов неполон. Ни один пакет не изменен.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Reviewed">Снимок пакетов проверен. Удаление пакетов недоступно и не разрешено.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Journal">Обзор снимка пакетов только для чтения. Журнал не записан.</sys:String>
+  <sys:String x:Key="Str_About_UpdateRejected">Не удалось проверить обновление, поэтому оно было удалено. Ничего не установлено. Можно повторить попытку.</sys:String>
+  <sys:String x:Key="Str_About_UpdateHandoffFailed">Не удалось запустить обновление. KillerBench остается открытым. Можно повторить попытку.</sys:String>
+  <sys:String x:Key="Str_About_UpdateElevationCanceled">Обновление отменено в окне запроса разрешения Windows. Ничего не установлено. Можно повторить попытку.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_ChooseAgain">Перед сохранением выберите место экспорта еще раз.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_Changed">Место экспорта изменилось после подтверждения. Перед сохранением выберите его еще раз.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_TooLarge">Размер существующего целевого файла превышает предел перезаписи 128 MiB. Выберите новое имя файла.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_NotPublished">Экспорт не опубликован. Предыдущий файл сохранен здесь: {0}</sys:String>
+  <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Новый отчет сохранен. Предыдущий файл сохранен здесь: {0}</sys:String>
 </ResourceDictionary>

@@ -1270,4 +1270,22 @@
     <sys:String x:Key="Str_Scroll_Down">Pomakni navzdol</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Pomakni levo</sys:String>
     <sys:String x:Key="Str_Scroll_Right">Pomakni desno</sys:String>
+  <sys:String x:Key="Str_PackageReview_Title">Pregled paketov (shranjeni posnetek)</sys:String>
+  <sys:String x:Key="Str_PackageReview_Scope">Obseg: {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_Dependents">Odvisni paketi</sys:String>
+  <sys:String x:Key="Str_PackageReview_None">V tem posnetku ni bil prijavljen noben.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Refresh">Za osvežitev inventarja znova izberite {0}. Noben paket ni bil spremenjen.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Item">Postavka pregleda paketa {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_DependentCount">Prijavljeni odvisni paketi: {0}. Pred kakršnim koli dejanjem preglejte neobdelani izpis.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Incomplete">Pregled posnetka paketov je nepopoln. Noben paket ni bil spremenjen.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Reviewed">Posnetek paketov je pregledan. Odstranitev paketov ni na voljo in ni dovoljena.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Journal">Pregled posnetka paketov samo za branje. Dnevnik ni bil zapisan.</sys:String>
+  <sys:String x:Key="Str_About_UpdateRejected">Posodobitve ni bilo mogoče preveriti, zato je bila zavržena. Nič ni bilo nameščeno. Lahko poskusite znova.</sys:String>
+  <sys:String x:Key="Str_About_UpdateHandoffFailed">Posodobitve ni bilo mogoče zagnati. KillerBench je še vedno odprt. Lahko poskusite znova.</sys:String>
+  <sys:String x:Key="Str_About_UpdateElevationCanceled">Posodobitev je bila preklicana v pozivu sistema Windows za dovoljenje. Nič ni bilo nameščeno. Lahko poskusite znova.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_ChooseAgain">Pred shranjevanjem znova izberite cilj izvoza.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_Changed">Cilj izvoza se je po potrditvi spremenil. Pred shranjevanjem ga znova izberite.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_TooLarge">Obstoječa ciljna datoteka presega omejitev prepisovanja 128 MiB. Izberite novo ime datoteke.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_NotPublished">Izvoz ni bil objavljen. Prejšnja datoteka je ohranjena na mestu: {0}</sys:String>
+  <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Novo poročilo je bilo shranjeno. Prejšnja datoteka je ohranjena na mestu: {0}</sys:String>
 </ResourceDictionary>

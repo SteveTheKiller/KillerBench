@@ -107,7 +107,7 @@ public partial class MainWindow
             Report(Controls.LocalizedText.Get("Str_Ui_CaptureLoaded"));
         }
         catch (OperationCanceledException) { Report(Controls.LocalizedText.Get("Str_Ui_ReadStopped")); }
-        catch (Exception error) when (error is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+        catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
         { Report(Controls.LocalizedText.Format("Str_Ui_Error", Controls.LocalizedText.Get("Str_OpenCapture"), error.Message)); }
         finally { readCancellation = null; SetCaptureBusy(false); }
     }

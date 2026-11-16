@@ -42,7 +42,7 @@ internal static class CaptureCommands
             return stop.IsCancellationRequested ? 130 : session.Partial ? 3 : 0;
         }
         catch (OperationCanceledException) { Console.Error.WriteLine("Operation stopped."); return 130; }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+        catch (Exception ex) when (ex is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
         { Console.Error.WriteLine(ex.Message); return 1; }
         finally { Console.CancelKeyPress -= handler; }
     }

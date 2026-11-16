@@ -17,8 +17,20 @@ namespace KillerBench.Features.About
             if (_host is IAboutRepairHold repair && repair.HoldUpdateForRepair()) hold = true;
         }
 
-        // The installer script could not start (UAC declined, or no install or portable target), so
-        // the verified download stays where it is and the release page opens, as it did before.
-        partial void UpdateShutdownCanceled() => Services.WebLink.Open(Services.UpdateService.ReleasesUrl);
+        partial void UpdateNotVerified(System.Exception failure)
+        {
+            string message = _host.Loc("Str_About_UpdateRejected");
+            _host.UpdateText = message;
+            _host.SetStatus(message);
+        }
+
+        partial void UpdateHandoffFailed(System.Exception failure)
+        {
+            string message = _host.Loc(failure is System.ComponentModel.Win32Exception { NativeErrorCode: 1223 }
+                ? "Str_About_UpdateElevationCanceled" : "Str_About_UpdateHandoffFailed");
+            _host.UpdateText = message;
+            _host.SetStatus(message);
+        }
+
     }
 }

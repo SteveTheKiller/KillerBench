@@ -16,14 +16,7 @@
   <ItemGroup><Resource Include="../Fonts/*.ttf" Link="Fonts/%(Filename)%(Extension)" /></ItemGroup>
   <ItemGroup><Compile Include="../Cli/TaskPlanCommands.cs" Link="TaskPlanCommands.cs" /></ItemGroup>
   <ItemGroup><Compile Include="../Cli/SystemRestoreCommands.cs" Link="SystemRestoreCommands.cs" /></ItemGroup>
-  <ItemGroup><Compile Include="../Services/CommandLinePath.cs" Link="CommandLinePath.cs" /></ItemGroup>
-  <ItemGroup><Compile Include="../Services/ImmutablePowerShell.cs" Link="ImmutablePowerShell.cs" /></ItemGroup>
-  <ItemGroup><Compile Include="../Services/AppInfo.cs" Link="AppInfo.cs" /></ItemGroup>
-  <ItemGroup><Compile Include="../Services/Preferences.cs" Link="Preferences.cs" /></ItemGroup>
-  <ItemGroup><Compile Include="../Services/UpdateImagePublication.cs" Link="UpdateImagePublication.cs" /></ItemGroup>
-  <ItemGroup><Compile Include="../Services/ExecutableDeployment.cs" Link="ExecutableDeployment.cs" /></ItemGroup>
-  <ItemGroup><Compile Include="../Services/ReleaseIdentity.cs" Link="ReleaseIdentity.cs" /></ItemGroup>
-  <ItemGroup><Compile Include="../Services/CodeSignature.cs" Link="CodeSignature.cs" /></ItemGroup>
-  <ItemGroup><Compile Include="../Services/InstallerExitCodes.cs" Link="InstallerExitCodes.cs" /></ItemGroup>
+  <!-- Friend access tests the production service types instead of shadowing them with copies. -->
+  <ItemGroup><Compile Remove="UpdateServiceRelaunch.cs" /></ItemGroup>
   <ItemGroup><Compile Include="../Packaging/KillerLauncher/InstallerPrerequisitePolicy.cs" Link="InstallerPrerequisitePolicy.cs" /></ItemGroup>
 </Project>

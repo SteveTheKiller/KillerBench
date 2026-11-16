@@ -1271,4 +1271,22 @@
     <sys:String x:Key="Str_Scroll_Down">Défiler vers le bas</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Défiler vers la gauche</sys:String>
     <sys:String x:Key="Str_Scroll_Right">Défiler vers la droite</sys:String>
+  <sys:String x:Key="Str_PackageReview_Title">Examen des paquets (instantané conservé)</sys:String>
+  <sys:String x:Key="Str_PackageReview_Scope">Portée : {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_Dependents">Paquets dépendants</sys:String>
+  <sys:String x:Key="Str_PackageReview_None">Aucun signalé dans cet instantané.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Refresh">Sélectionnez à nouveau {0} pour actualiser l’inventaire. Aucun paquet n’a été modifié.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Item">Élément d’examen du paquet {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_DependentCount">Paquets dépendants signalés : {0}. Examinez la sortie brute avant toute action.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Incomplete">L’examen de l’instantané des paquets est incomplet. Aucun paquet n’a été modifié.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Reviewed">Instantané des paquets examiné. Aucune suppression de paquet n’est disponible ni autorisée.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Journal">Examen en lecture seule de l’instantané des paquets. Aucun journal n’a été écrit.</sys:String>
+  <sys:String x:Key="Str_About_UpdateRejected">La mise à jour n’a pas pu être vérifiée et a été supprimée. Rien n’a été installé. Vous pouvez réessayer.</sys:String>
+  <sys:String x:Key="Str_About_UpdateHandoffFailed">La mise à jour n’a pas pu démarrer. KillerBench est toujours ouvert. Vous pouvez réessayer.</sys:String>
+  <sys:String x:Key="Str_About_UpdateElevationCanceled">La mise à jour a été annulée lors de la demande d’autorisation Windows. Rien n’a été installé. Vous pouvez réessayer.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_ChooseAgain">Sélectionnez à nouveau la destination d’exportation avant d’enregistrer.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_Changed">La destination d’exportation a changé après la confirmation. Sélectionnez-la à nouveau avant d’enregistrer.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_TooLarge">Le fichier de destination existant dépasse la limite de remplacement de 128 MiB. Choisissez un nouveau nom de fichier.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_NotPublished">L’exportation n’a pas été publiée. Le fichier précédent est conservé ici : {0}</sys:String>
+  <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Le nouveau rapport a été enregistré. Le fichier précédent est conservé ici : {0}</sys:String>
 </ResourceDictionary>

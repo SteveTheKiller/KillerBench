@@ -24,10 +24,16 @@ Full how-tos live in the [Help guide](https://killerbench.net/help.html), and th
 ## Requirements
 
 - Windows x64
-- [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) for Windows x64
 - Administrator rights for repairs and for the protected evidence some checks need; diagnostics also run as a standard user
 
-KillerBench ships as `KillerBench.exe` and `killerbench-cli.exe`, each a single portable EXE. Each release lists their SHA-256 values in `SHA256SUMS.txt`, and both are signed.
+Choose the distribution that fits the computer:
+
+- `KillerBench.exe` is the installer. Its framework-dependent payload requires the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) for Windows x64; the setup wizard checks this prerequisite.
+- `KillerBench-Portable.exe` bundles the runtime and runs without a separately installed .NET runtime.
+- The Microsoft Store installer bundles the runtime too.
+- `killerbench-cli.exe` is the framework-dependent, single-file command-line tool. It requires the .NET 10 Runtime for Windows x64; the Desktop Runtime also satisfies this requirement.
+
+Release downloads include SHA-256 values in `SHA256SUMS.txt` and signed executables.
 
 ## Safety
 

@@ -3,7 +3,11 @@ using System.Text.Json;
 namespace KillerBench.Engine.Applications;
 
 public sealed record BrowserExtensionIdentity(string Browser, string Profile, string ExtensionId);
-public sealed record BrowserExtensionReviewResult(IReadOnlyList<BrowserExtensionIdentity> Extensions, bool Complete, string Detail);
+public enum BrowserExtensionReviewScope { SuppliedRoots, RunningProcessAccount }
+public sealed record BrowserExtensionReviewResult(IReadOnlyList<BrowserExtensionIdentity> Extensions, bool Complete, string Detail)
+{
+    public BrowserExtensionReviewScope Scope { get; init; } = BrowserExtensionReviewScope.SuppliedRoots;
+}
 public enum BrowserExtensionLayout { Chromium, Firefox }
 public sealed record BrowserExtensionRoot(string Browser, string Path, BrowserExtensionLayout Layout = BrowserExtensionLayout.Chromium);
 
@@ -13,12 +17,18 @@ public static class BrowserExtensionReview
     {
         string local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.DoNotVerify);
         string roaming = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify);
-        return Read([
+        var result = Read([
             new("Chrome", Path.Combine(local, "Google", "Chrome", "User Data")),
             new("Edge", Path.Combine(local, "Microsoft", "Edge", "User Data")),
             new("Brave", Path.Combine(local, "BraveSoftware", "Brave-Browser", "User Data")),
             new("Firefox", Path.Combine(roaming, "Mozilla", "Firefox", "Profiles"), BrowserExtensionLayout.Firefox)
         ], token);
+        return result with
+        {
+            Scope = BrowserExtensionReviewScope.RunningProcessAccount,
+            Detail = "Scope: running process account only. Elevation under a different account reviews that account's profiles. " +
+                "This does not establish coverage for the desktop user or other accounts. " + result.Detail
+        };
     }
 
     public static BrowserExtensionReviewResult Read(IReadOnlyList<BrowserExtensionRoot> roots, CancellationToken token = default,
@@ -73,7 +83,7 @@ public static class BrowserExtensionReview
         }
         return new([.. found.OrderBy(item => item.Browser).ThenBy(item => item.Profile).ThenBy(item => item.ExtensionId)], complete,
             (complete ? "" : "Coverage is incomplete because profiles or identities exceeded review limits or content was inaccessible or invalid. ") +
-            "Read-only browser extension identity review. Browser history, credentials, extension settings, manifest content, commands and policy values were excluded. Presence does not prove enablement, trust, ownership or safe removal. No browser or policy changed.");
+            "Read-only browser extension identity review of the supplied roots only. Browser history, credentials, extension settings, manifest content, commands and policy values were excluded. Presence does not prove enablement, trust, ownership or safe removal. No browser or policy changed.");
     }
 
     private static IReadOnlyList<string> BoundedDirectories(string path, int maximumMatches, int maximumEntries,

@@ -10,12 +10,13 @@ namespace KillerBench.Shell;
 public partial class MainWindow
 {
     private enum ShortcutCategory { View, Nav, File, Help }
-    private enum ShortcutLayer { Base, Ctrl, AltShift }
+    private enum ShortcutLayer { Base, Ctrl, CtrlShift, AltShift }
 
     private readonly record struct ShortcutBinding(
         string Keys, string LabelKey, ShortcutCategory Category, bool Ctrl, params string[] Caps)
     {
         public ShortcutLayer Layer => Keys.StartsWith("Alt+Shift+", StringComparison.Ordinal) ? ShortcutLayer.AltShift
+            : Keys.StartsWith("Ctrl+Shift+", StringComparison.Ordinal) ? ShortcutLayer.CtrlShift
             : Ctrl ? ShortcutLayer.Ctrl : ShortcutLayer.Base;
     }
 
@@ -24,8 +25,13 @@ public partial class MainWindow
         new("F2", "Str_Shortcuts_ToggleSources", ShortcutCategory.View, false, "F2"),
         new("F3", "Str_Shortcuts_ToggleActivity", ShortcutCategory.View, false, "F3"),
         new("Alt+Shift+G", "Str_Theme_FilmGrain", ShortcutCategory.View, false, "G"),
-        new("Ctrl+Shift+Plus / Minus / 0", "Str_Shortcuts_AppZoom", ShortcutCategory.View, true),
+        new("Ctrl+Shift+Plus / Minus / 0", "Str_Shortcuts_AppZoom", ShortcutCategory.View, true, "Plus", "Minus", "D0"),
         new("Ctrl+O", "Str_Shortcuts_OpenEvidence", ShortcutCategory.File, true, "O"),
+        new("Ctrl+Shift+O", "Str_OpenCapture", ShortcutCategory.File, true, "O"),
+        new("Ctrl+S", "Str_SaveCapture", ShortcutCategory.File, true, "S"),
+        new("Ctrl+E", "Str_ExportReport", ShortcutCategory.File, true, "E"),
+        new("Ctrl+Shift+E", "Str_ExportActivityHint", ShortcutCategory.File, true, "E"),
+        new("Ctrl+F", "Str_AutomationProperties_Name_Filter_evidence", ShortcutCategory.Nav, true, "F"),
         new("F1", "Str_Shortcuts_Show", ShortcutCategory.Help, false, "F1"),
         new("F12", "Str_Shortcuts_About", ShortcutCategory.Help, false, "F12"),
         new("Esc", "Str_Shortcuts_CloseOrStop", ShortcutCategory.Nav, false, "Esc")
@@ -34,6 +40,7 @@ public partial class MainWindow
     private static readonly (string Id, string Cap, double Width)[][] KeyboardRows =
     [
         [("Esc", "Esc", 1.0), ("", "", 0.7), ("F1", "F1", 1.0), ("F2", "F2", 1.0), ("F3", "F3", 1.0), ("F4", "F4", 1.0), ("", "", 0.5), ("F5", "F5", 1.0), ("F6", "F6", 1.0), ("F7", "F7", 1.0), ("F8", "F8", 1.0), ("", "", 0.5), ("F9", "F9", 1.0), ("F10", "F10", 1.0), ("F11", "F11", 1.0), ("F12", "F12", 1.0)],
+        [("", "", 7.8), ("D0", "0", 1.0), ("Minus", "-", 1.0), ("Plus", "+", 1.0)],
         [("Tab", "Tab", 1.5), ("Q", "Q", 1.0), ("W", "W", 1.0), ("E", "E", 1.0), ("R", "R", 1.0), ("T", "T", 1.0), ("Y", "Y", 1.0), ("U", "U", 1.0), ("I", "I", 1.0), ("O", "O", 1.0), ("P", "P", 1.0)],
         [("Caps", "Caps", 1.8), ("A", "A", 1.0), ("S", "S", 1.0), ("D", "D", 1.0), ("F", "F", 1.0), ("G", "G", 1.0), ("H", "H", 1.0), ("J", "J", 1.0), ("K", "K", 1.0), ("L", "L", 1.0), ("Enter", "Enter", 2.2)],
         [("Shift", "Shift", 2.3), ("Z", "Z", 1.0), ("X", "X", 1.0), ("C", "C", 1.0), ("V", "V", 1.0), ("B", "B", 1.0), ("N", "N", 1.0), ("M", "M", 1.0), ("Comma", ",", 1.0), ("Period", ".", 1.0), ("RShift", "Shift", 2.7)],
@@ -47,6 +54,36 @@ public partial class MainWindow
     {
         ShortcutButton.ToolTip = KillerFamily.Layout.ShortcutHints.WithHint(Label(ShortcutBindings.Single(binding => binding.Keys == "F1")), "F1");
         ApplyShortcutView(Preferences.Get("ShortcutsMapView") == "1");
+        BindAction(WorkbenchCommands.OpenCapture, "Str_OpenCapture", OpenCaptureButton, OnOpenCapture);
+        BindAction(WorkbenchCommands.SaveCapture, "Str_SaveCapture", SaveCaptureButton, OnSaveCapture);
+        BindAction(WorkbenchCommands.ExportReport, "Str_ExportReport", ExportReportButton, OnExportReport);
+        BindAction(WorkbenchCommands.ExportActivity, "Str_ExportActivityHint", ExportActivityButton, OnExportActivity);
+        BindAction(WorkbenchCommands.FindEvidence, "Str_AutomationProperties_Name_Filter_evidence", SearchBox,
+            (_, _) => { ShowRawOutput(); SearchBox.Focus(); SearchBox.SelectAll(); });
+    }
+
+    private void BindAction(RoutedUICommand command, string labelKey, UIElement control, RoutedEventHandler execute)
+    {
+        ShortcutBinding binding = ShortcutBindings.Single(item => item.LabelKey == labelKey);
+        var gesture = (KeyGesture)new KeyGestureConverter().ConvertFromInvariantString(binding.Keys)!;
+        InputBindings.Add(new KeyBinding(command, gesture));
+        bool Available() => !App.ScreenshotMode && control.IsEnabled &&
+            AboutOverlay.Visibility != Visibility.Visible && ShortcutsOverlay.Visibility != Visibility.Visible;
+        CommandBindings.Add(new CommandBinding(command, (_, e) => { if (Available()) execute(this, e); e.Handled = true; },
+            (_, e) => { e.CanExecute = Available(); e.Handled = true; }));
+        if (control is MenuItem menu) menu.InputGestureText = binding.Keys;
+        string tipKey = labelKey switch
+        {
+            "Str_ExportReport" => "Str_ExportContents",
+            "Str_AutomationProperties_Name_Filter_evidence" => "Str_ToolTip_Filter_loaded_lines_Clear_to_show_all_lines",
+            _ => labelKey
+        };
+        var tip = new TextBlock();
+        var label = new System.Windows.Documents.Run();
+        label.SetResourceReference(System.Windows.Documents.Run.TextProperty, tipKey);
+        tip.Inlines.Add(label);
+        tip.Inlines.Add(new System.Windows.Documents.Run(" (" + binding.Keys + ")"));
+        ToolTipService.SetToolTip(control, tip);
     }
 
     private void OnShortcuts(object sender, RoutedEventArgs e)
@@ -67,6 +104,7 @@ public partial class MainWindow
     private void OnShortcutMap(object sender, RoutedEventArgs e) => ApplyShortcutView(true, true);
     private void OnShortcutBase(object sender, RoutedEventArgs e) { shortcutLayer = ShortcutLayer.Base; BuildKeyboard(); }
     private void OnShortcutCtrl(object sender, RoutedEventArgs e) { shortcutLayer = ShortcutLayer.Ctrl; BuildKeyboard(); }
+    private void OnShortcutCtrlShift(object sender, RoutedEventArgs e) { shortcutLayer = ShortcutLayer.CtrlShift; BuildKeyboard(); }
     private void OnShortcutAltShift(object sender, RoutedEventArgs e) { shortcutLayer = ShortcutLayer.AltShift; BuildKeyboard(); }
 
     private void ApplyShortcutView(bool keyboard, bool persist = false)
@@ -145,6 +183,7 @@ public partial class MainWindow
         }
         ShortcutBaseButton.Tag = shortcutLayer == ShortcutLayer.Base ? "on" : null;
         ShortcutCtrlButton.Tag = shortcutLayer == ShortcutLayer.Ctrl ? "on" : null;
+        ShortcutCtrlShiftButton.Tag = shortcutLayer == ShortcutLayer.CtrlShift ? "on" : null;
         ShortcutAltShiftButton.Tag = shortcutLayer == ShortcutLayer.AltShift ? "on" : null;
     }
 

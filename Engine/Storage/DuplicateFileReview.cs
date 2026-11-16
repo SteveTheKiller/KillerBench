@@ -17,7 +17,8 @@ public static class DuplicateFileReview
 {
     public static Task<DuplicateFileReviewResult> ScanAsync(string root, long minimumBytes = 1,
         int maximumFiles = 10_000, CancellationToken token = default, IFileReviewDirectoryReader? directoryReader = null,
-        FileReviewTraversalLimits? traversalLimits = null, long maximumHashBytes = 100L * 1024 * 1024 * 1024) => Task.Run(async () =>
+        FileReviewTraversalLimits? traversalLimits = null, long maximumHashBytes = 100L * 1024 * 1024 * 1024,
+        IFileReviewFileAccess? fileAccess = null) => Task.Run(async () =>
     {
         if (string.IsNullOrWhiteSpace(root)) throw new ArgumentException("Choose a folder to review.", nameof(root));
         ArgumentOutOfRangeException.ThrowIfNegative(minimumBytes);
@@ -28,13 +29,15 @@ public static class DuplicateFileReview
         if (!Directory.Exists(fullRoot)) throw new DirectoryNotFoundException("The selected folder does not exist.");
 
         ArgumentOutOfRangeException.ThrowIfNegative(maximumHashBytes);
+        fileAccess ??= SystemFileReviewFileAccess.Instance;
         var candidates = new List<(FileInfo File, FileSnapshot Snapshot)>();
         int examined = 0;
         bool complete = true;
+        using var boundary = new FileReviewBoundary();
         try
         {
             foreach (string path in FileReviewDirectoryWalker.Files(fullRoot,
-                directoryReader ?? SystemFileReviewDirectoryReader.Instance, token, () => complete = false, traversalLimits ?? new FileReviewTraversalLimits()))
+                directoryReader ?? SystemFileReviewDirectoryReader.Instance, token, () => complete = false, traversalLimits ?? new FileReviewTraversalLimits(), boundary))
             {
                 token.ThrowIfCancellationRequested();
                 if (examined >= maximumFiles) { complete = false; break; }
@@ -44,10 +47,11 @@ public static class DuplicateFileReview
                     var file = new FileInfo(path);
                     if ((file.Attributes & FileAttributes.ReparsePoint) == 0 && file.Length >= minimumBytes)
                     {
-                        using var handle = File.OpenHandle(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                        using var handle = fileAccess.OpenRead(path, asynchronous: false);
                         var snapshot = Snapshot(handle);
                         if ((snapshot.Attributes & FileAttributes.ReparsePoint) == 0 && snapshot.Length >= minimumBytes)
                             candidates.Add((file, snapshot));
+                        else if ((snapshot.Attributes & FileAttributes.ReparsePoint) != 0) complete = false;
                     }
                 }
                 catch (IOException) { complete = false; }
@@ -68,8 +72,8 @@ public static class DuplicateFileReview
                 token.ThrowIfCancellationRequested();
                 try
                 {
-                    await using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read,
-                        1, FileOptions.Asynchronous | FileOptions.SequentialScan);
+                    await using var stream = new FileStream(fileAccess.OpenRead(file.FullName, asynchronous: true),
+                        FileAccess.Read, 1, isAsync: true);
                     var before = Snapshot(stream.SafeFileHandle);
                     if (before != candidate.Snapshot || before.Length > maximumHashBytes - hashedBytes)
                     { complete = false; continue; }

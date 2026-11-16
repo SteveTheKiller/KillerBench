@@ -1271,4 +1271,22 @@
     <sys:String x:Key="Str_Scroll_Down">向下滚动</sys:String>
     <sys:String x:Key="Str_Scroll_Left">向左滚动</sys:String>
     <sys:String x:Key="Str_Scroll_Right">向右滚动</sys:String>
+  <sys:String x:Key="Str_PackageReview_Title">软件包审查（保留的快照）</sys:String>
+  <sys:String x:Key="Str_PackageReview_Scope">范围：{0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_Dependents">依赖软件包</sys:String>
+  <sys:String x:Key="Str_PackageReview_None">此快照中未报告任何依赖软件包。</sys:String>
+  <sys:String x:Key="Str_PackageReview_Refresh">再次选择{0}以刷新清单。未更改任何软件包。</sys:String>
+  <sys:String x:Key="Str_PackageReview_Item">软件包审查项 {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_DependentCount">报告的依赖软件包数：{0}。执行任何操作之前，请查看原始输出。</sys:String>
+  <sys:String x:Key="Str_PackageReview_Incomplete">软件包快照审查不完整。未更改任何软件包。</sys:String>
+  <sys:String x:Key="Str_PackageReview_Reviewed">已审查软件包快照。软件包删除不可用，也未获授权。</sys:String>
+  <sys:String x:Key="Str_PackageReview_Journal">软件包快照的只读审查。未写入日志。</sys:String>
+  <sys:String x:Key="Str_About_UpdateRejected">无法验证更新，已将其丢弃。未安装任何内容。您可以重试。</sys:String>
+  <sys:String x:Key="Str_About_UpdateHandoffFailed">无法启动更新。KillerBench 仍处于打开状态。您可以重试。</sys:String>
+  <sys:String x:Key="Str_About_UpdateElevationCanceled">在 Windows 权限提示处取消了更新。未安装任何内容。您可以重试。</sys:String>
+  <sys:String x:Key="Str_ExportFailure_ChooseAgain">保存前请重新选择导出目标。</sys:String>
+  <sys:String x:Key="Str_ExportFailure_Changed">确认后导出目标已更改。保存前请重新选择。</sys:String>
+  <sys:String x:Key="Str_ExportFailure_TooLarge">现有目标文件超过128 MiB的覆盖限制。请选择新的文件名。</sys:String>
+  <sys:String x:Key="Str_ExportFailure_NotPublished">导出未发布。先前的文件保留在：{0}</sys:String>
+  <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">新报告已保存。先前的文件保留在：{0}</sys:String>
 </ResourceDictionary>

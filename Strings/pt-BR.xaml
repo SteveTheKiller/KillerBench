@@ -1270,4 +1270,22 @@
     <sys:String x:Key="Str_Scroll_Down">Rolar para baixo</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Rolar para a esquerda</sys:String>
     <sys:String x:Key="Str_Scroll_Right">Rolar para a direita</sys:String>
+  <sys:String x:Key="Str_PackageReview_Title">Revisão de pacotes (instantâneo retido)</sys:String>
+  <sys:String x:Key="Str_PackageReview_Scope">Escopo: {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_Dependents">Pacotes dependentes</sys:String>
+  <sys:String x:Key="Str_PackageReview_None">Nenhum relatado neste instantâneo.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Refresh">Selecione {0} novamente para atualizar o inventário. Nenhum pacote foi alterado.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Item">Item de revisão do pacote {0}</sys:String>
+  <sys:String x:Key="Str_PackageReview_DependentCount">Pacotes dependentes relatados: {0}. Revise a saída bruta antes de qualquer ação.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Incomplete">A revisão do instantâneo de pacotes está incompleta. Nenhum pacote foi alterado.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Reviewed">Instantâneo de pacotes revisado. A remoção de pacotes não está disponível nem autorizada.</sys:String>
+  <sys:String x:Key="Str_PackageReview_Journal">Revisão somente leitura do instantâneo de pacotes. Nenhum diário foi gravado.</sys:String>
+  <sys:String x:Key="Str_About_UpdateRejected">Não foi possível verificar a atualização e ela foi descartada. Nada foi instalado. Você pode tentar novamente.</sys:String>
+  <sys:String x:Key="Str_About_UpdateHandoffFailed">Não foi possível iniciar a atualização. O KillerBench continua aberto. Você pode tentar novamente.</sys:String>
+  <sys:String x:Key="Str_About_UpdateElevationCanceled">A atualização foi cancelada na solicitação de permissão do Windows. Nada foi instalado. Você pode tentar novamente.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_ChooseAgain">Escolha novamente o destino da exportação antes de salvar.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_Changed">O destino da exportação mudou após a confirmação. Escolha-o novamente antes de salvar.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_TooLarge">O arquivo de destino existente excede o limite de sobrescrita de 128 MiB. Escolha um novo nome de arquivo.</sys:String>
+  <sys:String x:Key="Str_ExportFailure_NotPublished">A exportação não foi publicada. O arquivo anterior está preservado em: {0}</sys:String>
+  <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">O novo relatório foi salvo. O arquivo anterior está preservado em: {0}</sys:String>
 </ResourceDictionary>

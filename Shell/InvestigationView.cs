@@ -117,10 +117,16 @@ public partial class MainWindow
         if (evidence is not null) taskInspectionReports.TryGetValue(evidence, out taskInspection);
         if (evidence is not null) historicalWorkflows.TryGetValue(evidence, out historical);
         if (evidence is not null) workflowSummaries.TryGetValue(evidence, out workflow);
-        if (workflow is null && historical is not null)
+        if (historical is not null)
         {
             try { workflow = historical.ReadWorkflow(); }
-            catch (InvalidDataException) { }
+            catch (InvalidDataException)
+            {
+                workflow = BuildHistoricalWorkflowReport(historical);
+                workflow = workflow with { Checks = [..workflow.Checks,
+                    new WorkflowCheck("Recorded detail unavailable", CheckState.Unknown,
+                        "The saved details are invalid or incomplete. Only the historical summary is available.")] };
+            }
         }
         return workflow;
     }
@@ -151,10 +157,11 @@ public partial class MainWindow
         var workflow = ExportWorkflow(out var taskInspection, out var historical);
         if (shownReport is null && taskInspection is null && historical is null && workflow is null) return;
         var report = shownReport;
+        var export = new Services.DesktopReportExport();
         var picker = CreateExportPicker();
+        picker.FileExistsProbe = export.ObserveDestinationForPicker;
         if (picker.ShowDialog(this) != true) return;
-        if (sources.Any(source => string.Equals(source.Source, Path.GetFullPath(picker.FileName), StringComparison.OrdinalIgnoreCase)) ||
-            string.Equals(capturePath, Path.GetFullPath(picker.FileName), StringComparison.OrdinalIgnoreCase))
+        if (Services.DesktopReportExport.ConflictsWithEvidence(picker.FileName, sources.Select(source => source.Source).Append(capturePath)))
         { Report(Controls.LocalizedText.Get("Str_Ui_ExportSeparateDest")); return; }
         try
         {
@@ -165,20 +172,20 @@ public partial class MainWindow
                 var scope = includeRepairs ? WorkflowReportScope.DiagnosticsAndRepairs : WorkflowReportScope.Diagnostics;
                 string contents = html
                     ? WorkflowReportExport.BuildHtml(workflow, scope, Services.ThemeManager.Current.ToString(),
-                        Services.ThemeManager.AccentChoiceFor(Services.ThemeManager.Current).ToString())
-                    : WorkflowReportExport.BuildText(workflow, scope);
-                await File.WriteAllTextAsync(picker.FileName, contents);
+                        Services.ThemeManager.AccentChoiceFor(Services.ThemeManager.Current).ToString(), importedFrom: historical?.Source)
+                    : WorkflowReportExport.BuildText(workflow, scope, importedFrom: historical?.Source);
+                await export.WriteAsync(picker.FileName, contents);
                 Report(Controls.LocalizedText.Format("Str_Ui_Saved", Controls.LocalizedText.Get(includeRepairs ? "Str_Ui_DiagnosticRepairReport" : "Str_Ui_DiagnosticReport"), picker.FileName));
             }
             else
             {
                 string json = taskInspection is not null ? System.Text.Json.JsonSerializer.Serialize(taskInspection, Capture.JsonOptions) :
                     capture is not null && report!.Source == "Windows Update capture" ? await Task.Run(() => Capture.ReportJson(capture)) : Investigation.ToJson(report!);
-                await File.WriteAllTextAsync(picker.FileName, json);
+                await export.WriteAsync(picker.FileName, json);
                 Report(Controls.LocalizedText.Format("Str_Ui_Saved", Controls.LocalizedText.Get("Str_ExportReport"), picker.FileName) + " " + Controls.LocalizedText.Get("Str_ExportContents"));
             }
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException)
-        { Report(Controls.LocalizedText.Format("Str_Ui_Error", Controls.LocalizedText.Get("Str_ExportReport"), error.Message)); }
+        { Report(Controls.LocalizedText.Format("Str_Ui_Error", Controls.LocalizedText.Get("Str_ExportReport"), Services.DesktopReportExport.DescribeFailure(error))); }
     }
 }

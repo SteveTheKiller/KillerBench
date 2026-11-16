@@ -1842,8 +1842,16 @@
                              itself on a flat theme, where the window is square too. -->
                         <Border x:Name="Bd" Background="{DynamicResource CaptionButtonBrush}"
                                 CornerRadius="{DynamicResource CaptionCloseCornerRadius}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              Visibility="{DynamicResource CaptionFontGlyphVisibility}"/>
                         </Border>
+                        <!-- Win98's close X is pixel art, square 2px steps, not a smoothed diagonal. This is
+                             its 8x7 glyph grown to 10x9 for the 20x18 button, drawn aliased so every pixel is hard. -->
+                        <Path Width="10" Height="9" HorizontalAlignment="Center" VerticalAlignment="Center"
+                              Margin="0,0,0,1" Fill="{TemplateBinding Foreground}" IsHitTestVisible="False"
+                              SnapsToDevicePixels="True" RenderOptions.EdgeMode="Aliased"
+                              Visibility="{DynamicResource CaptionDrawnGlyphVisibility}"
+                              Data="M0,0h2v1h-2z M8,0h2v1h-2z M1,1h2v1h-2z M7,1h2v1h-2z M2,2h2v1h-2z M6,2h2v1h-2z M3,3h4v1h-4z M4,4h2v1h-2z M3,5h4v1h-4z M2,6h2v1h-2z M6,6h2v1h-2z M1,7h2v1h-2z M7,7h2v1h-2z M0,8h2v1h-2z M8,8h2v1h-2z"/>
                         <Border x:Name="bevelLight" IsHitTestVisible="False"
                                 BorderBrush="{DynamicResource BevelLightBrush}" BorderThickness="{DynamicResource BevelLightThickness}"/>
                         <Border x:Name="bevelDark" IsHitTestVisible="False" Margin="{DynamicResource BevelInnerMargin}"
@@ -1938,7 +1946,14 @@
                         <TextBlock kl:GlyphInk.Center="True" Text="{TemplateBinding Content}"
                                    FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}"
                                    FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}"
-                                   TextOptions.TextFormattingMode="Ideal" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                   TextOptions.TextFormattingMode="Ideal" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Visibility="{DynamicResource CaptionFontGlyphVisibility}"/>
+                        <!-- The same pixel X as ChromeCloseButton on a flat theme. -->
+                        <Path Width="10" Height="9" HorizontalAlignment="Center" VerticalAlignment="Center"
+                              Margin="0,0,0,1" Fill="{TemplateBinding Foreground}" IsHitTestVisible="False"
+                              SnapsToDevicePixels="True" RenderOptions.EdgeMode="Aliased"
+                              Visibility="{DynamicResource CaptionDrawnGlyphVisibility}"
+                              Data="M0,0h2v1h-2z M8,0h2v1h-2z M1,1h2v1h-2z M7,1h2v1h-2z M2,2h2v1h-2z M6,2h2v1h-2z M3,3h4v1h-4z M4,4h2v1h-2z M3,5h4v1h-4z M2,6h2v1h-2z M6,6h2v1h-2z M1,7h2v1h-2z M7,7h2v1h-2z M0,8h2v1h-2z M8,8h2v1h-2z"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -3422,5 +3437,61 @@
         <Separator/>
         <MenuItem Command="ApplicationCommands.SelectAll" Header="{DynamicResource Str_Ctx_SelectAll}" Icon="&#xE8B3;"/>
     </ContextMenu>
+
+    <!-- THE dialog card chrome, defined ONCE. Every XAML dialog other than ConfirmDialog wraps its
+         content in a ContentControl with this style, with a DialogTitleBar in its first row,
+         instead of carrying its own copy of the shadow, border, bevel and grain stack. Inline
+         copies in each dialog are how the dialogs drifted apart between apps.
+         - The shadow sits on its OWN childless sibling, never on the border that holds the
+           content. A DropShadowEffect rasterises everything inside it, and the text loses
+           ClearType.
+         - PaneShadowEffect is the family pane shadow at the theme's opacity, and null on a flat
+           theme, so a dialog carries the same shadow as the main window.
+         - Halo, radius and edge come from the theme, so 98SE collapses to a flat square window
+           wearing the stacked bevel pairs and every other theme gets the rounded card.
+         - Grain sits UNDER the content, as in the main window. A list pane carries its own grain
+           overlay above its rows; a card-wide overlay would texture the edit fields.
+         - DialogContentMargin is 0 on the card themes and keeps the caption band and body inside
+           the 98SE frame.
+         - Focusable and IsTabStop are false so the wrapper never takes focus from the inputs. -->
+    <Style x:Key="DialogCard" TargetType="ContentControl">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Grid>
+                        <Border Background="{DynamicResource BackgroundBrush}"
+                                BorderBrush="{DynamicResource BackgroundBrush}"
+                                BorderThickness="{DynamicResource WindowEdgeThickness}"
+                                CornerRadius="{DynamicResource PanelCornerRadius}"
+                                Margin="{DynamicResource DialogHaloMargin}"
+                                IsHitTestVisible="False"
+                                Effect="{DynamicResource PaneShadowEffect}"/>
+                        <kui:PickerBorder Background="{DynamicResource BackgroundBrush}"
+                                BorderBrush="{DynamicResource WindowEdgeBrush}"
+                                BorderThickness="{DynamicResource WindowEdgeThickness}"
+                                CornerRadius="{DynamicResource PanelCornerRadius}"
+                                Margin="{DynamicResource DialogHaloMargin}">
+                            <Grid>
+                                <Border Panel.ZIndex="9000" IsHitTestVisible="False"
+                                        BorderBrush="{DynamicResource BevelLightBrush}" BorderThickness="{DynamicResource BevelLightThickness}"/>
+                                <Border Panel.ZIndex="9000" IsHitTestVisible="False"
+                                        BorderBrush="{DynamicResource BevelDarkBrush}" BorderThickness="{DynamicResource BevelDarkThickness}"/>
+                                <Border Panel.ZIndex="9001" IsHitTestVisible="False"
+                                        BorderBrush="{DynamicResource FrameOuterLightBrush}" BorderThickness="{DynamicResource FrameOuterLightThickness}"/>
+                                <Border Panel.ZIndex="9001" IsHitTestVisible="False"
+                                        BorderBrush="{DynamicResource FrameOuterDarkBrush}" BorderThickness="{DynamicResource FrameOuterDarkThickness}"/>
+                                <Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}"
+                                        Opacity="{DynamicResource GrainOpacity}"
+                                        Background="{DynamicResource GrainTileBrush}"/>
+                                <ContentPresenter Margin="{DynamicResource DialogContentMargin}"/>
+                            </Grid>
+                        </kui:PickerBorder>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>
