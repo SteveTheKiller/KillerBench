@@ -8,10 +8,14 @@ namespace KillerBench.Shell;
 public partial class MainWindow
 {
     // Id is the fixed English section name; Title and Description come from the active language.
-    private sealed record ToolCategory(string Id, params WorkflowKind[] Tools)
+    private sealed class ToolCategory(string id, params WorkflowKind[] tools)
     {
+        public string Id { get; } = id;
+        public WorkflowKind[] Tools { get; } = tools;
         public string Title => LocalizedText.Get("Str_Category_" + Id);
         public string Description => LocalizedText.Get("Str_Category_" + Id + "_Description");
+        public string StateKey { get; set; } = "Str_Workspace_NotChecked";
+        public string EvidenceState => LocalizedText.Get(StateKey);
 
         public string Icon => ((char)(Id switch
         {

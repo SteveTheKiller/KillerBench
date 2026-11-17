@@ -1290,4 +1290,18 @@
   <sys:String x:Key="Str_ExportFailure_TooLarge">Istniejący plik docelowy przekracza limit nadpisywania wynoszący 128 MiB. Wybierz nową nazwę pliku.</sys:String>
   <sys:String x:Key="Str_ExportFailure_NotPublished">Eksport nie został opublikowany. Poprzedni plik zachowano tutaj: {0}</sys:String>
   <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Nowy raport został zapisany. Poprzedni plik zachowano tutaj: {0}</sys:String>
+  <sys:String x:Key="Str_Workspace_Overview">Przegląd</sys:String>
+  <sys:String x:Key="Str_Workspace_Investigate">Zbadaj</sys:String>
+  <sys:String x:Key="Str_Workspace_Tools">Narzędzia</sys:String>
+  <sys:String x:Key="Str_Workspace_History">Historia</sys:String>
+  <sys:String x:Key="Str_Workspace_SystemMap">Twój system w skrócie</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Wybierz obszar, aby przejrzeć związane z nim dowody. Kontrole rozpoczną się dopiero po uruchomieniu diagnostyki.</sys:String>
+  <sys:String x:Key="Str_Workspace_NotChecked">Nie sprawdzono</sys:String>
+  <sys:String x:Key="Str_Workspace_SelectArea">Wybierz obszar systemu</sys:String>
+  <sys:String x:Key="Str_Workspace_ReviewArea">Przejrzyj ten obszar</sys:String>
+  <sys:String x:Key="Str_Workspace_GuidedHint">Wybierz miejsce występowania problemu. Przejrzyj wybrane kontrole diagnostyczne przed ich uruchomieniem.</sys:String>
+  <sys:String x:Key="Str_Workspace_HistoryHint">Przejrzyj wyniki tej sesji lub otwórz zapisany przepływ pracy. Dowody z przeszłości nie potwierdzają obecnego stanu systemu.</sys:String>
+  <sys:String x:Key="Str_Workspace_SessionEmpty">Brak wyników w tej sesji.</sys:String>
+  <sys:String x:Key="Str_Workspace_ReadOnly">Diagnostyka tylko do odczytu</sys:String>
+  <sys:String x:Key="Str_Workspace_Evidence">Dowody i kolejne kroki</sys:String>
 </ResourceDictionary>

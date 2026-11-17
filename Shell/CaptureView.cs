@@ -29,6 +29,7 @@ public partial class MainWindow
 
     private void SetCaptureBusy(bool busy)
     {
+        SetWorkspaceBusy(busy);
         if (!busy) CompleteWorkflowOutput();
         MainGo.IsEnabled = !busy;
         MainWorkflow.IsEnabled = !busy;

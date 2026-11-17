@@ -28,17 +28,65 @@ internal static class LocalizationDesktopChecks
         try
         {
             window.Show();
-            var assembly = typeof(KillerBench.Shell.MainWindow).Assembly;
-            var localeType = assembly.GetType("KillerBench.Services.Locale")!;
-            var manager = assembly.GetType("KillerBench.Services.LocaleManager")!;
-            var apply = manager.GetMethod("Apply", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)!;
-            var refresh = typeof(KillerBench.Shell.MainWindow).GetMethod("RefreshLanguage", BindingFlags.Instance | BindingFlags.NonPublic)!;
+            var navigation = (ListBox)window.FindName("WorkspaceNavigation");
+            var destinations = navigation.Items.OfType<ListBoxItem>().ToArray();
+            var investigate = destinations.Single(item => Equals(item.Tag, "Investigate"));
+            var tools = destinations.Single(item => Equals(item.Tag, "Tools"));
+            var historyPage = destinations.Single(item => Equals(item.Tag, "History"));
+            var investigationAreas = (ListBox)window.FindName("InvestigationAreas");
+            var history = (ListBox)window.FindName("SessionHistory");
+            var languageButton = (Button)window.FindName("LangButton");
+            var languages = OpenLanguageMenu(languageButton);
+            var localeNames = LanguageChoices(languages).Select(item => item.Tag.ToString()).ToArray();
+            languages.IsOpen = false;
+            Require(localeNames.Length == 20 && localeNames.Distinct().Count() == 20, "The language menu offers twenty distinct locales");
+
+            navigation.SelectedItem = tools;
+            var sourceArea = (Grid)((ListBox)window.FindName("SourcesList")).Parent;
+            var sourceMenu = sourceArea.Children.OfType<DockPanel>().Single().Children.OfType<Button>().Single().ContextMenu;
+            var loadSample = sourceMenu.Items.OfType<MenuItem>().Single(item => Equals(item.Header, window.FindResource("Str_Session_LoadSample")));
+            loadSample.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            Require(history.Items.Count == 1, "Loading the built-in sample creates one history entry");
+
             string englishInvalidCode = (string)window.FindResource("Str_Tkp_EnterWindowsCode");
             int checkedLocales = 0;
-            foreach (var locale in Enum.GetValues(localeType))
+            foreach (var locale in localeNames)
             {
-                apply.Invoke(null, [locale]);
-                refresh.Invoke(window, []);
+                navigation.SelectedItem = investigate;
+                investigationAreas.SelectedIndex = 0;
+                investigationAreas.ScrollIntoView(investigationAreas.SelectedItem);
+                window.UpdateLayout();
+
+                languages = OpenLanguageMenu(languageButton);
+                LanguageChoices(languages).Single(item => item.Tag.ToString() == locale).IsChecked = true;
+                languages.IsOpen = false;
+                window.UpdateLayout();
+
+                foreach (var destination in destinations)
+                    Require(Equals(destination.Content, window.FindResource("Str_Workspace_" + destination.Tag)),
+                        $"The {destination.Tag} workspace tab follows {locale}");
+
+                var title = (TextBlock)window.FindName("AreaTitle");
+                var description = (TextBlock)window.FindName("AreaDescription");
+                Require(title.IsVisible && title.Text == (string)window.FindResource("Str_Category_Diagnostics"),
+                    "The Investigate evidence title follows " + locale);
+                Require(description.IsVisible && description.Text == (string)window.FindResource("Str_Category_Diagnostics_Description"),
+                    "The Investigate evidence description follows " + locale);
+                Require(((TextBlock)window.FindName("AreaState")).Text == (string)window.FindResource("Str_Workspace_NotChecked"),
+                    "Changing language leaves the unrun area unchecked in " + locale);
+                var areaRow = (ListBoxItem?)investigationAreas.ItemContainerGenerator.ContainerFromIndex(0);
+                Require(areaRow is not null && Equals(AutomationProperties.GetName(areaRow), title.Text) &&
+                    Descendants(areaRow).OfType<TextBlock>().Any(text => text.Text == title.Text) &&
+                    Descendants(areaRow).OfType<TextBlock>().Any(text => text.Text == description.Text),
+                    "The Investigate row text and accessible name follow " + locale);
+
+                navigation.SelectedItem = historyPage;
+                window.UpdateLayout();
+                Require(history.IsVisible && history.Items.Count == 1 &&
+                    history.Items[0].ToString() == (string)window.FindResource("Str_Content_Load_sample"),
+                    "The existing synthetic History entry follows " + locale);
+
+                navigation.SelectedItem = tools;
                 var categories = (ListBox)window.FindName("CategoryList");
                 categories.SelectedIndex = 0;
                 window.UpdateLayout();
@@ -49,7 +97,7 @@ internal static class LocalizationDesktopChecks
                 ((Button)window.FindName("KnowledgeRunButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 string status = ((TextBlock)window.FindName("StatusLabel")).Text;
                 Require(status == (string)window.FindResource("Str_Tkp_EnterWindowsCode"), "Windows code validation follows " + locale);
-                Require(locale.ToString() == "EnUS" || status != englishInvalidCode, "Non-English validation does not silently fall back in " + locale);
+                Require(locale == "EnUS" || status != englishInvalidCode, "Non-English validation does not silently fall back in " + locale);
                 categories.SelectedIndex = 3;
                 ((TextBox)window.FindName("KnowledgeCode")).Text = "-1";
                 ((Button)window.FindName("KnowledgeRunButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -64,11 +112,23 @@ internal static class LocalizationDesktopChecks
                 checkedLocales++;
             }
             Require(checkedLocales == 20, "All twenty application locales were exercised");
-            Console.WriteLine("PASS: twenty runtime languages, category navigation, accessible export labels and real read-only validation handlers. No provider or repair ran.");
+            Console.WriteLine("PASS: twenty locales through the language menu, localized workspace tabs, Investigate evidence, session history and Tools validation. No provider or repair ran.");
             return 0;
         }
         finally { window.Close(); application.Shutdown(); }
     }
+
+    private static ContextMenu OpenLanguageMenu(Button button)
+    {
+        button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        var menu = button.ContextMenu;
+        Require(menu.IsOpen, "The language button opens its menu");
+        return menu;
+    }
+
+    private static IEnumerable<RadioButton> LanguageChoices(ContextMenu menu) =>
+        menu.Items.OfType<StackPanel>().Single().Children.OfType<StackPanel>()
+            .SelectMany(column => column.Children.OfType<RadioButton>());
 
     private static IEnumerable<DependencyObject> Descendants(DependencyObject parent)
     {

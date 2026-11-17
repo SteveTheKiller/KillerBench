@@ -1,8 +1,8 @@
 # KillerBench Changelog
 
-## [1.0.1] - Unreleased
+## [1.1.0] - Unreleased
 
-1.0.1 protects captures and report exports, makes review scope clearer, and improves keyboard access, translations and update recovery.
+1.1.0 introduces a graphical diagnostic workspace alongside improvements to captures, report exports, keyboard access, translations and update recovery.
 
 ### Security
 
@@ -32,7 +32,8 @@
 
 ### Changed
 
-- Added capture, export and evidence-search shortcuts, with matching tooltips, menus, keyboard maps and translated Help tables. Text fields and dialogs use the family context menu with mouse and keyboard access.
+- Reorganized the workbench into Overview, Investigate, Tools and History, with a graphical system map beside resizable evidence and the KillerUI utility rail at the far left. Existing diagnostics and confirmed repairs remain available in Tools.
+- Added workspace, capture, export and evidence-search shortcuts, with matching tooltips, menus, keyboard maps and translated Help tables. Text fields and dialogs use the family context menu with mouse and keyboard access.
 - Updated the WinGet submission tool to Komac 2.17.2.
 - Demo runs and screenshots use realistic workstation findings and normal report labels.
 - Single-line text fields are as tall as the dropdowns beside them, so form rows line up instead of the text boxes standing oversized.

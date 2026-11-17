@@ -1290,4 +1290,18 @@
   <sys:String x:Key="Str_ExportFailure_TooLarge">বিদ্যমান গন্তব্যের আকার 128 MiB ওভাররাইট সীমা ছাড়িয়েছে। নতুন ফাইলের নাম বেছে নিন।</sys:String>
   <sys:String x:Key="Str_ExportFailure_NotPublished">রপ্তানি প্রকাশ করা হয়নি। আগের ফাইলটি এখানে রাখা আছে: {0}</sys:String>
   <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">নতুন প্রতিবেদন সংরক্ষিত হয়েছে। আগের ফাইলটি এখানে রাখা আছে: {0}</sys:String>
+  <sys:String x:Key="Str_Workspace_Overview">সারসংক্ষেপ</sys:String>
+  <sys:String x:Key="Str_Workspace_Investigate">অনুসন্ধান</sys:String>
+  <sys:String x:Key="Str_Workspace_Tools">সরঞ্জাম</sys:String>
+  <sys:String x:Key="Str_Workspace_History">ইতিহাস</sys:String>
+  <sys:String x:Key="Str_Workspace_SystemMap">এক নজরে আপনার সিস্টেম</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">একটি বিভাগ বেছে নিয়ে তার প্রমাণ পর্যালোচনা করুন। ডায়াগনসিস চালানোর আগে কোনো পরীক্ষা হয় না।</sys:String>
+  <sys:String x:Key="Str_Workspace_NotChecked">পরীক্ষা করা হয়নি</sys:String>
+  <sys:String x:Key="Str_Workspace_SelectArea">সিস্টেমের একটি বিভাগ বেছে নিন</sys:String>
+  <sys:String x:Key="Str_Workspace_ReviewArea">এই বিভাগটি পর্যালোচনা করুন</sys:String>
+  <sys:String x:Key="Str_Workspace_GuidedHint">সমস্যাটি কোথায় দেখা যাচ্ছে তা বেছে নিন। নির্বাচিত ডায়াগনসিস পরীক্ষাগুলো চালানোর আগে পর্যালোচনা করুন।</sys:String>
+  <sys:String x:Key="Str_Workspace_HistoryHint">এই সেশনের ফলাফল পর্যালোচনা করুন বা সংরক্ষিত কর্মপ্রবাহ খুলুন। আগের প্রমাণ সিস্টেমের বর্তমান অবস্থা নিশ্চিত করে না।</sys:String>
+  <sys:String x:Key="Str_Workspace_SessionEmpty">এই সেশনে কোনো ফলাফল নেই।</sys:String>
+  <sys:String x:Key="Str_Workspace_ReadOnly">শুধু পঠনযোগ্য ডায়াগনসিস</sys:String>
+  <sys:String x:Key="Str_Workspace_Evidence">প্রমাণ এবং পরবর্তী পদক্ষেপ</sys:String>
 </ResourceDictionary>

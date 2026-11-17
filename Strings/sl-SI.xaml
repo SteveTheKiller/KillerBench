@@ -1289,4 +1289,18 @@
   <sys:String x:Key="Str_ExportFailure_TooLarge">Obstoječa ciljna datoteka presega omejitev prepisovanja 128 MiB. Izberite novo ime datoteke.</sys:String>
   <sys:String x:Key="Str_ExportFailure_NotPublished">Izvoz ni bil objavljen. Prejšnja datoteka je ohranjena na mestu: {0}</sys:String>
   <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Novo poročilo je bilo shranjeno. Prejšnja datoteka je ohranjena na mestu: {0}</sys:String>
+  <sys:String x:Key="Str_Workspace_Overview">Pregled</sys:String>
+  <sys:String x:Key="Str_Workspace_Investigate">Razišči</sys:String>
+  <sys:String x:Key="Str_Workspace_Tools">Orodja</sys:String>
+  <sys:String x:Key="Str_Workspace_History">Zgodovina</sys:String>
+  <sys:String x:Key="Str_Workspace_SystemMap">Vaš sistem na kratko</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Izberite področje, da pregledate zbrane dokaze zanj. Preverjanja se izvedejo šele, ko zaženete diagnostiko.</sys:String>
+  <sys:String x:Key="Str_Workspace_NotChecked">Ni preverjeno</sys:String>
+  <sys:String x:Key="Str_Workspace_SelectArea">Izberite področje sistema</sys:String>
+  <sys:String x:Key="Str_Workspace_ReviewArea">Preglejte to področje</sys:String>
+  <sys:String x:Key="Str_Workspace_GuidedHint">Izberite, kje se pojavlja težava. Pred zagonom preglejte izbrana diagnostična preverjanja.</sys:String>
+  <sys:String x:Key="Str_Workspace_HistoryHint">Preglejte rezultate te seje ali odprite shranjen potek. Pretekli dokazi ne potrjujejo trenutnega stanja sistema.</sys:String>
+  <sys:String x:Key="Str_Workspace_SessionEmpty">V tej seji ni rezultatov.</sys:String>
+  <sys:String x:Key="Str_Workspace_ReadOnly">Diagnostika samo za branje</sys:String>
+  <sys:String x:Key="Str_Workspace_Evidence">Dokazi in naslednji koraki</sys:String>
 </ResourceDictionary>

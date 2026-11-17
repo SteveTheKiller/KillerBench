@@ -26,6 +26,7 @@ public partial class MainWindow
     private void OnRepairs(object sender, RoutedEventArgs e)
     {
         if (repairRunning) return;
+        ShowToolsWorkspace();
         workflowMode = false;
         RepairChoice.Items.Clear();
         var componentStore = new ComboBoxItem();

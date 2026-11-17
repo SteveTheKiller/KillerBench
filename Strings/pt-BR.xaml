@@ -1289,4 +1289,18 @@
   <sys:String x:Key="Str_ExportFailure_TooLarge">O arquivo de destino existente excede o limite de sobrescrita de 128 MiB. Escolha um novo nome de arquivo.</sys:String>
   <sys:String x:Key="Str_ExportFailure_NotPublished">A exportação não foi publicada. O arquivo anterior está preservado em: {0}</sys:String>
   <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">O novo relatório foi salvo. O arquivo anterior está preservado em: {0}</sys:String>
+  <sys:String x:Key="Str_Workspace_Overview">Visão geral</sys:String>
+  <sys:String x:Key="Str_Workspace_Investigate">Investigar</sys:String>
+  <sys:String x:Key="Str_Workspace_Tools">Ferramentas</sys:String>
+  <sys:String x:Key="Str_Workspace_History">Histórico</sys:String>
+  <sys:String x:Key="Str_Workspace_SystemMap">Seu sistema em resumo</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Escolha uma área para revisar as evidências correspondentes. As verificações só começam quando você executa o diagnóstico.</sys:String>
+  <sys:String x:Key="Str_Workspace_NotChecked">Não verificado</sys:String>
+  <sys:String x:Key="Str_Workspace_SelectArea">Escolha uma área do sistema</sys:String>
+  <sys:String x:Key="Str_Workspace_ReviewArea">Revisar esta área</sys:String>
+  <sys:String x:Key="Str_Workspace_GuidedHint">Escolha onde o problema aparece. Revise as verificações selecionadas antes de executá-las.</sys:String>
+  <sys:String x:Key="Str_Workspace_HistoryHint">Revise os resultados desta sessão ou abra um fluxo salvo. Evidências anteriores não confirmam o estado atual do sistema.</sys:String>
+  <sys:String x:Key="Str_Workspace_SessionEmpty">Nenhum resultado nesta sessão.</sys:String>
+  <sys:String x:Key="Str_Workspace_ReadOnly">Diagnóstico somente leitura</sys:String>
+  <sys:String x:Key="Str_Workspace_Evidence">Evidências e próximos passos</sys:String>
 </ResourceDictionary>

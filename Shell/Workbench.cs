@@ -99,6 +99,7 @@ public partial class MainWindow
         });
         SourcesList.SelectedIndex = sources.Count - 1;
         SessionLabel.Text = Controls.LocalizedText.Format("Str_Session_SourceCount", sources.Count);
+        RefreshSessionHistory();
     }
 
     private void OnSourceSelected(object sender, SelectionChangedEventArgs e)
@@ -211,7 +212,7 @@ public partial class MainWindow
         OutputDivider.LayoutTransform = new ScaleTransform(1 / appScale, 1 / appScale);
         LeftPanel.Width = sidebarWidth / appScale;
         ScaleHost.ColumnDefinitions[1].Width = new GridLength(24 / appScale);
-        ContentPane.ColumnDefinitions[1].Width = new GridLength(24 / appScale);
+        ContentPane.ColumnDefinitions[0].Width = new GridLength(24 / appScale);
         ContentPane.ColumnDefinitions[3].Width = new GridLength(TerminalPanel.Visibility == Visibility.Visible ? 8 / appScale : 0);
         ContentPane.ColumnDefinitions[2].MinWidth = (appScale > 1 ? 200 : 300) / appScale;
         ContentPane.ColumnDefinitions[4].MinWidth = TerminalPanel.Visibility == Visibility.Visible ? 200 / appScale : 0;

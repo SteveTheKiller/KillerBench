@@ -1290,4 +1290,18 @@
   <sys:String x:Key="Str_ExportFailure_TooLarge">Le fichier de destination existant dépasse la limite de remplacement de 128 MiB. Choisissez un nouveau nom de fichier.</sys:String>
   <sys:String x:Key="Str_ExportFailure_NotPublished">L’exportation n’a pas été publiée. Le fichier précédent est conservé ici : {0}</sys:String>
   <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Le nouveau rapport a été enregistré. Le fichier précédent est conservé ici : {0}</sys:String>
+  <sys:String x:Key="Str_Workspace_Overview">Vue d’ensemble</sys:String>
+  <sys:String x:Key="Str_Workspace_Investigate">Examiner</sys:String>
+  <sys:String x:Key="Str_Workspace_Tools">Outils</sys:String>
+  <sys:String x:Key="Str_Workspace_History">Historique</sys:String>
+  <sys:String x:Key="Str_Workspace_SystemMap">Votre système en un coup d’œil</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Choisissez une zone pour examiner les preuves recueillies. Aucune vérification n’est effectuée avant le lancement du diagnostic.</sys:String>
+  <sys:String x:Key="Str_Workspace_NotChecked">Non vérifié</sys:String>
+  <sys:String x:Key="Str_Workspace_SelectArea">Choisissez une zone du système</sys:String>
+  <sys:String x:Key="Str_Workspace_ReviewArea">Examiner cette zone</sys:String>
+  <sys:String x:Key="Str_Workspace_GuidedHint">Choisissez où le problème se manifeste. Passez en revue les contrôles sélectionnés avant de les lancer.</sys:String>
+  <sys:String x:Key="Str_Workspace_HistoryHint">Consultez les résultats de cette session ou ouvrez un flux de travail enregistré. Les preuves recueillies précédemment ne permettent pas d’établir l’état actuel du système.</sys:String>
+  <sys:String x:Key="Str_Workspace_SessionEmpty">Aucun résultat dans cette session.</sys:String>
+  <sys:String x:Key="Str_Workspace_ReadOnly">Diagnostic en lecture seule</sys:String>
+  <sys:String x:Key="Str_Workspace_Evidence">Preuves et prochaines étapes</sys:String>
 </ResourceDictionary>

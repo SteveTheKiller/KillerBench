@@ -1290,4 +1290,18 @@
   <sys:String x:Key="Str_ExportFailure_TooLarge">Die vorhandene Zieldatei überschreitet die Überschreibgrenze von 128 MiB. Wählen Sie einen neuen Dateinamen.</sys:String>
   <sys:String x:Key="Str_ExportFailure_NotPublished">Der Export wurde nicht veröffentlicht. Die vorherige Datei bleibt hier erhalten: {0}</sys:String>
   <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Der neue Bericht wurde gespeichert. Die vorherige Datei bleibt hier erhalten: {0}</sys:String>
+  <sys:String x:Key="Str_Workspace_Overview">Übersicht</sys:String>
+  <sys:String x:Key="Str_Workspace_Investigate">Untersuchen</sys:String>
+  <sys:String x:Key="Str_Workspace_Tools">Werkzeuge</sys:String>
+  <sys:String x:Key="Str_Workspace_History">Verlauf</sys:String>
+  <sys:String x:Key="Str_Workspace_SystemMap">Ihr System auf einen Blick</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Wählen Sie einen Bereich, um die zugehörigen Nachweise einzusehen. Erst wenn Sie die Diagnose starten, werden Prüfungen ausgeführt.</sys:String>
+  <sys:String x:Key="Str_Workspace_NotChecked">Nicht geprüft</sys:String>
+  <sys:String x:Key="Str_Workspace_SelectArea">Systembereich auswählen</sys:String>
+  <sys:String x:Key="Str_Workspace_ReviewArea">Diesen Bereich prüfen</sys:String>
+  <sys:String x:Key="Str_Workspace_GuidedHint">Wählen Sie aus, wo das Problem auftritt. Prüfen Sie die ausgewählten Diagnoseschritte vor dem Start.</sys:String>
+  <sys:String x:Key="Str_Workspace_HistoryHint">Sehen Sie sich die Ergebnisse dieser Sitzung an oder öffnen Sie einen gespeicherten Ablauf. Frühere Nachweise belegen den aktuellen Systemzustand nicht.</sys:String>
+  <sys:String x:Key="Str_Workspace_SessionEmpty">Für diese Sitzung liegen keine Ergebnisse vor.</sys:String>
+  <sys:String x:Key="Str_Workspace_ReadOnly">Schreibgeschützte Diagnose</sys:String>
+  <sys:String x:Key="Str_Workspace_Evidence">Nachweise und nächste Schritte</sys:String>
 </ResourceDictionary>

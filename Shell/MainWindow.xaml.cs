@@ -34,6 +34,8 @@ public partial class MainWindow : Window
         InitializeShell();
         InitializeNavigation();
         ShowWelcome();
+        InitializeWorkspace();
+        WorkspaceNavigation.SelectedIndex = 0;
         if (App.DemoMode)
         {
             ModeLabel.Text = Controls.LocalizedText.Get("Str_Mode_Ended");
@@ -125,6 +127,9 @@ public partial class MainWindow : Window
             refreshingLanguage = false;
         }
         SynchronizeNavigation();
+        SystemAreas.Items.Refresh();
+        InvestigationAreas.Items.Refresh();
+        RefreshSessionHistory();
         UpdateMainActionLabel();
         RefreshRecipeSelectionText();
         RefreshUpdateActions();
@@ -132,6 +137,7 @@ public partial class MainWindow : Window
         RefreshNativeCapabilityStatus();
         RefreshPrivacyLanguage();
         RefreshWorkflowReportLanguage();
+        if (OverviewPage.IsVisible || InvestigatePage.IsVisible) ShowAreaEvidence();
     }
 
     private void LoadSample()
@@ -176,6 +182,7 @@ public partial class MainWindow : Window
         bool eventXml = Path.GetExtension(path).Equals(".xml", StringComparison.OrdinalIgnoreCase);
         using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(15));
         readCancellation = cancellation;
+        SetWorkspaceBusy(true);
         OpenButton.IsEnabled = false;
         CancelButton.IsEnabled = true;
         Report(Controls.LocalizedText.Get(archive ? "Str_Ui_EventsReading" : "Str_Ui_LogReading"));
@@ -207,6 +214,7 @@ public partial class MainWindow : Window
         finally
         {
             readCancellation = null;
+            SetWorkspaceBusy(false);
             OpenButton.IsEnabled = true;
             CancelButton.IsEnabled = false;
         }

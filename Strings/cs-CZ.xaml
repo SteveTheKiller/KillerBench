@@ -1290,4 +1290,18 @@
   <sys:String x:Key="Str_ExportFailure_TooLarge">Stávající cílový soubor překračuje limit přepsání 128 MiB. Zvolte nový název souboru.</sys:String>
   <sys:String x:Key="Str_ExportFailure_NotPublished">Export nebyl zveřejněn. Předchozí soubor je zachován zde: {0}</sys:String>
   <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Nový přehled byl uložen. Předchozí soubor je zachován zde: {0}</sys:String>
+  <sys:String x:Key="Str_Workspace_Overview">Přehled</sys:String>
+  <sys:String x:Key="Str_Workspace_Investigate">Prověřit</sys:String>
+  <sys:String x:Key="Str_Workspace_Tools">Nástroje</sys:String>
+  <sys:String x:Key="Str_Workspace_History">Historie</sys:String>
+  <sys:String x:Key="Str_Workspace_SystemMap">Váš systém na první pohled</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Vyberte oblast a prohlédněte si příslušné důkazy. Dokud nespustíte diagnostiku, nic se nekontroluje.</sys:String>
+  <sys:String x:Key="Str_Workspace_NotChecked">Nezkontrolováno</sys:String>
+  <sys:String x:Key="Str_Workspace_SelectArea">Vyberte oblast systému</sys:String>
+  <sys:String x:Key="Str_Workspace_ReviewArea">Prověřit tuto oblast</sys:String>
+  <sys:String x:Key="Str_Workspace_GuidedHint">Vyberte, kde se problém projevuje. Před spuštěním si projděte vybrané diagnostické kontroly.</sys:String>
+  <sys:String x:Key="Str_Workspace_HistoryHint">Prohlédněte si výsledky této relace nebo otevřete uložený postup. Dřívější důkazy nepotvrzují aktuální stav systému.</sys:String>
+  <sys:String x:Key="Str_Workspace_SessionEmpty">V této relaci nejsou žádné výsledky.</sys:String>
+  <sys:String x:Key="Str_Workspace_ReadOnly">Diagnostika bez změn</sys:String>
+  <sys:String x:Key="Str_Workspace_Evidence">Důkazy a další kroky</sys:String>
 </ResourceDictionary>

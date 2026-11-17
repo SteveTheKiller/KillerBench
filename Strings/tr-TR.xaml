@@ -1290,4 +1290,18 @@
   <sys:String x:Key="Str_ExportFailure_TooLarge">Mevcut hedef dosya 128 MiB üzerine yazma sınırını aşıyor. Yeni bir dosya adı seçin.</sys:String>
   <sys:String x:Key="Str_ExportFailure_NotPublished">Dışa aktarma yayımlanmadı. Önceki dosya şu konumda korundu: {0}</sys:String>
   <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Yeni rapor kaydedildi. Önceki dosya şu konumda korundu: {0}</sys:String>
+  <sys:String x:Key="Str_Workspace_Overview">Genel bakış</sys:String>
+  <sys:String x:Key="Str_Workspace_Investigate">İncele</sys:String>
+  <sys:String x:Key="Str_Workspace_Tools">Araçlar</sys:String>
+  <sys:String x:Key="Str_Workspace_History">Geçmiş</sys:String>
+  <sys:String x:Key="Str_Workspace_SystemMap">Sisteminize genel bakış</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">İlgili kanıtları incelemek için bir alan seçin. Tanılamayı çalıştırana kadar hiçbir denetim yapılmaz.</sys:String>
+  <sys:String x:Key="Str_Workspace_NotChecked">Denetlenmedi</sys:String>
+  <sys:String x:Key="Str_Workspace_SelectArea">Bir sistem alanı seçin</sys:String>
+  <sys:String x:Key="Str_Workspace_ReviewArea">Bu alanı incele</sys:String>
+  <sys:String x:Key="Str_Workspace_GuidedHint">Sorunun görüldüğü alanı seçin. Seçili tanılama denetimlerini çalıştırmadan önce gözden geçirin.</sys:String>
+  <sys:String x:Key="Str_Workspace_HistoryHint">Bu oturumun sonuçlarını inceleyin veya kayıtlı bir iş akışını açın. Geçmişe ait kanıtlar sistemin şu anki durumunu doğrulamaz.</sys:String>
+  <sys:String x:Key="Str_Workspace_SessionEmpty">Bu oturumda sonuç yok.</sys:String>
+  <sys:String x:Key="Str_Workspace_ReadOnly">Salt okunur tanılama</sys:String>
+  <sys:String x:Key="Str_Workspace_Evidence">Kanıtlar ve sonraki adımlar</sys:String>
 </ResourceDictionary>

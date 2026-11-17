@@ -28,8 +28,6 @@ internal static class DemoScreenshotChecks
         KillerBench.Services.ThemeManager.Initialize();
         KillerBench.Services.ThemeManager.Apply(KillerBench.Services.Theme.Dark);
         KillerBench.Services.ThemeManager.ApplyAccent(KillerBench.Services.Theme.Dark, KillerBench.Services.Accent.Yellow);
-        typeof(KillerBench.App).GetProperty("DemoMode")!.SetValue(null, true);
-        typeof(KillerBench.App).GetProperty("ScreenshotMode")!.SetValue(null, true);
 
         KillerBench.Services.ThemeManager.GetSetting = _ => null;
         KillerBench.Services.ThemeManager.SetSetting = (_, _) => { };
@@ -37,6 +35,10 @@ internal static class DemoScreenshotChecks
         string output = Environment.GetEnvironmentVariable("KILLERBENCH_SCREENSHOT_OUTPUT") ??
             Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "bench-landing", "screenshots"));
         Directory.CreateDirectory(output);
+        RenderWorkspaceShots(output);
+
+        typeof(KillerBench.App).GetProperty("DemoMode")!.SetValue(null, true);
+        typeof(KillerBench.App).GetProperty("ScreenshotMode")!.SetValue(null, true);
         var dark = KillerBench.Services.Theme.Dark;
         var light = KillerBench.Services.Theme.Light;
         var black = KillerBench.Services.Theme.Black;
@@ -65,7 +67,7 @@ internal static class DemoScreenshotChecks
         KillerBench.Services.ThemeManager.Apply(dark);
         File.WriteAllText(Path.Combine(output, "capture-manifest.json"), System.Text.Json.JsonSerializer.Serialize(shots,
             new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
-        Console.WriteLine("PASS: twelve gallery images plus five size, zoom and tool variants rendered without a cursor: " + output);
+        Console.WriteLine("PASS: three workspace views, twelve gallery images and five size, zoom and tool variants rendered without a cursor: " + output);
         application.Shutdown();
         return 0;
     }
@@ -78,6 +80,54 @@ internal static class DemoScreenshotChecks
 
     private static void Call(object target, string name, params object?[] args) =>
         (target.GetType().GetMethod(name, Private) ?? throw new InvalidOperationException("Missing " + name)).Invoke(target, args);
+
+    private static void RenderWorkspaceShots(string output)
+    {
+        var window = new KillerBench.Shell.MainWindow
+        {
+            WindowStartupLocation = WindowStartupLocation.Manual,
+            ShowActivated = false,
+            ShowInTaskbar = false,
+            Left = SystemParameters.VirtualScreenLeft - 2000,
+            Top = SystemParameters.VirtualScreenTop,
+            Width = 800,
+            Height = 500
+        };
+        try
+        {
+            window.Show();
+            Call(window, "ApplyAppScale", 2.5);
+            var navigation = (ListBox)window.FindName("WorkspaceNavigation");
+            var destinations = navigation.Items.OfType<ListBoxItem>().ToDictionary(item => (string)item.Tag);
+            navigation.SelectedItem = destinations["History"];
+            Settle(window);
+            var open = (Button)window.FindName("OpenSavedWorkflowButton");
+            var viewport = (FrameworkElement)window.FindName("ZoomViewport");
+            open.BringIntoView();
+            Settle(window);
+            var bounds = open.TransformToAncestor(viewport).TransformBounds(new Rect(open.RenderSize));
+            Require(open.IsVisible && open.IsEnabled && bounds.Width > 0 && bounds.Height > 0 &&
+                bounds.Left >= -1 && bounds.Top >= -1 &&
+                bounds.Right <= viewport.ActualWidth + 1 && bounds.Bottom <= viewport.ActualHeight + 1,
+                $"History's saved-workflow action fits inside the visible viewport at 250% and 800x500. Action {bounds}, viewport {viewport.RenderSize}.");
+
+            window.Width = 1025;
+            window.Height = 700;
+            Call(window, "ApplyAppScale", 1d);
+            Settle(window);
+            Capture(window, Path.Combine(output, "workspace-history.png"), 1);
+            navigation.SelectedItem = destinations["Investigate"];
+            Settle(window);
+            Capture(window, Path.Combine(output, "workspace-investigate.png"), 1);
+            navigation.SelectedItem = destinations["Overview"];
+            Settle(window);
+            Capture(window, Path.Combine(output, "workspace-overview.png"), 1);
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
 
     private static void RenderShot(Shot shot, string output)
     {
@@ -112,6 +162,10 @@ internal static class DemoScreenshotChecks
 
             if (!shot.Grain) { Call(window, "ToggleFilmGrain"); grainToggled = true; }
             if (shot.Scale != 1) Call(window, "ApplyAppScale", shot.Scale);
+            bool overviewShot = shot.Kind == WorkflowKind.CommonProblems;
+            var navigation = (ListBox)window.FindName("WorkspaceNavigation");
+            string destination = overviewShot ? "Overview" : "Tools";
+            navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, destination));
             Settle(window);
 
             workflowPicker.SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == shot.Kind);
@@ -132,6 +186,27 @@ internal static class DemoScreenshotChecks
                     "demo|fabricated|synthetic|simulat", System.Text.RegularExpressions.RegexOptions.IgnoreCase) &&
                 ((TextBlock)window.FindName("ModeLabel")).Text == "OPERATION ENDED",
                 "Screenshot reports and status use normal product wording");
+            if (overviewShot)
+            {
+                navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, "Tools"));
+                navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, "Overview"));
+                Settle(window);
+                Require(window.FindName("ReportPane") is FrameworkElement { IsVisible: true } &&
+                    window.FindName("AreaEvidencePanel") is FrameworkElement { IsVisible: false } &&
+                    report.Children[0] is TextBlock { IsVisible: true, Text: "Full system scan report" },
+                    "Returning to Overview keeps the completed Full system scan report visible beside the map.");
+                var areas = (ListBox)window.FindName("SystemAreas");
+                var selectedArea = areas.ItemContainerGenerator.ContainerFromItem(areas.SelectedItem);
+                Require(selectedArea is ListBoxItem { IsVisible: true } && HasDemoStatus(selectedArea),
+                    "The selected system area visibly identifies the completed result as a demo.");
+                areas.SelectedIndex = 11;
+                Settle(window);
+                areas.SelectedIndex = 0;
+                Settle(window);
+                Require(((TextBlock)window.FindName("CoverageLabel")).Text.Contains("6 checks", StringComparison.Ordinal) &&
+                        ((TextBlock)window.FindName("EvidenceTitle")).Text != "Evidence and next steps",
+                    "Returning from an unchecked area restores the completed report's heading and actual coverage.");
+            }
             if (shot.Raw) Call(window, "ShowRawOutput");
             if (shot.OutputHidden) Call(window, "SetOutputOpen", false);
             if (shot.Shortcuts) Call(window, "OnShortcuts", window, new RoutedEventArgs());
@@ -139,8 +214,12 @@ internal static class DemoScreenshotChecks
             Settle(window);
             Require(Math.Abs(window.ActualWidth - shot.Width) < 0.5 && Math.Abs(window.ActualHeight - shot.Height) < 0.5,
                 "Screenshot window matches its requested size, was " + window.ActualWidth + "x" + window.ActualHeight);
-            Require(((FrameworkElement)window.FindName("LeftPanel")).ActualWidth > 0,
-                "Every screenshot retains the fixed category navigation");
+            var categories = (FrameworkElement)window.FindName("LeftPanel");
+            var overview = (FrameworkElement)window.FindName("OverviewPage");
+            var tools = (FrameworkElement)window.FindName("ConsoleBank");
+            Require(overviewShot ? overview.IsVisible && !categories.IsVisible && !tools.IsVisible
+                                 : tools.IsVisible && categories.IsVisible && categories.ActualWidth > 0 && !overview.IsVisible,
+                "Screenshot shows the selected " + destination + " workspace.");
             Capture(window, Path.Combine(output, shot.File), shot.PixelScale);
             Console.WriteLine(shot.File + ": " + shot.Width + "x" + shot.Height + ", zoom " + shot.Scale + ", pixel scale " + shot.PixelScale);
         }
@@ -149,6 +228,16 @@ internal static class DemoScreenshotChecks
             if (grainToggled) Call(window, "ToggleFilmGrain");
             window.Close();
         }
+    }
+
+    private static bool HasDemoStatus(DependencyObject element)
+    {
+        if (element is TextBlock { IsVisible: true } text &&
+            (text.Text.Contains("synthetic", StringComparison.OrdinalIgnoreCase) ||
+             text.Text.Contains("demo", StringComparison.OrdinalIgnoreCase))) return true;
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
+            if (HasDemoStatus(VisualTreeHelper.GetChild(element, i))) return true;
+        return false;
     }
 
     private static void Settle(Window window)

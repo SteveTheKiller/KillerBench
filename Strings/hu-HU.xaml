@@ -1290,4 +1290,18 @@
   <sys:String x:Key="Str_ExportFailure_TooLarge">A meglévő célfájl meghaladja a felülírás 128 MiB-os korlátját. Válasszon új fájlnevet.</sys:String>
   <sys:String x:Key="Str_ExportFailure_NotPublished">Az exportálás nem került közzétételre. Az előző fájl itt maradt meg: {0}</sys:String>
   <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Az új jelentés mentése sikerült. Az előző fájl itt maradt meg: {0}</sys:String>
+  <sys:String x:Key="Str_Workspace_Overview">Áttekintés</sys:String>
+  <sys:String x:Key="Str_Workspace_Investigate">Vizsgálat</sys:String>
+  <sys:String x:Key="Str_Workspace_Tools">Eszközök</sys:String>
+  <sys:String x:Key="Str_Workspace_History">Előzmények</sys:String>
+  <sys:String x:Key="Str_Workspace_SystemMap">A rendszer áttekintése</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Válasszon területet a hozzá tartozó bizonyítékok áttekintéséhez. Az ellenőrzések csak a diagnosztika indításakor futnak le.</sys:String>
+  <sys:String x:Key="Str_Workspace_NotChecked">Nincs ellenőrizve</sys:String>
+  <sys:String x:Key="Str_Workspace_SelectArea">Válasszon rendszerterületet</sys:String>
+  <sys:String x:Key="Str_Workspace_ReviewArea">Terület áttekintése</sys:String>
+  <sys:String x:Key="Str_Workspace_GuidedHint">Válassza ki, hol jelentkezik a probléma. Futtatás előtt tekintse át a kiválasztott diagnosztikai ellenőrzéseket.</sys:String>
+  <sys:String x:Key="Str_Workspace_HistoryHint">Tekintse át a munkamenet eredményeit, vagy nyisson meg egy mentett munkafolyamatot. A korábbi bizonyítékok nem igazolják a rendszer aktuális állapotát.</sys:String>
+  <sys:String x:Key="Str_Workspace_SessionEmpty">Ebben a munkamenetben nincsenek eredmények.</sys:String>
+  <sys:String x:Key="Str_Workspace_ReadOnly">Csak olvasási diagnosztika</sys:String>
+  <sys:String x:Key="Str_Workspace_Evidence">Bizonyítékok és következő lépések</sys:String>
 </ResourceDictionary>

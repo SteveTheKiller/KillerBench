@@ -61,11 +61,19 @@
     <Grid x:Name="ZoomViewport" Grid.Row="1" ClipToBounds="True">
     <kl:UnclippedGrid x:Name="ScaleHost" Margin="4,4,8,0">
       <Grid.ColumnDefinitions><ColumnDefinition Width="{Binding ActualWidth, ElementName=LeftPanel}"/><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-      <Grid.RowDefinitions><RowDefinition Height="*"/></Grid.RowDefinitions>
-      <kl:UnclippedGrid Grid.ColumnSpan="3" x:Name="ContentPane" UseLayoutRounding="True">
-        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="24"/><ColumnDefinition Width="2*" MinWidth="300"/><ColumnDefinition Width="8"/><ColumnDefinition Width="3*"/></Grid.ColumnDefinitions>
+      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+      <ListBox x:Name="WorkspaceNavigation" Grid.ColumnSpan="3" Margin="24,0,0,6" Background="Transparent" BorderThickness="0" SelectionChanged="OnWorkspaceSelected" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Text_DIAGNOSTIC_WORKBENCH}">
+        <ListBox.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal"/></ItemsPanelTemplate></ListBox.ItemsPanel>
+        <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}"><Setter Property="Padding" Value="16,9"/><Setter Property="Margin" Value="0,0,4,0"/><Setter Property="FontFamily" Value="{DynamicResource UiFont}"/><Setter Property="FontSize" Value="14"/><Setter Property="Cursor" Value="Hand"/></Style></ListBox.ItemContainerStyle>
+        <ListBoxItem Tag="Overview" Content="{DynamicResource Str_Workspace_Overview}"/>
+        <ListBoxItem Tag="Investigate" Content="{DynamicResource Str_Workspace_Investigate}"/>
+        <ListBoxItem Tag="Tools" Content="{DynamicResource Str_Workspace_Tools}"/>
+        <ListBoxItem Tag="History" Content="{DynamicResource Str_Workspace_History}"/>
+      </ListBox>
+      <kl:UnclippedGrid Grid.Row="1" Grid.ColumnSpan="3" x:Name="ContentPane" UseLayoutRounding="True">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="2*" MinWidth="300"/><ColumnDefinition Width="8"/><ColumnDefinition Width="3*"/></Grid.ColumnDefinitions>
         <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-        <Border x:Name="LeftPanel" Width="160" Grid.RowSpan="2" Background="{DynamicResource SidebarPaneBrush}" Margin="0" ClipToBounds="True">
+        <Border x:Name="LeftPanel" Grid.Column="1" Width="160" Grid.RowSpan="2" Background="{DynamicResource SidebarPaneBrush}" Margin="0" ClipToBounds="True">
 <Grid>
 <Border Padding="4,6,4,4"><DockPanel>
       <StackPanel x:Name="SidebarHeader" DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,2,0,8">
@@ -118,6 +126,52 @@
       </ListBox>
         </DockPanel></Border></Grid>
 </Border>
+        <Border x:Name="OverviewPage" Grid.Column="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Padding="16" icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
+          <ScrollViewer Style="{StaticResource OverlayScrollViewer}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+              <TextBlock Text="{DynamicResource Str_Workspace_SystemMap}" FontFamily="{DynamicResource HeadingFont}" FontSize="24" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap"/>
+              <TextBlock Text="{DynamicResource Str_Workspace_MapHint}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,6,0,14"/>
+              <Grid Height="90" Margin="0,0,0,8" IsHitTestVisible="False">
+                <Path Stroke="{DynamicResource PaneBorderBrush}" StrokeThickness="2" Stretch="Fill" Margin="28,45,28,0" Data="M 0,40 L 0,0 L 100,0 L 100,40 M 50,0 L 50,40"/>
+                <StackPanel HorizontalAlignment="Center" Background="{DynamicResource ContentPaneBrush}">
+                  <a11y:Glyph Text="&#xE7F4;" FontFamily="Segoe MDL2 Assets" FontSize="42" Foreground="{DynamicResource PrimaryBrush}" HorizontalAlignment="Center"/>
+                  <TextBlock Text="{DynamicResource Str_Workspace_ReadOnly}" FontSize="11" HorizontalAlignment="Center" Margin="6"/>
+                </StackPanel>
+              </Grid>
+              <ListBox x:Name="SystemAreas" Background="Transparent" BorderThickness="0" SelectionChanged="OnSystemAreaSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
+                <ListBox.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="3"/></ItemsPanelTemplate></ListBox.ItemsPanel>
+                <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}"><Setter Property="Padding" Value="5,12"/><Setter Property="Margin" Value="2"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Cursor" Value="Hand"/><Setter Property="AutomationProperties.Name" Value="{Binding Title}"/></Style></ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate><DataTemplate><StackPanel>
+                  <a11y:Glyph Text="{Binding Icon}" FontFamily="Segoe MDL2 Assets" FontSize="26" HorizontalAlignment="Center"/>
+                  <TextBlock Text="{Binding Title}" TextAlignment="Center" TextWrapping="Wrap" Margin="0,8,0,3"/>
+                  <TextBlock Text="{Binding EvidenceState}" TextAlignment="Center" TextWrapping="Wrap" FontSize="10" Opacity="0.8"/>
+                </StackPanel></DataTemplate></ListBox.ItemTemplate>
+              </ListBox>
+            </StackPanel>
+          </ScrollViewer>
+        </Border>
+        <Border x:Name="InvestigatePage" Grid.Column="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Padding="18" Visibility="Collapsed" icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
+          <DockPanel>
+            <StackPanel DockPanel.Dock="Top" Margin="0,0,0,14"><TextBlock Text="{DynamicResource Str_Workspace_Investigate}" FontFamily="{DynamicResource HeadingFont}" FontSize="24" Foreground="{DynamicResource PrimaryBrush}"/><TextBlock Text="{DynamicResource Str_Workspace_GuidedHint}" TextWrapping="Wrap" Margin="0,6,0,0" Foreground="{DynamicResource MutedTextBrush}"/></StackPanel>
+            <ListBox x:Name="InvestigationAreas" Style="{StaticResource WorkbenchList}" Background="Transparent" BorderThickness="0" SelectionChanged="OnInvestigationAreaSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
+              <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}"><Setter Property="Padding" Value="10"/><Setter Property="Margin" Value="0,0,0,6"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Cursor" Value="Hand"/><Setter Property="AutomationProperties.Name" Value="{Binding Title}"/></Style></ListBox.ItemContainerStyle>
+              <ListBox.ItemTemplate><DataTemplate><DockPanel><a11y:Glyph DockPanel.Dock="Left" Text="{Binding Icon}" FontFamily="Segoe MDL2 Assets" FontSize="28" Margin="0,4,14,0"/><StackPanel><TextBlock Text="{Binding Title}" FontSize="16"/><TextBlock Text="{Binding Description}" TextWrapping="Wrap" Opacity="0.8" Margin="0,4,0,0"/></StackPanel></DockPanel></DataTemplate></ListBox.ItemTemplate>
+            </ListBox>
+          </DockPanel>
+        </Border>
+        <Border x:Name="HistoryPage" Grid.Column="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Padding="18" Visibility="Collapsed" icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
+          <ScrollViewer Style="{StaticResource OverlayScrollViewer}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel>
+            <StackPanel>
+              <TextBlock Text="{DynamicResource Str_Workspace_History}" FontFamily="{DynamicResource HeadingFont}" FontSize="24" Foreground="{DynamicResource PrimaryBrush}"/>
+              <TextBlock Text="{DynamicResource Str_Workspace_HistoryHint}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,8,0,14"/>
+              <WrapPanel Margin="0,0,0,12"><Button x:Name="OpenSavedWorkflowButton" Content="{DynamicResource Str_Advanced_OpenWorkflow}" Click="OnOpenWorkflowJournal" ToolTip="{DynamicResource Str_Advanced_OpenWorkflowTip}" Margin="0,0,6,6"/><Button x:Name="HistoryOpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture" Margin="0,0,0,6"/></WrapPanel>
+              <TextBlock x:Name="HistoryEmpty" Text="{DynamicResource Str_Workspace_SessionEmpty}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+            </StackPanel>
+            <ListBox x:Name="SessionHistory" Style="{StaticResource WorkbenchList}" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" SelectionChanged="OnHistorySelected" AutomationProperties.Name="{DynamicResource Str_Session_Sources}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+              <ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="8"/></DataTemplate></ListBox.ItemTemplate>
+            </ListBox>
+          </StackPanel></ScrollViewer>
+        </Border>
         <kl:UnclippedGrid x:Name="ConsoleBank" Grid.Column="2">
           <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
           <Grid.RowDefinitions><RowDefinition Height="*"/></Grid.RowDefinitions>
@@ -832,7 +886,7 @@
       <GridSplitter x:Name="OutputDivider" Grid.Column="3" Grid.RowSpan="2" Width="8" HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Transparent" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" KeyboardIncrement="10" Cursor="SizeWE" Visibility="Collapsed">
         <GridSplitter.Template><ControlTemplate TargetType="GridSplitter"><Border Background="{TemplateBinding Background}"/></ControlTemplate></GridSplitter.Template>
       </GridSplitter>
-      <Grid x:Name="SidebarRail" Grid.Column="1" Panel.ZIndex="1">
+      <Grid x:Name="SidebarRail" Grid.Column="0" Grid.RowSpan="2" Panel.ZIndex="1">
         <Button x:Name="SidebarButton" Style="{StaticResource RailButton}" Content="&#xE76B;" FontSize="12" VerticalAlignment="Top" Margin="0,10,0,0" Click="OnToggleSources" ToolTip="{DynamicResource Str_ToolTip_Toggle_sources_F2}"/>
         <StackPanel Style="{StaticResource RailButtonHost}" VerticalAlignment="Bottom">
           <Button x:Name="ActivityButton" Style="{StaticResource RailButton}" Content="&#xE756;" Click="OnToggleActivity" ToolTip="{DynamicResource Str_ToolTip_Toggle_activity_log_F3}" Margin="0,0,0,10"/>
@@ -1019,6 +1073,15 @@
               <TextBox x:Name="EvidenceBox" IsReadOnly="True" AcceptsReturn="True" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource ConsoleTextBrush}" FontFamily="Consolas" FontSize="14" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Evidence_with_original_line_numbers}"/>
             </Border>
             <TextBlock x:Name="StartGuide" Grid.Row="3" Visibility="Collapsed" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" LineHeight="18" Margin="0,4,0,0"/>
+            <ScrollViewer x:Name="AreaEvidencePanel" Grid.Row="3" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+              <StackPanel Margin="0,12,6,0">
+                <TextBlock x:Name="AreaTitle" FontFamily="{DynamicResource HeadingFont}" FontSize="26" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap"/>
+                <TextBlock x:Name="AreaState" Text="{DynamicResource Str_Workspace_NotChecked}" Margin="0,12,0,8" FontSize="16" TextWrapping="Wrap"/>
+                <TextBlock x:Name="AreaDescription" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+                <Button x:Name="ReviewAreaButton" Content="{DynamicResource Str_Workspace_ReviewArea}" Click="OnReviewArea" HorizontalAlignment="Left" Margin="0,18,0,10"/>
+                <TextBlock Text="{DynamicResource Str_Report_NoActionStarts}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+              </StackPanel>
+            </ScrollViewer>
             <Border x:Name="ReportPane" Grid.Row="3" Visibility="Collapsed">
               <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel x:Name="ReportContent" Margin="0,4,6,0"/>

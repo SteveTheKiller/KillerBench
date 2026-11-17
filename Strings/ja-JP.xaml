@@ -1290,4 +1290,18 @@
   <sys:String x:Key="Str_ExportFailure_TooLarge">既存の保存先ファイルは上書きの上限128 MiBを超えています。新しいファイル名を選択してください。</sys:String>
   <sys:String x:Key="Str_ExportFailure_NotPublished">エクスポートは公開されませんでした。以前のファイルは次の場所に保持されています: {0}</sys:String>
   <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">新しいレポートを保存しました。以前のファイルは次の場所に保持されています: {0}</sys:String>
+  <sys:String x:Key="Str_Workspace_Overview">概要</sys:String>
+  <sys:String x:Key="Str_Workspace_Investigate">調査</sys:String>
+  <sys:String x:Key="Str_Workspace_Tools">ツール</sys:String>
+  <sys:String x:Key="Str_Workspace_History">履歴</sys:String>
+  <sys:String x:Key="Str_Workspace_SystemMap">システムの概要</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">領域を選択して、その領域の証拠を確認します。診断を実行するまでチェックは行われません。</sys:String>
+  <sys:String x:Key="Str_Workspace_NotChecked">未確認</sys:String>
+  <sys:String x:Key="Str_Workspace_SelectArea">システムの領域を選択</sys:String>
+  <sys:String x:Key="Str_Workspace_ReviewArea">この領域を確認</sys:String>
+  <sys:String x:Key="Str_Workspace_GuidedHint">問題が発生している領域を選択します。実行する前に、選択された診断項目を確認してください。</sys:String>
+  <sys:String x:Key="Str_Workspace_HistoryHint">このセッションの結果を確認するか、保存済みのワークフローを開きます。過去の証拠だけでは、現在のシステムの状態は判断できません。</sys:String>
+  <sys:String x:Key="Str_Workspace_SessionEmpty">このセッションには結果がありません。</sys:String>
+  <sys:String x:Key="Str_Workspace_ReadOnly">読み取り専用診断</sys:String>
+  <sys:String x:Key="Str_Workspace_Evidence">証拠と次の手順</sys:String>
 </ResourceDictionary>

@@ -31,6 +31,8 @@ internal static class CategoryNavigationChecks
         try
         {
             window.Show();
+            var navigation = (ListBox)window.FindName("WorkspaceNavigation");
+            navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, "Tools"));
             var list = (ListBox)window.FindName("CategoryList");
             var sidebar = (FrameworkElement)window.FindName("LeftPanel");
             Require(sidebar.Width == 160, "Fresh sidebar uses the narrower 160-pixel default");

@@ -20,6 +20,8 @@ internal static class ImportedReportUiChecks
         {
             window.Show();
             window.Left = SystemParameters.VirtualScreenLeft - window.Width - 200;
+            var navigation = (ListBox)window.FindName("WorkspaceNavigation");
+            navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, "Tools"));
             window.UpdateLayout();
             string log = Path.Combine(scratch, "CBS.log");
             File.WriteAllText(log, "2026-09-01 10:00:00, Error CBS Failed to resolve package 0x800f081f\n");

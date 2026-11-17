@@ -1290,4 +1290,18 @@
   <sys:String x:Key="Str_ExportFailure_TooLarge">现有目标文件超过128 MiB的覆盖限制。请选择新的文件名。</sys:String>
   <sys:String x:Key="Str_ExportFailure_NotPublished">导出未发布。先前的文件保留在：{0}</sys:String>
   <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">新报告已保存。先前的文件保留在：{0}</sys:String>
+  <sys:String x:Key="Str_Workspace_Overview">概览</sys:String>
+  <sys:String x:Key="Str_Workspace_Investigate">排查</sys:String>
+  <sys:String x:Key="Str_Workspace_Tools">工具</sys:String>
+  <sys:String x:Key="Str_Workspace_History">历史记录</sys:String>
+  <sys:String x:Key="Str_Workspace_SystemMap">系统概况</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">选择一个区域以查看相关证据。运行诊断前不会执行任何检查。</sys:String>
+  <sys:String x:Key="Str_Workspace_NotChecked">未检查</sys:String>
+  <sys:String x:Key="Str_Workspace_SelectArea">选择系统区域</sys:String>
+  <sys:String x:Key="Str_Workspace_ReviewArea">查看此区域</sys:String>
+  <sys:String x:Key="Str_Workspace_GuidedHint">选择问题出现的区域。运行诊断前，请查看已选的诊断项目。</sys:String>
+  <sys:String x:Key="Str_Workspace_HistoryHint">查看本次会话的结果，或打开已保存的工作流。历史证据无法确认系统的当前状态。</sys:String>
+  <sys:String x:Key="Str_Workspace_SessionEmpty">本次会话没有结果。</sys:String>
+  <sys:String x:Key="Str_Workspace_ReadOnly">只读诊断</sys:String>
+  <sys:String x:Key="Str_Workspace_Evidence">证据和后续步骤</sys:String>
 </ResourceDictionary>

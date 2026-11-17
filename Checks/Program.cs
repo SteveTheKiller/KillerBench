@@ -250,6 +250,7 @@ internal static class Program
             if (args is ["--isolated-ui-smoke"]) return RunUiSmoke();
             if (args is ["--isolated-localization-ui"]) return LocalizationDesktopChecks.Run();
             if (args is ["--isolated-category-ui"]) return CategoryNavigationChecks.Run();
+            if (args is ["--isolated-workspace-navigation"]) return WorkspaceNavigationChecks.Run();
             if (args is ["--isolated-dialog-smoke"]) return RunDialogSmoke();
             if (args is ["--isolated-demo-screenshots"]) return DemoScreenshotChecks.Run();
             if (args is ["--only", "menu-separators"]) return RunMenuSeparatorChecks();
@@ -302,6 +303,8 @@ internal static class Program
                 return IsolatedDesktop.Run("--isolated-localization-ui");
             if (args is ["--only", "ui-category"])
                 return IsolatedDesktop.Run("--isolated-category-ui");
+            if (args is ["--only", "workspace-navigation"])
+                return IsolatedDesktop.Run("--isolated-workspace-navigation");
             if (args is ["--only", "dialog-smoke"])
                 return IsolatedDesktop.Run("--isolated-dialog-smoke");
             if (args is ["--only", "demo-screenshots"])
@@ -316,7 +319,7 @@ internal static class Program
                 finally { try { Directory.Delete(scratch, true); } catch (Exception e) when (e is IOException or UnauthorizedAccessException) { } }
                 return 0;
             }
-            throw new ArgumentException("Use no arguments for all non-UI checks, or --only workflow-report-export, workflow-options, servicing-monitor, recipes, native-validation, workflow, dialog-smoke, demo-screenshots, ui-smoke, ui-category or ui-full. UI checks require an isolated desktop.");
+            throw new ArgumentException("Use no arguments for all non-UI checks, or --only workflow-report-export, workflow-options, servicing-monitor, recipes, native-validation, workflow, dialog-smoke, demo-screenshots, ui-smoke, ui-category, workspace-navigation or ui-full. UI checks require an isolated desktop.");
         }
         catch (Exception error) { Console.Error.WriteLine(error); return 1; }
     }
@@ -484,6 +487,12 @@ internal static class Program
         {
             window.Show();
             window.UpdateLayout();
+            var terminal = (FrameworkElement)window.FindName("TerminalPanel");
+            var categoryPane = (FrameworkElement)window.FindName("LeftPanel");
+            Require(window.FindName("OverviewPage") is FrameworkElement { IsVisible: true } &&
+                terminal.IsVisible && !categoryPane.IsVisible,
+                "Startup shows Overview and its evidence, with tool categories tucked away.");
+            SelectToolsWorkspace(window);
             string expectedFooter = "v" + typeof(KillerBench.App).Assembly.GetName().Version!.ToString(3);
             ShortcutCommandChecks.Run(window);
             TextMenuChecks.Run(window);
@@ -502,12 +511,13 @@ internal static class Program
                 Require(((TextBlock)window.FindName("ThemeStatus")).Text == expectedFooter,
                     "Footer retains the running version after theme changes");
             }
-            Require(((Border)window.FindName("TerminalPanel")).Visibility == Visibility.Collapsed &&
-                ((Border)window.FindName("LeftPanel")).ActualWidth > 0,
-                "Tool browsing starts with fixed navigation and tucked-away output");
+            Require(terminal.IsVisible && categoryPane.IsVisible && categoryPane.ActualWidth > 0,
+                "Tools opens with its category navigation and the evidence pane available.");
             var outputToggle = (Button)window.FindName("SidebarButton");
             outputToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            Require(((Border)window.FindName("TerminalPanel")).Visibility == Visibility.Visible,
+            Require(!terminal.IsVisible && categoryPane.IsVisible, "Output toggle closes evidence while keeping categories visible.");
+            outputToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(terminal.IsVisible,
                 "Output toggle opens the retained output pane");
             window.UpdateLayout();
             var paneDivider = window.FindName("OutputDivider") as GridSplitter;
@@ -543,10 +553,13 @@ internal static class Program
             Require(((Border)window.FindName("TerminalPanel")).Visibility == Visibility.Collapsed &&
                 ((Border)window.FindName("LeftPanel")).IsEnabled,
                 "Output toggle never hides or disables category navigation");
-            Require(System.Windows.Controls.Grid.GetColumn((FrameworkElement)window.FindName("SidebarRail")) == 1 &&
-                ReferenceEquals(((FrameworkElement)window.FindName("SidebarRail")).Parent, window.FindName("ContentPane")) &&
-                System.Windows.Controls.Grid.GetColumn((FrameworkElement)window.FindName("TerminalPanel")) == 4,
-                "The complete rail stays beside categories, separate from the output divider");
+            var rail = (FrameworkElement)window.FindName("SidebarRail");
+            var railRight = rail.TranslatePoint(new Point(rail.ActualWidth, 0), outputGrid).X;
+            var categoryLeft = categoryPane.TranslatePoint(new Point(), outputGrid).X;
+            Require(rail.IsVisible && rail.ActualWidth > 0 && Grid.GetColumn(rail) == 0 &&
+                ReferenceEquals(rail.Parent, outputGrid) && Math.Abs(categoryLeft - railRight) <= 1 &&
+                Grid.GetColumn(terminal) == 4,
+                "The rail starts at the far left beside categories, separate from the evidence divider.");
             RenderedTypographyChecks.VerifySubtitle(window);
             var windowDpi = VisualTreeHelper.GetDpi(window);
             Require(!WithinPixelRounding(1025 + 1 / windowDpi.DpiScaleX, 1025, windowDpi.DpiScaleX),
@@ -683,7 +696,19 @@ internal static class Program
                 window.FindName("ExportReportButton") is Button { IsEnabled: true } &&
                 window.FindName("MainGo") is Button { IsEnabled: false },
                 "Live work keeps category navigation and report export available while preventing another run");
+            Require(window.FindName("WorkspaceNavigation") is ListBox { IsEnabled: false } &&
+                window.FindName("SystemAreas") is ListBox { IsEnabled: false } &&
+                window.FindName("InvestigationAreas") is ListBox { IsEnabled: false } &&
+                window.FindName("SessionHistory") is ListBox { IsEnabled: false },
+                "Live work prevents workspace, area and history selection from replacing its output.");
             typeof(KillerBench.Shell.MainWindow).GetMethod("SetCaptureBusy", flags)!.Invoke(window, [false]);
+            Require(window.FindName("WorkspaceNavigation") is ListBox { IsEnabled: true } &&
+                window.FindName("SystemAreas") is ListBox { IsEnabled: true } &&
+                window.FindName("InvestigationAreas") is ListBox { IsEnabled: true } &&
+                window.FindName("SessionHistory") is ListBox { IsEnabled: true },
+                "Workspace, area and history selection return when the operation ends.");
+            var handoffNavigation = (ListBox)window.FindName("WorkspaceNavigation");
+            handoffNavigation.SelectedItem = handoffNavigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, "Overview"));
             var actionable = new WorkflowResult(WorkflowKind.CommonProblems, "smoke", DateTimeOffset.UtcNow, "Needs attention",
                 [new("Service repair", CheckState.Repairable, "Fixture repair option", RepairKind.SystemFiles),
                  new("Collected system detail", CheckState.Information, "Fixture informational evidence")], [], "smoke-journal.json");
@@ -697,6 +722,8 @@ internal static class Program
             var maintenanceNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review maintenance options"));
             repairNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             window.UpdateLayout();
+            Require(window.FindName("ConsoleBank") is FrameworkElement { IsVisible: true },
+                "Repair report handoff opens the visible Tools workspace from Overview");
             Require(window.FindName("CategoryList") is ListBox { SelectedItem: not null } categories && categories.SelectedItem.ToString() == "Repair" &&
                 window.FindName("MainWorkflow") is ComboBox { SelectedItem: WorkflowDefinition { Kind: WorkflowKind.SystemFiles } } &&
                 window.FindName("MainAutoRepair") is CheckBox { IsChecked: not true },
@@ -1439,15 +1466,19 @@ internal static class Program
             Require(text.Text.Contains("START HERE") && text.Text.Contains("Full system scan is selected by default") &&
                 ((ListBox)window.FindName("SourcesList")).Items.Count == 0,
                 "Startup explains the diagnostic-first full scan without pretending that sample evidence is machine evidence");
+            Require(window.FindName("OverviewPage") is FrameworkElement { IsVisible: true } &&
+                window.FindName("TerminalPanel") is FrameworkElement { IsVisible: true },
+                "The full UI starts in Overview with evidence visible.");
+            SelectToolsWorkspace(window);
             var controlBank = (FrameworkElement)window.FindName("LeftPanel");
             var consoleBank = (FrameworkElement)window.FindName("ConsoleBank");
             var controlOrigin = controlBank.TranslatePoint(new Point(), window);
             var consoleOrigin = consoleBank.TranslatePoint(new Point(), window);
             var rail = (FrameworkElement)window.FindName("SidebarRail");
             var railOrigin = rail.TranslatePoint(new Point(), window);
-            Require(railOrigin.X >= controlOrigin.X + controlBank.ActualWidth - 1 &&
-                railOrigin.X + rail.ActualWidth <= consoleOrigin.X + 1 && Grid.GetColumn(rail) == 1,
-                "Icon rail remains between categories and the main tool pane");
+            Require(rail.IsVisible && rail.ActualWidth > 0 && Grid.GetColumn(rail) == 0 &&
+                Math.Abs(railOrigin.X + rail.ActualWidth - controlOrigin.X) <= 1,
+                "The icon rail stays at the far left of the Tools category bank.");
             Require(consoleOrigin.X >= controlOrigin.X + controlBank.ActualWidth && Math.Abs(consoleOrigin.Y - controlOrigin.Y) < 1,
                 "Control bank sits beside the console, not above it");
             var categories = (ListBox)window.FindName("CategoryList");
@@ -1466,7 +1497,7 @@ internal static class Program
             ((Button)window.FindName("ShortcutListButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
             Require(shortcuts.Visibility == Visibility.Visible &&
-                ((StackPanel)window.FindName("ShortcutListHost")).Children.OfType<Grid>().Count() == 13 &&
+                ((StackPanel)window.FindName("ShortcutListHost")).Children.OfType<Grid>().Count() == 17 &&
                 ((Button)window.FindName("ShortcutButton")).ToolTip?.ToString() == KillerFamily.Layout.ShortcutHints.WithHint("Keyboard shortcuts", "F1"),
                 "Shortcut list and rail tooltip come from the shared binding table");
             ((Button)window.FindName("ShortcutMapButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -2385,6 +2416,13 @@ internal static class Program
 
     private static void Require(bool condition, string message)
     { if (!condition) throw new Exception(message); }
+
+    private static void SelectToolsWorkspace(Window window)
+    {
+        var navigation = (ListBox)window.FindName("WorkspaceNavigation");
+        navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, "Tools"));
+        window.UpdateLayout();
+    }
 
     private static void Pump()
     {

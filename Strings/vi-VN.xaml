@@ -1289,4 +1289,18 @@
   <sys:String x:Key="Str_ExportFailure_TooLarge">Tệp đích hiện có vượt quá giới hạn ghi đè 128 MiB. Chọn tên tệp mới.</sys:String>
   <sys:String x:Key="Str_ExportFailure_NotPublished">Bản xuất chưa được công bố. Tệp trước đó được giữ lại tại: {0}</sys:String>
   <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Báo cáo mới đã được lưu. Tệp trước đó được giữ lại tại: {0}</sys:String>
+  <sys:String x:Key="Str_Workspace_Overview">Tổng quan</sys:String>
+  <sys:String x:Key="Str_Workspace_Investigate">Tìm hiểu sự cố</sys:String>
+  <sys:String x:Key="Str_Workspace_Tools">Công cụ</sys:String>
+  <sys:String x:Key="Str_Workspace_History">Lịch sử</sys:String>
+  <sys:String x:Key="Str_Workspace_SystemMap">Tổng quan về hệ thống của bạn</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Chọn một mục để xem bằng chứng liên quan. Việc kiểm tra chỉ bắt đầu khi bạn chạy chẩn đoán.</sys:String>
+  <sys:String x:Key="Str_Workspace_NotChecked">Chưa kiểm tra</sys:String>
+  <sys:String x:Key="Str_Workspace_SelectArea">Chọn một mục của hệ thống</sys:String>
+  <sys:String x:Key="Str_Workspace_ReviewArea">Xem lại mục này</sys:String>
+  <sys:String x:Key="Str_Workspace_GuidedHint">Chọn nơi sự cố xuất hiện. Xem lại các mục chẩn đoán đã chọn trước khi chạy.</sys:String>
+  <sys:String x:Key="Str_Workspace_HistoryHint">Xem lại kết quả của phiên này hoặc mở một quy trình đã lưu. Bằng chứng trước đây không xác nhận tình trạng hiện tại của hệ thống.</sys:String>
+  <sys:String x:Key="Str_Workspace_SessionEmpty">Không có kết quả trong phiên này.</sys:String>
+  <sys:String x:Key="Str_Workspace_ReadOnly">Chẩn đoán chỉ đọc</sys:String>
+  <sys:String x:Key="Str_Workspace_Evidence">Bằng chứng và các bước tiếp theo</sys:String>
 </ResourceDictionary>

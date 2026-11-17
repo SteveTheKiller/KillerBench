@@ -1290,4 +1290,18 @@
   <sys:String x:Key="Str_ExportFailure_TooLarge">Размер существующего целевого файла превышает предел перезаписи 128 MiB. Выберите новое имя файла.</sys:String>
   <sys:String x:Key="Str_ExportFailure_NotPublished">Экспорт не опубликован. Предыдущий файл сохранен здесь: {0}</sys:String>
   <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Новый отчет сохранен. Предыдущий файл сохранен здесь: {0}</sys:String>
+  <sys:String x:Key="Str_Workspace_Overview">Обзор</sys:String>
+  <sys:String x:Key="Str_Workspace_Investigate">Поиск проблемы</sys:String>
+  <sys:String x:Key="Str_Workspace_Tools">Инструменты</sys:String>
+  <sys:String x:Key="Str_Workspace_History">История</sys:String>
+  <sys:String x:Key="Str_Workspace_SystemMap">Краткий обзор системы</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Выберите область, чтобы просмотреть собранные для неё данные. Проверки выполняются только после запуска диагностики.</sys:String>
+  <sys:String x:Key="Str_Workspace_NotChecked">Не проверено</sys:String>
+  <sys:String x:Key="Str_Workspace_SelectArea">Выберите область системы</sys:String>
+  <sys:String x:Key="Str_Workspace_ReviewArea">Просмотреть эту область</sys:String>
+  <sys:String x:Key="Str_Workspace_GuidedHint">Выберите область, в которой проявляется проблема. Просмотрите выбранные диагностические проверки перед запуском.</sys:String>
+  <sys:String x:Key="Str_Workspace_HistoryHint">Просмотрите результаты этого сеанса или откройте сохранённый процесс. Данные прошлых проверок не подтверждают текущее состояние системы.</sys:String>
+  <sys:String x:Key="Str_Workspace_SessionEmpty">В этом сеансе нет результатов.</sys:String>
+  <sys:String x:Key="Str_Workspace_ReadOnly">Диагностика только для чтения</sys:String>
+  <sys:String x:Key="Str_Workspace_Evidence">Диагностические данные и дальнейшие действия</sys:String>
 </ResourceDictionary>

@@ -2,6 +2,10 @@
 // key a language does not carry yet.
 var I18N = {
  "bn": {
+  "shortcut_Str_Workspace_Overview": "সারসংক্ষেপ",
+  "shortcut_Str_Workspace_Investigate": "অনুসন্ধান",
+  "shortcut_Str_Workspace_Tools": "সরঞ্জাম",
+  "shortcut_Str_Workspace_History": "ইতিহাস",
   "shortcut_Str_Shortcuts_ToggleSources": "আউটপুট দেখান বা লুকান",
   "shortcut_Str_Shortcuts_ToggleActivity": "কার্যক্রম লগ টগল করুন",
   "shortcut_Str_Theme_FilmGrain": "ফিল্ম গ্রেইন",
@@ -15,6 +19,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "কীবোর্ড শর্টকাট",
   "shortcut_Str_Shortcuts_About": "KillerBench সম্পর্কে",
   "shortcut_Str_Shortcuts_CloseOrStop": "ওভারলে বন্ধ করুন বা পড়া বন্ধ করুন",
+  "workspace_preview": "আসন্ন KillerBench 1.1.0-এ <strong>সারসংক্ষেপ</strong> ভিউয়ের বাঁ দিকে সিস্টেম মানচিত্র আর ডান দিকে প্রমাণ দেখা যাবে। প্যানেলের আকার বদলাতে মাঝের বিভাজকটি টানুন। <strong>অনুসন্ধান</strong> থেকে ডায়াগনসিসের একটি বিভাগ বেছে নিন, <strong>সরঞ্জাম</strong> থেকে আলাদা সরঞ্জাম খুঁজুন, আর <strong>ইতিহাস</strong> থেকে সেশনের ফলাফল দেখুন বা সংরক্ষিত কর্মপ্রবাহ খুলুন। একেবারে বাঁ দিকের বারে থিম, ভাষা ও অন্যান্য নিয়ন্ত্রণ আছে। ভিউ বদলাতে Ctrl+1 থেকে Ctrl+4 ব্যবহার করুন।",
   "workspace_lookup": "Windows ত্রুটি কোড খুঁজতে Diagnostics এবং Device Manager কোড খুঁজতে Devices ব্যবহার করুন। Windows Update লগের নিয়ন্ত্রণ শুধু Updates-এ থাকে।",
   "page_engine_api_title": "API নির্দেশিকা | KillerBench | ডেভেলপার নির্দেশিকা",
   "page_engine_api_description": "পাবলিক টাইপগুলো KillerBench.Engine.Workflows, KillerBench.Engine.Infrastructure এবং KillerBench.Engine.Validation-এর মতো সক্ষমতাভিত্তিক নেমস্পেস ব্যবহার করে। Windows প্রোভাইডারগুলো KillerBench.Engine.Windows এবং এর সাবনেমস্পেস ব্যবহার করে। নেটিভ ওয়ার্কফ্লো চালানোর আগে প্রোভাইডার প্রজেক্টটি রেফারেন্স করুন এবং WindowsEngine.Register() কল করুন; দেখুন শুরু করা।",
@@ -1758,6 +1763,10 @@ var I18N = {
   "ui_version": "সংস্করণ"
  },
  "cs": {
+  "shortcut_Str_Workspace_Overview": "Přehled",
+  "shortcut_Str_Workspace_Investigate": "Prověřit",
+  "shortcut_Str_Workspace_Tools": "Nástroje",
+  "shortcut_Str_Workspace_History": "Historie",
   "shortcut_Str_Shortcuts_ToggleSources": "Zobrazit nebo skrýt výstup",
   "shortcut_Str_Shortcuts_ToggleActivity": "Přepnout protokol činnosti",
   "shortcut_Str_Theme_FilmGrain": "Filmové zrno",
@@ -1771,6 +1780,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "Klávesové zkratky",
   "shortcut_Str_Shortcuts_About": "O KillerBench",
   "shortcut_Str_Shortcuts_CloseOrStop": "Zavřít překryv nebo ukončit čtení",
+  "workspace_preview": "V připravované verzi KillerBench 1.1.0 bude na stránce <strong>Přehled</strong> vlevo mapa systému a vpravo důkazy. Chcete-li změnit velikost panelů, přetáhněte dělicí příčku. Na stránce <strong>Prověřit</strong> vyberete oblast diagnostiky, na stránce <strong>Nástroje</strong> najdete jednotlivé nástroje a na stránce <strong>Historie</strong> si prohlédnete výsledky relace nebo otevřete uložený postup. Na liště zcela vlevo najdete motiv, jazyk a další ovládací prvky. Mezi stránkami přepnete pomocí Ctrl+1 až Ctrl+4.",
   "workspace_lookup": "Kódy chyb Windows hledejte v Diagnostice, kódy Správce zařízení v Zařízeních. Ovládání protokolů Windows Update je pouze v Aktualizacích.",
   "page_engine_api_title": "Příručka API | KillerBench | Příručka pro vývojáře",
   "page_engine_api_description": "Veřejné typy používají jmenné prostory podle schopností, například KillerBench.Engine.Workflows, KillerBench.Engine.Infrastructure a KillerBench.Engine.Validation. Poskytovatelé pro Windows používají KillerBench.Engine.Windows a jeho podřízené jmenné prostory. Před spuštěním nativních pracovních postupů odkažte na projekt poskytovatele a zavolejte WindowsEngine.Register(); viz Začínáme.",
@@ -3514,6 +3524,10 @@ var I18N = {
   "ui_version": "verze"
  },
  "de": {
+  "shortcut_Str_Workspace_Overview": "Übersicht",
+  "shortcut_Str_Workspace_Investigate": "Untersuchen",
+  "shortcut_Str_Workspace_Tools": "Werkzeuge",
+  "shortcut_Str_Workspace_History": "Verlauf",
   "shortcut_Str_Shortcuts_ToggleSources": "Ausgabe ein- oder ausblenden",
   "shortcut_Str_Shortcuts_ToggleActivity": "Aktivitätsprotokoll umschalten",
   "shortcut_Str_Theme_FilmGrain": "Filmkorn",
@@ -3527,6 +3541,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "Tastenkürzel",
   "shortcut_Str_Shortcuts_About": "Über KillerBench",
   "shortcut_Str_Shortcuts_CloseOrStop": "Overlay schließen oder Lesen stoppen",
+  "workspace_preview": "Im kommenden KillerBench 1.1.0 zeigt <strong>Übersicht</strong> links die Systemübersicht und rechts die Nachweise. Ziehen Sie die Trennleiste, um die Größe der Bereiche anzupassen. Unter <strong>Untersuchen</strong> wählen Sie einen Diagnosebereich aus, unter <strong>Werkzeuge</strong> finden Sie einzelne Werkzeuge, und unter <strong>Verlauf</strong> können Sie Sitzungsergebnisse ansehen oder gespeicherte Abläufe öffnen. Ganz links befindet sich die Leiste für Design, Sprache und weitere Einstellungen. Mit Ctrl+1 bis Ctrl+4 wechseln Sie zwischen den Ansichten.",
   "workspace_lookup": "Windows-Fehlercodes schlagen Sie unter Diagnose nach, Geräte-Manager-Codes unter Geräte. Die Windows-Update-Protokolle finden Sie nur unter Updates.",
   "page_engine_api_title": "API-Anleitung | KillerBench | Entwicklerhandbuch",
   "page_engine_api_description": "Öffentliche Typen verwenden Namespaces nach Funktionsbereich, etwa KillerBench.Engine.Workflows, KillerBench.Engine.Infrastructure und KillerBench.Engine.Validation. Windows-Anbieter verwenden KillerBench.Engine.Windows und dessen Unter-Namespaces. Verweisen Sie auf das Anbieterprojekt und rufen Sie WindowsEngine.Register() auf, bevor Sie native Workflows ausführen; siehe Erste Schritte.",
@@ -5270,6 +5285,10 @@ var I18N = {
   "ui_version": "Version"
  },
  "es": {
+  "shortcut_Str_Workspace_Overview": "Resumen",
+  "shortcut_Str_Workspace_Investigate": "Investigar",
+  "shortcut_Str_Workspace_Tools": "Herramientas",
+  "shortcut_Str_Workspace_History": "Historial",
   "shortcut_Str_Shortcuts_ToggleSources": "Mostrar u ocultar resultados",
   "shortcut_Str_Shortcuts_ToggleActivity": "Alternar registro de actividad",
   "shortcut_Str_Theme_FilmGrain": "Grano de película",
@@ -5283,6 +5302,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "Atajos de teclado",
   "shortcut_Str_Shortcuts_About": "Acerca de KillerBench",
   "shortcut_Str_Shortcuts_CloseOrStop": "Cerrar superposición o detener lectura",
+  "workspace_preview": "En la próxima versión de KillerBench, la 1.1.0, <strong>Resumen</strong> muestra el mapa del sistema a la izquierda y la evidencia a la derecha. Arrastra el separador para ajustar los paneles. Elige un área de diagnóstico en <strong>Investigar</strong>, busca herramientas individuales en <strong>Herramientas</strong> y revisa los resultados de la sesión o abre flujos guardados en <strong>Historial</strong>. La barra del extremo izquierdo reúne el tema, el idioma y otros controles. Cambia de vista con Ctrl+1 a Ctrl+4.",
   "workspace_lookup": "Busca códigos de error de Windows en Diagnóstico y códigos del Administrador de dispositivos en Dispositivos. Los controles de registros de Windows Update solo aparecen en Actualizaciones.",
   "page_engine_api_title": "Guía de API | KillerBench | Guía para desarrolladores",
   "page_engine_api_description": "Los tipos públicos usan espacios de nombres por funcionalidad, como KillerBench.Engine.Workflows, KillerBench.Engine.Infrastructure y KillerBench.Engine.Validation. Los proveedores de Windows usan KillerBench.Engine.Windows y sus espacios de nombres secundarios. Haga referencia al proyecto del proveedor y llame a WindowsEngine.Register() antes de ejecutar flujos de trabajo nativos; consulte Introducción.",
@@ -7026,6 +7046,10 @@ var I18N = {
   "ui_version": "versión"
  },
  "fr": {
+  "shortcut_Str_Workspace_Overview": "Vue d’ensemble",
+  "shortcut_Str_Workspace_Investigate": "Examiner",
+  "shortcut_Str_Workspace_Tools": "Outils",
+  "shortcut_Str_Workspace_History": "Historique",
   "shortcut_Str_Shortcuts_ToggleSources": "Afficher ou masquer les résultats",
   "shortcut_Str_Shortcuts_ToggleActivity": "Afficher ou masquer le journal d'activité",
   "shortcut_Str_Theme_FilmGrain": "Grain de film",
@@ -7039,6 +7063,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "Raccourcis clavier",
   "shortcut_Str_Shortcuts_About": "À propos de KillerBench",
   "shortcut_Str_Shortcuts_CloseOrStop": "Fermer le panneau ou arrêter la lecture",
+  "workspace_preview": "Dans la prochaine version de KillerBench, la 1.1.0, <strong>Vue d’ensemble</strong> affiche la carte du système à gauche et les preuves à droite. Faites glisser le séparateur pour redimensionner les volets. Choisissez une zone à diagnostiquer dans <strong>Examiner</strong>, retrouvez les outils individuels dans <strong>Outils</strong> et consultez les résultats de la session ou ouvrez des flux de travail enregistrés dans <strong>Historique</strong>. La barre à l’extrême gauche regroupe le thème, la langue et d’autres commandes. Utilisez les raccourcis Ctrl+1 à Ctrl+4 pour changer de vue.",
   "workspace_lookup": "Recherchez les codes d’erreur Windows dans Diagnostics et les codes du Gestionnaire de périphériques dans Périphériques. Les commandes des journaux Windows Update sont uniquement dans Mises à jour.",
   "page_engine_api_title": "Guide API | KillerBench | Guide développeur",
   "page_engine_api_description": "Les types publics utilisent des espaces de noms par fonctionnalité, tels que KillerBench.Engine.Workflows, KillerBench.Engine.Infrastructure et KillerBench.Engine.Validation. Les fournisseurs Windows utilisent KillerBench.Engine.Windows et ses sous-espaces de noms. Référencez le projet du fournisseur et appelez WindowsEngine.Register() avant d'exécuter des workflows natifs ; consultez Prise en main.",
@@ -8782,6 +8807,10 @@ var I18N = {
   "ui_version": "version"
  },
  "hu": {
+  "shortcut_Str_Workspace_Overview": "Áttekintés",
+  "shortcut_Str_Workspace_Investigate": "Vizsgálat",
+  "shortcut_Str_Workspace_Tools": "Eszközök",
+  "shortcut_Str_Workspace_History": "Előzmények",
   "shortcut_Str_Shortcuts_ToggleSources": "Kimenet megjelenítése vagy elrejtése",
   "shortcut_Str_Shortcuts_ToggleActivity": "Tevékenységnapló váltása",
   "shortcut_Str_Theme_FilmGrain": "Filmszemcse",
@@ -8795,6 +8824,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "Billentyűparancsok",
   "shortcut_Str_Shortcuts_About": "A KillerBench névjegye",
   "shortcut_Str_Shortcuts_CloseOrStop": "Átfedés bezárása vagy olvasás leállítása",
+  "workspace_preview": "A hamarosan érkező KillerBench 1.1.0 verzióban az <strong>Áttekintés</strong> nézet bal oldalán a rendszertérkép, jobb oldalán a bizonyítékok láthatók. A panelek átméretezéséhez húzza el az elválasztót. A <strong>Vizsgálat</strong> nézetben diagnosztikai területet választhat, az <strong>Eszközök</strong> nézetben az egyes eszközöket találja, az <strong>Előzmények</strong> nézetben pedig a munkamenet eredményeit tekintheti meg, vagy mentett munkafolyamatokat nyithat meg. A bal szélső sávban található a téma, a nyelv és a többi vezérlő. A nézetek között a Ctrl+1 és Ctrl+4 közötti billentyűparancsokkal válthat.",
   "workspace_lookup": "A Windows hibakódjai a Diagnosztika, az Eszközkezelő kódjai a Hardver szakaszban kereshetők. A Windows Update naplóinak vezérlői csak a Frissítések szakaszban jelennek meg.",
   "page_engine_api_title": "API-útmutató | KillerBench | Fejlesztői útmutató",
   "page_engine_api_description": "A nyilvános típusok képességek szerinti névtereket használnak, például KillerBench.Engine.Workflows, KillerBench.Engine.Infrastructure és KillerBench.Engine.Validation. A Windows-szolgáltatók a KillerBench.Engine.Windows névteret és annak alnévtereit használják. Natív munkafolyamatok futtatása előtt hivatkozzon a szolgáltatóprojektre, és hívja meg a WindowsEngine.Register() metódust; lásd: Első lépések.",
@@ -10538,6 +10568,10 @@ var I18N = {
   "ui_version": "verzió"
  },
  "it": {
+  "shortcut_Str_Workspace_Overview": "Panoramica",
+  "shortcut_Str_Workspace_Investigate": "Indaga",
+  "shortcut_Str_Workspace_Tools": "Strumenti",
+  "shortcut_Str_Workspace_History": "Cronologia",
   "shortcut_Str_Shortcuts_ToggleSources": "Mostra o nascondi risultati",
   "shortcut_Str_Shortcuts_ToggleActivity": "Mostra o nascondi log attività",
   "shortcut_Str_Theme_FilmGrain": "Grana pellicola",
@@ -10551,6 +10585,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "Scorciatoie da tastiera",
   "shortcut_Str_Shortcuts_About": "Informazioni su KillerBench",
   "shortcut_Str_Shortcuts_CloseOrStop": "Chiudi overlay o arresta lettura",
+  "workspace_preview": "Nella prossima versione di KillerBench, la 1.1.0, <strong>Panoramica</strong> mostra la mappa del sistema a sinistra e le prove a destra. Trascina il divisore per ridimensionare i riquadri. Scegli un’area diagnostica in <strong>Indaga</strong>, trova i singoli strumenti in <strong>Strumenti</strong> e consulta i risultati della sessione o apri i flussi salvati in <strong>Cronologia</strong>. La barra all’estrema sinistra contiene i comandi del tema, della lingua e altre opzioni. Usa le scorciatoie da Ctrl+1 a Ctrl+4 per passare da una vista all’altra.",
   "workspace_lookup": "Cerca i codici di errore Windows in Diagnostica e quelli di Gestione dispositivi in Dispositivi. I controlli dei log di Windows Update sono solo in Aggiornamenti.",
   "page_engine_api_title": "Guida API | KillerBench | Guida per sviluppatori",
   "page_engine_api_description": "I tipi pubblici usano namespace per funzionalità, come KillerBench.Engine.Workflows, KillerBench.Engine.Infrastructure e KillerBench.Engine.Validation. I provider Windows usano KillerBench.Engine.Windows e i relativi sotto-namespace. Fai riferimento al progetto del provider e chiama WindowsEngine.Register() prima di eseguire flussi di lavoro nativi; vedi Per iniziare.",
@@ -12294,6 +12329,10 @@ var I18N = {
   "ui_version": "versione"
  },
  "ja": {
+  "shortcut_Str_Workspace_Overview": "概要",
+  "shortcut_Str_Workspace_Investigate": "調査",
+  "shortcut_Str_Workspace_Tools": "ツール",
+  "shortcut_Str_Workspace_History": "履歴",
   "shortcut_Str_Shortcuts_ToggleSources": "出力を表示または非表示",
   "shortcut_Str_Shortcuts_ToggleActivity": "アクティビティ ログの表示切り替え",
   "shortcut_Str_Theme_FilmGrain": "フィルムグレイン",
@@ -12307,6 +12346,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "キーボードショートカット",
   "shortcut_Str_Shortcuts_About": "KillerBenchについて",
   "shortcut_Str_Shortcuts_CloseOrStop": "オーバーレイを閉じるか、読み取りを停止する",
+  "workspace_preview": "今後公開予定の KillerBench 1.1.0 では、<strong>概要</strong> の左側にシステムマップ、右側に証拠が表示されます。仕切りをドラッグすると、ペインの幅を調整できます。<strong>調査</strong> で診断する領域を選び、<strong>ツール</strong> で個別のツールを探し、<strong>履歴</strong> でセッションの結果を確認したり保存済みのワークフローを開いたりできます。左端のバーにはテーマや言語などの操作項目があります。Ctrl+1 から Ctrl+4 で画面を切り替えられます。",
   "workspace_lookup": "Windows のエラーコードは診断、デバイスマネージャーのコードはデバイスで検索します。Windows Update のログ操作は更新にのみ表示されます。",
   "page_engine_api_title": "APIガイド | KillerBench | 開発者ガイド",
   "page_engine_api_description": "公開型は KillerBench.Engine.Workflows、KillerBench.Engine.Infrastructure、KillerBench.Engine.Validation などの機能別名前空間を使用します。Windows プロバイダーは KillerBench.Engine.Windows とその下位の名前空間を使用します。ネイティブ ワークフローを実行する前に、プロバイダー プロジェクトを参照し、WindowsEngine.Register() を呼び出してください。はじめにを参照してください。",
@@ -14050,6 +14090,10 @@ var I18N = {
   "ui_version": "バージョン"
  },
  "kk": {
+  "shortcut_Str_Workspace_Overview": "Шолу",
+  "shortcut_Str_Workspace_Investigate": "Зерттеу",
+  "shortcut_Str_Workspace_Tools": "Құралдар",
+  "shortcut_Str_Workspace_History": "Тарих",
   "shortcut_Str_Shortcuts_ToggleSources": "Нәтижені көрсету немесе жасыру",
   "shortcut_Str_Shortcuts_ToggleActivity": "Әрекет журналын ауыстыру",
   "shortcut_Str_Theme_FilmGrain": "Пленка түйіршігі",
@@ -14063,6 +14107,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "Пернетақта тіркесімдері",
   "shortcut_Str_Shortcuts_About": "KillerBench туралы",
   "shortcut_Str_Shortcuts_CloseOrStop": "Қабаттасуды жабу немесе оқуды тоқтату",
+  "workspace_preview": "Шығуы жоспарланған KillerBench 1.1.0 нұсқасында <strong>Шолу</strong> көрінісінің сол жағында жүйе картасы, оң жағында дәлелдер көрсетіледі. Панельдердің енін өзгерту үшін бөлгішті сүйреңіз. <strong>Зерттеу</strong> бөлімінде диагностика аймағын таңдаңыз, <strong>Құралдар</strong> бөлімінде жеке құралдарды табыңыз, ал <strong>Тарих</strong> бөлімінде сеанс нәтижелерін қараңыз немесе сақталған жұмыс процестерін ашыңыз. Ең сол жақтағы жолақта тақырып, тіл және басқа басқару элементтері орналасқан. Көріністерді Ctrl+1 мен Ctrl+4 аралығындағы пернелер тіркесімдерімен ауыстырыңыз.",
   "workspace_lookup": "Windows қате кодтарын Диагностикадан, Құрылғылар диспетчері кодтарын Құрылғылардан іздеңіз. Windows Update журналдарының басқару элементтері тек Жаңартуларда көрсетіледі.",
   "page_engine_api_title": "API нұсқаулығы | KillerBench | Әзірлеуші нұсқаулығы",
   "page_engine_api_description": "Жалпыға ортақ типтер KillerBench.Engine.Workflows, KillerBench.Engine.Infrastructure және KillerBench.Engine.Validation сияқты мүмкіндік аттар кеңістіктерін пайдаланады. Windows провайдерлері KillerBench.Engine.Windows және оның ішкі аттар кеңістіктерін пайдаланады. Жергілікті жұмыс ағындарын іске қоспас бұрын провайдер жобасына сілтеме қосып, WindowsEngine.Register() шақырыңыз; Жұмысты бастау бөлімін қараңыз.",
@@ -15806,6 +15851,10 @@ var I18N = {
   "ui_version": "нұсқа"
  },
  "nb": {
+  "shortcut_Str_Workspace_Overview": "Oversikt",
+  "shortcut_Str_Workspace_Investigate": "Undersøk",
+  "shortcut_Str_Workspace_Tools": "Verktøy",
+  "shortcut_Str_Workspace_History": "Historikk",
   "shortcut_Str_Shortcuts_ToggleSources": "Vis eller skjul resultater",
   "shortcut_Str_Shortcuts_ToggleActivity": "Vis eller skjul aktivitetsloggen",
   "shortcut_Str_Theme_FilmGrain": "Filmkorn",
@@ -15819,6 +15868,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "Hurtigtaster",
   "shortcut_Str_Shortcuts_About": "Om KillerBench",
   "shortcut_Str_Shortcuts_CloseOrStop": "Lukk overlegget eller stopp lesingen",
+  "workspace_preview": "I den kommende KillerBench 1.1.0 viser <strong>Oversikt</strong> systemkartet til venstre og bevisene til høyre. Dra i skillelinjen for å endre størrelsen på rutene. Velg et diagnoseområde i <strong>Undersøk</strong>, finn enkeltverktøy i <strong>Verktøy</strong>, og se øktresultater eller åpne lagrede arbeidsflyter i <strong>Historikk</strong>. På linjen lengst til venstre finner du tema, språk og andre kontroller. Bruk Ctrl+1 til Ctrl+4 for å bytte visning.",
   "workspace_lookup": "Slå opp Windows-feilkoder i Diagnostikk og Enhetsbehandling-koder i Enheter. Kontrollene for Windows Update-logger finnes bare i Oppdateringer.",
   "page_engine_api_title": "API-veiledning | KillerBench | Utviklerveiledning",
   "page_engine_api_description": "Offentlige typer bruker funksjonsnavneområder som KillerBench.Engine.Workflows, KillerBench.Engine.Infrastructure og KillerBench.Engine.Validation. Windows-leverandører bruker KillerBench.Engine.Windows og dets undernavneområder. Referer leverandørprosjektet og kall WindowsEngine.Register() før du kjører opprinnelige arbeidsflyter; se Kom i gang.",
@@ -17562,6 +17612,10 @@ var I18N = {
   "ui_version": "versjon"
  },
  "pl": {
+  "shortcut_Str_Workspace_Overview": "Przegląd",
+  "shortcut_Str_Workspace_Investigate": "Zbadaj",
+  "shortcut_Str_Workspace_Tools": "Narzędzia",
+  "shortcut_Str_Workspace_History": "Historia",
   "shortcut_Str_Shortcuts_ToggleSources": "Pokaż lub ukryj wyniki",
   "shortcut_Str_Shortcuts_ToggleActivity": "Przełącz dziennik aktywności",
   "shortcut_Str_Theme_FilmGrain": "Ziarno filmowe",
@@ -17575,6 +17629,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "Skróty klawiaturowe",
   "shortcut_Str_Shortcuts_About": "O KillerBench",
   "shortcut_Str_Shortcuts_CloseOrStop": "Zamknij nakładkę lub zatrzymaj odczyt",
+  "workspace_preview": "W nadchodzącej wersji KillerBench 1.1.0 widok <strong>Przegląd</strong> pokazuje mapę systemu po lewej i dowody po prawej. Przeciągnij separator, aby zmienić rozmiar paneli. W widoku <strong>Zbadaj</strong> wybierz obszar diagnostyki, w widoku <strong>Narzędzia</strong> znajdź poszczególne narzędzia, a w widoku <strong>Historia</strong> przejrzyj wyniki sesji lub otwórz zapisany przepływ pracy. Na pasku po lewej stronie znajdziesz motyw, język i inne elementy sterujące. Przełączaj widoki skrótami od Ctrl+1 do Ctrl+4.",
   "workspace_lookup": "Kodów błędów Windows szukaj w Diagnostyce, a kodów Menedżera urządzeń w Urządzeniach. Kontrolki dzienników Windows Update są tylko w Aktualizacjach.",
   "page_engine_api_title": "Przewodnik API | KillerBench | Przewodnik dla programistów",
   "page_engine_api_description": "Typy publiczne korzystają z przestrzeni nazw odpowiadających możliwościom, takich jak KillerBench.Engine.Workflows, KillerBench.Engine.Infrastructure i KillerBench.Engine.Validation. Dostawcy Windows korzystają z KillerBench.Engine.Windows i jej podrzędnych przestrzeni nazw. Przed uruchomieniem natywnych przepływów pracy dodaj odwołanie do projektu dostawcy i wywołaj WindowsEngine.Register(); zobacz Pierwsze kroki.",
@@ -19318,6 +19373,10 @@ var I18N = {
   "ui_version": "wersja"
  },
  "pt": {
+  "shortcut_Str_Workspace_Overview": "Visão geral",
+  "shortcut_Str_Workspace_Investigate": "Investigar",
+  "shortcut_Str_Workspace_Tools": "Ferramentas",
+  "shortcut_Str_Workspace_History": "Histórico",
   "shortcut_Str_Shortcuts_ToggleSources": "Mostrar ou ocultar resultados",
   "shortcut_Str_Shortcuts_ToggleActivity": "Alternar log de atividades",
   "shortcut_Str_Theme_FilmGrain": "Granulação de filme",
@@ -19331,6 +19390,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "Atalhos de teclado",
   "shortcut_Str_Shortcuts_About": "Sobre o KillerBench",
   "shortcut_Str_Shortcuts_CloseOrStop": "Fechar a sobreposição ou parar a leitura",
+  "workspace_preview": "Na próxima versão do KillerBench, a 1.1.0, <strong>Visão geral</strong> mostra o mapa do sistema à esquerda e as evidências à direita. Arraste o divisor para redimensionar os painéis. Escolha uma área de diagnóstico em <strong>Investigar</strong>, encontre ferramentas individuais em <strong>Ferramentas</strong> e revise os resultados da sessão ou abra fluxos salvos em <strong>Histórico</strong>. A barra na extremidade esquerda reúne os controles de tema, idioma e outras opções. Use os atalhos de Ctrl+1 a Ctrl+4 para alternar entre as telas.",
   "workspace_lookup": "Consulte códigos de erro do Windows em Diagnósticos e códigos do Gerenciador de Dispositivos em Dispositivos. Os controles dos logs do Windows Update aparecem apenas em Atualizações.",
   "page_engine_api_title": "Guia de API | KillerBench | Guia do desenvolvedor",
   "page_engine_api_description": "Os tipos públicos usam namespaces por capacidade, como KillerBench.Engine.Workflows, KillerBench.Engine.Infrastructure e KillerBench.Engine.Validation. Os provedores do Windows usam KillerBench.Engine.Windows e seus subnamespaces. Referencie o projeto do provedor e chame WindowsEngine.Register() antes de executar fluxos de trabalho nativos; consulte Introdução.",
@@ -21074,6 +21134,10 @@ var I18N = {
   "ui_version": "versão"
  },
  "ru": {
+  "shortcut_Str_Workspace_Overview": "Обзор",
+  "shortcut_Str_Workspace_Investigate": "Поиск проблемы",
+  "shortcut_Str_Workspace_Tools": "Инструменты",
+  "shortcut_Str_Workspace_History": "История",
   "shortcut_Str_Shortcuts_ToggleSources": "Показать или скрыть результаты",
   "shortcut_Str_Shortcuts_ToggleActivity": "Переключить журнал активности",
   "shortcut_Str_Theme_FilmGrain": "Зернистость плёнки",
@@ -21087,6 +21151,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "Сочетания клавиш",
   "shortcut_Str_Shortcuts_About": "О программе KillerBench",
   "shortcut_Str_Shortcuts_CloseOrStop": "Закрыть наложение или прекратить чтение",
+  "workspace_preview": "В готовящейся версии KillerBench 1.1.0 на вкладке <strong>Обзор</strong> слева показана карта системы, а справа диагностические данные. Перетащите разделитель, чтобы изменить размеры панелей. На вкладке <strong>Поиск проблемы</strong> выберите область диагностики, на вкладке <strong>Инструменты</strong> найдите отдельные инструменты, а на вкладке <strong>История</strong> просмотрите результаты сеанса или откройте сохранённые процессы. На панели у левого края находятся настройки темы, языка и другие элементы управления. Переключайте вкладки сочетаниями клавиш от Ctrl+1 до Ctrl+4.",
   "workspace_lookup": "Коды ошибок Windows ищите в Диагностике, коды Диспетчера устройств в Устройствах. Элементы управления журналами Windows Update находятся только в Обновлениях.",
   "page_engine_api_title": "Руководство по API | KillerBench | Руководство разработчика",
   "page_engine_api_description": "Открытые типы используют пространства имён по возможностям, например KillerBench.Engine.Workflows, KillerBench.Engine.Infrastructure и KillerBench.Engine.Validation. Поставщики Windows используют KillerBench.Engine.Windows и его вложенные пространства имён. Добавьте ссылку на проект поставщика и вызовите WindowsEngine.Register() перед запуском собственных сценариев; см. Начало работы.",
@@ -22830,6 +22895,10 @@ var I18N = {
   "ui_version": "версия"
  },
  "sl": {
+  "shortcut_Str_Workspace_Overview": "Pregled",
+  "shortcut_Str_Workspace_Investigate": "Razišči",
+  "shortcut_Str_Workspace_Tools": "Orodja",
+  "shortcut_Str_Workspace_History": "Zgodovina",
   "shortcut_Str_Shortcuts_ToggleSources": "Prikaži ali skrij rezultate",
   "shortcut_Str_Shortcuts_ToggleActivity": "Pokaži ali skrij dnevnik dejavnosti",
   "shortcut_Str_Theme_FilmGrain": "Filmska zrnatost",
@@ -22843,6 +22912,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "Bližnjice na tipkovnici",
   "shortcut_Str_Shortcuts_About": "O aplikaciji KillerBench",
   "shortcut_Str_Shortcuts_CloseOrStop": "Zapri prekrivno podokno ali ustavi branje",
+  "workspace_preview": "V prihajajoči različici KillerBench 1.1.0 so v pogledu <strong>Pregled</strong> na levi zemljevid sistema, na desni pa dokazi. Povlecite ločilnik, da spremenite velikost podoken. V pogledu <strong>Razišči</strong> izberite področje diagnostike, v pogledu <strong>Orodja</strong> poiščite posamezna orodja, v pogledu <strong>Zgodovina</strong> pa preglejte rezultate seje ali odprite shranjene poteke dela. V vrstici skrajno levo so tema, jezik in drugi kontrolniki. Med pogledi preklapljajte z bližnjicami od Ctrl+1 do Ctrl+4.",
   "workspace_lookup": "Kode napak Windows poiščite v Diagnostiki, kode Upravitelja naprav v Napravah. Kontrolniki dnevnikov Windows Update so samo v Posodobitvah.",
   "page_engine_api_title": "Vodnik po API-ju | KillerBench | Vodnik za razvijalce",
   "page_engine_api_description": "Javni tipi uporabljajo imenske prostore po zmožnostih, kot so KillerBench.Engine.Workflows, KillerBench.Engine.Infrastructure in KillerBench.Engine.Validation. Ponudniki za Windows uporabljajo KillerBench.Engine.Windows in njegove podrejene imenske prostore. Preden zaženete izvorne poteke dela, dodajte sklic na projekt ponudnika in pokličite WindowsEngine.Register(); glejte Uvod.",
@@ -24592,6 +24662,10 @@ var I18N = {
   "ui_version": "različica"
  },
  "tr": {
+  "shortcut_Str_Workspace_Overview": "Genel bakış",
+  "shortcut_Str_Workspace_Investigate": "İncele",
+  "shortcut_Str_Workspace_Tools": "Araçlar",
+  "shortcut_Str_Workspace_History": "Geçmiş",
   "shortcut_Str_Shortcuts_ToggleSources": "Sonuçları göster veya gizle",
   "shortcut_Str_Shortcuts_ToggleActivity": "Etkinlik günlüğünü aç/kapat",
   "shortcut_Str_Theme_FilmGrain": "Film greni",
@@ -24605,6 +24679,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "Klavye kısayolları",
   "shortcut_Str_Shortcuts_About": "KillerBench hakkında",
   "shortcut_Str_Shortcuts_CloseOrStop": "Katmanı kapat veya okumayı durdur",
+  "workspace_preview": "Yakında çıkacak KillerBench 1.1.0 sürümünde <strong>Genel bakış</strong>, sistem haritasını solda ve kanıtları sağda gösterir. Bölmeleri yeniden boyutlandırmak için ayırıcıyı sürükleyin. <strong>İncele</strong> görünümünde bir tanılama alanı seçin, <strong>Araçlar</strong> görünümünde tek tek araçları bulun, <strong>Geçmiş</strong> görünümünde ise oturum sonuçlarını inceleyin veya kayıtlı iş akışlarını açın. En soldaki çubukta tema, dil ve diğer denetimler bulunur. Görünümler arasında geçiş yapmak için Ctrl+1 ile Ctrl+4 arasındaki kısayolları kullanın.",
   "workspace_lookup": "Windows hata kodlarını Tanılama, Aygıt Yöneticisi kodlarını Aygıtlar bölümünde arayın. Windows Update günlük denetimleri yalnızca Güncelleştirmeler bölümündedir.",
   "page_engine_api_title": "API kılavuzu | KillerBench | Geliştirici kılavuzu",
   "page_engine_api_description": "Genel türler, KillerBench.Engine.Workflows, KillerBench.Engine.Infrastructure ve KillerBench.Engine.Validation gibi yetenek ad alanlarını kullanır. Windows sağlayıcıları KillerBench.Engine.Windows ad alanını ve alt ad alanlarını kullanır. Yerel iş akışlarını çalıştırmadan önce sağlayıcı projesine başvuru ekleyin ve WindowsEngine.Register() çağrısını yapın; bkz. Başlarken.",
@@ -26348,6 +26423,10 @@ var I18N = {
   "ui_version": "sürüm"
  },
  "uk": {
+  "shortcut_Str_Workspace_Overview": "Огляд",
+  "shortcut_Str_Workspace_Investigate": "Пошук проблеми",
+  "shortcut_Str_Workspace_Tools": "Інструменти",
+  "shortcut_Str_Workspace_History": "Історія",
   "shortcut_Str_Shortcuts_ToggleSources": "Показати або приховати результати",
   "shortcut_Str_Shortcuts_ToggleActivity": "Показати або сховати журнал дій",
   "shortcut_Str_Theme_FilmGrain": "Зернистість плівки",
@@ -26361,6 +26440,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "Сполучення клавіш",
   "shortcut_Str_Shortcuts_About": "Про KillerBench",
   "shortcut_Str_Shortcuts_CloseOrStop": "Закрити накладку або зупинити читання",
+  "workspace_preview": "У майбутньому випуску KillerBench 1.1.0 на вкладці <strong>Огляд</strong> ліворуч показано карту системи, а праворуч діагностичні дані. Перетягніть роздільник, щоб змінити розміри панелей. На вкладці <strong>Пошук проблеми</strong> виберіть область діагностики, на вкладці <strong>Інструменти</strong> знайдіть окремі інструменти, а на вкладці <strong>Історія</strong> перегляньте результати сеансу або відкрийте збережені процеси. На крайній лівій панелі містяться налаштування теми, мови й інші елементи керування. Перемикайте вкладки сполученнями клавіш від Ctrl+1 до Ctrl+4.",
   "workspace_lookup": "Коди помилок Windows шукайте в Діагностиці, коди Диспетчера пристроїв у Пристроях. Елементи керування журналами Windows Update розміщені лише в Оновленнях.",
   "page_engine_api_title": "Посібник з API | KillerBench | Посібник розробника",
   "page_engine_api_description": "Публічні типи використовують простори імен за можливостями, наприклад KillerBench.Engine.Workflows, KillerBench.Engine.Infrastructure і KillerBench.Engine.Validation. Постачальники Windows використовують KillerBench.Engine.Windows та його вкладені простори імен. Додайте посилання на проєкт постачальника й викличте WindowsEngine.Register() перед запуском нативних процедур; див. Початок роботи.",
@@ -28104,6 +28184,10 @@ var I18N = {
   "ui_version": "версія"
  },
  "vi": {
+  "shortcut_Str_Workspace_Overview": "Tổng quan",
+  "shortcut_Str_Workspace_Investigate": "Tìm hiểu sự cố",
+  "shortcut_Str_Workspace_Tools": "Công cụ",
+  "shortcut_Str_Workspace_History": "Lịch sử",
   "shortcut_Str_Shortcuts_ToggleSources": "Hiện hoặc ẩn kết quả",
   "shortcut_Str_Shortcuts_ToggleActivity": "Chuyển đổi nhật ký hoạt động",
   "shortcut_Str_Theme_FilmGrain": "Hạt phim",
@@ -28117,6 +28201,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "Phím tắt",
   "shortcut_Str_Shortcuts_About": "Về KillerBench",
   "shortcut_Str_Shortcuts_CloseOrStop": "Đóng lớp phủ hoặc ngừng đọc",
+  "workspace_preview": "Trong bản KillerBench 1.1.0 sắp ra mắt, <strong>Tổng quan</strong> hiển thị sơ đồ hệ thống bên trái và bằng chứng bên phải. Kéo thanh phân cách để đổi kích thước các ngăn. Chọn một khu vực cần chẩn đoán trong <strong>Tìm hiểu sự cố</strong>, tìm từng công cụ trong <strong>Công cụ</strong> và xem kết quả phiên làm việc hoặc mở quy trình đã lưu trong <strong>Lịch sử</strong>. Thanh ngoài cùng bên trái có các tùy chọn giao diện, ngôn ngữ và những mục điều khiển khác. Dùng các phím tắt từ Ctrl+1 đến Ctrl+4 để chuyển chế độ xem.",
   "workspace_lookup": "Tra mã lỗi Windows trong Chẩn đoán và mã Trình quản lý thiết bị trong Thiết bị. Điều khiển nhật ký Windows Update chỉ có trong Cập nhật.",
   "page_engine_api_title": "Hướng dẫn API | KillerBench | Hướng dẫn nhà phát triển",
   "page_engine_api_description": "Các kiểu công khai sử dụng không gian tên theo khả năng như KillerBench.Engine.Workflows, KillerBench.Engine.Infrastructure và KillerBench.Engine.Validation. Các nhà cung cấp Windows sử dụng KillerBench.Engine.Windows và các không gian tên con của nó. Hãy tham chiếu dự án nhà cung cấp và gọi WindowsEngine.Register() trước khi chạy các quy trình gốc; xem Bắt đầu.",
@@ -29860,6 +29945,10 @@ var I18N = {
   "ui_version": "phiên bản"
  },
  "zh-cn": {
+  "shortcut_Str_Workspace_Overview": "概览",
+  "shortcut_Str_Workspace_Investigate": "排查",
+  "shortcut_Str_Workspace_Tools": "工具",
+  "shortcut_Str_Workspace_History": "历史记录",
   "shortcut_Str_Shortcuts_ToggleSources": "显示或隐藏输出",
   "shortcut_Str_Shortcuts_ToggleActivity": "切换活动日志",
   "shortcut_Str_Theme_FilmGrain": "胶片颗粒",
@@ -29873,6 +29962,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "键盘快捷键",
   "shortcut_Str_Shortcuts_About": "关于 KillerBench",
   "shortcut_Str_Shortcuts_CloseOrStop": "关闭覆盖层或停止阅读",
+  "workspace_preview": "即将推出的 KillerBench 1.1.0 将在<strong>概览</strong>中把系统示意图放在左侧，证据放在右侧。拖动分隔条可调整两侧窗格的大小。在<strong>排查</strong>中选择要诊断的区域，在<strong>工具</strong>中查找单项工具，在<strong>历史记录</strong>中查看会话结果或打开已保存的工作流。最左侧的工具栏提供主题、语言及其他控件。使用 Ctrl+1 到 Ctrl+4 切换视图。",
   "workspace_lookup": "在诊断中查询 Windows 错误代码，在设备中查询设备管理器代码。Windows Update 日志控件仅在更新中显示。",
   "page_engine_api_title": "API 指南 | KillerBench | 开发者指南",
   "page_engine_api_description": "公共类型使用按功能划分的命名空间，例如 KillerBench.Engine.Workflows、KillerBench.Engine.Infrastructure 和 KillerBench.Engine.Validation。Windows 提供程序使用 KillerBench.Engine.Windows 及其子命名空间。运行原生工作流程之前，请引用提供程序项目并调用 WindowsEngine.Register()；请参阅入门。",
@@ -31616,6 +31706,10 @@ var I18N = {
   "ui_version": "版本"
  },
  "zh": {
+  "shortcut_Str_Workspace_Overview": "概覽",
+  "shortcut_Str_Workspace_Investigate": "排查",
+  "shortcut_Str_Workspace_Tools": "工具",
+  "shortcut_Str_Workspace_History": "歷程記錄",
   "shortcut_Str_Shortcuts_ToggleSources": "顯示或隱藏輸出",
   "shortcut_Str_Shortcuts_ToggleActivity": "切換活動記錄",
   "shortcut_Str_Theme_FilmGrain": "底片顆粒",
@@ -31629,6 +31723,7 @@ var I18N = {
   "shortcut_Str_Shortcuts_Show": "鍵盤快速鍵",
   "shortcut_Str_Shortcuts_About": "關於 KillerBench",
   "shortcut_Str_Shortcuts_CloseOrStop": "關閉覆蓋或停止閱讀",
+  "workspace_preview": "即將推出的 KillerBench 1.1.0 會在<strong>概覽</strong>中將系統示意圖放在左側，證據放在右側。拖曳分隔線即可調整窗格大小。在<strong>排查</strong>中選擇要診斷的區域，在<strong>工具</strong>中尋找個別工具，在<strong>歷程記錄</strong>中檢視工作階段結果或開啟已儲存的工作流程。最左側的工具列提供佈景主題、語言和其他控制項。使用 Ctrl+1 到 Ctrl+4 切換檢視。",
   "workspace_lookup": "在診斷中查詢 Windows 錯誤代碼，在裝置中查詢裝置管理員代碼。Windows Update 記錄控制項僅在更新中顯示。",
   "page_engine_api_title": "API 指南 | KillerBench | 開發者指南",
   "page_engine_api_description": "公用類型使用功能命名空間，例如 KillerBench.Engine.Workflows、KillerBench.Engine.Infrastructure 和 KillerBench.Engine.Validation。Windows 提供者使用 KillerBench.Engine.Windows 及其子命名空間。執行原生工作流程之前，請參考提供者專案並呼叫 WindowsEngine.Register()；請參閱快速入門。",

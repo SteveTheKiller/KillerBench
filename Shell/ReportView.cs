@@ -12,16 +12,21 @@ public partial class MainWindow
     private (WorkflowResult Result, string? Title)? lastReport;
 
     // The right sidebar holds all output: the readable report and the raw technical log.
-    private void OnConsoleView(object sender, RoutedEventArgs e) => ShowRawOutput();
+    private void OnConsoleView(object sender, RoutedEventArgs e)
+    {
+        if (AreaEvidencePanel.Visibility != Visibility.Visible) ShowRawOutput();
+    }
 
     private void OnReportView(object sender, RoutedEventArgs e)
     {
+        if (AreaEvidencePanel.Visibility == Visibility.Visible) return;
         rawView = false;
         SetOutputView();
     }
 
     private void SetOutputView()
     {
+        if (AreaEvidencePanel is not null) SetAreaEvidenceMode(false);
         if (rawView || reportAvailable) SetOutputOpen(true);
         ReportPane.Visibility = !rawView && reportAvailable ? Visibility.Visible : Visibility.Collapsed;
         ConsolePane.Visibility = rawView ? Visibility.Visible : Visibility.Collapsed;
@@ -175,6 +180,7 @@ public partial class MainWindow
         CategoryList.SelectedItem = target is { } kind ? CategoryOf(kind) : ToolCategories.Single(category => category.Id == "Repair");
         if (target is { } selected)
             MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(workflow => workflow.Kind == selected);
+        ShowToolsWorkspace();
     }
 
     private Button MaintenanceNavigationButton(WorkflowKind workflow)
@@ -193,6 +199,7 @@ public partial class MainWindow
             WorkflowKind target = MaintenanceWorkflows.Contains(workflow) ? workflow : WorkflowKind.Cleanup;
             CategoryList.SelectedItem = CategoryOf(target);
             MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == target);
+            ShowToolsWorkspace();
         };
         return button;
     }
@@ -212,6 +219,7 @@ public partial class MainWindow
             MainAutoRepair.IsChecked = false;
             CategoryList.SelectedItem = CategoryOf(workflow);
             MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == workflow);
+            ShowToolsWorkspace();
         };
         return button;
     }
@@ -231,6 +239,7 @@ public partial class MainWindow
             MainAutoRepair.IsChecked = false;
             CategoryList.SelectedItem = CategoryOf(WorkflowKind.Network);
             MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(item => item.Kind == WorkflowKind.Network);
+            ShowToolsWorkspace();
         };
         return button;
     }

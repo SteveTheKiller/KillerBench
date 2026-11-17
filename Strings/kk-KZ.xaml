@@ -1290,4 +1290,18 @@
   <sys:String x:Key="Str_ExportFailure_TooLarge">Бар мақсатты файл 128 MiB қайта жазу шегінен асады. Жаңа файл атауын таңдаңыз.</sys:String>
   <sys:String x:Key="Str_ExportFailure_NotPublished">Экспорт жарияланбады. Алдыңғы файл мына жерде сақталған: {0}</sys:String>
   <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Жаңа есеп сақталды. Алдыңғы файл мына жерде сақталған: {0}</sys:String>
+  <sys:String x:Key="Str_Workspace_Overview">Шолу</sys:String>
+  <sys:String x:Key="Str_Workspace_Investigate">Зерттеу</sys:String>
+  <sys:String x:Key="Str_Workspace_Tools">Құралдар</sys:String>
+  <sys:String x:Key="Str_Workspace_History">Тарих</sys:String>
+  <sys:String x:Key="Str_Workspace_SystemMap">Жүйеңізге қысқаша шолу</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Тиісті дәлелдерді қарау үшін бір аймақты таңдаңыз. Тексерулер диагностиканы іске қосқаннан кейін ғана орындалады.</sys:String>
+  <sys:String x:Key="Str_Workspace_NotChecked">Тексерілмеген</sys:String>
+  <sys:String x:Key="Str_Workspace_SelectArea">Жүйе аймағын таңдаңыз</sys:String>
+  <sys:String x:Key="Str_Workspace_ReviewArea">Осы аймақты қарау</sys:String>
+  <sys:String x:Key="Str_Workspace_GuidedHint">Мәселе байқалатын аймақты таңдаңыз. Таңдалған диагностикалық тексерулерді іске қоспас бұрын қарап шығыңыз.</sys:String>
+  <sys:String x:Key="Str_Workspace_HistoryHint">Осы сеанстың нәтижелерін қарап шығыңыз немесе сақталған жұмыс процесін ашыңыз. Бұрынғы дәлелдер жүйенің қазіргі күйін растамайды.</sys:String>
+  <sys:String x:Key="Str_Workspace_SessionEmpty">Бұл сеанста нәтиже жоқ.</sys:String>
+  <sys:String x:Key="Str_Workspace_ReadOnly">Тек оқуға арналған диагностика</sys:String>
+  <sys:String x:Key="Str_Workspace_Evidence">Дәлелдер және келесі қадамдар</sys:String>
 </ResourceDictionary>

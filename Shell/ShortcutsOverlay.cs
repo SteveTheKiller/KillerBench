@@ -22,6 +22,10 @@ public partial class MainWindow
 
     private static readonly ShortcutBinding[] ShortcutBindings =
     [
+        new("Ctrl+1", "Str_Workspace_Overview", ShortcutCategory.Nav, true, "D1"),
+        new("Ctrl+2", "Str_Workspace_Investigate", ShortcutCategory.Nav, true, "D2"),
+        new("Ctrl+3", "Str_Workspace_Tools", ShortcutCategory.Nav, true, "D3"),
+        new("Ctrl+4", "Str_Workspace_History", ShortcutCategory.Nav, true, "D4"),
         new("F2", "Str_Shortcuts_ToggleSources", ShortcutCategory.View, false, "F2"),
         new("F3", "Str_Shortcuts_ToggleActivity", ShortcutCategory.View, false, "F3"),
         new("Alt+Shift+G", "Str_Theme_FilmGrain", ShortcutCategory.View, false, "G"),
@@ -40,7 +44,7 @@ public partial class MainWindow
     private static readonly (string Id, string Cap, double Width)[][] KeyboardRows =
     [
         [("Esc", "Esc", 1.0), ("", "", 0.7), ("F1", "F1", 1.0), ("F2", "F2", 1.0), ("F3", "F3", 1.0), ("F4", "F4", 1.0), ("", "", 0.5), ("F5", "F5", 1.0), ("F6", "F6", 1.0), ("F7", "F7", 1.0), ("F8", "F8", 1.0), ("", "", 0.5), ("F9", "F9", 1.0), ("F10", "F10", 1.0), ("F11", "F11", 1.0), ("F12", "F12", 1.0)],
-        [("", "", 7.8), ("D0", "0", 1.0), ("Minus", "-", 1.0), ("Plus", "+", 1.0)],
+        [("D1", "1", 1.0), ("D2", "2", 1.0), ("D3", "3", 1.0), ("D4", "4", 1.0), ("", "", 3.8), ("D0", "0", 1.0), ("Minus", "-", 1.0), ("Plus", "+", 1.0)],
         [("Tab", "Tab", 1.5), ("Q", "Q", 1.0), ("W", "W", 1.0), ("E", "E", 1.0), ("R", "R", 1.0), ("T", "T", 1.0), ("Y", "Y", 1.0), ("U", "U", 1.0), ("I", "I", 1.0), ("O", "O", 1.0), ("P", "P", 1.0)],
         [("Caps", "Caps", 1.8), ("A", "A", 1.0), ("S", "S", 1.0), ("D", "D", 1.0), ("F", "F", 1.0), ("G", "G", 1.0), ("H", "H", 1.0), ("J", "J", 1.0), ("K", "K", 1.0), ("L", "L", 1.0), ("Enter", "Enter", 2.2)],
         [("Shift", "Shift", 2.3), ("Z", "Z", 1.0), ("X", "X", 1.0), ("C", "C", 1.0), ("V", "V", 1.0), ("B", "B", 1.0), ("N", "N", 1.0), ("M", "M", 1.0), ("Comma", ",", 1.0), ("Period", ".", 1.0), ("RShift", "Shift", 2.7)],
@@ -54,12 +58,21 @@ public partial class MainWindow
     {
         ShortcutButton.ToolTip = KillerFamily.Layout.ShortcutHints.WithHint(Label(ShortcutBindings.Single(binding => binding.Keys == "F1")), "F1");
         ApplyShortcutView(Preferences.Get("ShortcutsMapView") == "1");
+        RoutedUICommand[] destinations = [WorkbenchCommands.Overview, WorkbenchCommands.Investigate, WorkbenchCommands.Tools, WorkbenchCommands.History];
+        for (int index = 0; index < destinations.Length; index++)
+        {
+            int target = index;
+            var item = (ListBoxItem)WorkspaceNavigation.Items[index];
+            BindAction(destinations[index], "Str_Workspace_" + item.Tag, item,
+                (_, _) => WorkspaceNavigation.SelectedIndex = target);
+        }
         BindAction(WorkbenchCommands.OpenCapture, "Str_OpenCapture", OpenCaptureButton, OnOpenCapture);
         BindAction(WorkbenchCommands.SaveCapture, "Str_SaveCapture", SaveCaptureButton, OnSaveCapture);
         BindAction(WorkbenchCommands.ExportReport, "Str_ExportReport", ExportReportButton, OnExportReport);
         BindAction(WorkbenchCommands.ExportActivity, "Str_ExportActivityHint", ExportActivityButton, OnExportActivity);
         BindAction(WorkbenchCommands.FindEvidence, "Str_AutomationProperties_Name_Filter_evidence", SearchBox,
             (_, _) => { ShowRawOutput(); SearchBox.Focus(); SearchBox.SelectAll(); });
+        SetShortcutHint(HistoryOpenCaptureButton, "Str_OpenCapture");
     }
 
     private void BindAction(RoutedUICommand command, string labelKey, UIElement control, RoutedEventHandler execute)
@@ -72,6 +85,12 @@ public partial class MainWindow
         CommandBindings.Add(new CommandBinding(command, (_, e) => { if (Available()) execute(this, e); e.Handled = true; },
             (_, e) => { e.CanExecute = Available(); e.Handled = true; }));
         if (control is MenuItem menu) menu.InputGestureText = binding.Keys;
+        SetShortcutHint(control, labelKey);
+    }
+
+    private static void SetShortcutHint(UIElement control, string labelKey)
+    {
+        ShortcutBinding binding = ShortcutBindings.Single(item => item.LabelKey == labelKey);
         string tipKey = labelKey switch
         {
             "Str_ExportReport" => "Str_ExportContents",

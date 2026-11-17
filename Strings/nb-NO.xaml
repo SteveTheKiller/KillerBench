@@ -1289,4 +1289,18 @@
   <sys:String x:Key="Str_ExportFailure_TooLarge">Den eksisterende målfilen overskrider grensen på 128 MiB for overskriving. Velg et nytt filnavn.</sys:String>
   <sys:String x:Key="Str_ExportFailure_NotPublished">Eksporten ble ikke publisert. Den forrige filen er bevart her: {0}</sys:String>
   <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">Den nye rapporten ble lagret. Den forrige filen er bevart her: {0}</sys:String>
+  <sys:String x:Key="Str_Workspace_Overview">Oversikt</sys:String>
+  <sys:String x:Key="Str_Workspace_Investigate">Undersøk</sys:String>
+  <sys:String x:Key="Str_Workspace_Tools">Verktøy</sys:String>
+  <sys:String x:Key="Str_Workspace_History">Historikk</sys:String>
+  <sys:String x:Key="Str_Workspace_SystemMap">Kort oversikt over systemet</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Velg et område for å se gjennom de tilhørende bevisene. Ingenting kontrolleres før du kjører diagnostikk.</sys:String>
+  <sys:String x:Key="Str_Workspace_NotChecked">Ikke kontrollert</sys:String>
+  <sys:String x:Key="Str_Workspace_SelectArea">Velg et systemområde</sys:String>
+  <sys:String x:Key="Str_Workspace_ReviewArea">Se gjennom dette området</sys:String>
+  <sys:String x:Key="Str_Workspace_GuidedHint">Velg hvor problemet viser seg. Gå gjennom de valgte diagnosekontrollene før du kjører dem.</sys:String>
+  <sys:String x:Key="Str_Workspace_HistoryHint">Se gjennom resultatene fra denne økten, eller åpne en lagret arbeidsflyt. Tidligere bevis fastslår ikke systemets nåværende tilstand.</sys:String>
+  <sys:String x:Key="Str_Workspace_SessionEmpty">Ingen resultater i denne økten.</sys:String>
+  <sys:String x:Key="Str_Workspace_ReadOnly">Skrivebeskyttet diagnostikk</sys:String>
+  <sys:String x:Key="Str_Workspace_Evidence">Bevis og neste steg</sys:String>
 </ResourceDictionary>

@@ -1289,4 +1289,18 @@
   <sys:String x:Key="Str_ExportFailure_TooLarge">The existing destination exceeds the 128 MiB overwrite limit. Choose a new filename.</sys:String>
   <sys:String x:Key="Str_ExportFailure_NotPublished">The export was not published. The prior file is retained at: {0}</sys:String>
   <sys:String x:Key="Str_ExportFailure_SavedPriorRetained">The new report was saved. The prior file is retained at: {0}</sys:String>
+  <sys:String x:Key="Str_Workspace_Overview">Overview</sys:String>
+  <sys:String x:Key="Str_Workspace_Investigate">Investigate</sys:String>
+  <sys:String x:Key="Str_Workspace_Tools">Tools</sys:String>
+  <sys:String x:Key="Str_Workspace_History">History</sys:String>
+  <sys:String x:Key="Str_Workspace_SystemMap">Your system at a glance</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Choose an area to review its evidence. Nothing is checked until you run diagnostics.</sys:String>
+  <sys:String x:Key="Str_Workspace_NotChecked">Not checked</sys:String>
+  <sys:String x:Key="Str_Workspace_SelectArea">Choose a system area</sys:String>
+  <sys:String x:Key="Str_Workspace_ReviewArea">Review this area</sys:String>
+  <sys:String x:Key="Str_Workspace_GuidedHint">Choose where the problem appears. Review the selected diagnostics before running them.</sys:String>
+  <sys:String x:Key="Str_Workspace_HistoryHint">Review results from this session or open a saved workflow. Historical evidence does not establish current health.</sys:String>
+  <sys:String x:Key="Str_Workspace_SessionEmpty">No results in this session.</sys:String>
+  <sys:String x:Key="Str_Workspace_ReadOnly">Read-only diagnostics</sys:String>
+  <sys:String x:Key="Str_Workspace_Evidence">Evidence and next steps</sys:String>
 </ResourceDictionary>
