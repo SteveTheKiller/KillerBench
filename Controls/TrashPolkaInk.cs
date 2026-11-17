@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
@@ -39,17 +41,20 @@ namespace KillerBench.Controls
         private static readonly Dictionary<(int Alpha, bool Dark), SolidColorBrush> AccentBrushes = [];
         private static Color _accent;
 
+        // net48 has no Math.Clamp.
+        private static double Clamp(double value, double min, double max) => value < min ? min : value > max ? max : value;
+
         /// <summary>Recolors every accent mark in every piece already drawn.</summary>
         internal static void SetAccent(Color accent)
         {
             if (accent == _accent) return;
             _accent = accent;
-            foreach (var (key, brush) in AccentBrushes) brush.Color = Shade(accent, key);
+            foreach (var pair in AccentBrushes) pair.Value.Color = Shade(accent, pair.Key);
         }
 
         private static SolidColorBrush AccentBrush(double alpha, bool dark)
         {
-            var key = ((int)Math.Round(Math.Clamp(alpha, 0, 1) * 20), dark);
+            var key = ((int)Math.Round(Clamp(alpha, 0, 1) * 20), dark);
             if (!AccentBrushes.TryGetValue(key, out var brush))
                 AccentBrushes[key] = brush = new SolidColorBrush(Shade(_accent, key));
             return brush;
@@ -195,10 +200,10 @@ namespace KillerBench.Controls
                 // one across the center behind the page and one down the right.
                 var t1 = new Point(left + area.Width * 0.38, top + area.Height * 0.18);
                 BubbleHalo(new Point(t1.X + 180, t1.Y + 260), 300);
-                TattooPiece(t1, Math.Clamp(area.Height / 22, 26, 44));
+                TattooPiece(t1, Clamp(area.Height / 22, 26, 44));
                 var t2 = new Point(right - area.Width * 0.2, top + area.Height * 0.12);
                 BubbleHalo(new Point(t2.X + 120, t2.Y + 220), 220);
-                TattooPiece(t2, Math.Clamp(area.Height / 30, 20, 34));
+                TattooPiece(t2, Clamp(area.Height / 30, 20, 34));
                 DotClump(new Point(left + area.Width * 0.18, top + area.Height * 0.78), 90);
                 DotClump(new Point(right - area.Width * 0.12, top + area.Height * 0.82), 70);
                 StreakSplat(new Point(left + area.Width * 0.12, top + area.Height * 0.3), 46);
@@ -259,7 +264,7 @@ namespace KillerBench.Controls
                 }
                 // Circuit fan out of the band's lower right: parallel lines with a bend and a node dot.
                 var fan = new Pen(ink, Math.Max(1.6, r * 0.07));
-                var origin = Cell(cells[^1].q, cells[^1].s);
+                var origin = Cell(cells[cells.Count - 1].q, cells[cells.Count - 1].s);
                 for (int k = 0; k < 6; k++)
                 {
                     var s0 = origin + new Vector(r * 0.3 * k, r);
