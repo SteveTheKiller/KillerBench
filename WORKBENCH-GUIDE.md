@@ -238,7 +238,7 @@ dotnet run --project KillerBench.csproj
 
 Paste a text-log path and click Open Text Log, or drop one file onto the window. Find filters lines while retaining original line numbers. Ctrl+O opens the supplied path; Esc cancels a read. Source reads are limited to 1,000,000 characters and displayed results to 2,000 matching lines. Oversized sources are explicitly marked as truncated. Text decoding supports UTF-8 and BOM-detected encodings.
 
-The default is Dark/Amber, using the existing Orange accent. The paint-roller button at the bottom of the left rail opens the KillerShell-style theme picker with 13 themes and a vertical accent strip. Dark, Light, Black, and 98SE support accents. The smoked-glass console follows the active theme, while reports provide a readable summary and specific next action after a workflow completes. App theme, accents and interface scale persist locally. Existing saved theme choices are preserved.
+The default is Dark/Amber, using the existing Orange accent. The paint-roller button at the bottom of the left rail opens the KillerShell-style theme picker with 14 themes and a vertical accent strip. Dark, Light, Black, 98SE, and Trash Polka support accents. The smoked-glass console follows the active theme, while reports provide a readable summary and specific next action after a workflow completes. App theme, accents and interface scale persist locally. Existing saved theme choices are preserved.
 
 The language button above the theme picker offers 19 languages. The choice persists and applies immediately, including section names, workflow names, the welcome text and the readable report. Any missing resource falls back to English. Engine findings and Raw output stay in English, the same as a log.
 
@@ -259,7 +259,7 @@ dotnet build KillerBench.slnx
 dotnet run --project Checks/KillerBench.Checks.csproj
 ```
 
-The checks cover input and display bounds, mixed newlines, original line references, cancellation, binary rejection, UI construction, sample labeling, search, theme-aware console output, all 13 app themes, panels, and the theme menu. They render previews into a unique temporary folder and print its location.
+The checks cover input and display bounds, mixed newlines, original line references, cancellation, binary rejection, UI construction, sample labeling, search, theme-aware console output, all 14 app themes, panels, and the theme menu. They render previews into a unique temporary folder and print its location.
 
 See [DESIGN.md](DESIGN.md) for the proposed diagnostic architecture and subsequent milestones.
 

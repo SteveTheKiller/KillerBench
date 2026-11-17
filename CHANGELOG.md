@@ -42,6 +42,7 @@
 
 ### Added
 
+- Trash Polka, a new theme under 98SE: black with a tattoo-style ink background in your accent color, from eight accents with Blood red as the default. Under a Windows high contrast theme the ink steps aside for the system colors.
 - Added the app icon to the Chocolatey package listing.
 
 ## [1.0.0] - 2026-11-02

@@ -17,7 +17,7 @@
     <bugTrackerUrl>https://github.com/SteveTheKiller/KillerBench/issues</bugTrackerUrl>
     <tags>windows diagnostics repair maintenance troubleshooting admin</tags>
     <summary>Windows diagnostics, guarded repairs, and maintenance tools with readable reports.</summary>
-    <description>KillerBench is a Windows diagnostics, repair, and maintenance toolbox. Run a read-only system scan, review findings in readable reports or raw output, and explicitly confirm supported repairs. Tools cover Windows Update, services, networking, printing, storage, security, BitLocker, privacy, applications, and computer setup. Includes report export, 13 themes, and 20 interface languages. A separate CLI download supports scripting and integration. Free and open source under GPL v3.
+    <description>KillerBench is a Windows diagnostics, repair, and maintenance toolbox. Run a read-only system scan, review findings in readable reports or raw output, and explicitly confirm supported repairs. Tools cover Windows Update, services, networking, printing, storage, security, BitLocker, privacy, applications, and computer setup. Includes report export, 14 themes, and 20 interface languages. A separate CLI download supports scripting and integration. Free and open source under GPL v3.
 
 This package installs the x64 desktop application and requires the .NET 10 Desktop Runtime. Uninstall removes application registration and shortcuts while preserving application files, reports, and settings.</description>
     <releaseNotes>https://github.com/SteveTheKiller/KillerBench/releases/tag/v1.0.0</releaseNotes>
