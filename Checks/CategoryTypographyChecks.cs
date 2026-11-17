@@ -46,7 +46,7 @@ internal static class CategoryTypographyChecks
             }
         }
         finally { ThemeManager.Apply(originalTheme); window.UpdateLayout(); }
-        Console.WriteLine("PASS: actual subtitle and category glyphs match production font bytes across all 13 themes; 98SE retains its native face, and the previous Segoe UI fallback is rejected.");
+        Console.WriteLine("PASS: actual subtitle and category glyphs match production font bytes across all 14 themes; 98SE retains its native face, and the previous Segoe UI fallback is rejected.");
     }
 
     private static IEnumerable<TextBlock> FindTextBlocks(DependencyObject parent)

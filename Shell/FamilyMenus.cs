@@ -72,7 +72,7 @@ public partial class MainWindow
     private void UpdateAccentStrip(bool animate)
     {
         if (AccentStripHost is null) return;
-        bool show = ThemeManager.Current is Theme.Dark or Theme.Light or Theme.Black or Theme.SE98;
+        bool show = ThemeManager.SupportsAccents(ThemeManager.Current);
         double target = show ? 38 : 0;
         if (animate) AnimateWidth(AccentStripHost, target); else { AccentStripHost.BeginAnimation(WidthProperty, null); AccentStripHost.Width = target; }
         if (!show) return;
@@ -83,7 +83,9 @@ public partial class MainWindow
         for (int i = 0; i < dots.Length; i++)
         {
             var accent = order[i];
-            var colors = accent == Accent.Green ? palette : new ResourceDictionary { Source = new Uri($"pack://application:,,,/KillerBench;component/Themes/Accents/{family}/{accent}.xaml") };
+            // The accent a family bakes into its base palette has no overlay of its own. Trash Polka's swatches are its
+            // overlays' SelectionBg: Blood, Ember, Ochre, Moss, Teal, Cobalt, Violet and Rose.
+            var colors = accent.ToString() == ThemeAccentRules.BakedAccent(family) ? palette : new ResourceDictionary { Source = new Uri($"pack://application:,,,/KillerBench;component/Themes/Accents/{family}/{accent}.xaml") };
             dots[i].Tag = accent;
             dots[i].SetResourceReference(FrameworkElement.ToolTipProperty, "Str_Accent_" + accent);
             // Each pill shows its accent the way a selection does (KillerNotes): the palette's own

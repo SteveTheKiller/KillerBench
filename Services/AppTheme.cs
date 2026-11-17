@@ -15,6 +15,8 @@ namespace KillerBench.Services
         /// <summary>Call once before ThemeManager.Initialize, in the app and in every check harness.</summary>
         public static void Configure()
         {
+            // Trash Polka's background ink on every dialog and flyout, not just the main window.
+            Controls.ThemeMotif.EnableForAllWindows();
             ThemeManager.GetSetting = Get;
             ThemeManager.SetSetting = Set;
             ThemeManager.SetDefaults(Theme.Dark, dark: Accent.Yellow, light: Accent.Green, black: Accent.Green, se98: Accent.Green);

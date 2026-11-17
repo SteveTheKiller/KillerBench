@@ -333,7 +333,7 @@ internal static class Program
             KillerBench.Services.ThemeManager.Apply(theme);
             CheckMenuSeparators(theme);
         }
-        Console.WriteLine("PASS: Menu separator brushes and unchanged general separators across all 13 themes.");
+        Console.WriteLine("PASS: Menu separator brushes and unchanged general separators across all 14 themes.");
         return 0;
     }
 
@@ -356,6 +356,7 @@ internal static class Program
             KillerBench.Services.Theme.Sepulchre => Color.FromRgb(0x83, 0x5A, 0x30),
             KillerBench.Services.Theme.Delirium => Color.FromRgb(0x66, 0x66, 0x66),
             KillerBench.Services.Theme.Mourning => Color.FromRgb(0x75, 0x6B, 0x79),
+            KillerBench.Services.Theme.TrashPolka => Color.FromRgb(0x2E, 0x2E, 0x2E),
             _ => throw new ArgumentOutOfRangeException(nameof(theme))
         };
         Require(menuBrush.Color == expected, "Menu separator color matches the KillerUI theme");
@@ -447,7 +448,7 @@ internal static class Program
             ((Button)choice.FindName("CancelButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(!choice.Confirmed && !choice.Check1Checked && !choice.IsVisible,
                 "Not now keeps a cleared checkbox and never starts the update");
-            Console.WriteLine("PASS: KillerUI confirmation card and safe actions across all 13 themes. Captures: " + captures);
+            Console.WriteLine("PASS: KillerUI confirmation card and safe actions across all 14 themes. Captures: " + captures);
             return 0;
         }
         finally
@@ -2331,7 +2332,7 @@ internal static class Program
                 "Update reports open the exact Maintenance tool without selecting installation");
             Capture(window, Path.Combine(scratch, "workflow-outcome.png"));
             window.Close();
-            Console.WriteLine("PASS: UI construction, sample labeling, console and report output, all 13 themes, panels, and theme menu.");
+            Console.WriteLine("PASS: UI construction, sample labeling, console and report output, all 14 themes, panels, and theme menu.");
             Console.WriteLine("Preview: " + preview);
             return 0;
         }

@@ -31,12 +31,16 @@
       </Style>
     </ResourceDictionary>
   </Window.Resources>
-  <Border x:Name="WindowEdgeBorder" BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="{DynamicResource WindowEdgeThickness}">
+  <!-- Trash Polka: the window root carries the background ink (Controls/ThemeMotif.cs). It has no background of its
+       own under the other themes, so the window's BackgroundBrush shows through as before. -->
+  <Border x:Name="WindowEdgeBorder" BorderBrush="{DynamicResource AppBorderBrush}" BorderThickness="{DynamicResource WindowEdgeThickness}"
+          icons:ThemeMotif.Part="Chrome" icons:ThemeMotif.BaseBrush="BackgroundBrush">
   <Grid x:Name="RootGrid">
     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="24"/></Grid.RowDefinitions>
     <Border x:Name="WorkspaceGrain" Grid.Row="1" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>
     <Grid x:Name="CaptionBar" Background="Transparent" Height="{DynamicResource TitleBarHeight}" MouseLeftButtonDown="OnCaptionDrag" Panel.ZIndex="1">
-      <Border Background="{DynamicResource TitleBarBrush}" IsHitTestVisible="False"/>
+      <Border Background="{DynamicResource TitleBarBrush}" IsHitTestVisible="False"
+              icons:ThemeMotif.Part="Chrome" icons:ThemeMotif.BaseBrush="TitleBarBrush"/>
       <Border Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>
       <StackPanel x:Name="LogoBar" Orientation="Horizontal" Margin="{DynamicResource TitleLogoMargin}" VerticalAlignment="Center" PreviewMouseWheel="OnAppScale" ToolTip="{DynamicResource Str_ToolTip_Scroll_here_to_resize_the_interface}">
         <icons:AppIcon x:Name="TitlebarIcon" Width="{DynamicResource TitleIconSize}" Height="{DynamicResource TitleIconSize}" Margin="{DynamicResource TitleIconMargin}" RenderOptions.BitmapScalingMode="NearestNeighbor" AutomationProperties.Name="{DynamicResource Str_ToolTip_Scroll_here_to_resize_the_interface}"/>
@@ -117,7 +121,10 @@
         <kl:UnclippedGrid x:Name="ConsoleBank" Grid.Column="2">
           <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
           <Grid.RowDefinitions><RowDefinition Height="*"/></Grid.RowDefinitions>
-        <Border x:Name="ToolCard" Grid.Row="0" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Margin="0">
+        <!-- Trash Polka: the tool and evidence cards carry the pane ink; their lists and report cards paint opaque
+             surfaces of their own over it, so rows stay plain. -->
+        <Border x:Name="ToolCard" Grid.Row="0" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Margin="0"
+                icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
 <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
 <Border>
           <ScrollViewer x:Name="ToolScroll" Style="{StaticResource OverlayScrollViewer}" Padding="14"
@@ -887,6 +894,11 @@
                                                  GroupName="ThemeGroup"
                                                  Style="{StaticResource ThemeRadio}"
                                                  Tag="SE98" Checked="OnThemeSelected"/>
+                                    <RadioButton x:Name="ThemeTrashPolkaRadio"
+                                                 Content="{DynamicResource Str_Theme_TrashPolka}"
+                                                 GroupName="ThemeGroup"
+                                                 Style="{StaticResource ThemeRadio}"
+                                                 Tag="TrashPolka" Checked="OnThemeSelected"/>
                                     <RadioButton x:Name="ThemeBloodRadio"
                                                  Content="{DynamicResource Str_Theme_Blood}"
                                                  GroupName="ThemeGroup"
@@ -983,7 +995,8 @@
         </StackPanel>
       </Grid>
       <Thumb x:Name="SidebarGrip" Grid.Column="3" Visibility="Collapsed" IsHitTestVisible="False"/>
-        <Border x:Name="TerminalPanel" Grid.Column="4" Grid.RowSpan="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Margin="0" ClipToBounds="True">
+        <Border x:Name="TerminalPanel" Grid.Column="4" Grid.RowSpan="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Margin="0" ClipToBounds="True"
+                icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
 <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
 <Border Padding="14">
           <ScrollViewer x:Name="OutputScroll" Style="{StaticResource OverlayScrollViewer}" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
@@ -1052,7 +1065,8 @@
       </kl:UnclippedGrid>
     </kl:UnclippedGrid>
     </Grid>
-    <Border Grid.Row="2" Background="{DynamicResource FooterBackgroundBrush}" Panel.ZIndex="-1"/>
+    <Border Grid.Row="2" Background="{DynamicResource FooterBackgroundBrush}" Panel.ZIndex="-1"
+            icons:ThemeMotif.Part="Chrome" icons:ThemeMotif.BaseBrush="FooterBackgroundBrush"/>
     <Grid Grid.Row="2">
       <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
       <Border Grid.ColumnSpan="2" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>
