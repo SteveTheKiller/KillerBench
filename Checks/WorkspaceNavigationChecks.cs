@@ -114,6 +114,19 @@ internal static class WorkspaceNavigationChecks
 
             var areas = Find<ListBox>(window, "SystemAreas");
             Require(areas.Items.Count == 12, "The system map exposes every existing tool category.");
+            var machine = VisualElements(areas).OfType<KillerBench.Controls.MachineMapPanel>().SingleOrDefault();
+            Require(machine is not null && machine.ScreenRect.Width > 0 && machine.TowerRect.Width > 0,
+                "The Overview map draws the machine itself, a screen and a tower, instead of a plain grid of buttons.");
+            Rect PartBounds(int index)
+            {
+                var part = (FrameworkElement)areas.ItemContainerGenerator.ContainerFromIndex(index);
+                return part.TransformToAncestor(machine!).TransformBounds(new Rect(part.RenderSize));
+            }
+            bool Inside(Rect outer, Rect inner) => outer.Contains(inner.TopLeft) && outer.Contains(inner.BottomRight);
+            Require(Inside(machine!.ScreenRect, PartBounds(0)) && Inside(machine.TowerRect, PartBounds(11)) &&
+                    Inside(machine.TowerRect, PartBounds(9)) && Inside(machine.ScreenRect, PartBounds(5)),
+                "Software areas light up on the screen and hardware areas sit in the tower bays. Diagnostics: " + PartBounds(0) +
+                ", Storage: " + PartBounds(11) + ", screen: " + machine.ScreenRect + ", tower: " + machine.TowerRect);
             areas.SelectedIndex = 11;
             Settle(window);
             var detail = Find<TextBlock>(window, "AreaTitle");

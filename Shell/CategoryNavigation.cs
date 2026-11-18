@@ -18,6 +18,8 @@ public partial class MainWindow
         public string EvidenceState => LocalizedText.Get(StateKey);
         public OverviewScore? Score { get; set; }
         public OverviewTone Tone => Score?.Tone ?? OverviewTone.NotChecked;
+        // Software areas light up on the monitor, hardware and system areas sit in the tower bays.
+        public bool InTower => Id is "Repair" or "Devices" or "Network" or "Security" or "BitLocker" or "Storage";
         public string Badge => Score is null ? string.Empty
             : Score.NeedsAttention > 0 ? Score.NeedsAttention.ToString(System.Globalization.CultureInfo.CurrentCulture)
             : Score.Tone == OverviewTone.Incomplete ? "?" : string.Empty;

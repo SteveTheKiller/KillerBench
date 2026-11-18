@@ -162,17 +162,20 @@
                 </DockPanel>
               </Border>
               <ListBox x:Name="SystemAreas" Background="Transparent" BorderThickness="0" SelectionChanged="OnSystemAreaSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
-                <ListBox.ItemsPanel><ItemsPanelTemplate><icons:SystemMapPanel Stroke="{DynamicResource PrimaryBrush}" ConnectionBrush="{DynamicResource PaneBorderBrush}"/></ItemsPanelTemplate></ListBox.ItemsPanel>
+                <ListBox.ItemsPanel><ItemsPanelTemplate><icons:MachineMapPanel FrameBrush="{DynamicResource PaneBorderBrush}" BezelBrush="{DynamicResource BackgroundBrush}" ScreenBrush="{DynamicResource PaneBrush}"/></ItemsPanelTemplate></ListBox.ItemsPanel>
                 <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}">
-                  <Setter Property="Padding" Value="10,8"/><Setter Property="Margin" Value="4,3"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Cursor" Value="Hand"/><Setter Property="AutomationProperties.Name" Value="{Binding Title}"/>
-                  <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="NodeFace" Background="{DynamicResource ContentPaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}"><Grid><ContentPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/><Border Style="{StaticResource FlyoutGrain}"/></Grid></Border><ControlTemplate.Triggers>
+                  <Setter Property="Padding" Value="10,6"/><Setter Property="Margin" Value="3"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Cursor" Value="Hand"/><Setter Property="AutomationProperties.Name" Value="{Binding Title}"/><Setter Property="icons:MachineMapPanel.InTower" Value="{Binding InTower}"/>
+                  <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="NodeFace" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}"><Grid><Border x:Name="PartGlow" Background="Transparent" Opacity="0.16" CornerRadius="{DynamicResource ControlCornerRadius}"/><ContentPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/><Border Style="{StaticResource FlyoutGrain}"/></Grid></Border><ControlTemplate.Triggers>
+                    <DataTrigger Binding="{Binding Tone}" Value="Clear"><Setter TargetName="PartGlow" Property="Background" Value="{DynamicResource OkBrush}"/><Setter TargetName="NodeFace" Property="BorderBrush" Value="{DynamicResource OkBrush}"/></DataTrigger>
+                    <DataTrigger Binding="{Binding Tone}" Value="Review"><Setter TargetName="PartGlow" Property="Background" Value="{DynamicResource WarnBrush}"/><Setter TargetName="NodeFace" Property="BorderBrush" Value="{DynamicResource WarnBrush}"/></DataTrigger>
+                    <DataTrigger Binding="{Binding Tone}" Value="Fixable"><Setter TargetName="PartGlow" Property="Background" Value="{DynamicResource DangerRed}"/><Setter TargetName="NodeFace" Property="BorderBrush" Value="{DynamicResource DangerRed}"/></DataTrigger>
                     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="NodeFace" Property="Background" Value="{DynamicResource RowHoverBrush}"/></Trigger>
                     <Trigger Property="IsSelected" Value="True"><Setter TargetName="NodeFace" Property="Background" Value="{DynamicResource SelectionBg}"/><Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/></Trigger>
                     <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="NodeFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/></Trigger>
                   </ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
                 </Style></ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate><DataTemplate><DockPanel>
-                  <Border x:Name="AreaStripe" DockPanel.Dock="Bottom" Height="4" Margin="0,6,0,0" Background="{DynamicResource PaneBorderBrush}"/>
+                  <Border x:Name="AreaStripe" Visibility="Collapsed" DockPanel.Dock="Bottom" Height="4" Margin="0,6,0,0" Background="{DynamicResource PaneBorderBrush}"/>
                   <Border x:Name="AreaBadge" DockPanel.Dock="Right" VerticalAlignment="Top" MinWidth="22" Padding="6,1" Margin="8,0,0,0" CornerRadius="{DynamicResource ControlCornerRadius}" Background="{DynamicResource PaneBorderBrush}" Visibility="Collapsed">
                     <TextBlock Text="{Binding Badge}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource BackgroundBrush}"/>
                   </Border>
@@ -183,6 +186,7 @@
                   </StackPanel>
                 </DockPanel><DataTemplate.Triggers>
                   <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True"><Setter TargetName="AreaArt" Property="Stroke" Value="{DynamicResource SelectionFg}"/></DataTrigger>
+                  <DataTrigger Binding="{Binding InTower}" Value="True"><Setter TargetName="AreaArt" Property="Width" Value="30"/><Setter TargetName="AreaArt" Property="Height" Value="30"/><Setter TargetName="AreaArt" Property="Margin" Value="0,0,10,0"/><Setter TargetName="AreaStripe" Property="Visibility" Value="Collapsed"/></DataTrigger>
                   <DataTrigger Binding="{Binding Tone}" Value="Clear"><Setter TargetName="AreaStripe" Property="Background" Value="{DynamicResource OkBrush}"/></DataTrigger>
                   <DataTrigger Binding="{Binding Tone}" Value="Incomplete"><Setter TargetName="AreaStripe" Property="Background" Value="{DynamicResource MutedTextBrush}"/><Setter TargetName="AreaBadge" Property="Background" Value="{DynamicResource MutedTextBrush}"/><Setter TargetName="AreaBadge" Property="Visibility" Value="Visible"/></DataTrigger>
                   <DataTrigger Binding="{Binding Tone}" Value="Review"><Setter TargetName="AreaStripe" Property="Background" Value="{DynamicResource WarnBrush}"/><Setter TargetName="AreaBadge" Property="Background" Value="{DynamicResource WarnBrush}"/><Setter TargetName="AreaBadge" Property="Visibility" Value="Visible"/></DataTrigger>
