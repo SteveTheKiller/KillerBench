@@ -46,7 +46,7 @@
   <Grid x:Name="RootGrid">
     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="24"/></Grid.RowDefinitions>
     <Border x:Name="WorkspaceGrain" Grid.Row="1" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>
-    <Grid x:Name="CaptionBar" Background="Transparent" MinHeight="{DynamicResource TitleBarHeight}" MouseLeftButtonDown="OnCaptionDrag" Panel.ZIndex="1">
+    <Grid x:Name="CaptionBar" Background="Transparent" Height="{DynamicResource TitleBarHeight}" MouseLeftButtonDown="OnCaptionDrag" Panel.ZIndex="1">
       <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*" MinWidth="32"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
       <Border Grid.ColumnSpan="5" Background="{DynamicResource TitleBarBrush}" IsHitTestVisible="False"
               icons:ThemeMotif.Part="Chrome" icons:ThemeMotif.BaseBrush="TitleBarBrush"/>
@@ -60,7 +60,7 @@
         </Grid>
         <TextBlock Text="KillerBench" FontFamily="{DynamicResource ChromeFontFamily}" Foreground="{DynamicResource ChromeTextBrush}" FontWeight="Bold" Visibility="{DynamicResource PlainTitleVisibility}"/>
       </StackPanel>
-      <ListBox x:Name="WorkspaceNavigation" Grid.Column="1" Margin="12,3,0,3" Background="Transparent" BorderThickness="0" SelectionChanged="OnWorkspaceSelected" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_Overview}">
+      <ListBox x:Name="WorkspaceNavigation" Grid.Column="1" Margin="12,0,0,0" Background="Transparent" BorderThickness="0" SelectionChanged="OnWorkspaceSelected" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_Overview}">
         <ListBox.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal"/></ItemsPanelTemplate></ListBox.ItemsPanel>
         <ListBox.ContextMenu><ContextMenu x:Name="ToolbarMenu" Style="{StaticResource CardMenu}"/></ListBox.ContextMenu>
         <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="Margin" Value="0,0,4,0"/><Setter Property="IsTabStop" Value="False"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><ContentPresenter/></ControlTemplate></Setter.Value></Setter></Style></ListBox.ItemContainerStyle>

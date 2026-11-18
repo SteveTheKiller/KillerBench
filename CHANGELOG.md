@@ -33,7 +33,7 @@
 
 ### Changed
 
-- Reorganized the workbench around an illustrated system map, six symptom entry points and resizable evidence with coverage charts and finding cards. Navigation and search share the title bar, Tools categories run horizontally, and the utility rail stays at the far left. Toolbar settings persist, and the map fills the taller default window when screen space permits.
+- Reorganized the workbench around an illustrated system map, six symptom entry points and resizable evidence with coverage charts and finding cards. Navigation and search share a single-row title bar with small icons and saved caption settings. Tools categories run horizontally, the utility rail stays at the far left, and the map fills the taller default window when screen space permits.
 - Added grouped tool and evidence search plus workspace, capture and export shortcuts, with matching tooltips, menus, keyboard maps and translated Help tables. Text fields and dialogs use the family context menu with mouse and keyboard access.
 - Updated the WinGet submission tool to Komac 2.17.2.
 - Demo runs and screenshots use realistic workstation findings and normal report labels.

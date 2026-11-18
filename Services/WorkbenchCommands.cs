@@ -9,10 +9,8 @@ public static class WorkbenchCommands
     public static RoutedUICommand Tools { get; } = new();
     public static RoutedUICommand History { get; } = new();
     public static RoutedUICommand ToolbarSmallIcons { get; } = new();
-    public static RoutedUICommand ToolbarLargeIcons { get; } = new();
     public static RoutedUICommand ToolbarTextNone { get; } = new();
     public static RoutedUICommand ToolbarTextBeside { get; } = new();
-    public static RoutedUICommand ToolbarTextUnder { get; } = new();
     public static RoutedUICommand ToolbarTextOnly { get; } = new();
     public static RoutedUICommand OpenCapture { get; } = new();
     public static RoutedUICommand SaveCapture { get; } = new();

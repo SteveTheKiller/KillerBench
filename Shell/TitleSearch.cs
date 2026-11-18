@@ -55,6 +55,7 @@ public partial class MainWindow
         double budget = Math.Max(184, ActualWidth - LogoBar.ActualWidth - CaptionButtons.ActualWidth - TitleSearchHost.Width - 76);
         WorkspaceNavigation.MaxWidth = budget;
         RestoreToolbarCaptions();
+        CompactWorkspaceToolbarButtons();
         // The shared engine sheds captions only when necessary, retaining every destination.
         ShedToolbarCaptions(() =>
         {
@@ -67,6 +68,7 @@ public partial class MainWindow
             return width <= budget;
         });
         TitleSearchCard.Width = Math.Min(464, Math.Max(300, ActualWidth - 44));
+        CompactWorkspaceToolbarButtons();
     }
 
     private void OnTitleSearchChanged(object sender, TextChangedEventArgs e)

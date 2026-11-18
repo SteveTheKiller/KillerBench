@@ -13,6 +13,10 @@ internal static class WorkspaceNavigationChecks
         IsolatedDesktop.Verify();
         Preferences.FilePath = Path.Combine(Path.GetTempPath(), "toolbar-settings-" + Guid.NewGuid().ToString("N") + ".json");
         Preferences.Load();
+        Preferences.Set("ToolbarIconSize", "Large");
+        Preferences.Set("ToolbarLabels", "Under");
+        Preferences.Save();
+        Preferences.Load();
         var application = new Application();
         SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(application.Dispatcher));
         foreach (string resource in new[] { "Themes/Black.xaml", "Controls/Controls.xaml", "Themes/Instrument.xaml", "Strings/en-US.xaml" })
@@ -229,32 +233,37 @@ internal static class WorkspaceNavigationChecks
     private static void VerifyToolbar(MainWindow window)
     {
         var button = Find<Button>(window, "OverviewButton");
-        Require(button.Content is StackPanel { Orientation: Orientation.Vertical } initial &&
-                initial.Children.OfType<TextBlock>().First().FontSize == 20,
-            "The family default shows large icons with labels underneath.");
+        Require(button.Content is StackPanel { Orientation: Orientation.Horizontal } initial &&
+                initial.Children.OfType<TextBlock>().First().FontSize == 14 &&
+                Find<FrameworkElement>(window, "CaptionBar").ActualHeight == (double)window.FindResource("TitleBarHeight"),
+            "Title-bar navigation defaults to small icons beside text within one caption row.");
         var menu = (ContextMenu)window.FindName("ToolbarMenu");
         MenuItem Option(string name) => menu.Items.OfType<MenuItem>().Single(item => Equals(item.Header, name));
-        void Select(string name) { Option(name).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent)); Settle(window); }
+        void Select(string name)
+        {
+            Option(name).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            Settle(window);
+            Require(Find<FrameworkElement>(window, "CaptionBar").ActualHeight == (double)window.FindResource("TitleBarHeight"),
+                "Every supported appearance mode preserves a single caption row.");
+        }
         Select("Small icons");
         Require(button.Content is StackPanel small && small.Children.OfType<TextBlock>().First().FontSize == 14,
             "The toolbar changes icon size independently of label placement.");
         Select("Text beside icons");
         Require(button.Content is StackPanel { Orientation: Orientation.Horizontal }, "Toolbar labels can sit beside icons.");
-        Select("Large icons");
-        Require(button.Content is StackPanel large && large.Children.OfType<TextBlock>().First().FontSize == 20,
-            "Large icons retain the chosen beside-label mode.");
+        Require(!menu.Items.OfType<MenuItem>().Any(item => Equals(item.Header, "Large icons") || Equals(item.Header, "Text under icons")),
+            "The title-bar menu excludes large icons and text underneath.");
         Select("Text only");
-        Require(button.Content is TextBlock && !Option("Small icons").IsEnabled && !Option("Large icons").IsEnabled,
-            "Text-only mode hides icons and disables both size choices.");
-        Require(!WorkbenchCommands.ToolbarLargeIcons.CanExecute(null, window), "Text-only mode also guards the icon-size shortcut.");
+        Require(button.Content is TextBlock && !Option("Small icons").IsEnabled,
+            "Text-only mode hides icons and disables icon sizing.");
         Select("No text");
-        Require(button.Content is KillerFamily.Accessibility.Glyph { FontSize: 20 }, "Icon-only mode keeps the chosen large workspace glyph.");
+        Require(button.Content is KillerFamily.Accessibility.Glyph { FontSize: 14 }, "Icon-only mode keeps the compact workspace glyph.");
         for (int index = 0; index < 6; index++)
         {
             var key = (Key)((int)Key.D1 + index);
             Require(window.InputBindings.OfType<KeyBinding>().Count(binding => binding.Key == key &&
-                    binding.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift)) == 1,
-                "Each toolbar appearance shortcut has one binding.");
+                    binding.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift)) == (index is 1 or 4 ? 0 : 1),
+                "Only supported single-row appearance options have keyboard bindings.");
         }
         WorkbenchCommands.ToolbarSmallIcons.Execute(null, window);
         WorkbenchCommands.ToolbarTextBeside.Execute(null, window);
@@ -275,8 +284,7 @@ internal static class WorkspaceNavigationChecks
                 "Reloaded settings restore both toolbar appearance axes in a new window.");
         }
         finally { reopened.Close(); }
-        WorkbenchCommands.ToolbarLargeIcons.Execute(null, window);
-        WorkbenchCommands.ToolbarTextUnder.Execute(null, window);
+        WorkbenchCommands.ToolbarTextBeside.Execute(null, window);
         Require(Equals(button.Tag, "selected"), "Toolbar restyling preserves the active workspace mark.");
     }
 
