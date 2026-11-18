@@ -18,6 +18,7 @@
 - Update failures explain verification rejection, denied launch and canceled elevation while keeping retry available.
 - Package reviews, license links and distribution requirements now match the app across all supported languages. The footer retains the running version after theme changes.
 - Overview, Investigate and History use the same themed film grain as the evidence pane and follow its on/off switch. Picked up current KillerUI file-picker, menu-card, update recovery and 98SE caption fixes.
+- Scroll shadows reach the workspace pane edges, and the obsolete chevron is gone while the far-left utility rail remains.
 - The file picker loads icons and picture previews in the background, refreshes overwritten previews, and restores its position on any monitor. Scrollbar buttons have localized screen-reader names.
 - Saved workflow and validation reports write their timestamps the same way on every Windows region, so Thai and Finnish settings no longer give years like 2569 or times like 14.30.
 - The disk-busy and shadow-storage checks read the decimal comma that Windows tools print on German, Finnish and other regions, instead of reporting no samples or unrecognized sizes.
@@ -32,7 +33,7 @@
 
 ### Changed
 
-- Reorganized the workbench into Overview, Investigate, Tools and History, with a graphical system map beside resizable evidence and the KillerUI utility rail at the far left. Existing diagnostics and confirmed repairs remain available in Tools.
+- Reorganized the workbench into Overview, Investigate, Tools and History, with a graphical system map beside resizable evidence and the KillerUI utility rail at the far left. The top toolbar has icons, independent size and label options, and saved appearance settings. Existing diagnostics and confirmed repairs remain available in Tools.
 - Added workspace, capture, export and evidence-search shortcuts, with matching tooltips, menus, keyboard maps and translated Help tables. Text fields and dialogs use the family context menu with mouse and keyboard access.
 - Updated the WinGet submission tool to Komac 2.17.2.
 - Demo runs and screenshots use realistic workstation findings and normal report labels.

@@ -26,6 +26,12 @@ public partial class MainWindow
         new("Ctrl+2", "Str_Workspace_Investigate", ShortcutCategory.Nav, true, "D2"),
         new("Ctrl+3", "Str_Workspace_Tools", ShortcutCategory.Nav, true, "D3"),
         new("Ctrl+4", "Str_Workspace_History", ShortcutCategory.Nav, true, "D4"),
+        new("Ctrl+Shift+1", "Str_Toolbar_SmallIcons", ShortcutCategory.View, true, "D1"),
+        new("Ctrl+Shift+2", "Str_Toolbar_LargeIcons", ShortcutCategory.View, true, "D2"),
+        new("Ctrl+Shift+3", "Str_Toolbar_TextNone", ShortcutCategory.View, true, "D3"),
+        new("Ctrl+Shift+4", "Str_Toolbar_TextBeside", ShortcutCategory.View, true, "D4"),
+        new("Ctrl+Shift+5", "Str_Toolbar_TextUnder", ShortcutCategory.View, true, "D5"),
+        new("Ctrl+Shift+6", "Str_Toolbar_TextOnly", ShortcutCategory.View, true, "D6"),
         new("F2", "Str_Shortcuts_ToggleSources", ShortcutCategory.View, false, "F2"),
         new("F3", "Str_Shortcuts_ToggleActivity", ShortcutCategory.View, false, "F3"),
         new("Alt+Shift+G", "Str_Theme_FilmGrain", ShortcutCategory.View, false, "G"),
@@ -44,7 +50,7 @@ public partial class MainWindow
     private static readonly (string Id, string Cap, double Width)[][] KeyboardRows =
     [
         [("Esc", "Esc", 1.0), ("", "", 0.7), ("F1", "F1", 1.0), ("F2", "F2", 1.0), ("F3", "F3", 1.0), ("F4", "F4", 1.0), ("", "", 0.5), ("F5", "F5", 1.0), ("F6", "F6", 1.0), ("F7", "F7", 1.0), ("F8", "F8", 1.0), ("", "", 0.5), ("F9", "F9", 1.0), ("F10", "F10", 1.0), ("F11", "F11", 1.0), ("F12", "F12", 1.0)],
-        [("D1", "1", 1.0), ("D2", "2", 1.0), ("D3", "3", 1.0), ("D4", "4", 1.0), ("", "", 3.8), ("D0", "0", 1.0), ("Minus", "-", 1.0), ("Plus", "+", 1.0)],
+        [("D1", "1", 1.0), ("D2", "2", 1.0), ("D3", "3", 1.0), ("D4", "4", 1.0), ("D5", "5", 1.0), ("D6", "6", 1.0), ("", "", 1.8), ("D0", "0", 1.0), ("Minus", "-", 1.0), ("Plus", "+", 1.0)],
         [("Tab", "Tab", 1.5), ("Q", "Q", 1.0), ("W", "W", 1.0), ("E", "E", 1.0), ("R", "R", 1.0), ("T", "T", 1.0), ("Y", "Y", 1.0), ("U", "U", 1.0), ("I", "I", 1.0), ("O", "O", 1.0), ("P", "P", 1.0)],
         [("Caps", "Caps", 1.8), ("A", "A", 1.0), ("S", "S", 1.0), ("D", "D", 1.0), ("F", "F", 1.0), ("G", "G", 1.0), ("H", "H", 1.0), ("J", "J", 1.0), ("K", "K", 1.0), ("L", "L", 1.0), ("Enter", "Enter", 2.2)],
         [("Shift", "Shift", 2.3), ("Z", "Z", 1.0), ("X", "X", 1.0), ("C", "C", 1.0), ("V", "V", 1.0), ("B", "B", 1.0), ("N", "N", 1.0), ("M", "M", 1.0), ("Comma", ",", 1.0), ("Period", ".", 1.0), ("RShift", "Shift", 2.7)],
@@ -63,7 +69,7 @@ public partial class MainWindow
         {
             int target = index;
             var item = (ListBoxItem)WorkspaceNavigation.Items[index];
-            BindAction(destinations[index], "Str_Workspace_" + item.Tag, item,
+            BindAction(destinations[index], "Str_Workspace_" + item.Tag, (Button)item.Content,
                 (_, _) => WorkspaceNavigation.SelectedIndex = target);
         }
         BindAction(WorkbenchCommands.OpenCapture, "Str_OpenCapture", OpenCaptureButton, OnOpenCapture);
@@ -77,18 +83,26 @@ public partial class MainWindow
 
     private void BindAction(RoutedUICommand command, string labelKey, UIElement control, RoutedEventHandler execute)
     {
-        ShortcutBinding binding = ShortcutBindings.Single(item => item.LabelKey == labelKey);
-        var gesture = (KeyGesture)new KeyGestureConverter().ConvertFromInvariantString(binding.Keys)!;
-        InputBindings.Add(new KeyBinding(command, gesture));
-        bool Available() => !App.ScreenshotMode && control.IsEnabled &&
-            AboutOverlay.Visibility != Visibility.Visible && ShortcutsOverlay.Visibility != Visibility.Visible;
-        CommandBindings.Add(new CommandBinding(command, (_, e) => { if (Available()) execute(this, e); e.Handled = true; },
-            (_, e) => { e.CanExecute = Available(); e.Handled = true; }));
-        if (control is MenuItem menu) menu.InputGestureText = binding.Keys;
+        BindShortcutCommand(command, labelKey, () => control.IsEnabled, execute);
+        if (control is MenuItem menu) menu.InputGestureText = ShortcutBindings.Single(item => item.LabelKey == labelKey).Keys;
         SetShortcutHint(control, labelKey);
     }
 
-    private static void SetShortcutHint(UIElement control, string labelKey)
+    private void BindShortcutCommand(RoutedUICommand command, string labelKey, Func<bool> canExecute, RoutedEventHandler execute)
+    {
+        ShortcutBinding binding = ShortcutBindings.Single(item => item.LabelKey == labelKey);
+        var gesture = (KeyGesture)new KeyGestureConverter().ConvertFromInvariantString(binding.Keys)!;
+        InputBindings.Add(new KeyBinding(command, gesture));
+        bool Available() => !App.ScreenshotMode && canExecute() &&
+            AboutOverlay.Visibility != Visibility.Visible && ShortcutsOverlay.Visibility != Visibility.Visible;
+        CommandBindings.Add(new CommandBinding(command, (_, e) => { if (Available()) execute(this, e); e.Handled = true; },
+            (_, e) => { e.CanExecute = Available(); e.Handled = true; }));
+    }
+
+    private static void SetShortcutHint(UIElement control, string labelKey) =>
+        ToolTipService.SetToolTip(control, CreateShortcutHint(labelKey));
+
+    private static TextBlock CreateShortcutHint(string labelKey)
     {
         ShortcutBinding binding = ShortcutBindings.Single(item => item.LabelKey == labelKey);
         string tipKey = labelKey switch
@@ -102,7 +116,7 @@ public partial class MainWindow
         label.SetResourceReference(System.Windows.Documents.Run.TextProperty, tipKey);
         tip.Inlines.Add(label);
         tip.Inlines.Add(new System.Windows.Documents.Run(" (" + binding.Keys + ")"));
-        ToolTipService.SetToolTip(control, tip);
+        return tip;
     }
 
     private void OnShortcuts(object sender, RoutedEventArgs e)

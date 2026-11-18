@@ -11,6 +11,8 @@ internal static class WorkspaceNavigationChecks
     internal static int Run()
     {
         IsolatedDesktop.Verify();
+        Preferences.FilePath = Path.Combine(Path.GetTempPath(), "toolbar-settings-" + Guid.NewGuid().ToString("N") + ".json");
+        Preferences.Load();
         var application = new Application();
         SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(application.Dispatcher));
         foreach (string resource in new[] { "Themes/Black.xaml", "Controls/Controls.xaml", "Themes/Instrument.xaml", "Strings/en-US.xaml" })
@@ -24,12 +26,17 @@ internal static class WorkspaceNavigationChecks
             window.Show();
             Settle(window);
 
+            Require(window.FindName("SidebarButton") is null,
+                "The utility rail has no obsolete sidebar chevron.");
             var navigation = Find<ListBox>(window, "WorkspaceNavigation");
             var destinations = navigation.Items.OfType<ListBoxItem>().ToArray();
+            Require(window.FindName("OverviewButton") is Button,
+                "The workspace toolbar exposes real icon-and-label buttons.");
             Require(navigation.IsVisible && navigation.IsEnabled, "Workspace navigation is visible and enabled.");
             Require(navigation.Items.Count == 4 && destinations.Select(item => item.Tag as string)
                 .SequenceEqual(new[] { "Overview", "Investigate", "Tools", "History" }),
                 "Workspace navigation offers Overview, Investigate, Tools and History in order.");
+            VerifyToolbar(window);
 
             var overview = Find<FrameworkElement>(window, "OverviewPage");
             var options = Find<FrameworkElement>(window, "ConsoleBank");
@@ -160,6 +167,60 @@ internal static class WorkspaceNavigationChecks
             window.Close();
             application.Shutdown();
         }
+    }
+
+    private static void VerifyToolbar(MainWindow window)
+    {
+        var button = Find<Button>(window, "OverviewButton");
+        Require(button.Content is StackPanel { Orientation: Orientation.Vertical } initial &&
+                initial.Children.OfType<TextBlock>().First().FontSize == 20,
+            "The family default shows large icons with labels underneath.");
+        var menu = (ContextMenu)window.FindName("ToolbarMenu");
+        MenuItem Option(string name) => menu.Items.OfType<MenuItem>().Single(item => Equals(item.Header, name));
+        void Select(string name) { Option(name).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent)); Settle(window); }
+        Select("Small icons");
+        Require(button.Content is StackPanel small && small.Children.OfType<TextBlock>().First().FontSize == 14,
+            "The toolbar changes icon size independently of label placement.");
+        Select("Text beside icons");
+        Require(button.Content is StackPanel { Orientation: Orientation.Horizontal }, "Toolbar labels can sit beside icons.");
+        Select("Large icons");
+        Require(button.Content is StackPanel large && large.Children.OfType<TextBlock>().First().FontSize == 20,
+            "Large icons retain the chosen beside-label mode.");
+        Select("Text only");
+        Require(button.Content is TextBlock && !Option("Small icons").IsEnabled && !Option("Large icons").IsEnabled,
+            "Text-only mode hides icons and disables both size choices.");
+        Require(!WorkbenchCommands.ToolbarLargeIcons.CanExecute(null, window), "Text-only mode also guards the icon-size shortcut.");
+        Select("No text");
+        Require(button.Content is KillerFamily.Accessibility.Glyph { FontSize: 20 }, "Icon-only mode keeps the chosen large workspace glyph.");
+        for (int index = 0; index < 6; index++)
+        {
+            var key = (Key)((int)Key.D1 + index);
+            Require(window.InputBindings.OfType<KeyBinding>().Count(binding => binding.Key == key &&
+                    binding.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift)) == 1,
+                "Each toolbar appearance shortcut has one binding.");
+        }
+        WorkbenchCommands.ToolbarSmallIcons.Execute(null, window);
+        WorkbenchCommands.ToolbarTextBeside.Execute(null, window);
+        string saved = Preferences.FilePath;
+        string empty = Path.Combine(Path.GetTempPath(), "empty-toolbar-" + Guid.NewGuid().ToString("N") + ".json");
+        File.WriteAllText(empty, "{}");
+        Preferences.FilePath = empty;
+        Preferences.Load();
+        Preferences.FilePath = saved;
+        Preferences.Load();
+        var reopened = new MainWindow { ShowActivated = false, ShowInTaskbar = false };
+        try
+        {
+            reopened.Show();
+            Settle(reopened);
+            Require(Find<Button>(reopened, "OverviewButton").Content is StackPanel { Orientation: Orientation.Horizontal } restored &&
+                    restored.Children.OfType<TextBlock>().First().FontSize == 14,
+                "Reloaded settings restore both toolbar appearance axes in a new window.");
+        }
+        finally { reopened.Close(); }
+        WorkbenchCommands.ToolbarLargeIcons.Execute(null, window);
+        WorkbenchCommands.ToolbarTextUnder.Execute(null, window);
+        Require(Equals(button.Tag, "selected"), "Toolbar restyling preserves the active workspace mark.");
     }
 
     private static T Find<T>(Window window, string name) where T : FrameworkElement =>

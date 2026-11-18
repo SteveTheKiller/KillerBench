@@ -62,7 +62,7 @@ internal static class ShortcutCommandChecks
             ((Button)window.FindName(wasRawView ? "ConsoleViewButton" : "ReportViewButton"))
                 .RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             if ((((FrameworkElement)window.FindName("TerminalPanel")).Visibility == Visibility.Visible) != wasTerminalOpen)
-                ((Button)window.FindName("SidebarButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                window.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(window), 0, Key.F2) { RoutedEvent = Keyboard.PreviewKeyDownEvent });
             overlay.Visibility = previous;
             window.UpdateLayout();
         }

@@ -513,10 +513,10 @@ internal static class Program
             }
             Require(terminal.IsVisible && categoryPane.IsVisible && categoryPane.ActualWidth > 0,
                 "Tools opens with its category navigation and the evidence pane available.");
-            var outputToggle = (Button)window.FindName("SidebarButton");
-            outputToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Action outputToggle = () => ToggleOutput(window);
+            outputToggle();
             Require(!terminal.IsVisible && categoryPane.IsVisible, "Output toggle closes evidence while keeping categories visible.");
-            outputToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            outputToggle();
             Require(terminal.IsVisible,
                 "Output toggle opens the retained output pane");
             window.UpdateLayout();
@@ -532,8 +532,8 @@ internal static class Program
             window.UpdateLayout();
             Require(toolPane.ActualWidth > beforeResize, "The divider resizes the adjacent panes through keyboard input");
             double resizedWidth = toolPane.ActualWidth;
-            outputToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            outputToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            outputToggle();
+            outputToggle();
             window.UpdateLayout();
             Require(Math.Abs(toolPane.ActualWidth - resizedWidth) < 1, "Reopening output retains the chosen pane split");
             var outputGrid = (Grid)window.FindName("ContentPane");
@@ -549,7 +549,7 @@ internal static class Program
             Require(!readableBounds.IntersectsWith(rawBounds), "Output view buttons reflow without colliding in a narrow pane");
             Require(FindButtons((FrameworkElement)window.FindName("TerminalPanel")).All(button => !Equals(button.Content, ((char)0xE76C).ToString())),
                 "Only the divider rail retains the output chevron");
-            outputToggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            outputToggle();
             Require(((Border)window.FindName("TerminalPanel")).Visibility == Visibility.Collapsed &&
                 ((Border)window.FindName("LeftPanel")).IsEnabled,
                 "Output toggle never hides or disables category navigation");
@@ -879,7 +879,7 @@ internal static class Program
             scopedCategories.SelectedIndex = 1;
             Require(((FrameworkElement)window.FindName("TerminalPanel")).Visibility == Visibility.Collapsed,
                 "Browsing tools hides inactive output");
-            ((Button)window.FindName("SidebarButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ToggleOutput(window);
             Require(((FrameworkElement)window.FindName("TerminalPanel")).Visibility == Visibility.Visible && lookupOutput.Text == retainedLookup,
                 "The divider chevron restores the previous result without rerunning it");
             rawButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -1497,7 +1497,7 @@ internal static class Program
             ((Button)window.FindName("ShortcutListButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
             Require(shortcuts.Visibility == Visibility.Visible &&
-                ((StackPanel)window.FindName("ShortcutListHost")).Children.OfType<Grid>().Count() == 17 &&
+                ((StackPanel)window.FindName("ShortcutListHost")).Children.OfType<Grid>().Count() == 23 &&
                 ((Button)window.FindName("ShortcutButton")).ToolTip?.ToString() == KillerFamily.Layout.ShortcutHints.WithHint("Keyboard shortcuts", "F1"),
                 "Shortcut list and rail tooltip come from the shared binding table");
             ((Button)window.FindName("ShortcutMapButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -2041,8 +2041,8 @@ internal static class Program
                 }
             KillerBench.Services.ThemeManager.ApplyAccent(KillerBench.Services.Theme.Black, KillerBench.Services.Accent.Green);
             KillerBench.Services.ThemeManager.Apply(KillerBench.Services.Theme.Black);
-            ((Button)window.FindName("SidebarButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            ((Button)window.FindName("SidebarButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ToggleOutput(window);
+            ToggleOutput(window);
             ((Button)window.FindName("ActivityButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(((Border)window.FindName("ActivityPanel")).Visibility == Visibility.Collapsed, "Activity hides independently");
             ((Button)window.FindName("ActivityButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -2392,6 +2392,9 @@ internal static class Program
         Require(many.Excerpt("", out matches).Contains("Display limited") && matches == 3000, "Display bound is explicit");
         Console.WriteLine("PASS: newlines, search references, source bound, cancellation, binary rejection, display bound.");
     }
+
+    private static void ToggleOutput(Window window) => window.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice,
+        PresentationSource.FromVisual(window), 0, Key.F2) { RoutedEvent = Keyboard.PreviewKeyDownEvent });
 
     private static IEnumerable<Button> FindButtons(DependencyObject parent)
     {

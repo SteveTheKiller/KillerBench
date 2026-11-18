@@ -5,6 +5,12 @@ namespace KillerBench.Shell;
 
 public partial class MainWindow
 {
+    private void OnWorkspaceToolbarClick(object sender, RoutedEventArgs e)
+    {
+        var item = WorkspaceNavigation.Items.OfType<ListBoxItem>().SingleOrDefault(candidate => ReferenceEquals(candidate.Content, sender));
+        if (item is not null) WorkspaceNavigation.SelectedItem = item;
+    }
+
     private sealed record SessionEntry(KillerBench.Engine.Evidence.TextEvidence Evidence, string Label)
     {
         public override string ToString() => Label;
@@ -13,6 +19,7 @@ public partial class MainWindow
     private void OnWorkspaceSelected(object sender, SelectionChangedEventArgs e)
     {
         if (WorkspaceNavigation.SelectedItem is not ListBoxItem { Tag: string page } || OverviewPage is null) return;
+        RefreshWorkspaceToolbarSelection();
         OverviewPage.Visibility = page == "Overview" ? Visibility.Visible : Visibility.Collapsed;
         InvestigatePage.Visibility = page == "Investigate" ? Visibility.Visible : Visibility.Collapsed;
         HistoryPage.Visibility = page == "History" ? Visibility.Visible : Visibility.Collapsed;

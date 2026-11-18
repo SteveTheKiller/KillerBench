@@ -99,6 +99,29 @@ internal static class DemoScreenshotChecks
             Call(window, "ApplyAppScale", 2.5);
             var navigation = (ListBox)window.FindName("WorkspaceNavigation");
             var destinations = navigation.Items.OfType<ListBoxItem>().ToDictionary(item => (string)item.Tag);
+            Call(window, "ApplyAppScale", 1d);
+            navigation.SelectedItem = destinations["Overview"];
+            Settle(window);
+            var overview = (Border)window.FindName("OverviewPage");
+            var viewer = window.FindName("OverviewScroll") as ScrollViewer;
+            Require(viewer is not null, "Overview uses the shared pane-edge shadow viewer.");
+            viewer!.ScrollToTop();
+            Settle(window);
+            var shadowRoot = (Grid)VisualTreeHelper.GetChild(viewer, 0);
+            var bottomCue = shadowRoot.Children.OfType<Border>().Single(border =>
+                ReferenceEquals(border.Style, window.FindResource("ScrollBottomCue")));
+            Rect cue = bottomCue.TransformToAncestor(overview).TransformBounds(new Rect(bottomCue.RenderSize));
+            Require(viewer.ScrollableHeight > 0 && bottomCue.IsVisible &&
+                Math.Abs(cue.Left - overview.BorderThickness.Left) < 1 &&
+                Math.Abs(cue.Right - (overview.ActualWidth - overview.BorderThickness.Right)) < 1 &&
+                Math.Abs(cue.Bottom - (overview.ActualHeight - overview.BorderThickness.Bottom)) < 1,
+                "The scrolling shadow reaches the pane edges without a padding gap.");
+            viewer.ScrollToBottom();
+            Settle(window);
+            Require(!bottomCue.IsVisible, "The bottom cue disappears when no content remains below it.");
+            viewer.ScrollToTop();
+            Settle(window);
+            Call(window, "ApplyAppScale", 2.5);
             navigation.SelectedItem = destinations["History"];
             Settle(window);
             var open = (Button)window.FindName("OpenSavedWorkflowButton");
@@ -154,6 +177,14 @@ internal static class DemoScreenshotChecks
             navigation.SelectedItem = destinations["Overview"];
             Settle(window);
             Capture(window, Path.Combine(output, "workspace-overview.png"), 1);
+            var toolbar = (ContextMenu)window.FindName("ToolbarMenu");
+            foreach (var (label, file) in new[] { ("Text beside icons", "toolbar-beside.png"), ("No text", "toolbar-icons.png"), ("Text only", "toolbar-text.png") })
+            {
+                toolbar.Items.OfType<MenuItem>().Single(item => Equals(item.Header, label))
+                    .RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                Settle(window);
+                Capture(window, Path.Combine(output, file), 1);
+            }
         }
         finally
         {

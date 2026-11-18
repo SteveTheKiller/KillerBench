@@ -614,6 +614,13 @@
   <sys:String x:Key="Str_TT_ViewDetails">Подробное представление</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Значки</sys:String>
   <sys:String x:Key="Str_TT_ViewList">Список</sys:String>
+  <sys:String x:Key="Str_Toolbar_Header">Панель инструментов</sys:String>
+  <sys:String x:Key="Str_Toolbar_SmallIcons">Мелкие значки</sys:String>
+  <sys:String x:Key="Str_Toolbar_LargeIcons">Крупные значки</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextNone">Без подписей</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextBeside">Подписи рядом со значками</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextUnder">Подписи под значками</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextOnly">Только подписи</sys:String>
   <sys:String x:Key="Str_Scroll_PageUp">На страницу вверх</sys:String>
   <sys:String x:Key="Str_Scroll_PageDown">На страницу вниз</sys:String>
   <sys:String x:Key="Str_Scroll_PageLeft">На страницу влево</sys:String>

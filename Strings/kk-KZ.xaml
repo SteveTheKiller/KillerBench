@@ -614,6 +614,13 @@
   <sys:String x:Key="Str_TT_ViewDetails">Кесте</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Белгішелер</sys:String>
   <sys:String x:Key="Str_TT_ViewList">Тізім</sys:String>
+  <sys:String x:Key="Str_Toolbar_Header">Құралдар тақтасы</sys:String>
+  <sys:String x:Key="Str_Toolbar_SmallIcons">Шағын белгішелер</sys:String>
+  <sys:String x:Key="Str_Toolbar_LargeIcons">Үлкен белгішелер</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextNone">Мәтінсіз</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextBeside">Мәтін белгішелердің қасында</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextUnder">Мәтін белгішелердің астында</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextOnly">Тек мәтін</sys:String>
   <sys:String x:Key="Str_Scroll_PageUp">Бір бет жоғары</sys:String>
   <sys:String x:Key="Str_Scroll_PageDown">Бір бет төмен</sys:String>
   <sys:String x:Key="Str_Scroll_PageLeft">Бір бет солға</sys:String>

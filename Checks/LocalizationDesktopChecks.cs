@@ -63,7 +63,7 @@ internal static class LocalizationDesktopChecks
                 window.UpdateLayout();
 
                 foreach (var destination in destinations)
-                    Require(Equals(destination.Content, window.FindResource("Str_Workspace_" + destination.Tag)),
+                    Require(destination.Content is Button button && Equals(AutomationProperties.GetName(button), window.FindResource("Str_Workspace_" + destination.Tag)),
                         $"The {destination.Tag} workspace tab follows {locale}");
 
                 var title = (TextBlock)window.FindName("AreaTitle");

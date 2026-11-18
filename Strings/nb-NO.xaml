@@ -613,6 +613,13 @@
   <sys:String x:Key="Str_TT_ViewDetails">Detaljvisning</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Ikonvisning</sys:String>
   <sys:String x:Key="Str_TT_ViewList">Listevisning</sys:String>
+  <sys:String x:Key="Str_Toolbar_Header">Verktøylinje</sys:String>
+  <sys:String x:Key="Str_Toolbar_SmallIcons">Små ikoner</sys:String>
+  <sys:String x:Key="Str_Toolbar_LargeIcons">Store ikoner</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextNone">Ingen tekst</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextBeside">Tekst ved siden av ikoner</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextUnder">Tekst under ikoner</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextOnly">Bare tekst</sys:String>
   <sys:String x:Key="Str_Scroll_PageUp">Side opp</sys:String>
   <sys:String x:Key="Str_Scroll_PageDown">Side ned</sys:String>
   <sys:String x:Key="Str_Scroll_PageLeft">Side til venstre</sys:String>

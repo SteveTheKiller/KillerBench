@@ -613,6 +613,13 @@
   <sys:String x:Key="Str_TT_ViewDetails">Exibição em detalhes</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Exibição em ícones</sys:String>
   <sys:String x:Key="Str_TT_ViewList">Exibição em lista</sys:String>
+  <sys:String x:Key="Str_Toolbar_Header">Barra de ferramentas</sys:String>
+  <sys:String x:Key="Str_Toolbar_SmallIcons">Ícones pequenos</sys:String>
+  <sys:String x:Key="Str_Toolbar_LargeIcons">Ícones grandes</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextNone">Sem texto</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextBeside">Texto ao lado dos ícones</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextUnder">Texto abaixo dos ícones</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextOnly">Somente texto</sys:String>
   <sys:String x:Key="Str_Scroll_PageUp">Uma página acima</sys:String>
   <sys:String x:Key="Str_Scroll_PageDown">Uma página abaixo</sys:String>
   <sys:String x:Key="Str_Scroll_PageLeft">Uma página à esquerda</sys:String>

@@ -613,6 +613,13 @@
   <sys:String x:Key="Str_TT_ViewDetails">Таблиця</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Значки</sys:String>
   <sys:String x:Key="Str_TT_ViewList">Список</sys:String>
+  <sys:String x:Key="Str_Toolbar_Header">Панель інструментів</sys:String>
+  <sys:String x:Key="Str_Toolbar_SmallIcons">Малі значки</sys:String>
+  <sys:String x:Key="Str_Toolbar_LargeIcons">Великі значки</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextNone">Без тексту</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextBeside">Текст поруч зі значками</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextUnder">Текст під значками</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextOnly">Лише текст</sys:String>
   <sys:String x:Key="Str_Scroll_PageUp">На сторінку вгору</sys:String>
   <sys:String x:Key="Str_Scroll_PageDown">На сторінку вниз</sys:String>
   <sys:String x:Key="Str_Scroll_PageLeft">На сторінку ліворуч</sys:String>

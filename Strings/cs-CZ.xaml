@@ -614,6 +614,13 @@
   <sys:String x:Key="Str_TT_ViewDetails">Zobrazení podrobností</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Zobrazení ikon</sys:String>
   <sys:String x:Key="Str_TT_ViewList">Zobrazení seznamu</sys:String>
+  <sys:String x:Key="Str_Toolbar_Header">Panel nástrojů</sys:String>
+  <sys:String x:Key="Str_Toolbar_SmallIcons">Malé ikony</sys:String>
+  <sys:String x:Key="Str_Toolbar_LargeIcons">Velké ikony</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextNone">Bez textu</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextBeside">Text vedle ikon</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextUnder">Text pod ikonami</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextOnly">Pouze text</sys:String>
   <sys:String x:Key="Str_Scroll_PageUp">O stránku nahoru</sys:String>
   <sys:String x:Key="Str_Scroll_PageDown">O stránku dolů</sys:String>
   <sys:String x:Key="Str_Scroll_PageLeft">O stránku doleva</sys:String>

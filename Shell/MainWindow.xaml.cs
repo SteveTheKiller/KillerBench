@@ -35,6 +35,7 @@ public partial class MainWindow : Window
         InitializeNavigation();
         ShowWelcome();
         InitializeWorkspace();
+        InitializeWorkspaceToolbar();
         WorkspaceNavigation.SelectedIndex = 0;
         if (App.DemoMode)
         {
@@ -137,6 +138,7 @@ public partial class MainWindow : Window
         RefreshNativeCapabilityStatus();
         RefreshPrivacyLanguage();
         RefreshWorkflowReportLanguage();
+        RefreshWorkspaceToolbarLanguage();
         if (OverviewPage.IsVisible || InvestigatePage.IsVisible) ShowAreaEvidence();
     }
 

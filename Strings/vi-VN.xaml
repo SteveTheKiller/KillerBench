@@ -613,6 +613,13 @@
   <sys:String x:Key="Str_TT_ViewDetails">Dạng xem chi tiết</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Dạng xem biểu tượng</sys:String>
   <sys:String x:Key="Str_TT_ViewList">Dạng xem danh sách</sys:String>
+  <sys:String x:Key="Str_Toolbar_Header">Thanh công cụ</sys:String>
+  <sys:String x:Key="Str_Toolbar_SmallIcons">Biểu tượng nhỏ</sys:String>
+  <sys:String x:Key="Str_Toolbar_LargeIcons">Biểu tượng lớn</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextNone">Không có văn bản</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextBeside">Văn bản bên cạnh biểu tượng</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextUnder">Văn bản bên dưới biểu tượng</sys:String>
+  <sys:String x:Key="Str_Toolbar_TextOnly">Chỉ văn bản</sys:String>
   <sys:String x:Key="Str_Scroll_PageUp">Lên một trang</sys:String>
   <sys:String x:Key="Str_Scroll_PageDown">Xuống một trang</sys:String>
   <sys:String x:Key="Str_Scroll_PageLeft">Sang trái một trang</sys:String>

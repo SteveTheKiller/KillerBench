@@ -71,8 +71,6 @@ public partial class MainWindow
             ContentPane.ColumnDefinitions[4].Width = outputPaneWidth;
         }
         else if (!open) ContentPane.ColumnDefinitions[4].Width = new GridLength(0, GridUnitType.Star);
-        SidebarButton.Tag = open ? "on" : null;
-        SidebarButton.Content = ((char)(open ? 0xE76C : 0xE76B)).ToString();
         if (open && !wasOpen && IsVisible && System.Windows.SystemParameters.ClientAreaAnimation)
         {
             var slide = new System.Windows.Media.TranslateTransform();
