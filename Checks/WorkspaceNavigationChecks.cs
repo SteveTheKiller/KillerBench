@@ -396,6 +396,13 @@ internal static class WorkspaceNavigationChecks
             Require(VisualElements(cards).OfType<TextBlock>().Any(text => text.Text.Contains("11.8 GB", StringComparison.Ordinal)) &&
                     VisualElements(cards).OfType<TextBlock>().Any(text => text.Text.Contains("no healthy verdict", StringComparison.Ordinal)),
                 "Review cards retain the actual storage finding and unavailable-health boundary.");
+            var stateChart = Find<Grid>(window, "AreaStateChart");
+            double[] weights = stateChart.ColumnDefinitions.Select(column => column.Width.Value).ToArray();
+            string stateName = System.Windows.Automation.AutomationProperties.GetName(stateChart);
+            Require(stateChart.IsVisible && weights.SequenceEqual(new double[] { 1, 1, 4 }) &&
+                    stateChart.Children.Count == 3 && stateName.Contains('4') && stateName.Contains('1'),
+                "The storage state bar splits the same score into one review, one unknown and four fine segments and names those counts. Weights: " +
+                string.Join(",", weights) + " Name: " + stateName);
             Find<Button>(window, "AreaFullReportButton").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(Find<FrameworkElement>(window, "ReportPane").IsVisible && !Find<FrameworkElement>(window, "AreaEvidencePanel").IsVisible,
                 "Full report opens the existing detailed report from the selected area.");
@@ -407,7 +414,7 @@ internal static class WorkspaceNavigationChecks
                 "Raw output opens evidence for this area rather than an earlier imported source.");
             WorkbenchCommands.Overview.Execute(null, window);
             Find<ListBox>(window, "SystemAreas").SelectedIndex = 4;
-            Require(!chart.IsVisible && !Find<FrameworkElement>(window, "AreaDetailActions").IsVisible &&
+            Require(!chart.IsVisible && !stateChart.IsVisible && !Find<FrameworkElement>(window, "AreaDetailActions").IsVisible &&
                     Find<TextBlock>(window, "AreaState").Text == "Not checked" && !WorkbenchCommands.ExportReport.CanExecute(null, window),
                 "An unrun area clears previous metrics, report actions and export eligibility.");
         }

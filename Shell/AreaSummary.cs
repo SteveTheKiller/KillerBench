@@ -20,8 +20,12 @@ public partial class MainWindow
         AreaReviewCards.Children.Clear();
         AreaCoverageChart.Children.Clear();
         AreaCoverageChart.ColumnDefinitions.Clear();
+        AreaStateChart.Children.Clear();
+        AreaStateChart.ColumnDefinitions.Clear();
+        AreaStateLegend.Children.Clear();
         bool recorded = source is not null && result is not null;
         AreaCoverageChart.Visibility = AreaDetailActions.Visibility = recorded ? Visibility.Visible : Visibility.Collapsed;
+        AreaStateChart.Visibility = AreaStateLegend.Visibility = recorded ? Visibility.Visible : Visibility.Collapsed;
         AreaBeforeCheck.Visibility = recorded ? Visibility.Collapsed : Visibility.Visible;
         AreaSectionTitle.SetResourceReference(TextBlock.TextProperty, recorded ? "Str_Area_ReviewNext" : "Str_Area_ChooseChecks");
         if (recorded)
@@ -34,6 +38,7 @@ public partial class MainWindow
             AddAreaCoverage("Str_Report_Checked", score.Ran, score.Total, 0);
             AddAreaCoverage("Str_Report_NeedsReview", score.NeedsAttention, score.Total, 1);
             AddAreaCoverage("Str_Report_Incomplete", score.Unknown, score.Total, 2);
+            BuildAreaStateChart(score);
             var problems = result.Checks.Where(check => check.EffectiveState is CheckState.Attention or CheckState.Repairable or CheckState.Unknown)
                 .OrderBy(check => ReviewPriority(check.EffectiveState)).ToArray();
             foreach (var check in problems.Take(2))
@@ -129,6 +134,39 @@ public partial class MainWindow
         stack.Children.Add(bar);
         Grid.SetColumn(stack, column);
         AreaCoverageChart.Children.Add(stack);
+    }
+
+    // One stacked bar of check states, split from the same score as the gauge and the counts above.
+    private void BuildAreaStateChart(OverviewScore score)
+    {
+        (string Key, int Count, string Brush)[] segments =
+        [
+            ("Str_Overview_Fixable", score.Fixable, "DangerRed"),
+            ("Str_Overview_Review", score.NeedsAttention - score.Fixable, "WarnBrush"),
+            ("Str_Overview_Unknown", score.Unknown, "MutedTextBrush"),
+            ("Str_Overview_Fine", score.Ran - score.NeedsAttention, "OkBrush"),
+        ];
+        var names = new List<string>();
+        foreach (var (key, count, brush) in segments.Where(segment => segment.Count > 0))
+        {
+            int column = AreaStateChart.ColumnDefinitions.Count;
+            AreaStateChart.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(count, GridUnitType.Star) });
+            var bar = new Border { Margin = new Thickness(column == 0 ? 0 : 2, 0, 0, 0), CornerRadius = new CornerRadius(3) };
+            bar.SetResourceReference(Border.BackgroundProperty, brush);
+            Grid.SetColumn(bar, column);
+            AreaStateChart.Children.Add(bar);
+            string text = LocalizedText.Format(key, count);
+            names.Add(text);
+            var item = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 16, 4) };
+            var dot = new Border { Width = 9, Height = 9, CornerRadius = new CornerRadius(5), Margin = new Thickness(0, 0, 6, 0), VerticalAlignment = VerticalAlignment.Center };
+            dot.SetResourceReference(Border.BackgroundProperty, brush);
+            item.Children.Add(dot);
+            item.Children.Add(Body(text, 12, new Thickness(0), "TextBrush"));
+            AreaStateLegend.Children.Add(item);
+        }
+        System.Windows.Automation.AutomationProperties.SetName(AreaStateChart, string.Join(", ", names));
+        if (names.Count == 0)
+            AreaStateChart.Visibility = AreaStateLegend.Visibility = Visibility.Collapsed;
     }
 
     private void OpenAreaTool(WorkflowKind kind)

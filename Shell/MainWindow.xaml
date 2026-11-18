@@ -1150,7 +1150,9 @@
                   <StackPanel VerticalAlignment="Center"><TextBlock x:Name="AreaTitle" FontFamily="{DynamicResource UiFont}" FontWeight="SemiBold" FontSize="22" TextWrapping="Wrap"/><TextBlock x:Name="AreaState" Text="{DynamicResource Str_Workspace_NotChecked}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0" FontSize="12" TextWrapping="Wrap"/></StackPanel>
                 </DockPanel>
                 <TextBlock x:Name="AreaDescription" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" FontSize="13" Margin="0,0,0,18"/>
-                <Grid x:Name="AreaCoverageChart" Visibility="Collapsed" Margin="0,0,0,20"/>
+                <Grid x:Name="AreaCoverageChart" Visibility="Collapsed" Margin="0,0,0,14"/>
+                <Grid x:Name="AreaStateChart" Visibility="Collapsed" Height="14" Margin="0,0,0,8"/>
+                <WrapPanel x:Name="AreaStateLegend" Visibility="Collapsed" Margin="0,0,0,20"/>
                 <TextBlock x:Name="AreaSectionTitle" Text="{DynamicResource Str_Area_ChooseChecks}" FontFamily="{DynamicResource HeadingFont}" FontSize="22" Foreground="{DynamicResource PrimaryBrush}" Margin="0,0,0,10"/>
                 <TextBlock x:Name="AreaBeforeCheck" Text="{DynamicResource Str_Area_BeforeCheck}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" FontSize="12" Margin="0,0,0,12"/>
                 <StackPanel x:Name="AreaReviewCards"/>
