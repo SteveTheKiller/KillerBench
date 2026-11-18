@@ -7,6 +7,8 @@ public partial class MainWindow
     private void LockScreenshotPresentation()
     {
         ZoomViewport.IsHitTestVisible = false;
+        WorkspaceNavigation.IsHitTestVisible = false;
+        TitleSearchBox.IsEnabled = false;
         AllowDrop = false;
     }
 

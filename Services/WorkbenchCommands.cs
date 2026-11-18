@@ -19,4 +19,5 @@ public static class WorkbenchCommands
     public static RoutedUICommand ExportReport { get; } = new();
     public static RoutedUICommand ExportActivity { get; } = new();
     public static RoutedUICommand FindEvidence { get; } = new();
+    public static RoutedUICommand SearchWorkspace { get; } = new();
 }

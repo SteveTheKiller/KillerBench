@@ -68,6 +68,7 @@ public partial class MainWindow
         foreach (var (button, _, key) in ToolbarItems())
             AutomationProperties.SetName(button, Loc(key));
         RefreshWorkspaceToolbarSelection();
+        ReflowCaption();
     }
 
     private static class Settings

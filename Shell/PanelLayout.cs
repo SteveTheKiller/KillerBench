@@ -6,19 +6,12 @@ namespace KillerBench.Shell;
 // Category navigation stays visible. The selected tool fills the workspace until output is needed.
 public partial class MainWindow
 {
-    private const double SidebarDefaultWidth = 160;
-    private const double SidebarMinOpen = 140;
-    private const double SidebarMaxWidth = 360;
-
-    private double sidebarWidth = SidebarDefaultWidth;
     private bool rawView;
-    private GridLength toolPaneWidth = new(2, GridUnitType.Star);
-    private GridLength outputPaneWidth = new(3, GridUnitType.Star);
+    private GridLength toolPaneWidth = new(3, GridUnitType.Star);
+    private GridLength outputPaneWidth = new(2, GridUnitType.Star);
 
     private void InitializePanels()
     {
-        sidebarWidth = ReadNumber("SidebarWidth", SidebarDefaultWidth, SidebarMinOpen, SidebarMaxWidth);
-        LeftPanel.Width = sidebarWidth / appScale;
         SetOutputView();
         SetOutputOpen(false);
     }

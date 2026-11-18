@@ -167,7 +167,7 @@ public partial class MainWindow
     {
         while (item is not null)
         {
-            if (item is ButtonBase) return true;
+            if (item is ButtonBase or TextBoxBase or Selector) return true;
             item = item is Visual ? VisualTreeHelper.GetParent(item) : LogicalTreeHelper.GetParent(item);
         }
         return false;
@@ -205,12 +205,12 @@ public partial class MainWindow
     }
     private void ApplyAppScale(double scale)
     {
-        if (shellReady) sidebarWidth = (double.IsNaN(LeftPanel.Width) ? LeftPanel.ActualWidth : LeftPanel.Width) * appScale;
         appScale = double.IsFinite(scale) ? Math.Clamp(Math.Round(scale, 3), 0.7, 2.5) : 1;
         ScaleHost.LayoutTransform = new ScaleTransform(appScale, appScale);
         SidebarRail.LayoutTransform = new ScaleTransform(1 / appScale, 1 / appScale);
         OutputDivider.LayoutTransform = new ScaleTransform(1 / appScale, 1 / appScale);
-        LeftPanel.Width = sidebarWidth / appScale;
+        LeftPanel.MaxHeight = 96 / appScale;
+        LeftPanel.Margin = new Thickness(24 / appScale, 0, 0, 6 / appScale);
         ScaleHost.ColumnDefinitions[1].Width = new GridLength(24 / appScale);
         ContentPane.ColumnDefinitions[0].Width = new GridLength(24 / appScale);
         ContentPane.ColumnDefinitions[3].Width = new GridLength(TerminalPanel.Visibility == Visibility.Visible ? 8 / appScale : 0);

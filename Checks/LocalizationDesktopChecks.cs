@@ -75,10 +75,13 @@ internal static class LocalizationDesktopChecks
                 Require(((TextBlock)window.FindName("AreaState")).Text == (string)window.FindResource("Str_Workspace_NotChecked"),
                     "Changing language leaves the unrun area unchecked in " + locale);
                 var areaRow = (ListBoxItem?)investigationAreas.ItemContainerGenerator.ContainerFromIndex(0);
-                Require(areaRow is not null && Equals(AutomationProperties.GetName(areaRow), title.Text) &&
-                    Descendants(areaRow).OfType<TextBlock>().Any(text => text.Text == title.Text) &&
-                    Descendants(areaRow).OfType<TextBlock>().Any(text => text.Text == description.Text),
+                Require(areaRow is not null && Equals(AutomationProperties.GetName(areaRow), window.FindResource("Str_Guided_Slow")) &&
+                    Descendants(areaRow).OfType<TextBlock>().Any(text => text.Text == (string)window.FindResource("Str_Guided_Slow")) &&
+                    Descendants(areaRow).OfType<TextBlock>().Any(text => text.Text == (string)window.FindResource("Str_Guided_SlowHint")),
                     "The Investigate row text and accessible name follow " + locale);
+                Require(((TextBlock)window.FindName("AreaSectionTitle")).Text == (string)window.FindResource("Str_Area_ChooseChecks") &&
+                    Equals(((Button)window.FindName("ReviewAreaButton")).Content, window.FindResource("Str_Area_AllTools")),
+                    "The rebuilt area-summary actions follow " + locale);
 
                 navigation.SelectedItem = historyPage;
                 window.UpdateLayout();

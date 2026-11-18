@@ -42,6 +42,7 @@ public partial class MainWindow
         new("Ctrl+E", "Str_ExportReport", ShortcutCategory.File, true, "E"),
         new("Ctrl+Shift+E", "Str_ExportActivityHint", ShortcutCategory.File, true, "E"),
         new("Ctrl+F", "Str_AutomationProperties_Name_Filter_evidence", ShortcutCategory.Nav, true, "F"),
+        new("Ctrl+K", "Str_Search_All", ShortcutCategory.Nav, true, "K"),
         new("F1", "Str_Shortcuts_Show", ShortcutCategory.Help, false, "F1"),
         new("F12", "Str_Shortcuts_About", ShortcutCategory.Help, false, "F12"),
         new("Esc", "Str_Shortcuts_CloseOrStop", ShortcutCategory.Nav, false, "Esc")
@@ -70,7 +71,11 @@ public partial class MainWindow
             int target = index;
             var item = (ListBoxItem)WorkspaceNavigation.Items[index];
             BindAction(destinations[index], "Str_Workspace_" + item.Tag, (Button)item.Content,
-                (_, _) => WorkspaceNavigation.SelectedIndex = target);
+                (_, _) =>
+                {
+                    if (WorkspaceNavigation.SelectedIndex == target && target <= 1) ShowAreaEvidence();
+                    else WorkspaceNavigation.SelectedIndex = target;
+                });
         }
         BindAction(WorkbenchCommands.OpenCapture, "Str_OpenCapture", OpenCaptureButton, OnOpenCapture);
         BindAction(WorkbenchCommands.SaveCapture, "Str_SaveCapture", SaveCaptureButton, OnSaveCapture);
@@ -79,6 +84,7 @@ public partial class MainWindow
         BindAction(WorkbenchCommands.FindEvidence, "Str_AutomationProperties_Name_Filter_evidence", SearchBox,
             (_, _) => { ShowRawOutput(); SearchBox.Focus(); SearchBox.SelectAll(); });
         SetShortcutHint(HistoryOpenCaptureButton, "Str_OpenCapture");
+        SetShortcutHint(OverviewOpenCaptureButton, "Str_OpenCapture");
     }
 
     private void BindAction(RoutedUICommand command, string labelKey, UIElement control, RoutedEventHandler execute)

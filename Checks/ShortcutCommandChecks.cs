@@ -13,7 +13,8 @@ internal static class ShortcutCommandChecks
             (WorkbenchCommands.SaveCapture, Key.S, ModifierKeys.Control, "SaveCaptureButton"),
             (WorkbenchCommands.ExportReport, Key.E, ModifierKeys.Control, "ExportReportButton"),
             (WorkbenchCommands.ExportActivity, Key.E, ModifierKeys.Control | ModifierKeys.Shift, "ExportActivityButton"),
-            (WorkbenchCommands.FindEvidence, Key.F, ModifierKeys.Control, "SearchBox")
+            (WorkbenchCommands.FindEvidence, Key.F, ModifierKeys.Control, "SearchBox"),
+            (WorkbenchCommands.SearchWorkspace, Key.K, ModifierKeys.Control, "TitleSearchBox")
         ];
         foreach (var action in actions)
         {
@@ -66,7 +67,7 @@ internal static class ShortcutCommandChecks
             overlay.Visibility = previous;
             window.UpdateLayout();
         }
-        Console.WriteLine("PASS: 5 public shortcut commands, 5 disabled-action guards, overlay guard, search action and Ctrl+Shift map layer.");
+        Console.WriteLine("PASS: 6 public shortcut commands, 6 disabled-action guards, overlay guard, evidence search and Ctrl+Shift map layer.");
     }
 
     private static void Require(bool condition, string message)

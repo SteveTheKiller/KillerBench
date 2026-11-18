@@ -34,151 +34,186 @@ internal static class CategoryNavigationChecks
             var navigation = (ListBox)window.FindName("WorkspaceNavigation");
             navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, "Tools"));
             var list = (ListBox)window.FindName("CategoryList");
-            var sidebar = (FrameworkElement)window.FindName("LeftPanel");
-            Require(sidebar.Width == 160, "Fresh sidebar uses the narrower 160-pixel default");
+            var strip = (FrameworkElement)window.FindName("LeftPanel");
+            var tools = (FrameworkElement)window.FindName("ConsoleBank");
+            var evidence = (FrameworkElement)window.FindName("TerminalPanel");
             Settle(window);
             Console.WriteLine("Category font: " + Item(list, 0).FontFamily.Source);
             CategoryTypographyChecks.Run(window);
-            foreach (var theme in new[] { Theme.Dark, Theme.Light, Theme.Black, Theme.SE98 })
+
+            var sizes = new[] { (Width: 800, Height: 500), (Width: 1025, Height: 780), (Width: 1025, Height: 1200) };
+            var themes = new[] { Theme.Dark, Theme.Light, Theme.Black, Theme.SE98 };
+            var scroll = Descendants<ScrollViewer>(list).Single();
+            var viewport = Descendants<ScrollContentPresenter>(scroll).Single();
+            foreach (var theme in themes)
             {
                 ThemeManager.Apply(theme);
-                foreach (double height in new[] { 500d, 700d, 1200d })
+                foreach (var size in sizes)
                 {
-                    window.Width = height == 500 ? 800 : 1025;
-                    window.Height = height;
+                    window.Width = size.Width;
+                    window.Height = size.Height;
                     Settle(window);
-                    VerifyLayout(list);
+                    VerifyStrip(window, strip, tools, evidence);
+                    VerifyLayout(list, viewport, mustWrap: size.Width == 800);
+                    Require(scroll.ScrollableHeight <= .5 && scroll.ScrollableWidth <= .5,
+                        $"{theme} categories fit without scrolling at {size.Width}x{size.Height}");
+                    for (int index = 0; index < list.Items.Count; index++)
+                        Require(IsFullyVisible(Item(list, index), viewport), $"Category {index} fits inside the strip viewport");
+
                     RenderedTypographyChecks.VerifySubtitle(window);
-                    Capture(sidebar, Path.Combine(output, $"{theme}-{height}.png"));
-                    if (theme == Theme.Dark && (height == 700 || height == 1200)) Capture(window, Path.Combine(output, $"workbench-{height}.png"));
+                    Capture(strip, Path.Combine(output, $"{theme}-{size.Width}x{size.Height}-strip.png"));
+                    if (theme == Theme.Dark && size.Width == 1025)
+                        Capture(window, Path.Combine(output, $"workbench-{size.Width}x{size.Height}.png"));
                 }
             }
+
             ThemeManager.Apply(Theme.Dark);
+            window.Width = 800;
             window.Height = 500;
             Settle(window);
-            var scroll = Descendants<ScrollViewer>(list).First();
-            Require(scroll.ScrollableHeight > 0, "Short window scrolls instead of shrinking category controls");
-            var first = Item(list, 0);
             window.Activate();
-            Require(first.Focus(), "Category accepts keyboard focus on the isolated desktop");
-            Settle(window);
+            VerifyKeyboard(window, list, scroll, viewport, expectOverflow: false);
+
+            var first = Item(list, 0);
             Require(first.IsKeyboardFocusWithin && Face(first).BorderBrush == window.FindResource("PrimaryBrush"),
                 "Keyboard focus has the family accent outline");
-            Capture(sidebar, Path.Combine(output, "short-keyboard-focus.png"));
-            first.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(first), 0, Key.End)
-            { RoutedEvent = Keyboard.KeyDownEvent });
-            Settle(window);
-            Require(list.SelectedIndex == 11 && scroll.VerticalOffset > 0, "End key selects and reveals the final category");
-            var last = Item(list, 11);
-            var top = last.TranslatePoint(new Point(), scroll).Y;
-            Require(top >= -1 && top + last.ActualHeight <= scroll.ViewportHeight + 1,
-                "Keyboard selection brings the entire minimum-height button into view");
-            Require(UIElementAutomationPeer.CreatePeerForElement(last)!.GetName() == "Storage", "Automation exposes a text category name");
-            Capture(sidebar, Path.Combine(output, "short-keyboard-end.png"));
-            scroll.ScrollToTop();
-            Settle(window);
-            list.SelectedIndex = 0;
             Require(Face(first).Background == window.FindResource("SelectionBg") && first.Foreground == window.FindResource("SelectionFg"),
                 "Selection retains the existing theme fill and readable foreground");
             var hover = Item(list, 1);
             var mouseOverKey = (DependencyPropertyKey)typeof(UIElement).GetField("IsMouseOverPropertyKey", BindingFlags.NonPublic | BindingFlags.Static)!.GetValue(null)!;
             hover.SetValue(mouseOverKey, true);
+            try
+            {
+                Settle(window);
+                Require(Face(hover).Background == window.FindResource("RowHoverBrush"), "Hover trigger retains the family row color");
+                Capture(strip, Path.Combine(output, "short-selected-hover-focus.png"));
+            }
+            finally { hover.SetValue(mouseOverKey, false); }
+
+            var zoom = typeof(KillerBench.Shell.MainWindow).GetMethod("ApplyAppScale", BindingFlags.Instance | BindingFlags.NonPublic)!;
+            var scaleHost = (FrameworkElement)window.FindName("ScaleHost");
+            var toolsTab = navigation.SelectedItem;
+            navigation.SelectedIndex = 0;
+            navigation.SelectedItem = toolsTab;
+            zoom.Invoke(window, [2.5d]);
             Settle(window);
-            Require(Face(hover).Background == window.FindResource("RowHoverBrush"), "Hover trigger retains the family row color");
-            Capture(sidebar, Path.Combine(output, "short-selected-hover-focus.png"));
-            hover.SetValue(mouseOverKey, false);
+            Require(scaleHost.LayoutTransform is ScaleTransform { ScaleX: 2.5, ScaleY: 2.5 },
+                "The small-window overflow case uses the production 250% app scale");
+            VerifyStrip(window, strip, tools, evidence);
+            VerifyLayout(list, viewport, mustWrap: true);
+            Require(scroll.ScrollableHeight > 0 && scroll.ScrollableWidth <= .5 && !IsFullyVisible(Item(list, 11), viewport),
+                "The zoomed strip exposes only vertical overflow and initially clips the last category");
+            Capture(window, Path.Combine(output, "workbench-800x500-250-percent.png"));
+            VerifyKeyboard(window, list, scroll, viewport, expectOverflow: true);
             scroll.RaiseEvent(new MouseWheelEventArgs(Mouse.PrimaryDevice, 0, -120) { RoutedEvent = Mouse.MouseWheelEvent });
             Settle(window);
-            Require(scroll.VerticalOffset > 0, "Mouse wheel reaches overflowing categories");
-            sidebar.Width = 140;
-            Settle(window);
-            VerifyLayout(list);
-            Capture(sidebar, Path.Combine(output, "short-minimum-sidebar-width.png"));
-            sidebar.Width = 160;
+            Require(scroll.VerticalOffset > 0, "Mouse wheel reaches the zoomed strip's overflowing rows");
 
-            // Cross the real allocation threshold repeatedly. Desired content cannot drive row height.
-            window.Height = 900;
-            Settle(window);
-            double thresholdWindow = window.Height + (66 - (scroll.ViewportHeight / list.Items.Count)) * list.Items.Count;
-            foreach (double offset in new[] { -3d, -1d, 0d, 1d, 3d, 0d, -1d, -3d })
-            {
-                window.Height = thresholdWindow + offset * list.Items.Count;
-                Settle(window);
-                VerifyLayout(list);
-                double stableHeight = Item(list, 0).ActualHeight;
-                Settle(window);
-                Require(Math.Abs(stableHeight - Item(list, 0).ActualHeight) < .01, "Orientation threshold has stable layout");
-                if (offset == -1 || offset == 1) Capture(sidebar, Path.Combine(output, $"threshold-{offset}.png"));
-            }
-            var zoom = typeof(KillerBench.Shell.MainWindow).GetMethod("ApplyAppScale", BindingFlags.Instance | BindingFlags.NonPublic)!;
-            foreach (double scale in new[] { .7, 1d, 1.5, 2.5 })
-            {
-                zoom.Invoke(window, [scale]);
-                Settle(window);
-                Require(Math.Abs(sidebar.ActualWidth * scale - 160) < 1, $"App zoom preserves navigation width: scale={scale}, width={sidebar.ActualWidth}, requested={sidebar.Width}");
-            }
-            zoom.Invoke(window, [1d]);
-            // Enlarged interface uses fewer logical pixels and retains readable scrolling controls.
-            var scaleHost = (FrameworkElement)window.FindName("ScaleHost");
-            scaleHost.LayoutTransform = new ScaleTransform(1.5, 1.5);
-            window.Height = 500;
-            Settle(window);
-            VerifyLayout(list);
-            Require(scroll.ScrollableHeight > 0, "Enlarged interface retains overflow access");
-            Capture(sidebar, Path.Combine(output, "short-150-percent.png"));
-            // Use only process-local preferences, with no load or save of the user's settings file.
-            var preferences = typeof(KillerBench.Shell.MainWindow).Assembly.GetType("KillerBench.Services.Preferences")!;
-            var setPreference = preferences.GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic)!;
-            var initializePanels = typeof(KillerBench.Shell.MainWindow).GetMethod("InitializePanels", BindingFlags.Instance | BindingFlags.NonPublic)!;
-            foreach (double savedWidth in new[] { 180d, 230d })
-            {
-                setPreference.Invoke(null, ["SidebarWidth", savedWidth.ToString(System.Globalization.CultureInfo.InvariantCulture)]);
-                initializePanels.Invoke(window, []);
-                Require(sidebar.Width == savedWidth, "Saved sidebar width takes precedence over the new default");
-            }
-            sidebar.Width = 210;
-            Require(((FrameworkElement)window.FindName("SidebarGrip")).Visibility == Visibility.Collapsed,
-                "Fixed navigation has no active collapse or resize grip");
-            initializePanels.Invoke(window, []);
-            Require(sidebar.Width == 230, "Layout restores the saved navigation width instead of a simulated drag");
-            setPreference.Invoke(null, ["SidebarWidth", "160"]);
-            Console.WriteLine("PASS: category layout at 800x500, 1025x700 and 1025x1200 across Dark, Light, Black and 98SE; 160-pixel default, both icon orientations, full labels, saved and splitter widths, threshold stability, minimum heights, keyboard and mouse-wheel overflow, 140-pixel sidebar, accessible names, selection, simulated hover, focus and 150% layout scale.");
+            Console.WriteLine($"PASS: {themes.Length * sizes.Length} category layout cases across Dark, Light, Black and 98SE, plus one 800x500 250% overflow case; full labels, glyphs, minimum height, accessibility, Home/End, mouse-wheel scrolling, selection, simulated hover and keyboard focus.");
             Console.WriteLine("Category render evidence: " + output);
             return 0;
         }
         finally { window.Close(); application.Shutdown(); }
     }
 
-    private static void VerifyLayout(ListBox list)
+    private static void VerifyStrip(Window window, FrameworkElement strip, FrameworkElement tools, FrameworkElement evidence)
     {
-        var scroll = Descendants<ScrollViewer>(list).First();
-        double expected = Math.Max(42, scroll.ViewportHeight / list.Items.Count) - 2;
+        Require(strip.IsVisible && tools.IsVisible && evidence.IsVisible, "The category strip and both panes are visible in Tools");
+        Rect stripBounds = BoundsIn(strip, window);
+        Rect toolBounds = BoundsIn(tools, window);
+        Rect evidenceBounds = BoundsIn(evidence, window);
+        Require(stripBounds.Bottom <= Math.Min(toolBounds.Top, evidenceBounds.Top) + 1 &&
+                stripBounds.Left < toolBounds.Right && stripBounds.Right > evidenceBounds.Left,
+            "The category strip runs above both the tools and evidence panes");
+    }
+
+    private static void VerifyLayout(ListBox list, ScrollContentPresenter viewport, bool mustWrap)
+    {
+        Require(list.Items.Count == 12, "The strip contains every tool category");
+        Rect first = BoundsIn(Item(list, 0), viewport);
+        Rect second = BoundsIn(Item(list, 1), viewport);
+        Require(Math.Abs(second.Top - first.Top) <= 1 && second.Left > first.Left,
+            "The first two category buttons appear on the same row in reading order");
+
+        Rect previous = first;
+        bool wrapped = false;
         var glyphs = new HashSet<string>();
         for (int index = 0; index < list.Items.Count; index++)
         {
             var item = Item(list, index);
-            Require(item.ActualHeight >= 39.99 && Math.Abs(item.ActualHeight - expected) < 1,
-                $"Category {index} shares viewport height and keeps a 40-pixel readable minimum: {item.ActualHeight}, expected {expected}");
+            Rect bounds = BoundsIn(item, viewport);
+            Require(item.ActualHeight >= 31.99, $"Category {index} keeps its 32-pixel minimum height");
+            Require(bounds.Left >= -1 && bounds.Right <= viewport.ActualWidth + 1,
+                $"Category {index} fits horizontally in the strip");
+            if (index > 0)
+            {
+                bool newRow = bounds.Top > previous.Top + 1;
+                Require(newRow
+                    ? bounds.Top >= previous.Bottom - 1 && Math.Abs(bounds.Left - first.Left) <= 1
+                    : Math.Abs(bounds.Top - previous.Top) <= 1 && bounds.Left >= previous.Right - 1,
+                    $"Category {index} follows the previous button without overlap, wrapping at the strip's left edge");
+                wrapped |= newRow;
+            }
+            previous = bounds;
+
             var label = Descendants<DockPanel>(item).Single(panel => panel.Name == "CategoryLabel");
             var icon = Descendants<TextBlock>(label).Single(block => block.Name == "CategoryIcon");
             var text = Descendants<TextBlock>(label).Single(block => block.Name == "CategoryText");
-            Require(DockPanel.GetDock(icon) == (item.ActualHeight >= 64 ? Dock.Top : Dock.Left), "Icon orientation follows allocated button height");
+            Rect iconBounds = BoundsIn(icon, item);
+            Rect textBounds = BoundsIn(text, item);
+            Require(DockPanel.GetDock(icon) == Dock.Left && icon.FontSize == 16 &&
+                    iconBounds.Right <= textBounds.Left && iconBounds.Top < textBounds.Bottom && textBounds.Top < iconBounds.Bottom,
+                "The normal-size category glyph sits beside its label");
             Require(icon.FontFamily.Source == "Segoe MDL2 Assets" && glyphs.Add(icon.Text), "Each category has a distinct family glyph");
             Require(new Typeface(icon.FontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal).TryGetGlyphTypeface(out var font)
                 && font.CharacterToGlyphMap.TryGetValue(icon.Text[0], out ushort glyph) && glyph != 0, "Category glyph exists in the installed font");
-            var textOrigin = text.TranslatePoint(new Point(), item);
-            Require(text.ActualHeight > 0 && textOrigin.Y >= 0 && textOrigin.Y + text.ActualHeight <= item.ActualHeight,
+            Require(text.ActualHeight > 0 && textBounds.Top >= 0 && textBounds.Bottom <= item.ActualHeight,
                 "Category label fits vertically without clipping");
             var fullText = new FormattedText(text.Text, System.Globalization.CultureInfo.CurrentCulture, text.FlowDirection,
                 new Typeface(text.FontFamily, text.FontStyle, text.FontWeight, text.FontStretch), text.FontSize,
-                text.Foreground, VisualTreeHelper.GetDpi(text).PixelsPerDip);
-            Require(fullText.Width <= text.ActualWidth + .5, "Full category label fits at the existing minimum sidebar width");
+                text.Foreground, null, TextOptions.GetTextFormattingMode(text), VisualTreeHelper.GetDpi(text).PixelsPerDip);
+            Require(fullText.Width <= text.ActualWidth + .5, "Full category label fits in the strip");
             Require(UIElementAutomationPeer.CreatePeerForElement(item)!.GetName() == list.Items[index].ToString() && Equals(item.ToolTip, list.Items[index].ToString()),
-                "Category text remains available to accessibility and narrow-sidebar tooltips");
+                "Category text remains available to accessibility and tooltips");
         }
-        Require(Math.Abs(scroll.ExtentHeight - Math.Max(scroll.ViewportHeight, 42 * list.Items.Count)) < 1,
-            "Category buttons fill the viewport or expose their complete scroll extent");
+        Require(!mustWrap || wrapped, "The narrow strip wraps the category buttons onto another row");
     }
+
+    private static void VerifyKeyboard(Window window, ListBox list, ScrollViewer scroll, ScrollContentPresenter viewport, bool expectOverflow)
+    {
+        var first = Item(list, 0);
+        var last = Item(list, 11);
+        Require(first.Focus(), "Category accepts keyboard focus on the isolated desktop");
+        Settle(window);
+        SendKey(first, Key.End);
+        Settle(window);
+        Require(list.SelectedIndex == 11 && UIElementAutomationPeer.CreatePeerForElement(last)!.GetName() == "Storage" &&
+                IsFullyVisible(last, viewport), "End selects Storage and reveals the entire button");
+        Require(expectOverflow ? scroll.VerticalOffset > 0 : scroll.VerticalOffset <= .5,
+            "End scrolls only when the categories overflow");
+
+        SendKey(last, Key.Home);
+        Settle(window);
+        Require(list.SelectedIndex == 0 && UIElementAutomationPeer.CreatePeerForElement(first)!.GetName() == "Diagnostics" &&
+                IsFullyVisible(first, viewport) && scroll.VerticalOffset <= .5,
+            "Home selects Diagnostics and reveals the entire first button at the top");
+    }
+
+    private static void SendKey(ListBoxItem item, Key key)
+    {
+        item.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(item), 0, key)
+        { RoutedEvent = Keyboard.KeyDownEvent });
+    }
+
+    private static bool IsFullyVisible(FrameworkElement element, ScrollContentPresenter viewport)
+    {
+        Rect bounds = BoundsIn(element, viewport);
+        return bounds.Top >= -1 && bounds.Bottom <= viewport.ActualHeight + 1 &&
+            bounds.Left >= -1 && bounds.Right <= viewport.ActualWidth + 1;
+    }
+
+    private static Rect BoundsIn(FrameworkElement element, Visual ancestor) =>
+        element.TransformToAncestor(ancestor).TransformBounds(new Rect(element.RenderSize));
 
     private static ListBoxItem Item(ListBox list, int index) => (ListBoxItem)list.ItemContainerGenerator.ContainerFromIndex(index);
     private static Border Face(ListBoxItem item) => (Border)item.Template.FindName("CategoryFace", item);

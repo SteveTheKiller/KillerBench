@@ -565,7 +565,7 @@ internal static class Program
             Require(!WithinPixelRounding(1025 + 1 / windowDpi.DpiScaleX, 1025, windowDpi.DpiScaleX),
                 "Window geometry rejects a whole physical pixel of displacement");
             Require(WithinPixelRounding(window.Width, 1025, windowDpi.DpiScaleX) &&
-                WithinPixelRounding(window.Height, 700, windowDpi.DpiScaleY) && window.MinWidth == 800 && window.MinHeight == 500 &&
+                WithinPixelRounding(window.Height, 780, windowDpi.DpiScaleY) && window.MinWidth == 800 && window.MinHeight == 500 &&
                 window.SizeToContent == SizeToContent.Manual,
                 $"Workbench window keeps its family window geometry within native pixel rounding: {window.Width:R} x {window.Height:R}, minimum {window.MinWidth:R} x {window.MinHeight:R}, {window.SizeToContent}, DPI {windowDpi.DpiScaleX:R}.");
             Require(window.FindName("ZoomViewport") is FrameworkElement { ClipToBounds: true },
@@ -687,8 +687,6 @@ internal static class Program
                 Require(Math.Abs(rightInset - 8) <= 1.01, $"Eight-pixel right inset allows pixel rounding at scale {insetScale}: {rightInset}");
             }
             typeof(KillerBench.Shell.MainWindow).GetMethod("ApplyAppScale", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [1d]);
-            Require((string)application.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH") == "Windows Maintenance Workbench",
-                "Desktop subtitle identifies the full maintenance scope");
             var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
             typeof(KillerBench.Shell.MainWindow).GetMethod("SetCaptureBusy", flags)!.Invoke(window, [true]);
             Require(window.FindName("CategoryList") is ListBox { IsEnabled: true } &&
@@ -1448,7 +1446,8 @@ internal static class Program
             setThirdPartyResult.Invoke(window, [null]);
             updateSnapshotField.SetValue(window, null);
             ((CheckBox)window.FindName("UpdateDownloadedOnly")).IsChecked = false;
-            Require(window.Width / window.Height > 1.4, "Workbench opens in a landscape layout");
+            Require(window.Width > window.Height && window.Width == 1025 && window.Height == 780,
+                "Workbench opens in the taller landscape layout that accommodates the system map");
             window.WindowStartupLocation = WindowStartupLocation.Manual;
             window.ShowActivated = false;
             window.ShowInTaskbar = false;
@@ -1479,12 +1478,12 @@ internal static class Program
             Require(rail.IsVisible && rail.ActualWidth > 0 && Grid.GetColumn(rail) == 0 &&
                 Math.Abs(railOrigin.X + rail.ActualWidth - controlOrigin.X) <= 1,
                 "The icon rail stays at the far left of the Tools category bank.");
-            Require(consoleOrigin.X >= controlOrigin.X + controlBank.ActualWidth && Math.Abs(consoleOrigin.Y - controlOrigin.Y) < 1,
-                "Control bank sits beside the console, not above it");
+            Require(consoleOrigin.Y >= controlOrigin.Y + controlBank.ActualHeight && Math.Abs(consoleOrigin.X - controlOrigin.X) < 1,
+                "Tools categories run above both content panes");
             var categories = (ListBox)window.FindName("CategoryList");
             var categoryOrigin = categories.TranslatePoint(new Point(), window);
             Require(categoryOrigin.X >= controlOrigin.X - 1 && categoryOrigin.X + categories.ActualWidth <= controlOrigin.X + controlBank.ActualWidth + 1,
-                "Section navigation lives in the left sidebar");
+                "Section navigation fits the horizontal category strip");
             Require(Grid.GetColumnSpan(categories) == 1 && ((FrameworkElement)window.FindName("DetailsPanel")).Visibility == Visibility.Collapsed &&
                 ((Button)window.FindName("ExportReportButton")).Visibility == Visibility.Visible,
                 "Category bank leads to the report workspace with a visible export action and no inspector sidebar");
@@ -1497,7 +1496,7 @@ internal static class Program
             ((Button)window.FindName("ShortcutListButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
             Require(shortcuts.Visibility == Visibility.Visible &&
-                ((StackPanel)window.FindName("ShortcutListHost")).Children.OfType<Grid>().Count() == 23 &&
+                ((StackPanel)window.FindName("ShortcutListHost")).Children.OfType<Grid>().Count() == 24 &&
                 ((Button)window.FindName("ShortcutButton")).ToolTip?.ToString() == KillerFamily.Layout.ShortcutHints.WithHint("Keyboard shortcuts", "F1"),
                 "Shortcut list and rail tooltip come from the shared binding table");
             ((Button)window.FindName("ShortcutMapButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -1517,7 +1516,7 @@ internal static class Program
             var categoryTools = (ComboBox)window.FindName("CategoryWorkflow");
             var allTools = (ComboBox)window.FindName("MainWorkflow");
             Require(categories.Items.Cast<object>().Select(category => category.ToString()).SequenceEqual(["Diagnostics", "Repair", "Updates", "Devices", "Network", "Apps", "Maintenance", "Onboarding", "Security", "BitLocker", "Privacy", "Storage"]),
-                "Twelve primary sections list in the left sidebar while preserving the existing category order");
+                "Twelve primary sections retain their existing order in the horizontal category strip");
             CategoryTypographyChecks.Run(window);
             var mainAction = (Button)window.FindName("MainGo");
             var automaticRepair = (CheckBox)window.FindName("MainAutoRepair");
@@ -1782,8 +1781,9 @@ internal static class Program
                 Require(Math.Abs(zoomViewport.ActualWidth - zoomHost.TranslatePoint(new Point(zoomHost.ActualWidth, 0), zoomViewport).X - 8) <= 1.01,
                     "Eight-pixel right inset remains fixed at interface scale " + scale);
                 Require(Math.Abs(zoomHost.LayoutTransform.Value.M11 - scale) < .001 && Math.Abs(((TextBox)window.FindName("EvidenceBox")).FontSize - ((Slider)window.FindName("SizeSlider")).Value) < 0.001 &&
-                    new Size(titleIcon.ActualWidth, titleIcon.ActualHeight) == stableTitleIconSize && Math.Abs(controlBank.Width * scale - 160) < 0.1 && Math.Abs(controlBank.ActualWidth - controlBank.Width) <= 1,
-                    "Zoom scales content without squeezing the sidebar or moving titlebar controls. Scale=" + scale + ", transform=" + zoomHost.LayoutTransform.Value.M11 + ", sidebar=" + controlBank.ActualWidth + ", font=" + ((TextBox)window.FindName("EvidenceBox")).FontSize + ", slider=" + ((Slider)window.FindName("SizeSlider")).Value);
+                    new Size(titleIcon.ActualWidth, titleIcon.ActualHeight) == stableTitleIconSize &&
+                    controlBank.ActualWidth * scale >= zoomViewport.ActualWidth - 40 && controlBank.ActualHeight * scale <= 96,
+                    "Zoom scales content while the horizontal Tools strip spans the panes and caption controls retain their size. Scale=" + scale);
                 Require(new Size(window.ActualWidth, window.ActualHeight) == stableWindowSize &&
                     zoomHost.ActualWidth * scale <= zoomViewport.ActualWidth + 1 && zoomHost.ActualHeight * scale <= zoomViewport.ActualHeight + 1,
                     "Every zoom level preserves the window and fits its workspace");
@@ -2087,7 +2087,7 @@ internal static class Program
             }
             applyLocale.Invoke(null, new[] { englishLocale });
             Require(((Border)window.FindName("LeftPanel")).Style != window.FindResource("Panel") && ((Border)window.FindName("LeftPanel")).Background == window.FindResource("SidebarPaneBrush"),
-                "Tool sidebar sits on the window through SidebarPaneBrush like KillerScan");
+                "The horizontal Tools strip retains its established themed surface");
             Require(((TextBox)window.FindName("PathBox")).Padding.Top <= 3, "Compact text input padding");
             window.UpdateLayout();
             var retainedSampleSources = ((ListBox)window.FindName("SourcesList")).Items.Cast<ListBoxItem>()

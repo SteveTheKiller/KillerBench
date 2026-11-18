@@ -33,8 +33,8 @@
 
 ### Changed
 
-- Reorganized the workbench into Overview, Investigate, Tools and History, with a graphical system map beside resizable evidence and the KillerUI utility rail at the far left. The top toolbar has icons, independent size and label options, and saved appearance settings. Existing diagnostics and confirmed repairs remain available in Tools.
-- Added workspace, capture, export and evidence-search shortcuts, with matching tooltips, menus, keyboard maps and translated Help tables. Text fields and dialogs use the family context menu with mouse and keyboard access.
+- Reorganized the workbench around an illustrated system map, six symptom entry points and resizable evidence with coverage charts and finding cards. Navigation and search share the title bar, Tools categories run horizontally, and the utility rail stays at the far left. Toolbar settings persist, and the map fills the taller default window when screen space permits.
+- Added grouped tool and evidence search plus workspace, capture and export shortcuts, with matching tooltips, menus, keyboard maps and translated Help tables. Text fields and dialogs use the family context menu with mouse and keyboard access.
 - Updated the WinGet submission tool to Komac 2.17.2.
 - Demo runs and screenshots use realistic workstation findings and normal report labels.
 - Single-line text fields are as tall as the dropdowns beside them, so form rows line up instead of the text boxes standing oversized.

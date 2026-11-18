@@ -67,7 +67,7 @@ internal static class DemoScreenshotChecks
         KillerBench.Services.ThemeManager.Apply(dark);
         File.WriteAllText(Path.Combine(output, "capture-manifest.json"), System.Text.Json.JsonSerializer.Serialize(shots,
             new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
-        Console.WriteLine("PASS: three workspace views, twelve gallery images and five size, zoom and tool variants rendered without a cursor: " + output);
+        Console.WriteLine("PASS: four workspace views, grouped search, three toolbar modes, twelve gallery images and five size, zoom and tool variants rendered without a cursor: " + output);
         application.Shutdown();
         return 0;
     }
@@ -135,11 +135,30 @@ internal static class DemoScreenshotChecks
                 $"History's saved-workflow action fits inside the visible viewport at 250% and 800x500. Action {bounds}, viewport {viewport.RenderSize}.");
 
             window.Width = 1025;
-            window.Height = 700;
+            window.Height = 780;
             Call(window, "ApplyAppScale", 1d);
             Settle(window);
             var grain = (CheckBox)window.FindName("FilmGrainCheck");
             var evidence = (FrameworkElement)window.FindName("TerminalPanel");
+            navigation.SelectedItem = destinations["Overview"];
+            Settle(window);
+            var mapItems = (ListBox)window.FindName("SystemAreas");
+            var mapItem = (ListBoxItem)mapItems.ItemContainerGenerator.ContainerFromIndex(0);
+            var nodeFace = (FrameworkElement)mapItem.Template.FindName("NodeFace", mapItem);
+            var areaCard = ((StackPanel)window.FindName("AreaReviewCards")).Children.OfType<Border>().First();
+            foreach (FrameworkElement card in new FrameworkElement[] { nodeFace, areaCard })
+            {
+                grain.IsChecked = true;
+                grain.RaiseEvent(new RoutedEventArgs(CheckBox.ClickEvent));
+                Settle(window);
+                byte[] on = CardPaddingPixels(card);
+                grain.IsChecked = false;
+                grain.RaiseEvent(new RoutedEventArgs(CheckBox.ClickEvent));
+                Settle(window);
+                byte[] off = CardPaddingPixels(card);
+                Require(ChangedPixels(on, off) > 8, "The card texture covers its padding without an inset grain rectangle.");
+                Require(ChangedPixels(off, CardPaddingPixels(card)) == 0, "Unchanged grain-off card padding is the absent-texture control.");
+            }
             grain.IsChecked = true;
             grain.RaiseEvent(new RoutedEventArgs(CheckBox.ClickEvent));
             Settle(window);
@@ -177,6 +196,22 @@ internal static class DemoScreenshotChecks
             navigation.SelectedItem = destinations["Overview"];
             Settle(window);
             Capture(window, Path.Combine(output, "workspace-overview.png"), 1);
+            navigation.SelectedItem = destinations["Tools"];
+            Settle(window);
+            Capture(window, Path.Combine(output, "workspace-tools.png"), 1);
+            navigation.SelectedItem = destinations["Overview"];
+            var titleSearch = (TextBox)window.FindName("TitleSearchBox");
+            titleSearch.Text = "network";
+            var searchPopup = (System.Windows.Controls.Primitives.Popup)window.FindName("TitleSearchPopup");
+            DateTime deadline = DateTime.UtcNow.AddSeconds(4);
+            while (!searchPopup.IsOpen && DateTime.UtcNow < deadline)
+                window.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+            Require(searchPopup.IsOpen && ((ListBox)window.FindName("TitleSearchResults")).Items.Count > 0,
+                "The actual grouped search flyout renders matching areas and tools.");
+            Settle(window);
+            Capture((FrameworkElement)VisualTreeHelper.GetParent(searchPopup.Child), Path.Combine(output, "search-results.png"), 1);
+            searchPopup.IsOpen = false;
+            titleSearch.Clear();
             var toolbar = (ContextMenu)window.FindName("ToolbarMenu");
             foreach (var (label, file) in new[] { ("Text beside icons", "toolbar-beside.png"), ("No text", "toolbar-icons.png"), ("Text only", "toolbar-text.png") })
             {
@@ -271,6 +306,16 @@ internal static class DemoScreenshotChecks
         return changed;
     }
 
+    private static byte[] CardPaddingPixels(FrameworkElement card)
+    {
+        var bitmap = new RenderTargetBitmap((int)Math.Ceiling(card.ActualWidth), (int)Math.Ceiling(card.ActualHeight),
+            96, 96, PixelFormats.Pbgra32);
+        bitmap.Render(card);
+        var pixels = new byte[4 * 24 * 4];
+        bitmap.CopyPixels(new Int32Rect(4, 12, 4, 24), pixels, 16, 0);
+        return pixels;
+    }
+
     private static void RenderShot(Shot shot, string output)
     {
         if (shot.Accent is { } accent) KillerBench.Services.ThemeManager.ApplyAccent(shot.Theme, accent);
@@ -333,10 +378,11 @@ internal static class DemoScreenshotChecks
                 navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, "Tools"));
                 navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, "Overview"));
                 Settle(window);
-                Require(window.FindName("ReportPane") is FrameworkElement { IsVisible: true } &&
-                    window.FindName("AreaEvidencePanel") is FrameworkElement { IsVisible: false } &&
-                    report.Children[0] is TextBlock { IsVisible: true, Text: "Full system scan report" },
-                    "Returning to Overview keeps the completed Full system scan report visible beside the map.");
+                Require(window.FindName("AreaCoverageChart") is FrameworkElement { IsVisible: true } &&
+                    window.FindName("AreaEvidencePanel") is FrameworkElement { IsVisible: true } &&
+                    window.FindName("AreaFullReportButton") is FrameworkElement { IsVisible: true } &&
+                    report.Children[0] is TextBlock { Text: "Full system scan report" },
+                    "Returning to Overview shows scoped coverage and review cards with the full report available.");
                 var areas = (ListBox)window.FindName("SystemAreas");
                 var selectedArea = areas.ItemContainerGenerator.ContainerFromItem(areas.SelectedItem);
                 Require(selectedArea is ListBoxItem { IsVisible: true } && HasDemoStatus(selectedArea),
@@ -345,9 +391,10 @@ internal static class DemoScreenshotChecks
                 Settle(window);
                 areas.SelectedIndex = 0;
                 Settle(window);
-                Require(((TextBlock)window.FindName("CoverageLabel")).Text.Contains("6 checks", StringComparison.Ordinal) &&
-                        ((TextBlock)window.FindName("EvidenceTitle")).Text != "Evidence and next steps",
-                    "Returning from an unchecked area restores the completed report's heading and actual coverage.");
+                var coverage = (Grid)window.FindName("AreaCoverageChart");
+                Require(coverage.IsVisible && ((StackPanel)coverage.Children[0]).Children.OfType<TextBlock>().First().Text == "6" &&
+                        ((TextBlock)window.FindName("AreaTitle")).Text == "Diagnostics",
+                    "Returning from an unchecked area restores its scoped summary and six recorded checks.");
             }
             if (shot.Raw) Call(window, "ShowRawOutput");
             if (shot.OutputHidden) Call(window, "SetOutputOpen", false);

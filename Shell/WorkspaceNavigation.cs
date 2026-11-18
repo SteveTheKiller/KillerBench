@@ -7,14 +7,37 @@ public partial class MainWindow
 {
     private void OnWorkspaceToolbarClick(object sender, RoutedEventArgs e)
     {
+        if (App.ScreenshotMode || !WorkspaceNavigation.IsEnabled ||
+            AboutOverlay.Visibility == Visibility.Visible || ShortcutsOverlay.Visibility == Visibility.Visible) return;
         var item = WorkspaceNavigation.Items.OfType<ListBoxItem>().SingleOrDefault(candidate => ReferenceEquals(candidate.Content, sender));
-        if (item is not null) WorkspaceNavigation.SelectedItem = item;
+        if (item is not null)
+        {
+            if (ReferenceEquals(WorkspaceNavigation.SelectedItem, item) && item.Tag is "Overview" or "Investigate") ShowAreaEvidence();
+            else WorkspaceNavigation.SelectedItem = item;
+        }
     }
 
     private sealed record SessionEntry(KillerBench.Engine.Evidence.TextEvidence Evidence, string Label)
     {
         public override string ToString() => Label;
     }
+
+    private sealed record GuidedSymptom(string Id, string Art, string Area, WorkflowKind Workflow)
+    {
+        public string Title => Controls.LocalizedText.Get("Str_Guided_" + Id);
+        public string Description => Controls.LocalizedText.Get("Str_Guided_" + Id + "Hint");
+        public override string ToString() => Title;
+    }
+
+    private static readonly GuidedSymptom[] GuidedSymptoms =
+    [
+        new("Slow", "SlowPC", "Diagnostics", WorkflowKind.StartupPerformance),
+        new("Updates", "Updates", "Updates", WorkflowKind.WindowsUpdate),
+        new("Network", "Network", "Network", WorkflowKind.Network),
+        new("Storage", "Storage", "Storage", WorkflowKind.Storage),
+        new("Apps", "AppCrashes", "Diagnostics", WorkflowKind.ReliabilityHistory),
+        new("Other", "Other", "Diagnostics", WorkflowKind.CommonProblems)
+    ];
 
     private void OnWorkspaceSelected(object sender, SelectionChangedEventArgs e)
     {
@@ -25,7 +48,9 @@ public partial class MainWindow
         HistoryPage.Visibility = page == "History" ? Visibility.Visible : Visibility.Collapsed;
         ConsoleBank.Visibility = page == "Tools" ? Visibility.Visible : Visibility.Collapsed;
         LeftPanel.Visibility = ConsoleBank.Visibility;
-        if (page == "Investigate") InvestigationAreas.SelectedItem = SystemAreas.SelectedItem;
+        if (page == "Investigate" && SystemAreas.SelectedItem is ToolCategory current &&
+            (InvestigationAreas.SelectedItem is not GuidedSymptom selected || selected.Area != current.Id))
+            InvestigationAreas.SelectedItem = GuidedSymptoms.FirstOrDefault(symptom => symptom.Area == current.Id);
         SetOutputOpen(true);
         if (page is "Overview" or "Investigate") ShowAreaEvidence();
         else if (page == "History")
@@ -41,16 +66,36 @@ public partial class MainWindow
     {
         foreach (var area in ToolCategories) area.StateKey = "Str_Workspace_NotChecked";
         SystemAreas.ItemsSource = ToolCategories;
-        InvestigationAreas.ItemsSource = ToolCategories;
+        InvestigationAreas.ItemsSource = GuidedSymptoms;
         SystemAreas.SelectedIndex = 0;
         InvestigationAreas.SelectedIndex = 0;
+        OverviewScroll.LayoutUpdated += (_, _) => FitSystemMap();
+    }
+
+    private void FitSystemMap()
+    {
+        if (!OverviewPage.IsVisible || OverviewScroll.ViewportHeight <= 0) return;
+        double height = Math.Max(0, OverviewScroll.ViewportHeight - OverviewMapActions.ActualHeight - OverviewMapActions.Margin.Top - 8);
+        if (Math.Abs(SystemAreas.MinHeight - height) > 1) SystemAreas.MinHeight = height;
+    }
+
+    private void FitInitialOverviewHeight()
+    {
+        double width = Math.Max(220, (Width - 40) * .6 / appScale - OverviewScroll.Padding.Left - OverviewScroll.Padding.Right);
+        SystemAreas.Measure(new Size(width, double.PositiveInfinity));
+        OverviewMapActions.Measure(new Size(width, double.PositiveInfinity));
+        CaptionBar.Measure(new Size(Width, double.PositiveInfinity));
+        double content = SystemAreas.DesiredSize.Height + OverviewMapActions.DesiredSize.Height +
+            OverviewMapActions.Margin.Top + OverviewScroll.Padding.Top + OverviewScroll.Padding.Bottom + 12;
+        Height = Math.Max(780, content * appScale + CaptionBar.DesiredSize.Height + 28);
     }
 
     private void OnSystemAreaSelected(object sender, SelectionChangedEventArgs e) => ShowAreaEvidence();
 
     private void OnInvestigationAreaSelected(object sender, SelectionChangedEventArgs e)
     {
-        if (InvestigationAreas.SelectedItem is ToolCategory area) SystemAreas.SelectedItem = area;
+        if (InvestigationAreas.SelectedItem is GuidedSymptom symptom)
+            SystemAreas.SelectedItem = ToolCategories.Single(area => area.Id == symptom.Area);
         ShowAreaEvidence();
     }
 
@@ -93,18 +138,10 @@ public partial class MainWindow
             else SourcesList.SelectedIndex = sourceIndex;
             if (workflowReportTitles.TryGetValue(previous, out var title)) RenderNamedWorkflowReport(result, title);
             else RenderWorkflowReport(result);
-            AreaEvidencePanel.Visibility = Visibility.Collapsed;
-            SetOutputView();
+            BuildAreaSummary(area, previous, result);
             return;
         }
-        AreaTitle.Text = area.Title;
-        AreaDescription.Text = area.Description;
-        AreaState.SetResourceReference(TextBlock.TextProperty, "Str_Workspace_NotChecked");
-        CoverageLabel.SetResourceReference(TextBlock.TextProperty, "Str_Workspace_NotChecked");
-        EvidenceTitle.SetResourceReference(TextBlock.TextProperty, "Str_Workspace_Evidence");
-        SetAreaEvidenceMode(true);
-        ReportPane.Visibility = ConsolePane.Visibility = StartGuide.Visibility = ConsoleSearchPanel.Visibility = Visibility.Collapsed;
-        SetOutputOpen(true);
+        BuildAreaSummary(area, null, null);
     }
 
     private KillerBench.Engine.Evidence.TextEvidence? LatestAreaSource(ToolCategory area) =>
@@ -128,6 +165,8 @@ public partial class MainWindow
         if (SystemAreas.SelectedItem is not ToolCategory area) return;
         MainAutoRepair.IsChecked = false;
         CategoryList.SelectedItem = area;
+        if (InvestigatePage.IsVisible && InvestigationAreas.SelectedItem is GuidedSymptom symptom && symptom.Area == area.Id)
+            MainWorkflow.SelectedItem = KillerBench.Engine.Workflows.WorkflowCatalog.All.Single(tool => tool.Kind == symptom.Workflow);
         ShowToolsWorkspace();
     }
 
@@ -138,9 +177,20 @@ public partial class MainWindow
         SetOutputOpen(true);
     }
 
+    private void OnOverviewCheck(object sender, RoutedEventArgs e)
+    {
+        if (!MainGo.IsEnabled || !CanSearchWorkspace) return;
+        MainAutoRepair.IsChecked = false;
+        ShowToolsWorkspace();
+        MainWorkflow.SelectedItem = KillerBench.Engine.Workflows.WorkflowCatalog.All.Single(tool => tool.Kind == WorkflowKind.CommonProblems);
+        OnMainGo(sender, e);
+    }
+
     private void SetWorkspaceBusy(bool busy)
     {
         WorkspaceNavigation.IsEnabled = !busy;
+        OverviewCheckButton.IsEnabled = !busy;
+        OverviewOpenCaptureButton.IsEnabled = !busy;
         SystemAreas.IsEnabled = !busy;
         InvestigationAreas.IsEnabled = !busy;
         SessionHistory.IsEnabled = !busy;
@@ -149,8 +199,10 @@ public partial class MainWindow
     private void SetAreaEvidenceMode(bool area)
     {
         AreaEvidencePanel.Visibility = area ? Visibility.Visible : Visibility.Collapsed;
+        EvidenceHeader.Visibility = OutputViewButtons.Visibility = CoverageLabel.Visibility = SessionSourcesExpander.Visibility =
+            area ? Visibility.Collapsed : Visibility.Visible;
         OutputViewButtons.IsEnabled = !area;
-        ExportReportButton.IsEnabled = !area;
+        ExportReportButton.IsEnabled = !area || areaSummarySource is not null;
         SearchBox.IsEnabled = !area && !workflowOutputActive;
     }
 }

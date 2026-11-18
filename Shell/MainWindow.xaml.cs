@@ -36,6 +36,7 @@ public partial class MainWindow : Window
         ShowWelcome();
         InitializeWorkspace();
         InitializeWorkspaceToolbar();
+        InitializeTitleSearch();
         WorkspaceNavigation.SelectedIndex = 0;
         if (App.DemoMode)
         {
@@ -44,6 +45,7 @@ public partial class MainWindow : Window
         ApplyDisplay();
         SetDetailsOpen(false);
         ActivityPanel.Visibility = Visibility.Collapsed;
+        FitInitialOverviewHeight();
         Closed += (_, _) => readCancellation?.Cancel();
         Closing += (_, e) =>
         {
@@ -139,6 +141,7 @@ public partial class MainWindow : Window
         RefreshPrivacyLanguage();
         RefreshWorkflowReportLanguage();
         RefreshWorkspaceToolbarLanguage();
+        QueueTitleSearch();
         if (OverviewPage.IsVisible || InvestigatePage.IsVisible) ShowAreaEvidence();
     }
 
@@ -296,6 +299,7 @@ public partial class MainWindow : Window
     private async void OnKeyDown(object sender, KeyEventArgs e)
     {
         if (App.ScreenshotMode) { e.Handled = true; return; }
+        if (e.Key == Key.Escape && TitleSearchPopup.IsOpen) { CloseTitleSearch(); OverviewButton.Focus(); e.Handled = true; return; }
         if (HandleShellKey(e)) return;
         if (HandleZoomKey(e.Key, Keyboard.Modifiers)) { e.Handled = true; return; }   // Shell/Workbench.cs
         // Alt+Shift+G, the family Film Grain chord. Alt chords arrive as Key.System.

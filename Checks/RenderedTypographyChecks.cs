@@ -26,10 +26,11 @@ internal static class RenderedTypographyChecks
     internal static void VerifySubtitle(KillerBench.Shell.MainWindow window)
     {
         string subtitle = (string)window.FindResource("Str_Text_DIAGNOSTIC_WORKBENCH");
-        var label = ((StackPanel)window.FindName("LogoBar")).Children.OfType<TextBlock>().Single(block => block.Text == subtitle);
+        Require(!((StackPanel)window.FindName("LogoBar")).Children.OfType<TextBlock>().Any(block => block.Text == subtitle),
+            "The redundant workbench subtitle is absent from the compact caption.");
+        var label = (TextBlock)window.FindName("TitleSearchHint");
         bool classic = ThemeManager.Current == Theme.SE98;
-        Require(label.FontSize == (classic ? 11 : 18), "Subtitle retains its production filename font size");
-        VerifyFont(label, classic ? "Microsoft Sans Serif" : "Killer Sans", classic ? null : "KillerSans-Regular.ttf");
+        VerifyFont(label, classic ? "Microsoft Sans Serif" : "Killer Sans UI", classic ? null : "KillerSansUI-Regular.ttf");
     }
 
     internal static void VerifyFont(TextBlock label, string expectedFamily, string? productionFile)
