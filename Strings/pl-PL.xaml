@@ -1347,6 +1347,7 @@
   <sys:String x:Key="Str_Overview_Review">Do przejrzenia: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Unknown">Nieznane: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Fine">W porządku: {0}</sys:String>
+  <sys:String x:Key="Str_Area_SpaceUsed">{0}: zajęte {1} z {2}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Wybierz obszar, aby przejrzeć związane z nim dowody. Kontrole rozpoczną się dopiero po uruchomieniu diagnostyki.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Nie sprawdzono</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Wybierz obszar systemu</sys:String>

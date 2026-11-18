@@ -57,6 +57,7 @@ internal static class DemoScreenshotChecks
             new("10.png", WorkflowKind.BitLocker, light, A(KillerBench.Services.Accent.Green), Grain: false, Height: 960),
             new("11.png", WorkflowKind.CommonProblems, dark, A(KillerBench.Services.Accent.Blue), Shortcuts: true, Width: 1280),
             new("12.png", WorkflowKind.Certificates, KillerBench.Services.Theme.Greed, null, Scale: 1.2, Width: 1920, Height: 1080),
+            new("overview-storage.png", WorkflowKind.Storage, dark, A(KillerBench.Services.Accent.Yellow), Width: 1600, Height: 1000, Area: 11),
             new("matrix-privacy.png", WorkflowKind.Privacy, KillerBench.Services.Theme.Cyanotic, null, Scale: 1.25, OutputHidden: true, Height: 1000),
             new("matrix-maintenance.png", WorkflowKind.Cleanup, KillerBench.Services.Theme.Blood, null, Scale: 1.5, Width: 1600, Height: 1000),
             new("matrix-devices.png", WorkflowKind.DeviceProblems, KillerBench.Services.Theme.Decay, null, Scale: 2, Width: 1920, Height: 1080),
@@ -74,7 +75,7 @@ internal static class DemoScreenshotChecks
 
     private sealed record Shot(string File, WorkflowKind Kind, KillerBench.Services.Theme Theme, KillerBench.Services.Accent? Accent,
         double Scale = 1, bool Grain = true, bool Raw = false, bool OutputHidden = false, bool Shortcuts = false, bool Repair = false,
-        double Width = 1440, double Height = 900, double PixelScale = 1);
+        double Width = 1440, double Height = 900, double PixelScale = 1, int? Area = null);
 
     private static readonly BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
 
@@ -349,7 +350,7 @@ internal static class DemoScreenshotChecks
             if (shot.Scale != 1) Call(window, "ApplyAppScale", shot.Scale);
             bool overviewShot = shot.Kind == WorkflowKind.CommonProblems;
             var navigation = (ListBox)window.FindName("WorkspaceNavigation");
-            string destination = overviewShot ? "Overview" : "Tools";
+            string destination = overviewShot || shot.Area is not null ? "Overview" : "Tools";
             navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, destination));
             Settle(window);
 
@@ -395,6 +396,14 @@ internal static class DemoScreenshotChecks
                         ((TextBlock)window.FindName("AreaTitle")).Text == "Diagnostics",
                     "Returning from an unchecked area restores its scoped summary and five checks that ran.");
             }
+            if (shot.Area is int area)
+            {
+                navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, "Overview"));
+                ((ListBox)window.FindName("SystemAreas")).SelectedIndex = area;
+                Settle(window);
+                Require(window.FindName("AreaMetricChart") is StackPanel { IsVisible: true, Children.Count: > 0 },
+                    "The area shot shows measured metric bars.");
+            }
             if (shot.Raw) Call(window, "ShowRawOutput");
             if (shot.OutputHidden) Call(window, "SetOutputOpen", false);
             if (shot.Shortcuts) Call(window, "OnShortcuts", window, new RoutedEventArgs());
@@ -405,7 +414,7 @@ internal static class DemoScreenshotChecks
             var categories = (FrameworkElement)window.FindName("LeftPanel");
             var overview = (FrameworkElement)window.FindName("OverviewPage");
             var tools = (FrameworkElement)window.FindName("ConsoleBank");
-            Require(overviewShot ? overview.IsVisible && !categories.IsVisible && !tools.IsVisible
+            Require(overviewShot || shot.Area is not null ? overview.IsVisible && !categories.IsVisible && !tools.IsVisible
                                  : tools.IsVisible && categories.IsVisible && categories.ActualWidth > 0 && !overview.IsVisible,
                 "Screenshot shows the selected " + destination + " workspace.");
             Capture(window, Path.Combine(output, shot.File), shot.PixelScale);

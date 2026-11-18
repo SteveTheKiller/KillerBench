@@ -1346,6 +1346,7 @@
   <sys:String x:Key="Str_Overview_Review">На перегляд: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Unknown">Невідомо: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Fine">Гаразд: {0}</sys:String>
+  <sys:String x:Key="Str_Area_SpaceUsed">{0}: зайнято {1} з {2}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Виберіть область, щоб переглянути пов’язані з нею дані. Перевірки починаються лише після запуску діагностики.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Не перевірено</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Виберіть область системи</sys:String>

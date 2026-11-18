@@ -1347,6 +1347,7 @@
   <sys:String x:Key="Str_Overview_Review">Қарап шығу: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Unknown">Белгісіз: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Fine">Қалыпты: {0}</sys:String>
+  <sys:String x:Key="Str_Area_SpaceUsed">{0}: {2} ішінен {1} пайдаланылған</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Тиісті дәлелдерді қарау үшін бір аймақты таңдаңыз. Тексерулер диагностиканы іске қосқаннан кейін ғана орындалады.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Тексерілмеген</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Жүйе аймағын таңдаңыз</sys:String>

@@ -126,7 +126,13 @@ internal static class StorageDispatchChecks
         Require(VolumeCapacity.Assess(new("D:", 1000, 99)) is { State: CheckState.Attention, Repair: null, Evidence: not null }, "Low capacity is a review finding without deletion authority");
         Require(VolumeCapacity.Assess(new("D:", 1000, 100)).State == CheckState.Information, "Capacity threshold does not imply disk health");
         foreach (var capacity in new[] { new VolumeCapacitySnapshot("D:", 0, 0), new("D:", 100, -1), new("D:", 100, 101) })
-            Require(VolumeCapacity.Assess(capacity).State == CheckState.Unknown, "Invalid capacity snapshots remain unknown");
+            Require(VolumeCapacity.Assess(capacity) is { State: CheckState.Unknown, Metrics: null }, "Invalid capacity snapshots remain unknown and chart nothing");
+        var measured = VolumeCapacity.Assess(new("D:", 1000, 250));
+        var roundTrip = System.Text.Json.JsonSerializer.Deserialize<WorkflowCheck>(
+            System.Text.Json.JsonSerializer.Serialize(measured, Capture.JsonOptions), Capture.JsonOptions)!;
+        Require(measured.Metrics is [{ Label: "D:", Value: 750, Maximum: 1000, Unit: MetricUnit.Bytes }] &&
+                roundTrip.Metrics is [{ Label: "D:", Value: 750, Maximum: 1000, Unit: MetricUnit.Bytes }],
+            "Measured capacity records used and total bytes as a typed metric that survives the journal");
         Require(typeof(StorageDiagnostics).GetMethod(nameof(StorageDiagnostics.CheckVolumeAsync),
             [typeof(string), typeof(IProgress<string>), typeof(CancellationToken)]) is not null,
             "Original storage API signature remains available to compiled consumers");

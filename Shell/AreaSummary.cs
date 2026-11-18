@@ -23,6 +23,8 @@ public partial class MainWindow
         AreaStateChart.Children.Clear();
         AreaStateChart.ColumnDefinitions.Clear();
         AreaStateLegend.Children.Clear();
+        AreaMetricChart.Children.Clear();
+        AreaMetricChart.Visibility = Visibility.Collapsed;
         bool recorded = source is not null && result is not null;
         AreaCoverageChart.Visibility = AreaDetailActions.Visibility = recorded ? Visibility.Visible : Visibility.Collapsed;
         AreaStateChart.Visibility = AreaStateLegend.Visibility = recorded ? Visibility.Visible : Visibility.Collapsed;
@@ -39,6 +41,7 @@ public partial class MainWindow
             AddAreaCoverage("Str_Report_NeedsReview", score.NeedsAttention, score.Total, 1);
             AddAreaCoverage("Str_Report_Incomplete", score.Unknown, score.Total, 2);
             BuildAreaStateChart(score);
+            BuildAreaMetricChart(result.Checks);
             var problems = result.Checks.Where(check => check.EffectiveState is CheckState.Attention or CheckState.Repairable or CheckState.Unknown)
                 .OrderBy(check => ReviewPriority(check.EffectiveState)).ToArray();
             foreach (var check in problems.Take(2))
@@ -167,6 +170,50 @@ public partial class MainWindow
         System.Windows.Automation.AutomationProperties.SetName(AreaStateChart, string.Join(", ", names));
         if (names.Count == 0)
             AreaStateChart.Visibility = AreaStateLegend.Visibility = Visibility.Collapsed;
+    }
+
+    // Used-space bars drawn only from typed metrics a check measured; nothing is parsed out of Detail text.
+    private void BuildAreaMetricChart(IEnumerable<WorkflowCheck> checks)
+    {
+        foreach (var (check, metric) in checks.Where(check => check.EffectiveState != CheckState.Unknown)
+                     .SelectMany(check => (check.Metrics ?? []).Select(metric => (check, metric)))
+                     .Where(pair => pair.metric.Unit == MetricUnit.Bytes && pair.metric.Maximum > 0 &&
+                         pair.metric.Value >= 0 && pair.metric.Value <= pair.metric.Maximum)
+                     .Take(6))
+        {
+            string text = LocalizedText.Format("Str_Area_SpaceUsed", metric.Label.TrimEnd(':'),FormatBytes(metric.Value), FormatBytes(metric.Maximum));
+            var row = new StackPanel { Margin = new Thickness(0, 0, 0, 10) };
+            System.Windows.Automation.AutomationProperties.SetName(row, text);
+            row.Children.Add(Body(text, 12, new Thickness(0, 0, 0, 4), "TextBrush"));
+            double fraction = metric.Value / metric.Maximum;
+            var bar = new Grid { Height = 10 };
+            bar.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(fraction, GridUnitType.Star) });
+            bar.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1 - fraction, GridUnitType.Star) });
+            var track = new Border { Opacity = .18, CornerRadius = new CornerRadius(3) };
+            track.SetResourceReference(Border.BackgroundProperty, "MutedTextBrush");
+            Grid.SetColumnSpan(track, 2);
+            bar.Children.Add(track);
+            var fill = new Border { CornerRadius = new CornerRadius(3) };
+            fill.SetResourceReference(Border.BackgroundProperty, check.EffectiveState switch
+            {
+                CheckState.Repairable => "DangerRed",
+                CheckState.Attention => "WarnBrush",
+                _ => "OkBrush",
+            });
+            bar.Children.Add(fill);
+            row.Children.Add(bar);
+            AreaMetricChart.Children.Add(row);
+        }
+        AreaMetricChart.Visibility = AreaMetricChart.Children.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private static string FormatBytes(double bytes)
+    {
+        string[] units = ["B", "KB", "MB", "GB", "TB", "PB"];
+        int unit = 0;
+        // Binary units with Explorer's labels, so the bar reads the same as the drive's Properties page.
+        while (bytes >= 1024 && unit < units.Length - 1) { bytes /= 1024; unit++; }
+        return bytes.ToString(bytes >= 100 || unit == 0 ? "N0" : "N1", CultureInfo.CurrentCulture) + " " + units[unit];
     }
 
     private void OpenAreaTool(WorkflowKind kind)

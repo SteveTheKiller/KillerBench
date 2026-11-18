@@ -1347,6 +1347,7 @@
   <sys:String x:Key="Str_Overview_Review">Para revisar: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Unknown">Desconocidas: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Fine">Correctas: {0}</sys:String>
+  <sys:String x:Key="Str_Area_SpaceUsed">{0}: {1} usados de {2}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Elige un área para revisar su evidencia. No se comprueba nada hasta que ejecutes el diagnóstico.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Sin comprobar</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Elige un área del sistema</sys:String>

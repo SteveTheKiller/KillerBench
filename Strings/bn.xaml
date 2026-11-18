@@ -1347,6 +1347,7 @@
   <sys:String x:Key="Str_Overview_Review">পর্যালোচনা: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Unknown">অজানা: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Fine">ঠিক আছে: {0}</sys:String>
+  <sys:String x:Key="Str_Area_SpaceUsed">{0}: {2}-এর মধ্যে {1} ব্যবহৃত</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">একটি বিভাগ বেছে নিয়ে তার প্রমাণ পর্যালোচনা করুন। ডায়াগনসিস চালানোর আগে কোনো পরীক্ষা হয় না।</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">পরীক্ষা করা হয়নি</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">সিস্টেমের একটি বিভাগ বেছে নিন</sys:String>

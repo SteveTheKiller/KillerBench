@@ -115,8 +115,10 @@ public static class DemoWorkflow
         ],
         WorkflowKind.Storage =>
         [
-            new("System volume free space", CheckState.Attention, "The C: volume has 11.8 GB free of 476 GB (2.5 percent)."),
-            new("Data volume", CheckState.Clear, "The D: volume has 612 GB free of 931 GB."),
+            new("System volume free space", CheckState.Attention, "The C: volume has 11.8 GB free of 476 GB (2.5 percent).")
+                { Metrics = [new("C:", 464.2 * 1073741824, 476.0 * 1073741824, MetricUnit.Bytes)] },
+            new("Data volume", CheckState.Clear, "The D: volume has 612 GB free of 931 GB.")
+                { Metrics = [new("D:", 319.0 * 1073741824, 931.0 * 1073741824, MetricUnit.Bytes)] },
             new("Disk health", CheckState.Unknown, "The reliability counters are unavailable; no healthy verdict is inferred."),
             new("File system state", CheckState.Clear, "No volume is marked dirty."),
             new("Largest folders", CheckState.Information, "User downloads and a retained update cache account for 64 GB.")

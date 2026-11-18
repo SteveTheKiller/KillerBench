@@ -1347,6 +1347,7 @@
   <sys:String x:Key="Str_Overview_Review">K prověření: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Unknown">Neznámé: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Fine">V pořádku: {0}</sys:String>
+  <sys:String x:Key="Str_Area_SpaceUsed">{0}: využito {1} z {2}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Vyberte oblast a prohlédněte si příslušné důkazy. Dokud nespustíte diagnostiku, nic se nekontroluje.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Nezkontrolováno</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Vyberte oblast systému</sys:String>

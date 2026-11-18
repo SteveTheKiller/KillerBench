@@ -1346,6 +1346,7 @@
   <sys:String x:Key="Str_Overview_Review">Å se gjennom: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Unknown">Ukjent: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Fine">I orden: {0}</sys:String>
+  <sys:String x:Key="Str_Area_SpaceUsed">{0}: {1} brukt av {2}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Velg et område for å se gjennom de tilhørende bevisene. Ingenting kontrolleres før du kjører diagnostikk.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Ikke kontrollert</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Velg et systemområde</sys:String>

@@ -1347,6 +1347,7 @@
   <sys:String x:Key="Str_Overview_Review">To review: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Unknown">Unknown: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Fine">Fine: {0}</sys:String>
+  <sys:String x:Key="Str_Area_SpaceUsed">{0}: {1} used of {2}</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Not checked</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Choose a system area</sys:String>
   <sys:String x:Key="Str_Workspace_ReviewArea">Review this area</sys:String>

@@ -18,6 +18,11 @@ internal static class Program
             SystemRestoreCommandParsingChecks.RunAsync().GetAwaiter().GetResult();
             return 0;
         }
+        if (args is ["--only", "storage-dispatch"])
+        {
+            StorageDispatchChecks.RunAsync().GetAwaiter().GetResult();
+            return 0;
+        }
         if (args is ["--only", "native-profile-metadata"])
         {
             NativeAcceptancePackage.RunAsync(ProfileMetadataNativeAcceptanceChecks.RunAsync).GetAwaiter().GetResult();

@@ -1347,6 +1347,7 @@
   <sys:String x:Key="Str_Overview_Review">Áttekintendő: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Unknown">Ismeretlen: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Fine">Rendben: {0}</sys:String>
+  <sys:String x:Key="Str_Area_SpaceUsed">{0}: {1} foglalt / {2}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Válasszon területet a hozzá tartozó bizonyítékok áttekintéséhez. Az ellenőrzések csak a diagnosztika indításakor futnak le.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Nincs ellenőrizve</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Válasszon rendszerterületet</sys:String>

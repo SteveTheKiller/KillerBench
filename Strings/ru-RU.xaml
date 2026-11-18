@@ -1347,6 +1347,7 @@
   <sys:String x:Key="Str_Overview_Review">На просмотр: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Unknown">Неизвестно: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Fine">В порядке: {0}</sys:String>
+  <sys:String x:Key="Str_Area_SpaceUsed">{0}: занято {1} из {2}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Выберите область, чтобы просмотреть собранные для неё данные. Проверки выполняются только после запуска диагностики.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Не проверено</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Выберите область системы</sys:String>

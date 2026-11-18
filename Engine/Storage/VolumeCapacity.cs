@@ -45,6 +45,7 @@ public static class VolumeCapacity
         return new("Volume capacity", low ? CheckState.Attention : CheckState.Information,
             $"Volume {volume} has {snapshot.AvailableBytes / 1073741824.0:F1} GiB available of {snapshot.TotalBytes / 1073741824.0:F1} GiB ({percent:F1}%). " +
             (low ? "Below the 10% review threshold. Review storage usage before selecting cleanup. " : "") +
-            "Available space is for the running account and can change. This is not a filesystem or hardware health verdict. No files removed.", Evidence: evidence);
+            "Available space is for the running account and can change. This is not a filesystem or hardware health verdict. No files removed.", Evidence: evidence)
+        { Metrics = [new(volume, snapshot.TotalBytes - snapshot.AvailableBytes, snapshot.TotalBytes, MetricUnit.Bytes)] };
     }
 }

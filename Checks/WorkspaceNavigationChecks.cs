@@ -403,6 +403,14 @@ internal static class WorkspaceNavigationChecks
                     stateChart.Children.Count == 3 && stateName.Contains('4') && stateName.Contains('1'),
                 "The storage state bar splits the same score into one review, one unknown and four fine segments and names those counts. Weights: " +
                 string.Join(",", weights) + " Name: " + stateName);
+            var metricChart = Find<StackPanel>(window, "AreaMetricChart");
+            string[] metricNames = metricChart.Children.OfType<FrameworkElement>()
+                .Select(row => System.Windows.Automation.AutomationProperties.GetName(row)).ToArray();
+            Require(metricChart.IsVisible && metricNames.Length == 2 &&
+                    metricNames[0].StartsWith("C:", StringComparison.Ordinal) && !metricNames[0].Contains("::", StringComparison.Ordinal) &&
+                    metricNames[0].Contains("476", StringComparison.Ordinal) &&
+                    metricNames[1].StartsWith("D:", StringComparison.Ordinal) && metricNames[1].Contains("931", StringComparison.Ordinal),
+                "The storage summary draws one used-space bar per measured volume from typed metrics. Rows: " + string.Join(" | ", metricNames));
             Find<Button>(window, "AreaFullReportButton").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(Find<FrameworkElement>(window, "ReportPane").IsVisible && !Find<FrameworkElement>(window, "AreaEvidencePanel").IsVisible,
                 "Full report opens the existing detailed report from the selected area.");
@@ -414,7 +422,7 @@ internal static class WorkspaceNavigationChecks
                 "Raw output opens evidence for this area rather than an earlier imported source.");
             WorkbenchCommands.Overview.Execute(null, window);
             Find<ListBox>(window, "SystemAreas").SelectedIndex = 4;
-            Require(!chart.IsVisible && !stateChart.IsVisible && !Find<FrameworkElement>(window, "AreaDetailActions").IsVisible &&
+            Require(!chart.IsVisible && !stateChart.IsVisible && !metricChart.IsVisible && !Find<FrameworkElement>(window, "AreaDetailActions").IsVisible &&
                     Find<TextBlock>(window, "AreaState").Text == "Not checked" && !WorkbenchCommands.ExportReport.CanExecute(null, window),
                 "An unrun area clears previous metrics, report actions and export eligibility.");
         }
