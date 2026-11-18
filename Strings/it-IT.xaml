@@ -601,6 +601,15 @@
   <sys:String x:Key="Str_Sum_Counts">{0} cartella/e, {1} file</sys:String>
   <sys:String x:Key="Str_TT_RecentLocations">Posizioni recenti</sys:String>
   <sys:String x:Key="Str_TT_ShowHidden">Mostra elementi nascosti e di sistema  (Ctrl+H)</sys:String>
+  <sys:String x:Key="Str_TT_NewFolder">Nuova cartella (Ctrl+Shift+N)</sys:String>
+  <sys:String x:Key="Str_FD_NewFolder">Nuova cartella</sys:String>
+  <sys:String x:Key="Str_FD_FolderEmpty">Immetti un nome per la cartella.</sys:String>
+  <sys:String x:Key="Str_FD_FolderInvalid">Il nome della cartella non può contenere nessuno di questi caratteri: \ / : * ? " &lt; &gt; |</sys:String>
+  <sys:String x:Key="Str_FD_FolderReserved">Questo nome è riservato da Windows. Scegline un altro.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTrailing">Il nome della cartella non può terminare con un punto o uno spazio.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTooLong">Il nome è troppo lungo. Usa al massimo 255 caratteri.</sys:String>
+  <sys:String x:Key="Str_FD_FolderExists">In questa posizione esiste già una cartella o un file con questo nome.</sys:String>
+  <sys:String x:Key="Str_FD_FolderFailed">Impossibile creare la cartella:</sys:String>
   <sys:String x:Key="Str_TT_Up">Su di una cartella</sys:String>
   <sys:String x:Key="Str_TT_ViewDetails">Vista dettagli</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Vista icone</sys:String>

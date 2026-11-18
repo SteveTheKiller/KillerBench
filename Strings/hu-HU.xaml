@@ -601,6 +601,15 @@
   <sys:String x:Key="Str_Sum_Counts">{0} mappa, {1} fájl</sys:String>
   <sys:String x:Key="Str_TT_RecentLocations">Legutóbbi helyek</sys:String>
   <sys:String x:Key="Str_TT_ShowHidden">Rejtett és rendszerelemek megjelenítése (Ctrl+H)</sys:String>
+  <sys:String x:Key="Str_TT_NewFolder">Új mappa (Ctrl+Shift+N)</sys:String>
+  <sys:String x:Key="Str_FD_NewFolder">Új mappa</sys:String>
+  <sys:String x:Key="Str_FD_FolderEmpty">Adja meg a mappa nevét.</sys:String>
+  <sys:String x:Key="Str_FD_FolderInvalid">A mappa neve nem tartalmazhatja a következő karakterek egyikét sem: \ / : * ? " &lt; &gt; |</sys:String>
+  <sys:String x:Key="Str_FD_FolderReserved">Ezt a nevet a Windows fenntartja. Válasszon másik nevet.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTrailing">A mappa neve nem végződhet pontra vagy szóközre.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTooLong">A név túl hosszú. Legfeljebb 255 karaktert használjon.</sys:String>
+  <sys:String x:Key="Str_FD_FolderExists">Ezen a helyen már van ilyen nevű mappa vagy fájl.</sys:String>
+  <sys:String x:Key="Str_FD_FolderFailed">A mappát nem sikerült létrehozni:</sys:String>
   <sys:String x:Key="Str_TT_Up">Egy mappával feljebb</sys:String>
   <sys:String x:Key="Str_TT_ViewDetails">Részletek nézet</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Ikon nézet</sys:String>

@@ -601,6 +601,15 @@
   <sys:String x:Key="Str_Sum_Counts">{0} Ordner, {1} Datei(en)</sys:String>
   <sys:String x:Key="Str_TT_RecentLocations">Zuletzt verwendete Orte</sys:String>
   <sys:String x:Key="Str_TT_ShowHidden">Versteckte und Systemelemente anzeigen (Ctrl+H)</sys:String>
+  <sys:String x:Key="Str_TT_NewFolder">Neuer Ordner (Ctrl+Shift+N)</sys:String>
+  <sys:String x:Key="Str_FD_NewFolder">Neuer Ordner</sys:String>
+  <sys:String x:Key="Str_FD_FolderEmpty">Geben Sie einen Namen für den Ordner ein.</sys:String>
+  <sys:String x:Key="Str_FD_FolderInvalid">Ein Ordnername darf keines dieser Zeichen enthalten: \ / : * ? " &lt; &gt; |</sys:String>
+  <sys:String x:Key="Str_FD_FolderReserved">Dieser Name ist in Windows reserviert. Wählen Sie einen anderen.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTrailing">Ein Ordnername darf nicht mit einem Punkt oder Leerzeichen enden.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTooLong">Der Name ist zu lang. Verwenden Sie höchstens 255 Zeichen.</sys:String>
+  <sys:String x:Key="Str_FD_FolderExists">Hier gibt es bereits einen Ordner oder eine Datei mit diesem Namen.</sys:String>
+  <sys:String x:Key="Str_FD_FolderFailed">Der Ordner konnte nicht erstellt werden:</sys:String>
   <sys:String x:Key="Str_TT_Up">Einen Ordner nach oben</sys:String>
   <sys:String x:Key="Str_TT_ViewDetails">Detailansicht</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Symbolansicht</sys:String>

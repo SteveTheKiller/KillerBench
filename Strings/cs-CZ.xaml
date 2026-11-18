@@ -601,6 +601,15 @@
   <sys:String x:Key="Str_Sum_Counts">{0} složek, {1} souborů</sys:String>
   <sys:String x:Key="Str_TT_RecentLocations">Nedávná umístění</sys:String>
   <sys:String x:Key="Str_TT_ShowHidden">Zobrazit skryté a systémové položky (Ctrl+H)</sys:String>
+  <sys:String x:Key="Str_TT_NewFolder">Nová složka (Ctrl+Shift+N)</sys:String>
+  <sys:String x:Key="Str_FD_NewFolder">Nová složka</sys:String>
+  <sys:String x:Key="Str_FD_FolderEmpty">Zadejte název složky.</sys:String>
+  <sys:String x:Key="Str_FD_FolderInvalid">Název složky nesmí obsahovat žádný z těchto znaků: \ / : * ? " &lt; &gt; |</sys:String>
+  <sys:String x:Key="Str_FD_FolderReserved">Tento název je v systému Windows rezervovaný. Zvolte jiný.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTrailing">Název složky nesmí končit tečkou ani mezerou.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTooLong">Název je příliš dlouhý. Použijte nejvýše 255 znaků.</sys:String>
+  <sys:String x:Key="Str_FD_FolderExists">Složka nebo soubor s tímto názvem zde už existuje.</sys:String>
+  <sys:String x:Key="Str_FD_FolderFailed">Složku se nepodařilo vytvořit:</sys:String>
   <sys:String x:Key="Str_TT_Up">O složku výš</sys:String>
   <sys:String x:Key="Str_TT_ViewDetails">Zobrazení podrobností</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Zobrazení ikon</sys:String>

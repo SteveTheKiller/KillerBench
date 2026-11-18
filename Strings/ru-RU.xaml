@@ -601,6 +601,15 @@
   <sys:String x:Key="Str_Sum_Counts">папок: {0}, файлов: {1}</sys:String>
   <sys:String x:Key="Str_TT_RecentLocations">Недавние места</sys:String>
   <sys:String x:Key="Str_TT_ShowHidden">Показывать скрытые и системные элементы (Ctrl+H)</sys:String>
+  <sys:String x:Key="Str_TT_NewFolder">Новая папка (Ctrl+Shift+N)</sys:String>
+  <sys:String x:Key="Str_FD_NewFolder">Новая папка</sys:String>
+  <sys:String x:Key="Str_FD_FolderEmpty">Введите имя папки.</sys:String>
+  <sys:String x:Key="Str_FD_FolderInvalid">Имя папки не может содержать ни одного из следующих символов: \ / : * ? " &lt; &gt; |</sys:String>
+  <sys:String x:Key="Str_FD_FolderReserved">Это имя зарезервировано в Windows. Выберите другое.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTrailing">Имя папки не может заканчиваться точкой или пробелом.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTooLong">Имя слишком длинное. Используйте не более 255 символов.</sys:String>
+  <sys:String x:Key="Str_FD_FolderExists">Здесь уже есть папка или файл с таким именем.</sys:String>
+  <sys:String x:Key="Str_FD_FolderFailed">Не удалось создать папку:</sys:String>
   <sys:String x:Key="Str_TT_Up">На папку вверх</sys:String>
   <sys:String x:Key="Str_TT_ViewDetails">Подробное представление</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Значки</sys:String>

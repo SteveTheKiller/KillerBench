@@ -601,6 +601,15 @@
   <sys:String x:Key="Str_Sum_Counts">{0} carpeta(s), {1} archivo(s)</sys:String>
   <sys:String x:Key="Str_TT_RecentLocations">Ubicaciones recientes</sys:String>
   <sys:String x:Key="Str_TT_ShowHidden">Mostrar elementos ocultos y del sistema (Ctrl+H)</sys:String>
+  <sys:String x:Key="Str_TT_NewFolder">Nueva carpeta (Ctrl+Shift+N)</sys:String>
+  <sys:String x:Key="Str_FD_NewFolder">Nueva carpeta</sys:String>
+  <sys:String x:Key="Str_FD_FolderEmpty">Escriba un nombre para la carpeta.</sys:String>
+  <sys:String x:Key="Str_FD_FolderInvalid">El nombre de la carpeta no puede contener ninguno de estos caracteres: \ / : * ? " &lt; &gt; |</sys:String>
+  <sys:String x:Key="Str_FD_FolderReserved">Windows reserva ese nombre. Elija otro.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTrailing">El nombre de la carpeta no puede terminar en un punto ni en un espacio.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTooLong">El nombre es demasiado largo. Use 255 caracteres como máximo.</sys:String>
+  <sys:String x:Key="Str_FD_FolderExists">Ya existe una carpeta o un archivo con ese nombre en esta ubicación.</sys:String>
+  <sys:String x:Key="Str_FD_FolderFailed">No se pudo crear la carpeta:</sys:String>
   <sys:String x:Key="Str_TT_Up">Subir una carpeta</sys:String>
   <sys:String x:Key="Str_TT_ViewDetails">Vista de detalles</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Vista de iconos</sys:String>

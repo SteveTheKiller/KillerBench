@@ -126,17 +126,21 @@
       </ListBox>
         </DockPanel></Border></Grid>
 </Border>
-        <Border x:Name="OverviewPage" Grid.Column="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Padding="16" icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
+        <Border x:Name="OverviewPage" Grid.Column="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
+          <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/><Border Padding="16">
           <ScrollViewer Style="{StaticResource OverlayScrollViewer}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
               <TextBlock Text="{DynamicResource Str_Workspace_SystemMap}" FontFamily="{DynamicResource HeadingFont}" FontSize="24" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap"/>
               <TextBlock Text="{DynamicResource Str_Workspace_MapHint}" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,6,0,14"/>
               <Grid Height="90" Margin="0,0,0,8" IsHitTestVisible="False">
                 <Path Stroke="{DynamicResource PaneBorderBrush}" StrokeThickness="2" Stretch="Fill" Margin="28,45,28,0" Data="M 0,40 L 0,0 L 100,0 L 100,40 M 50,0 L 50,40"/>
-                <StackPanel HorizontalAlignment="Center" Background="{DynamicResource ContentPaneBrush}">
+                <Grid HorizontalAlignment="Center" Background="{DynamicResource ContentPaneBrush}">
+                  <Border IsHitTestVisible="False" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
+                  <StackPanel>
                   <a11y:Glyph Text="&#xE7F4;" FontFamily="Segoe MDL2 Assets" FontSize="42" Foreground="{DynamicResource PrimaryBrush}" HorizontalAlignment="Center"/>
                   <TextBlock Text="{DynamicResource Str_Workspace_ReadOnly}" FontSize="11" HorizontalAlignment="Center" Margin="6"/>
-                </StackPanel>
+                  </StackPanel>
+                </Grid>
               </Grid>
               <ListBox x:Name="SystemAreas" Background="Transparent" BorderThickness="0" SelectionChanged="OnSystemAreaSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
                 <ListBox.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="3"/></ItemsPanelTemplate></ListBox.ItemsPanel>
@@ -149,8 +153,10 @@
               </ListBox>
             </StackPanel>
           </ScrollViewer>
+          </Border></Grid>
         </Border>
-        <Border x:Name="InvestigatePage" Grid.Column="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Padding="18" Visibility="Collapsed" icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
+        <Border x:Name="InvestigatePage" Grid.Column="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Visibility="Collapsed" icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
+          <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/><Border Padding="18">
           <DockPanel>
             <StackPanel DockPanel.Dock="Top" Margin="0,0,0,14"><TextBlock Text="{DynamicResource Str_Workspace_Investigate}" FontFamily="{DynamicResource HeadingFont}" FontSize="24" Foreground="{DynamicResource PrimaryBrush}"/><TextBlock Text="{DynamicResource Str_Workspace_GuidedHint}" TextWrapping="Wrap" Margin="0,6,0,0" Foreground="{DynamicResource MutedTextBrush}"/></StackPanel>
             <ListBox x:Name="InvestigationAreas" Style="{StaticResource WorkbenchList}" Background="Transparent" BorderThickness="0" SelectionChanged="OnInvestigationAreaSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
@@ -158,8 +164,10 @@
               <ListBox.ItemTemplate><DataTemplate><DockPanel><a11y:Glyph DockPanel.Dock="Left" Text="{Binding Icon}" FontFamily="Segoe MDL2 Assets" FontSize="28" Margin="0,4,14,0"/><StackPanel><TextBlock Text="{Binding Title}" FontSize="16"/><TextBlock Text="{Binding Description}" TextWrapping="Wrap" Opacity="0.8" Margin="0,4,0,0"/></StackPanel></DockPanel></DataTemplate></ListBox.ItemTemplate>
             </ListBox>
           </DockPanel>
+          </Border></Grid>
         </Border>
-        <Border x:Name="HistoryPage" Grid.Column="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Padding="18" Visibility="Collapsed" icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
+        <Border x:Name="HistoryPage" Grid.Column="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Visibility="Collapsed" icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
+          <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/><Border Padding="18">
           <ScrollViewer Style="{StaticResource OverlayScrollViewer}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel>
             <StackPanel>
               <TextBlock Text="{DynamicResource Str_Workspace_History}" FontFamily="{DynamicResource HeadingFont}" FontSize="24" Foreground="{DynamicResource PrimaryBrush}"/>
@@ -171,6 +179,7 @@
               <ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="8"/></DataTemplate></ListBox.ItemTemplate>
             </ListBox>
           </StackPanel></ScrollViewer>
+          </Border></Grid>
         </Border>
         <kl:UnclippedGrid x:Name="ConsoleBank" Grid.Column="2">
           <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>

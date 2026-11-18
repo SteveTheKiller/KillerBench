@@ -601,6 +601,15 @@
   <sys:String x:Key="Str_Sum_Counts">{0} 个文件夹，{1} 个文件</sys:String>
   <sys:String x:Key="Str_TT_RecentLocations">最近的位置</sys:String>
   <sys:String x:Key="Str_TT_ShowHidden">显示隐藏和系统项目（Ctrl+H）</sys:String>
+  <sys:String x:Key="Str_TT_NewFolder">新建文件夹（Ctrl+Shift+N）</sys:String>
+  <sys:String x:Key="Str_FD_NewFolder">新建文件夹</sys:String>
+  <sys:String x:Key="Str_FD_FolderEmpty">请输入文件夹名称。</sys:String>
+  <sys:String x:Key="Str_FD_FolderInvalid">文件夹名称不能包含以下任何字符： \ / : * ? " &lt; &gt; |</sys:String>
+  <sys:String x:Key="Str_FD_FolderReserved">此名称为 Windows 保留名称。请选择其他名称。</sys:String>
+  <sys:String x:Key="Str_FD_FolderTrailing">文件夹名称不能以句点或空格结尾。</sys:String>
+  <sys:String x:Key="Str_FD_FolderTooLong">名称过长。请使用不超过 255 个字符。</sys:String>
+  <sys:String x:Key="Str_FD_FolderExists">此处已存在同名的文件夹或文件。</sys:String>
+  <sys:String x:Key="Str_FD_FolderFailed">无法创建文件夹：</sys:String>
   <sys:String x:Key="Str_TT_Up">上一级文件夹</sys:String>
   <sys:String x:Key="Str_TT_ViewDetails">详细信息视图</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">图标视图</sys:String>

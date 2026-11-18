@@ -17,7 +17,7 @@
 - Saved workflow exports retain detailed checks and repairs with historical labels, and HTML reports support every current accent.
 - Update failures explain verification rejection, denied launch and canceled elevation while keeping retry available.
 - Package reviews, license links and distribution requirements now match the app across all supported languages. The footer retains the running version after theme changes.
-- Picked up current shared file-picker, update recovery, and 98SE caption fixes.
+- Overview, Investigate and History use the same themed film grain as the evidence pane and follow its on/off switch. Picked up current KillerUI file-picker, menu-card, update recovery and 98SE caption fixes.
 - The file picker loads icons and picture previews in the background, refreshes overwritten previews, and restores its position on any monitor. Scrollbar buttons have localized screen-reader names.
 - Saved workflow and validation reports write their timestamps the same way on every Windows region, so Thai and Finnish settings no longer give years like 2569 or times like 14.30.
 - The disk-busy and shadow-storage checks read the decimal comma that Windows tools print on German, Finnish and other regions, instead of reporting no samples or unrecognized sizes.

@@ -115,6 +115,38 @@ internal static class DemoScreenshotChecks
             window.Height = 700;
             Call(window, "ApplyAppScale", 1d);
             Settle(window);
+            var grain = (CheckBox)window.FindName("FilmGrainCheck");
+            var evidence = (FrameworkElement)window.FindName("TerminalPanel");
+            grain.IsChecked = true;
+            grain.RaiseEvent(new RoutedEventArgs(CheckBox.ClickEvent));
+            Settle(window);
+            byte[] evidenceOn = GrainPixels(evidence);
+            grain.IsChecked = false;
+            grain.RaiseEvent(new RoutedEventArgs(CheckBox.ClickEvent));
+            Settle(window);
+            byte[] evidenceOff = GrainPixels(evidence);
+            Require(ChangedPixels(evidenceOn, evidenceOff) > 32, "The established evidence pane calibrates visible film grain.");
+            Require(ChangedPixels(evidenceOff, GrainPixels(evidence)) == 0, "The unchanged grain-off pane is the absent texture control.");
+            grain.IsChecked = true;
+            grain.RaiseEvent(new RoutedEventArgs(CheckBox.ClickEvent));
+            Settle(window);
+            foreach (string destination in new[] { "Overview", "Investigate", "History" })
+            {
+                navigation.SelectedItem = destinations[destination];
+                Settle(window);
+                var pane = (FrameworkElement)window.FindName(destination + "Page");
+                byte[] on = GrainPixels(pane);
+                grain.IsChecked = false;
+                grain.RaiseEvent(new RoutedEventArgs(CheckBox.ClickEvent));
+                Settle(window);
+                Require(ChangedPixels(on, GrainPixels(pane)) > 32, destination + " uses the same visible KillerUI grain and shared toggle as the evidence pane.");
+                grain.IsChecked = true;
+                grain.RaiseEvent(new RoutedEventArgs(CheckBox.ClickEvent));
+                Settle(window);
+            }
+            navigation.SelectedItem = destinations["History"];
+            Settle(window);
+            VerifySharedPicker(window);
             Capture(window, Path.Combine(output, "workspace-history.png"), 1);
             navigation.SelectedItem = destinations["Investigate"];
             Settle(window);
@@ -127,6 +159,85 @@ internal static class DemoScreenshotChecks
         {
             window.Close();
         }
+    }
+
+    private static void VerifySharedPicker(Window owner)
+    {
+        string root = Path.Combine(Path.GetTempPath(), "kit-picker-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        var picker = new KillerBench.Controls.FileDialog(KillerBench.Controls.FileDialogMode.Open)
+            { Owner = owner, InitialDirectory = root, ShowInTaskbar = false };
+        Exception? failure = null;
+        int stage = 0;
+        DateTime deadline = DateTime.UtcNow.AddSeconds(10);
+        var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(20) };
+        timer.Tick += (_, _) =>
+        {
+            try
+            {
+                if (DateTime.UtcNow > deadline) throw new TimeoutException("Shared picker readiness timed out at stage " + stage);
+                if (!picker.IsVisible) return;
+                if (stage == 0 && ((TextBox)picker.FindName("PathBox")).Text.TrimEnd('\\') != root.TrimEnd('\\')) return;
+                if (stage == 1 && PresentationSource.FromVisual((TextBox)picker.FindName("NewFolderBox")) is null) return;
+                if (stage == 0)
+                {
+                    var open = (Button)picker.FindName("NewFolderButton");
+                    Require(open.IsVisible && open.ToolTip?.ToString()?.Contains("Ctrl+Shift+N", StringComparison.Ordinal) == true,
+                        "The current KillerUI picker exposes its New folder action and shortcut.");
+                    open.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    stage = 1;
+                    return;
+                }
+                timer.Stop();
+                CheckNames();
+                picker.Close();
+            }
+            catch (Exception error) { failure = error; timer.Stop(); picker.Close(); }
+        };
+        try
+        {
+            timer.Start();
+            picker.ShowDialog(owner);
+            if (failure is not null) throw new InvalidOperationException("Shared picker behavior check failed.", failure);
+            Require(stage == 1, "The shared picker exercised its actual New folder controls.");
+        }
+        finally { timer.Stop(); if (picker.IsVisible) picker.Close(); }
+
+        void CheckNames()
+        {
+            var input = (TextBox)picker.FindName("NewFolderBox");
+            var error = (TextBlock)picker.FindName("NewFolderError");
+            input.Text = "NUL";
+            input.RaiseEvent(new System.Windows.Input.KeyEventArgs(System.Windows.Input.Keyboard.PrimaryDevice,
+                PresentationSource.FromVisual(input), 0, System.Windows.Input.Key.Enter) { RoutedEvent = System.Windows.Input.Keyboard.KeyDownEvent });
+            Require(error.IsVisible && Directory.GetDirectories(root).Length == 0,
+                "The shared picker rejects a Windows reserved name before creating anything.");
+            input.Text = "Fixture folder";
+            input.RaiseEvent(new System.Windows.Input.KeyEventArgs(System.Windows.Input.Keyboard.PrimaryDevice,
+                PresentationSource.FromVisual(input), 0, System.Windows.Input.Key.Enter) { RoutedEvent = System.Windows.Input.Keyboard.KeyDownEvent });
+            Require(Directory.Exists(Path.Combine(root, "Fixture folder")), "The shared picker creates the valid fixture folder.");
+        }
+    }
+
+    private static byte[] GrainPixels(FrameworkElement pane)
+    {
+        var owner = Window.GetWindow(pane);
+        var bitmap = new RenderTargetBitmap((int)Math.Ceiling(owner.ActualWidth),
+            (int)Math.Ceiling(owner.ActualHeight), 96, 96, PixelFormats.Pbgra32);
+        bitmap.Render(owner);
+        // A blank strip inside the pane padding avoids labels, controls, edges and shadows.
+        var pixels = new byte[8 * 64 * 4];
+        Point origin = pane.TranslatePoint(new Point(8, 80), owner);
+        bitmap.CopyPixels(new Int32Rect((int)origin.X, (int)origin.Y, 8, 64), pixels, 8 * 4, 0);
+        return pixels;
+    }
+
+    private static int ChangedPixels(byte[] before, byte[] after)
+    {
+        int changed = 0;
+        for (int index = 0; index < before.Length; index += 4)
+            if (BitConverter.ToInt32(before, index) != BitConverter.ToInt32(after, index)) changed++;
+        return changed;
     }
 
     private static void RenderShot(Shot shot, string output)

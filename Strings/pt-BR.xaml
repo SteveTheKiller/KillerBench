@@ -600,6 +600,15 @@
   <sys:String x:Key="Str_Sum_Counts">{0} pasta(s), {1} arquivo(s)</sys:String>
   <sys:String x:Key="Str_TT_RecentLocations">Locais recentes</sys:String>
   <sys:String x:Key="Str_TT_ShowHidden">Mostrar itens ocultos e de sistema  (Ctrl+H)</sys:String>
+  <sys:String x:Key="Str_TT_NewFolder">Nova pasta (Ctrl+Shift+N)</sys:String>
+  <sys:String x:Key="Str_FD_NewFolder">Nova pasta</sys:String>
+  <sys:String x:Key="Str_FD_FolderEmpty">Digite um nome para a pasta.</sys:String>
+  <sys:String x:Key="Str_FD_FolderInvalid">O nome da pasta não pode conter nenhum destes caracteres: \ / : * ? " &lt; &gt; |</sys:String>
+  <sys:String x:Key="Str_FD_FolderReserved">Esse nome é reservado pelo Windows. Escolha outro.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTrailing">O nome da pasta não pode terminar com um ponto ou um espaço.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTooLong">O nome é muito longo. Use no máximo 255 caracteres.</sys:String>
+  <sys:String x:Key="Str_FD_FolderExists">Já existe uma pasta ou um arquivo com esse nome neste local.</sys:String>
+  <sys:String x:Key="Str_FD_FolderFailed">Não foi possível criar a pasta:</sys:String>
   <sys:String x:Key="Str_TT_Up">Subir uma pasta</sys:String>
   <sys:String x:Key="Str_TT_ViewDetails">Exibição em detalhes</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Exibição em ícones</sys:String>

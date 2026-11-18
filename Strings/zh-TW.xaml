@@ -601,6 +601,15 @@
   <sys:String x:Key="Str_Sum_Counts">{0} 個資料夾，{1} 個檔案</sys:String>
   <sys:String x:Key="Str_TT_RecentLocations">最近的位置</sys:String>
   <sys:String x:Key="Str_TT_ShowHidden">顯示隱藏和系統項目（Ctrl+H）</sys:String>
+  <sys:String x:Key="Str_TT_NewFolder">新增資料夾（Ctrl+Shift+N）</sys:String>
+  <sys:String x:Key="Str_FD_NewFolder">新增資料夾</sys:String>
+  <sys:String x:Key="Str_FD_FolderEmpty">請輸入資料夾名稱。</sys:String>
+  <sys:String x:Key="Str_FD_FolderInvalid">資料夾名稱不得包含下列任何字元： \ / : * ? " &lt; &gt; |</sys:String>
+  <sys:String x:Key="Str_FD_FolderReserved">此名稱由 Windows 保留。請選擇其他名稱。</sys:String>
+  <sys:String x:Key="Str_FD_FolderTrailing">資料夾名稱不得以句點或空格結尾。</sys:String>
+  <sys:String x:Key="Str_FD_FolderTooLong">名稱過長。請使用至多 255 個字元。</sys:String>
+  <sys:String x:Key="Str_FD_FolderExists">此位置已有同名的資料夾或檔案。</sys:String>
+  <sys:String x:Key="Str_FD_FolderFailed">無法建立資料夾：</sys:String>
   <sys:String x:Key="Str_TT_Up">上一層資料夾</sys:String>
   <sys:String x:Key="Str_TT_ViewDetails">詳細資料檢視</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">圖示檢視</sys:String>

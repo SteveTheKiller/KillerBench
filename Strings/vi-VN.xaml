@@ -600,6 +600,15 @@
   <sys:String x:Key="Str_Sum_Counts">{0} thư mục, {1} tệp</sys:String>
   <sys:String x:Key="Str_TT_RecentLocations">Vị trí gần đây</sys:String>
   <sys:String x:Key="Str_TT_ShowHidden">Hiện các mục ẩn và mục hệ thống (Ctrl+H)</sys:String>
+  <sys:String x:Key="Str_TT_NewFolder">Thư mục mới (Ctrl+Shift+N)</sys:String>
+  <sys:String x:Key="Str_FD_NewFolder">Thư mục mới</sys:String>
+  <sys:String x:Key="Str_FD_FolderEmpty">Nhập tên cho thư mục.</sys:String>
+  <sys:String x:Key="Str_FD_FolderInvalid">Tên thư mục không được chứa bất kỳ ký tự nào sau đây: \ / : * ? " &lt; &gt; |</sys:String>
+  <sys:String x:Key="Str_FD_FolderReserved">Tên này được Windows dành riêng. Hãy chọn tên khác.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTrailing">Tên thư mục không được kết thúc bằng dấu chấm hoặc dấu cách.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTooLong">Tên quá dài. Hãy dùng tối đa 255 ký tự.</sys:String>
+  <sys:String x:Key="Str_FD_FolderExists">Đã có thư mục hoặc tệp mang tên này ở đây.</sys:String>
+  <sys:String x:Key="Str_FD_FolderFailed">Không thể tạo thư mục:</sys:String>
   <sys:String x:Key="Str_TT_Up">Lên một thư mục</sys:String>
   <sys:String x:Key="Str_TT_ViewDetails">Dạng xem chi tiết</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Dạng xem biểu tượng</sys:String>

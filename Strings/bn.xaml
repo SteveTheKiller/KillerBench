@@ -601,6 +601,15 @@
   <sys:String x:Key="Str_Sum_Counts">{0}টি ফোল্ডার, {1}টি ফাইল</sys:String>
   <sys:String x:Key="Str_TT_RecentLocations">সাম্প্রতিক জায়গা</sys:String>
   <sys:String x:Key="Str_TT_ShowHidden">লুকানো ও সিস্টেম আইটেম দেখান (Ctrl+H)</sys:String>
+  <sys:String x:Key="Str_TT_NewFolder">নতুন ফোল্ডার (Ctrl+Shift+N)</sys:String>
+  <sys:String x:Key="Str_FD_NewFolder">নতুন ফোল্ডার</sys:String>
+  <sys:String x:Key="Str_FD_FolderEmpty">ফোল্ডারের জন্য একটি নাম লিখুন।</sys:String>
+  <sys:String x:Key="Str_FD_FolderInvalid">ফোল্ডারের নামে এই অক্ষরগুলোর কোনোটি ব্যবহার করা যাবে না: \ / : * ? " &lt; &gt; |</sys:String>
+  <sys:String x:Key="Str_FD_FolderReserved">Windows এই নামটি সংরক্ষিত রেখেছে। অন্য একটি নাম বেছে নিন।</sys:String>
+  <sys:String x:Key="Str_FD_FolderTrailing">ফোল্ডারের নামের শেষে পূর্ণচ্ছেদ বা ফাঁকা স্থান রাখা যাবে না।</sys:String>
+  <sys:String x:Key="Str_FD_FolderTooLong">নামটি খুব দীর্ঘ। সর্বোচ্চ ২৫৫টি অক্ষর ব্যবহার করুন।</sys:String>
+  <sys:String x:Key="Str_FD_FolderExists">এই নামে এখানে ইতিমধ্যে একটি ফোল্ডার বা ফাইল আছে।</sys:String>
+  <sys:String x:Key="Str_FD_FolderFailed">ফোল্ডার তৈরি করা যায়নি:</sys:String>
   <sys:String x:Key="Str_TT_Up">এক ফোল্ডার উপরে</sys:String>
   <sys:String x:Key="Str_TT_ViewDetails">বিস্তারিত ভিউ</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">আইকন ভিউ</sys:String>

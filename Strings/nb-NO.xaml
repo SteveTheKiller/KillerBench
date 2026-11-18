@@ -600,6 +600,15 @@
   <sys:String x:Key="Str_Sum_Counts">{0} mappe(r), {1} fil(er)</sys:String>
   <sys:String x:Key="Str_TT_RecentLocations">Nylige plasseringer</sys:String>
   <sys:String x:Key="Str_TT_ShowHidden">Vis skjulte elementer og systemelementer  (Ctrl+H)</sys:String>
+  <sys:String x:Key="Str_TT_NewFolder">Ny mappe (Ctrl+Shift+N)</sys:String>
+  <sys:String x:Key="Str_FD_NewFolder">Ny mappe</sys:String>
+  <sys:String x:Key="Str_FD_FolderEmpty">Skriv inn et navn på mappen.</sys:String>
+  <sys:String x:Key="Str_FD_FolderInvalid">Mappenavnet kan ikke inneholde noen av disse tegnene: \ / : * ? " &lt; &gt; |</sys:String>
+  <sys:String x:Key="Str_FD_FolderReserved">Dette navnet er reservert i Windows. Velg et annet navn.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTrailing">Mappenavnet kan ikke slutte med punktum eller mellomrom.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTooLong">Navnet er for langt. Bruk maksimalt 255 tegn.</sys:String>
+  <sys:String x:Key="Str_FD_FolderExists">Det finnes allerede en mappe eller fil med dette navnet her.</sys:String>
+  <sys:String x:Key="Str_FD_FolderFailed">Kunne ikke opprette mappen:</sys:String>
   <sys:String x:Key="Str_TT_Up">Opp ett mappenivå</sys:String>
   <sys:String x:Key="Str_TT_ViewDetails">Detaljvisning</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Ikonvisning</sys:String>

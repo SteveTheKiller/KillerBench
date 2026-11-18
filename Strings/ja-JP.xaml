@@ -601,6 +601,15 @@
   <sys:String x:Key="Str_Sum_Counts">{0} 個のフォルダー、{1} 個のファイル</sys:String>
   <sys:String x:Key="Str_TT_RecentLocations">最近使った場所</sys:String>
   <sys:String x:Key="Str_TT_ShowHidden">隠しファイルとシステム項目を表示 (Ctrl+H)</sys:String>
+  <sys:String x:Key="Str_TT_NewFolder">新しいフォルダー (Ctrl+Shift+N)</sys:String>
+  <sys:String x:Key="Str_FD_NewFolder">新しいフォルダー</sys:String>
+  <sys:String x:Key="Str_FD_FolderEmpty">フォルダーの名前を入力してください。</sys:String>
+  <sys:String x:Key="Str_FD_FolderInvalid">フォルダー名に次の文字は使用できません： \ / : * ? " &lt; &gt; |</sys:String>
+  <sys:String x:Key="Str_FD_FolderReserved">この名前は Windows で予約されています。別の名前を選んでください。</sys:String>
+  <sys:String x:Key="Str_FD_FolderTrailing">フォルダー名の末尾にピリオドや空白を使用することはできません。</sys:String>
+  <sys:String x:Key="Str_FD_FolderTooLong">名前が長すぎます。255 文字以内にしてください。</sys:String>
+  <sys:String x:Key="Str_FD_FolderExists">同じ名前のフォルダーまたはファイルが既にこの場所にあります。</sys:String>
+  <sys:String x:Key="Str_FD_FolderFailed">フォルダーを作成できませんでした：</sys:String>
   <sys:String x:Key="Str_TT_Up">一つ上のフォルダーへ</sys:String>
   <sys:String x:Key="Str_TT_ViewDetails">詳細表示</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">アイコン表示</sys:String>

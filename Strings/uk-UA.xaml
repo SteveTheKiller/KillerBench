@@ -600,6 +600,15 @@
   <sys:String x:Key="Str_Sum_Counts">Папок: {0}, файлів: {1}</sys:String>
   <sys:String x:Key="Str_TT_RecentLocations">Нещодавні розташування</sys:String>
   <sys:String x:Key="Str_TT_ShowHidden">Показати приховані та системні елементи (Ctrl+H)</sys:String>
+  <sys:String x:Key="Str_TT_NewFolder">Нова папка (Ctrl+Shift+N)</sys:String>
+  <sys:String x:Key="Str_FD_NewFolder">Нова папка</sys:String>
+  <sys:String x:Key="Str_FD_FolderEmpty">Введіть ім’я папки.</sys:String>
+  <sys:String x:Key="Str_FD_FolderInvalid">Ім’я папки не може містити жодного з цих символів: \ / : * ? " &lt; &gt; |</sys:String>
+  <sys:String x:Key="Str_FD_FolderReserved">Це ім’я зарезервовано у Windows. Виберіть інше.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTrailing">Ім’я папки не може закінчуватися крапкою або пробілом.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTooLong">Ім’я задовге. Використайте щонайбільше 255 символів.</sys:String>
+  <sys:String x:Key="Str_FD_FolderExists">Тут уже є папка або файл з таким ім’ям.</sys:String>
+  <sys:String x:Key="Str_FD_FolderFailed">Не вдалося створити папку:</sys:String>
   <sys:String x:Key="Str_TT_Up">На одну папку вгору</sys:String>
   <sys:String x:Key="Str_TT_ViewDetails">Таблиця</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Значки</sys:String>

@@ -601,6 +601,15 @@
   <sys:String x:Key="Str_Sum_Counts">Foldery: {0}, pliki: {1}</sys:String>
   <sys:String x:Key="Str_TT_RecentLocations">Ostatnie lokalizacje</sys:String>
   <sys:String x:Key="Str_TT_ShowHidden">Pokaż elementy ukryte i systemowe  (Ctrl+H)</sys:String>
+  <sys:String x:Key="Str_TT_NewFolder">Nowy folder (Ctrl+Shift+N)</sys:String>
+  <sys:String x:Key="Str_FD_NewFolder">Nowy folder</sys:String>
+  <sys:String x:Key="Str_FD_FolderEmpty">Wpisz nazwę folderu.</sys:String>
+  <sys:String x:Key="Str_FD_FolderInvalid">Nazwa folderu nie może zawierać żadnego z tych znaków: \ / : * ? " &lt; &gt; |</sys:String>
+  <sys:String x:Key="Str_FD_FolderReserved">Ta nazwa jest zastrzeżona w systemie Windows. Wybierz inną.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTrailing">Nazwa folderu nie może kończyć się kropką ani spacją.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTooLong">Nazwa jest za długa. Użyj maksymalnie 255 znaków.</sys:String>
+  <sys:String x:Key="Str_FD_FolderExists">W tym miejscu istnieje już folder lub plik o tej nazwie.</sys:String>
+  <sys:String x:Key="Str_FD_FolderFailed">Nie można utworzyć folderu:</sys:String>
   <sys:String x:Key="Str_TT_Up">Folder wyżej</sys:String>
   <sys:String x:Key="Str_TT_ViewDetails">Widok szczegółów</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Widok ikon</sys:String>

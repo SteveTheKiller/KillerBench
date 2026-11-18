@@ -601,6 +601,15 @@
   <sys:String x:Key="Str_Sum_Counts">{0} klasör, {1} dosya</sys:String>
   <sys:String x:Key="Str_TT_RecentLocations">Son konumlar</sys:String>
   <sys:String x:Key="Str_TT_ShowHidden">Gizli ve sistem öğelerini göster (Ctrl+H)</sys:String>
+  <sys:String x:Key="Str_TT_NewFolder">Yeni klasör (Ctrl+Shift+N)</sys:String>
+  <sys:String x:Key="Str_FD_NewFolder">Yeni klasör</sys:String>
+  <sys:String x:Key="Str_FD_FolderEmpty">Klasör için bir ad yazın.</sys:String>
+  <sys:String x:Key="Str_FD_FolderInvalid">Klasör adı şu karakterlerden hiçbirini içeremez: \ / : * ? " &lt; &gt; |</sys:String>
+  <sys:String x:Key="Str_FD_FolderReserved">Bu ad Windows tarafından ayrılmıştır. Başka bir ad seçin.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTrailing">Klasör adı nokta veya boşlukla bitemez.</sys:String>
+  <sys:String x:Key="Str_FD_FolderTooLong">Bu ad çok uzun. En fazla 255 karakter kullanın.</sys:String>
+  <sys:String x:Key="Str_FD_FolderExists">Burada zaten bu ada sahip bir klasör veya dosya var.</sys:String>
+  <sys:String x:Key="Str_FD_FolderFailed">Klasör oluşturulamadı:</sys:String>
   <sys:String x:Key="Str_TT_Up">Bir klasör yukarı</sys:String>
   <sys:String x:Key="Str_TT_ViewDetails">Ayrıntı görünümü</sys:String>
   <sys:String x:Key="Str_TT_ViewIcons">Simge görünümü</sys:String>
