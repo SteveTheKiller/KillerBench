@@ -56,9 +56,8 @@ internal static class WorkspaceNavigationChecks
             titleSearch.Clear();
             var map = Find<ListBox>(window, "SystemAreas");
             var mapItem = (FrameworkElement)map.ItemContainerGenerator.ContainerFromIndex(0);
-            var illustration = VisualElements(mapItem).SingleOrDefault(element => element.Name == "AreaArt");
-            Require(illustration is { ActualWidth: >= 44, ActualHeight: >= 44 },
-                "System areas expose substantial vector illustrations inside the map cards.");
+            Require(mapItem is { ActualWidth: >= 24, ActualHeight: >= 24 } && mapItem.ToolTip is not null,
+                "Each hardware part on the map is a real click target with a name on hover. Size: " + mapItem.RenderSize);
             if (SystemParameters.WorkArea.Height >= 780)
                 Require(Find<ScrollViewer>(window, "OverviewScroll").ScrollableHeight < 1,
                     "The initial window fits the entire map on a work area that supports its default height.");
@@ -127,6 +126,10 @@ internal static class WorkspaceNavigationChecks
                     Inside(machine.TowerRect, PartBounds(9)) && Inside(machine.ScreenRect, PartBounds(5)),
                 "Software areas light up on the screen and hardware areas sit in the tower bays. Diagnostics: " + PartBounds(0) +
                 ", Storage: " + PartBounds(11) + ", screen: " + machine.ScreenRect + ", tower: " + machine.TowerRect);
+            var partRects = Enumerable.Range(0, areas.Items.Count).Select(PartBounds).ToList();
+            Require(partRects.All(rect => rect.Width >= 24 && rect.Height >= 24) &&
+                    !partRects.SelectMany((a, i) => partRects.Skip(i + 1), (a, b) => Rect.Intersect(a, b)).Any(overlap => !overlap.IsEmpty && overlap.Width * overlap.Height > 4),
+                "Every hardware part is a separate click target of at least 24 pixels, and no two parts overlap.");
             areas.SelectedIndex = 11;
             Settle(window);
             var detail = Find<TextBlock>(window, "AreaTitle");

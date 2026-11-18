@@ -142,11 +142,9 @@ internal static class DemoScreenshotChecks
             var evidence = (FrameworkElement)window.FindName("TerminalPanel");
             navigation.SelectedItem = destinations["Overview"];
             Settle(window);
-            var mapItems = (ListBox)window.FindName("SystemAreas");
-            var mapItem = (ListBoxItem)mapItems.ItemContainerGenerator.ContainerFromIndex(0);
-            var nodeFace = (FrameworkElement)mapItem.Template.FindName("NodeFace", mapItem);
+            // Overview map parts are transparent hotspots over the drawn machine, not cards, so only review cards carry grain.
             var areaCard = ((StackPanel)window.FindName("AreaReviewCards")).Children.OfType<Border>().First();
-            foreach (FrameworkElement card in new FrameworkElement[] { nodeFace, areaCard })
+            foreach (FrameworkElement card in new FrameworkElement[] { areaCard })
             {
                 grain.IsChecked = true;
                 grain.RaiseEvent(new RoutedEventArgs(CheckBox.ClickEvent));
