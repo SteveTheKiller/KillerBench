@@ -75,7 +75,7 @@ public partial class MainWindow
     private void FitSystemMap()
     {
         if (!OverviewPage.IsVisible || OverviewScroll.ViewportHeight <= 0) return;
-        double height = Math.Max(0, OverviewScroll.ViewportHeight - OverviewMapActions.ActualHeight - OverviewMapActions.Margin.Top - 8);
+        double height = Math.Max(0, OverviewScroll.ViewportHeight - OverviewHero.ActualHeight - OverviewHero.Margin.Bottom - 8);
         if (Math.Abs(SystemAreas.MinHeight - height) > 1) SystemAreas.MinHeight = height;
     }
 
@@ -83,10 +83,10 @@ public partial class MainWindow
     {
         double width = Math.Max(220, (Width - 40) * .6 / appScale - OverviewScroll.Padding.Left - OverviewScroll.Padding.Right);
         SystemAreas.Measure(new Size(width, double.PositiveInfinity));
-        OverviewMapActions.Measure(new Size(width, double.PositiveInfinity));
+        OverviewHero.Measure(new Size(width, double.PositiveInfinity));
         CaptionBar.Measure(new Size(Width, double.PositiveInfinity));
-        double content = SystemAreas.DesiredSize.Height + OverviewMapActions.DesiredSize.Height +
-            OverviewMapActions.Margin.Top + OverviewScroll.Padding.Top + OverviewScroll.Padding.Bottom + 12;
+        double content = SystemAreas.DesiredSize.Height + OverviewHero.DesiredSize.Height +
+            OverviewHero.Margin.Bottom + OverviewScroll.Padding.Top + OverviewScroll.Padding.Bottom + 12;
         Height = Math.Max(780, content * appScale + CaptionBar.DesiredSize.Height + 28);
     }
 
@@ -149,15 +149,67 @@ public partial class MainWindow
 
     private void RefreshMapEvidence()
     {
+        var latest = new List<WorkflowResult>();
         foreach (var area in ToolCategories)
         {
             var source = LatestAreaSource(area);
+            WorkflowResult? result = null;
+            if (source is not null) workflowSummaries.TryGetValue(source, out result);
             area.StateKey = source is null ? "Str_Workspace_NotChecked"
                 : historicalWorkflows.TryGetValue(source, out _) ? "Str_Mode_Historical"
-                : workflowSummaries.TryGetValue(source, out var result) && result.Machine == DemoWorkflow.MachineName
-                    ? "Str_Mode_DemoDiagnosis" : "Str_Session_ReadableReport";
+                : result?.Machine == DemoWorkflow.MachineName ? "Str_Mode_DemoDiagnosis" : "Str_Session_ReadableReport";
+            area.Score = result is null ? null : OverviewScore.From([result]);
+            if (result is not null && !latest.Contains(result)) latest.Add(result);
         }
         SystemAreas.Items.Refresh();
+        RefreshOverviewHero(OverviewScore.From(latest));
+    }
+
+    private void RefreshOverviewHero(OverviewScore score)
+    {
+        OverviewGauge.Percent = score.CheckedPercent;
+        OverviewPercent.Text = score.Total == 0 ? "0%" : score.CheckedPercent.ToString(System.Globalization.CultureInfo.CurrentCulture) + "%";
+        OverviewGauge.SetResourceReference(Controls.CoverageGauge.ToneBrushProperty, score.Tone switch
+        {
+            OverviewTone.Clear => "OkBrush",
+            OverviewTone.Review => "WarnBrush",
+            OverviewTone.Fixable => "DangerRed",
+            OverviewTone.Incomplete => "MutedTextBrush",
+            _ => "PaneBorderBrush"
+        });
+        if (score.Total == 0)
+        {
+            OverviewHeadline.SetResourceReference(TextBlock.TextProperty, "Str_Workspace_SystemMap");
+            OverviewDetail.SetResourceReference(TextBlock.TextProperty, "Str_Workspace_MapHint");
+            OverviewChips.Visibility = Visibility.Collapsed;
+            return;
+        }
+        OverviewHeadline.Text = score.NeedsAttention > 0 ? Controls.LocalizedText.Format("Str_Overview_HeadlineReview", score.NeedsAttention)
+            : Controls.LocalizedText.Get(score.Unknown > 0 ? "Str_Overview_HeadlineIncomplete" : "Str_Overview_HeadlineClear");
+        OverviewDetail.Text = Controls.LocalizedText.Format("Str_Overview_Coverage", score.Ran, score.Total);
+        OverviewChips.Children.Clear();
+        AddOverviewChip("Str_Overview_Fixable", score.Fixable, "DangerRed");
+        AddOverviewChip("Str_Overview_Review", score.NeedsAttention - score.Fixable, "WarnBrush");
+        AddOverviewChip("Str_Overview_Unknown", score.Unknown, "MutedTextBrush");
+        AddOverviewChip("Str_Overview_Fine", score.Ran - score.NeedsAttention, "OkBrush");
+        OverviewChips.Visibility = Visibility.Visible;
+    }
+
+    private void AddOverviewChip(string key, int count, string brush)
+    {
+        if (count <= 0) return;
+        var dot = new System.Windows.Shapes.Ellipse { Width = 8, Height = 8, Margin = new Thickness(0, 0, 6, 0), VerticalAlignment = VerticalAlignment.Center };
+        dot.SetResourceReference(System.Windows.Shapes.Shape.FillProperty, brush);
+        var label = new TextBlock { Text = Controls.LocalizedText.Format(key, count), FontSize = 12, VerticalAlignment = VerticalAlignment.Center };
+        var chip = new Border
+        {
+            BorderThickness = new Thickness(1), Padding = new Thickness(8, 3, 10, 3), Margin = new Thickness(0, 0, 8, 6),
+            Child = new StackPanel { Orientation = Orientation.Horizontal, Children = { dot, label } }
+        };
+        chip.SetResourceReference(Border.BorderBrushProperty, "PaneBorderBrush");
+        chip.SetResourceReference(Border.CornerRadiusProperty, "ControlCornerRadius");
+        System.Windows.Automation.AutomationProperties.SetName(chip, label.Text);
+        OverviewChips.Children.Add(chip);
     }
 
     private void OnReviewArea(object sender, RoutedEventArgs e)

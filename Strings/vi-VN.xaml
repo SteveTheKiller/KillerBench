@@ -1337,6 +1337,15 @@
   <sys:String x:Key="Str_Workspace_Tools">Công cụ</sys:String>
   <sys:String x:Key="Str_Workspace_History">Lịch sử</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Tổng quan về hệ thống của bạn</sys:String>
+  <sys:String x:Key="Str_Overview_Checked">đã kiểm tra</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineReview">Cần xem lại: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineClear">Không có gì cần chú ý</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineIncomplete">Không tìm thấy gì trong bằng chứng đọc được</sys:String>
+  <sys:String x:Key="Str_Overview_Coverage">Đã chạy {0} trên {1} mục kiểm tra. Các mục không chạy được được giữ là không xác định, không phải là ổn.</sys:String>
+  <sys:String x:Key="Str_Overview_Fixable">Có thể sửa: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Review">Cần xem lại: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Unknown">Không xác định: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Fine">Ổn: {0}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Chọn một mục để xem bằng chứng liên quan. Việc kiểm tra chỉ bắt đầu khi bạn chạy chẩn đoán.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Chưa kiểm tra</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Chọn một mục của hệ thống</sys:String>

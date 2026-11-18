@@ -1338,6 +1338,15 @@
   <sys:String x:Key="Str_Workspace_Tools">Nástroje</sys:String>
   <sys:String x:Key="Str_Workspace_History">Historie</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Váš systém na první pohled</sys:String>
+  <sys:String x:Key="Str_Overview_Checked">zkontrolováno</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineReview">K prověření: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineClear">Nic nevyžaduje pozornost</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineIncomplete">V důkazech, které šlo načíst, se nic nenašlo</sys:String>
+  <sys:String x:Key="Str_Overview_Coverage">Proběhlo {0} z {1} kontrol. Kontroly, které nemohly proběhnout, zůstávají neznámé, ne v pořádku.</sys:String>
+  <sys:String x:Key="Str_Overview_Fixable">Opravitelné: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Review">K prověření: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Unknown">Neznámé: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Fine">V pořádku: {0}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Vyberte oblast a prohlédněte si příslušné důkazy. Dokud nespustíte diagnostiku, nic se nekontroluje.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Nezkontrolováno</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Vyberte oblast systému</sys:String>

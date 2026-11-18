@@ -1338,6 +1338,15 @@
   <sys:String x:Key="Str_Workspace_History">History</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Your system at a glance</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Choose an area to review its evidence. Nothing is checked until you run diagnostics.</sys:String>
+  <sys:String x:Key="Str_Overview_Checked">checked</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineReview">Things to review: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineClear">Nothing needs a look</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineIncomplete">Nothing found in the evidence that could be read</sys:String>
+  <sys:String x:Key="Str_Overview_Coverage">{0} of {1} checks ran. Checks that could not run stay unknown, not healthy.</sys:String>
+  <sys:String x:Key="Str_Overview_Fixable">Fixable: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Review">To review: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Unknown">Unknown: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Fine">Fine: {0}</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Not checked</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Choose a system area</sys:String>
   <sys:String x:Key="Str_Workspace_ReviewArea">Review this area</sys:String>

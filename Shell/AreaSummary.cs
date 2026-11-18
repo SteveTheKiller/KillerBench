@@ -29,9 +29,11 @@ public partial class MainWindow
             string provenance = historicalWorkflows.TryGetValue(source!, out _) ? "Str_Mode_Historical"
                 : result!.Machine == DemoWorkflow.MachineName ? "Str_Mode_DemoDiagnosis" : "Str_Session_ReadableReport";
             AreaState.Text = LocalizedText.Get(provenance) + ", " + result!.StartedUtc.ToLocalTime().ToString("g", CultureInfo.CurrentCulture);
-            AddAreaCoverage("Str_Report_Checked", result.Checks.Count, result.Checks.Count, 0);
-            AddAreaCoverage("Str_Report_NeedsReview", result.Summary.ReviewItems, result.Checks.Count + result.Recipes.Count, 1);
-            AddAreaCoverage("Str_Report_Incomplete", result.Summary.Incomplete, result.Checks.Count + result.Recipes.Count, 2);
+            // Same numbers as the Overview gauge, so the two panes never disagree about one result.
+            var score = OverviewScore.From([result]);
+            AddAreaCoverage("Str_Report_Checked", score.Ran, score.Total, 0);
+            AddAreaCoverage("Str_Report_NeedsReview", score.NeedsAttention, score.Total, 1);
+            AddAreaCoverage("Str_Report_Incomplete", score.Unknown, score.Total, 2);
             var problems = result.Checks.Where(check => check.EffectiveState is CheckState.Attention or CheckState.Repairable or CheckState.Unknown)
                 .OrderBy(check => ReviewPriority(check.EffectiveState)).ToArray();
             foreach (var check in problems.Take(2))

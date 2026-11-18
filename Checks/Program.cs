@@ -133,6 +133,11 @@ internal static class Program
                 TaskVerificationBoundaryChecks.Run();
                 return 0;
             }
+            if (args is ["--only", "overview-score"])
+            {
+                OverviewScoreChecks.Run();
+                return 0;
+            }
             if (args is ["--only", "bounded-reads"])
             {
                 BoundedReadChecks.RunAsync(Path.GetTempPath()).GetAwaiter().GetResult();
@@ -1157,6 +1162,7 @@ internal static class Program
             RecoveryRecordValidationChecks.RunAsync(scratch).GetAwaiter().GetResult();
             TaskVerificationBoundaryChecks.Run();
             BoundedReadChecks.RunAsync(scratch).GetAwaiter().GetResult();
+            OverviewScoreChecks.Run();
             ProfileInclusionChecks.RunAsync().GetAwaiter().GetResult();
             BitLockerAclChecks.RunAsync().GetAwaiter().GetResult();
             ServiceBinaryChecks.Run();

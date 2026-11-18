@@ -1337,6 +1337,15 @@
   <sys:String x:Key="Str_Workspace_Tools">Verktøy</sys:String>
   <sys:String x:Key="Str_Workspace_History">Historikk</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Kort oversikt over systemet</sys:String>
+  <sys:String x:Key="Str_Overview_Checked">kontrollert</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineReview">Å se gjennom: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineClear">Ingenting trenger oppmerksomhet</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineIncomplete">Ingenting funnet i bevisene som kunne leses</sys:String>
+  <sys:String x:Key="Str_Overview_Coverage">{0} av {1} kontroller ble kjørt. Kontroller som ikke kunne kjøres, forblir ukjente, ikke friske.</sys:String>
+  <sys:String x:Key="Str_Overview_Fixable">Kan repareres: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Review">Å se gjennom: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Unknown">Ukjent: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Fine">I orden: {0}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Velg et område for å se gjennom de tilhørende bevisene. Ingenting kontrolleres før du kjører diagnostikk.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Ikke kontrollert</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Velg et systemområde</sys:String>

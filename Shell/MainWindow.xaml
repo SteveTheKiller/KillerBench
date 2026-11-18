@@ -144,10 +144,27 @@
           <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/><Border>
           <ScrollViewer x:Name="OverviewScroll" Style="{StaticResource ShadowScrollViewer}" Padding="16" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
+              <Border x:Name="OverviewHero" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="12" Margin="4,0,4,6">
+                <DockPanel>
+                  <Grid DockPanel.Dock="Left" Width="108" Height="108" Margin="0,0,18,0" VerticalAlignment="Center">
+                    <icons:CoverageGauge x:Name="OverviewGauge" TrackBrush="{DynamicResource PaneBorderBrush}" CoverageBrush="{DynamicResource PrimaryBrush}" ToneBrush="{DynamicResource PaneBorderBrush}" IsHitTestVisible="False"/>
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                      <TextBlock x:Name="OverviewPercent" Text="0%" FontFamily="{DynamicResource HeadingFont}" FontSize="26" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                      <TextBlock Text="{DynamicResource Str_Overview_Checked}" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                  </Grid>
+                  <StackPanel VerticalAlignment="Center">
+                    <TextBlock x:Name="OverviewHeadline" Text="{DynamicResource Str_Workspace_SystemMap}" FontFamily="{DynamicResource HeadingFont}" FontSize="22" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="OverviewDetail" Text="{DynamicResource Str_Workspace_MapHint}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,8"/>
+                    <WrapPanel x:Name="OverviewChips" Margin="0,0,0,8" Visibility="Collapsed"/>
+                    <WrapPanel x:Name="OverviewMapActions"><Button x:Name="OverviewCheckButton" Content="{DynamicResource Str_Main_RunDiagnosis}" Click="OnOverviewCheck" Margin="0,0,8,6"/><Button x:Name="OverviewOpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture" Margin="0,0,0,6"/></WrapPanel>
+                  </StackPanel>
+                </DockPanel>
+              </Border>
               <ListBox x:Name="SystemAreas" Background="Transparent" BorderThickness="0" SelectionChanged="OnSystemAreaSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
                 <ListBox.ItemsPanel><ItemsPanelTemplate><icons:SystemMapPanel Stroke="{DynamicResource PrimaryBrush}" ConnectionBrush="{DynamicResource PaneBorderBrush}"/></ItemsPanelTemplate></ListBox.ItemsPanel>
                 <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}">
-                  <Setter Property="Padding" Value="10"/><Setter Property="Margin" Value="4,5"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Cursor" Value="Hand"/><Setter Property="AutomationProperties.Name" Value="{Binding Title}"/>
+                  <Setter Property="Padding" Value="10,8"/><Setter Property="Margin" Value="4,3"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Cursor" Value="Hand"/><Setter Property="AutomationProperties.Name" Value="{Binding Title}"/>
                   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="NodeFace" Background="{DynamicResource ContentPaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}"><Grid><ContentPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/><Border Style="{StaticResource FlyoutGrain}"/></Grid></Border><ControlTemplate.Triggers>
                     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="NodeFace" Property="Background" Value="{DynamicResource RowHoverBrush}"/></Trigger>
                     <Trigger Property="IsSelected" Value="True"><Setter TargetName="NodeFace" Property="Background" Value="{DynamicResource SelectionBg}"/><Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/></Trigger>
@@ -155,14 +172,23 @@
                   </ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
                 </Style></ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate><DataTemplate><DockPanel>
+                  <Border x:Name="AreaStripe" DockPanel.Dock="Bottom" Height="4" Margin="0,6,0,0" Background="{DynamicResource PaneBorderBrush}"/>
+                  <Border x:Name="AreaBadge" DockPanel.Dock="Right" VerticalAlignment="Top" MinWidth="22" Padding="6,1" Margin="8,0,0,0" CornerRadius="{DynamicResource ControlCornerRadius}" Background="{DynamicResource PaneBorderBrush}" Visibility="Collapsed">
+                    <TextBlock Text="{Binding Badge}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource BackgroundBrush}"/>
+                  </Border>
                   <icons:AreaIllustration x:Name="AreaArt" Id="{Binding Id}" Stroke="{DynamicResource PrimaryBrush}" Width="48" Height="48" DockPanel.Dock="Left" Margin="0,0,12,0" IsHitTestVisible="False"/>
                   <StackPanel VerticalAlignment="Center">
                     <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="14" TextWrapping="Wrap"/>
                     <TextBlock Text="{Binding EvidenceState}" TextWrapping="Wrap" FontSize="11" Opacity="0.75" Margin="0,5,0,0"/>
                   </StackPanel>
-                </DockPanel><DataTemplate.Triggers><DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True"><Setter TargetName="AreaArt" Property="Stroke" Value="{DynamicResource SelectionFg}"/></DataTrigger></DataTemplate.Triggers></DataTemplate></ListBox.ItemTemplate>
+                </DockPanel><DataTemplate.Triggers>
+                  <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True"><Setter TargetName="AreaArt" Property="Stroke" Value="{DynamicResource SelectionFg}"/></DataTrigger>
+                  <DataTrigger Binding="{Binding Tone}" Value="Clear"><Setter TargetName="AreaStripe" Property="Background" Value="{DynamicResource OkBrush}"/></DataTrigger>
+                  <DataTrigger Binding="{Binding Tone}" Value="Incomplete"><Setter TargetName="AreaStripe" Property="Background" Value="{DynamicResource MutedTextBrush}"/><Setter TargetName="AreaBadge" Property="Background" Value="{DynamicResource MutedTextBrush}"/><Setter TargetName="AreaBadge" Property="Visibility" Value="Visible"/></DataTrigger>
+                  <DataTrigger Binding="{Binding Tone}" Value="Review"><Setter TargetName="AreaStripe" Property="Background" Value="{DynamicResource WarnBrush}"/><Setter TargetName="AreaBadge" Property="Background" Value="{DynamicResource WarnBrush}"/><Setter TargetName="AreaBadge" Property="Visibility" Value="Visible"/></DataTrigger>
+                  <DataTrigger Binding="{Binding Tone}" Value="Fixable"><Setter TargetName="AreaStripe" Property="Background" Value="{DynamicResource DangerRed}"/><Setter TargetName="AreaBadge" Property="Background" Value="{DynamicResource DangerRed}"/><Setter TargetName="AreaBadge" Property="Visibility" Value="Visible"/></DataTrigger>
+                </DataTemplate.Triggers></DataTemplate></ListBox.ItemTemplate>
               </ListBox>
-              <WrapPanel x:Name="OverviewMapActions" Margin="4,14,4,0"><Button x:Name="OverviewCheckButton" Content="{DynamicResource Str_Main_RunDiagnosis}" Click="OnOverviewCheck" Margin="0,0,8,6"/><Button x:Name="OverviewOpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture" Margin="0,0,0,6"/></WrapPanel>
             </StackPanel>
           </ScrollViewer>
           </Border></Grid>

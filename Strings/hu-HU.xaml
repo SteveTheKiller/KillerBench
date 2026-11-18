@@ -1338,6 +1338,15 @@
   <sys:String x:Key="Str_Workspace_Tools">Eszközök</sys:String>
   <sys:String x:Key="Str_Workspace_History">Előzmények</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">A rendszer áttekintése</sys:String>
+  <sys:String x:Key="Str_Overview_Checked">ellenőrizve</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineReview">Áttekintendő: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineClear">Semmi sem igényel figyelmet</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineIncomplete">Az olvasható bizonyítékokban nem volt találat</sys:String>
+  <sys:String x:Key="Str_Overview_Coverage">{1} ellenőrzésből {0} futott le. A le nem futott ellenőrzések ismeretlenek maradnak, nem rendben lévők.</sys:String>
+  <sys:String x:Key="Str_Overview_Fixable">Javítható: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Review">Áttekintendő: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Unknown">Ismeretlen: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Fine">Rendben: {0}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Válasszon területet a hozzá tartozó bizonyítékok áttekintéséhez. Az ellenőrzések csak a diagnosztika indításakor futnak le.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Nincs ellenőrizve</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Válasszon rendszerterületet</sys:String>

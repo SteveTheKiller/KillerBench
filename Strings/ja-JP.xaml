@@ -1338,6 +1338,15 @@
   <sys:String x:Key="Str_Workspace_Tools">ツール</sys:String>
   <sys:String x:Key="Str_Workspace_History">履歴</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">システムの概要</sys:String>
+  <sys:String x:Key="Str_Overview_Checked">確認済み</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineReview">確認が必要な項目: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineClear">確認が必要な項目はありません</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineIncomplete">読み取れた証拠からは何も見つかりませんでした</sys:String>
+  <sys:String x:Key="Str_Overview_Coverage">{1} 件中 {0} 件のチェックを実行しました。実行できなかったチェックは正常ではなく不明として扱います。</sys:String>
+  <sys:String x:Key="Str_Overview_Fixable">修復可能: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Review">要確認: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Unknown">不明: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Fine">問題なし: {0}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">領域を選択して、その領域の証拠を確認します。診断を実行するまでチェックは行われません。</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">未確認</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">システムの領域を選択</sys:String>

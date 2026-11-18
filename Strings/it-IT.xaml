@@ -1338,6 +1338,15 @@
   <sys:String x:Key="Str_Workspace_Tools">Strumenti</sys:String>
   <sys:String x:Key="Str_Workspace_History">Cronologia</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Il tuo sistema a colpo d’occhio</sys:String>
+  <sys:String x:Key="Str_Overview_Checked">verificato</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineReview">Da esaminare: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineClear">Niente richiede attenzione</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineIncomplete">Nessun risultato nelle prove che è stato possibile leggere</sys:String>
+  <sys:String x:Key="Str_Overview_Coverage">Eseguite {0} verifiche su {1}. Quelle che non è stato possibile eseguire restano sconosciute, non integre.</sys:String>
+  <sys:String x:Key="Str_Overview_Fixable">Riparabili: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Review">Da esaminare: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Unknown">Sconosciute: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Fine">Corrette: {0}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Scegli un’area per esaminare le relative prove. Le verifiche iniziano solo quando avvii la diagnostica.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Non verificata</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Scegli un’area del sistema</sys:String>

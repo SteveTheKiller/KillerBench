@@ -1338,6 +1338,15 @@
   <sys:String x:Key="Str_Workspace_Tools">Outils</sys:String>
   <sys:String x:Key="Str_Workspace_History">Historique</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Votre système en un coup d’œil</sys:String>
+  <sys:String x:Key="Str_Overview_Checked">vérifié</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineReview">À examiner : {0}</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineClear">Rien ne demande d’attention</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineIncomplete">Rien n’a été trouvé dans les preuves lisibles</sys:String>
+  <sys:String x:Key="Str_Overview_Coverage">{0} vérifications sur {1} ont été effectuées. Celles qui n’ont pas pu s’exécuter restent inconnues, pas saines.</sys:String>
+  <sys:String x:Key="Str_Overview_Fixable">Réparables : {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Review">À examiner : {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Unknown">Inconnues : {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Fine">Correctes : {0}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Choisissez une zone pour examiner les preuves recueillies. Aucune vérification n’est effectuée avant le lancement du diagnostic.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Non vérifié</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Choisissez une zone du système</sys:String>

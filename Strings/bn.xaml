@@ -1338,6 +1338,15 @@
   <sys:String x:Key="Str_Workspace_Tools">সরঞ্জাম</sys:String>
   <sys:String x:Key="Str_Workspace_History">ইতিহাস</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">এক নজরে আপনার সিস্টেম</sys:String>
+  <sys:String x:Key="Str_Overview_Checked">পরীক্ষিত</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineReview">পর্যালোচনার বিষয়: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineClear">দেখার মতো কিছু নেই</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineIncomplete">যে প্রমাণ পড়া গেছে তাতে কিছু পাওয়া যায়নি</sys:String>
+  <sys:String x:Key="Str_Overview_Coverage">{1}টি পরীক্ষার মধ্যে {0}টি চলেছে। যে পরীক্ষা চলতে পারেনি তা অজানা থাকে, সুস্থ নয়।</sys:String>
+  <sys:String x:Key="Str_Overview_Fixable">ঠিক করা যায়: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Review">পর্যালোচনা: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Unknown">অজানা: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Fine">ঠিক আছে: {0}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">একটি বিভাগ বেছে নিয়ে তার প্রমাণ পর্যালোচনা করুন। ডায়াগনসিস চালানোর আগে কোনো পরীক্ষা হয় না।</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">পরীক্ষা করা হয়নি</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">সিস্টেমের একটি বিভাগ বেছে নিন</sys:String>

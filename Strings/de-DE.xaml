@@ -1338,6 +1338,15 @@
   <sys:String x:Key="Str_Workspace_Tools">Werkzeuge</sys:String>
   <sys:String x:Key="Str_Workspace_History">Verlauf</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Ihr System auf einen Blick</sys:String>
+  <sys:String x:Key="Str_Overview_Checked">geprüft</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineReview">Zu prüfen: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineClear">Nichts muss angesehen werden</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineIncomplete">In den lesbaren Nachweisen wurde nichts gefunden</sys:String>
+  <sys:String x:Key="Str_Overview_Coverage">{0} von {1} Prüfungen liefen. Prüfungen, die nicht laufen konnten, bleiben unbekannt und gelten nicht als fehlerfrei.</sys:String>
+  <sys:String x:Key="Str_Overview_Fixable">Behebbar: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Review">Zu prüfen: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Unknown">Unbekannt: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Fine">In Ordnung: {0}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Wählen Sie einen Bereich, um die zugehörigen Nachweise einzusehen. Erst wenn Sie die Diagnose starten, werden Prüfungen ausgeführt.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Nicht geprüft</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Systembereich auswählen</sys:String>

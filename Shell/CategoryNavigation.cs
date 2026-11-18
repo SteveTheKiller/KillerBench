@@ -16,6 +16,11 @@ public partial class MainWindow
         public string Description => LocalizedText.Get("Str_Category_" + Id + "_Description");
         public string StateKey { get; set; } = "Str_Workspace_NotChecked";
         public string EvidenceState => LocalizedText.Get(StateKey);
+        public OverviewScore? Score { get; set; }
+        public OverviewTone Tone => Score?.Tone ?? OverviewTone.NotChecked;
+        public string Badge => Score is null ? string.Empty
+            : Score.NeedsAttention > 0 ? Score.NeedsAttention.ToString(System.Globalization.CultureInfo.CurrentCulture)
+            : Score.Tone == OverviewTone.Incomplete ? "?" : string.Empty;
 
         public string Icon => ((char)(Id switch
         {

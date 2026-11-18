@@ -1338,6 +1338,15 @@
   <sys:String x:Key="Str_Workspace_Tools">Инструменты</sys:String>
   <sys:String x:Key="Str_Workspace_History">История</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Краткий обзор системы</sys:String>
+  <sys:String x:Key="Str_Overview_Checked">проверено</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineReview">Требуют просмотра: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineClear">Ничто не требует внимания</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineIncomplete">В прочитанных данных ничего не найдено</sys:String>
+  <sys:String x:Key="Str_Overview_Coverage">Выполнено проверок: {0} из {1}. Проверки, которые не удалось выполнить, остаются неизвестными, а не исправными.</sys:String>
+  <sys:String x:Key="Str_Overview_Fixable">Можно исправить: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Review">На просмотр: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Unknown">Неизвестно: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Fine">В порядке: {0}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Выберите область, чтобы просмотреть собранные для неё данные. Проверки выполняются только после запуска диагностики.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Не проверено</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Выберите область системы</sys:String>

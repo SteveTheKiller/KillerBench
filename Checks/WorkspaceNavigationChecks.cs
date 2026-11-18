@@ -66,8 +66,8 @@ internal static class WorkspaceNavigationChecks
             window.Height = 1000;
             Settle(window);
             var mapPane = Find<FrameworkElement>(window, "OverviewPage");
-            var mapAction = Find<Button>(window, "OverviewCheckButton");
-            Require(mapAction.TranslatePoint(new Point(0, mapAction.ActualHeight), mapPane).Y >= mapPane.ActualHeight - 50,
+            // The actions now sit in the hero above the map, so the map's own bottom edge is the measure.
+            Require(map.TranslatePoint(new Point(0, map.ActualHeight), mapPane).Y >= mapPane.ActualHeight - 50,
                 "The map grows with a taller window instead of leaving a large blank block beneath the cards.");
             window.Width = 1025;
             window.Height = 780;
@@ -370,9 +370,13 @@ internal static class WorkspaceNavigationChecks
             var chart = Find<Grid>(window, "AreaCoverageChart");
             var cards = Find<StackPanel>(window, "AreaReviewCards");
             string[] values = chart.Children.OfType<StackPanel>().Select(stack => stack.Children.OfType<TextBlock>().First().Text).ToArray();
-            Require(chart.IsVisible && values.SequenceEqual(new[] { "6", "2", "1" }) && cards.Children.Count == 2 &&
+            Require(chart.IsVisible && values.SequenceEqual(new[] { "5", "1", "1" }) && cards.Children.Count == 2 &&
                 Find<TextBlock>(window, "AreaState").Text.Contains("Demo", StringComparison.OrdinalIgnoreCase),
-                "The storage summary charts six recorded checks, two review items and one incomplete check with demo provenance. Values: " + string.Join(",", values));
+                "The storage summary charts five checks that ran, one review item and one unknown check, never counting the unknown as review too. Values: " + string.Join(",", values));
+            Require(Find<TextBlock>(window, "OverviewPercent").Text == "83%" &&
+                Find<WrapPanel>(window, "OverviewChips").Children.Count == 3,
+                "The Overview gauge shows the same storage result as 83% checked with review, unknown and fine chips. Gauge: " +
+                Find<TextBlock>(window, "OverviewPercent").Text);
             Require(VisualElements(cards).OfType<TextBlock>().Any(text => text.Text.Contains("11.8 GB", StringComparison.Ordinal)) &&
                     VisualElements(cards).OfType<TextBlock>().Any(text => text.Text.Contains("no healthy verdict", StringComparison.Ordinal)),
                 "Review cards retain the actual storage finding and unavailable-health boundary.");

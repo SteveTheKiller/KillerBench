@@ -392,9 +392,10 @@ internal static class DemoScreenshotChecks
                 areas.SelectedIndex = 0;
                 Settle(window);
                 var coverage = (Grid)window.FindName("AreaCoverageChart");
-                Require(coverage.IsVisible && ((StackPanel)coverage.Children[0]).Children.OfType<TextBlock>().First().Text == "6" &&
+                // Five of the six demo checks ran; the unknown one is not counted as checked.
+                Require(coverage.IsVisible && ((StackPanel)coverage.Children[0]).Children.OfType<TextBlock>().First().Text == "5" &&
                         ((TextBlock)window.FindName("AreaTitle")).Text == "Diagnostics",
-                    "Returning from an unchecked area restores its scoped summary and six recorded checks.");
+                    "Returning from an unchecked area restores its scoped summary and five checks that ran.");
             }
             if (shot.Raw) Call(window, "ShowRawOutput");
             if (shot.OutputHidden) Call(window, "SetOutputOpen", false);

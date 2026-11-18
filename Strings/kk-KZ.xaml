@@ -1338,6 +1338,15 @@
   <sys:String x:Key="Str_Workspace_Tools">Құралдар</sys:String>
   <sys:String x:Key="Str_Workspace_History">Тарих</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Жүйеңізге қысқаша шолу</sys:String>
+  <sys:String x:Key="Str_Overview_Checked">тексерілді</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineReview">Қарап шығу керек: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineClear">Назар аударатын ештеңе жоқ</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineIncomplete">Оқылған дәлелдерден ештеңе табылмады</sys:String>
+  <sys:String x:Key="Str_Overview_Coverage">{1} тексерудің {0} орындалды. Орындалмаған тексерулер белгісіз болып қалады, қалыпты деп саналмайды.</sys:String>
+  <sys:String x:Key="Str_Overview_Fixable">Түзетуге болады: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Review">Қарап шығу: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Unknown">Белгісіз: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Fine">Қалыпты: {0}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Тиісті дәлелдерді қарау үшін бір аймақты таңдаңыз. Тексерулер диагностиканы іске қосқаннан кейін ғана орындалады.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Тексерілмеген</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Жүйе аймағын таңдаңыз</sys:String>

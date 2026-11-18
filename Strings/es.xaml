@@ -1338,6 +1338,15 @@
   <sys:String x:Key="Str_Workspace_Tools">Herramientas</sys:String>
   <sys:String x:Key="Str_Workspace_History">Historial</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Tu sistema de un vistazo</sys:String>
+  <sys:String x:Key="Str_Overview_Checked">comprobado</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineReview">Para revisar: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineClear">Nada requiere atención</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineIncomplete">No se encontró nada en la evidencia que se pudo leer</sys:String>
+  <sys:String x:Key="Str_Overview_Coverage">Se ejecutaron {0} de {1} comprobaciones. Las que no pudieron ejecutarse quedan como desconocidas, no como correctas.</sys:String>
+  <sys:String x:Key="Str_Overview_Fixable">Reparables: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Review">Para revisar: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Unknown">Desconocidas: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Fine">Correctas: {0}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Elige un área para revisar su evidencia. No se comprueba nada hasta que ejecutes el diagnóstico.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Sin comprobar</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Elige un área del sistema</sys:String>

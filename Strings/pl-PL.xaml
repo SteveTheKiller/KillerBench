@@ -1338,6 +1338,15 @@
   <sys:String x:Key="Str_Workspace_Tools">Narzędzia</sys:String>
   <sys:String x:Key="Str_Workspace_History">Historia</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Twój system w skrócie</sys:String>
+  <sys:String x:Key="Str_Overview_Checked">sprawdzono</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineReview">Do przejrzenia: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineClear">Nic nie wymaga uwagi</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineIncomplete">W dowodach, które udało się odczytać, niczego nie znaleziono</sys:String>
+  <sys:String x:Key="Str_Overview_Coverage">Wykonano {0} z {1} kontroli. Kontrole, których nie dało się wykonać, pozostają nieznane, a nie poprawne.</sys:String>
+  <sys:String x:Key="Str_Overview_Fixable">Do naprawy: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Review">Do przejrzenia: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Unknown">Nieznane: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Fine">W porządku: {0}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Wybierz obszar, aby przejrzeć związane z nim dowody. Kontrole rozpoczną się dopiero po uruchomieniu diagnostyki.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Nie sprawdzono</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Wybierz obszar systemu</sys:String>

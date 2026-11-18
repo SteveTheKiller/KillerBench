@@ -1337,6 +1337,15 @@
   <sys:String x:Key="Str_Workspace_Tools">Orodja</sys:String>
   <sys:String x:Key="Str_Workspace_History">Zgodovina</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Vaš sistem na kratko</sys:String>
+  <sys:String x:Key="Str_Overview_Checked">preverjeno</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineReview">Za pregled: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineClear">Nič ne potrebuje pozornosti</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineIncomplete">V dokazih, ki jih je bilo mogoče prebrati, ni bilo najdeno nič</sys:String>
+  <sys:String x:Key="Str_Overview_Coverage">Izvedenih je bilo {0} od {1} preverjanj. Preverjanja, ki se niso mogla izvesti, ostanejo neznana, ne v redu.</sys:String>
+  <sys:String x:Key="Str_Overview_Fixable">Popravljivo: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Review">Za pregled: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Unknown">Neznano: {0}</sys:String>
+  <sys:String x:Key="Str_Overview_Fine">V redu: {0}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">Izberite področje, da pregledate zbrane dokaze zanj. Preverjanja se izvedejo šele, ko zaženete diagnostiko.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Ni preverjeno</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Izberite področje sistema</sys:String>

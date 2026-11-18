@@ -1338,6 +1338,15 @@
   <sys:String x:Key="Str_Workspace_Tools">工具</sys:String>
   <sys:String x:Key="Str_Workspace_History">历史记录</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">系统概况</sys:String>
+  <sys:String x:Key="Str_Overview_Checked">已检查</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineReview">需要查看：{0}</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineClear">没有需要关注的项目</sys:String>
+  <sys:String x:Key="Str_Overview_HeadlineIncomplete">在可读取的证据中未发现问题</sys:String>
+  <sys:String x:Key="Str_Overview_Coverage">已运行 {0}/{1} 项检查。无法运行的检查保持为未知，而不是正常。</sys:String>
+  <sys:String x:Key="Str_Overview_Fixable">可修复：{0}</sys:String>
+  <sys:String x:Key="Str_Overview_Review">待查看：{0}</sys:String>
+  <sys:String x:Key="Str_Overview_Unknown">未知：{0}</sys:String>
+  <sys:String x:Key="Str_Overview_Fine">正常：{0}</sys:String>
   <sys:String x:Key="Str_Workspace_MapHint">选择一个区域以查看相关证据。运行诊断前不会执行任何检查。</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">未检查</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">选择系统区域</sys:String>
