@@ -22,27 +22,28 @@ public sealed class MachineMapPanel : Panel
     public static bool GetIsDrawn(DependencyObject element) => (bool)element.GetValue(IsDrawnProperty);
     public static void SetIsDrawn(DependencyObject element, bool value) => element.SetValue(IsDrawnProperty, value);
 
-    private const double DesignWidth = 760, DesignHeight = 460, MinDrawnWidth = 460;
+    private const double DesignWidth = 740, DesignHeight = 430, MinDrawnWidth = 460;
 
-    // Part hotspots in design coordinates.
+    // Part hotspots in design coordinates. The parts fill the screen and the case so the machine reads at a glance.
     private static readonly Dictionary<string, Rect> Parts = new()
     {
-        ["Privacy"] = new(192, 16, 56, 36),
-        ["Updates"] = new(40, 58, 160, 88),
-        ["Apps"] = new(226, 60, 86, 56),
-        ["Diagnostics"] = new(40, 160, 160, 80),
-        ["Onboarding"] = new(226, 160, 120, 74),
-        ["Security"] = new(376, 240, 40, 36),
-        ["Maintenance"] = new(668, 58, 66, 66),
-        ["Storage"] = new(494, 162, 108, 70),
-        ["BitLocker"] = new(616, 178, 50, 38),
-        ["Network"] = new(478, 238, 66, 62),
-        ["Devices"] = new(556, 238, 62, 50),
-        ["Repair"] = new(488, 348, 154, 74),
+        ["Privacy"] = new(182, 0, 72, 37),
+        ["Updates"] = new(24, 40, 206, 112),
+        ["Apps"] = new(240, 40, 178, 112),
+        ["Diagnostics"] = new(24, 162, 206, 104),
+        ["Onboarding"] = new(240, 162, 132, 104),
+        ["Security"] = new(380, 236, 38, 40),
+        ["Maintenance"] = new(626, 22, 102, 102),
+        ["Storage"] = new(452, 134, 150, 92),
+        ["BitLocker"] = new(612, 140, 116, 74),
+        ["Network"] = new(452, 236, 110, 92),
+        ["Devices"] = new(572, 236, 72, 92),
+        ["Repair"] = new(448, 340, 284, 82),
     };
 
-    private static readonly Rect MonitorScreen = new(24, 40, 392, 236);
-    private static readonly Rect TowerBoard = new(474, 24, 262, 300);
+    private static readonly Rect Monitor = new(4, 4, 424, 300);
+    private static readonly Rect MonitorScreen = new(16, 32, 410, 260);
+    private static readonly Rect Tower = new(438, 4, 300, 424);
 
     public Rect ScreenRect { get; private set; } = Rect.Empty;
     public Rect TowerRect { get; private set; } = Rect.Empty;
@@ -82,7 +83,7 @@ public sealed class MachineMapPanel : Panel
         scale = Math.Min(finalSize.Width / DesignWidth, finalSize.Height / DesignHeight);
         offset = new Vector((finalSize.Width - DesignWidth * scale) / 2, 0);
         ScreenRect = ToView(MonitorScreen);
-        TowerRect = ToView(new Rect(TowerBoard.X, TowerBoard.Y, TowerBoard.Width, 400));
+        TowerRect = ToView(Tower);
         foreach (UIElement child in InternalChildren)
             child.Arrange(Parts.TryGetValue(GetPart(child), out var part) ? ToView(part) : new Rect(-9999, -9999, 0, 0));
         InvalidateVisual();
@@ -95,7 +96,7 @@ public sealed class MachineMapPanel : Panel
         Chip = Solid(0xFF151514), Gold = Solid(0xFFB89A3C), Metal = Solid(0xFF3E3D38), MetalEdge = Solid(0xFF5C5A53), Silver = Solid(0xFFBDBDB6),
         CpuLid = Solid(0xFFC9C8C1), CpuBase = Solid(0xFF9A9A94), Paper = Solid(0xFFF1F1EE), TitleBar = Solid(0xFFDCDCD6), Ink = Solid(0xFF222222),
         Blue = Solid(0xFF2A6FD6), Orange = Solid(0xFFD65A2A), UsbBlue = Solid(0xFF2B5FBF), Lens = Solid(0xFF24344A), Taskbar = Solid(0xFF0B0F15),
-        Label = Solid(0xFFE9E6DA), Dark = Solid(0xFF111111), Ram = Solid(0xFF20201E), RamChip = Solid(0xFF2E2D2A);
+        Dark = Solid(0xFF111111), Ram = Solid(0xFF20201E), RamChip = Solid(0xFF2E2D2A), NvmeBoard = Solid(0xFF173A2A), Blade = Solid(0xFF666666);
     private static readonly Brush ScreenFill = Freeze(new LinearGradientBrush(Color.FromRgb(0x1D, 0x2A, 0x3A), Color.FromRgb(0x0F, 0x16, 0x20), 45));
     private static Brush Freeze(Brush brush) { brush.Freeze(); return brush; }
     private static Pen Line(Brush brush, double thickness) { var pen = new Pen(brush, thickness); pen.Freeze(); return pen; }
@@ -122,36 +123,40 @@ public sealed class MachineMapPanel : Panel
 
     private void Window(DrawingContext dc, Rect r, string title)
     {
-        dc.DrawRoundedRectangle(Paper, null, r, 4, 4);
-        dc.DrawRoundedRectangle(TitleBar, null, new Rect(r.X, r.Y, r.Width, 14), 4, 4);
-        Text(dc, title, r.X + 8, r.Y + 30, 9, Ink, bold: true);
+        dc.DrawRoundedRectangle(Paper, null, r, 5, 5);
+        dc.DrawRoundedRectangle(TitleBar, null, new Rect(r.X, r.Y, r.Width, 18), 5, 5);
+        dc.DrawRectangle(TitleBar, null, new Rect(r.X, r.Y + 10, r.Width, 8));
+        Text(dc, title, r.X + 10, r.Y + 38, 13, Ink, bold: true);
     }
 
     private void DrawMonitor(DrawingContext dc)
     {
-        var edge = Line(Edge, 2);
-        dc.DrawRoundedRectangle(Case, edge, new Rect(10, 20, 420, 284), 12, 12);
-        dc.DrawRectangle(ScreenFill, null, MonitorScreen);
-        dc.DrawRectangle(Taskbar, null, new Rect(MonitorScreen.X, MonitorScreen.Bottom - 20, MonitorScreen.Width, 20));
-        dc.DrawRectangle(Metal, null, new Rect(190, 304, 60, 38));
-        dc.DrawRoundedRectangle(Metal, null, new Rect(140, 342, 160, 12), 5, 5);
+        dc.DrawRoundedRectangle(Case, Line(Edge, 2), Monitor, 12, 12);
+        dc.DrawRectangle(ScreenFill, null, new Rect(MonitorScreen.X, MonitorScreen.Y, MonitorScreen.Width - 12, MonitorScreen.Height - 4));
+        dc.DrawRectangle(Taskbar, null, new Rect(MonitorScreen.X, 270, MonitorScreen.Width - 12, 18));
+        dc.DrawRectangle(Metal, null, new Rect(186, 304, 60, 96));
+        dc.DrawRoundedRectangle(Metal, null, new Rect(116, 400, 200, 16), 6, 6);
 
         // Privacy: the webcam on the top bezel.
-        dc.DrawRoundedRectangle(Dark, null, new Rect(203, 30, 34, 10), 5, 5);
-        dc.DrawEllipse(Lens, Line(MetalEdge, 1), new Point(220, 35), 3.2, 3.2);
+        var cam = Parts["Privacy"];
+        dc.DrawRoundedRectangle(Dark, null, new Rect(cam.X + 14, cam.Y + 12, cam.Width - 28, 14), 7, 7);
+        dc.DrawEllipse(Lens, Line(MetalEdge, 1), new Point(cam.X + cam.Width / 2, cam.Y + 19), 4.5, 4.5);
 
-        // Updates: a Windows Update window with a progress bar.
+        // Updates: a Windows Update window with a refresh arrow and progress bar.
         var updates = Parts["Updates"];
         Window(dc, updates, "Windows Update");
-        dc.DrawEllipse(null, Line(Blue, 3), new Point(updates.X + 22, updates.Y + 56), 12, 12);
-        dc.DrawRoundedRectangle(TitleBar, null, new Rect(updates.X + 44, updates.Y + 54, updates.Width - 56, 5), 2, 2);
-        dc.DrawRoundedRectangle(Blue, null, new Rect(updates.X + 44, updates.Y + 54, (updates.Width - 56) * .3, 5), 2, 2);
+        dc.DrawEllipse(null, Line(Blue, 4), new Point(updates.X + 34, updates.Y + 76), 18, 18);
+        dc.DrawGeometry(Blue, null, Geometry.Parse($"M{updates.X + 46},{updates.Y + 54} l8,0 l-2,10 z"));
+        dc.DrawRoundedRectangle(TitleBar, null, new Rect(updates.X + 64, updates.Y + 72, updates.Width - 80, 8), 4, 4);
+        dc.DrawRoundedRectangle(Blue, null, new Rect(updates.X + 64, updates.Y + 72, (updates.Width - 80) * .3, 8), 4, 4);
 
-        // Apps: a block of app icons.
+        // Apps: a grid of app icons.
         var apps = Parts["Apps"];
-        Brush[] tiles = [Blue, Orange, Solid(0xFF3AA35A), Solid(0xFF8A4FD6), Solid(0xFFD6B52A), Solid(0xFF2AB5D6)];
-        for (int index = 0; index < 6; index++)
-            dc.DrawRoundedRectangle(tiles[index], null, new Rect(apps.X + 4 + index % 3 * 28, apps.Y + 4 + index / 3 * 28, 22, 22), 5, 5);
+        Brush[] tiles = [Blue, Orange, Solid(0xFF3AA35A), Solid(0xFF8A4FD6), Solid(0xFFD6B52A), Solid(0xFF2AB5D6), Solid(0xFFD62A6F), Solid(0xFF7A7A72)];
+        double tile = (apps.Height - 24) / 2;
+        double gap = (apps.Width - tile * 4) / 5;
+        for (int index = 0; index < 8; index++)
+            dc.DrawRoundedRectangle(tiles[index], null, new Rect(apps.X + gap + index % 4 * (tile + gap), apps.Y + 8 + index / 4 * (tile + 8), tile, tile), 8, 8);
 
         // Diagnostics: a reliability chart window.
         var diagnostics = Parts["Diagnostics"];
@@ -159,107 +164,128 @@ public sealed class MachineMapPanel : Panel
         var trend = new StreamGeometry();
         using (var g = trend.Open())
         {
-            double[] ys = [.8, .65, .72, .35, .58, .45, .66, .5];
-            g.BeginFigure(new Point(diagnostics.X + 10, diagnostics.Y + 36 + ys[0] * 36), false, false);
+            double[] ys = [.8, .6, .72, .25, .55, .4, .68, .45, .6];
+            double top = diagnostics.Y + 50, height = diagnostics.Height - 62;
+            g.BeginFigure(new Point(diagnostics.X + 12, top + ys[0] * height), false, false);
             for (int index = 1; index < ys.Length; index++)
-                g.LineTo(new Point(diagnostics.X + 10 + index * (diagnostics.Width - 20) / (ys.Length - 1), diagnostics.Y + 36 + ys[index] * 36), true, false);
+                g.LineTo(new Point(diagnostics.X + 12 + index * (diagnostics.Width - 24) / (ys.Length - 1), top + ys[index] * height), true, false);
         }
         trend.Freeze();
-        dc.DrawGeometry(null, Line(Orange, 2), trend);
+        dc.DrawGeometry(null, Line(Orange, 3), trend);
 
         // Onboarding: a setup checklist window.
         var onboarding = Parts["Onboarding"];
         Window(dc, onboarding, "Setup");
         for (int row = 0; row < 3; row++)
         {
-            dc.DrawRectangle(null, Line(Blue, 1.5), new Rect(onboarding.X + 10, onboarding.Y + 38 + row * 11, 7, 7));
-            dc.DrawRectangle(TitleBar, null, new Rect(onboarding.X + 22, onboarding.Y + 40 + row * 11, onboarding.Width - 34, 4));
+            dc.DrawRectangle(null, Line(Blue, 2), new Rect(onboarding.X + 12, onboarding.Y + 52 + row * 16, 10, 10));
+            dc.DrawRectangle(TitleBar, null, new Rect(onboarding.X + 30, onboarding.Y + 55 + row * 16, onboarding.Width - 44, 5));
         }
 
         // Security: the shield in the tray.
         var security = Parts["Security"];
-        var shield = Geometry.Parse($"M{security.X + 20},{security.Y + 5} l10,4 v7 c0,6 -5,10 -10,12 c-5,-2 -10,-6 -10,-12 v-7 z");
+        var shield = Geometry.Parse($"M{security.X + 19},{security.Y + 4} l14,6 v10 c0,9 -7,14 -14,17 c-7,-3 -14,-8 -14,-17 v-10 z");
         dc.DrawGeometry(Blue, null, shield);
+        dc.DrawGeometry(null, Line(Brushes.White, 2.5), Geometry.Parse($"M{security.X + 12},{security.Y + 20} l5,5 l9,-9"));
     }
 
     private void DrawTower(DrawingContext dc)
     {
-        dc.DrawRoundedRectangle(Case, Line(Edge, 2), new Rect(460, 10, 290, 440), 10, 10);
-        dc.DrawRoundedRectangle(Pcb, null, TowerBoard, 4, 4);
+        dc.DrawRoundedRectangle(Case, Line(Edge, 2), Tower, 10, 10);
+        var board = new Rect(Tower.X + 8, Tower.Y + 10, Tower.Width - 16, 322);
+        dc.DrawRoundedRectangle(Pcb, null, board, 4, 4);
         var trace = Line(PcbTrace, 1.4);
-        for (int index = 0; index < 12; index++)
-            dc.DrawLine(trace, new Point(TowerBoard.X + 10, TowerBoard.Y + 14 + index * 24), new Point(TowerBoard.X + 60 + index * 8, TowerBoard.Y + 14 + index * 24));
+        for (int index = 0; index < 13; index++)
+            dc.DrawLine(trace, new Point(board.X + 6, board.Y + 8 + index * 24), new Point(board.Right - 6, board.Y + 8 + index * 24));
 
         // CPU and RAM are scenery, the parts people recognize first.
-        dc.DrawRoundedRectangle(CpuBase, null, new Rect(560, 64, 70, 70), 4, 4);
-        dc.DrawRoundedRectangle(CpuLid, null, new Rect(568, 72, 54, 54), 3, 3);
-        Text(dc, "CPU", 595, 103, 10, Ink, bold: true, center: true);
-        for (int stick = 0; stick < 2; stick++)
+        dc.DrawRoundedRectangle(CpuBase, null, new Rect(454, 22, 102, 102), 5, 5);
+        dc.DrawRoundedRectangle(CpuLid, null, new Rect(464, 32, 82, 82), 4, 4);
+        Text(dc, "CPU", 505, 78, 15, Ink, bold: true, center: true);
+        for (int stick = 0; stick < 4; stick++)
         {
-            dc.DrawRoundedRectangle(Ram, Line(MetalEdge, 1), new Rect(500 + stick * 13, 40, 9, 110), 1.5, 1.5);
-            dc.DrawRectangle(RamChip, null, new Rect(501.5 + stick * 13, 50, 6, 90));
+            dc.DrawRoundedRectangle(Ram, Line(MetalEdge, 1), new Rect(566 + stick * 14, 22, 10, 102), 1.5, 1.5);
+            dc.DrawRectangle(RamChip, null, new Rect(568 + stick * 14, 32, 6, 82));
         }
 
         // Maintenance: the case fan.
         var fan = Parts["Maintenance"];
         var hub = new Point(fan.X + fan.Width / 2, fan.Y + fan.Height / 2);
-        double radius = fan.Width / 2 - 2;
-        dc.DrawEllipse(Dark, Line(MetalEdge, 1.5), hub, radius, radius);
-        var blade = Line(Solid(0xFF666666), 5);
+        double radius = fan.Width / 2 - 3;
+        dc.DrawEllipse(Dark, Line(MetalEdge, 2), hub, radius, radius);
+        var blade = Line(Blade, 9);
         for (int index = 0; index < 5; index++)
         {
             double angle = index * Math.PI * 2 / 5;
-            dc.DrawLine(blade, hub, new Point(hub.X + Math.Cos(angle) * radius * .8, hub.Y + Math.Sin(angle) * radius * .8));
+            dc.DrawLine(blade, hub, new Point(hub.X + Math.Cos(angle) * radius * .78, hub.Y + Math.Sin(angle) * radius * .78));
         }
-        dc.DrawEllipse(Metal, null, hub, 7, 7);
+        dc.DrawEllipse(Metal, null, hub, 11, 11);
 
         // Storage: two NVMe sticks.
         var storage = Parts["Storage"];
         for (int stick = 0; stick < 2; stick++)
         {
-            double y = storage.Y + 8 + stick * 32;
-            dc.DrawRoundedRectangle(Solid(0xFF173A2A), null, new Rect(storage.X + 4, y, storage.Width - 8, 22), 2, 2);
-            for (int chip = 0; chip < 3; chip++) dc.DrawRectangle(Chip, null, new Rect(storage.X + 12 + chip * 28, y + 4, 22, 14));
-            dc.DrawRectangle(Gold, null, new Rect(storage.Right - 10, y + 3, 6, 16));
+            double y = storage.Y + 8 + stick * 42;
+            dc.DrawRoundedRectangle(NvmeBoard, Line(PcbTrace, 1), new Rect(storage.X + 4, y, storage.Width - 8, 34), 3, 3);
+            for (int chip = 0; chip < 3; chip++) dc.DrawRectangle(Chip, null, new Rect(storage.X + 12 + chip * 40, y + 6, 32, 22));
+            dc.DrawRectangle(Gold, null, new Rect(storage.Right - 14, y + 4, 8, 26));
         }
 
-        // BitLocker: the TPM chip.
+        // BitLocker: the TPM chip with its pins.
         var tpm = Parts["BitLocker"];
-        dc.DrawRoundedRectangle(Chip, Line(MetalEdge, 1), new Rect(tpm.X + 6, tpm.Y + 7, tpm.Width - 12, tpm.Height - 14), 2, 2);
-        Text(dc, "TPM", tpm.X + tpm.Width / 2, tpm.Y + tpm.Height / 2 + 4, 9, Silver, center: true);
+        var body = new Rect(tpm.X + 22, tpm.Y + 12, tpm.Width - 44, tpm.Height - 24);
+        var pin = Line(Silver, 2);
+        for (int index = 0; index < 6; index++)
+        {
+            double x = body.X + 6 + index * (body.Width - 12) / 5;
+            dc.DrawLine(pin, new Point(x, body.Y - 6), new Point(x, body.Y));
+            dc.DrawLine(pin, new Point(x, body.Bottom), new Point(x, body.Bottom + 6));
+        }
+        dc.DrawRoundedRectangle(Chip, Line(MetalEdge, 1), body, 3, 3);
+        Text(dc, "TPM", body.X + body.Width / 2, body.Y + body.Height / 2 + 6, 15, Silver, bold: true, center: true);
 
         // Network: the Ethernet port with its link light, and the Wi-Fi card.
         var network = Parts["Network"];
-        dc.DrawRoundedRectangle(Silver, null, new Rect(network.X + 6, network.Y + 4, 30, 26), 2, 2);
-        dc.DrawRectangle(Dark, null, new Rect(network.X + 11, network.Y + 9, 20, 14));
-        dc.DrawRectangle(Dark, null, new Rect(network.X + 17, network.Y + 23, 8, 4));
-        dc.DrawEllipse(Solid(0xFF4FC36B), null, new Point(network.X + 10, network.Y + 7), 1.8, 1.8);
-        dc.DrawRoundedRectangle(Solid(0xFF173A2A), null, new Rect(network.X + 6, network.Y + 38, 54, 16), 2, 2);
-        dc.DrawRectangle(Chip, null, new Rect(network.X + 12, network.Y + 41, 16, 10));
-        dc.DrawEllipse(Gold, null, new Point(network.X + 40, network.Y + 46), 3, 3);
-        dc.DrawEllipse(Gold, null, new Point(network.X + 50, network.Y + 46), 3, 3);
+        var port = new Rect(network.X + 8, network.Y + 6, 52, 44);
+        dc.DrawRoundedRectangle(Silver, null, port, 3, 3);
+        dc.DrawRectangle(Dark, null, new Rect(port.X + 8, port.Y + 8, port.Width - 16, 24));
+        dc.DrawRectangle(Dark, null, new Rect(port.X + 18, port.Y + 32, port.Width - 36, 6));
+        dc.DrawEllipse(Solid(0xFF4FC36B), null, new Point(port.X + 6, port.Y + 5), 2.5, 2.5);
+        var wifi = new Rect(network.X + 8, network.Y + 58, network.Width - 16, 26);
+        dc.DrawRoundedRectangle(NvmeBoard, Line(PcbTrace, 1), wifi, 3, 3);
+        dc.DrawRectangle(Chip, null, new Rect(wifi.X + 8, wifi.Y + 5, 30, 16));
+        dc.DrawEllipse(Gold, null, new Point(wifi.Right - 30, wifi.Y + 13), 5, 5);
+        dc.DrawEllipse(Gold, null, new Point(wifi.Right - 14, wifi.Y + 13), 5, 5);
 
         // Devices: USB ports and the audio jacks.
         var devices = Parts["Devices"];
-        for (int port = 0; port < 2; port++)
+        for (int index = 0; index < 2; index++)
         {
-            dc.DrawRoundedRectangle(Silver, null, new Rect(devices.X + 4, devices.Y + 8 + port * 16, 26, 10), 1, 1);
-            dc.DrawRectangle(UsbBlue, null, new Rect(devices.X + 7, devices.Y + 11 + port * 16, 20, 4));
+            var usb = new Rect(devices.X + 8, devices.Y + 8 + index * 22, devices.Width - 16, 16);
+            dc.DrawRoundedRectangle(Silver, null, usb, 2, 2);
+            dc.DrawRectangle(UsbBlue, null, new Rect(usb.X + 5, usb.Y + 5, usb.Width - 10, 6));
         }
         Brush[] jacks = [Solid(0xFF6DB04F), Solid(0xFFE0C040), Solid(0xFFE46BA0)];
-        for (int jack = 0; jack < 3; jack++) dc.DrawEllipse(jacks[jack], null, new Point(devices.X + 46, devices.Y + 11 + jack * 12), 4, 4);
+        for (int jack = 0; jack < 3; jack++)
+        {
+            var center = new Point(devices.X + 16 + jack * (devices.Width - 32) / 2, devices.Y + 72);
+            dc.DrawEllipse(jacks[jack], null, center, 7, 7);
+            dc.DrawEllipse(Dark, null, center, 2.5, 2.5);
+        }
 
-        // Repair: the power supply.
+        // Scenery: a SATA SSD in the free corner of the board.
+        dc.DrawRoundedRectangle(Metal, Line(MetalEdge, 1), new Rect(654, 236, 74, 92), 4, 4);
+        Text(dc, "SSD", 691, 286, 14, Silver, bold: true, center: true);
+
+        // Repair: the power supply across the bottom of the case.
         var psu = Parts["Repair"];
-        dc.DrawRoundedRectangle(Metal, Line(MetalEdge, 1), new Rect(psu.X + 2, psu.Y + 2, psu.Width - 4, psu.Height - 4), 4, 4);
-        dc.DrawEllipse(Dark, Line(Solid(0xFF666666), 1), new Point(psu.X + psu.Width / 2, psu.Y + psu.Height / 2), psu.Height / 2 - 9, psu.Height / 2 - 9);
-        Text(dc, "PSU", psu.X + 10, psu.Bottom - 10, 9, Silver);
-
-        // SATA SSD as scenery beside the drives, and the power button and vents along the bottom.
-        dc.DrawRoundedRectangle(Metal, Line(MetalEdge, 1), new Rect(640, 238, 84, 54), 4, 4);
-        Text(dc, "SSD", 682, 270, 10, Silver, center: true);
-        var vent = Line(Edge, 1.5);
-        for (int slot = 0; slot < 5; slot++) dc.DrawLine(vent, new Point(660, 380 + slot * 6), new Point(724, 380 + slot * 6));
-        dc.DrawEllipse(null, Line(Edge, 2), new Point(706, 428), 7, 7);
+        dc.DrawRoundedRectangle(Metal, Line(MetalEdge, 1.5), new Rect(psu.X + 2, psu.Y + 2, psu.Width - 4, psu.Height - 4), 5, 5);
+        var grill = new Point(psu.X + 60, psu.Y + psu.Height / 2);
+        double grillRadius = psu.Height / 2 - 10;
+        dc.DrawEllipse(Dark, Line(Blade, 1.5), grill, grillRadius, grillRadius);
+        for (int ring = 1; ring < 3; ring++) dc.DrawEllipse(null, Line(Blade, 1), grill, grillRadius * ring / 3, grillRadius * ring / 3);
+        var vent = Line(Edge, 2.5);
+        for (int slot = 0; slot < 5; slot++) dc.DrawLine(vent, new Point(psu.X + 120, psu.Y + 18 + slot * 9), new Point(psu.Right - 20, psu.Y + 18 + slot * 9));
+        Text(dc, "PSU", psu.X + 120, psu.Bottom - 10, 12, Silver, bold: true);
     }
 }
