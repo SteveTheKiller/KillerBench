@@ -575,7 +575,7 @@ internal static class Program
             Require(!WithinPixelRounding(1025 + 1 / windowDpi.DpiScaleX, 1025, windowDpi.DpiScaleX),
                 "Window geometry rejects a whole physical pixel of displacement");
             Require(WithinPixelRounding(window.Width, 1025, windowDpi.DpiScaleX) &&
-                WithinPixelRounding(window.Height, 780, windowDpi.DpiScaleY) && window.MinWidth == 800 && window.MinHeight == 500 &&
+                window.Height >= window.MinHeight && window.Height < 700 && window.MinWidth == 800 && window.MinHeight == 500 &&
                 window.SizeToContent == SizeToContent.Manual,
                 $"Workbench window keeps its family window geometry within native pixel rounding: {window.Width:R} x {window.Height:R}, minimum {window.MinWidth:R} x {window.MinHeight:R}, {window.SizeToContent}, DPI {windowDpi.DpiScaleX:R}.");
             Require(window.FindName("ZoomViewport") is FrameworkElement { ClipToBounds: true },
@@ -1457,8 +1457,8 @@ internal static class Program
             setThirdPartyResult.Invoke(window, [null]);
             updateSnapshotField.SetValue(window, null);
             ((CheckBox)window.FindName("UpdateDownloadedOnly")).IsChecked = false;
-            Require(window.Width > window.Height && window.Width == 1025 && window.Height == 780,
-                "Workbench opens in the taller landscape layout that accommodates the system map");
+            Require(window.Width > window.Height && window.Width == 1025 && window.Height < 700,
+                "Workbench opens in a landscape layout fitted to the system map, without a blank band beneath it");
             window.WindowStartupLocation = WindowStartupLocation.Manual;
             window.ShowActivated = false;
             window.ShowInTaskbar = false;

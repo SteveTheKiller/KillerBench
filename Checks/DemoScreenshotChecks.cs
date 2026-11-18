@@ -136,8 +136,8 @@ internal static class DemoScreenshotChecks
                 $"History's saved-workflow action fits inside the visible viewport at 250% and 800x500. Action {bounds}, viewport {viewport.RenderSize}.");
 
             window.Width = 1025;
-            window.Height = 780;
             Call(window, "ApplyAppScale", 1d);
+            Call(window, "FitInitialOverviewHeight");
             Settle(window);
             var grain = (CheckBox)window.FindName("FilmGrainCheck");
             var evidence = (FrameworkElement)window.FindName("TerminalPanel");

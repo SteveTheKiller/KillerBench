@@ -87,7 +87,8 @@ public partial class MainWindow
         CaptionBar.Measure(new Size(Width, double.PositiveInfinity));
         double content = SystemAreas.DesiredSize.Height + OverviewHero.DesiredSize.Height +
             OverviewHero.Margin.Bottom + OverviewScroll.Padding.Top + OverviewScroll.Padding.Bottom + 12;
-        Height = Math.Max(780, content * appScale + CaptionBar.DesiredSize.Height + 28);
+        // Fit the Overview content, so the map isn't followed by a band of empty pane.
+        Height = Math.Max(MinHeight, content * appScale + CaptionBar.DesiredSize.Height + 28);
     }
 
     private void OnSystemAreaSelected(object sender, SelectionChangedEventArgs e) => ShowAreaEvidence();
