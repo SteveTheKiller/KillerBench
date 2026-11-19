@@ -43,15 +43,10 @@ public partial class MainWindow
     {
         if (WorkspaceNavigation.SelectedItem is not ListBoxItem { Tag: string page } || OverviewPage is null) return;
         RefreshWorkspaceToolbarSelection();
-        OverviewPage.Visibility = page == "Overview" ? Visibility.Visible : Visibility.Collapsed;
-        InvestigatePage.Visibility = page == "Investigate" ? Visibility.Visible : Visibility.Collapsed;
-        HistoryPage.Visibility = page == "History" ? Visibility.Visible : Visibility.Collapsed;
-        ConsoleBank.Visibility = page == "Tools" ? Visibility.Visible : Visibility.Collapsed;
-        LeftPanel.Visibility = ConsoleBank.Visibility;
+        RefreshPageVisibility();
         if (page == "Investigate" && SystemAreas.SelectedItem is ToolCategory current &&
             (InvestigationAreas.SelectedItem is not GuidedSymptom selected || selected.Area != current.Id))
             InvestigationAreas.SelectedItem = GuidedSymptoms.FirstOrDefault(symptom => symptom.Area == current.Id);
-        SetOutputOpen(true);
         if (page is "Overview" or "Investigate") ShowAreaEvidence();
         else if (page == "History")
         {
@@ -60,6 +55,22 @@ public partial class MainWindow
             else SetOutputView();
         }
         else SetOutputView();
+        // A page switch always lands on the page; details swap in only when something on it is chosen.
+        SetOutputOpen(false);
+    }
+
+    // Only one thing fills the pane: the current page, or the output swapped in over it.
+    private void RefreshPageVisibility()
+    {
+        if (OverviewPage is null || TerminalPanel is null) return;
+        string page = WorkspaceNavigation.SelectedItem is ListBoxItem { Tag: string tag } ? tag : "Overview";
+        bool covered = TerminalPanel.Visibility == Visibility.Visible;
+        Visibility Show(string name) => page == name && !covered ? Visibility.Visible : Visibility.Collapsed;
+        OverviewPage.Visibility = Show("Overview");
+        InvestigatePage.Visibility = Show("Investigate");
+        HistoryPage.Visibility = Show("History");
+        ConsoleBank.Visibility = Show("Tools");
+        LeftPanel.Visibility = page == "Tools" ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void InitializeWorkspace()
@@ -75,16 +86,19 @@ public partial class MainWindow
     private void FitSystemMap()
     {
         if (!OverviewPage.IsVisible || OverviewScroll.ViewportHeight <= 0) return;
-        double height = Math.Max(0, OverviewScroll.ViewportHeight - OverviewHero.ActualHeight - OverviewHero.Margin.Bottom -
-            OverviewMapHint.ActualHeight - OverviewMapHint.Margin.Top - OverviewMapHint.Margin.Bottom - 8);
+        // The map sits beside the score column and shares its height only with the hint underneath it.
+        double hint = OverviewMapHint.ActualHeight + OverviewMapHint.Margin.Top + OverviewMapHint.Margin.Bottom;
+        double height = Math.Max(0, OverviewScroll.ViewportHeight - 8 - hint);
         if (Math.Abs(SystemAreas.MinHeight - height) > 1) SystemAreas.MinHeight = height;
     }
 
     private void FitInitialOverviewHeight()
     {
-        double width = Math.Max(220, (Width - 40) * .6 / appScale - OverviewScroll.Padding.Left - OverviewScroll.Padding.Right);
+        double width = Math.Max(220, (Width - 40) / appScale - OverviewScroll.Padding.Left - OverviewScroll.Padding.Right);
         // Measure the whole scroll content (hero, map hint and map) so nothing on the page is left out of the sum.
         var page = (FrameworkElement)OverviewScroll.Content;
+        // A MinHeight left over from a larger window would inflate the sum; FitSystemMap sets it again after layout.
+        SystemAreas.ClearValue(MinHeightProperty);
         page.Measure(new Size(width, double.PositiveInfinity));
         CaptionBar.Measure(new Size(Width, double.PositiveInfinity));
         double content = page.DesiredSize.Height + OverviewScroll.Padding.Top + OverviewScroll.Padding.Bottom + 12;
@@ -222,7 +236,7 @@ public partial class MainWindow
         if (SystemAreas.SelectedItem is not ToolCategory area) return;
         MainAutoRepair.IsChecked = false;
         CategoryList.SelectedItem = area;
-        if (InvestigatePage.IsVisible && InvestigationAreas.SelectedItem is GuidedSymptom symptom && symptom.Area == area.Id)
+        if (WorkspaceNavigation.SelectedItem is ListBoxItem { Tag: "Investigate" } && InvestigationAreas.SelectedItem is GuidedSymptom symptom && symptom.Area == area.Id)
             MainWorkflow.SelectedItem = KillerBench.Engine.Workflows.WorkflowCatalog.All.Single(tool => tool.Kind == symptom.Workflow);
         ShowToolsWorkspace();
     }
@@ -231,7 +245,9 @@ public partial class MainWindow
     {
         WorkspaceNavigation.SelectedIndex = 2;
         AreaEvidencePanel.Visibility = Visibility.Collapsed;
-        SetOutputOpen(true);
+        SetOutputView();
+        // Land on the tool controls; output swaps in when the tool runs.
+        SetOutputOpen(false);
     }
 
     private void OnOverviewCheck(object sender, RoutedEventArgs e)
@@ -256,7 +272,8 @@ public partial class MainWindow
     private void SetAreaEvidenceMode(bool area)
     {
         AreaEvidencePanel.Visibility = area ? Visibility.Visible : Visibility.Collapsed;
-        EvidenceHeader.Visibility = OutputViewButtons.Visibility = CoverageLabel.Visibility = SessionSourcesExpander.Visibility =
+        // The header stays for its Back button; only the generic title and export hide on an area summary.
+        EvidenceTitle.Visibility = ExportReportButton.Visibility = OutputViewButtons.Visibility = CoverageLabel.Visibility = SessionSourcesExpander.Visibility =
             area ? Visibility.Collapsed : Visibility.Visible;
         OutputViewButtons.IsEnabled = !area;
         ExportReportButton.IsEnabled = !area || areaSummarySource is not null;

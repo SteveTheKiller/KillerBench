@@ -45,6 +45,7 @@ public partial class MainWindow : Window
         ApplyDisplay();
         SetDetailsOpen(false);
         ActivityPanel.Visibility = Visibility.Collapsed;
+        SetOutputOpen(false);
         FitInitialOverviewHeight();
         Closed += (_, _) => readCancellation?.Cancel();
         Closing += (_, e) =>
@@ -102,6 +103,7 @@ public partial class MainWindow : Window
 
     private void RefreshLanguage()
     {
+        bool areaDetailsShown = AreaEvidencePanel.IsVisible && TerminalPanel.IsVisible;
         if (evidence is null && !workflowOutputActive && EvidenceBox.Text == welcomeText)
         {
             bool statusWasWelcome = StatusLabel.Text == welcomeStatus;
@@ -142,7 +144,8 @@ public partial class MainWindow : Window
         RefreshWorkflowReportLanguage();
         RefreshWorkspaceToolbarLanguage();
         QueueTitleSearch();
-        if (OverviewPage.IsVisible || InvestigatePage.IsVisible) ShowAreaEvidence();
+        // One pane: the details cover the page, so rebuild them when they were showing, not when the page is.
+        if (areaDetailsShown || OverviewPage.IsVisible || InvestigatePage.IsVisible) ShowAreaEvidence();
     }
 
     private void LoadSample()

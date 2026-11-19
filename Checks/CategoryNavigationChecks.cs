@@ -118,13 +118,11 @@ internal static class CategoryNavigationChecks
 
     private static void VerifyStrip(Window window, FrameworkElement strip, FrameworkElement tools, FrameworkElement evidence)
     {
-        Require(strip.IsVisible && tools.IsVisible && evidence.IsVisible, "The category strip and both panes are visible in Tools");
+        Require(strip.IsVisible && tools.IsVisible && !evidence.IsVisible, "Tools shows the category strip over the tool pane alone, with output swapped out");
         Rect stripBounds = BoundsIn(strip, window);
         Rect toolBounds = BoundsIn(tools, window);
-        Rect evidenceBounds = BoundsIn(evidence, window);
-        Require(stripBounds.Bottom <= Math.Min(toolBounds.Top, evidenceBounds.Top) + 1 &&
-                stripBounds.Left < toolBounds.Right && stripBounds.Right > evidenceBounds.Left,
-            "The category strip runs above both the tools and evidence panes");
+        Require(stripBounds.Bottom <= toolBounds.Top + 1 && stripBounds.Left < toolBounds.Right,
+            "The category strip runs above the tool pane");
     }
 
     private static void VerifyLayout(ListBox list, ScrollContentPresenter viewport, bool mustWrap)

@@ -1336,6 +1336,7 @@
   <sys:String x:Key="Str_Workspace_Investigate">Undersøk</sys:String>
   <sys:String x:Key="Str_Workspace_Tools">Verktøy</sys:String>
   <sys:String x:Key="Str_Workspace_History">Historikk</sys:String>
+  <sys:String x:Key="Str_Output_Back">Tilbake</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Kort oversikt over systemet</sys:String>
   <sys:String x:Key="Str_Overview_Checked">kontrollert</sys:String>
   <sys:String x:Key="Str_Overview_HeadlineReview">Å se gjennom: {0}</sys:String>

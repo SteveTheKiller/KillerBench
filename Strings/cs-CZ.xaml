@@ -1337,6 +1337,7 @@
   <sys:String x:Key="Str_Workspace_Investigate">Prověřit</sys:String>
   <sys:String x:Key="Str_Workspace_Tools">Nástroje</sys:String>
   <sys:String x:Key="Str_Workspace_History">Historie</sys:String>
+  <sys:String x:Key="Str_Output_Back">Zpět</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Váš systém na první pohled</sys:String>
   <sys:String x:Key="Str_Overview_Checked">zkontrolováno</sys:String>
   <sys:String x:Key="Str_Overview_HeadlineReview">K prověření: {0}</sys:String>

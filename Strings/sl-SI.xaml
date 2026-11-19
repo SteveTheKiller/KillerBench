@@ -1336,6 +1336,7 @@
   <sys:String x:Key="Str_Workspace_Investigate">Razišči</sys:String>
   <sys:String x:Key="Str_Workspace_Tools">Orodja</sys:String>
   <sys:String x:Key="Str_Workspace_History">Zgodovina</sys:String>
+  <sys:String x:Key="Str_Output_Back">Nazaj</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Vaš sistem na kratko</sys:String>
   <sys:String x:Key="Str_Overview_Checked">preverjeno</sys:String>
   <sys:String x:Key="Str_Overview_HeadlineReview">Za pregled: {0}</sys:String>

@@ -149,10 +149,13 @@
         <Border x:Name="OverviewPage" Grid.Column="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
           <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/><Border>
           <ScrollViewer x:Name="OverviewScroll" Style="{StaticResource ShadowScrollViewer}" Padding="16" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <StackPanel>
-              <Border x:Name="OverviewHero" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="12" Margin="4,0,4,6">
+            <!-- One pane: the score column sits beside the map, so the map uses the width instead of the height. -->
+            <Grid x:Name="OverviewLayout">
+              <Grid.ColumnDefinitions><ColumnDefinition Width="260"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+              <StackPanel x:Name="OverviewSide" Margin="0,0,16,0">
+              <Border x:Name="OverviewHero" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="14" Margin="0,0,0,10">
                 <Grid><DockPanel>
-                  <Grid DockPanel.Dock="Left" Width="108" Height="108" Margin="0,0,18,0" VerticalAlignment="Center">
+                  <Grid DockPanel.Dock="Top" Width="120" Height="120" Margin="0,0,0,14" HorizontalAlignment="Center">
                     <icons:CoverageGauge x:Name="OverviewGauge" TrackBrush="{DynamicResource PaneBorderBrush}" CoverageBrush="{DynamicResource PrimaryBrush}" ToneBrush="{DynamicResource PaneBorderBrush}" IsHitTestVisible="False"/>
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                       <TextBlock x:Name="OverviewPercent" Text="0%" FontFamily="{DynamicResource HeadingFont}" FontSize="26" FontWeight="SemiBold" HorizontalAlignment="Center"/>
@@ -167,11 +170,13 @@
                     <WrapPanel x:Name="OverviewMapActions"><Button x:Name="OverviewCheckButton" Content="{DynamicResource Str_Main_RunDiagnosis}" Click="OnOverviewCheck" Margin="0,0,8,6"/><Button x:Name="OverviewOpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture" Margin="0,0,0,6"/></WrapPanel>
                   </StackPanel>
                 </DockPanel>
-                <Border Style="{StaticResource FlyoutGrain}" Margin="-12"/></Grid>
+                <Border Style="{StaticResource FlyoutGrain}" Margin="-14"/></Grid>
               </Border>
-              <!-- Map instruction sits with the map it describes. -->
-              <TextBlock x:Name="OverviewMapHint" Text="{DynamicResource Str_Workspace_MapHint}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="6,6,6,6"/>
-              <ListBox x:Name="SystemAreas" Background="Transparent" BorderThickness="0" SelectionChanged="OnSystemAreaSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
+              </StackPanel>
+              <!-- Map instruction sits directly under the components it describes. -->
+              <DockPanel Grid.Column="1" VerticalAlignment="Top">
+              <TextBlock x:Name="OverviewMapHint" DockPanel.Dock="Bottom" Text="{DynamicResource Str_Workspace_MapHint}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+              <ListBox x:Name="SystemAreas" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" SelectionChanged="OnSystemAreaSelected" PreviewMouseLeftButtonUp="OnReopenSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
                 <ListBox.ItemsPanel><ItemsPanelTemplate><icons:MachineMapPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
                 <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}">
                   <Setter Property="Padding" Value="10,6"/><Setter Property="Margin" Value="0"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Cursor" Value="Hand"/><Setter Property="AutomationProperties.Name" Value="{Binding Title}"/><Setter Property="ToolTip" Value="{Binding Title}"/><Setter Property="icons:MachineMapPanel.Part" Value="{Binding Id}"/>
@@ -215,7 +220,8 @@
                   <DataTrigger Binding="{Binding Tone}" Value="Fixable"><Setter TargetName="AreaStripe" Property="Background" Value="{DynamicResource DangerRed}"/><Setter TargetName="AreaBadge" Property="Background" Value="{DynamicResource DangerRed}"/><Setter TargetName="AreaBadge" Property="Visibility" Value="Visible"/></DataTrigger>
                 </DataTemplate.Triggers></DataTemplate></ListBox.ItemTemplate>
               </ListBox>
-            </StackPanel>
+              </DockPanel>
+            </Grid>
           </ScrollViewer>
           </Border></Grid>
         </Border>
@@ -233,7 +239,7 @@
                 <Border Grid.Column="4" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="11" Padding="10,2"><TextBlock Text="{DynamicResource Str_Guided_Review}" Foreground="{DynamicResource MutedTextBrush}" FontSize="12"/></Border>
               </Grid>
             </StackPanel>
-            <ListBox x:Name="InvestigationAreas" Style="{StaticResource WorkspaceList}" Padding="18,0,18,18" Background="Transparent" BorderThickness="0" SelectionChanged="OnInvestigationAreaSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
+            <ListBox x:Name="InvestigationAreas" Style="{StaticResource WorkspaceList}" Padding="18,0,18,18" Background="Transparent" BorderThickness="0" SelectionChanged="OnInvestigationAreaSelected" PreviewMouseLeftButtonUp="OnReopenSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
               <ListBox.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="2"/></ItemsPanelTemplate></ListBox.ItemsPanel>
               <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}"><Setter Property="Padding" Value="10"/><Setter Property="Margin" Value="3"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Cursor" Value="Hand"/><Setter Property="AutomationProperties.Name" Value="{Binding Title}"/>
                 <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="SymptomFace" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Background="{DynamicResource ContentPaneBrush}"><Grid><ContentPresenter Margin="{TemplateBinding Padding}"/><Border Style="{StaticResource FlyoutGrain}"/></Grid></Border><ControlTemplate.Triggers>
@@ -262,7 +268,7 @@
               <WrapPanel Margin="0,0,0,12"><Button x:Name="OpenSavedWorkflowButton" Content="{DynamicResource Str_Advanced_OpenWorkflow}" Click="OnOpenWorkflowJournal" ToolTip="{DynamicResource Str_Advanced_OpenWorkflowTip}" Margin="0,0,6,6"/><Button x:Name="HistoryOpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture" Margin="0,0,0,6"/></WrapPanel>
               <TextBlock x:Name="HistoryEmpty" Text="{DynamicResource Str_Workspace_SessionEmpty}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
             </StackPanel>
-            <ListBox x:Name="SessionHistory" Style="{StaticResource WorkbenchList}" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" SelectionChanged="OnHistorySelected" AutomationProperties.Name="{DynamicResource Str_Session_Sources}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox x:Name="SessionHistory" Style="{StaticResource WorkbenchList}" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" SelectionChanged="OnHistorySelected" PreviewMouseLeftButtonUp="OnReopenSelected" AutomationProperties.Name="{DynamicResource Str_Session_Sources}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
               <ListBox.ItemTemplate><DataTemplate>
                 <!-- Timeline row: a dot on a rule ties the session's entries together. -->
                 <Grid>
@@ -1159,7 +1165,7 @@
         </StackPanel>
       </Grid>
       <Thumb x:Name="SidebarGrip" Grid.Column="3" Visibility="Collapsed" IsHitTestVisible="False"/>
-        <Border x:Name="TerminalPanel" Grid.Column="4" Grid.RowSpan="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Margin="0" ClipToBounds="True"
+        <Border x:Name="TerminalPanel" Grid.Column="4" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Margin="0" ClipToBounds="True"
                 icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
 <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
 <Border Padding="14">
@@ -1168,6 +1174,7 @@
             <Grid.Resources><DataTemplate x:Key="OutputViewLabel"><TextBlock Text="{Binding}" TextWrapping="Wrap"/></DataTemplate></Grid.Resources>
             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <DockPanel x:Name="EvidenceHeader" Margin="0,0,0,8">
+              <Button x:Name="OutputBackButton" DockPanel.Dock="Left" Style="{StaticResource RailButton}" Content="&#xE72B;" Click="OnOutputBack" Margin="0,0,8,0" ToolTip="{DynamicResource Str_Output_Back}" AutomationProperties.Name="{DynamicResource Str_Output_Back}"/>
               <Button x:Name="ExportReportButton" DockPanel.Dock="Right" Style="{StaticResource RailButton}" Content="&#xEDE1;" Click="OnExportReport" ToolTip="{DynamicResource Str_ExportContents}" AutomationProperties.Name="{DynamicResource Str_ExportReport}"/>
               <TextBlock x:Name="EvidenceTitle" Text="{DynamicResource Str_Text_Evidence}" FontFamily="{DynamicResource HeadingFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,8,0"/>
             </DockPanel>
@@ -1236,7 +1243,7 @@
         </Border>
         </Grid>
 </Border>
-        <Border x:Name="ActivityPanel" Grid.Column="2" Grid.Row="1" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Height="124" Margin="0,4,0,0">
+        <Border x:Name="ActivityPanel" Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="1" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Height="124" Margin="0,4,0,0">
 <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
 <Border Padding="14,10">
           <DockPanel>

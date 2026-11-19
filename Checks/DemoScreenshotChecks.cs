@@ -97,6 +97,9 @@ internal static class DemoScreenshotChecks
         try
         {
             window.Show();
+            // The map fits its viewport now, so a short window is what makes the score column scroll.
+            window.MinHeight = 0;
+            window.Height = 320;
             Call(window, "ApplyAppScale", 2.5);
             var navigation = (ListBox)window.FindName("WorkspaceNavigation");
             var destinations = navigation.Items.OfType<ListBoxItem>().ToDictionary(item => (string)item.Tag);
@@ -143,6 +146,11 @@ internal static class DemoScreenshotChecks
             var evidence = (FrameworkElement)window.FindName("TerminalPanel");
             navigation.SelectedItem = destinations["Overview"];
             Settle(window);
+            Require(!evidence.IsVisible, "Overview opens on the map alone; details swap in only when an area is chosen.");
+            Call(window, "ShowAreaEvidence");
+            Settle(window);
+            Require(evidence.IsVisible && !((FrameworkElement)window.FindName("OverviewPage")).IsVisible,
+                "Choosing an area swaps its details in over the map instead of beside it.");
             // Overview map parts are transparent hotspots over the drawn machine, not cards, so only review cards carry grain.
             var areaCard = ((StackPanel)window.FindName("AreaReviewCards")).Children.OfType<Border>().First();
             foreach (FrameworkElement card in new FrameworkElement[] { areaCard })
@@ -195,6 +203,12 @@ internal static class DemoScreenshotChecks
             navigation.SelectedItem = destinations["Overview"];
             Settle(window);
             Capture(window, Path.Combine(output, "workspace-overview.png"), 1);
+            Call(window, "ShowAreaEvidence");
+            Settle(window);
+            Capture(window, Path.Combine(output, "workspace-area.png"), 1);
+            ((Button)window.FindName("OutputBackButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Settle(window);
+            Require(((FrameworkElement)window.FindName("OverviewPage")).IsVisible && !evidence.IsVisible, "Back swaps the map in again.");
             navigation.SelectedItem = destinations["Tools"];
             Settle(window);
             Capture(window, Path.Combine(output, "workspace-tools.png"), 1);
@@ -377,6 +391,12 @@ internal static class DemoScreenshotChecks
                 navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, "Tools"));
                 navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, "Overview"));
                 Settle(window);
+                // One pane: Overview lands on the map, and the selected area's details swap in over it.
+                Require(window.FindName("SystemAreas") is FrameworkElement { IsVisible: true } &&
+                    window.FindName("AreaEvidencePanel") is FrameworkElement { IsVisible: false },
+                    "Returning to Overview lands on the scored map.");
+                Call(window, "ShowAreaEvidence");
+                Settle(window);
                 Require(window.FindName("AreaCoverageChart") is FrameworkElement { IsVisible: true } &&
                     window.FindName("AreaEvidencePanel") is FrameworkElement { IsVisible: true } &&
                     window.FindName("AreaFullReportButton") is FrameworkElement { IsVisible: true } &&
@@ -384,8 +404,6 @@ internal static class DemoScreenshotChecks
                     "Returning to Overview shows scoped coverage and review cards with the full report available.");
                 var areas = (ListBox)window.FindName("SystemAreas");
                 var selectedArea = areas.ItemContainerGenerator.ContainerFromItem(areas.SelectedItem);
-                Require(selectedArea is ListBoxItem { IsVisible: true } && HasDemoStatus(selectedArea),
-                    "The selected system area visibly identifies the completed result as a demo.");
                 areas.SelectedIndex = 11;
                 Settle(window);
                 areas.SelectedIndex = 0;
@@ -395,6 +413,10 @@ internal static class DemoScreenshotChecks
                 Require(coverage.IsVisible && ((StackPanel)coverage.Children[0]).Children.OfType<TextBlock>().First().Text == "5" &&
                         ((TextBlock)window.FindName("AreaTitle")).Text == "Diagnostics",
                     "Returning from an unchecked area restores its scoped summary and five checks that ran.");
+                Call(window, "OnOutputBack", window, new RoutedEventArgs());
+                Settle(window);
+                Require(window.FindName("SystemAreas") is FrameworkElement { IsVisible: true } && selectedArea is ListBoxItem { IsVisible: true } && HasDemoStatus(selectedArea),
+                    "Back returns to the map, where the selected area visibly identifies the completed result as a demo.");
             }
             if (shot.Area is int area)
             {
@@ -414,8 +436,13 @@ internal static class DemoScreenshotChecks
             var categories = (FrameworkElement)window.FindName("LeftPanel");
             var overview = (FrameworkElement)window.FindName("OverviewPage");
             var tools = (FrameworkElement)window.FindName("ConsoleBank");
-            Require(overviewShot || shot.Area is not null ? overview.IsVisible && !categories.IsVisible && !tools.IsVisible
-                                 : tools.IsVisible && categories.IsVisible && categories.ActualWidth > 0 && !overview.IsVisible,
+            var outputPane = (FrameworkElement)window.FindName("TerminalPanel");
+            var details = (FrameworkElement)window.FindName("AreaEvidencePanel");
+            // One pane: the map, an area's swapped-in details, or a tool's controls or output, never two side by side.
+            Require(shot.Area is not null ? details.IsVisible && !overview.IsVisible && !categories.IsVisible && !tools.IsVisible
+                  : overviewShot && shot.Raw ? outputPane.IsVisible && !overview.IsVisible && !categories.IsVisible && !tools.IsVisible
+                  : overviewShot ? overview.IsVisible && !outputPane.IsVisible && !categories.IsVisible && !tools.IsVisible
+                  : categories.IsVisible && categories.ActualWidth > 0 && !overview.IsVisible && (tools.IsVisible != outputPane.IsVisible),
                 "Screenshot shows the selected " + destination + " workspace.");
             Capture(window, Path.Combine(output, shot.File), shot.PixelScale);
             Console.WriteLine(shot.File + ": " + shot.Width + "x" + shot.Height + ", zoom " + shot.Scale + ", pixel scale " + shot.PixelScale);

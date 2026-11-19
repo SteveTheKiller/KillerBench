@@ -65,8 +65,11 @@ internal static class WorkspaceNavigationChecks
             window.Height = 1000;
             Settle(window);
             var mapPane = Find<FrameworkElement>(window, "OverviewPage");
-            // The actions now sit in the hero above the map, so the map's own bottom edge is the measure.
-            Require(map.TranslatePoint(new Point(0, map.ActualHeight), mapPane).Y >= mapPane.ActualHeight - 50,
+            // The hint sits directly under the map, so the map runs down to the hint and the hint to the pane's bottom edge.
+            var mapHint = Find<FrameworkElement>(window, "OverviewMapHint");
+            double mapBottom = map.TranslatePoint(new Point(0, map.ActualHeight), mapPane).Y;
+            double hintTop = mapHint.TranslatePoint(new Point(0, 0), mapPane).Y;
+            Require(hintTop - mapBottom < 20 && hintTop + mapHint.ActualHeight >= mapPane.ActualHeight - 50,
                 "The map grows with a taller window instead of leaving a large blank block beneath the cards.");
             window.Width = 1025;
             window.Height = 780;
@@ -92,8 +95,8 @@ internal static class WorkspaceNavigationChecks
             var categories = Find<FrameworkElement>(window, "LeftPanel");
             var evidence = Find<FrameworkElement>(window, "TerminalPanel");
             Require(navigation.SelectedItem == destinations[0] && overview.IsVisible &&
-                    evidence.IsVisible && !options.IsVisible && !categories.IsVisible,
-                "Startup opens Overview with evidence and keeps Tools controls out of view.");
+                    !evidence.IsVisible && !options.IsVisible && !categories.IsVisible,
+                "Startup opens Overview alone in one pane and keeps evidence and Tools controls out of view.");
 
             navigation.SelectedItem = destinations[2];
             Settle(window);
@@ -108,8 +111,8 @@ internal static class WorkspaceNavigationChecks
 
             navigation.SelectedItem = destinations[0];
             Settle(window);
-            Require(overview.IsVisible && evidence.IsVisible && !options.IsVisible && !categories.IsVisible,
-                "Returning to Overview restores its page and evidence beside it.");
+            Require(overview.IsVisible && !evidence.IsVisible && !options.IsVisible && !categories.IsVisible,
+                "Returning to Overview restores its page alone, with no evidence beside it.");
 
             var areas = Find<ListBox>(window, "SystemAreas");
             Require(areas.Items.Count == 12, "The system map exposes every existing tool category.");
@@ -134,8 +137,9 @@ internal static class WorkspaceNavigationChecks
             Settle(window);
             var detail = Find<TextBlock>(window, "AreaTitle");
             var state = Find<TextBlock>(window, "AreaState");
-            Require(detail.Text == "Storage" && state.Text == "Not checked" && overview.IsVisible,
-                "Choosing Storage updates adjacent evidence without leaving the map or inventing health.");
+            Require(detail.Text == "Storage" && state.Text == "Not checked" && evidence.IsVisible && !overview.IsVisible &&
+                    Find<Button>(window, "OutputBackButton").IsVisible,
+                "Choosing Storage swaps its details in over the map with a way back, without inventing health.");
             Require(!Find<FrameworkElement>(window, "OutputViewButtons").IsVisible && !Find<TextBlock>(window, "EvidenceTitle").IsVisible,
                 "The area summary replaces generic evidence chrome and disabled report tabs.");
             Find<Button>(window, "ReviewAreaButton").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -151,8 +155,8 @@ internal static class WorkspaceNavigationChecks
                 "Investigate offers the six illustrated symptom entry points from the approved concept.");
             investigation.SelectedIndex = 2;
             Settle(window);
-            Require(Find<FrameworkElement>(window, "InvestigatePage").IsVisible && detail.Text == "Network",
-                "Guided investigation selects the matching area without dispatching an action.");
+            Require(evidence.IsVisible && !Find<FrameworkElement>(window, "InvestigatePage").IsVisible && detail.Text == "Network",
+                "Guided investigation swaps in the matching area without dispatching an action.");
             Find<Button>(window, "ReviewAreaButton").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Settle(window);
             Require(options.IsVisible && Find<TextBlock>(window, "CategoryTitle").Text == "Network" &&
@@ -180,18 +184,27 @@ internal static class WorkspaceNavigationChecks
             }
             navigation.SelectedIndex = 0;
             Settle(window);
-            var divider = Find<GridSplitter>(window, "OutputDivider");
-            double before = overview.ActualWidth;
-            divider.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(window), 0, Key.Right)
-                { RoutedEvent = Keyboard.KeyDownEvent });
+            // One pane: no divider, and the page or the swapped-in output takes the whole content width.
+            var content = Find<FrameworkElement>(window, "ContentPane");
+            Require(!Find<GridSplitter>(window, "OutputDivider").IsVisible && overview.ActualWidth > content.ActualWidth - 40,
+                "The Overview fills the content area alone, with no side-by-side divider.");
+            areas.SelectedIndex = 0;
             Settle(window);
-            Require(overview.ActualWidth > before, "The evidence divider resizes the graphical workspace by keyboard.");
+            Require(!Find<GridSplitter>(window, "OutputDivider").IsVisible && evidence.ActualWidth > content.ActualWidth - 40 && !overview.IsVisible,
+                "Area details take the whole content width when they swap in.");
+            Find<Button>(window, "OutputBackButton").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Settle(window);
+            Require(overview.IsVisible && !evidence.IsVisible, "Back returns to the map.");
+            areas.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left) { RoutedEvent = UIElement.PreviewMouseLeftButtonUpEvent, Source = areas.ItemContainerGenerator.ContainerFromIndex(0) });
+            Settle(window);
+            Require(evidence.IsVisible && detail.Text == "Diagnostics", "Clicking the area that is still selected opens its details again.");
 
             navigation.SelectedIndex = 2;
             ImportFixture(window, "workspace-evidence.log", "Synthetic fixture. No machine evidence was collected.\n");
             ImportFixture(window, "workspace-other.log", "Second synthetic fixture. No machine evidence was collected.\n");
 
             navigation.SelectedIndex = 0;
+            areas.SelectedIndex = 0;
             areas.SelectedIndex = 11;
             Settle(window);
             Require(detail.Text == "Storage" && state.Text == "Not checked" &&
@@ -224,8 +237,12 @@ internal static class WorkspaceNavigationChecks
             navigation.SelectedIndex = 3;
             Settle(window);
             Require(history.SelectedIndex == 0 && evidenceTitle.Text == "workspace-evidence.log" &&
-                    Find<FrameworkElement>(window, "ReportPane").IsVisible,
-                "Returning to History restores the report for its selected row.");
+                    Find<FrameworkElement>(window, "HistoryPage").IsVisible && !evidence.IsVisible,
+                "Returning to History lands on the list with its row and report still loaded.");
+            history.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left) { RoutedEvent = UIElement.PreviewMouseLeftButtonUpEvent, Source = history.ItemContainerGenerator.ContainerFromIndex(0) });
+            Settle(window);
+            Require(evidence.IsVisible && Find<FrameworkElement>(window, "ReportPane").IsVisible && evidenceTitle.Text == "workspace-evidence.log",
+                "Clicking the selected History row swaps its report in.");
 
             navigation.SelectedIndex = 2;
             ImportFixture(window, "workspace-new.log", "Third synthetic fixture. No machine evidence was collected.\n");

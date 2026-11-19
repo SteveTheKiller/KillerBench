@@ -53,6 +53,7 @@ internal static class LocalizationDesktopChecks
             foreach (var locale in localeNames)
             {
                 navigation.SelectedItem = investigate;
+                investigationAreas.SelectedIndex = -1;
                 investigationAreas.SelectedIndex = 0;
                 investigationAreas.ScrollIntoView(investigationAreas.SelectedItem);
                 window.UpdateLayout();
@@ -69,11 +70,14 @@ internal static class LocalizationDesktopChecks
                 var title = (TextBlock)window.FindName("AreaTitle");
                 var description = (TextBlock)window.FindName("AreaDescription");
                 Require(title.IsVisible && title.Text == (string)window.FindResource("Str_Category_Diagnostics"),
-                    "The Investigate evidence title follows " + locale);
+                    "The Investigate evidence title follows " + locale + $" (visible {title.IsVisible}, text '{title.Text}', output {((FrameworkElement)window.FindName("TerminalPanel")).IsVisible})");
                 Require(description.IsVisible && description.Text == (string)window.FindResource("Str_Category_Diagnostics_Description"),
                     "The Investigate evidence description follows " + locale);
                 Require(((TextBlock)window.FindName("AreaState")).Text == (string)window.FindResource("Str_Workspace_NotChecked"),
                     "Changing language leaves the unrun area unchecked in " + locale);
+                // The symptom list sits under the swapped-in details; Back brings it forward again.
+                ((Button)window.FindName("OutputBackButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                window.UpdateLayout();
                 var areaRow = (ListBoxItem?)investigationAreas.ItemContainerGenerator.ContainerFromIndex(0);
                 Require(areaRow is not null && Equals(AutomationProperties.GetName(areaRow), window.FindResource("Str_Guided_Slow")) &&
                     Descendants(areaRow).OfType<TextBlock>().Any(text => text.Text == (string)window.FindResource("Str_Guided_Slow")) &&

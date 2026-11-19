@@ -500,8 +500,8 @@ internal static class Program
             var terminal = (FrameworkElement)window.FindName("TerminalPanel");
             var categoryPane = (FrameworkElement)window.FindName("LeftPanel");
             Require(window.FindName("OverviewPage") is FrameworkElement { IsVisible: true } &&
-                terminal.IsVisible && !categoryPane.IsVisible,
-                "Startup shows Overview and its evidence, with tool categories tucked away.");
+                !terminal.IsVisible && !categoryPane.IsVisible,
+                "Startup shows Overview alone, with evidence and tool categories tucked away.");
             SelectToolsWorkspace(window);
             string expectedFooter = "v" + typeof(KillerBench.App).Assembly.GetName().Version!.ToString(3);
             ShortcutCommandChecks.Run(window);
@@ -521,31 +521,21 @@ internal static class Program
                 Require(((TextBlock)window.FindName("ThemeStatus")).Text == expectedFooter,
                     "Footer retains the running version after theme changes");
             }
-            Require(terminal.IsVisible && categoryPane.IsVisible && categoryPane.ActualWidth > 0,
-                "Tools opens with its category navigation and the evidence pane available.");
+            Require(!terminal.IsVisible && categoryPane.IsVisible && categoryPane.ActualWidth > 0,
+                "Tools opens on its category navigation and tool pane, with output swapped out until a run.");
             Action outputToggle = () => ToggleOutput(window);
-            outputToggle();
-            Require(!terminal.IsVisible && categoryPane.IsVisible, "Output toggle closes evidence while keeping categories visible.");
-            outputToggle();
-            Require(terminal.IsVisible,
-                "Output toggle opens the retained output pane");
-            window.UpdateLayout();
-            var paneDivider = window.FindName("OutputDivider") as GridSplitter;
-            Require(paneDivider is { IsVisible: true, ActualWidth: 8 }, "Open output exposes an eight-pixel grabbable divider");
-            var dividerPoint = paneDivider!.TranslatePoint(new Point(paneDivider.ActualWidth / 2, paneDivider.ActualHeight / 2), window);
-            DependencyObject? dividerHit = window.InputHitTest(dividerPoint) as DependencyObject;
-            while (dividerHit is not null && !ReferenceEquals(dividerHit, paneDivider)) dividerHit = VisualTreeHelper.GetParent(dividerHit);
-            Require(ReferenceEquals(dividerHit, paneDivider), "The center handle receives drag input beside the rail buttons");
+            // One pane: the output toggle swaps the output in over the tool pane and back, with no divider between them.
             var toolPane = (FrameworkElement)window.FindName("ConsoleBank");
-            double beforeResize = toolPane.ActualWidth;
-            paneDivider!.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(window), 0, Key.Right) { RoutedEvent = Keyboard.KeyDownEvent });
-            window.UpdateLayout();
-            Require(toolPane.ActualWidth > beforeResize, "The divider resizes the adjacent panes through keyboard input");
-            double resizedWidth = toolPane.ActualWidth;
-            outputToggle();
             outputToggle();
             window.UpdateLayout();
-            Require(Math.Abs(toolPane.ActualWidth - resizedWidth) < 1, "Reopening output retains the chosen pane split");
+            Require(terminal.IsVisible && !toolPane.IsVisible && categoryPane.IsVisible &&
+                window.FindName("OutputDivider") is GridSplitter { IsVisible: false },
+                "Output toggle swaps the output in over the tool pane, keeping categories and no divider.");
+            outputToggle();
+            window.UpdateLayout();
+            Require(!terminal.IsVisible && toolPane.IsVisible && categoryPane.IsVisible, "Output toggle swaps the tool pane back in.");
+            outputToggle();
+            window.UpdateLayout();
             var outputGrid = (Grid)window.FindName("ContentPane");
             outputGrid.ColumnDefinitions[4].Width = new GridLength(220);
             window.UpdateLayout();
@@ -1477,8 +1467,8 @@ internal static class Program
                 ((ListBox)window.FindName("SourcesList")).Items.Count == 0,
                 "Startup explains the diagnostic-first full scan without pretending that sample evidence is machine evidence");
             Require(window.FindName("OverviewPage") is FrameworkElement { IsVisible: true } &&
-                window.FindName("TerminalPanel") is FrameworkElement { IsVisible: true },
-                "The full UI starts in Overview with evidence visible.");
+                window.FindName("TerminalPanel") is FrameworkElement { IsVisible: false },
+                "The full UI starts in Overview alone, with evidence swapped out until something is chosen.");
             SelectToolsWorkspace(window);
             var controlBank = (FrameworkElement)window.FindName("LeftPanel");
             var consoleBank = (FrameworkElement)window.FindName("ConsoleBank");
@@ -1732,11 +1722,17 @@ internal static class Program
                         "Saved task-plan review appears only for Scheduled tasks");
                     Require(((FrameworkElement)window.FindName("NetworkSettings")).IsVisible == (tool.Kind == WorkflowKind.Network),
                         "Hostname options appear only for Network");
+                    // A review that wrote output swapped it in over the tool pane; Back returns to the controls being measured.
+                    if (((FrameworkElement)window.FindName("TerminalPanel")).IsVisible)
+                    {
+                        ((Button)window.FindName("OutputBackButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        window.UpdateLayout();
+                    }
                     Require(new Size(window.ActualWidth, window.ActualHeight) == stableWindowSize &&
                         new Size(stableWorkspace.ActualWidth, stableWorkspace.ActualHeight) == stableWorkspaceSize,
                         "Switching tools preserves window and workspace dimensions: " + tool.Kind);
                     Require(Math.Abs(consoleBank.ActualHeight - stableConsoleHeight) < 1,
-                        "Tool content does not resize the main console row: " + tool.Kind);
+                        "Tool content does not resize the main console row: " + tool.Kind + " height " + consoleBank.ActualHeight + " vs " + stableConsoleHeight + " visible " + consoleBank.IsVisible + " output " + ((FrameworkElement)window.FindName("TerminalPanel")).IsVisible);
                 }
                 Require(Equals(categoryTools.SelectedItem, allTools.SelectedItem), "Category selection preserves workflow identity");
             }
