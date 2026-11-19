@@ -696,13 +696,13 @@ internal static class Program
                 "Live work keeps category navigation and report export available while preventing another run");
             Require(window.FindName("WorkspaceNavigation") is ListBox { IsEnabled: false } &&
                 window.FindName("SystemAreas") is ListBox { IsEnabled: false } &&
-                window.FindName("InvestigationAreas") is ListBox { IsEnabled: false } &&
+                window.FindName("SymptomChips") is ItemsControl { IsEnabled: false } &&
                 window.FindName("SessionHistory") is ListBox { IsEnabled: false },
                 "Live work prevents workspace, area and history selection from replacing its output.");
             typeof(KillerBench.Shell.MainWindow).GetMethod("SetCaptureBusy", flags)!.Invoke(window, [false]);
             Require(window.FindName("WorkspaceNavigation") is ListBox { IsEnabled: true } &&
                 window.FindName("SystemAreas") is ListBox { IsEnabled: true } &&
-                window.FindName("InvestigationAreas") is ListBox { IsEnabled: true } &&
+                window.FindName("SymptomChips") is ItemsControl { IsEnabled: true } &&
                 window.FindName("SessionHistory") is ListBox { IsEnabled: true },
                 "Workspace, area and history selection return when the operation ends.");
             var handoffNavigation = (ListBox)window.FindName("WorkspaceNavigation");
@@ -1498,7 +1498,7 @@ internal static class Program
             ((Button)window.FindName("ShortcutListButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
             Require(shortcuts.Visibility == Visibility.Visible &&
-                ((StackPanel)window.FindName("ShortcutListHost")).Children.OfType<Grid>().Count() == 22 &&
+                ((StackPanel)window.FindName("ShortcutListHost")).Children.OfType<Grid>().Count() == 21 &&
                 ((Button)window.FindName("ShortcutButton")).ToolTip?.ToString() == KillerFamily.Layout.ShortcutHints.WithHint("Keyboard shortcuts", "F1"),
                 "Shortcut list and rail tooltip come from the shared binding table");
             ((Button)window.FindName("ShortcutMapButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));

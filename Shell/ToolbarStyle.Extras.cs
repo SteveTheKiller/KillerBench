@@ -27,7 +27,6 @@ public partial class MainWindow
     private IEnumerable<(Button Btn, string Glyph, string Key)> ToolbarItems()
     {
         yield return (OverviewButton, "\uE80F", "Str_Workspace_Overview");
-        yield return (InvestigateButton, "\uE721", "Str_Workspace_Investigate");
         yield return (ToolsButton, "\uE90F", "Str_Workspace_Tools");
         yield return (HistoryButton, "\uE81C", "Str_Workspace_History");
     }

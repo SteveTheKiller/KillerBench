@@ -23,9 +23,8 @@ public partial class MainWindow
     private static readonly ShortcutBinding[] ShortcutBindings =
     [
         new("Ctrl+1", "Str_Workspace_Overview", ShortcutCategory.Nav, true, "D1"),
-        new("Ctrl+2", "Str_Workspace_Investigate", ShortcutCategory.Nav, true, "D2"),
-        new("Ctrl+3", "Str_Workspace_Tools", ShortcutCategory.Nav, true, "D3"),
-        new("Ctrl+4", "Str_Workspace_History", ShortcutCategory.Nav, true, "D4"),
+        new("Ctrl+2", "Str_Workspace_Tools", ShortcutCategory.Nav, true, "D2"),
+        new("Ctrl+3", "Str_Workspace_History", ShortcutCategory.Nav, true, "D3"),
         new("Ctrl+Shift+1", "Str_Toolbar_SmallIcons", ShortcutCategory.View, true, "D1"),
         new("Ctrl+Shift+3", "Str_Toolbar_TextNone", ShortcutCategory.View, true, "D3"),
         new("Ctrl+Shift+4", "Str_Toolbar_TextBeside", ShortcutCategory.View, true, "D4"),
@@ -63,7 +62,7 @@ public partial class MainWindow
     {
         ShortcutButton.ToolTip = KillerFamily.Layout.ShortcutHints.WithHint(Label(ShortcutBindings.Single(binding => binding.Keys == "F1")), "F1");
         ApplyShortcutView(Preferences.Get("ShortcutsMapView") == "1");
-        RoutedUICommand[] destinations = [WorkbenchCommands.Overview, WorkbenchCommands.Investigate, WorkbenchCommands.Tools, WorkbenchCommands.History];
+        RoutedUICommand[] destinations = [WorkbenchCommands.Overview, WorkbenchCommands.Tools, WorkbenchCommands.History];
         for (int index = 0; index < destinations.Length; index++)
         {
             int target = index;
@@ -71,7 +70,7 @@ public partial class MainWindow
             BindAction(destinations[index], "Str_Workspace_" + item.Tag, (Button)item.Content,
                 (_, _) =>
                 {
-                    if (WorkspaceNavigation.SelectedIndex == target && target <= 1) ShowAreaEvidence();
+                    if (WorkspaceNavigation.SelectedIndex == target && target == 0) ShowAreaEvidence();
                     else WorkspaceNavigation.SelectedIndex = target;
                 });
         }

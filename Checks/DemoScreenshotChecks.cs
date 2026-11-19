@@ -179,7 +179,7 @@ internal static class DemoScreenshotChecks
             grain.IsChecked = true;
             grain.RaiseEvent(new RoutedEventArgs(CheckBox.ClickEvent));
             Settle(window);
-            foreach (string destination in new[] { "Overview", "Investigate", "History" })
+            foreach (string destination in new[] { "Overview", "History" })
             {
                 navigation.SelectedItem = destinations[destination];
                 Settle(window);
@@ -197,9 +197,6 @@ internal static class DemoScreenshotChecks
             Settle(window);
             VerifySharedPicker(window);
             Capture(window, Path.Combine(output, "workspace-history.png"), 1);
-            navigation.SelectedItem = destinations["Investigate"];
-            Settle(window);
-            Capture(window, Path.Combine(output, "workspace-investigate.png"), 1);
             navigation.SelectedItem = destinations["Overview"];
             Settle(window);
             Capture(window, Path.Combine(output, "workspace-overview.png"), 1);

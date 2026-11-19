@@ -133,7 +133,6 @@ public partial class MainWindow : Window
         }
         SynchronizeNavigation();
         SystemAreas.Items.Refresh();
-        InvestigationAreas.Items.Refresh();
         SymptomChips.Items.Refresh();
         RefreshSessionHistory();
         UpdateMainActionLabel();
@@ -146,7 +145,7 @@ public partial class MainWindow : Window
         RefreshWorkspaceToolbarLanguage();
         QueueTitleSearch();
         // One pane: the details cover the page, so rebuild them when they were showing, not when the page is.
-        if (areaDetailsShown || OverviewPage.IsVisible || InvestigatePage.IsVisible) ShowAreaEvidence();
+        if (areaDetailsShown || OverviewPage.IsVisible) ShowAreaEvidence();
     }
 
     private void LoadSample()

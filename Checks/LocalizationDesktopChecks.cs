@@ -30,10 +30,11 @@ internal static class LocalizationDesktopChecks
             window.Show();
             var navigation = (ListBox)window.FindName("WorkspaceNavigation");
             var destinations = navigation.Items.OfType<ListBoxItem>().ToArray();
-            var investigate = destinations.Single(item => Equals(item.Tag, "Investigate"));
+            var home = destinations.Single(item => Equals(item.Tag, "Overview"));
             var tools = destinations.Single(item => Equals(item.Tag, "Tools"));
             var historyPage = destinations.Single(item => Equals(item.Tag, "History"));
-            var investigationAreas = (ListBox)window.FindName("InvestigationAreas");
+            var systemAreas = (ListBox)window.FindName("SystemAreas");
+            var symptomChips = (ItemsControl)window.FindName("SymptomChips");
             var history = (ListBox)window.FindName("SessionHistory");
             var languageButton = (Button)window.FindName("LangButton");
             var languages = OpenLanguageMenu(languageButton);
@@ -52,10 +53,9 @@ internal static class LocalizationDesktopChecks
             int checkedLocales = 0;
             foreach (var locale in localeNames)
             {
-                navigation.SelectedItem = investigate;
-                investigationAreas.SelectedIndex = -1;
-                investigationAreas.SelectedIndex = 0;
-                investigationAreas.ScrollIntoView(investigationAreas.SelectedItem);
+                navigation.SelectedItem = home;
+                systemAreas.SelectedIndex = -1;
+                systemAreas.SelectedIndex = 0;
                 window.UpdateLayout();
 
                 languages = OpenLanguageMenu(languageButton);
@@ -70,19 +70,17 @@ internal static class LocalizationDesktopChecks
                 var title = (TextBlock)window.FindName("AreaTitle");
                 var description = (TextBlock)window.FindName("AreaDescription");
                 Require(title.IsVisible && title.Text == (string)window.FindResource("Str_Category_Diagnostics"),
-                    "The Investigate evidence title follows " + locale + $" (visible {title.IsVisible}, text '{title.Text}', output {((FrameworkElement)window.FindName("TerminalPanel")).IsVisible})");
+                    "The area evidence title follows " + locale + $" (visible {title.IsVisible}, text '{title.Text}', output {((FrameworkElement)window.FindName("TerminalPanel")).IsVisible})");
                 Require(description.IsVisible && description.Text == (string)window.FindResource("Str_Category_Diagnostics_Description"),
-                    "The Investigate evidence description follows " + locale);
+                    "The area evidence description follows " + locale);
                 Require(((TextBlock)window.FindName("AreaState")).Text == (string)window.FindResource("Str_Workspace_NotChecked"),
                     "Changing language leaves the unrun area unchecked in " + locale);
-                // The symptom list sits under the swapped-in details; Back brings it forward again.
+                // The Home chips sit under the swapped-in details; Back brings them forward again.
                 ((Button)window.FindName("OutputBackButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 window.UpdateLayout();
-                var areaRow = (ListBoxItem?)investigationAreas.ItemContainerGenerator.ContainerFromIndex(0);
-                Require(areaRow is not null && Equals(AutomationProperties.GetName(areaRow), window.FindResource("Str_Guided_Slow")) &&
-                    Descendants(areaRow).OfType<TextBlock>().Any(text => text.Text == (string)window.FindResource("Str_Guided_Slow")) &&
-                    Descendants(areaRow).OfType<TextBlock>().Any(text => text.Text == (string)window.FindResource("Str_Guided_SlowHint")),
-                    "The Investigate row text and accessible name follow " + locale);
+                var chip = symptomChips.ItemContainerGenerator.ContainerFromIndex(0);
+                Require(chip is not null && Descendants(chip).OfType<TextBlock>().Any(text => text.Text == (string)window.FindResource("Str_Guided_Slow")),
+                    "The Home symptom chip text follows " + locale);
                 Require(((TextBlock)window.FindName("AreaSectionTitle")).Text == (string)window.FindResource("Str_Area_ChooseChecks") &&
                     Equals(((Button)window.FindName("ReviewAreaButton")).Content, window.FindResource("Str_Area_AllTools")),
                     "The rebuilt area-summary actions follow " + locale);
@@ -119,7 +117,7 @@ internal static class LocalizationDesktopChecks
                 checkedLocales++;
             }
             Require(checkedLocales == 20, "All twenty application locales were exercised");
-            Console.WriteLine("PASS: twenty locales through the language menu, localized workspace tabs, Investigate evidence, session history and Tools validation. No provider or repair ran.");
+            Console.WriteLine("PASS: twenty locales through the language menu, localized workspace tabs, Home area evidence and symptom chips, session history and Tools validation. No provider or repair ran.");
             return 0;
         }
         finally { window.Close(); application.Shutdown(); }

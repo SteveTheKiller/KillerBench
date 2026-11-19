@@ -173,7 +173,7 @@ public partial class MainWindow
         }
         else if (selected.Source is { } source && sources.Contains(source))
         {
-            WorkspaceNavigation.SelectedIndex = 3;
+            WorkspaceNavigation.SelectedIndex = 2;
             SourcesList.SelectedIndex = sources.IndexOf(source);
             OnSourceSelected(this, new SelectionChangedEventArgs(Selector.SelectionChangedEvent, Array.Empty<object>(), Array.Empty<object>()));
             SearchBox.Text = source.Lines.Any(line => line.Contains(query, StringComparison.CurrentCultureIgnoreCase)) ? query : "";

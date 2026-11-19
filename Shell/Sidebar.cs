@@ -53,7 +53,7 @@ public partial class MainWindow
     {
         if (SidebarHome is null || CategoryList is null) return;
         string page = WorkspaceNavigation.SelectedItem is ListBoxItem { Tag: string tag } ? tag : "Overview";
-        MarkViewButton(SidebarHome, page is "Overview" or "Investigate");
+        MarkViewButton(SidebarHome, page == "Overview");
         MarkViewButton(SidebarHistory, page == "History");
         CategoryList.Tag = page == "Tools" ? "active" : null;
     }

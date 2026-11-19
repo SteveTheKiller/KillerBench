@@ -36,9 +36,10 @@ internal static class WorkspaceNavigationChecks
             var destinations = navigation.Items.OfType<ListBoxItem>().ToArray();
             // The sidebar replaced the title-bar tabs; the hidden list stays as the page model it drives.
             Require(!navigation.IsVisible && navigation.IsEnabled, "The title-bar tabs are gone and the page model stays enabled.");
-            Require(navigation.Items.Count == 4 && destinations.Select(item => item.Tag as string)
-                .SequenceEqual(new[] { "Overview", "Investigate", "Tools", "History" }),
-                "The page model keeps Overview, Investigate, Tools and History in order.");
+            Require(navigation.Items.Count == 3 && destinations.Select(item => item.Tag as string)
+                .SequenceEqual(new[] { "Overview", "Tools", "History" }) &&
+                window.FindName("InvestigatePage") is null && window.FindName("InvestigationAreas") is null,
+                "The page model keeps Overview, Tools and History in order, and the Investigate page is gone.");
             var sidebarPanel = Find<FrameworkElement>(window, "LeftPanel");
             var homeRow = Find<Button>(window, "SidebarHome");
             var historyRow = Find<Button>(window, "SidebarHistory");
@@ -116,7 +117,7 @@ internal static class WorkspaceNavigationChecks
             categoryItems.SelectedIndex = 1;
             categoryItems.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left) { RoutedEvent = UIElement.PreviewMouseLeftButtonUpEvent, Source = secondCategory });
             Settle(window);
-            Require(navigation.SelectedItem == destinations[2] && options.IsVisible && !overview.IsVisible &&
+            Require(navigation.SelectedItem == destinations[1] && options.IsVisible && !overview.IsVisible &&
                     Equals(categoryItems.Tag, "active") && homeRow.Tag is null && historyRow.Tag is null,
                 "Clicking an area in the sidebar opens its page and marks only that area.");
             var firstCategory = (FrameworkElement)categoryItems.ItemContainerGenerator.ContainerFromIndex(0);
@@ -164,23 +165,9 @@ internal static class WorkspaceNavigationChecks
                     Find<CheckBox>(window, "MainAutoRepair").IsChecked == false,
                 "Review opens the selected category with automatic repair off and starts no diagnostic.");
 
-            navigation.SelectedItem = destinations[1];
-            Settle(window);
-            var investigation = Find<ListBox>(window, "InvestigationAreas");
-            Require(investigation.Items.Count == 6,
-                "Investigate offers the six illustrated symptom entry points from the approved concept.");
-            investigation.SelectedIndex = 2;
-            Settle(window);
-            Require(evidence.IsVisible && !Find<FrameworkElement>(window, "InvestigatePage").IsVisible && detail.Text == "Network",
-                "Guided investigation swaps in the matching area without dispatching an action.");
-            Find<Button>(window, "ReviewAreaButton").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            Settle(window);
-            Require(options.IsVisible && Find<TextBlock>(window, "CategoryTitle").Text == "Network" &&
-                    Find<CheckBox>(window, "MainAutoRepair").IsChecked == false,
-                "Guided handoff opens the matching workflow for review without repair consent.");
             historyRow.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Settle(window);
-            Require(navigation.SelectedItem == destinations[3] && Equals(historyRow.Tag, "selected") && homeRow.Tag is null,
+            Require(navigation.SelectedItem == destinations[2] && Equals(historyRow.Tag, "selected") && homeRow.Tag is null,
                 "History in the sidebar opens History and marks only that row.");
             Require(Find<FrameworkElement>(window, "HistoryPage").IsVisible &&
                     Find<Button>(window, "OpenSavedWorkflowButton").IsVisible &&
@@ -190,7 +177,9 @@ internal static class WorkspaceNavigationChecks
                     captureHint.Inlines.OfType<System.Windows.Documents.Run>().Any(run => run.Text.Contains("Ctrl+Shift+O", StringComparison.Ordinal)),
                 "History's Open capture action advertises its existing keyboard shortcut.");
 
-            for (int index = 0; index < 4; index++)
+            Require(!window.InputBindings.OfType<KeyBinding>().Any(item => item.Key == Key.D4 && item.Modifiers == ModifierKeys.Control),
+                "Ctrl+4 is free now that the Investigate page is gone.");
+            for (int index = 0; index < 3; index++)
             {
                 Key key = (Key)((int)Key.D1 + index);
                 var binding = window.InputBindings.OfType<KeyBinding>().SingleOrDefault(item =>
@@ -218,7 +207,7 @@ internal static class WorkspaceNavigationChecks
             Settle(window);
             Require(evidence.IsVisible && detail.Text == "Diagnostics", "Clicking the area that is still selected opens its details again.");
 
-            navigation.SelectedIndex = 2;
+            navigation.SelectedIndex = 1;
             ImportFixture(window, "workspace-evidence.log", "Synthetic fixture. No machine evidence was collected.\n");
             ImportFixture(window, "workspace-other.log", "Second synthetic fixture. No machine evidence was collected.\n");
 
@@ -235,7 +224,7 @@ internal static class WorkspaceNavigationChecks
                     !WorkbenchCommands.ExportReport.CanExecute(null, window),
                 "An unchecked area cannot reveal, search or export previously selected evidence.");
 
-            navigation.SelectedIndex = 3;
+            navigation.SelectedIndex = 2;
             var history = Find<ListBox>(window, "SessionHistory");
             Settle(window);
             Require(history.Items.Count == 2 && history.Items[0].ToString() == "workspace-evidence.log" &&
@@ -249,11 +238,11 @@ internal static class WorkspaceNavigationChecks
                     evidenceTitle.Text == "workspace-evidence.log" && export.IsEnabled,
                 "Selecting a session entry restores the actual imported report.");
 
-            navigation.SelectedIndex = 2;
+            navigation.SelectedIndex = 1;
             Find<ListBox>(window, "SourcesList").SelectedIndex = 1;
             Settle(window);
             Require(evidenceTitle.Text == "workspace-other.log", "Tools can show the other retained report.");
-            navigation.SelectedIndex = 3;
+            navigation.SelectedIndex = 2;
             Settle(window);
             Require(history.SelectedIndex == 0 && evidenceTitle.Text == "workspace-evidence.log" &&
                     Find<FrameworkElement>(window, "HistoryPage").IsVisible && !evidence.IsVisible,
@@ -271,7 +260,7 @@ internal static class WorkspaceNavigationChecks
             Require(evidence.IsVisible && Find<FrameworkElement>(window, "ReportPane").IsVisible && evidenceTitle.Text == "workspace-evidence.log",
                 "The open History row's Full report button swaps its report in.");
 
-            navigation.SelectedIndex = 2;
+            navigation.SelectedIndex = 1;
             ImportFixture(window, "workspace-new.log", "Third synthetic fixture. No machine evidence was collected.\n");
             Settle(window);
             Require(evidenceTitle.Text == "workspace-new.log",
@@ -382,7 +371,7 @@ internal static class WorkspaceNavigationChecks
         results.SelectedItem = FromGroup("Tools");
         Enter(results);
         Settle(window);
-        Require(navigation.SelectedIndex == 2 && Find<ComboBox>(window, "CategoryWorkflow").SelectedItem!.ToString()!
+        Require(navigation.SelectedIndex == 1 && Find<ComboBox>(window, "CategoryWorkflow").SelectedItem!.ToString()!
                 .Contains("Network", StringComparison.OrdinalIgnoreCase) &&
                 Find<CheckBox>(window, "MainAutoRepair").IsChecked == false && !Find<Button>(window, "CancelButton").IsEnabled,
             "A tool search result opens the workflow for review with repair consent off.");
@@ -391,7 +380,7 @@ internal static class WorkspaceNavigationChecks
         Enter(results);
         Settle(window);
         string visible = Find<TextBox>(window, "EvidenceBox").Text;
-        Require(navigation.SelectedIndex == 3 && Find<TextBlock>(window, "EvidenceTitle").Text == "search-network.log" &&
+        Require(navigation.SelectedIndex == 2 && Find<TextBlock>(window, "EvidenceTitle").Text == "search-network.log" &&
                 visible.Contains("2  Network fixture", StringComparison.Ordinal) && !visible.Contains("Unrelated", StringComparison.Ordinal) &&
                 Find<FrameworkElement>(window, "ConsolePane").IsVisible,
             "An evidence result opens the matching source with original line numbers and the query applied.");
@@ -413,7 +402,7 @@ internal static class WorkspaceNavigationChecks
         typeof(KillerBench.App).GetProperty("DemoMode")!.SetValue(null, true);
         try
         {
-            navigation.SelectedIndex = 2;
+            navigation.SelectedIndex = 1;
             Find<ListBox>(window, "CategoryList").SelectedIndex = 11;
             Find<CheckBox>(window, "MainAutoRepair").IsChecked = false;
             typeof(KillerBench.App).GetProperty("ScreenshotMode")!.SetValue(null, true);

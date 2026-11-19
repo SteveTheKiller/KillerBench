@@ -69,9 +69,7 @@ public partial class MainWindow
         else
         {
             AreaState.SetResourceReference(TextBlock.TextProperty, "Str_Workspace_NotChecked");
-            IEnumerable<WorkflowKind> choices = InvestigatePage.IsVisible && InvestigationAreas.SelectedItem is GuidedSymptom symptom && symptom.Area == area.Id
-                ? new[] { symptom.Workflow }.Concat(area.Tools.Where(kind => kind != symptom.Workflow)).Take(3)
-                : area.Tools.Take(3);
+            IEnumerable<WorkflowKind> choices = area.Tools.Take(3);
             foreach (var kind in choices)
             {
                 var button = new Button

@@ -5,7 +5,6 @@ namespace KillerBench.Services;
 public static class WorkbenchCommands
 {
     public static RoutedUICommand Overview { get; } = new();
-    public static RoutedUICommand Investigate { get; } = new();
     public static RoutedUICommand Tools { get; } = new();
     public static RoutedUICommand History { get; } = new();
     public static RoutedUICommand ToolbarSmallIcons { get; } = new();

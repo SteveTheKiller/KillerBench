@@ -81,7 +81,6 @@
         <ListBox.ContextMenu><ContextMenu x:Name="ToolbarMenu" Style="{StaticResource CardMenu}"/></ListBox.ContextMenu>
         <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="Margin" Value="0,0,4,0"/><Setter Property="IsTabStop" Value="False"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><ContentPresenter/></ControlTemplate></Setter.Value></Setter></Style></ListBox.ItemContainerStyle>
         <ListBoxItem Tag="Overview"><Button x:Name="OverviewButton" Content="{DynamicResource Str_Workspace_Overview}" Style="{StaticResource ViewToolbarButton}" Click="OnWorkspaceToolbarClick" AutomationProperties.Name="{DynamicResource Str_Workspace_Overview}"/></ListBoxItem>
-        <ListBoxItem Tag="Investigate"><Button x:Name="InvestigateButton" Content="{DynamicResource Str_Workspace_Investigate}" Style="{StaticResource ViewToolbarButton}" Click="OnWorkspaceToolbarClick" AutomationProperties.Name="{DynamicResource Str_Workspace_Investigate}"/></ListBoxItem>
         <ListBoxItem Tag="Tools"><Button x:Name="ToolsButton" Content="{DynamicResource Str_Workspace_Tools}" Style="{StaticResource ViewToolbarButton}" Click="OnWorkspaceToolbarClick" AutomationProperties.Name="{DynamicResource Str_Workspace_Tools}"/></ListBoxItem>
         <ListBoxItem Tag="History"><Button x:Name="HistoryButton" Content="{DynamicResource Str_Workspace_History}" Style="{StaticResource ViewToolbarButton}" Click="OnWorkspaceToolbarClick" AutomationProperties.Name="{DynamicResource Str_Workspace_History}"/></ListBoxItem>
       </ListBox>
@@ -278,34 +277,6 @@
           </ScrollViewer>
           </Border></Grid>
         </Border>
-        <Border x:Name="InvestigatePage" Grid.Column="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Visibility="Collapsed" icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
-          <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/><Border>
-          <DockPanel>
-            <StackPanel DockPanel.Dock="Top" Margin="18,18,18,10"><TextBlock Text="{DynamicResource Str_Guided_Title}" FontFamily="{DynamicResource HeadingFont}" FontSize="24" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap"/><TextBlock Text="{DynamicResource Str_Guided_Hint}" TextWrapping="Wrap" Margin="0,6,0,0" Foreground="{DynamicResource MutedTextBrush}"/>
-              <!-- Step track: the first step is the current one; checks and review happen in the area pane. -->
-              <Grid x:Name="GuidedSteps" Margin="0,12,0,0">
-                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                <Border Grid.Column="0" Background="{DynamicResource PrimaryBrush}" CornerRadius="11" Padding="10,3"><TextBlock Text="{DynamicResource Str_Guided_Choose}" Foreground="{DynamicResource OnPrimaryBrush}" FontSize="12"/></Border>
-                <Border Grid.Column="1" Height="2" Margin="6,0" Background="{DynamicResource PaneBorderBrush}"/>
-                <Border Grid.Column="2" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="11" Padding="10,2"><TextBlock Text="{DynamicResource Str_Guided_Check}" Foreground="{DynamicResource MutedTextBrush}" FontSize="12"/></Border>
-                <Border Grid.Column="3" Height="2" Margin="6,0" Background="{DynamicResource PaneBorderBrush}"/>
-                <Border Grid.Column="4" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="11" Padding="10,2"><TextBlock Text="{DynamicResource Str_Guided_Review}" Foreground="{DynamicResource MutedTextBrush}" FontSize="12"/></Border>
-              </Grid>
-            </StackPanel>
-            <ListBox x:Name="InvestigationAreas" Style="{StaticResource WorkspaceList}" Padding="18,0,18,18" Background="Transparent" BorderThickness="0" SelectionChanged="OnInvestigationAreaSelected" PreviewMouseLeftButtonUp="OnReopenSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
-              <ListBox.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="2"/></ItemsPanelTemplate></ListBox.ItemsPanel>
-              <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}"><Setter Property="Padding" Value="10"/><Setter Property="Margin" Value="3"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Cursor" Value="Hand"/><Setter Property="AutomationProperties.Name" Value="{Binding Title}"/>
-                <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="SymptomFace" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Background="{DynamicResource ContentPaneBrush}"><Grid><ContentPresenter Margin="{TemplateBinding Padding}"/><Border Style="{StaticResource FlyoutGrain}"/></Grid></Border><ControlTemplate.Triggers>
-                  <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="SymptomFace" Property="Background" Value="{DynamicResource RowHoverBrush}"/></Trigger>
-                  <Trigger Property="IsSelected" Value="True"><Setter TargetName="SymptomFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/><Setter TargetName="SymptomFace" Property="Background" Value="{DynamicResource RowHoverBrush}"/></Trigger>
-                  <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="SymptomFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/></Trigger>
-                </ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
-              </Style></ListBox.ItemContainerStyle>
-              <ListBox.ItemTemplate><DataTemplate><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><icons:AreaIllustration Id="{Binding Art}" Stroke="{DynamicResource PrimaryBrush}" Width="44" Height="44" VerticalAlignment="Top" Margin="0,0,12,0" IsHitTestVisible="False"/><StackPanel Grid.Column="1" VerticalAlignment="Center"><TextBlock Text="{Binding Title}" FontFamily="{DynamicResource HeadingFont}" FontSize="16" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap" Margin="0,0,0,2"/><TextBlock Text="{Binding Description}" TextWrapping="Wrap" FontSize="12" Opacity="0.8"/></StackPanel></Grid></DataTemplate></ListBox.ItemTemplate>
-            </ListBox>
-          </DockPanel>
-          </Border></Grid>
-        </Border>
         <Border x:Name="HistoryPage" Grid.Column="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" Visibility="Collapsed" icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
           <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/><Border>
           <ScrollViewer Style="{StaticResource ShadowScrollViewer}" Padding="18" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel>
@@ -345,7 +316,7 @@
                         <!-- The selected result opens in place: outcome, each check with its state, then the full views. -->
                         <StackPanel x:Name="HistoryDetail" Margin="12,0,12,10" Visibility="Collapsed" Cursor="Arrow">
                           <TextBlock Text="{Binding Summary}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,6"/>
-                          <ItemsControl ItemsSource="{Binding Checks}" Visibility="{Binding ChecksVisibility}" Margin="0,0,0,8" Focusable="False">
+                          <ItemsControl ItemsSource="{Binding Checks}" Visibility="{Binding ChecksVisibility}" Margin="0,0,0,8" Focusable="False" MaxWidth="560" HorizontalAlignment="Left">
                             <ItemsControl.ItemTemplate><DataTemplate>
                               <DockPanel Margin="0,2">
                                 <Ellipse Width="8" Height="8" Fill="{Binding Tone}" VerticalAlignment="Center" Margin="0,0,8,0"/>

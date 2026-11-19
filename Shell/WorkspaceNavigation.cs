@@ -12,7 +12,7 @@ public partial class MainWindow
         var item = WorkspaceNavigation.Items.OfType<ListBoxItem>().SingleOrDefault(candidate => ReferenceEquals(candidate.Content, sender));
         if (item is not null)
         {
-            if (ReferenceEquals(WorkspaceNavigation.SelectedItem, item) && item.Tag is "Overview" or "Investigate") ShowAreaEvidence();
+            if (ReferenceEquals(WorkspaceNavigation.SelectedItem, item) && item.Tag is "Overview") ShowAreaEvidence();
             else WorkspaceNavigation.SelectedItem = item;
         }
     }
@@ -50,10 +50,7 @@ public partial class MainWindow
         if (WorkspaceNavigation.SelectedItem is not ListBoxItem { Tag: string page } || OverviewPage is null) return;
         RefreshWorkspaceToolbarSelection();
         RefreshPageVisibility();
-        if (page == "Investigate" && SystemAreas.SelectedItem is ToolCategory current &&
-            (InvestigationAreas.SelectedItem is not GuidedSymptom selected || selected.Area != current.Id))
-            InvestigationAreas.SelectedItem = GuidedSymptoms.FirstOrDefault(symptom => symptom.Area == current.Id);
-        if (page is "Overview" or "Investigate") ShowAreaEvidence();
+        if (page == "Overview") ShowAreaEvidence();
         else if (page == "History")
         {
             if (SessionHistory.SelectedItem is SessionEntry) OnHistorySelected(sender, e);
@@ -73,7 +70,6 @@ public partial class MainWindow
         bool covered = TerminalPanel.Visibility == Visibility.Visible;
         Visibility Show(string name) => page == name && !covered ? Visibility.Visible : Visibility.Collapsed;
         OverviewPage.Visibility = Show("Overview");
-        InvestigatePage.Visibility = Show("Investigate");
         HistoryPage.Visibility = Show("History");
         ConsoleBank.Visibility = Show("Tools");
         RefreshSidebarSelection();
@@ -83,10 +79,8 @@ public partial class MainWindow
     {
         foreach (var area in ToolCategories) area.StateKey = "Str_Workspace_NotChecked";
         SystemAreas.ItemsSource = ToolCategories;
-        InvestigationAreas.ItemsSource = GuidedSymptoms;
         SymptomChips.ItemsSource = GuidedSymptoms;
         SystemAreas.SelectedIndex = 0;
-        InvestigationAreas.SelectedIndex = 0;
         OverviewScroll.LayoutUpdated += (_, _) => FitSystemMap();
     }
 
@@ -116,13 +110,6 @@ public partial class MainWindow
 
     private void OnSystemAreaSelected(object sender, SelectionChangedEventArgs e) => ShowAreaEvidence();
 
-    private void OnInvestigationAreaSelected(object sender, SelectionChangedEventArgs e)
-    {
-        if (InvestigationAreas.SelectedItem is GuidedSymptom symptom)
-            SystemAreas.SelectedItem = ToolCategories.Single(area => area.Id == symptom.Area);
-        ShowAreaEvidence();
-    }
-
     private void RefreshSessionHistory()
     {
         var selected = (SessionHistory.SelectedItem as SessionEntry)?.Evidence;
@@ -133,7 +120,8 @@ public partial class MainWindow
                 Summary = LocalizedStatus(result.Status),
                 Checks = result.Checks.Where(check => check.Name != NativeCapabilityCheckName)
                     .Select(check => new HistoryCheck(DisplayReportCheckName(check.Name), Controls.LocalizedText.Choice(check.State),
-                        (System.Windows.Media.Brush)FindResource(ToneBrush(check.State)))).ToArray()
+                        // Information has no tone of its own in reports; on a dark row it needs the text color to show at all.
+                        (System.Windows.Media.Brush)FindResource(check.State == CheckState.Information ? "TextBrush" : ToneBrush(check.State)))).ToArray()
             }
             : new SessionEntry(source, source.Source == "Synthetic demonstration" ? Controls.LocalizedText.Get("Str_Content_Load_sample")
                 : System.IO.Path.GetFileName(source.Source)) { Summary = source.Source }).ToArray();
@@ -259,14 +247,12 @@ public partial class MainWindow
         if (SystemAreas.SelectedItem is not ToolCategory area) return;
         MainAutoRepair.IsChecked = false;
         CategoryList.SelectedItem = area;
-        if (WorkspaceNavigation.SelectedItem is ListBoxItem { Tag: "Investigate" } && InvestigationAreas.SelectedItem is GuidedSymptom symptom && symptom.Area == area.Id)
-            MainWorkflow.SelectedItem = KillerBench.Engine.Workflows.WorkflowCatalog.All.Single(tool => tool.Kind == symptom.Workflow);
         ShowToolsWorkspace();
     }
 
     private void ShowToolsWorkspace()
     {
-        WorkspaceNavigation.SelectedIndex = 2;
+        WorkspaceNavigation.SelectedIndex = 1;
         AreaEvidencePanel.Visibility = Visibility.Collapsed;
         SetOutputView();
         // Land on the tool controls; output swaps in when the tool runs.
@@ -282,11 +268,10 @@ public partial class MainWindow
         OnMainGo(sender, e);
     }
 
-    // A Home chip opens the symptom's area and runs its check, the way the old Investigate page did in two steps.
+    // A Home chip opens the symptom's area and runs its matching check in one step.
     private void OnSymptomChip(object sender, RoutedEventArgs e)
     {
         if (sender is not FrameworkElement { Tag: GuidedSymptom symptom } || !MainGo.IsEnabled || !CanSearchWorkspace) return;
-        InvestigationAreas.SelectedItem = symptom;
         CategoryList.SelectedItem = ToolCategories.Single(area => area.Id == symptom.Area);
         MainAutoRepair.IsChecked = false;
         ShowToolsWorkspace();
@@ -301,7 +286,6 @@ public partial class MainWindow
         OverviewCheckButton.IsEnabled = !busy;
         OverviewOpenCaptureButton.IsEnabled = !busy;
         SystemAreas.IsEnabled = !busy;
-        InvestigationAreas.IsEnabled = !busy;
         SessionHistory.IsEnabled = !busy;
     }
 
