@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace KillerBench.Shell;
@@ -87,48 +87,13 @@ public partial class MainWindow
     private void FitSystemMap()
     {
         if (!OverviewPage.IsVisible || OverviewScroll.ViewportHeight <= 0) return;
-        // The map sits beside the score card and takes the pane's full height.
-        double height = Math.Max(0, OverviewScroll.ViewportHeight - 8);
-        if (Math.Abs(SystemAreas.MinHeight - height) > 1) SystemAreas.MinHeight = height;
-        PlaceOverviewGauge();
-    }
-
-    // The gauge fills the strip above the monitor. When the map stacks as a plain list, it sits above the list.
-    private void PlaceOverviewGauge()
-    {
-        var machine = FindChild<KillerBench.Controls.MachineMapPanel>(SystemAreas);
-        Rect strip = machine?.GaugeRect ?? Rect.Empty;
-        Thickness margin; double size; Thickness listMargin;
-        if (machine is not null && !strip.IsEmpty && strip.Height > 0)
-        {
-            var origin = machine.TranslatePoint(new Point(strip.X, strip.Y), OverviewMapHost);
-            size = Math.Clamp(strip.Height - 8, 40, 150);
-            margin = new Thickness(origin.X + (strip.Width - size) / 2, origin.Y + strip.Height - size, 0, 0);
-            listMargin = new Thickness(0);
-        }
-        else
-        {
-            size = 100;
-            margin = new Thickness(0);
-            listMargin = new Thickness(0, size + 12, 0, 0);
-        }
-        if (Math.Abs(OverviewGaugeSpot.Width - size) > 0.5) OverviewGaugeSpot.Width = OverviewGaugeSpot.Height = size;
-        if (!AreClose(OverviewGaugeSpot.Margin, margin)) OverviewGaugeSpot.Margin = margin;
-        if (!AreClose(SystemAreas.Margin, listMargin)) SystemAreas.Margin = listMargin;
-    }
-
-    private static bool AreClose(Thickness a, Thickness b) =>
-        Math.Abs(a.Left - b.Left) < 0.5 && Math.Abs(a.Top - b.Top) < 0.5 && Math.Abs(a.Right - b.Right) < 0.5 && Math.Abs(a.Bottom - b.Bottom) < 0.5;
-
-    private static T? FindChild<T>(DependencyObject parent) where T : DependencyObject
-    {
-        for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent); i++)
-        {
-            var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
-            if (child is T match) return match;
-            if (FindChild<T>(child) is { } found) return found;
-        }
-        return null;
+        // The machine fills whatever the summary band leaves, so the pane has no dead floor.
+        // A fixed height, not a floor: inside the scroll viewer the map would otherwise size itself to the width and run off the bottom.
+        // Below 280px it keeps that floor and the page scrolls rather than shrinking the machine to nothing.
+        double height = Math.Max(280, OverviewScroll.ViewportHeight - OverviewHero.ActualHeight - OverviewHero.Margin.Bottom - 2);
+        // A narrow pane stacks the parts as a list, which needs its natural height.
+        if (OverviewMapHost.ActualWidth < 460) { if (!double.IsNaN(SystemAreas.Height)) SystemAreas.ClearValue(HeightProperty); return; }
+        if (double.IsNaN(SystemAreas.Height) || Math.Abs(SystemAreas.Height - height) > 1) SystemAreas.Height = height;
     }
 
     private void FitInitialOverviewHeight()
@@ -137,8 +102,8 @@ public partial class MainWindow
         double width = Math.Max(220, (Width - 40) / appScale - LeftPanel.Width - 8 - OverviewScroll.Padding.Left - OverviewScroll.Padding.Right);
         // Measure the whole scroll content (hero, map hint and map) so nothing on the page is left out of the sum.
         var page = (FrameworkElement)OverviewScroll.Content;
-        // A MinHeight left over from a larger window would inflate the sum; FitSystemMap sets it again after layout.
-        SystemAreas.ClearValue(MinHeightProperty);
+        // A Height left over from a larger window would inflate the sum; FitSystemMap sets it again after layout.
+        SystemAreas.ClearValue(HeightProperty);
         page.Measure(new Size(width, double.PositiveInfinity));
         CaptionBar.Measure(new Size(Width, double.PositiveInfinity));
         double content = page.DesiredSize.Height + OverviewScroll.Padding.Top + OverviewScroll.Padding.Bottom + 12;

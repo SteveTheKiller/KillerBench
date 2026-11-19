@@ -70,21 +70,21 @@ internal static class WorkspaceNavigationChecks
             window.Height = 1000;
             Settle(window);
             var mapPane = Find<FrameworkElement>(window, "OverviewPage");
-            // One toolbar only: the symptoms live inside the score card, the gauge sits in the free strip above the
-            // monitor, and the card wraps its content, centered against the machine instead of running the pane height.
+            // Home is one summary band (gauge, status, symptoms, actions) over a machine that fills the rest of the pane.
             var chips = Find<FrameworkElement>(window, "SymptomChips");
             var hero = Find<FrameworkElement>(window, "OverviewHero");
             var gauge = Find<FrameworkElement>(window, "OverviewGaugeSpot");
-            var drawn = FindVisual<KillerBench.Controls.MachineMapPanel>(map);
-            Require(chips.IsDescendantOf(hero), "The symptom buttons sit inside the score card, not in a bar of their own.");
-            Rect gaugeBox = gauge.TransformToVisual(drawn!).TransformBounds(new Rect(gauge.RenderSize));
-            Rect screen = drawn!.ScreenRect;
-            Require(gauge.ActualWidth >= 60 && gaugeBox.Bottom <= screen.Top && gaugeBox.Left >= screen.Left - 20 && gaugeBox.Right <= screen.Right + 20,
-                "The gauge fills the strip above the monitor. Gauge " + gaugeBox + ", screen " + screen);
-            double heroMiddle = hero.TranslatePoint(new Point(0, hero.ActualHeight / 2), mapPane).Y;
-            double mapMiddle = map.TranslatePoint(new Point(0, map.ActualHeight / 2), mapPane).Y;
-            Require(Math.Abs(heroMiddle - mapMiddle) <= 2 && hero.ActualHeight < map.ActualHeight - 40,
-                "The score card wraps its content and sits centered on the machine. Card middle " + heroMiddle + ", map middle " + mapMiddle);
+            var drawn = FindVisual<KillerBench.Controls.MachineMapPanel>(map)!;
+            Require(chips.IsDescendantOf(hero) && gauge.IsDescendantOf(hero), "The gauge and the symptom buttons sit in the summary band, not in bars of their own.");
+            var scroll = Find<ScrollViewer>(window, "OverviewScroll");
+            double heroBottom = hero.TranslatePoint(new Point(0, hero.ActualHeight), scroll).Y;
+            double mapTop = map.TranslatePoint(new Point(0, 0), scroll).Y;
+            double mapBottom = map.TranslatePoint(new Point(0, map.ActualHeight), scroll).Y;
+            Require(mapTop >= heroBottom && mapTop - heroBottom <= 20 && scroll.ScrollableHeight < 1 && scroll.ActualHeight - mapBottom <= 24,
+                "The machine starts right under the band and runs to the bottom of the pane. Band " + heroBottom + ", map " + mapTop + " to " + mapBottom + " of " + scroll.ActualHeight);
+            double machineWidth = drawn.TowerRect.Right - drawn.ScreenRect.Left, machineHeight = drawn.TowerRect.Height;
+            Require(Math.Min(map.ActualWidth - machineWidth, map.ActualHeight - machineHeight) <= 40,
+                "The machine is as big as the pane allows. Machine " + machineWidth + "x" + machineHeight + " in " + map.RenderSize);
             Require(Find<TextBlock>(window, "OverviewDetail") is { IsVisible: true } detailLine && detailLine.Text.Length > 1,
                 "Before any check, the score card carries the map instruction instead of an empty line.");
             window.Width = 1025;
