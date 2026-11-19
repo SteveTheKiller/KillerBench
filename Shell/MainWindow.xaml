@@ -206,11 +206,8 @@
                     <ItemsControl x:Name="SymptomChips" Margin="0,4,0,10" AutomationProperties.Name="{DynamicResource Str_Guided_Title}">
                       <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
                       <ItemsControl.ItemTemplate><DataTemplate>
-                        <Button Click="OnSymptomChip" Tag="{Binding}" Margin="0,0,6,6" Padding="8,4" AutomationProperties.Name="{Binding Title}" ToolTip="{Binding Description}">
-                          <StackPanel Orientation="Horizontal">
-                            <icons:AreaIllustration Id="{Binding Art}" Stroke="{DynamicResource PrimaryBrush}" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center" IsHitTestVisible="False"/>
-                            <TextBlock Text="{Binding Title}" FontSize="12" VerticalAlignment="Center"/>
-                          </StackPanel>
+                        <Button Click="OnSymptomChip" Tag="{Binding}" Margin="0,0,6,6" Padding="8,3" AutomationProperties.Name="{Binding Title}" ToolTip="{Binding Description}">
+                          <TextBlock Text="{Binding Title}" FontSize="12"/>
                         </Button>
                       </DataTemplate></ItemsControl.ItemTemplate>
                     </ItemsControl>

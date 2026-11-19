@@ -41,10 +41,9 @@ public sealed class MachineMapPanel : Panel
         ["Repair"] = new(448, 340, 284, 82),
     };
 
-    // The monitor stands on a short foot so its base lines up with the tower's; the strip it frees above it
-    // is GaugeRect, where the Overview puts its score gauge. Monitor parts are drawn in the old coordinates and
-    // shifted down by MonitorDrop.
-    private const double MonitorDrop = 100;
+    // The monitor sits flush on the tower's floor line; the strip it frees above it is GaugeRect, where the
+    // Overview puts its score gauge. Monitor parts are drawn in the old coordinates and shifted down by MonitorDrop.
+    private const double MonitorDrop = 124;
     private static readonly Rect Monitor = new(4, 4, 424, 300);
     private static readonly Rect MonitorScreen = new(16, 32, 410, 260);
     private static readonly Rect Tower = new(438, 4, 300, 424);
@@ -147,8 +146,6 @@ public sealed class MachineMapPanel : Panel
         dc.DrawRoundedRectangle(Case, Line(Edge, 2), Monitor, 12, 12);
         dc.DrawRectangle(ScreenFill, null, new Rect(MonitorScreen.X, MonitorScreen.Y, MonitorScreen.Width - 12, MonitorScreen.Height - 4));
         dc.DrawRectangle(Taskbar, null, new Rect(MonitorScreen.X, 270, MonitorScreen.Width - 12, 18));
-        dc.DrawRectangle(Metal, null, new Rect(186, 304, 60, 10));
-        dc.DrawRoundedRectangle(Metal, null, new Rect(116, 312, 200, 12), 6, 6);
 
         // Privacy: the webcam on the top bezel.
         var cam = Parts["Privacy"];
