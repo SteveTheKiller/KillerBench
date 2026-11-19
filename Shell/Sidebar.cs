@@ -53,9 +53,11 @@ public partial class MainWindow
     {
         if (SidebarHome is null || CategoryList is null) return;
         string page = WorkspaceNavigation.SelectedItem is ListBoxItem { Tag: string tag } ? tag : "Overview";
-        MarkViewButton(SidebarHome, page == "Overview");
-        MarkViewButton(SidebarHistory, page == "History");
-        CategoryList.Tag = page == "Tools" ? "active" : null;
+        // An open area summary belongs to its area, not to Home.
+        bool areaSummary = AreaEvidencePanel?.Visibility == Visibility.Visible && TerminalPanel?.Visibility == Visibility.Visible;
+        MarkViewButton(SidebarHome, page == "Overview" && !areaSummary);
+        MarkViewButton(SidebarHistory, page == "History" && !areaSummary);
+        CategoryList.Tag = page == "Tools" || areaSummary ? "active" : null;
     }
 
     private void RefreshSidebarWidth()

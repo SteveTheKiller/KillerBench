@@ -14,6 +14,9 @@ public partial class MainWindow
     private void BuildAreaSummary(ToolCategory area, TextEvidence? source, WorkflowResult? result)
     {
         areaSummarySource = source;
+        // The sidebar marks the area whose summary is open, so the Tools page behind it follows too.
+        if (!workflowOutputActive && readCancellation is null)
+            MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(w => w.Kind == area.Tools[0]);
         AreaTitle.Text = area.Title;
         SelectedAreaArt.Id = area.Id;
         AreaDescription.Text = area.Description;
@@ -72,24 +75,29 @@ public partial class MainWindow
             IEnumerable<WorkflowKind> choices = area.Tools.Take(3);
             foreach (var kind in choices)
             {
+                // Same 38px shape as the check rows on the area page, with a chevron that points where it goes.
                 var button = new Button
                 {
                     HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                    Padding = new Thickness(2, 4, 2, 4),
+                    Padding = new Thickness(12, 0, 12, 0),
+                    MinHeight = 38,
                     ToolTip = LocalizedText.Get("Str_Area_ChooseChecks")
                 };
                 var row = new DockPanel();
-                var icon = new AreaIllustration { Id = area.Id, Width = 34, Height = 34, Margin = new Thickness(0, 0, 12, 0), IsHitTestVisible = false };
-                icon.SetResourceReference(AreaIllustration.StrokeProperty, "PrimaryBrush");
-                DockPanel.SetDock(icon, Dock.Left);
-                row.Children.Add(icon);
-                row.Children.Add(Body(LocalizedText.Workflow(kind), 14, new Thickness(0)));
+                var chevron = new TextBlock { Text = "", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, IsHitTestVisible = false };
+                chevron.SetResourceReference(TextBlock.ForegroundProperty, "MutedTextBrush");
+                DockPanel.SetDock(chevron, Dock.Right);
+                row.Children.Add(chevron);
+                var name = Body(LocalizedText.Workflow(kind), 13, new Thickness(0));
+                name.FontWeight = FontWeights.SemiBold;
+                name.VerticalAlignment = VerticalAlignment.Center;
+                row.Children.Add(name);
                 button.Content = row;
                 button.SetResourceReference(StyleProperty, "AreaChoiceButton");
                 button.SetResourceReference(FontFamilyProperty, "UiFont");
                 System.Windows.Automation.AutomationProperties.SetName(button, LocalizedText.Workflow(kind));
                 button.Click += (_, _) => OpenAreaTool(kind);
-                AreaReviewCards.Children.Add(AreaCard(button));
+                AreaReviewCards.Children.Add(AreaCard(button, new Thickness(0), 6));
             }
         }
         SetAreaEvidenceMode(true);
@@ -97,16 +105,18 @@ public partial class MainWindow
         SetOutputOpen(true);
     }
 
-    private static Border AreaCard(UIElement content)
+    private static Border AreaCard(UIElement content) => AreaCard(content, new Thickness(14), 10);
+
+    private static Border AreaCard(UIElement content, Thickness padding, double gap)
     {
         var grid = new Grid();
-        grid.Children.Add(new Border { Child = content, Padding = new Thickness(14) });
+        grid.Children.Add(new Border { Child = content, Padding = padding });
         var grain = new Border();
         grain.SetResourceReference(StyleProperty, "FlyoutGrain");
         grid.Children.Add(grain);
         var card = new Border
         {
-            Child = grid, Margin = new Thickness(0, 0, 0, 10), BorderThickness = new Thickness(1)
+            Child = grid, Margin = new Thickness(0, 0, 0, gap), BorderThickness = new Thickness(1)
         };
         card.SetResourceReference(Border.BackgroundProperty, "ReportCardBrush");
         card.SetResourceReference(Border.BorderBrushProperty, "PaneBorderBrush");

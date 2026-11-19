@@ -291,7 +291,7 @@ public partial class MainWindow
 
     private void SetAreaEvidenceMode(bool area)
     {
-        AreaEvidencePanel.Visibility = area ? Visibility.Visible : Visibility.Collapsed;
+        AreaEvidencePanel.Visibility = AreaHeaderBlock.Visibility = ReviewAreaButton.Visibility = area ? Visibility.Visible : Visibility.Collapsed;
         // The header stays for its Back button; only the generic title and export hide on an area summary.
         EvidenceTitle.Visibility = ExportReportButton.Visibility = OutputViewButtons.Visibility = CoverageLabel.Visibility = SessionSourcesExpander.Visibility =
             area ? Visibility.Collapsed : Visibility.Visible;

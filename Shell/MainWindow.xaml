@@ -1285,6 +1285,12 @@
                 <Button x:Name="ReportViewButton" Style="{StaticResource ViewToolbarButton}" Content="{DynamicResource Str_Session_ReadableReport}" ContentTemplate="{StaticResource OutputViewLabel}" Click="OnReportView" Padding="9,4" Margin="0,2,4,2" ToolTip="{DynamicResource Str_Session_ReadableReportTip}" AutomationProperties.Name="{DynamicResource Str_Session_ReadableReport}"/>
                 <Button x:Name="ConsoleViewButton" Style="{StaticResource ViewToolbarButton}" Content="{DynamicResource Str_Session_RawOutput}" ContentTemplate="{StaticResource OutputViewLabel}" Click="OnConsoleView" Padding="9,4" Margin="0,2,0,2" ToolTip="{DynamicResource Str_Session_RawOutputTip}" AutomationProperties.Name="{DynamicResource Str_Session_RawOutput}"/>
               </WrapPanel>
+              <!-- An area summary uses the page header shape: art, title and state, with All tools on the right. -->
+              <Button x:Name="ReviewAreaButton" DockPanel.Dock="Right" Content="{DynamicResource Str_Area_AllTools}" Style="{StaticResource OutlineButton}" Click="OnReviewArea" MinWidth="110" Margin="8,0,0,0" VerticalAlignment="Center" Visibility="Collapsed"/>
+              <DockPanel x:Name="AreaHeaderBlock" Visibility="Collapsed" VerticalAlignment="Center">
+                <icons:AreaIllustration x:Name="SelectedAreaArt" Width="44" Height="44" Stroke="{DynamicResource PrimaryBrush}" DockPanel.Dock="Left" Margin="0,0,12,0" IsHitTestVisible="False"/>
+                <StackPanel VerticalAlignment="Center"><TextBlock x:Name="AreaTitle" FontWeight="SemiBold" FontSize="18" Foreground="{DynamicResource PrimaryBrush}" TextTrimming="CharacterEllipsis"/><TextBlock x:Name="AreaState" Text="{DynamicResource Str_Workspace_NotChecked}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,2,0,0" FontSize="12" TextTrimming="CharacterEllipsis"/></StackPanel>
+              </DockPanel>
               <TextBlock x:Name="EvidenceTitle" Text="{DynamicResource Str_Text_Evidence}" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
             </DockPanel>
             <!-- A narrow output pane moves the view toggle here, under the title. -->
@@ -1300,10 +1306,6 @@
             <!-- Negative margins run the scrollbar flush to the pane edge; the content keeps the pane padding. -->
             <ScrollViewer x:Name="AreaEvidencePanel" Grid.Row="3" Grid.RowSpan="3" Margin="0,0,-14,-14" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
               <StackPanel Margin="4,6,18,14">
-                <DockPanel Margin="0,0,0,16">
-                  <icons:AreaIllustration x:Name="SelectedAreaArt" Width="72" Height="72" Stroke="{DynamicResource PrimaryBrush}" DockPanel.Dock="Left" Margin="0,0,16,0" IsHitTestVisible="False"/>
-                  <StackPanel VerticalAlignment="Center"><TextBlock x:Name="AreaTitle" FontFamily="{DynamicResource UiFont}" FontWeight="SemiBold" FontSize="22" TextWrapping="Wrap"/><TextBlock x:Name="AreaState" Text="{DynamicResource Str_Workspace_NotChecked}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0" FontSize="12" TextWrapping="Wrap"/></StackPanel>
-                </DockPanel>
                 <TextBlock x:Name="AreaDescription" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" FontSize="13" Margin="0,0,0,18"/>
                 <Grid x:Name="AreaCoverageChart" Visibility="Collapsed" Margin="0,0,0,14"/>
                 <Grid x:Name="AreaStateChart" Visibility="Collapsed" Height="14" Margin="0,0,0,8"/>
@@ -1313,7 +1315,6 @@
                 <TextBlock x:Name="AreaBeforeCheck" Text="{DynamicResource Str_Area_BeforeCheck}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" FontSize="12" Margin="0,0,0,12"/>
                 <StackPanel x:Name="AreaReviewCards"/>
                 <WrapPanel x:Name="AreaDetailActions" Visibility="Collapsed" Margin="0,8,0,6"><Button x:Name="AreaFullReportButton" Content="{DynamicResource Str_Area_FullReport}" Click="OnAreaOpenReport" Margin="0,0,8,6"/><Button x:Name="AreaRawEvidenceButton" Content="{DynamicResource Str_Session_RawOutput}" Tag="raw" Click="OnAreaOpenReport" Margin="0,0,0,6"/></WrapPanel>
-                <Button x:Name="ReviewAreaButton" Content="{DynamicResource Str_Area_AllTools}" Click="OnReviewArea" HorizontalAlignment="Left" Margin="0,4,0,0"/>
               </StackPanel>
             </ScrollViewer>
             <Border x:Name="ReportPane" Grid.Row="3" Margin="0,0,-14,0" Visibility="Collapsed">
