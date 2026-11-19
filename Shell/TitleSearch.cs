@@ -15,7 +15,11 @@ namespace KillerBench.Shell;
 public partial class MainWindow
 {
     private sealed record SearchDestination(string Group, string Title, string Detail,
-        ToolCategory? Area = null, WorkflowDefinition? Tool = null, TextEvidence? Source = null);
+        ToolCategory? Area = null, WorkflowDefinition? Tool = null, TextEvidence? Source = null)
+    {
+        // Area art for the row: the area itself, a tool's category, or the evidence figure for text sources.
+        public string ArtId { get; init; } = Area?.Id ?? "Diagnostics";
+    }
 
     private readonly DispatcherTimer titleSearchDelay = new() { Interval = TimeSpan.FromMilliseconds(160) };
     private CancellationTokenSource? titleSearchCancellation;
@@ -108,7 +112,7 @@ public partial class MainWindow
         var tools = WorkflowCatalog.All.Where(tool => Matches(LocalizedText.Workflow(tool.Kind)))
             .Take(limit + 1).ToArray();
         results.AddRange(tools.Take(limit).Select(tool => new SearchDestination(LocalizedText.Get("Str_Shell_Tools"),
-            LocalizedText.Workflow(tool.Kind), CategoryOf(tool.Kind).Title, Tool: tool)));
+            LocalizedText.Workflow(tool.Kind), CategoryOf(tool.Kind).Title, Tool: tool) { ArtId = CategoryOf(tool.Kind).Id }));
         var snapshot = sources.ToArray();
         try
         {

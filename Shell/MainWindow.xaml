@@ -81,7 +81,13 @@
                 <ListBox x:Name="TitleSearchResults" MaxHeight="360" Background="Transparent" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" PreviewKeyDown="OnTitleSearchResultKey" PreviewMouseLeftButtonUp="OnTitleSearchResultClick" AutomationProperties.Name="{DynamicResource Str_Search_All}">
                   <ListBox.GroupStyle><GroupStyle><GroupStyle.HeaderTemplate><DataTemplate><TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}" Margin="6,10,6,4"/></DataTemplate></GroupStyle.HeaderTemplate></GroupStyle></ListBox.GroupStyle>
                   <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}"><Setter Property="Padding" Value="8"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="AutomationProperties.Name" Value="{Binding Title}"/></Style></ListBox.ItemContainerStyle>
-                  <ListBox.ItemTemplate><DataTemplate><StackPanel><TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap"/><TextBlock Text="{Binding Detail}" TextWrapping="Wrap" FontSize="11" Opacity="0.75" Margin="0,3,0,0"/></StackPanel></DataTemplate></ListBox.ItemTemplate>
+                  <ListBox.ItemTemplate><DataTemplate>
+                    <Grid>
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                      <icons:AreaIllustration Id="{Binding ArtId}" Width="30" Height="30" Margin="0,0,10,0" VerticalAlignment="Center" IsHitTestVisible="False"/>
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center"><TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap"/><TextBlock Text="{Binding Detail}" TextWrapping="Wrap" FontSize="11" Opacity="0.75" Margin="0,3,0,0"/></StackPanel>
+                    </Grid>
+                  </DataTemplate></ListBox.ItemTemplate>
                 </ListBox>
               </DockPanel>
               <Border Style="{StaticResource FlyoutGrain}"/>
