@@ -70,19 +70,21 @@ internal static class WorkspaceNavigationChecks
             window.Height = 1000;
             Settle(window);
             var mapPane = Find<FrameworkElement>(window, "OverviewPage");
-            // The chips sit right under the map, the map grows until the chips meet the pane's bottom edge,
-            // and the score card runs the map's full height instead of leaving a blank block under it.
+            // One toolbar only: the symptoms live inside the score card, the gauge sits in the free strip above the
+            // monitor, and the card wraps its content, centered against the machine instead of running the pane height.
             var chips = Find<FrameworkElement>(window, "SymptomChips");
             var hero = Find<FrameworkElement>(window, "OverviewHero");
-            double mapTop = map.TranslatePoint(new Point(), mapPane).Y;
-            double mapBottom = map.TranslatePoint(new Point(0, map.ActualHeight), mapPane).Y;
-            double chipsTop = chips.TranslatePoint(new Point(0, 0), mapPane).Y;
-            double heroTop = hero.TranslatePoint(new Point(), mapPane).Y;
-            double heroBottom = heroTop + hero.ActualHeight;
-            Require(chipsTop - mapBottom < 24 && chipsTop + chips.ActualHeight >= mapPane.ActualHeight - 50 &&
-                    Math.Abs(heroTop - mapTop) <= 1 && Math.Abs(heroBottom - mapBottom) <= 1,
-                "The map and score card fill the pane down to the chips, with no blank block. Map " + mapTop + "-" + mapBottom +
-                ", card " + heroTop + "-" + heroBottom + ", chips " + chipsTop + "+" + chips.ActualHeight + ", pane " + mapPane.ActualHeight);
+            var gauge = Find<FrameworkElement>(window, "OverviewGaugeSpot");
+            var drawn = FindVisual<KillerBench.Controls.MachineMapPanel>(map);
+            Require(chips.IsDescendantOf(hero), "The symptom buttons sit inside the score card, not in a bar of their own.");
+            Rect gaugeBox = gauge.TransformToVisual(drawn!).TransformBounds(new Rect(gauge.RenderSize));
+            Rect screen = drawn!.ScreenRect;
+            Require(gauge.ActualWidth >= 60 && gaugeBox.Bottom <= screen.Top && gaugeBox.Left >= screen.Left - 20 && gaugeBox.Right <= screen.Right + 20,
+                "The gauge fills the strip above the monitor. Gauge " + gaugeBox + ", screen " + screen);
+            double heroMiddle = hero.TranslatePoint(new Point(0, hero.ActualHeight / 2), mapPane).Y;
+            double mapMiddle = map.TranslatePoint(new Point(0, map.ActualHeight / 2), mapPane).Y;
+            Require(Math.Abs(heroMiddle - mapMiddle) <= 2 && hero.ActualHeight < map.ActualHeight - 40,
+                "The score card wraps its content and sits centered on the machine. Card middle " + heroMiddle + ", map middle " + mapMiddle);
             Require(Find<TextBlock>(window, "OverviewDetail") is { IsVisible: true } detailLine && detailLine.Text.Length > 1,
                 "Before any check, the score card carries the map instruction instead of an empty line.");
             window.Width = 1025;
@@ -501,5 +503,16 @@ internal static class WorkspaceNavigationChecks
             if (child is FrameworkElement element) yield return element;
             foreach (var descendant in VisualElements(child)) yield return descendant;
         }
+    }
+
+    private static T? FindVisual<T>(DependencyObject parent) where T : DependencyObject
+    {
+        for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent); i++)
+        {
+            var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
+            if (child is T match) return match;
+            if (FindVisual<T>(child) is { } found) return found;
+        }
+        return null;
     }
 }

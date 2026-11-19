@@ -87,10 +87,48 @@ public partial class MainWindow
     private void FitSystemMap()
     {
         if (!OverviewPage.IsVisible || OverviewScroll.ViewportHeight <= 0) return;
-        // The map sits beside the score card and shares its height only with the symptom chips below both.
-        double chips = SymptomChips.ActualHeight + SymptomChips.Margin.Top + SymptomChips.Margin.Bottom;
-        double height = Math.Max(0, OverviewScroll.ViewportHeight - 8 - chips);
+        // The map sits beside the score card and takes the pane's full height.
+        double height = Math.Max(0, OverviewScroll.ViewportHeight - 8);
         if (Math.Abs(SystemAreas.MinHeight - height) > 1) SystemAreas.MinHeight = height;
+        PlaceOverviewGauge();
+    }
+
+    // The gauge fills the strip above the monitor. When the map stacks as a plain list, it sits above the list.
+    private void PlaceOverviewGauge()
+    {
+        var machine = FindChild<KillerBench.Controls.MachineMapPanel>(SystemAreas);
+        Rect strip = machine?.GaugeRect ?? Rect.Empty;
+        Thickness margin; double size; Thickness listMargin;
+        if (machine is not null && !strip.IsEmpty && strip.Height > 0)
+        {
+            var origin = machine.TranslatePoint(new Point(strip.X, strip.Y), OverviewMapHost);
+            size = Math.Clamp(strip.Height - 8, 40, 150);
+            margin = new Thickness(origin.X + (strip.Width - size) / 2, origin.Y + strip.Height - size, 0, 0);
+            listMargin = new Thickness(0);
+        }
+        else
+        {
+            size = 100;
+            margin = new Thickness(0);
+            listMargin = new Thickness(0, size + 12, 0, 0);
+        }
+        if (Math.Abs(OverviewGaugeSpot.Width - size) > 0.5) OverviewGaugeSpot.Width = OverviewGaugeSpot.Height = size;
+        if (!AreClose(OverviewGaugeSpot.Margin, margin)) OverviewGaugeSpot.Margin = margin;
+        if (!AreClose(SystemAreas.Margin, listMargin)) SystemAreas.Margin = listMargin;
+    }
+
+    private static bool AreClose(Thickness a, Thickness b) =>
+        Math.Abs(a.Left - b.Left) < 0.5 && Math.Abs(a.Top - b.Top) < 0.5 && Math.Abs(a.Right - b.Right) < 0.5 && Math.Abs(a.Bottom - b.Bottom) < 0.5;
+
+    private static T? FindChild<T>(DependencyObject parent) where T : DependencyObject
+    {
+        for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent); i++)
+        {
+            var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
+            if (child is T match) return match;
+            if (FindChild<T>(child) is { } found) return found;
+        }
+        return null;
     }
 
     private void FitInitialOverviewHeight()

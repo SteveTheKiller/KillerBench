@@ -1,4 +1,4 @@
-<Window x:Class="KillerBench.Shell.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+﻿<Window x:Class="KillerBench.Shell.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:theme="clr-namespace:KillerFamily.Theming" xmlns:a11y="clr-namespace:KillerFamily.Accessibility"
         xmlns:icons="clr-namespace:KillerBench.Controls"
         xmlns:kl="clr-namespace:KillerFamily.Layout"
@@ -193,29 +193,44 @@
             <Grid x:Name="OverviewLayout">
               <Grid.ColumnDefinitions><ColumnDefinition Width="260"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
               <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-              <!-- The score card runs the map's full height and centers its content, so no dead block sits under it. -->
+              <!-- The score card wraps its content and sits centered against the machine, so no empty box runs the pane height. -->
               <Grid x:Name="OverviewSide" Margin="0,0,16,0">
-              <Border x:Name="OverviewHero" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="14">
-                <Grid><DockPanel VerticalAlignment="Center">
-                  <Grid DockPanel.Dock="Top" Width="120" Height="120" Margin="0,0,0,14" HorizontalAlignment="Center">
-                    <icons:CoverageGauge x:Name="OverviewGauge" TrackBrush="{DynamicResource PaneBorderBrush}" CoverageBrush="{DynamicResource PrimaryBrush}" ToneBrush="{DynamicResource PaneBorderBrush}" IsHitTestVisible="False"/>
-                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                      <TextBlock x:Name="OverviewPercent" Text="0%" FontFamily="{DynamicResource HeadingFont}" FontSize="26" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                      <TextBlock Text="{DynamicResource Str_Overview_Checked}" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" HorizontalAlignment="Center"/>
-                    </StackPanel>
-                  </Grid>
+              <Border x:Name="OverviewHero" VerticalAlignment="Center" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="14">
+                <Grid><DockPanel VerticalAlignment="Top">
                   <StackPanel VerticalAlignment="Center">
                     <TextBlock x:Name="OverviewHeadline" Text="{DynamicResource Str_Workspace_SystemMap}" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap"/>
                     <TextBlock x:Name="OverviewDetail" Text="{DynamicResource Str_Workspace_MapHint}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
                     <Border Height="8"/>
                     <WrapPanel x:Name="OverviewChips" Margin="0,0,0,8" Visibility="Collapsed"/>
+                    <!-- Symptoms: each one opens its area and runs the matching check. -->
+                    <ItemsControl x:Name="SymptomChips" Margin="0,4,0,10" AutomationProperties.Name="{DynamicResource Str_Guided_Title}">
+                      <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                      <ItemsControl.ItemTemplate><DataTemplate>
+                        <Button Click="OnSymptomChip" Tag="{Binding}" Margin="0,0,6,6" Padding="8,4" AutomationProperties.Name="{Binding Title}" ToolTip="{Binding Description}">
+                          <StackPanel Orientation="Horizontal">
+                            <icons:AreaIllustration Id="{Binding Art}" Stroke="{DynamicResource PrimaryBrush}" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center" IsHitTestVisible="False"/>
+                            <TextBlock Text="{Binding Title}" FontSize="12" VerticalAlignment="Center"/>
+                          </StackPanel>
+                        </Button>
+                      </DataTemplate></ItemsControl.ItemTemplate>
+                    </ItemsControl>
                     <WrapPanel x:Name="OverviewMapActions"><Button x:Name="OverviewCheckButton" Content="{DynamicResource Str_Main_RunDiagnosis}" Click="OnOverviewCheck" Margin="0,0,8,6"/><Button x:Name="OverviewOpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture" Margin="0,0,0,6"/></WrapPanel>
                   </StackPanel>
                 </DockPanel>
                 <Border Style="{StaticResource FlyoutGrain}" Margin="-14"/></Grid>
               </Border>
               </Grid>
-              <DockPanel Grid.Column="1" VerticalAlignment="Top">
+              <Grid x:Name="OverviewMapHost" Grid.Column="1" VerticalAlignment="Top">
+              <!-- The gauge sits in the strip the map leaves above the monitor (MachineMapPanel.GaugeRect). -->
+              <Viewbox x:Name="OverviewGaugeSpot" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="100" Panel.ZIndex="1">
+                  <Grid Width="120" Height="120">
+                    <icons:CoverageGauge x:Name="OverviewGauge" TrackBrush="{DynamicResource PaneBorderBrush}" CoverageBrush="{DynamicResource PrimaryBrush}" ToneBrush="{DynamicResource PaneBorderBrush}" IsHitTestVisible="False"/>
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                      <TextBlock x:Name="OverviewPercent" Text="0%" FontFamily="{DynamicResource HeadingFont}" FontSize="26" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                      <TextBlock Text="{DynamicResource Str_Overview_Checked}" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                  </Grid>
+              </Viewbox>
               <ListBox x:Name="SystemAreas" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" SelectionChanged="OnSystemAreaSelected" PreviewMouseLeftButtonUp="OnReopenSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
                 <ListBox.ItemsPanel><ItemsPanelTemplate><icons:MachineMapPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
                 <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}">
@@ -260,19 +275,7 @@
                   <DataTrigger Binding="{Binding Tone}" Value="Fixable"><Setter TargetName="AreaStripe" Property="Background" Value="{DynamicResource DangerRed}"/><Setter TargetName="AreaBadge" Property="Background" Value="{DynamicResource DangerRed}"/><Setter TargetName="AreaBadge" Property="Visibility" Value="Visible"/></DataTrigger>
                 </DataTemplate.Triggers></DataTemplate></ListBox.ItemTemplate>
               </ListBox>
-              </DockPanel>
-              <!-- Symptom chips: each one opens its area and runs the matching check. -->
-              <ItemsControl x:Name="SymptomChips" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,12,0,0" AutomationProperties.Name="{DynamicResource Str_Guided_Title}">
-                <ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Rows="1"/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate><DataTemplate>
-                  <Button Click="OnSymptomChip" Tag="{Binding}" Margin="0,0,8,0" Padding="8,10" HorizontalContentAlignment="Stretch" AutomationProperties.Name="{Binding Title}" ToolTip="{Binding Description}">
-                    <StackPanel>
-                      <icons:AreaIllustration Id="{Binding Art}" Stroke="{DynamicResource PrimaryBrush}" Width="28" Height="28" HorizontalAlignment="Center" IsHitTestVisible="False"/>
-                      <TextBlock Text="{Binding Title}" FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap" TextAlignment="Center" Margin="0,6,0,0"/>
-                    </StackPanel>
-                  </Button>
-                </DataTemplate></ItemsControl.ItemTemplate>
-              </ItemsControl>
+              </Grid>
             </Grid>
           </ScrollViewer>
           </Border></Grid>
