@@ -32,6 +32,16 @@ public partial class MainWindow
         ConsolePane.Visibility = rawView ? Visibility.Visible : Visibility.Collapsed;
         ConsoleSearchPanel.Visibility = ConsolePane.Visibility;
         RefreshOutputButtons();
+        RefreshOutputEmpty();
+    }
+
+    private void RefreshOutputEmpty()
+    {
+        if (OutputEmpty is null) return;
+        bool empty = AreaEvidencePanel.Visibility != Visibility.Visible && ReportPane.Visibility != Visibility.Visible &&
+            ConsolePane.Visibility != Visibility.Visible && StartGuide.Visibility != Visibility.Visible;
+        OutputEmpty.Visibility = empty ? Visibility.Visible : Visibility.Collapsed;
+        if (empty) OutputEmpty.Id = ToolArt.Id;
     }
 
     private void ClearWorkflowReport()

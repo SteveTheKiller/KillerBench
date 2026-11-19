@@ -257,5 +257,6 @@ public partial class MainWindow
         OutputViewButtons.IsEnabled = !area;
         ExportReportButton.IsEnabled = !area || areaSummarySource is not null;
         SearchBox.IsEnabled = !area && !workflowOutputActive;
+        RefreshOutputEmpty();
     }
 }
