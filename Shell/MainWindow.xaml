@@ -241,13 +241,27 @@
           <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/><Border>
           <ScrollViewer Style="{StaticResource ShadowScrollViewer}" Padding="18" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel>
             <StackPanel>
-              <TextBlock Text="{DynamicResource Str_Workspace_History}" FontFamily="{DynamicResource HeadingFont}" FontSize="24" Foreground="{DynamicResource PrimaryBrush}"/>
-              <TextBlock Text="{DynamicResource Str_Workspace_HistoryHint}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,8,0,14"/>
+              <Grid Margin="0,0,0,14">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <icons:AreaIllustration Id="Diagnostics" Width="52" Height="52" Margin="0,0,14,0" VerticalAlignment="Top" IsHitTestVisible="False"/>
+                <StackPanel Grid.Column="1">
+                  <TextBlock Text="{DynamicResource Str_Workspace_History}" FontFamily="{DynamicResource HeadingFont}" FontSize="20" Foreground="{DynamicResource PrimaryBrush}"/>
+                  <TextBlock Text="{DynamicResource Str_Workspace_HistoryHint}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+                </StackPanel>
+              </Grid>
               <WrapPanel Margin="0,0,0,12"><Button x:Name="OpenSavedWorkflowButton" Content="{DynamicResource Str_Advanced_OpenWorkflow}" Click="OnOpenWorkflowJournal" ToolTip="{DynamicResource Str_Advanced_OpenWorkflowTip}" Margin="0,0,6,6"/><Button x:Name="HistoryOpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture" Margin="0,0,0,6"/></WrapPanel>
               <TextBlock x:Name="HistoryEmpty" Text="{DynamicResource Str_Workspace_SessionEmpty}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
             </StackPanel>
             <ListBox x:Name="SessionHistory" Style="{StaticResource WorkbenchList}" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" SelectionChanged="OnHistorySelected" AutomationProperties.Name="{DynamicResource Str_Session_Sources}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-              <ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="8"/></DataTemplate></ListBox.ItemTemplate>
+              <ListBox.ItemTemplate><DataTemplate>
+                <!-- Timeline row: a dot on a rule ties the session's entries together. -->
+                <Grid>
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="22"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                  <Rectangle Width="2" HorizontalAlignment="Center" Fill="{DynamicResource PaneBorderBrush}"/>
+                  <Ellipse Width="10" Height="10" Margin="0,12,0,0" VerticalAlignment="Top" Fill="{DynamicResource PrimaryBrush}"/>
+                  <TextBlock Grid.Column="1" Text="{Binding}" TextWrapping="Wrap" Margin="6,8,8,8"/>
+                </Grid>
+              </DataTemplate></ListBox.ItemTemplate>
             </ListBox>
           </StackPanel></ScrollViewer>
           </Border></Grid>
