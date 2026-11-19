@@ -2328,6 +2328,14 @@ internal static class Program
                 .Select(card => ((StackPanel)card.Child).Children.OfType<TextBlock>().First().Text)];
             Require(cardTitles.Take(4).SequenceEqual(["Recommended next step", "Repairable item", "Attention item", "Unknown item"]),
                 "Report orders actionable findings before attention and incomplete evidence");
+            var prioritizedCards = ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>().ToArray();
+            var reportStateChart = ((StackPanel)window.FindName("ReportContent")).Children.OfType<StackPanel>()
+                .SelectMany(panel => panel.Children.OfType<Grid>()).FirstOrDefault();
+            string reportStateName = reportStateChart is null ? "" : System.Windows.Automation.AutomationProperties.GetName(reportStateChart);
+            Require(reportStateChart is { ColumnDefinitions.Count: 3 } && reportStateName.Contains("Fixable: 1", StringComparison.Ordinal) &&
+                    prioritizedCards[1].BorderThickness.Left == 4 && prioritizedCards[1].BorderBrush == window.FindResource("DangerRed") &&
+                    !((StackPanel)prioritizedCards[3].Child).Children.OfType<TextBlock>().Any(text => text.Text.StartsWith("Next:", StringComparison.Ordinal)),
+                "The report draws the result's state bar, marks each finding with its tone stripe, and drops the stock next line. Chart: " + reportStateName);
             var repairNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review System files repair"));
             categories.SelectedItem = categories.Items.Cast<object>().Single(category => category.ToString() == "Diagnostics");
             Pump();

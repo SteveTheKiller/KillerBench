@@ -140,8 +140,14 @@ public partial class MainWindow
     }
 
     // One stacked bar of check states, split from the same score as the gauge and the counts above.
-    private void BuildAreaStateChart(OverviewScore score)
+    private void BuildAreaStateChart(OverviewScore score) => FillStateChart(AreaStateChart, AreaStateLegend, score);
+
+    // Shared by the area summary and the readable report so both draw a result the same way.
+    private static void FillStateChart(Grid chart, WrapPanel legend, OverviewScore score)
     {
+        chart.Children.Clear();
+        chart.ColumnDefinitions.Clear();
+        legend.Children.Clear();
         (string Key, int Count, string Brush)[] segments =
         [
             ("Str_Overview_Fixable", score.Fixable, "DangerRed"),
@@ -152,12 +158,12 @@ public partial class MainWindow
         var names = new List<string>();
         foreach (var (key, count, brush) in segments.Where(segment => segment.Count > 0))
         {
-            int column = AreaStateChart.ColumnDefinitions.Count;
-            AreaStateChart.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(count, GridUnitType.Star) });
+            int column = chart.ColumnDefinitions.Count;
+            chart.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(count, GridUnitType.Star) });
             var bar = new Border { Margin = new Thickness(column == 0 ? 0 : 2, 0, 0, 0), CornerRadius = new CornerRadius(3) };
             bar.SetResourceReference(Border.BackgroundProperty, brush);
             Grid.SetColumn(bar, column);
-            AreaStateChart.Children.Add(bar);
+            chart.Children.Add(bar);
             string text = LocalizedText.Format(key, count);
             names.Add(text);
             var item = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 16, 4) };
@@ -165,16 +171,19 @@ public partial class MainWindow
             dot.SetResourceReference(Border.BackgroundProperty, brush);
             item.Children.Add(dot);
             item.Children.Add(Body(text, 12, new Thickness(0), "TextBrush"));
-            AreaStateLegend.Children.Add(item);
+            legend.Children.Add(item);
         }
-        System.Windows.Automation.AutomationProperties.SetName(AreaStateChart, string.Join(", ", names));
+        System.Windows.Automation.AutomationProperties.SetName(chart, string.Join(", ", names));
         if (names.Count == 0)
-            AreaStateChart.Visibility = AreaStateLegend.Visibility = Visibility.Collapsed;
+            chart.Visibility = legend.Visibility = Visibility.Collapsed;
     }
 
+    private void BuildAreaMetricChart(IEnumerable<WorkflowCheck> checks) => FillMetricChart(AreaMetricChart, checks);
+
     // Used-space bars drawn only from typed metrics a check measured; nothing is parsed out of Detail text.
-    private void BuildAreaMetricChart(IEnumerable<WorkflowCheck> checks)
+    private static void FillMetricChart(StackPanel host, IEnumerable<WorkflowCheck> checks)
     {
+        host.Children.Clear();
         foreach (var (check, metric) in checks.Where(check => check.EffectiveState != CheckState.Unknown)
                      .SelectMany(check => (check.Metrics ?? []).Select(metric => (check, metric)))
                      .Where(pair => pair.metric.Unit == MetricUnit.Bytes && pair.metric.Maximum > 0 &&
@@ -202,9 +211,9 @@ public partial class MainWindow
             });
             bar.Children.Add(fill);
             row.Children.Add(bar);
-            AreaMetricChart.Children.Add(row);
+            host.Children.Add(row);
         }
-        AreaMetricChart.Visibility = AreaMetricChart.Children.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        host.Visibility = host.Children.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private static string FormatBytes(double bytes)

@@ -67,23 +67,22 @@ public partial class MainWindow
         ReportContent.Children.Add(Heading(LocalizedText.Format("Str_Report_Title", reportTitle), 15));
         ReportContent.Children.Add(Body(LocalizedStatus(result.Status) + " | " + result.StartedUtc.ToString("g"), 12, new Thickness(0, 0, 0, 14)));
 
-        var summary = result.Summary;
-        var metrics = new System.Windows.Controls.Primitives.UniformGrid { Columns = 4, Margin = new Thickness(0, 0, -8, 14) };
-        metrics.SizeChanged += (_, _) =>
-        {
-            int columns = Math.Clamp((int)(metrics.ActualWidth / 120), 1, 4);
-            if (metrics.Columns != columns) metrics.Columns = columns;
-        };
-        AddMetric(metrics, LocalizedText.Get("Str_Report_NeedsReview"), summary.ReviewItems);
-        AddMetric(metrics, LocalizedText.Get("Str_Report_VerifiedRepairs"), summary.VerifiedRepairs);
-        AddMetric(metrics, LocalizedText.Get("Str_Report_Incomplete"), summary.Incomplete);
-        AddMetric(metrics, LocalizedText.Get("Str_Report_Checked"), result.Checks.Count);
-        ReportContent.Children.Add(metrics);
+        // The same state bar and drive bars as the Overview, so a result reads the same everywhere.
+        var charts = new StackPanel { Margin = new Thickness(0, 0, 0, 12) };
+        var stateChart = new Grid { Height = 14, Margin = new Thickness(0, 0, 0, 8) };
+        var stateLegend = new WrapPanel { Margin = new Thickness(0, 0, 0, 8) };
+        var metricChart = new StackPanel();
+        FillStateChart(stateChart, stateLegend, OverviewScore.From([result]));
+        FillMetricChart(metricChart, result.Checks);
+        charts.Children.Add(stateChart);
+        charts.Children.Add(stateLegend);
+        charts.Children.Add(metricChart);
+        ReportContent.Children.Add(charts);
 
         ReportContent.Children.Add(Heading(LocalizedText.Get("Str_Report_NextStep"), 13));
         ReportContent.Children.Add(Card(LocalizedText.Get("Str_Report_RecommendedNextStep"), "",
             NextAction(result),
-            LocalizedText.Get("Str_Report_NoActionStarts")));
+            LocalizedText.Get("Str_Report_NoActionStarts"), "PrimaryBrush"));
         if (!demo)
         {
             if (HasRepairAvailable(result)) ReportContent.Children.Add(RepairNavigationButton(result));
@@ -103,14 +102,15 @@ public partial class MainWindow
             ReportContent.Children.Add(Body(LocalizedText.Get("Str_Report_NoProblem"), 12, new Thickness(0, 0, 0, 12)));
         foreach (var check in problems.Take(visibleProblems))
             ReportContent.Children.Add(Card(DisplayReportCheckName(check.Name), LocalizedText.Choice(check.EffectiveState), result.Kind is WorkflowKind.Profiles or WorkflowKind.BitLocker ? LocalizeBitLockerResultText(LocalizeProfileResultText(check.Detail)) : result.Kind == WorkflowKind.AppPackages ? LocalizePackageReviewText(check.Detail) : check.Detail,
-                check.Repair is null ? LocalizedText.Get("Str_Report_ReviewEvidence") : Repairs.Plan(check.Repair.Value).Effects));
+                check.Repair is null ? null : Repairs.Plan(check.Repair.Value).Effects, ToneBrush(check.EffectiveState)));
 
         int visibleRecipes = Math.Min(reviewRecipes.Length, maximumVisibleReviewItems - visibleProblems);
         foreach (var recipe in reviewRecipes.Take(visibleRecipes))
         {
             string recipeTitle = RecipeCatalog.All.FirstOrDefault(item => item.Id == recipe.RecipeId)?.Title ?? recipe.RecipeId;
             ReportContent.Children.Add(Card(recipeTitle, DescribeRecipeOutcome(recipe), recipe.Detail,
-                recipe.Repair is null ? LocalizedText.Get("Str_Report_ReviewOutcome") : Repairs.Plan(recipe.Repair.Kind).Effects));
+                recipe.Repair is null ? null : Repairs.Plan(recipe.Repair.Kind).Effects,
+                recipe.EffectiveOutcome is RecipeOutcome.RepairAvailable ? "DangerRed" : recipe.EffectiveOutcome is RecipeOutcome.Unknown or RecipeOutcome.Blocked or RecipeOutcome.Canceled ? "MutedTextBrush" : "WarnBrush"));
         }
         int additionalReviewItems = problems.Length + reviewRecipes.Length - visibleProblems - visibleRecipes;
         if (additionalReviewItems > 0)
@@ -124,7 +124,7 @@ public partial class MainWindow
             const int maximumVisibleInformationItems = 12;
             foreach (var check in information.Take(maximumVisibleInformationItems))
                 ReportContent.Children.Add(Card(DisplayReportCheckName(check.Name), LocalizedText.Choice(CheckState.Information), result.Kind is WorkflowKind.Profiles or WorkflowKind.BitLocker ? LocalizeBitLockerResultText(LocalizeProfileResultText(check.Detail)) : result.Kind == WorkflowKind.AppPackages ? LocalizePackageReviewText(check.Detail) : check.Detail,
-                    LocalizedText.Get("Str_Report_EvidenceOnly")));
+                    null, "PaneBorderBrush"));
             if (information.Length > maximumVisibleInformationItems)
                 ReportContent.Children.Add(Body(LocalizedText.Format("Str_Report_MoreInformation", information.Length - maximumVisibleInformationItems), 12, new Thickness(0, 0, 0, 12), "MutedTextBrush"));
         }
@@ -137,24 +137,38 @@ public partial class MainWindow
         foreach (var repair in result.Repairs)
             ReportContent.Children.Add(Card(Repairs.Plan(repair.Kind).Title, LocalizedStatus(repair.Status),
                 Repairs.IsVerified(repair) ? LocalizedText.Get("Str_Report_RepairVerified") : LocalizedText.Get("Str_Report_RepairNotVerified"),
-                repair.RequiresRestart ? LocalizedText.Get("Str_Report_RestartThenRerun") : LocalizedText.Get("Str_Report_TestFeature")));
+                repair.RequiresRestart ? LocalizedText.Get("Str_Report_RestartThenRerun") : LocalizedText.Get("Str_Report_TestFeature"),
+                Repairs.IsVerified(repair) ? "OkBrush" : "WarnBrush"));
 
         ReportContent.Children.Add(Heading(LocalizedText.Get("Str_Report_ScopeAndLimits"), 13));
         ReportContent.Children.Add(Body(LocalizedText.Get(title is null ? "Str_Report_ScopeWorkflow" : "Str_Report_ScopeFocused"), 12, new Thickness(0, 0, 0, 4)));
     }
 
-    private static Border Card(string title, string state, string detail, string action)
+    // A finding card: the left stripe and state word carry the finding's tone, and the next line appears
+    // only when it says something specific, never the same stock sentence on every card.
+    private static Border Card(string title, string state, string detail, string? action, string tone = "PaneBorderBrush")
     {
         var content = new StackPanel();
         content.Children.Add(Heading(title, 13));
-        if (!string.IsNullOrWhiteSpace(state)) content.Children.Add(Body(state, 11, new Thickness(0, 0, 0, 7), "PrimaryBrush"));
-        content.Children.Add(Body(detail, 12, new Thickness(0, 0, 0, 9)));
-        content.Children.Add(Body(LocalizedText.Format("Str_Report_NextPrefix", action), 12, new Thickness(0), "MutedTextBrush"));
-        var card = new Border { Child = content, Padding = new Thickness(12), Margin = new Thickness(0, 0, 0, 10), CornerRadius = new CornerRadius(4), BorderThickness = new Thickness(1) };
+        if (!string.IsNullOrWhiteSpace(state))
+            content.Children.Add(Body(state, 11, new Thickness(0, 0, 0, 7), tone == "PaneBorderBrush" ? "MutedTextBrush" : tone));
+        content.Children.Add(Body(detail, 12, new Thickness(0, 0, 0, string.IsNullOrWhiteSpace(action) ? 0 : 9)));
+        if (!string.IsNullOrWhiteSpace(action))
+            content.Children.Add(Body(LocalizedText.Format("Str_Report_NextPrefix", action), 12, new Thickness(0), "MutedTextBrush"));
+        var card = new Border { Child = content, Padding = new Thickness(12, 10, 12, 10), Margin = new Thickness(0, 0, 0, 8), CornerRadius = new CornerRadius(4), BorderThickness = new Thickness(4, 0, 0, 0) };
         card.SetResourceReference(Border.BackgroundProperty, "ReportCardBrush");
-        card.SetResourceReference(Border.BorderBrushProperty, "PaneBorderBrush");
+        card.SetResourceReference(Border.BorderBrushProperty, tone);
         return card;
     }
+
+    private static string ToneBrush(CheckState state) => state switch
+    {
+        CheckState.Repairable => "DangerRed",
+        CheckState.Attention => "WarnBrush",
+        CheckState.Unknown => "MutedTextBrush",
+        CheckState.Clear => "OkBrush",
+        _ => "PaneBorderBrush"
+    };
 
     private Button RepairNavigationButton(WorkflowResult result)
     {
@@ -298,17 +312,6 @@ public partial class MainWindow
         var block = new TextBlock { Text = text, FontSize = size, TextWrapping = TextWrapping.Wrap, Margin = margin };
         block.SetResourceReference(TextBlock.ForegroundProperty, brush);
         return block;
-    }
-
-    private static void AddMetric(Panel host, string label, int value)
-    {
-        var metric = new StackPanel();
-        metric.Children.Add(Heading(value.ToString(), 15));
-        metric.Children.Add(Body(label, 11, new Thickness(0), "MutedTextBrush"));
-        var card = new Border { Child = metric, Padding = new Thickness(10), Margin = new Thickness(0, 0, 8, 0), CornerRadius = new CornerRadius(4), BorderThickness = new Thickness(1) };
-        card.SetResourceReference(Border.BackgroundProperty, "ReportMetricBrush");
-        card.SetResourceReference(Border.BorderBrushProperty, "PaneBorderBrush");
-        host.Children.Add(card);
     }
 
     private static string DescribeRecipeOutcome(RecipeResult recipe) => LocalizedText.Get(recipe.EffectiveOutcome switch
