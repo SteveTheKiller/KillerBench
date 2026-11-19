@@ -1337,6 +1337,7 @@
   <sys:String x:Key="Str_Workspace_Investigate">Поиск проблемы</sys:String>
   <sys:String x:Key="Str_Workspace_Tools">Инструменты</sys:String>
   <sys:String x:Key="Str_Workspace_History">История</sys:String>
+  <sys:String x:Key="Str_Workspace_Home">Главная</sys:String>
   <sys:String x:Key="Str_Output_Back">Назад</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Краткий обзор системы</sys:String>
   <sys:String x:Key="Str_Overview_Checked">проверено</sys:String>

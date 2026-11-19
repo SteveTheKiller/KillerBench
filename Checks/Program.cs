@@ -500,8 +500,8 @@ internal static class Program
             var terminal = (FrameworkElement)window.FindName("TerminalPanel");
             var categoryPane = (FrameworkElement)window.FindName("LeftPanel");
             Require(window.FindName("OverviewPage") is FrameworkElement { IsVisible: true } &&
-                !terminal.IsVisible && !categoryPane.IsVisible,
-                "Startup shows Overview alone, with evidence and tool categories tucked away.");
+                !terminal.IsVisible && categoryPane.IsVisible,
+                "Startup shows Home beside the sidebar, with evidence tucked away.");
             SelectToolsWorkspace(window);
             string expectedFooter = "v" + typeof(KillerBench.App).Assembly.GetName().Version!.ToString(3);
             ShortcutCommandChecks.Run(window);
@@ -557,9 +557,9 @@ internal static class Program
             var railRight = rail.TranslatePoint(new Point(rail.ActualWidth, 0), outputGrid).X;
             var categoryLeft = categoryPane.TranslatePoint(new Point(), outputGrid).X;
             Require(rail.IsVisible && rail.ActualWidth > 0 && Grid.GetColumn(rail) == 0 &&
-                ReferenceEquals(rail.Parent, outputGrid) && Math.Abs(categoryLeft - railRight) <= 1 &&
+                ReferenceEquals(rail.Parent, outputGrid) && railRight <= categoryLeft + categoryPane.ActualWidth + 1 && rail.TranslatePoint(new Point(), outputGrid).X >= categoryLeft - 1 &&
                 Grid.GetColumn(terminal) == 4,
-                "The rail starts at the far left beside categories, separate from the evidence divider.");
+                "The app buttons sit inside the sidebar column, separate from the evidence divider.");
             RenderedTypographyChecks.VerifySubtitle(window);
             var windowDpi = VisualTreeHelper.GetDpi(window);
             Require(!WithinPixelRounding(1025 + 1 / windowDpi.DpiScaleX, 1025, windowDpi.DpiScaleX),
@@ -1477,14 +1477,15 @@ internal static class Program
             var rail = (FrameworkElement)window.FindName("SidebarRail");
             var railOrigin = rail.TranslatePoint(new Point(), window);
             Require(rail.IsVisible && rail.ActualWidth > 0 && Grid.GetColumn(rail) == 0 &&
-                Math.Abs(railOrigin.X + rail.ActualWidth - controlOrigin.X) <= 1,
-                "The icon rail stays at the far left of the Tools category bank.");
-            Require(consoleOrigin.Y >= controlOrigin.Y + controlBank.ActualHeight && Math.Abs(consoleOrigin.X - controlOrigin.X) < 1,
-                "Tools categories run above both content panes");
+                railOrigin.X >= controlOrigin.X - 1 && railOrigin.X + rail.ActualWidth <= controlOrigin.X + controlBank.ActualWidth + 1 &&
+                railOrigin.Y + rail.ActualHeight >= controlOrigin.Y + controlBank.ActualHeight - 16,
+                "The app buttons sit at the bottom of the sidebar.");
+            Require(consoleOrigin.X >= controlOrigin.X + controlBank.ActualWidth - 1,
+                "The sidebar runs down the left of the area page");
             var categories = (ListBox)window.FindName("CategoryList");
             var categoryOrigin = categories.TranslatePoint(new Point(), window);
             Require(categoryOrigin.X >= controlOrigin.X - 1 && categoryOrigin.X + categories.ActualWidth <= controlOrigin.X + controlBank.ActualWidth + 1,
-                "Section navigation fits the horizontal category strip");
+                "Area navigation fits inside the sidebar");
             Require(Grid.GetColumnSpan(categories) == 1 && ((FrameworkElement)window.FindName("DetailsPanel")).Visibility == Visibility.Collapsed &&
                 ((Button)window.FindName("ExportReportButton")).Visibility == Visibility.Visible,
                 "Category bank leads to the report workspace with a visible export action and no inspector sidebar");
@@ -1789,8 +1790,8 @@ internal static class Program
                     "Eight-pixel right inset remains fixed at interface scale " + scale);
                 Require(Math.Abs(zoomHost.LayoutTransform.Value.M11 - scale) < .001 && Math.Abs(((TextBox)window.FindName("EvidenceBox")).FontSize - ((Slider)window.FindName("SizeSlider")).Value) < 0.001 &&
                     new Size(titleIcon.ActualWidth, titleIcon.ActualHeight) == stableTitleIconSize &&
-                    controlBank.ActualWidth * scale >= zoomViewport.ActualWidth - 40 && controlBank.ActualHeight * scale <= 96,
-                    "Zoom scales content while the horizontal Tools strip spans the panes and caption controls retain their size. Scale=" + scale);
+                    controlBank.ActualHeight * scale >= zoomViewport.ActualHeight - 60 && controlBank.ActualWidth * scale <= zoomViewport.ActualWidth / 2,
+                    "Zoom scales content while the sidebar runs the full height beside the page and caption controls retain their size. Scale=" + scale);
                 Require(new Size(window.ActualWidth, window.ActualHeight) == stableWindowSize &&
                     zoomHost.ActualWidth * scale <= zoomViewport.ActualWidth + 1 && zoomHost.ActualHeight * scale <= zoomViewport.ActualHeight + 1,
                     "Every zoom level preserves the window and fits its workspace");

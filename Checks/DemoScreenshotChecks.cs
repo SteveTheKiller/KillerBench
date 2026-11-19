@@ -438,11 +438,12 @@ internal static class DemoScreenshotChecks
             var tools = (FrameworkElement)window.FindName("ConsoleBank");
             var outputPane = (FrameworkElement)window.FindName("TerminalPanel");
             var details = (FrameworkElement)window.FindName("AreaEvidencePanel");
-            // One pane: the map, an area's swapped-in details, or a tool's controls or output, never two side by side.
-            Require(shot.Area is not null ? details.IsVisible && !overview.IsVisible && !categories.IsVisible && !tools.IsVisible
-                  : overviewShot && shot.Raw ? outputPane.IsVisible && !overview.IsVisible && !categories.IsVisible && !tools.IsVisible
-                  : overviewShot ? overview.IsVisible && !outputPane.IsVisible && !categories.IsVisible && !tools.IsVisible
-                  : categories.IsVisible && categories.ActualWidth > 0 && !overview.IsVisible && (tools.IsVisible != outputPane.IsVisible),
+            // One pane beside the sidebar: the map, an area's swapped-in details, or a tool's controls or output, never two side by side.
+            Require(categories.IsVisible && categories.ActualWidth > 0 &&
+                    (shot.Area is not null ? details.IsVisible && !overview.IsVisible && !tools.IsVisible
+                  : overviewShot && shot.Raw ? outputPane.IsVisible && !overview.IsVisible && !tools.IsVisible
+                  : overviewShot ? overview.IsVisible && !outputPane.IsVisible && !tools.IsVisible
+                  : !overview.IsVisible && (tools.IsVisible != outputPane.IsVisible)),
                 "Screenshot shows the selected " + destination + " workspace.");
             Capture(window, Path.Combine(output, shot.File), shot.PixelScale);
             Console.WriteLine(shot.File + ": " + shot.Width + "x" + shot.Height + ", zoom " + shot.Scale + ", pixel scale " + shot.PixelScale);

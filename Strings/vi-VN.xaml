@@ -1336,6 +1336,7 @@
   <sys:String x:Key="Str_Workspace_Investigate">Tìm hiểu sự cố</sys:String>
   <sys:String x:Key="Str_Workspace_Tools">Công cụ</sys:String>
   <sys:String x:Key="Str_Workspace_History">Lịch sử</sys:String>
+  <sys:String x:Key="Str_Workspace_Home">Trang chủ</sys:String>
   <sys:String x:Key="Str_Output_Back">Quay lại</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Tổng quan về hệ thống của bạn</sys:String>
   <sys:String x:Key="Str_Overview_Checked">đã kiểm tra</sys:String>

@@ -1337,6 +1337,7 @@
   <sys:String x:Key="Str_Workspace_Investigate">অনুসন্ধান</sys:String>
   <sys:String x:Key="Str_Workspace_Tools">সরঞ্জাম</sys:String>
   <sys:String x:Key="Str_Workspace_History">ইতিহাস</sys:String>
+  <sys:String x:Key="Str_Workspace_Home">হোম</sys:String>
   <sys:String x:Key="Str_Output_Back">ফিরে যান</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">এক নজরে আপনার সিস্টেম</sys:String>
   <sys:String x:Key="Str_Overview_Checked">পরীক্ষিত</sys:String>

@@ -54,11 +54,19 @@ internal static class CategoryNavigationChecks
                     window.Height = size.Height;
                     Settle(window);
                     VerifyStrip(window, strip, tools, evidence);
-                    VerifyLayout(list, viewport, mustWrap: size.Width == 800);
-                    Require(scroll.ScrollableHeight <= .5 && scroll.ScrollableWidth <= .5,
-                        $"{theme} categories fit without scrolling at {size.Width}x{size.Height}");
-                    for (int index = 0; index < list.Items.Count; index++)
-                        Require(IsFullyVisible(Item(list, index), viewport), $"Category {index} fits inside the strip viewport");
+                    VerifyLayout(list, viewport, compact: size.Width == 800);
+                    Require(scroll.ScrollableWidth <= .5, $"{theme} sidebar never scrolls sideways at {size.Width}x{size.Height}");
+                    // A short window scrolls the area list while Home, History and the app buttons stay put.
+                    if (size.Height >= 780)
+                    {
+                        Require(scroll.ScrollableHeight <= .5, $"{theme} categories fit without scrolling at {size.Width}x{size.Height}");
+                        for (int index = 0; index < list.Items.Count; index++)
+                            Require(IsFullyVisible(Item(list, index), viewport), $"Category {index} fits inside the sidebar viewport");
+                    }
+                    foreach (string pinned in new[] { "SidebarHome", "SidebarHistory", "SidebarRail" })
+                        Require(window.FindName(pinned) is FrameworkElement { IsVisible: true } element &&
+                                BoundsIn(element, window) is var box && box.Bottom <= window.ActualHeight && box.Right <= BoundsIn(strip, window).Right + 1,
+                            $"{pinned} stays visible inside the sidebar at {size.Width}x{size.Height}");
 
                     RenderedTypographyChecks.VerifySubtitle(window);
                     Capture(strip, Path.Combine(output, $"{theme}-{size.Width}x{size.Height}-strip.png"));
@@ -68,8 +76,8 @@ internal static class CategoryNavigationChecks
             }
 
             ThemeManager.Apply(Theme.Dark);
-            window.Width = 800;
-            window.Height = 500;
+            window.Width = 1025;
+            window.Height = 780;
             Settle(window);
             window.Activate();
             VerifyKeyboard(window, list, scroll, viewport, expectOverflow: false);
@@ -100,7 +108,7 @@ internal static class CategoryNavigationChecks
             Require(scaleHost.LayoutTransform is ScaleTransform { ScaleX: 2.5, ScaleY: 2.5 },
                 "The small-window overflow case uses the production 250% app scale");
             VerifyStrip(window, strip, tools, evidence);
-            VerifyLayout(list, viewport, mustWrap: true);
+            VerifyLayout(list, viewport, compact: true);
             Require(scroll.ScrollableHeight > 0 && scroll.ScrollableWidth <= .5 && !IsFullyVisible(Item(list, 11), viewport),
                 "The zoomed strip exposes only vertical overflow and initially clips the last category");
             Capture(window, Path.Combine(output, "workbench-800x500-250-percent.png"));
@@ -109,7 +117,7 @@ internal static class CategoryNavigationChecks
             Settle(window);
             Require(scroll.VerticalOffset > 0, "Mouse wheel reaches the zoomed strip's overflowing rows");
 
-            Console.WriteLine($"PASS: {themes.Length * sizes.Length} category layout cases across Dark, Light, Black and 98SE, plus one 800x500 250% overflow case; full labels, glyphs, minimum height, accessibility, Home/End, mouse-wheel scrolling, selection, simulated hover and keyboard focus.");
+            Console.WriteLine($"PASS: {themes.Length * sizes.Length} sidebar layout cases across Dark, Light, Black and 98SE, plus one 800x500 250% overflow case; full and icon-only rows, glyphs, minimum height, pinned Home/History/app buttons, accessibility, Home/End, mouse-wheel scrolling, selection, simulated hover and keyboard focus.");
             Console.WriteLine("Category render evidence: " + output);
             return 0;
         }
@@ -118,23 +126,19 @@ internal static class CategoryNavigationChecks
 
     private static void VerifyStrip(Window window, FrameworkElement strip, FrameworkElement tools, FrameworkElement evidence)
     {
-        Require(strip.IsVisible && tools.IsVisible && !evidence.IsVisible, "Tools shows the category strip over the tool pane alone, with output swapped out");
+        Require(strip.IsVisible && tools.IsVisible && !evidence.IsVisible, "Tools shows the sidebar beside the tool pane alone, with output swapped out");
         Rect stripBounds = BoundsIn(strip, window);
         Rect toolBounds = BoundsIn(tools, window);
-        Require(stripBounds.Bottom <= toolBounds.Top + 1 && stripBounds.Left < toolBounds.Right,
-            "The category strip runs above the tool pane");
+        Require(stripBounds.Right <= toolBounds.Left + 1 && stripBounds.Top <= toolBounds.Top + 1 && stripBounds.Bottom >= toolBounds.Bottom - 1,
+            $"The sidebar runs down the left of the tool pane, at least as tall as it. Sidebar {stripBounds}, page {toolBounds}");
     }
 
-    private static void VerifyLayout(ListBox list, ScrollContentPresenter viewport, bool mustWrap)
+    // The sidebar lists one area per row; below 900 effective pixels it shows icons only, with the name kept for tooltips and accessibility.
+    private static void VerifyLayout(ListBox list, ScrollContentPresenter viewport, bool compact)
     {
-        Require(list.Items.Count == 12, "The strip contains every tool category");
+        Require(list.Items.Count == 12, "The sidebar contains every tool category");
         Rect first = BoundsIn(Item(list, 0), viewport);
-        Rect second = BoundsIn(Item(list, 1), viewport);
-        Require(Math.Abs(second.Top - first.Top) <= 1 && second.Left > first.Left,
-            "The first two category buttons appear on the same row in reading order");
-
         Rect previous = first;
-        bool wrapped = false;
         var glyphs = new HashSet<string>();
         for (int index = 0; index < list.Items.Count; index++)
         {
@@ -144,37 +148,38 @@ internal static class CategoryNavigationChecks
             Require(bounds.Left >= -1 && bounds.Right <= viewport.ActualWidth + 1,
                 $"Category {index} fits horizontally in the strip");
             if (index > 0)
-            {
-                bool newRow = bounds.Top > previous.Top + 1;
-                Require(newRow
-                    ? bounds.Top >= previous.Bottom - 1 && Math.Abs(bounds.Left - first.Left) <= 1
-                    : Math.Abs(bounds.Top - previous.Top) <= 1 && bounds.Left >= previous.Right - 1,
-                    $"Category {index} follows the previous button without overlap, wrapping at the strip's left edge");
-                wrapped |= newRow;
-            }
+                Require(bounds.Top >= previous.Bottom - 1 && Math.Abs(bounds.Left - first.Left) <= 1,
+                    $"Category {index} sits on its own row under the previous one, without overlap");
             previous = bounds;
 
             var label = Descendants<DockPanel>(item).Single(panel => panel.Name == "CategoryLabel");
             var icon = Descendants<TextBlock>(label).Single(block => block.Name == "CategoryIcon");
             var text = Descendants<TextBlock>(label).Single(block => block.Name == "CategoryText");
             Rect iconBounds = BoundsIn(icon, item);
-            Rect textBounds = BoundsIn(text, item);
-            Require(DockPanel.GetDock(icon) == Dock.Left && icon.FontSize == 16 &&
-                    iconBounds.Right <= textBounds.Left && iconBounds.Top < textBounds.Bottom && textBounds.Top < iconBounds.Bottom,
-                "The normal-size category glyph sits beside its label");
+            Require(DockPanel.GetDock(icon) == Dock.Left && icon.FontSize == 16 && iconBounds.Right <= item.ActualWidth,
+                $"The normal-size category glyph sits at the row's left. Dock {DockPanel.GetDock(icon)}, size {icon.FontSize}, icon {iconBounds}, row width {item.ActualWidth}");
             Require(icon.FontFamily.Source == "Segoe MDL2 Assets" && glyphs.Add(icon.Text), "Each category has a distinct family glyph");
             Require(new Typeface(icon.FontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal).TryGetGlyphTypeface(out var font)
                 && font.CharacterToGlyphMap.TryGetValue(icon.Text[0], out ushort glyph) && glyph != 0, "Category glyph exists in the installed font");
-            Require(text.ActualHeight > 0 && textBounds.Top >= 0 && textBounds.Bottom <= item.ActualHeight,
-                "Category label fits vertically without clipping");
-            var fullText = new FormattedText(text.Text, System.Globalization.CultureInfo.CurrentCulture, text.FlowDirection,
-                new Typeface(text.FontFamily, text.FontStyle, text.FontWeight, text.FontStretch), text.FontSize,
-                text.Foreground, null, TextOptions.GetTextFormattingMode(text), VisualTreeHelper.GetDpi(text).PixelsPerDip);
-            Require(fullText.Width <= text.ActualWidth + .5, "Full category label fits in the strip");
+            if (compact)
+            {
+                Require(!text.IsVisible, $"Category {index} shows its icon only in the narrow sidebar");
+            }
+            else
+            {
+                Rect textBounds = BoundsIn(text, item);
+                Require(iconBounds.Right <= textBounds.Left && iconBounds.Top < textBounds.Bottom && textBounds.Top < iconBounds.Bottom,
+                    "The category glyph sits beside its label");
+                Require(text.ActualHeight > 0 && textBounds.Top >= 0 && textBounds.Bottom <= item.ActualHeight,
+                    "Category label fits vertically without clipping");
+                var fullText = new FormattedText(text.Text, System.Globalization.CultureInfo.CurrentCulture, text.FlowDirection,
+                    new Typeface(text.FontFamily, text.FontStyle, text.FontWeight, text.FontStretch), text.FontSize,
+                    text.Foreground, null, TextOptions.GetTextFormattingMode(text), VisualTreeHelper.GetDpi(text).PixelsPerDip);
+                Require(fullText.Width <= text.ActualWidth + .5, "Full category label fits in the sidebar");
+            }
             Require(UIElementAutomationPeer.CreatePeerForElement(item)!.GetName() == list.Items[index].ToString() && Equals(item.ToolTip, list.Items[index].ToString()),
                 "Category text remains available to accessibility and tooltips");
         }
-        Require(!mustWrap || wrapped, "The narrow strip wraps the category buttons onto another row");
     }
 
     private static void VerifyKeyboard(Window window, ListBox list, ScrollViewer scroll, ScrollContentPresenter viewport, bool expectOverflow)

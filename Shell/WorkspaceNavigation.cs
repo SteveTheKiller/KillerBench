@@ -70,7 +70,7 @@ public partial class MainWindow
         InvestigatePage.Visibility = Show("Investigate");
         HistoryPage.Visibility = Show("History");
         ConsoleBank.Visibility = Show("Tools");
-        LeftPanel.Visibility = page == "Tools" ? Visibility.Visible : Visibility.Collapsed;
+        RefreshSidebarSelection();
     }
 
     private void InitializeWorkspace()
@@ -78,6 +78,7 @@ public partial class MainWindow
         foreach (var area in ToolCategories) area.StateKey = "Str_Workspace_NotChecked";
         SystemAreas.ItemsSource = ToolCategories;
         InvestigationAreas.ItemsSource = GuidedSymptoms;
+        SymptomChips.ItemsSource = GuidedSymptoms;
         SystemAreas.SelectedIndex = 0;
         InvestigationAreas.SelectedIndex = 0;
         OverviewScroll.LayoutUpdated += (_, _) => FitSystemMap();
@@ -86,15 +87,17 @@ public partial class MainWindow
     private void FitSystemMap()
     {
         if (!OverviewPage.IsVisible || OverviewScroll.ViewportHeight <= 0) return;
-        // The map sits beside the score column and shares its height only with the hint underneath it.
+        // The map sits beside the score column and shares its height with the hint under it and the symptom chips below both.
         double hint = OverviewMapHint.ActualHeight + OverviewMapHint.Margin.Top + OverviewMapHint.Margin.Bottom;
-        double height = Math.Max(0, OverviewScroll.ViewportHeight - 8 - hint);
+        double chips = SymptomChips.ActualHeight + SymptomChips.Margin.Top + SymptomChips.Margin.Bottom;
+        double height = Math.Max(0, OverviewScroll.ViewportHeight - 8 - hint - chips);
         if (Math.Abs(SystemAreas.MinHeight - height) > 1) SystemAreas.MinHeight = height;
     }
 
     private void FitInitialOverviewHeight()
     {
-        double width = Math.Max(220, (Width - 40) / appScale - OverviewScroll.Padding.Left - OverviewScroll.Padding.Right);
+        // The page shares the width with the sidebar and its 8px gap.
+        double width = Math.Max(220, (Width - 40) / appScale - LeftPanel.Width - 8 - OverviewScroll.Padding.Left - OverviewScroll.Padding.Right);
         // Measure the whole scroll content (hero, map hint and map) so nothing on the page is left out of the sum.
         var page = (FrameworkElement)OverviewScroll.Content;
         // A MinHeight left over from a larger window would inflate the sum; FitSystemMap sets it again after layout.
@@ -259,9 +262,22 @@ public partial class MainWindow
         OnMainGo(sender, e);
     }
 
+    // A Home chip opens the symptom's area and runs its check, the way the old Investigate page did in two steps.
+    private void OnSymptomChip(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { Tag: GuidedSymptom symptom } || !MainGo.IsEnabled || !CanSearchWorkspace) return;
+        InvestigationAreas.SelectedItem = symptom;
+        CategoryList.SelectedItem = ToolCategories.Single(area => area.Id == symptom.Area);
+        MainAutoRepair.IsChecked = false;
+        ShowToolsWorkspace();
+        MainWorkflow.SelectedItem = KillerBench.Engine.Workflows.WorkflowCatalog.All.Single(tool => tool.Kind == symptom.Workflow);
+        OnMainGo(sender, e);
+    }
+
     private void SetWorkspaceBusy(bool busy)
     {
         WorkspaceNavigation.IsEnabled = !busy;
+        SymptomChips.IsEnabled = !busy;
         OverviewCheckButton.IsEnabled = !busy;
         OverviewOpenCaptureButton.IsEnabled = !busy;
         SystemAreas.IsEnabled = !busy;

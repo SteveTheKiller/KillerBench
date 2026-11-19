@@ -81,6 +81,7 @@ public partial class MainWindow
         MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(w => w.Kind == category.Tools[0]);
         SynchronizeNavigation();
         if (!workflowOutputActive && readCancellation is null) SetOutputOpen(false);
+        OpenSelectedAreaFromSidebar();
     }
 
     private void OnCategoryWorkflowSelected(object sender, SelectionChangedEventArgs e)

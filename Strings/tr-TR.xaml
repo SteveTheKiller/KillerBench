@@ -1337,6 +1337,7 @@
   <sys:String x:Key="Str_Workspace_Investigate">İncele</sys:String>
   <sys:String x:Key="Str_Workspace_Tools">Araçlar</sys:String>
   <sys:String x:Key="Str_Workspace_History">Geçmiş</sys:String>
+  <sys:String x:Key="Str_Workspace_Home">Ana sayfa</sys:String>
   <sys:String x:Key="Str_Output_Back">Geri</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Sisteminize genel bakış</sys:String>
   <sys:String x:Key="Str_Overview_Checked">denetlendi</sys:String>

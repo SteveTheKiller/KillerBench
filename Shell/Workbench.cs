@@ -44,6 +44,7 @@ public partial class MainWindow
         appScale = ReadNumber("AppScale", 1, 0.7, 2.5);
         ApplyAppScale(appScale);
         InitializePanels();
+        InitializeSidebar();
         OutputScroll.SizeChanged += (_, _) => UpdateScaledWorkspaceWidths();
         ToolScroll.SizeChanged += (_, _) => UpdateScaledWorkspaceWidths();
         shellReady = true;
@@ -207,15 +208,10 @@ public partial class MainWindow
     {
         appScale = double.IsFinite(scale) ? Math.Clamp(Math.Round(scale, 3), 0.7, 2.5) : 1;
         ScaleHost.LayoutTransform = new ScaleTransform(appScale, appScale);
-        SidebarRail.LayoutTransform = new ScaleTransform(1 / appScale, 1 / appScale);
         OutputDivider.LayoutTransform = new ScaleTransform(1 / appScale, 1 / appScale);
-        LeftPanel.MaxHeight = 96 / appScale;
-        LeftPanel.Margin = new Thickness(24 / appScale, 0, 0, 6 / appScale);
-        ScaleHost.ColumnDefinitions[1].Width = new GridLength(24 / appScale);
-        ContentPane.ColumnDefinitions[0].Width = new GridLength(24 / appScale);
-        ContentPane.ColumnDefinitions[3].Width = new GridLength(TerminalPanel.Visibility == Visibility.Visible ? 8 / appScale : 0);
-        ContentPane.ColumnDefinitions[2].MinWidth = (appScale > 1 ? 200 : 300) / appScale;
-        ContentPane.ColumnDefinitions[4].MinWidth = TerminalPanel.Visibility == Visibility.Visible ? 200 / appScale : 0;
+        // The sidebar scales with the content; below 900 effective pixels it drops to icons so the page keeps its width.
+        RefreshSidebarWidth();
+        SetOutputOpen(TerminalPanel.Visibility == Visibility.Visible);
         // Panes never scroll sideways at any zoom: content takes the viewport width and text wraps inside it.
         // A forced minimum content width wider than the viewport is what clipped text mid-word above 100%.
         ToolScroll.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;

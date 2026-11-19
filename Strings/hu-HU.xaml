@@ -1337,6 +1337,7 @@
   <sys:String x:Key="Str_Workspace_Investigate">Vizsgálat</sys:String>
   <sys:String x:Key="Str_Workspace_Tools">Eszközök</sys:String>
   <sys:String x:Key="Str_Workspace_History">Előzmények</sys:String>
+  <sys:String x:Key="Str_Workspace_Home">Kezdőlap</sys:String>
   <sys:String x:Key="Str_Output_Back">Vissza</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">A rendszer áttekintése</sys:String>
   <sys:String x:Key="Str_Overview_Checked">ellenőrizve</sys:String>

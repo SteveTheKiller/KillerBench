@@ -34,6 +34,21 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border Padding="{TemplateBinding Padding}" Background="Transparent"><ContentPresenter/></Border></ControlTemplate></Setter.Value></Setter>
       </Style>
+      <!-- Sidebar row: the same face as an area row, so Home, the areas and History read as one list. -->
+      <Style x:Key="SideNavButton" TargetType="Button">
+        <Setter Property="Height" Value="32"/><Setter Property="Padding" Value="11,0"/><Setter Property="FontSize" Value="13"/><Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
+          <Border x:Name="Face" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="{TemplateBinding Padding}">
+            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center"/>
+          </Border>
+          <ControlTemplate.Triggers>
+            <MultiTrigger><MultiTrigger.Conditions><Condition Property="IsMouseOver" Value="True"/><Condition Property="Tag" Value="{x:Null}"/></MultiTrigger.Conditions><Setter TargetName="Face" Property="Background" Value="{DynamicResource RowHoverBrush}"/></MultiTrigger>
+            <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Face" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/></Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate></Setter.Value></Setter>
+      </Style>
       <Style x:Key="AreaChoiceButton" TargetType="Button" BasedOn="{StaticResource ViewToolbarButton}">
         <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" CornerRadius="{DynamicResource ControlCornerRadius}"><ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center"/></Border></ControlTemplate></Setter.Value></Setter>
       </Style>
@@ -60,7 +75,8 @@
         </Grid>
         <TextBlock Text="KillerBench" FontFamily="{DynamicResource ChromeFontFamily}" Foreground="{DynamicResource ChromeTextBrush}" FontWeight="Bold" Visibility="{DynamicResource PlainTitleVisibility}"/>
       </StackPanel>
-      <ListBox x:Name="WorkspaceNavigation" Grid.Column="1" Margin="12,0,0,0" Background="Transparent" BorderThickness="0" SelectionChanged="OnWorkspaceSelected" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_Overview}">
+      <!-- The page model. The sidebar drives it; the caption no longer shows it. -->
+      <ListBox x:Name="WorkspaceNavigation" Grid.Column="1" Margin="12,0,0,0" Visibility="Collapsed" Background="Transparent" BorderThickness="0" SelectionChanged="OnWorkspaceSelected" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_Overview}">
         <ListBox.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal"/></ItemsPanelTemplate></ListBox.ItemsPanel>
         <ListBox.ContextMenu><ContextMenu x:Name="ToolbarMenu" Style="{StaticResource CardMenu}"/></ListBox.ContextMenu>
         <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="Margin" Value="0,0,4,0"/><Setter Property="IsTabStop" Value="False"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><ContentPresenter/></ControlTemplate></Setter.Value></Setter></Style></ListBox.ItemContainerStyle>
@@ -103,55 +119,81 @@
     </Grid>
     <Grid x:Name="ZoomViewport" Grid.Row="1" ClipToBounds="True">
     <kl:UnclippedGrid x:Name="ScaleHost" Margin="4,4,8,0">
-      <Grid.ColumnDefinitions><ColumnDefinition Width="0"/><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-        <Border x:Name="LeftPanel" Grid.ColumnSpan="3" MaxHeight="96" Background="{DynamicResource SidebarPaneBrush}" Margin="24,0,0,6" ClipToBounds="True">
-<Grid>
-      <ListBox x:Name="CategoryList" Margin="0" Background="Transparent" BorderThickness="0" SelectionChanged="OnCategorySelected" AutomationProperties.Name="{DynamicResource Str_Shell_Tools}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
-        <ListBox.ItemTemplate><DataTemplate>
-          <DockPanel x:Name="CategoryLabel" VerticalAlignment="Center">
-            <a11y:Glyph x:Name="CategoryIcon" DockPanel.Dock="Left" Text="{Binding Icon}" FontFamily="Segoe MDL2 Assets" FontSize="16" Width="16" Margin="0,0,6,0" VerticalAlignment="Center" TextAlignment="Center" IsHitTestVisible="False"/>
-            <TextBlock x:Name="CategoryText" Text="{Binding Title}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-          </DockPanel>
-        </DataTemplate></ListBox.ItemTemplate>
-        <ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
-        <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}">
-          <!-- Family view-button semantics (KillerScan ViewToolbarButton / KillerPDF ToolbarButton): transparent at rest,
-               RowHoverBrush on hover, and the theme's SelectionBg/SelectionFg pair marks the current section. -->
-          <Setter Property="MinHeight" Value="32"/><Setter Property="Margin" Value="0,0,4,2"/><Setter Property="Padding" Value="8,5"/><Setter Property="FontSize" Value="13"/>
-          <Setter Property="AutomationProperties.Name" Value="{Binding Title}"/><Setter Property="ToolTip" Value="{Binding Title}"/>
-          <Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Cursor" Value="Hand"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="VerticalContentAlignment" Value="Center"/>
-          <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
-          <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
-            <Border x:Name="CategoryFace" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="{TemplateBinding Padding}">
-              <ContentPresenter VerticalAlignment="Center"/>
-            </Border>
-            <ControlTemplate.Triggers>
-              <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="CategoryFace" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
-              </Trigger>
-              <Trigger Property="IsSelected" Value="True">
-                <Setter TargetName="CategoryFace" Property="Background" Value="{DynamicResource SelectionBg}"/>
-                <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
-              </Trigger>
-              <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                <Setter TargetName="CategoryFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
-              </Trigger>
-            </ControlTemplate.Triggers>
-          </ControlTemplate></Setter.Value></Setter>
-        </Style></ListBox.ItemContainerStyle>
-      </ListBox>
-        </Grid>
-</Border>
+      <Grid.ColumnDefinitions><ColumnDefinition Width="0"/><ColumnDefinition Width="0"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+      <Grid.RowDefinitions><RowDefinition Height="0"/><RowDefinition Height="*"/></Grid.RowDefinitions>
       <kl:UnclippedGrid Grid.Row="1" Grid.ColumnSpan="3" x:Name="ContentPane" UseLayoutRounding="True">
-        <Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition Width="0"/><ColumnDefinition Width="3*" MinWidth="300"/><ColumnDefinition Width="8"/><ColumnDefinition Width="2*"/></Grid.ColumnDefinitions>
+        <!-- 0 sidebar, 1 gap, 2 page, 3 unused, 4 output. The output swaps in over the page; nothing sits side by side. -->
+        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="8"/><ColumnDefinition Width="3*" MinWidth="300"/><ColumnDefinition Width="0"/><ColumnDefinition Width="0"/></Grid.ColumnDefinitions>
         <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <!-- One left column: Home, every area, History, and the four app buttons pinned underneath. -->
+        <Border x:Name="LeftPanel" Grid.Column="0" Grid.RowSpan="2" Width="188" Background="{DynamicResource SidebarPaneBrush}">
+          <DockPanel>
+            <Border DockPanel.Dock="Bottom" Height="34"/>
+            <Button x:Name="SidebarHistory" DockPanel.Dock="Bottom" Style="{StaticResource SideNavButton}" Click="OnSidebarHistory" AutomationProperties.Name="{DynamicResource Str_Workspace_History}" ToolTip="{DynamicResource Str_Workspace_History}" Margin="0,0,0,4">
+              <DockPanel><a11y:Glyph Text="&#xE81C;" FontFamily="Segoe MDL2 Assets" FontSize="16" Width="18" Margin="{DynamicResource SidebarIconGap}" VerticalAlignment="Center" TextAlignment="Center" IsHitTestVisible="False"/><TextBlock x:Name="SidebarHistoryText" Text="{DynamicResource Str_Workspace_History}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/></DockPanel>
+            </Button>
+            <Border DockPanel.Dock="Bottom" Height="1" Margin="10,4,10,6" Background="{DynamicResource PaneBorderBrush}"/>
+            <Button x:Name="SidebarHome" DockPanel.Dock="Top" Style="{StaticResource SideNavButton}" Click="OnSidebarHome" AutomationProperties.Name="{DynamicResource Str_Workspace_Home}" ToolTip="{DynamicResource Str_Workspace_Home}">
+              <DockPanel><a11y:Glyph Text="&#xE80F;" FontFamily="Segoe MDL2 Assets" FontSize="16" Width="18" Margin="{DynamicResource SidebarIconGap}" VerticalAlignment="Center" TextAlignment="Center" IsHitTestVisible="False"/><TextBlock x:Name="SidebarHomeText" Text="{DynamicResource Str_Workspace_Home}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/></DockPanel>
+            </Button>
+            <Border DockPanel.Dock="Top" Height="1" Margin="10,6,10,4" Background="{DynamicResource PaneBorderBrush}"/>
+            <ListBox x:Name="CategoryList" Margin="0" Background="Transparent" BorderThickness="0" SelectionChanged="OnCategorySelected" PreviewMouseLeftButtonUp="OnSidebarAreaClick" AutomationProperties.Name="{DynamicResource Str_Shell_Tools}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="False">
+              <ListBox.Template><ControlTemplate TargetType="ListBox"><ScrollViewer Style="{StaticResource OverlayScrollViewer}" Focusable="False" CanContentScroll="False" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" HorizontalScrollBarVisibility="Disabled"><ItemsPresenter/></ScrollViewer></ControlTemplate></ListBox.Template>
+              <ListBox.ItemTemplate><DataTemplate>
+                <!-- The status dot sits at the row's right edge; in the icon-only sidebar that edge is the icon's corner, so it reads as a badge. -->
+                <Grid>
+                  <DockPanel x:Name="CategoryLabel" VerticalAlignment="Center">
+                    <a11y:Glyph x:Name="CategoryIcon" DockPanel.Dock="Left" Text="{Binding Icon}" FontFamily="Segoe MDL2 Assets" FontSize="16" Width="18" Margin="{DynamicResource SidebarIconGap}" VerticalAlignment="Center" TextAlignment="Center" IsHitTestVisible="False"/>
+                    <TextBlock x:Name="CategoryText" Text="{Binding Title}" Margin="0,0,14,0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Visibility="{DynamicResource SidebarLabelVisibility}"/>
+                  </DockPanel>
+                  <Ellipse x:Name="CategoryDot" Width="7" Height="7" HorizontalAlignment="Right" VerticalAlignment="{DynamicResource SidebarDotAlignment}" Visibility="Collapsed" IsHitTestVisible="False"/>
+                </Grid>
+                <DataTemplate.Triggers>
+                  <DataTrigger Binding="{Binding Tone}" Value="Clear"><Setter TargetName="CategoryDot" Property="Fill" Value="{DynamicResource OkBrush}"/><Setter TargetName="CategoryDot" Property="Visibility" Value="Visible"/></DataTrigger>
+                  <DataTrigger Binding="{Binding Tone}" Value="Incomplete"><Setter TargetName="CategoryDot" Property="Fill" Value="{DynamicResource MutedTextBrush}"/><Setter TargetName="CategoryDot" Property="Visibility" Value="Visible"/></DataTrigger>
+                  <DataTrigger Binding="{Binding Tone}" Value="Review"><Setter TargetName="CategoryDot" Property="Fill" Value="{DynamicResource WarnBrush}"/><Setter TargetName="CategoryDot" Property="Visibility" Value="Visible"/></DataTrigger>
+                  <DataTrigger Binding="{Binding Tone}" Value="Fixable"><Setter TargetName="CategoryDot" Property="Fill" Value="{DynamicResource DangerRed}"/><Setter TargetName="CategoryDot" Property="Visibility" Value="Visible"/></DataTrigger>
+                </DataTemplate.Triggers>
+              </DataTemplate></ListBox.ItemTemplate>
+              <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}">
+                <!-- Family view-button semantics: transparent at rest, RowHoverBrush on hover, and the theme's
+                     SelectionBg/SelectionFg pair marks the current area only while an area page is showing. -->
+                <Setter Property="Height" Value="32"/><Setter Property="Margin" Value="0,0,0,1"/><Setter Property="Padding" Value="{DynamicResource SidebarRowPadding}"/><Setter Property="FontSize" Value="13"/>
+                <Setter Property="AutomationProperties.Name" Value="{Binding Title}"/><Setter Property="ToolTip" Value="{Binding Title}"/>
+                <Setter Property="Cursor" Value="Hand"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
+                  <Border x:Name="CategoryFace" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="{TemplateBinding Padding}">
+                    <ContentPresenter VerticalAlignment="Center"/>
+                  </Border>
+                  <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                      <Setter TargetName="CategoryFace" Property="Background" Value="{DynamicResource RowHoverBrush}"/>
+                    </Trigger>
+                    <MultiDataTrigger>
+                      <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True"/>
+                        <Condition Binding="{Binding Tag, RelativeSource={RelativeSource AncestorType=ListBox}}" Value="active"/>
+                      </MultiDataTrigger.Conditions>
+                      <Setter TargetName="CategoryFace" Property="Background" Value="{DynamicResource SelectionBg}"/>
+                      <Setter Property="Foreground" Value="{DynamicResource SelectionFg}"/>
+                    </MultiDataTrigger>
+                    <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                      <Setter TargetName="CategoryFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                    </Trigger>
+                  </ControlTemplate.Triggers>
+                </ControlTemplate></Setter.Value></Setter>
+              </Style></ListBox.ItemContainerStyle>
+            </ListBox>
+          </DockPanel>
+        </Border>
         <Border x:Name="OverviewPage" Grid.Column="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
           <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/><Border>
           <ScrollViewer x:Name="OverviewScroll" Style="{StaticResource ShadowScrollViewer}" Padding="16" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <!-- One pane: the score column sits beside the map, so the map uses the width instead of the height. -->
             <Grid x:Name="OverviewLayout">
               <Grid.ColumnDefinitions><ColumnDefinition Width="260"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+              <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
               <StackPanel x:Name="OverviewSide" Margin="0,0,16,0">
               <Border x:Name="OverviewHero" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="14" Margin="0,0,0,10">
                 <Grid><DockPanel>
@@ -163,7 +205,7 @@
                     </StackPanel>
                   </Grid>
                   <StackPanel VerticalAlignment="Center">
-                    <TextBlock x:Name="OverviewHeadline" Text="{DynamicResource Str_Workspace_SystemMap}" FontFamily="{DynamicResource HeadingFont}" FontSize="22" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="OverviewHeadline" Text="{DynamicResource Str_Workspace_SystemMap}" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap"/>
                     <TextBlock x:Name="OverviewDetail" Text=" " Visibility="Hidden" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
                     <Border Height="8"/>
                     <WrapPanel x:Name="OverviewChips" Margin="0,0,0,8" Visibility="Collapsed"/>
@@ -221,6 +263,18 @@
                 </DataTemplate.Triggers></DataTemplate></ListBox.ItemTemplate>
               </ListBox>
               </DockPanel>
+              <!-- Symptom chips: each one opens its area and runs the matching check. -->
+              <ItemsControl x:Name="SymptomChips" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,12,0,0" AutomationProperties.Name="{DynamicResource Str_Guided_Title}">
+                <ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Rows="1"/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate><DataTemplate>
+                  <Button Click="OnSymptomChip" Tag="{Binding}" Margin="0,0,8,0" Padding="8,10" HorizontalContentAlignment="Stretch" AutomationProperties.Name="{Binding Title}" ToolTip="{Binding Description}">
+                    <StackPanel>
+                      <icons:AreaIllustration Id="{Binding Art}" Stroke="{DynamicResource PrimaryBrush}" Width="28" Height="28" HorizontalAlignment="Center" IsHitTestVisible="False"/>
+                      <TextBlock Text="{Binding Title}" FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap" TextAlignment="Center" Margin="0,6,0,0"/>
+                    </StackPanel>
+                  </Button>
+                </DataTemplate></ItemsControl.ItemTemplate>
+              </ItemsControl>
             </Grid>
           </ScrollViewer>
           </Border></Grid>
@@ -1003,12 +1057,12 @@
       <GridSplitter x:Name="OutputDivider" Grid.Column="3" Grid.RowSpan="2" Width="8" HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="Transparent" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" KeyboardIncrement="10" Cursor="SizeWE" Visibility="Collapsed">
         <GridSplitter.Template><ControlTemplate TargetType="GridSplitter"><Border Background="{TemplateBinding Background}"/></ControlTemplate></GridSplitter.Template>
       </GridSplitter>
-      <Grid x:Name="SidebarRail" Grid.Column="0" Grid.RowSpan="2" Panel.ZIndex="1">
-        <StackPanel Style="{StaticResource RailButtonHost}" VerticalAlignment="Bottom">
-          <Button x:Name="ActivityButton" Style="{StaticResource RailButton}" Content="&#xE756;" Click="OnToggleActivity" ToolTip="{DynamicResource Str_ToolTip_Toggle_activity_log_F3}" Margin="0,0,0,10"/>
-          <Button x:Name="ShortcutButton" Style="{StaticResource RailButton}" Content="?" FontFamily="Consolas" FontSize="18" Click="OnShortcuts" ToolTip="{DynamicResource Str_ToolTip_Keyboard_shortcuts_F1}" Margin="0,0,0,10"><Button.Template><ControlTemplate TargetType="Button"><Border Background="Transparent"><TextBlock Text="?" FontFamily="Segoe UI" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource TextBrush}" TextOptions.TextFormattingMode="Display" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Button.Template></Button>
-          <Button x:Name="LangButton" Style="{StaticResource RailButton}" Content="&#xF2B7;" Click="OnLanguages" ContextMenuOpening="RailMenu_Opening" ToolTip="{DynamicResource Str_ToolTip_Language}" Margin="0,0,0,10"><Button.ContextMenu><ContextMenu/></Button.ContextMenu></Button>
-<Button x:Name="ThemeButton" Style="{StaticResource RailButton}" Content="&#xE790;" Click="OnThemes" ContextMenuOpening="RailMenu_Opening" ToolTip="{DynamicResource Str_ToolTip_Choose_app_theme}" Margin="0,0,0,6"><Button.ContextMenu><ContextMenu x:Name="ThemeFlyout">
+      <Grid x:Name="SidebarRail" Grid.Column="0" Grid.RowSpan="2" Panel.ZIndex="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10,0,0,10">
+        <StackPanel Orientation="Horizontal">
+          <Button x:Name="ActivityButton" Style="{StaticResource RailButton}" Content="&#xE756;" Click="OnToggleActivity" ToolTip="{DynamicResource Str_ToolTip_Toggle_activity_log_F3}" Margin="0,0,16,0"/>
+          <Button x:Name="ShortcutButton" Style="{StaticResource RailButton}" Content="?" FontFamily="Consolas" FontSize="18" Click="OnShortcuts" ToolTip="{DynamicResource Str_ToolTip_Keyboard_shortcuts_F1}" Margin="0,0,16,0"><Button.Template><ControlTemplate TargetType="Button"><Border Background="Transparent"><TextBlock Text="?" FontFamily="Segoe UI" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource TextBrush}" TextOptions.TextFormattingMode="Display" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border></ControlTemplate></Button.Template></Button>
+          <Button x:Name="LangButton" Style="{StaticResource RailButton}" Content="&#xF2B7;" Click="OnLanguages" ContextMenuOpening="RailMenu_Opening" ToolTip="{DynamicResource Str_ToolTip_Language}" Margin="0,0,16,0"><Button.ContextMenu><ContextMenu/></Button.ContextMenu></Button>
+<Button x:Name="ThemeButton" Style="{StaticResource RailButton}" Content="&#xE790;" Click="OnThemes" ContextMenuOpening="RailMenu_Opening" ToolTip="{DynamicResource Str_ToolTip_Choose_app_theme}" Margin="0"><Button.ContextMenu><ContextMenu x:Name="ThemeFlyout">
 
                                 <ContextMenu.Template>
                                     <ControlTemplate TargetType="ContextMenu">

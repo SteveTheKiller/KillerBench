@@ -34,17 +34,21 @@ internal static class WorkspaceNavigationChecks
                 "The utility rail has no obsolete sidebar chevron.");
             var navigation = Find<ListBox>(window, "WorkspaceNavigation");
             var destinations = navigation.Items.OfType<ListBoxItem>().ToArray();
-            Require(window.FindName("OverviewButton") is Button,
-                "The workspace toolbar exposes real icon-and-label buttons.");
-            Require(navigation.IsVisible && navigation.IsEnabled, "Workspace navigation is visible and enabled.");
+            // The sidebar replaced the title-bar tabs; the hidden list stays as the page model it drives.
+            Require(!navigation.IsVisible && navigation.IsEnabled, "The title-bar tabs are gone and the page model stays enabled.");
             Require(navigation.Items.Count == 4 && destinations.Select(item => item.Tag as string)
                 .SequenceEqual(new[] { "Overview", "Investigate", "Tools", "History" }),
-                "Workspace navigation offers Overview, Investigate, Tools and History in order.");
-            var caption = Find<FrameworkElement>(window, "CaptionBar");
-            var navBounds = navigation.TransformToAncestor(window).TransformBounds(new Rect(navigation.RenderSize));
-            var captionBounds = caption.TransformToAncestor(window).TransformBounds(new Rect(caption.RenderSize));
-            Require(navBounds.Top >= captionBounds.Top && navBounds.Bottom <= captionBounds.Bottom + 1,
-                "Workspace navigation fits inside the title bar instead of taking a separate content row.");
+                "The page model keeps Overview, Investigate, Tools and History in order.");
+            var sidebarPanel = Find<FrameworkElement>(window, "LeftPanel");
+            var homeRow = Find<Button>(window, "SidebarHome");
+            var historyRow = Find<Button>(window, "SidebarHistory");
+            var areaRows = Find<ListBox>(window, "CategoryList");
+            Require(sidebarPanel.IsVisible && homeRow.IsVisible && historyRow.IsVisible && areaRows.IsVisible &&
+                    homeRow.TranslatePoint(new Point(), window).Y < areaRows.TranslatePoint(new Point(), window).Y &&
+                    areaRows.TranslatePoint(new Point(0, areaRows.ActualHeight), window).Y <= historyRow.TranslatePoint(new Point(), window).Y + 1,
+                "One sidebar lists Home, then every area, then History.");
+            Require(Find<ItemsControl>(window, "SymptomChips").Items.Count == 6 && Find<ItemsControl>(window, "SymptomChips").IsVisible,
+                "Home offers the six symptom chips under the score and map.");
             VerifyToolbar(window);
             var titleSearch = Find<TextBox>(window, "TitleSearchBox");
             titleSearch.Text = "network";
@@ -65,12 +69,16 @@ internal static class WorkspaceNavigationChecks
             window.Height = 1000;
             Settle(window);
             var mapPane = Find<FrameworkElement>(window, "OverviewPage");
-            // The hint sits directly under the map, so the map runs down to the hint and the hint to the pane's bottom edge.
+            // The hint sits directly under the map and the symptom chips under both, so the map grows until the chips meet the pane's bottom edge.
             var mapHint = Find<FrameworkElement>(window, "OverviewMapHint");
+            var chips = Find<FrameworkElement>(window, "SymptomChips");
             double mapBottom = map.TranslatePoint(new Point(0, map.ActualHeight), mapPane).Y;
             double hintTop = mapHint.TranslatePoint(new Point(0, 0), mapPane).Y;
-            Require(hintTop - mapBottom < 20 && hintTop + mapHint.ActualHeight >= mapPane.ActualHeight - 50,
-                "The map grows with a taller window instead of leaving a large blank block beneath the cards.");
+            double hintBottom = hintTop + mapHint.ActualHeight;
+            double chipsTop = chips.TranslatePoint(new Point(0, 0), mapPane).Y;
+            Require(hintTop - mapBottom < 20 && chipsTop - hintBottom < 24 && chipsTop + chips.ActualHeight >= mapPane.ActualHeight - 50,
+                "The map grows with a taller window instead of leaving a large blank block beneath the cards. Map bottom " + mapBottom +
+                ", hint " + hintTop + "-" + hintBottom + ", chips " + chipsTop + "+" + chips.ActualHeight + ", pane " + mapPane.ActualHeight);
             window.Width = 1025;
             window.Height = 780;
             Settle(window);
@@ -94,25 +102,28 @@ internal static class WorkspaceNavigationChecks
             var options = Find<FrameworkElement>(window, "ConsoleBank");
             var categories = Find<FrameworkElement>(window, "LeftPanel");
             var evidence = Find<FrameworkElement>(window, "TerminalPanel");
-            Require(navigation.SelectedItem == destinations[0] && overview.IsVisible &&
-                    !evidence.IsVisible && !options.IsVisible && !categories.IsVisible,
-                "Startup opens Overview alone in one pane and keeps evidence and Tools controls out of view.");
-
-            navigation.SelectedItem = destinations[2];
-            Settle(window);
-            Require(options.IsVisible && categories.IsVisible && !overview.IsVisible,
-                "Selecting Tools opens the existing options and category controls.");
             var categoryItems = Find<ListBox>(window, "CategoryList");
-            var firstCategory = (FrameworkElement)categoryItems.ItemContainerGenerator.ContainerFromIndex(0);
-            var secondCategory = (FrameworkElement)categoryItems.ItemContainerGenerator.ContainerFromIndex(1);
-            Require(secondCategory.TranslatePoint(new Point(), window).X > firstCategory.TranslatePoint(new Point(), window).X &&
-                    categories.TranslatePoint(new Point(0, categories.ActualHeight), window).Y <= options.TranslatePoint(new Point(), window).Y + 1,
-                "Tools categories run horizontally above both content panes.");
+            Require(navigation.SelectedItem == destinations[0] && overview.IsVisible && categories.IsVisible &&
+                    !evidence.IsVisible && !options.IsVisible && Equals(homeRow.Tag, "selected") && categoryItems.Tag is null,
+                "Startup opens Home beside the sidebar, with Home the only marked row.");
 
-            navigation.SelectedItem = destinations[0];
+            var secondCategory = (FrameworkElement)categoryItems.ItemContainerGenerator.ContainerFromIndex(1);
+            categoryItems.SelectedIndex = 1;
+            categoryItems.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left) { RoutedEvent = UIElement.PreviewMouseLeftButtonUpEvent, Source = secondCategory });
             Settle(window);
-            Require(overview.IsVisible && !evidence.IsVisible && !options.IsVisible && !categories.IsVisible,
-                "Returning to Overview restores its page alone, with no evidence beside it.");
+            Require(navigation.SelectedItem == destinations[2] && options.IsVisible && !overview.IsVisible &&
+                    Equals(categoryItems.Tag, "active") && homeRow.Tag is null && historyRow.Tag is null,
+                "Clicking an area in the sidebar opens its page and marks only that area.");
+            var firstCategory = (FrameworkElement)categoryItems.ItemContainerGenerator.ContainerFromIndex(0);
+            Require(secondCategory.TranslatePoint(new Point(), window).Y > firstCategory.TranslatePoint(new Point(), window).Y &&
+                    categories.TranslatePoint(new Point(categories.ActualWidth, 0), window).X <= options.TranslatePoint(new Point(), window).X + 1,
+                "Areas run down the sidebar to the left of the area page.");
+
+            homeRow.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Settle(window);
+            Require(navigation.SelectedItem == destinations[0] && overview.IsVisible && !evidence.IsVisible && !options.IsVisible &&
+                    Equals(homeRow.Tag, "selected") && categoryItems.Tag is null,
+                "Home in the sidebar restores the Home page alone, with no evidence beside it.");
 
             var areas = Find<ListBox>(window, "SystemAreas");
             Require(areas.Items.Count == 12, "The system map exposes every existing tool category.");
@@ -162,8 +173,10 @@ internal static class WorkspaceNavigationChecks
             Require(options.IsVisible && Find<TextBlock>(window, "CategoryTitle").Text == "Network" &&
                     Find<CheckBox>(window, "MainAutoRepair").IsChecked == false,
                 "Guided handoff opens the matching workflow for review without repair consent.");
-            navigation.SelectedItem = destinations[3];
+            historyRow.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Settle(window);
+            Require(navigation.SelectedItem == destinations[3] && Equals(historyRow.Tag, "selected") && homeRow.Tag is null,
+                "History in the sidebar opens History and marks only that row.");
             Require(Find<FrameworkElement>(window, "HistoryPage").IsVisible &&
                     Find<Button>(window, "OpenSavedWorkflowButton").IsVisible &&
                     Find<ListBox>(window, "SessionHistory").Items.Count == 0,
@@ -186,11 +199,12 @@ internal static class WorkspaceNavigationChecks
             Settle(window);
             // One pane: no divider, and the page or the swapped-in output takes the whole content width.
             var content = Find<FrameworkElement>(window, "ContentPane");
-            Require(!Find<GridSplitter>(window, "OutputDivider").IsVisible && overview.ActualWidth > content.ActualWidth - 40,
-                "The Overview fills the content area alone, with no side-by-side divider.");
+            double pageWidth = content.ActualWidth - categories.ActualWidth - 8;
+            Require(!Find<GridSplitter>(window, "OutputDivider").IsVisible && overview.ActualWidth > pageWidth - 40,
+                "The Overview fills the area beside the sidebar alone, with no side-by-side divider.");
             areas.SelectedIndex = 0;
             Settle(window);
-            Require(!Find<GridSplitter>(window, "OutputDivider").IsVisible && evidence.ActualWidth > content.ActualWidth - 40 && !overview.IsVisible,
+            Require(!Find<GridSplitter>(window, "OutputDivider").IsVisible && evidence.ActualWidth > pageWidth - 40 && !overview.IsVisible,
                 "Area details take the whole content width when they swap in.");
             Find<Button>(window, "OutputBackButton").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Settle(window);
@@ -263,14 +277,16 @@ internal static class WorkspaceNavigationChecks
         }
     }
 
+    // The appearance menu now styles the sidebar: "No text" is icons only, the other modes keep names beside icons.
     private static void VerifyToolbar(MainWindow window)
     {
-        var button = Find<Button>(window, "OverviewButton");
-        Require(button.Content is StackPanel { Orientation: Orientation.Horizontal } initial &&
-                initial.Children.OfType<TextBlock>().First().FontSize == 14 &&
+        var sidebar = Find<FrameworkElement>(window, "LeftPanel");
+        var homeText = Find<FrameworkElement>(window, "SidebarHomeText");
+        Require(sidebar.ActualWidth >= 180 && homeText.IsVisible &&
                 Find<FrameworkElement>(window, "CaptionBar").ActualHeight == (double)window.FindResource("TitleBarHeight"),
-            "Title-bar navigation defaults to small icons beside text within one caption row.");
+            "The sidebar defaults to icons beside names, under a single caption row.");
         var menu = (ContextMenu)window.FindName("ToolbarMenu");
+        Require(ReferenceEquals(sidebar.ContextMenu, menu), "Right-clicking the sidebar opens its appearance menu.");
         MenuItem Option(string name) => menu.Items.OfType<MenuItem>().Single(item => Equals(item.Header, name));
         void Select(string name)
         {
@@ -280,17 +296,15 @@ internal static class WorkspaceNavigationChecks
                 "Every supported appearance mode preserves a single caption row.");
         }
         Select("Small icons");
-        Require(button.Content is StackPanel small && small.Children.OfType<TextBlock>().First().FontSize == 14,
-            "The toolbar changes icon size independently of label placement.");
         Select("Text beside icons");
-        Require(button.Content is StackPanel { Orientation: Orientation.Horizontal }, "Toolbar labels can sit beside icons.");
+        Require(sidebar.ActualWidth >= 180 && homeText.IsVisible, "Text beside icons shows the full sidebar.");
         Require(!menu.Items.OfType<MenuItem>().Any(item => Equals(item.Header, "Large icons") || Equals(item.Header, "Text under icons")),
-            "The title-bar menu excludes large icons and text underneath.");
+            "The appearance menu excludes large icons and text underneath.");
         Select("Text only");
-        Require(button.Content is TextBlock && !Option("Small icons").IsEnabled,
-            "Text-only mode hides icons and disables icon sizing.");
+        Require(!Option("Small icons").IsEnabled && sidebar.ActualWidth >= 180, "Text-only mode keeps names and disables icon sizing.");
         Select("No text");
-        Require(button.Content is KillerFamily.Accessibility.Glyph { FontSize: 14 }, "Icon-only mode keeps the compact workspace glyph.");
+        Require(sidebar.ActualWidth <= 48 && !homeText.IsVisible, "No text collapses the sidebar to icons only.");
+        Select("Text beside icons");
         for (int index = 0; index < 6; index++)
         {
             var key = (Key)((int)Key.D1 + index);
@@ -312,13 +326,12 @@ internal static class WorkspaceNavigationChecks
         {
             reopened.Show();
             Settle(reopened);
-            Require(Find<Button>(reopened, "OverviewButton").Content is StackPanel { Orientation: Orientation.Horizontal } restored &&
-                    restored.Children.OfType<TextBlock>().First().FontSize == 14,
-                "Reloaded settings restore both toolbar appearance axes in a new window.");
+            Require(Find<FrameworkElement>(reopened, "LeftPanel").ActualWidth >= 180 && Find<FrameworkElement>(reopened, "SidebarHomeText").IsVisible,
+                "Reloaded settings restore the sidebar appearance in a new window.");
         }
         finally { reopened.Close(); }
         WorkbenchCommands.ToolbarTextBeside.Execute(null, window);
-        Require(Equals(button.Tag, "selected"), "Toolbar restyling preserves the active workspace mark.");
+        Require(Equals(Find<Button>(window, "SidebarHome").Tag, "selected"), "Sidebar restyling preserves the active page mark.");
     }
 
     private static void VerifyGroupedSearch(MainWindow window)

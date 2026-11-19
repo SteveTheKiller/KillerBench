@@ -1337,6 +1337,7 @@
   <sys:String x:Key="Str_Workspace_Investigate">Зерттеу</sys:String>
   <sys:String x:Key="Str_Workspace_Tools">Құралдар</sys:String>
   <sys:String x:Key="Str_Workspace_History">Тарих</sys:String>
+  <sys:String x:Key="Str_Workspace_Home">Басты бет</sys:String>
   <sys:String x:Key="Str_Output_Back">Артқа</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Жүйеңізге қысқаша шолу</sys:String>
   <sys:String x:Key="Str_Overview_Checked">тексерілді</sys:String>

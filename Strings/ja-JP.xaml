@@ -1337,6 +1337,7 @@
   <sys:String x:Key="Str_Workspace_Investigate">調査</sys:String>
   <sys:String x:Key="Str_Workspace_Tools">ツール</sys:String>
   <sys:String x:Key="Str_Workspace_History">履歴</sys:String>
+  <sys:String x:Key="Str_Workspace_Home">ホーム</sys:String>
   <sys:String x:Key="Str_Output_Back">戻る</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">システムの概要</sys:String>
   <sys:String x:Key="Str_Overview_Checked">確認済み</sys:String>

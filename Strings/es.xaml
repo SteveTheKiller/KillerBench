@@ -1337,6 +1337,7 @@
   <sys:String x:Key="Str_Workspace_Investigate">Investigar</sys:String>
   <sys:String x:Key="Str_Workspace_Tools">Herramientas</sys:String>
   <sys:String x:Key="Str_Workspace_History">Historial</sys:String>
+  <sys:String x:Key="Str_Workspace_Home">Inicio</sys:String>
   <sys:String x:Key="Str_Output_Back">Atrás</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Tu sistema de un vistazo</sys:String>
   <sys:String x:Key="Str_Overview_Checked">comprobado</sys:String>

@@ -1337,6 +1337,7 @@
   <sys:String x:Key="Str_Workspace_Investigate">排查</sys:String>
   <sys:String x:Key="Str_Workspace_Tools">工具</sys:String>
   <sys:String x:Key="Str_Workspace_History">歷程記錄</sys:String>
+  <sys:String x:Key="Str_Workspace_Home">首頁</sys:String>
   <sys:String x:Key="Str_Output_Back">返回</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">系統概況</sys:String>
   <sys:String x:Key="Str_Overview_Checked">已檢查</sys:String>

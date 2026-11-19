@@ -134,6 +134,7 @@ public partial class MainWindow : Window
         SynchronizeNavigation();
         SystemAreas.Items.Refresh();
         InvestigationAreas.Items.Refresh();
+        SymptomChips.Items.Refresh();
         RefreshSessionHistory();
         UpdateMainActionLabel();
         RefreshRecipeSelectionText();

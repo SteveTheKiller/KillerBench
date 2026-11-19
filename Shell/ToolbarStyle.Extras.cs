@@ -100,6 +100,7 @@ public partial class MainWindow
             AutomationProperties.SetName(button, Loc(key));
         RefreshWorkspaceToolbarSelection();
         ReflowCaption();
+        RefreshSidebarWidth();
     }
 
     private static class Settings
