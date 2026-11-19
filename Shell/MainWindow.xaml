@@ -194,9 +194,10 @@
             <Grid x:Name="OverviewLayout">
               <Grid.ColumnDefinitions><ColumnDefinition Width="260"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
               <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-              <StackPanel x:Name="OverviewSide" Margin="0,0,16,0">
-              <Border x:Name="OverviewHero" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="14" Margin="0,0,0,10">
-                <Grid><DockPanel>
+              <!-- The score card runs the map's full height and centers its content, so no dead block sits under it. -->
+              <Grid x:Name="OverviewSide" Margin="0,0,16,0">
+              <Border x:Name="OverviewHero" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="14">
+                <Grid><DockPanel VerticalAlignment="Center">
                   <Grid DockPanel.Dock="Top" Width="120" Height="120" Margin="0,0,0,14" HorizontalAlignment="Center">
                     <icons:CoverageGauge x:Name="OverviewGauge" TrackBrush="{DynamicResource PaneBorderBrush}" CoverageBrush="{DynamicResource PrimaryBrush}" ToneBrush="{DynamicResource PaneBorderBrush}" IsHitTestVisible="False"/>
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -206,7 +207,7 @@
                   </Grid>
                   <StackPanel VerticalAlignment="Center">
                     <TextBlock x:Name="OverviewHeadline" Text="{DynamicResource Str_Workspace_SystemMap}" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap"/>
-                    <TextBlock x:Name="OverviewDetail" Text=" " Visibility="Hidden" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                    <TextBlock x:Name="OverviewDetail" Text="{DynamicResource Str_Workspace_MapHint}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
                     <Border Height="8"/>
                     <WrapPanel x:Name="OverviewChips" Margin="0,0,0,8" Visibility="Collapsed"/>
                     <WrapPanel x:Name="OverviewMapActions"><Button x:Name="OverviewCheckButton" Content="{DynamicResource Str_Main_RunDiagnosis}" Click="OnOverviewCheck" Margin="0,0,8,6"/><Button x:Name="OverviewOpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture" Margin="0,0,0,6"/></WrapPanel>
@@ -214,10 +215,8 @@
                 </DockPanel>
                 <Border Style="{StaticResource FlyoutGrain}" Margin="-14"/></Grid>
               </Border>
-              </StackPanel>
-              <!-- Map instruction sits directly under the components it describes. -->
+              </Grid>
               <DockPanel Grid.Column="1" VerticalAlignment="Top">
-              <TextBlock x:Name="OverviewMapHint" DockPanel.Dock="Bottom" Text="{DynamicResource Str_Workspace_MapHint}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,8,0,0"/>
               <ListBox x:Name="SystemAreas" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" SelectionChanged="OnSystemAreaSelected" PreviewMouseLeftButtonUp="OnReopenSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
                 <ListBox.ItemsPanel><ItemsPanelTemplate><icons:MachineMapPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
                 <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}">

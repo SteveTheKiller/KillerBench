@@ -69,16 +69,21 @@ internal static class WorkspaceNavigationChecks
             window.Height = 1000;
             Settle(window);
             var mapPane = Find<FrameworkElement>(window, "OverviewPage");
-            // The hint sits directly under the map and the symptom chips under both, so the map grows until the chips meet the pane's bottom edge.
-            var mapHint = Find<FrameworkElement>(window, "OverviewMapHint");
+            // The chips sit right under the map, the map grows until the chips meet the pane's bottom edge,
+            // and the score card runs the map's full height instead of leaving a blank block under it.
             var chips = Find<FrameworkElement>(window, "SymptomChips");
+            var hero = Find<FrameworkElement>(window, "OverviewHero");
+            double mapTop = map.TranslatePoint(new Point(), mapPane).Y;
             double mapBottom = map.TranslatePoint(new Point(0, map.ActualHeight), mapPane).Y;
-            double hintTop = mapHint.TranslatePoint(new Point(0, 0), mapPane).Y;
-            double hintBottom = hintTop + mapHint.ActualHeight;
             double chipsTop = chips.TranslatePoint(new Point(0, 0), mapPane).Y;
-            Require(hintTop - mapBottom < 20 && chipsTop - hintBottom < 24 && chipsTop + chips.ActualHeight >= mapPane.ActualHeight - 50,
-                "The map grows with a taller window instead of leaving a large blank block beneath the cards. Map bottom " + mapBottom +
-                ", hint " + hintTop + "-" + hintBottom + ", chips " + chipsTop + "+" + chips.ActualHeight + ", pane " + mapPane.ActualHeight);
+            double heroTop = hero.TranslatePoint(new Point(), mapPane).Y;
+            double heroBottom = heroTop + hero.ActualHeight;
+            Require(chipsTop - mapBottom < 24 && chipsTop + chips.ActualHeight >= mapPane.ActualHeight - 50 &&
+                    Math.Abs(heroTop - mapTop) <= 1 && Math.Abs(heroBottom - mapBottom) <= 1,
+                "The map and score card fill the pane down to the chips, with no blank block. Map " + mapTop + "-" + mapBottom +
+                ", card " + heroTop + "-" + heroBottom + ", chips " + chipsTop + "+" + chips.ActualHeight + ", pane " + mapPane.ActualHeight);
+            Require(Find<TextBlock>(window, "OverviewDetail") is { IsVisible: true } detailLine && detailLine.Text.Length > 1,
+                "Before any check, the score card carries the map instruction instead of an empty line.");
             window.Width = 1025;
             window.Height = 780;
             Settle(window);

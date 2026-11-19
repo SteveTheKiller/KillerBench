@@ -87,10 +87,9 @@ public partial class MainWindow
     private void FitSystemMap()
     {
         if (!OverviewPage.IsVisible || OverviewScroll.ViewportHeight <= 0) return;
-        // The map sits beside the score column and shares its height with the hint under it and the symptom chips below both.
-        double hint = OverviewMapHint.ActualHeight + OverviewMapHint.Margin.Top + OverviewMapHint.Margin.Bottom;
+        // The map sits beside the score card and shares its height only with the symptom chips below both.
         double chips = SymptomChips.ActualHeight + SymptomChips.Margin.Top + SymptomChips.Margin.Bottom;
-        double height = Math.Max(0, OverviewScroll.ViewportHeight - 8 - hint - chips);
+        double height = Math.Max(0, OverviewScroll.ViewportHeight - 8 - chips);
         if (Math.Abs(SystemAreas.MinHeight - height) > 1) SystemAreas.MinHeight = height;
     }
 
@@ -200,8 +199,9 @@ public partial class MainWindow
         {
             OverviewHeadline.SetResourceReference(TextBlock.TextProperty, "Str_Workspace_SystemMap");
             // Hidden, not collapsed: the hero keeps its height so the map doesn't jump once a scan fills the line.
-            OverviewDetail.Text = " ";
-            OverviewDetail.Visibility = Visibility.Hidden;
+            // Before any check the card says what to do with the map beside it, in the space the coverage line will use.
+            OverviewDetail.SetResourceReference(TextBlock.TextProperty, "Str_Workspace_MapHint");
+            OverviewDetail.Visibility = Visibility.Visible;
             OverviewChips.Visibility = Visibility.Collapsed;
             return;
         }
