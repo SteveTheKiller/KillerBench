@@ -41,16 +41,22 @@ public sealed class MachineMapPanel : Panel
         ["Repair"] = new(448, 340, 284, 82),
     };
 
+    // The monitor sits flush on the tower's floor line; the strip it frees above it is GaugeRect, where the
+    // Overview puts its score gauge. Monitor parts are drawn in the old coordinates and shifted down by MonitorDrop.
+    private const double MonitorDrop = 124;
     private static readonly Rect Monitor = new(4, 4, 424, 300);
     private static readonly Rect MonitorScreen = new(16, 32, 410, 260);
     private static readonly Rect Tower = new(438, 4, 300, 424);
 
     public Rect ScreenRect { get; private set; } = Rect.Empty;
     public Rect TowerRect { get; private set; } = Rect.Empty;
+    public Rect GaugeRect { get; private set; } = Rect.Empty;
 
     private double scale = 1;
     private Vector offset;
     private bool drawn;
+
+    private static Rect Placed(Rect design) => design.X < Tower.X ? Rect.Offset(design, 0, MonitorDrop) : design;
 
     private Rect ToView(Rect design) => new(offset.X + design.X * scale, offset.Y + design.Y * scale, design.Width * scale, design.Height * scale);
 
@@ -76,16 +82,20 @@ public sealed class MachineMapPanel : Panel
         {
             double y = 0;
             foreach (UIElement child in InternalChildren) { child.Arrange(new Rect(0, y, finalSize.Width, child.DesiredSize.Height)); y += child.DesiredSize.Height; }
-            ScreenRect = TowerRect = Rect.Empty;
+            ScreenRect = TowerRect = GaugeRect = Rect.Empty;
             InvalidateVisual();
             return finalSize;
         }
         scale = Math.Min(finalSize.Width / DesignWidth, finalSize.Height / DesignHeight);
-        offset = new Vector((finalSize.Width - DesignWidth * scale) / 2, Math.Max(0, (finalSize.Height - DesignHeight * scale) / 2));
-        ScreenRect = ToView(MonitorScreen);
+        // Centered across, sitting on the floor: spare height goes above the machine, into the space over the monitor.
+        offset = new Vector((finalSize.Width - DesignWidth * scale) / 2, Math.Max(0, finalSize.Height - DesignHeight * scale));
+        ScreenRect = ToView(Placed(MonitorScreen));
+        // Everything above the monitor, from the panel's top edge down to just over the webcam.
+        var monitorView = ToView(Placed(Monitor));
+        GaugeRect = new Rect(monitorView.X, 0, monitorView.Width, Math.Max(0, ToView(Placed(Parts["Privacy"])).Y - 6 * scale));
         TowerRect = ToView(Tower);
         foreach (UIElement child in InternalChildren)
-            child.Arrange(Parts.TryGetValue(GetPart(child), out var part) ? ToView(part) : new Rect(-9999, -9999, 0, 0));
+            child.Arrange(Parts.TryGetValue(GetPart(child), out var part) ? ToView(Placed(part)) : new Rect(-9999, -9999, 0, 0));
         InvalidateVisual();
         return finalSize;
     }
@@ -115,7 +125,9 @@ public sealed class MachineMapPanel : Panel
         if (!drawn || ActualWidth <= 0) return;
         dc.PushTransform(new TranslateTransform(offset.X, offset.Y));
         dc.PushTransform(new ScaleTransform(scale, scale));
+        dc.PushTransform(new TranslateTransform(0, MonitorDrop));
         DrawMonitor(dc);
+        dc.Pop();
         DrawTower(dc);
         dc.Pop();
         dc.Pop();
@@ -134,8 +146,6 @@ public sealed class MachineMapPanel : Panel
         dc.DrawRoundedRectangle(Case, Line(Edge, 2), Monitor, 12, 12);
         dc.DrawRectangle(ScreenFill, null, new Rect(MonitorScreen.X, MonitorScreen.Y, MonitorScreen.Width - 12, MonitorScreen.Height - 4));
         dc.DrawRectangle(Taskbar, null, new Rect(MonitorScreen.X, 270, MonitorScreen.Width - 12, 18));
-        dc.DrawRectangle(Metal, null, new Rect(186, 304, 60, 96));
-        dc.DrawRoundedRectangle(Metal, null, new Rect(116, 400, 200, 16), 6, 6);
 
         // Privacy: the webcam on the top bezel.
         var cam = Parts["Privacy"];

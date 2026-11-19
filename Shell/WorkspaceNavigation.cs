@@ -87,13 +87,57 @@ public partial class MainWindow
     private void FitSystemMap()
     {
         if (!OverviewPage.IsVisible || OverviewScroll.ViewportHeight <= 0) return;
-        // The machine fills whatever the summary band leaves, so the pane has no dead floor.
-        // A fixed height, not a floor: inside the scroll viewer the map would otherwise size itself to the width and run off the bottom.
-        // Below 280px it keeps that floor and the page scrolls rather than shrinking the machine to nothing.
-        double height = Math.Max(280, OverviewScroll.ViewportHeight - OverviewHero.ActualHeight - OverviewHero.Margin.Bottom - 2);
-        // A narrow pane stacks the parts as a list, which needs its natural height.
-        if (OverviewMapHost.ActualWidth < 460) { if (!double.IsNaN(SystemAreas.Height)) SystemAreas.ClearValue(HeightProperty); return; }
+        // A narrow pane stacks the parts as a list with the status block above it, at natural heights.
+        if (OverviewMapHost.ActualWidth < 460)
+        {
+            if (!double.IsNaN(SystemAreas.Height)) SystemAreas.ClearValue(HeightProperty);
+            if (!double.IsNaN(OverviewHeroSpot.Width)) { OverviewHeroSpot.ClearValue(WidthProperty); OverviewHeroSpot.ClearValue(MaxHeightProperty); }
+            SetIfChanged(OverviewHero, Math.Max(200, OverviewMapHost.ActualWidth));
+            SetMargin(OverviewHeroSpot, new Thickness(0));
+            SetMargin(SystemAreas, new Thickness(0, OverviewHeroSpot.ActualHeight + 12, 0, 0));
+            return;
+        }
+        // The machine takes the pane's full height: a fixed height, because inside the scroll viewer it would otherwise
+        // size itself to the width and run off the bottom. Below 280px the page scrolls instead of shrinking it to nothing.
+        double height = Math.Max(280, OverviewScroll.ViewportHeight - 2);
         if (double.IsNaN(SystemAreas.Height) || Math.Abs(SystemAreas.Height - height) > 1) SystemAreas.Height = height;
+        SetMargin(SystemAreas, new Thickness(0));
+        PlaceOverviewHero();
+    }
+
+    // The status block fills the space above the monitor, sitting just over it. It shrinks to fit when that space is small.
+    private void PlaceOverviewHero()
+    {
+        var machine = FindChild<KillerBench.Controls.MachineMapPanel>(SystemAreas);
+        if (machine is null || machine.GaugeRect.IsEmpty || machine.GaugeRect.Height <= 0) return;
+        Rect strip = machine.GaugeRect;
+        var origin = machine.TranslatePoint(new Point(strip.X, strip.Y), OverviewMapHost);
+        SetIfChanged(OverviewHero, Math.Max(440, strip.Width));
+        if (Math.Abs(OverviewHeroSpot.Width - strip.Width) > 0.5) OverviewHeroSpot.Width = strip.Width;
+        if (Math.Abs(OverviewHeroSpot.MaxHeight - strip.Height) > 0.5) OverviewHeroSpot.MaxHeight = strip.Height;
+        double used = OverviewHeroSpot.ActualHeight > 0 ? OverviewHeroSpot.ActualHeight : strip.Height;
+        SetMargin(OverviewHeroSpot, new Thickness(origin.X, origin.Y + Math.Max(0, strip.Height - used), 0, 0));
+    }
+
+    private static void SetIfChanged(FrameworkElement element, double width)
+    {
+        if (Math.Abs(element.Width - width) > 0.5) element.Width = width;
+    }
+
+    private static void SetMargin(FrameworkElement element, Thickness margin)
+    {
+        if (Math.Abs(element.Margin.Left - margin.Left) > 0.5 || Math.Abs(element.Margin.Top - margin.Top) > 0.5) element.Margin = margin;
+    }
+
+    private static T? FindChild<T>(DependencyObject parent) where T : DependencyObject
+    {
+        for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent); i++)
+        {
+            var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
+            if (child is T match) return match;
+            if (FindChild<T>(child) is { } found) return found;
+        }
+        return null;
     }
 
     private void FitInitialOverviewHeight()

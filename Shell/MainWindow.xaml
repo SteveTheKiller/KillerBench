@@ -189,13 +189,15 @@
         <Border x:Name="OverviewPage" Grid.Column="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
           <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/><Border>
           <ScrollViewer x:Name="OverviewScroll" Style="{StaticResource ShadowScrollViewer}" Padding="16" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <!-- Home: one summary band across the top (gauge, status, symptoms, actions), the machine fills the rest. -->
+            <!-- Home: the machine sits on the pane's floor. The monitor is flush with the tower's base, and the space
+                 above the monitor holds the gauge, the status, the symptom buttons and the actions (MachineMapPanel.GaugeRect). -->
             <Grid x:Name="OverviewLayout">
-              <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-              <Border x:Name="OverviewHero" Margin="0,0,0,16" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="16,12">
-                <Grid><Grid>
-                  <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                  <Viewbox x:Name="OverviewGaugeSpot" Width="84" Height="84" VerticalAlignment="Top" Margin="0,0,16,0">
+              <Grid x:Name="OverviewMapHost">
+              <Viewbox x:Name="OverviewHeroSpot" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform" StretchDirection="DownOnly" Panel.ZIndex="1">
+                <Border x:Name="OverviewHero" Width="440">
+                <Grid>
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                  <Viewbox x:Name="OverviewGaugeSpot" Width="96" Height="96" VerticalAlignment="Top" Margin="0,0,16,0">
                     <Grid Width="120" Height="120">
                       <icons:CoverageGauge x:Name="OverviewGauge" TrackBrush="{DynamicResource PaneBorderBrush}" CoverageBrush="{DynamicResource PrimaryBrush}" ToneBrush="{DynamicResource PaneBorderBrush}" IsHitTestVisible="False"/>
                       <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -204,7 +206,7 @@
                       </StackPanel>
                     </Grid>
                   </Viewbox>
-                  <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                  <StackPanel Grid.Column="1" VerticalAlignment="Top">
                     <TextBlock x:Name="OverviewHeadline" Text="{DynamicResource Str_Workspace_SystemMap}" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap"/>
                     <TextBlock x:Name="OverviewDetail" Text="{DynamicResource Str_Workspace_MapHint}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,2,0,6"/>
                     <WrapPanel x:Name="OverviewChips" Visibility="Collapsed"/>
@@ -217,12 +219,11 @@
                         </Button>
                       </DataTemplate></ItemsControl.ItemTemplate>
                     </ItemsControl>
+                    <WrapPanel x:Name="OverviewMapActions" Margin="0,10,0,0"><Button x:Name="OverviewCheckButton" Content="{DynamicResource Str_Main_RunDiagnosis}" Click="OnOverviewCheck" Margin="0,0,8,0"/><Button x:Name="OverviewOpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture"/></WrapPanel>
                   </StackPanel>
-                  <StackPanel x:Name="OverviewMapActions" Grid.Column="2" VerticalAlignment="Top" Margin="16,0,0,0"><Button x:Name="OverviewCheckButton" Content="{DynamicResource Str_Main_RunDiagnosis}" Click="OnOverviewCheck" Margin="0,0,0,6"/><Button x:Name="OverviewOpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture"/></StackPanel>
                 </Grid>
-                <Border Style="{StaticResource FlyoutGrain}" Margin="-16,-12"/></Grid>
-              </Border>
-              <Grid x:Name="OverviewMapHost" Grid.Row="1">
+                </Border>
+              </Viewbox>
               <ListBox x:Name="SystemAreas" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" SelectionChanged="OnSystemAreaSelected" PreviewMouseLeftButtonUp="OnReopenSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
                 <ListBox.ItemsPanel><ItemsPanelTemplate><icons:MachineMapPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
                 <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}">

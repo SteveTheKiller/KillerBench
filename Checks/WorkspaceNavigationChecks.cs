@@ -70,21 +70,25 @@ internal static class WorkspaceNavigationChecks
             window.Height = 1000;
             Settle(window);
             var mapPane = Find<FrameworkElement>(window, "OverviewPage");
-            // Home is one summary band (gauge, status, symptoms, actions) over a machine that fills the rest of the pane.
+            // Home: the machine sits on the pane's floor with the monitor flush with the tower's base, and the gauge,
+            // status, symptoms and actions fill the space above the monitor. Nothing sits in a band of its own.
             var chips = Find<FrameworkElement>(window, "SymptomChips");
-            var hero = Find<FrameworkElement>(window, "OverviewHero");
+            var spot = Find<FrameworkElement>(window, "OverviewHeroSpot");
             var gauge = Find<FrameworkElement>(window, "OverviewGaugeSpot");
+            var actions = Find<FrameworkElement>(window, "OverviewMapActions");
             var drawn = FindVisual<KillerBench.Controls.MachineMapPanel>(map)!;
-            Require(chips.IsDescendantOf(hero) && gauge.IsDescendantOf(hero), "The gauge and the symptom buttons sit in the summary band, not in bars of their own.");
+            Require(chips.IsDescendantOf(spot) && gauge.IsDescendantOf(spot) && actions.IsDescendantOf(spot), "The gauge, symptoms and actions sit together above the monitor.");
             var scroll = Find<ScrollViewer>(window, "OverviewScroll");
-            double heroBottom = hero.TranslatePoint(new Point(0, hero.ActualHeight), scroll).Y;
-            double mapTop = map.TranslatePoint(new Point(0, 0), scroll).Y;
+            Rect block = spot.TransformToVisual(drawn).TransformBounds(new Rect(spot.RenderSize));
+            Rect screen = drawn.ScreenRect, tower = drawn.TowerRect;
+            // The screen glass starts below the bezel and webcam, so the block may sit up to the bezel's height plus a small gap above it.
+            Require(block.Bottom <= screen.Top && screen.Top - block.Bottom <= 70 &&block.Left >= screen.Left - 20 && block.Right <= tower.Left,
+                "The status block sits just above the monitor, left of the tower. Block " + block + ", screen " + screen + ", tower " + tower);
             double mapBottom = map.TranslatePoint(new Point(0, map.ActualHeight), scroll).Y;
-            Require(mapTop >= heroBottom && mapTop - heroBottom <= 20 && scroll.ScrollableHeight < 1 && scroll.ActualHeight - mapBottom <= 24,
-                "The machine starts right under the band and runs to the bottom of the pane. Band " + heroBottom + ", map " + mapTop + " to " + mapBottom + " of " + scroll.ActualHeight);
-            double machineWidth = drawn.TowerRect.Right - drawn.ScreenRect.Left, machineHeight = drawn.TowerRect.Height;
-            Require(Math.Min(map.ActualWidth - machineWidth, map.ActualHeight - machineHeight) <= 40,
-                "The machine is as big as the pane allows. Machine " + machineWidth + "x" + machineHeight + " in " + map.RenderSize);
+            Require(scroll.ScrollableHeight < 1 && scroll.ActualHeight - mapBottom <= 24 && map.ActualHeight - tower.Bottom <= 8,
+                "The machine stands on the pane's floor with no empty band under it. Tower bottom " + tower.Bottom + " of " + map.ActualHeight);
+            Require(map.ActualWidth - (tower.Right - screen.Left) <= 60 || tower.Top <= 4,
+                "The machine is as big as the pane allows. Machine " + (tower.Right - screen.Left) + "x" + tower.Height + " in " + map.RenderSize);
             Require(Find<TextBlock>(window, "OverviewDetail") is { IsVisible: true } detailLine && detailLine.Text.Length > 1,
                 "Before any check, the score card carries the map instruction instead of an empty line.");
             window.Width = 1025;
