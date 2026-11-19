@@ -417,6 +417,20 @@ internal static class DemoScreenshotChecks
                 Settle(window);
                 Require(window.FindName("SystemAreas") is FrameworkElement { IsVisible: true } && selectedArea is ListBoxItem { IsVisible: true } && HasDemoStatus(selectedArea),
                     "Back returns to the map, where the selected area visibly identifies the completed result as a demo.");
+                if (shot.File == "01.png")
+                {
+                    // History opens the finished result in place: outcome, each check with its state, and the full views.
+                    navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, "History"));
+                    Settle(window);
+                    var history = (ListBox)window.FindName("SessionHistory");
+                    var openRow = history.ItemContainerGenerator.ContainerFromItem(history.SelectedItem) as ListBoxItem;
+                    Require(openRow?.Template.FindName("HistoryDetail", openRow) is FrameworkElement { IsVisible: true } &&
+                            openRow.Template.FindName("HistoryFullReport", openRow) is FrameworkElement { IsVisible: true },
+                        "History opens the finished result in place with its checks and report buttons.");
+                    Capture(window, Path.Combine(output, "workspace-history-open.png"), shot.PixelScale);
+                    navigation.SelectedItem = navigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, "Overview"));
+                    Settle(window);
+                }
             }
             if (shot.Area is int area)
             {

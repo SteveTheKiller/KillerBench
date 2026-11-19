@@ -333,20 +333,44 @@
               <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem">
                 <Setter Property="Margin" Value="0,0,0,4"/><Setter Property="Cursor" Value="Hand"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
-                <Setter Property="AutomationProperties.Name" Value="{Binding}"/>
+                <Setter Property="AutomationProperties.Name" Value="{Binding Label}"/>
                 <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
                   <Border x:Name="RowFace" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}">
                     <Grid>
-                      <DockPanel MinHeight="38" Margin="12,0">
-                        <a11y:Glyph DockPanel.Dock="Right" Text="&#xE76C;" FontFamily="Segoe MDL2 Assets" FontSize="11" VerticalAlignment="Center" Margin="12,0,0,0" Foreground="{DynamicResource MutedTextBrush}" IsHitTestVisible="False"/>
-                        <TextBlock Text="{Binding}" FontSize="13" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,9"/>
-                      </DockPanel>
+                      <StackPanel>
+                        <DockPanel MinHeight="38" Margin="12,0">
+                          <a11y:Glyph x:Name="HistoryChevron" DockPanel.Dock="Right" Text="&#xE70D;" FontFamily="Segoe MDL2 Assets" FontSize="11" VerticalAlignment="Center" Margin="12,0,0,0" Foreground="{DynamicResource MutedTextBrush}" IsHitTestVisible="False"/>
+                          <TextBlock Text="{Binding Label}" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,9"/>
+                        </DockPanel>
+                        <!-- The selected result opens in place: outcome, each check with its state, then the full views. -->
+                        <StackPanel x:Name="HistoryDetail" Margin="12,0,12,10" Visibility="Collapsed" Cursor="Arrow">
+                          <TextBlock Text="{Binding Summary}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" Margin="0,0,0,6"/>
+                          <ItemsControl ItemsSource="{Binding Checks}" Visibility="{Binding ChecksVisibility}" Margin="0,0,0,8" Focusable="False">
+                            <ItemsControl.ItemTemplate><DataTemplate>
+                              <DockPanel Margin="0,2">
+                                <Ellipse Width="8" Height="8" Fill="{Binding Tone}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock DockPanel.Dock="Right" Text="{Binding State}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding Name}" FontSize="12" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                              </DockPanel>
+                            </DataTemplate></ItemsControl.ItemTemplate>
+                          </ItemsControl>
+                          <WrapPanel>
+                            <Button x:Name="HistoryFullReport" Content="{DynamicResource Str_Area_FullReport}" Click="OnHistoryOpenReport" Style="{StaticResource OutlineButton}" Margin="0,0,8,0"/>
+                            <Button x:Name="HistoryRawOutput" Content="{DynamicResource Str_Session_RawOutput}" Tag="raw" Click="OnHistoryOpenReport"/>
+                          </WrapPanel>
+                        </StackPanel>
+                      </StackPanel>
                       <Border Style="{StaticResource FlyoutGrain}"/>
                     </Grid>
                   </Border>
                   <ControlTemplate.Triggers>
                     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="RowFace" Property="Background" Value="{DynamicResource RowHoverBrush}"/></Trigger>
-                    <Trigger Property="IsSelected" Value="True"><Setter TargetName="RowFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/></Trigger>
+                    <Trigger Property="IsSelected" Value="True">
+                      <Setter TargetName="RowFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                      <Setter TargetName="RowFace" Property="Background" Value="{DynamicResource PaneBrush}"/>
+                      <Setter TargetName="HistoryDetail" Property="Visibility" Value="Visible"/>
+                      <Setter TargetName="HistoryChevron" Property="Text" Value="&#xE70E;"/>
+                    </Trigger>
                     <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="RowFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/></Trigger>
                   </ControlTemplate.Triggers>
                 </ControlTemplate></Setter.Value></Setter>

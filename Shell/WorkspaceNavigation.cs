@@ -19,8 +19,14 @@ public partial class MainWindow
 
     private sealed record SessionEntry(KillerBench.Engine.Evidence.TextEvidence Evidence, string Label)
     {
+        // What the row shows when it opens in place: the outcome line and each check with its state.
+        public string Summary { get; init; } = "";
+        public IReadOnlyList<HistoryCheck> Checks { get; init; } = [];
+        public Visibility ChecksVisibility => Checks.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         public override string ToString() => Label;
     }
+
+    private sealed record HistoryCheck(string Name, string State, System.Windows.Media.Brush Tone);
 
     private sealed record GuidedSymptom(string Id, string Art, string Area, WorkflowKind Workflow)
     {
@@ -121,11 +127,16 @@ public partial class MainWindow
     {
         var selected = (SessionHistory.SelectedItem as SessionEntry)?.Evidence;
         RefreshMapEvidence();
-        SessionHistory.ItemsSource = sources.Select(source => new SessionEntry(source,
-            workflowSummaries.TryGetValue(source, out var result)
-                ? Controls.LocalizedText.Workflow(result.Kind) + " · " + result.StartedUtc.ToLocalTime().ToString("t")
-                : source.Source == "Synthetic demonstration" ? Controls.LocalizedText.Get("Str_Content_Load_sample")
-                : System.IO.Path.GetFileName(source.Source))).ToArray();
+        SessionHistory.ItemsSource = sources.Select(source => workflowSummaries.TryGetValue(source, out var result)
+            ? new SessionEntry(source, Controls.LocalizedText.Workflow(result.Kind) + " · " + result.StartedUtc.ToLocalTime().ToString("t"))
+            {
+                Summary = LocalizedStatus(result.Status),
+                Checks = result.Checks.Where(check => check.Name != NativeCapabilityCheckName)
+                    .Select(check => new HistoryCheck(DisplayReportCheckName(check.Name), Controls.LocalizedText.Choice(check.State),
+                        (System.Windows.Media.Brush)FindResource(ToneBrush(check.State)))).ToArray()
+            }
+            : new SessionEntry(source, source.Source == "Synthetic demonstration" ? Controls.LocalizedText.Get("Str_Content_Load_sample")
+                : System.IO.Path.GetFileName(source.Source)) { Summary = source.Source }).ToArray();
         SessionHistory.SelectedItem = SessionHistory.Items.Cast<SessionEntry>().FirstOrDefault(entry => ReferenceEquals(entry.Evidence, selected));
         HistoryEmpty.Visibility = sources.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
@@ -137,6 +148,15 @@ public partial class MainWindow
         OnSourceSelected(sender, e);
         AreaEvidencePanel.Visibility = Visibility.Collapsed;
         SetOutputView();
+        // The row opens in place with its outcome and checks; the full report opens from the row's own buttons.
+    }
+
+    private void OnHistoryOpenReport(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { DataContext: SessionEntry entry }) return;
+        SessionHistory.SelectedItem = entry;
+        if (Equals((sender as FrameworkElement)?.Tag, "raw")) OnConsoleView(sender, e);
+        else OnReportView(sender, e);
         SetOutputOpen(true);
     }
 

@@ -74,8 +74,7 @@ public partial class MainWindow
         if (sender is not System.Windows.Controls.ListBox list || e.OriginalSource is not DependencyObject source) return;
         if (System.Windows.Controls.ItemsControl.ContainerFromElement(list, source) is not System.Windows.Controls.ListBoxItem { IsSelected: true }) return;
         if (TerminalPanel.Visibility == Visibility.Visible) return;
-        if (list == SessionHistory) SetOutputOpen(true);
-        else ShowAreaEvidence();
+        if (list != SessionHistory) ShowAreaEvidence();
     }
 
 }

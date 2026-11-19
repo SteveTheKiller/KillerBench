@@ -260,8 +260,16 @@ internal static class WorkspaceNavigationChecks
                 "Returning to History lands on the list with its row and report still loaded.");
             history.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left) { RoutedEvent = UIElement.PreviewMouseLeftButtonUpEvent, Source = history.ItemContainerGenerator.ContainerFromIndex(0) });
             Settle(window);
+            var openRow = (ListBoxItem)history.ItemContainerGenerator.ContainerFromIndex(0);
+            var rowDetail = (FrameworkElement)openRow.Template.FindName("HistoryDetail", openRow);
+            var closedRow = history.Items.Count > 1 ? (ListBoxItem)history.ItemContainerGenerator.ContainerFromIndex(1) : null;
+            Require(!evidence.IsVisible && rowDetail.IsVisible &&
+                    (closedRow is null || !((FrameworkElement)closedRow.Template.FindName("HistoryDetail", closedRow)).IsVisible),
+                "Clicking the selected History row opens it in place and leaves the other rows closed.");
+            ((Button)openRow.Template.FindName("HistoryFullReport", openRow)).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Settle(window);
             Require(evidence.IsVisible && Find<FrameworkElement>(window, "ReportPane").IsVisible && evidenceTitle.Text == "workspace-evidence.log",
-                "Clicking the selected History row swaps its report in.");
+                "The open History row's Full report button swaps its report in.");
 
             navigation.SelectedIndex = 2;
             ImportFixture(window, "workspace-new.log", "Third synthetic fixture. No machine evidence was collected.\n");
