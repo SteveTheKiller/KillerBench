@@ -1729,6 +1729,14 @@ internal static class Program
                         ((Button)window.FindName("OutputBackButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                         window.UpdateLayout();
                     }
+                    window.UpdateLayout();
+                    var checkRows = (ListBox)window.FindName("CheckRows");
+                    Require(((FrameworkElement)window.FindName("CheckDetail")).Parent is Border { TemplatedParent: ListBoxItem { IsSelected: true } detailRow } &&
+                        Equals(checkRows.ItemContainerGenerator.ItemFromContainer(detailRow), tool) &&
+                        !((FrameworkElement)window.FindName("CategoryWorkflow")).IsVisible &&
+                        ((FrameworkElement)window.FindName("MainGo")).Parent is StackPanel { Parent: Grid header } && Grid.GetColumn((UIElement)((FrameworkElement)window.FindName("MainGo")).Parent) == 2 &&
+                        header.Children.Contains((UIElement)window.FindName("ToolArt")),
+                        "The selected check row opens in place with its options, and Run sits in the page header: " + tool.Kind);
                     Require(new Size(window.ActualWidth, window.ActualHeight) == stableWindowSize &&
                         new Size(stableWorkspace.ActualWidth, stableWorkspace.ActualHeight) == stableWorkspaceSize,
                         "Switching tools preserves window and workspace dimensions: " + tool.Kind);

@@ -355,20 +355,59 @@
             </ScrollViewer.Resources>
           <StackPanel>
             <!-- Same area art as the Overview pane, so a tool page reads as the area it belongs to. -->
-            <Grid Margin="0,0,0,12">
-              <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-              <icons:AreaIllustration x:Name="ToolArt" Id="Diagnostics" Stroke="{DynamicResource PrimaryBrush}" Width="52" Height="52" Margin="0,0,14,0" VerticalAlignment="Top" IsHitTestVisible="False"/>
+            <!-- Page header, the same on every page: icon, title, one muted line, actions on the right. -->
+            <Grid Margin="0,0,0,12" MinHeight="48">
+              <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+              <icons:AreaIllustration x:Name="ToolArt" Id="Diagnostics" Stroke="{DynamicResource PrimaryBrush}" Width="44" Height="44" Margin="0,0,12,0" VerticalAlignment="Center" IsHitTestVisible="False"/>
               <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                <TextBlock x:Name="CategoryTitle" Text="{DynamicResource Str_Shell_Diagnostics}" FontFamily="{DynamicResource HeadingFont}" Foreground="{DynamicResource PrimaryBrush}" FontSize="20" Margin="0,0,0,4"/>
-                <TextBlock x:Name="CategoryDescription" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
+                <TextBlock x:Name="CategoryTitle" Text="{DynamicResource Str_Shell_Diagnostics}" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}" FontSize="18" Margin="0,0,0,2"/>
+                <TextBlock x:Name="CategoryDescription" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource MutedTextBrush}"/>
+              </StackPanel>
+              <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
+                <Button x:Name="MainGo" Content="{DynamicResource Str_Main_RunDiagnosis}" Style="{StaticResource OutlineButton}" Click="OnMainGo" MinWidth="110" Margin="0,0,8,0" ToolTip="{DynamicResource Str_Main_RunDiagnosisTip}"/>
+                <Button x:Name="CancelButton" Content="{DynamicResource Str_Main_Stop}" Click="OnCancel" IsEnabled="False" ToolTip="{DynamicResource Str_Main_StopTip}" MinWidth="64"/>
               </StackPanel>
             </Grid>
-            <WrapPanel Margin="0,0,0,6">
-              <ComboBox x:Name="MainWorkflow" ItemsSource="{x:Static workflows:WorkflowCatalog.All}" DisplayMemberPath="Title" SelectedIndex="0" Visibility="Collapsed" SelectionChanged="OnWorkflowOptionsChanged"/>
-              <ComboBox x:Name="CategoryWorkflow" Width="250" AutomationProperties.Name="{DynamicResource Str_Advanced_Workflows}" Margin="0,0,8,0" SelectionChanged="OnCategoryWorkflowSelected">
-                <ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Converter={x:Static icons:WorkflowTitleConverter.Instance}}"/></DataTemplate></ComboBox.ItemTemplate>
-              </ComboBox>
-            </WrapPanel>
+            <ComboBox x:Name="MainWorkflow" ItemsSource="{x:Static workflows:WorkflowCatalog.All}" DisplayMemberPath="Title" SelectedIndex="0" Visibility="Collapsed" SelectionChanged="OnWorkflowOptionsChanged"/>
+            <!-- The page model for the area's checks; the rows below show and drive it. -->
+            <ComboBox x:Name="CategoryWorkflow" Visibility="Collapsed" AutomationProperties.Name="{DynamicResource Str_Advanced_Workflows}" SelectionChanged="OnCategoryWorkflowSelected"/>
+            <!-- One row per check. The selected row opens in place and carries the check's options and consent. -->
+            <ListBox x:Name="CheckRows" ItemsSource="{Binding ItemsSource, ElementName=CategoryWorkflow}" SelectedItem="{Binding SelectedItem, ElementName=CategoryWorkflow, Mode=TwoWay}"
+                     Background="Transparent" BorderThickness="0" Margin="0,0,0,12" SelectionChanged="OnCheckRowSelected" AutomationProperties.Name="{DynamicResource Str_Advanced_Workflows}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+              <ListBox.Template><ControlTemplate TargetType="ListBox"><ItemsPresenter/></ControlTemplate></ListBox.Template>
+              <ListBox.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
+              <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem">
+                <Setter Property="Margin" Value="0,0,0,4"/><Setter Property="Cursor" Value="Hand"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                <Setter Property="AutomationProperties.Name" Value="{Binding Converter={x:Static icons:WorkflowTitleConverter.Instance}}"/>
+                <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
+                  <Border x:Name="RowFace" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}">
+                    <Grid>
+                      <StackPanel>
+                        <DockPanel Height="38" Margin="12,0">
+                          <a11y:Glyph x:Name="RowChevron" DockPanel.Dock="Right" Text="&#xE70D;" FontFamily="Segoe MDL2 Assets" FontSize="11" VerticalAlignment="Center" Foreground="{DynamicResource MutedTextBrush}" IsHitTestVisible="False"/>
+                          <TextBlock Text="{Binding Converter={x:Static icons:WorkflowTitleConverter.Instance}}" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                        </DockPanel>
+                        <Border x:Name="RowDetailHost" Padding="12,0,12,10" Visibility="Collapsed" Cursor="Arrow"/>
+                      </StackPanel>
+                      <Border Style="{StaticResource FlyoutGrain}"/>
+                    </Grid>
+                  </Border>
+                  <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="RowFace" Property="Background" Value="{DynamicResource RowHoverBrush}"/></Trigger>
+                    <Trigger Property="IsSelected" Value="True">
+                      <Setter TargetName="RowFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                      <Setter TargetName="RowFace" Property="Background" Value="{DynamicResource PaneBrush}"/>
+                      <Setter TargetName="RowDetailHost" Property="Visibility" Value="Visible"/>
+                      <Setter TargetName="RowChevron" Property="Text" Value="&#xE70E;"/>
+                    </Trigger>
+                    <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="RowFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/></Trigger>
+                  </ControlTemplate.Triggers>
+                </ControlTemplate></Setter.Value></Setter>
+              </Style></ListBox.ItemContainerStyle>
+            </ListBox>
+            <StackPanel x:Name="CheckDetail">
             <StackPanel x:Name="ServicingMonitorSettings" Visibility="Collapsed" Margin="0,0,0,8">
               <StackPanel.Resources><Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}"><Setter Property="Margin" Value="0,3,0,3"/></Style></StackPanel.Resources>
               <TextBlock Text="{DynamicResource Str_Peek_Description}" TextWrapping="Wrap"/>
@@ -936,9 +975,6 @@
             </StackPanel>
             <CheckBox x:Name="MainAutoRepair" Content="{DynamicResource Str_Main_AutoRepair}" Margin="0,8,0,8" Checked="OnMainAutoRepairChanged" Unchecked="OnMainAutoRepairChanged"/>
             <TextBlock x:Name="NativeCapabilityStatus" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,0,0,8" AutomationProperties.Name="{DynamicResource Str_NativeLab_Name}"/>
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-              <Button x:Name="MainGo" Content="{DynamicResource Str_Main_RunDiagnosis}" Style="{StaticResource OutlineButton}" Click="OnMainGo" Width="128" Margin="0,0,8,0" ToolTip="{DynamicResource Str_Main_RunDiagnosisTip}"/>
-              <Button x:Name="CancelButton" Content="{DynamicResource Str_Main_Stop}" Click="OnCancel" IsEnabled="False" ToolTip="{DynamicResource Str_Main_StopTip}" Width="72"/>
             </StackPanel>
             <Expander x:Name="RecipeSelectionPanel" Header="{DynamicResource Str_Advanced_ChooseChecks}" Foreground="{DynamicResource TextBrush}" Visibility="Collapsed" Margin="0,0,0,6">
               <StackPanel>

@@ -107,7 +107,9 @@ public partial class MainWindow
             KnowledgeTools.Visibility = category.Id is "Diagnostics" or "Devices" ? Visibility.Visible : Visibility.Collapsed;
             CodeLookupLabel.SetResourceReference(TextBlock.TextProperty,
                 category.Id == "Devices" ? "Str_Knowledge_DeviceLabel" : "Str_Knowledge_CodeLabel");
-            CategoryWorkflow.ItemsSource = category.Tools.Select(kind => WorkflowCatalog.All.Single(w => w.Kind == kind)).ToArray();
+            // Swap the rows only when the area changes; a fresh array on every option change rebuilds them and drops focus.
+            if (CategoryWorkflow.ItemsSource is not WorkflowDefinition[] current || !current.Select(w => w.Kind).SequenceEqual(category.Tools))
+                CategoryWorkflow.ItemsSource = category.Tools.Select(kind => WorkflowCatalog.All.Single(w => w.Kind == kind)).ToArray();
             CategoryWorkflow.SelectedItem = workflow;
         }
         finally { synchronizingNavigation = false; }
