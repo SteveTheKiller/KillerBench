@@ -310,27 +310,47 @@
           <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/><Border>
           <ScrollViewer Style="{StaticResource ShadowScrollViewer}" Padding="18" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel>
             <StackPanel>
-              <Grid Margin="0,0,0,14">
-                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                <icons:AreaIllustration Id="Diagnostics" Width="52" Height="52" Margin="0,0,14,0" VerticalAlignment="Top" IsHitTestVisible="False"/>
-                <StackPanel Grid.Column="1">
-                  <TextBlock Text="{DynamicResource Str_Workspace_History}" FontFamily="{DynamicResource HeadingFont}" FontSize="20" Foreground="{DynamicResource PrimaryBrush}"/>
-                  <TextBlock Text="{DynamicResource Str_Workspace_HistoryHint}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" Margin="0,4,0,0"/>
+              <!-- Same page header as the area pages: icon, title, one muted line, actions on the right. -->
+              <Grid x:Name="HistoryHeader" Margin="0,0,0,12" MinHeight="48">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                <icons:AreaIllustration Id="Diagnostics" Stroke="{DynamicResource PrimaryBrush}" Width="44" Height="44" Margin="0,0,12,0" VerticalAlignment="Center" IsHitTestVisible="False"/>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                  <TextBlock Text="{DynamicResource Str_Workspace_History}" FontWeight="SemiBold" FontSize="18" Foreground="{DynamicResource PrimaryBrush}" Margin="0,0,0,2"/>
+                  <TextBlock Text="{DynamicResource Str_Workspace_HistoryHint}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource MutedTextBrush}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
+                  <Button x:Name="OpenSavedWorkflowButton" Content="{DynamicResource Str_Advanced_OpenWorkflow}" Click="OnOpenWorkflowJournal" ToolTip="{DynamicResource Str_Advanced_OpenWorkflowTip}" Margin="0,0,8,0"/>
+                  <Button x:Name="HistoryOpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture"/>
                 </StackPanel>
               </Grid>
-              <WrapPanel Margin="0,0,0,12"><Button x:Name="OpenSavedWorkflowButton" Content="{DynamicResource Str_Advanced_OpenWorkflow}" Click="OnOpenWorkflowJournal" ToolTip="{DynamicResource Str_Advanced_OpenWorkflowTip}" Margin="0,0,6,6"/><Button x:Name="HistoryOpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture" Margin="0,0,0,6"/></WrapPanel>
               <TextBlock x:Name="HistoryEmpty" Text="{DynamicResource Str_Workspace_SessionEmpty}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}"/>
             </StackPanel>
-            <ListBox x:Name="SessionHistory" Style="{StaticResource WorkbenchList}" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource SourceItem}" SelectionChanged="OnHistorySelected" PreviewMouseLeftButtonUp="OnReopenSelected" AutomationProperties.Name="{DynamicResource Str_Session_Sources}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-              <ListBox.ItemTemplate><DataTemplate>
-                <!-- Timeline row: a dot on a rule ties the session's entries together. -->
-                <Grid>
-                  <Grid.ColumnDefinitions><ColumnDefinition Width="22"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                  <Rectangle Width="2" HorizontalAlignment="Center" Fill="{DynamicResource PaneBorderBrush}"/>
-                  <Ellipse Width="10" Height="10" Margin="0,12,0,0" VerticalAlignment="Top" Fill="{DynamicResource PrimaryBrush}"/>
-                  <TextBlock Grid.Column="1" Text="{Binding}" TextWrapping="Wrap" Margin="6,8,8,8"/>
-                </Grid>
-              </DataTemplate></ListBox.ItemTemplate>
+            <!-- One bordered row per result, the same row face the area pages use for their checks. -->
+            <ListBox x:Name="SessionHistory" Background="Transparent" BorderThickness="0" SelectionChanged="OnHistorySelected" PreviewMouseLeftButtonUp="OnReopenSelected" AutomationProperties.Name="{DynamicResource Str_Session_Sources}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+              <ListBox.Template><ControlTemplate TargetType="ListBox"><ItemsPresenter/></ControlTemplate></ListBox.Template>
+              <ListBox.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
+              <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem">
+                <Setter Property="Margin" Value="0,0,0,4"/><Setter Property="Cursor" Value="Hand"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                <Setter Property="AutomationProperties.Name" Value="{Binding}"/>
+                <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
+                  <Border x:Name="RowFace" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}">
+                    <Grid>
+                      <DockPanel MinHeight="38" Margin="12,0">
+                        <a11y:Glyph DockPanel.Dock="Right" Text="&#xE76C;" FontFamily="Segoe MDL2 Assets" FontSize="11" VerticalAlignment="Center" Margin="12,0,0,0" Foreground="{DynamicResource MutedTextBrush}" IsHitTestVisible="False"/>
+                        <TextBlock Text="{Binding}" FontSize="13" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,9"/>
+                      </DockPanel>
+                      <Border Style="{StaticResource FlyoutGrain}"/>
+                    </Grid>
+                  </Border>
+                  <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="RowFace" Property="Background" Value="{DynamicResource RowHoverBrush}"/></Trigger>
+                    <Trigger Property="IsSelected" Value="True"><Setter TargetName="RowFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/></Trigger>
+                    <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="RowFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/></Trigger>
+                  </ControlTemplate.Triggers>
+                </ControlTemplate></Setter.Value></Setter>
+              </Style></ListBox.ItemContainerStyle>
             </ListBox>
           </StackPanel></ScrollViewer>
           </Border></Grid>
