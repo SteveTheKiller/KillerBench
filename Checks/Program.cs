@@ -2270,7 +2270,7 @@ internal static class Program
                 "Workflow result summary uses recorded checks instead of log-rule findings: " + outcomeLabel.Text);
             Require(window.FindName("ReportPane") is Border { Visibility: Visibility.Visible } &&
                 window.FindName("StartGuide") is TextBlock { Visibility: Visibility.Collapsed } &&
-                ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>().Any(card => card.Child is StackPanel),
+                ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>().Any(card => card.Child is Grid { Children: [Border { Child: StackPanel }, Border grain] } && grain.Style == window.FindResource("FlyoutGrain")),
                 "Completed workflows open a formatted report in the center pane, separate from the raw-output terminal");
             typeof(KillerBench.Shell.MainWindow).GetMethod("OnSourceSelected", flags)!.Invoke(window, [window, null]);
             Require(((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Focused service review report"),
@@ -2301,7 +2301,7 @@ internal static class Program
                 "Historical workflow review is a readable current-health-unknown report without an action replay");
             typeof(KillerBench.Shell.MainWindow).GetMethod("RenderNamedWorkflowReport", flags)!.Invoke(window, [historicalReport, "Saved workflow"]);
             Require(((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Saved workflow report") &&
-                ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>().Any(card => card.Child is StackPanel panel &&
+                ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>().Any(card => card.Child is Grid { Children: [Border { Child: StackPanel panel }, ..] } &&
                     panel.Children.OfType<TextBlock>().Any(block => block.Text == "Current health")),
                 "Historical workflow evidence opens the readable report instead of raw JSON only");
             var largeWorkflow = completedWorkflow with
@@ -2325,7 +2325,7 @@ internal static class Program
             };
             typeof(KillerBench.Shell.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [prioritizedWorkflow]);
             string[] cardTitles = [.. ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>()
-                .Select(card => ((StackPanel)card.Child).Children.OfType<TextBlock>().First().Text)];
+                .Select(card => ((StackPanel)((Border)((Grid)card.Child).Children[0]).Child).Children.OfType<TextBlock>().First().Text)];
             Require(cardTitles.Take(4).SequenceEqual(["Recommended next step", "Repairable item", "Attention item", "Unknown item"]),
                 "Report orders actionable findings before attention and incomplete evidence");
             var prioritizedCards = ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>().ToArray();
@@ -2334,7 +2334,7 @@ internal static class Program
             string reportStateName = reportStateChart is null ? "" : System.Windows.Automation.AutomationProperties.GetName(reportStateChart);
             Require(reportStateChart is { ColumnDefinitions.Count: 3 } && reportStateName.Contains("Fixable: 1", StringComparison.Ordinal) &&
                     prioritizedCards[1].BorderThickness.Left == 4 && prioritizedCards[1].BorderBrush == window.FindResource("DangerRed") &&
-                    !((StackPanel)prioritizedCards[3].Child).Children.OfType<TextBlock>().Any(text => text.Text.StartsWith("Next:", StringComparison.Ordinal)),
+                    !((StackPanel)((Border)((Grid)prioritizedCards[3].Child).Children[0]).Child).Children.OfType<TextBlock>().Any(text => text.Text.StartsWith("Next:", StringComparison.Ordinal)),
                 "The report draws the result's state bar, marks each finding with its tone stripe, and drops the stock next line. Chart: " + reportStateName);
             var repairNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review System files repair"));
             categories.SelectedItem = categories.Items.Cast<object>().Single(category => category.ToString() == "Diagnostics");

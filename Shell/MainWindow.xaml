@@ -151,7 +151,7 @@
           <ScrollViewer x:Name="OverviewScroll" Style="{StaticResource ShadowScrollViewer}" Padding="16" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
               <Border x:Name="OverviewHero" Background="{DynamicResource PaneBrush}" BorderBrush="{DynamicResource PaneBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="12" Margin="4,0,4,6">
-                <DockPanel>
+                <Grid><DockPanel>
                   <Grid DockPanel.Dock="Left" Width="108" Height="108" Margin="0,0,18,0" VerticalAlignment="Center">
                     <icons:CoverageGauge x:Name="OverviewGauge" TrackBrush="{DynamicResource PaneBorderBrush}" CoverageBrush="{DynamicResource PrimaryBrush}" ToneBrush="{DynamicResource PaneBorderBrush}" IsHitTestVisible="False"/>
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -161,12 +161,16 @@
                   </Grid>
                   <StackPanel VerticalAlignment="Center">
                     <TextBlock x:Name="OverviewHeadline" Text="{DynamicResource Str_Workspace_SystemMap}" FontFamily="{DynamicResource HeadingFont}" FontSize="22" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap"/>
-                    <TextBlock x:Name="OverviewDetail" Text="{DynamicResource Str_Workspace_MapHint}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,8"/>
+                    <TextBlock x:Name="OverviewDetail" Text=" " Visibility="Hidden" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                    <Border Height="8"/>
                     <WrapPanel x:Name="OverviewChips" Margin="0,0,0,8" Visibility="Collapsed"/>
                     <WrapPanel x:Name="OverviewMapActions"><Button x:Name="OverviewCheckButton" Content="{DynamicResource Str_Main_RunDiagnosis}" Click="OnOverviewCheck" Margin="0,0,8,6"/><Button x:Name="OverviewOpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture" Margin="0,0,0,6"/></WrapPanel>
                   </StackPanel>
                 </DockPanel>
+                <Border Style="{StaticResource FlyoutGrain}" Margin="-12"/></Grid>
               </Border>
+              <!-- Map instruction sits with the map it describes. -->
+              <TextBlock x:Name="OverviewMapHint" Text="{DynamicResource Str_Workspace_MapHint}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="6,6,6,6"/>
               <ListBox x:Name="SystemAreas" Background="Transparent" BorderThickness="0" SelectionChanged="OnSystemAreaSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
                 <ListBox.ItemsPanel><ItemsPanelTemplate><icons:MachineMapPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
                 <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}">
@@ -1178,11 +1182,10 @@
             <Border x:Name="ConsolePane" Grid.Row="3" Visibility="Collapsed" Background="{DynamicResource ConsoleSurfaceBrush}" BorderBrush="{DynamicResource ConsoleBorderBrush}" BorderThickness="1" CornerRadius="{DynamicResource ControlCornerRadius}" Padding="5" ClipToBounds="True" Effect="{DynamicResource ConsoleShadowEffect}">
               <TextBox x:Name="EvidenceBox" IsReadOnly="True" AcceptsReturn="True" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource ConsoleTextBrush}" FontFamily="Consolas" FontSize="14" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" AutomationProperties.Name="{DynamicResource Str_AutomationProperties_Name_Evidence_with_original_line_numbers}"/>
             </Border>
-            <!-- Empty output: the area art stands in for a blank box until a report or raw output exists. -->
-            <icons:AreaIllustration x:Name="OutputEmpty" Grid.Row="3" Id="Diagnostics" Stroke="{DynamicResource MutedTextBrush}" Width="120" Height="120" Opacity=".45" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False" Visibility="Collapsed"/>
             <TextBlock x:Name="StartGuide" Grid.Row="3" Visibility="Collapsed" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" LineHeight="18" Margin="0,4,0,0"/>
-            <ScrollViewer x:Name="AreaEvidencePanel" Grid.Row="3" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-              <StackPanel Margin="4,6,6,0">
+            <!-- Negative margins run the scrollbar flush to the pane edge; the content keeps the pane padding. -->
+            <ScrollViewer x:Name="AreaEvidencePanel" Grid.Row="3" Grid.RowSpan="3" Margin="0,0,-14,-14" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+              <StackPanel Margin="4,6,18,14">
                 <DockPanel Margin="0,0,0,16">
                   <icons:AreaIllustration x:Name="SelectedAreaArt" Width="72" Height="72" Stroke="{DynamicResource PrimaryBrush}" DockPanel.Dock="Left" Margin="0,0,16,0" IsHitTestVisible="False"/>
                   <StackPanel VerticalAlignment="Center"><TextBlock x:Name="AreaTitle" FontFamily="{DynamicResource UiFont}" FontWeight="SemiBold" FontSize="22" TextWrapping="Wrap"/><TextBlock x:Name="AreaState" Text="{DynamicResource Str_Workspace_NotChecked}" Foreground="{DynamicResource MutedTextBrush}" Margin="0,6,0,0" FontSize="12" TextWrapping="Wrap"/></StackPanel>
@@ -1196,12 +1199,12 @@
                 <TextBlock x:Name="AreaBeforeCheck" Text="{DynamicResource Str_Area_BeforeCheck}" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" FontSize="12" Margin="0,0,0,12"/>
                 <StackPanel x:Name="AreaReviewCards"/>
                 <WrapPanel x:Name="AreaDetailActions" Visibility="Collapsed" Margin="0,8,0,6"><Button x:Name="AreaFullReportButton" Content="{DynamicResource Str_Area_FullReport}" Click="OnAreaOpenReport" Margin="0,0,8,6"/><Button x:Name="AreaRawEvidenceButton" Content="{DynamicResource Str_Session_RawOutput}" Tag="raw" Click="OnAreaOpenReport" Margin="0,0,0,6"/></WrapPanel>
-                <Button x:Name="ReviewAreaButton" Content="{DynamicResource Str_Area_AllTools}" Click="OnReviewArea" HorizontalAlignment="Left" Margin="0,10,0,10"/>
+                <Button x:Name="ReviewAreaButton" Content="{DynamicResource Str_Area_AllTools}" Click="OnReviewArea" HorizontalAlignment="Left" Margin="0,4,0,0"/>
               </StackPanel>
             </ScrollViewer>
-            <Border x:Name="ReportPane" Grid.Row="3" Visibility="Collapsed">
+            <Border x:Name="ReportPane" Grid.Row="3" Margin="0,0,-14,0" Visibility="Collapsed">
               <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                <StackPanel x:Name="ReportContent" Margin="0,4,6,0"/>
+                <StackPanel x:Name="ReportContent" Margin="0,4,18,0"/>
               </ScrollViewer>
             </Border>
             <TextBlock x:Name="CoverageLabel" Grid.Row="4" TextWrapping="Wrap" Foreground="{DynamicResource MutedTextBrush}" FontSize="11" Margin="0,10,0,0"/>

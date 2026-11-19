@@ -101,7 +101,6 @@ public partial class MainWindow
             CategoryList.SelectedItem = category;
             CategoryTitle.Text = category.Title;
             ToolArt.Id = category.Id;
-            RefreshOutputEmpty();
             CategoryDescription.Text = category.Description;
             AdvancedTools.Visibility = category.Id == "Updates" ? Visibility.Visible : Visibility.Collapsed;
             KnowledgeTools.Visibility = category.Id is "Diagnostics" or "Devices" ? Visibility.Visible : Visibility.Collapsed;

@@ -75,18 +75,19 @@ public partial class MainWindow
     private void FitSystemMap()
     {
         if (!OverviewPage.IsVisible || OverviewScroll.ViewportHeight <= 0) return;
-        double height = Math.Max(0, OverviewScroll.ViewportHeight - OverviewHero.ActualHeight - OverviewHero.Margin.Bottom - 8);
+        double height = Math.Max(0, OverviewScroll.ViewportHeight - OverviewHero.ActualHeight - OverviewHero.Margin.Bottom -
+            OverviewMapHint.ActualHeight - OverviewMapHint.Margin.Top - OverviewMapHint.Margin.Bottom - 8);
         if (Math.Abs(SystemAreas.MinHeight - height) > 1) SystemAreas.MinHeight = height;
     }
 
     private void FitInitialOverviewHeight()
     {
         double width = Math.Max(220, (Width - 40) * .6 / appScale - OverviewScroll.Padding.Left - OverviewScroll.Padding.Right);
-        SystemAreas.Measure(new Size(width, double.PositiveInfinity));
-        OverviewHero.Measure(new Size(width, double.PositiveInfinity));
+        // Measure the whole scroll content (hero, map hint and map) so nothing on the page is left out of the sum.
+        var page = (FrameworkElement)OverviewScroll.Content;
+        page.Measure(new Size(width, double.PositiveInfinity));
         CaptionBar.Measure(new Size(Width, double.PositiveInfinity));
-        double content = SystemAreas.DesiredSize.Height + OverviewHero.DesiredSize.Height +
-            OverviewHero.Margin.Bottom + OverviewScroll.Padding.Top + OverviewScroll.Padding.Bottom + 12;
+        double content = page.DesiredSize.Height + OverviewScroll.Padding.Top + OverviewScroll.Padding.Bottom + 12;
         // Fit the Overview content, so the map isn't followed by a band of empty pane.
         Height = Math.Max(MinHeight, content * appScale + CaptionBar.DesiredSize.Height + 28);
     }
@@ -181,13 +182,16 @@ public partial class MainWindow
         if (score.Total == 0)
         {
             OverviewHeadline.SetResourceReference(TextBlock.TextProperty, "Str_Workspace_SystemMap");
-            OverviewDetail.SetResourceReference(TextBlock.TextProperty, "Str_Workspace_MapHint");
+            // Hidden, not collapsed: the hero keeps its height so the map doesn't jump once a scan fills the line.
+            OverviewDetail.Text = " ";
+            OverviewDetail.Visibility = Visibility.Hidden;
             OverviewChips.Visibility = Visibility.Collapsed;
             return;
         }
         OverviewHeadline.Text = score.NeedsAttention > 0 ? Controls.LocalizedText.Format("Str_Overview_HeadlineReview", score.NeedsAttention)
             : Controls.LocalizedText.Get(score.Unknown > 0 ? "Str_Overview_HeadlineIncomplete" : "Str_Overview_HeadlineClear");
         OverviewDetail.Text = Controls.LocalizedText.Format("Str_Overview_Coverage", score.Ran, score.Total);
+        OverviewDetail.Visibility = Visibility.Visible;
         OverviewChips.Children.Clear();
         AddOverviewChip("Str_Overview_Fixable", score.Fixable, "DangerRed");
         AddOverviewChip("Str_Overview_Review", score.NeedsAttention - score.Fixable, "WarnBrush");
@@ -257,6 +261,5 @@ public partial class MainWindow
         OutputViewButtons.IsEnabled = !area;
         ExportReportButton.IsEnabled = !area || areaSummarySource is not null;
         SearchBox.IsEnabled = !area && !workflowOutputActive;
-        RefreshOutputEmpty();
     }
 }

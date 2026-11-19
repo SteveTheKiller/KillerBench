@@ -60,7 +60,7 @@ internal static class WorkspaceNavigationChecks
                 "Each hardware part on the map is a real click target with a name on hover. Size: " + mapItem.RenderSize);
             if (SystemParameters.WorkArea.Height >= 780)
                 Require(Find<ScrollViewer>(window, "OverviewScroll").ScrollableHeight < 1,
-                    "The initial window fits the entire map on a work area that supports its default height.");
+                    "The initial window fits the entire map on a work area that supports its default height. Overflow: " + Find<ScrollViewer>(window, "OverviewScroll").ScrollableHeight);
             window.Width = 1280;
             window.Height = 1000;
             Settle(window);

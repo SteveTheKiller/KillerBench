@@ -32,16 +32,6 @@ public partial class MainWindow
         ConsolePane.Visibility = rawView ? Visibility.Visible : Visibility.Collapsed;
         ConsoleSearchPanel.Visibility = ConsolePane.Visibility;
         RefreshOutputButtons();
-        RefreshOutputEmpty();
-    }
-
-    private void RefreshOutputEmpty()
-    {
-        if (OutputEmpty is null) return;
-        bool empty = AreaEvidencePanel.Visibility != Visibility.Visible && ReportPane.Visibility != Visibility.Visible &&
-            ConsolePane.Visibility != Visibility.Visible && StartGuide.Visibility != Visibility.Visible;
-        OutputEmpty.Visibility = empty ? Visibility.Visible : Visibility.Collapsed;
-        if (empty) OutputEmpty.Id = ToolArt.Id;
     }
 
     private void ClearWorkflowReport()
@@ -165,7 +155,13 @@ public partial class MainWindow
         content.Children.Add(Body(detail, 12, new Thickness(0, 0, 0, string.IsNullOrWhiteSpace(action) ? 0 : 9)));
         if (!string.IsNullOrWhiteSpace(action))
             content.Children.Add(Body(LocalizedText.Format("Str_Report_NextPrefix", action), 12, new Thickness(0), "MutedTextBrush"));
-        var card = new Border { Child = content, Padding = new Thickness(12, 10, 12, 10), Margin = new Thickness(0, 0, 0, 8), CornerRadius = new CornerRadius(4), BorderThickness = new Thickness(4, 0, 0, 0) };
+        // Grain goes over the card face like every other surface (KillerUI card rule).
+        var face = new Grid();
+        face.Children.Add(new Border { Child = content, Padding = new Thickness(12, 10, 12, 10) });
+        var grain = new Border();
+        grain.SetResourceReference(StyleProperty, "FlyoutGrain");
+        face.Children.Add(grain);
+        var card = new Border { Child = face, Margin = new Thickness(0, 0, 0, 8), CornerRadius = new CornerRadius(4), BorderThickness = new Thickness(4, 0, 0, 0) };
         card.SetResourceReference(Border.BackgroundProperty, "ReportCardBrush");
         card.SetResourceReference(Border.BorderBrushProperty, tone);
         return card;
