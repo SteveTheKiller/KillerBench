@@ -108,7 +108,7 @@ internal static class DesktopExportChecks
             Capture.SaveAsync(session, path).GetAwaiter().GetResult();
             byte[] before = File.ReadAllBytes(path);
             Pick("OpenCaptureButton", path, menu: true);
-            Wait(() => ((MenuItem)window.FindName("SaveCaptureButton")).IsEnabled);
+            Wait(() => window.SaveCaptureEnabled);
             string activity = ((TextBox)window.FindName("ActivityLog")).Text;
             Pick("ExportActivityButton", path);
             Wait(() => ((Button)window.FindName("ExportActivityButton")).IsEnabled);
@@ -192,7 +192,7 @@ internal static class DesktopExportChecks
             damagedRecord["checks"] = new System.Text.Json.Nodes.JsonArray((System.Text.Json.Nodes.JsonNode?)null);
             File.WriteAllText(damaged, damagedRecord.ToJsonString());
             Pick("OpenWorkflowJournal", damaged, menu: true);
-            Wait(() => ((TextBox)window.FindName("EvidenceBox")).Text.Contains(Path.GetFullPath(damaged)) && ((MenuItem)window.FindName("OpenCaptureButton")).IsEnabled);
+            Wait(() => ((TextBox)window.FindName("EvidenceBox")).Text.Contains(Path.GetFullPath(damaged)) && window.OpenCaptureEnabled);
             string damagedOutput = Path.Combine(scratch, "damaged-history-" + Guid.NewGuid().ToString("N") + ".txt");
             Pick("ExportReportButton", damagedOutput, filterIndex: 4);
             Wait(() => File.Exists(damagedOutput));
@@ -340,11 +340,9 @@ internal static class DesktopExportChecks
             {
                 if (menu)
                 {
-                    var item = (MenuItem)window.FindName("OpenCaptureButton");
-                    if (controlName == "OpenWorkflowJournal")
-                        item = ItemsControl.ItemsControlFromItemContainer(item).Items.OfType<MenuItem>().Single(candidate =>
-                            Equals(candidate.Header, KillerBench.Controls.LocalizedText.Get("Str_Advanced_OpenWorkflow")));
-                    item.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                    var tile = KillerBench.Shell.MainWindow.FindCardTile(window.BuildSessionSourcesCard(),
+                        controlName == "OpenWorkflowJournal" ? "Str_Advanced_OpenWorkflow" : "Str_OpenCapture");
+                    tile.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 }
                 else ((Button)window.FindName(controlName)).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             }

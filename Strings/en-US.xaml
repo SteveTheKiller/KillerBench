@@ -519,6 +519,13 @@
   <sys:String x:Key="Str_Knowledge_Lookup">Open pack and look up code</sys:String>
   <sys:String x:Key="Str_Knowledge_Search">Open pack and search text</sys:String>
   <sys:String x:Key="Str_Knowledge_Compare">Compare pack revisions</sys:String>
+  <sys:String x:Key="Str_Knowledge_LookupTile">Look up code</sys:String>
+  <sys:String x:Key="Str_Knowledge_SearchTile">Search text</sys:String>
+  <sys:String x:Key="Str_Knowledge_CompareTile">Compare</sys:String>
+  <sys:String x:Key="Str_Ctx_Copy">Copy</sys:String>
+  <sys:String x:Key="Str_Ctx_Cut">Cut</sys:String>
+  <sys:String x:Key="Str_Ctx_Paste">Paste</sys:String>
+  <sys:String x:Key="Str_Ctx_SelectAll">Select all</sys:String>
   <sys:String x:Key="Str_Knowledge_CompareTip">Choose current and candidate files to review changes. No pack is installed.</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCode">Look up Windows system code</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCodeTip">Use the code field with the installed Windows message table; no pack needed</sys:String>

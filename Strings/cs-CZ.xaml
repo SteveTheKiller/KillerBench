@@ -516,6 +516,13 @@
   <sys:String x:Key="Str_Knowledge_Lookup">Otevřít balíček a vyhledat kód</sys:String>
   <sys:String x:Key="Str_Knowledge_Search">Otevřít balíček a vyhledat text</sys:String>
   <sys:String x:Key="Str_Knowledge_Compare">Porovnat revize balíčku</sys:String>
+  <sys:String x:Key="Str_Knowledge_LookupTile">Vyhledat kód</sys:String>
+  <sys:String x:Key="Str_Knowledge_SearchTile">Hledat text</sys:String>
+  <sys:String x:Key="Str_Knowledge_CompareTile">Porovnat</sys:String>
+  <sys:String x:Key="Str_Ctx_Copy">Kopírovat</sys:String>
+  <sys:String x:Key="Str_Ctx_Cut">Vyjmout</sys:String>
+  <sys:String x:Key="Str_Ctx_Paste">Vložit</sys:String>
+  <sys:String x:Key="Str_Ctx_SelectAll">Vybrat vše</sys:String>
   <sys:String x:Key="Str_Knowledge_CompareTip">Vyberte aktuální a kandidátní soubory a zkontrolujte změny. Žádný balíček se neinstaluje.</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCode">Vyhledat kód systému Windows</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCodeTip">Použijte pole kódu s nainstalovanou tabulkou zpráv Windows; žádný balíček není potřeba</sys:String>

@@ -517,6 +517,13 @@
   <sys:String x:Key="Str_Knowledge_Lookup">Paket öffnen und Code nachschlagen</sys:String>
   <sys:String x:Key="Str_Knowledge_Search">Paket öffnen und Text suchen</sys:String>
   <sys:String x:Key="Str_Knowledge_Compare">Paketrevisionen vergleichen</sys:String>
+  <sys:String x:Key="Str_Knowledge_LookupTile">Code suchen</sys:String>
+  <sys:String x:Key="Str_Knowledge_SearchTile">Text suchen</sys:String>
+  <sys:String x:Key="Str_Knowledge_CompareTile">Vergleichen</sys:String>
+  <sys:String x:Key="Str_Ctx_Copy">Kopieren</sys:String>
+  <sys:String x:Key="Str_Ctx_Cut">Ausschneiden</sys:String>
+  <sys:String x:Key="Str_Ctx_Paste">Einfügen</sys:String>
+  <sys:String x:Key="Str_Ctx_SelectAll">Alles auswählen</sys:String>
   <sys:String x:Key="Str_Knowledge_CompareTip">Aktuelle und Kandidatendateien auswählen, um Änderungen zu prüfen. Es wird kein Paket installiert.</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCode">Windows-Systemcode nachschlagen</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCodeTip">Codefeld mit der installierten Windows-Meldungstabelle verwenden; kein Paket erforderlich</sys:String>

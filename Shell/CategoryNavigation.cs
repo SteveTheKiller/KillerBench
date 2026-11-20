@@ -115,14 +115,6 @@ public partial class MainWindow
         finally { synchronizingNavigation = false; }
     }
 
-    private void OnWorkbenchMenu(object sender, System.Windows.RoutedEventArgs e)
-    {
-        if (sender is not Button { ContextMenu: { } menu } button) return;
-        menu.PlacementTarget = button;
-        menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
-        menu.IsOpen = true;
-    }
-
     private void OnLookupErrorCode(object sender, RoutedEventArgs e)
     {
         if (MainWorkflow.SelectedItem is WorkflowDefinition workflow && CategoryOf(workflow.Kind).Id == "Devices")

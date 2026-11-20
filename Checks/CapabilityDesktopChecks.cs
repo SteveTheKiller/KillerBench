@@ -21,7 +21,7 @@ internal static class CapabilityDesktopChecks
             Require(!Get<TextBlock>("RecipeEffectsSummary").Text.Contains("Native lab:", StringComparison.Ordinal) &&
                 Get<TextBlock>("RecipeEffectsSummary").Text.Contains("Use at your own risk", StringComparison.Ordinal),
                 "Recipe effect summaries must display the shared native lab label before selection or execution");
-            Get<MenuItem>("RepairActions").RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            KillerBench.Shell.MainWindow.FindCardTile(window.BuildSessionSourcesCard(), "Str_Advanced_Repairs").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(Get<TextBox>("RepairPreview").Text.Contains("Use at your own risk", StringComparison.Ordinal), "Focused repair previews retain repair readiness without internal prefixes");
             Get<ComboBox>("RepairChoice").SelectedIndex = 1;
             Require(Get<TextBox>("RepairPreview").Text.Contains("Use at your own risk", StringComparison.Ordinal), "Changing the focused repair preserves its current label");

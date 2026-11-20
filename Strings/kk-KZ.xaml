@@ -512,6 +512,13 @@
   <sys:String x:Key="Str_Knowledge_Lookup">Пакетті ашу және кодты іздеу</sys:String>
   <sys:String x:Key="Str_Knowledge_Search">Пакетті ашу және мәтінді іздеу</sys:String>
   <sys:String x:Key="Str_Knowledge_Compare">Пакет түзетулерін салыстыру</sys:String>
+  <sys:String x:Key="Str_Knowledge_LookupTile">Кодты іздеу</sys:String>
+  <sys:String x:Key="Str_Knowledge_SearchTile">Мәтінді іздеу</sys:String>
+  <sys:String x:Key="Str_Knowledge_CompareTile">Салыстыру</sys:String>
+  <sys:String x:Key="Str_Ctx_Copy">Көшіру</sys:String>
+  <sys:String x:Key="Str_Ctx_Cut">Қиып алу</sys:String>
+  <sys:String x:Key="Str_Ctx_Paste">Қою</sys:String>
+  <sys:String x:Key="Str_Ctx_SelectAll">Бәрін таңдау</sys:String>
   <sys:String x:Key="Str_Knowledge_CompareTip">Өзгерістерді қарап шығу үшін ағымдағы және кандидат файлдарды таңдаңыз. Пакет орнатылмайды.</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCode">Windows жүйелік кодын іздеу</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCodeTip">Код өрісін орнатылған Windows хабар кестесімен пайдаланыңыз; пакет қажет емес</sys:String>

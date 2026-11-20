@@ -511,6 +511,13 @@
   <sys:String x:Key="Str_Knowledge_Lookup">Åpne pakken og slå opp kode</sys:String>
   <sys:String x:Key="Str_Knowledge_Search">Åpne pakken og søk etter tekst</sys:String>
   <sys:String x:Key="Str_Knowledge_Compare">Sammenlign pakkerevisjoner</sys:String>
+  <sys:String x:Key="Str_Knowledge_LookupTile">Slå opp kode</sys:String>
+  <sys:String x:Key="Str_Knowledge_SearchTile">Søk i tekst</sys:String>
+  <sys:String x:Key="Str_Knowledge_CompareTile">Sammenlign</sys:String>
+  <sys:String x:Key="Str_Ctx_Copy">Kopier</sys:String>
+  <sys:String x:Key="Str_Ctx_Cut">Klipp ut</sys:String>
+  <sys:String x:Key="Str_Ctx_Paste">Lim inn</sys:String>
+  <sys:String x:Key="Str_Ctx_SelectAll">Merk alt</sys:String>
   <sys:String x:Key="Str_Knowledge_CompareTip">Velg gjeldende og kandidatfiler for å gjennomgå endringer. Ingen pakke installeres.</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCode">Slå opp Windows-systemkode</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCodeTip">Bruk kodefeltet med den installerte Windows-meldingstabellen; ingen pakke trengs</sys:String>

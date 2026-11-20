@@ -517,6 +517,13 @@
   <sys:String x:Key="Str_Knowledge_Lookup">パックを開いてコードを参照</sys:String>
   <sys:String x:Key="Str_Knowledge_Search">パックを開いてテキストを検索</sys:String>
   <sys:String x:Key="Str_Knowledge_Compare">パックのリビジョンを比較</sys:String>
+  <sys:String x:Key="Str_Knowledge_LookupTile">コードを検索</sys:String>
+  <sys:String x:Key="Str_Knowledge_SearchTile">テキストを検索</sys:String>
+  <sys:String x:Key="Str_Knowledge_CompareTile">比較</sys:String>
+  <sys:String x:Key="Str_Ctx_Copy">コピー</sys:String>
+  <sys:String x:Key="Str_Ctx_Cut">切り取り</sys:String>
+  <sys:String x:Key="Str_Ctx_Paste">貼り付け</sys:String>
+  <sys:String x:Key="Str_Ctx_SelectAll">すべて選択</sys:String>
   <sys:String x:Key="Str_Knowledge_CompareTip">変更を確認するために、現在のファイルと候補ファイルを選択します。パックはインストールされません。</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCode">Windowsシステムコードを参照</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCodeTip">インストールされたWindowsメッセージテーブルでコード欄を使用してください。パックは不要です</sys:String>

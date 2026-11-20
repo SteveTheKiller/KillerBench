@@ -517,6 +517,13 @@
   <sys:String x:Key="Str_Knowledge_Lookup">Paketi aç ve kodu ara</sys:String>
   <sys:String x:Key="Str_Knowledge_Search">Paketi aç ve metin ara</sys:String>
   <sys:String x:Key="Str_Knowledge_Compare">Paket revizyonlarını karşılaştır</sys:String>
+  <sys:String x:Key="Str_Knowledge_LookupTile">Kod ara</sys:String>
+  <sys:String x:Key="Str_Knowledge_SearchTile">Metin ara</sys:String>
+  <sys:String x:Key="Str_Knowledge_CompareTile">Karşılaştır</sys:String>
+  <sys:String x:Key="Str_Ctx_Copy">Kopyala</sys:String>
+  <sys:String x:Key="Str_Ctx_Cut">Kes</sys:String>
+  <sys:String x:Key="Str_Ctx_Paste">Yapıştır</sys:String>
+  <sys:String x:Key="Str_Ctx_SelectAll">Tümünü seç</sys:String>
   <sys:String x:Key="Str_Knowledge_CompareTip">Değişiklikleri incelemek için geçerli ve aday dosyaları seçin. Hiçbir paket yüklenmez.</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCode">Windows sistem kodu ara</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCodeTip">Yüklü Windows ileti tablosuyla kod alanını kullanın; paket gerekmez</sys:String>

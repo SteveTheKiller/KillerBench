@@ -121,7 +121,7 @@ public partial class MainWindow
     {
         if (readCancellation is not null) return;
         string context = KnowledgeContext.Text.Trim(), code = KnowledgeCode.Text.Trim();
-        bool search = sender is System.Windows.FrameworkElement { Tag: "search" };
+        bool search = sender is KnowledgeSearchMode.Text;
         if (context.Length == 0 || code.Length == 0)
         { Report(Controls.LocalizedText.Get("Str_Tkp_EnterContext")); return; }
         var picker = new Controls.FileDialog(Controls.FileDialogMode.Open) { Title = Controls.LocalizedText.Get("Str_Tkp_OpenPack"), Filter = "JSON (*.json)|*.json", CheckFileExists = true };

@@ -511,6 +511,13 @@
   <sys:String x:Key="Str_Knowledge_Lookup">Відкрити пакет і знайти код</sys:String>
   <sys:String x:Key="Str_Knowledge_Search">Відкрити пакет і шукати текст</sys:String>
   <sys:String x:Key="Str_Knowledge_Compare">Порівняти редакції пакета</sys:String>
+  <sys:String x:Key="Str_Knowledge_LookupTile">Знайти код</sys:String>
+  <sys:String x:Key="Str_Knowledge_SearchTile">Шукати текст</sys:String>
+  <sys:String x:Key="Str_Knowledge_CompareTile">Порівняти</sys:String>
+  <sys:String x:Key="Str_Ctx_Copy">Копіювати</sys:String>
+  <sys:String x:Key="Str_Ctx_Cut">Вирізати</sys:String>
+  <sys:String x:Key="Str_Ctx_Paste">Вставити</sys:String>
+  <sys:String x:Key="Str_Ctx_SelectAll">Вибрати все</sys:String>
   <sys:String x:Key="Str_Knowledge_CompareTip">Виберіть поточний і кандидатний файли, щоб переглянути зміни. Жоден пакет не встановлюється.</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCode">Знайти системний код Windows</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCodeTip">Використайте поле коду з установленою таблицею повідомлень Windows; пакет не потрібен</sys:String>

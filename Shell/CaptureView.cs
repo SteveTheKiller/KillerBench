@@ -48,8 +48,8 @@ public partial class MainWindow
         if (busy) SetScanLight("running", Controls.LocalizedText.Get("Str_Ui_Working"));
         else if (ScanLight.Tag as string == "running") SetScanLight("incomplete", Controls.LocalizedText.Get("Str_Ui_EndedReview"));
         ScanButton.IsEnabled = !busy;
-        OpenCaptureButton.IsEnabled = !busy;
-        SaveCaptureButton.IsEnabled = !busy && capture is not null;
+        OpenCaptureEnabled = !busy;
+        SaveCaptureEnabled = !busy && capture is not null;
         OpenButton.IsEnabled = !busy;
         CancelButton.IsEnabled = busy;
         ExportReportButton.IsEnabled = true;
@@ -141,7 +141,7 @@ public partial class MainWindow
         RegisterSource(overview);
         RenderNamedWorkflowReport(workflowReport, "Windows Update capture");
         SetOutputView();
-        SaveCaptureButton.IsEnabled = true;
+        SaveCaptureEnabled = true;
         CaptureInfo.Text = $"{session.Machine} | {session.Elevation} | {session.StartedUtc.ToLocalTime():g} | {session.Sources.Count(s => s.Evidence is not null)}/{session.Sources.Count} sources | {findings.Length} findings";
         OnFindingsTab(this, new RoutedEventArgs());
     }

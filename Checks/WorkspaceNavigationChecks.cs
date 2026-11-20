@@ -295,10 +295,17 @@ internal static class WorkspaceNavigationChecks
             "The sidebar defaults to icons beside names, under a single caption row.");
         var menu = (ContextMenu)window.FindName("ToolbarMenu");
         Require(ReferenceEquals(sidebar.ContextMenu, menu), "Right-clicking the sidebar opens its appearance menu.");
-        MenuItem Option(string name) => menu.Items.OfType<MenuItem>().Single(item => Equals(item.Header, name));
+        // The appearance menu is a KillerUI tile card; each tile is found by its label resource.
+        string KeyOf(string name) => name switch
+        {
+            "Small icons" => "Str_Toolbar_SmallIcons", "Large icons" => "Str_Toolbar_LargeIcons",
+            "No text" => "Str_Toolbar_TextNone", "Text beside icons" => "Str_Toolbar_TextBeside",
+            "Text under icons" => "Str_Toolbar_TextUnder", _ => "Str_Toolbar_TextOnly",
+        };
+        Button Option(string name) => KillerBench.Shell.MainWindow.FindCardTile(menu, KeyOf(name));
         void Select(string name)
         {
-            Option(name).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            Option(name).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Settle(window);
             Require(Find<FrameworkElement>(window, "CaptionBar").ActualHeight == (double)window.FindResource("TitleBarHeight"),
                 "Every supported appearance mode preserves a single caption row.");
@@ -306,8 +313,8 @@ internal static class WorkspaceNavigationChecks
         Select("Small icons");
         Select("Text beside icons");
         Require(sidebar.ActualWidth >= 180 && homeText.IsVisible, "Text beside icons shows the full sidebar.");
-        Require(!menu.Items.OfType<MenuItem>().Any(item => Equals(item.Header, "Large icons") || Equals(item.Header, "Text under icons")),
-            "The appearance menu excludes large icons and text underneath.");
+        Require(!Option("Large icons").IsEnabled && !Option("Text under icons").IsEnabled,
+            "The appearance card dims large icons and text underneath.");
         Select("Text only");
         Require(!Option("Small icons").IsEnabled && sidebar.ActualWidth >= 180, "Text-only mode keeps names and disables icon sizing.");
         Select("No text");

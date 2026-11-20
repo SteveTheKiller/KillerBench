@@ -517,6 +517,13 @@
   <sys:String x:Key="Str_Knowledge_Lookup">開啟套件並查找代碼</sys:String>
   <sys:String x:Key="Str_Knowledge_Search">開啟套件並搜尋文字</sys:String>
   <sys:String x:Key="Str_Knowledge_Compare">比較套件版本</sys:String>
+  <sys:String x:Key="Str_Knowledge_LookupTile">查詢代碼</sys:String>
+  <sys:String x:Key="Str_Knowledge_SearchTile">搜尋文字</sys:String>
+  <sys:String x:Key="Str_Knowledge_CompareTile">比較</sys:String>
+  <sys:String x:Key="Str_Ctx_Copy">複製</sys:String>
+  <sys:String x:Key="Str_Ctx_Cut">剪下</sys:String>
+  <sys:String x:Key="Str_Ctx_Paste">貼上</sys:String>
+  <sys:String x:Key="Str_Ctx_SelectAll">全選</sys:String>
   <sys:String x:Key="Str_Knowledge_CompareTip">選擇要檢視變更的目前檔案和候選檔案。未安裝任何套件。</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCode">查找 Windows 系統代碼</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCodeTip">使用已安裝的 Windows 訊息表中的代碼欄位；不需要套件</sys:String>

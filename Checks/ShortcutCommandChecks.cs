@@ -21,6 +21,19 @@ internal static class ShortcutCommandChecks
             Require(window.InputBindings.OfType<KeyBinding>().Count(binding => binding.Command == action.Command &&
                 binding.Key == action.Key && binding.Modifiers == action.Modifiers) == 1,
                 "Public command is bound to its documented chord: " + action.Control);
+            // The capture actions are tiles on the Session sources card, so their availability lives on the window.
+            if (action.Control is "OpenCaptureButton" or "SaveCaptureButton")
+            {
+                bool open = action.Control == "OpenCaptureButton";
+                bool was = open ? window.OpenCaptureEnabled : window.SaveCaptureEnabled;
+                try
+                {
+                    if (open) window.OpenCaptureEnabled = false; else window.SaveCaptureEnabled = false;
+                    Require(!action.Command.CanExecute(null, window), "Disabled action rejects shortcut: " + action.Control);
+                }
+                finally { if (open) window.OpenCaptureEnabled = was; else window.SaveCaptureEnabled = was; }
+                continue;
+            }
             var control = (UIElement)window.FindName(action.Control);
             bool enabled = control.IsEnabled;
             try

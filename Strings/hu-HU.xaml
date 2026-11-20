@@ -512,6 +512,13 @@
   <sys:String x:Key="Str_Knowledge_Lookup">Csomag megnyitása és kód keresése</sys:String>
   <sys:String x:Key="Str_Knowledge_Search">Csomag megnyitása és szöveg keresése</sys:String>
   <sys:String x:Key="Str_Knowledge_Compare">Csomagverziók összehasonlítása</sys:String>
+  <sys:String x:Key="Str_Knowledge_LookupTile">Kód keresése</sys:String>
+  <sys:String x:Key="Str_Knowledge_SearchTile">Szöveg keresése</sys:String>
+  <sys:String x:Key="Str_Knowledge_CompareTile">Összehasonlítás</sys:String>
+  <sys:String x:Key="Str_Ctx_Copy">Másolás</sys:String>
+  <sys:String x:Key="Str_Ctx_Cut">Kivágás</sys:String>
+  <sys:String x:Key="Str_Ctx_Paste">Beillesztés</sys:String>
+  <sys:String x:Key="Str_Ctx_SelectAll">Válassza ki az összeset</sys:String>
   <sys:String x:Key="Str_Knowledge_CompareTip">Válassza ki a jelenlegi és jelölt fájlokat a változások áttekintéséhez. Csomag nincs telepítve.</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCode">Windows rendszerkód keresése</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCodeTip">Használja a kódmezőt a telepített Windows üzenettáblával; csomag nem szükséges</sys:String>

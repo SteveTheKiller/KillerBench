@@ -511,6 +511,13 @@
   <sys:String x:Key="Str_Knowledge_Lookup">Odpri paket in poišči kodo</sys:String>
   <sys:String x:Key="Str_Knowledge_Search">Odpri paket in poišči besedilo</sys:String>
   <sys:String x:Key="Str_Knowledge_Compare">Primerjaj različice paketa</sys:String>
+  <sys:String x:Key="Str_Knowledge_LookupTile">Poišči kodo</sys:String>
+  <sys:String x:Key="Str_Knowledge_SearchTile">Išči besedilo</sys:String>
+  <sys:String x:Key="Str_Knowledge_CompareTile">Primerjaj</sys:String>
+  <sys:String x:Key="Str_Ctx_Copy">Kopiraj</sys:String>
+  <sys:String x:Key="Str_Ctx_Cut">Izreži</sys:String>
+  <sys:String x:Key="Str_Ctx_Paste">Prilepi</sys:String>
+  <sys:String x:Key="Str_Ctx_SelectAll">Izberi vse</sys:String>
   <sys:String x:Key="Str_Knowledge_CompareTip">Izberite trenutno in predlagano datoteko za pregled sprememb. Paket se ne namesti.</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCode">Poišči sistemsko kodo Windows</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCodeTip">Uporabi polje s kodo in nameščeno tabelo sporočil sistema Windows; paket ni potreben</sys:String>

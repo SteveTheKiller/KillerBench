@@ -8,7 +8,7 @@ using System.Windows.Media.Effects;
 // Promoted from KillerShell, the family reference for theme colors, grain and geometry.
 namespace KillerBench.Services
 {
-    // Fourteen palettes, in enum order. SE98 cannot be written "98SE" because an enum member
+    // Fourteen palettes. SE98 cannot be written "98SE" because an enum member
     // may not start with a digit; ThemeFileName below maps it back to the real file and accent
     // folder name. Order matches KillerNotes, which is the reference for the theme set.
     public enum Theme
@@ -40,9 +40,14 @@ namespace KillerBench.Services
         internal static FontFamily KillerSansUiStack { get; private set; } = UiStack(UiLanguage);
         internal static readonly FontFamily KillerSansFont = new(new Uri("pack://application:,,,/"), "./Fonts/#Killer Sans");
         internal static FontFamily LacquerHeadingStack { get; private set; } = HeadingStack(UiLanguage);
+        // The title bar's file name: Killer Sans over the language's fallbacks, so a CJK name is not left to the
+        // system default face.
+        internal static FontFamily KillerSansTitleStack { get; private set; } = TitleStack(UiLanguage);
 
         private static FontFamily UiStack(string language) =>
             new(new Uri($"pack://application:,,,/{AssemblyName};component/"), UiFontStack.For(language));
+        private static FontFamily TitleStack(string language) =>
+            new(new Uri("pack://application:,,,/"), UiFontStack.Title(language));
         private static FontFamily HeadingStack(string language) =>
             new(new Uri("pack://application:,,,/"), UiFontStack.Heading(language));
 
@@ -58,6 +63,7 @@ namespace KillerBench.Services
             if (!changed) return;
             KillerSansUiStack = UiStack(language);
             LacquerHeadingStack = HeadingStack(language);
+            KillerSansTitleStack = TitleStack(language);
             LoadDict(_current);
         }
         /// <summary>
@@ -470,6 +476,13 @@ namespace KillerBench.Services
             {
                 var red = new SolidColorBrush(Color.FromRgb(0xE0, 0x44, 0x44)); red.Freeze();
                 combined["CaptionCloseHoverBrush"] = red;
+            }
+            // The system menu's Close glyph: DangerRed's red on the dark menus, and a theme with a light gray menu
+            // (Light, 98SE) states a darker red so the glyph keeps 3:1 on it.
+            if (!combined.Contains("MenuDangerBrush"))
+            {
+                var menuRed = new SolidColorBrush(Color.FromRgb(0xE0, 0x44, 0x44)); menuRed.Freeze();
+                combined["MenuDangerBrush"] = menuRed;
             }
             if (!combined.Contains("CaptionCloseHoverFgBrush"))
             {
@@ -952,6 +965,13 @@ namespace KillerBench.Services
             // opaque tile. 98SE states #c0c0c0 - there, a toolbar button IS a raised button.
             SetIfAbsent("SortButtonBrush", Transparent);
             Mirror("SurfaceHoverBrush", "RowHoverBrush");
+            // A plain (non-accent) dialog button's face and hovered face. Every theme keeps the
+            // pane and surface wash it always had; Trash Polka states black with a gray hover.
+            Mirror("ButtonFaceBrush", "PaneBrush");
+            Mirror("ButtonHoverFaceBrush", "SurfaceHoverBrush");
+            // A dialog list well's tint, drawn at half opacity. Trash Polka states black so its motif
+            // darkens behind the rows the way the app's panels do, instead of washing gray.
+            Mirror("WellFillBrush", "PaneBrush");
             // The toolbar buttons' hovered face (Controls.xaml ViewToggleBtn). Mirrors the wash
             // above so it reads its source AFTER it exists; 98SE states the flat button face.
             Mirror("ToolHoverFaceBrush", "SurfaceHoverBrush");
@@ -1006,8 +1026,7 @@ namespace KillerBench.Services
             // baseline in Killer Sans, as KillerPDF's filename and KillerScan's subtitle do. A flat
             // theme keeps its caption font beside its plain title.
             bool flatTitle = combined.Contains("UseDialogCaption") && combined["UseDialogCaption"] is bool ft && ft;
-            SetIfAbsent("FileNameFont", flatTitle ? combined["ChromeFontFamily"]
-                : new FontFamily(new Uri("pack://application:,,,/"), "./Fonts/#Killer Sans"));
+            SetIfAbsent("FileNameFont", flatTitle ? combined["ChromeFontFamily"] : KillerSansTitleStack);
             SetIfAbsent("FileNameFontSize", flatTitle ? 11.0 : 18.0);
             if (!combined.Contains("FileNameTransform"))
             {
@@ -1018,8 +1037,7 @@ namespace KillerBench.Services
             // The app (mono) slot: Killer Sans UI, the family UI face, over the Segoe stack. It is
             // completed here rather than in AppStyles.xaml so 98SE can state its own face; a font
             // picked in Fonts still overrides it from the top-level application dictionary.
-            SetIfAbsent("MonoFont", new FontFamily(new Uri("pack://application:,,,/"),
-                $"/{AssemblyName};component/Fonts/#Killer Sans UI, Segoe UI"));
+            SetIfAbsent("MonoFont", KillerSansUiStack);
             SetIfAbsent("TitleIconMargin", new Thickness(0, 0, 7, 0));
             SetIfAbsent("TitleIconSize", 27.0);
             SetIfAbsent("TitleTextMargin", new Thickness(0));

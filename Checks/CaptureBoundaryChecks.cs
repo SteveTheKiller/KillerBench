@@ -73,7 +73,7 @@ internal static class CaptureBoundaryChecks
             string prior = ((TextBox)window.FindName("EvidenceBox")).Text;
             string priorInfo = ((TextBlock)window.FindName("CaptureInfo")).Text;
             int priorSources = ((ListBox)window.FindName("SourcesList")).Items.Count;
-            Require(priorSources > 0 && ((MenuItem)window.FindName("SaveCaptureButton")).IsEnabled,
+            Require(priorSources > 0 && window.SaveCaptureEnabled,
                 "Valid capture must be loaded before malformed input.");
             string malformed = Path.Combine(scratch, "malformed.kbench");
             File.WriteAllText(malformed, "{\"schemaVer");
@@ -109,7 +109,7 @@ internal static class CaptureBoundaryChecks
                 Require(after.Length > activity.Length && (message is null || after[activity.Length..].Contains(message)),
                     "Open capture must explain the rejected or canceled input.");
                 Require(window.IsVisible && ((Button)window.FindName("OpenButton")).IsEnabled &&
-                    ((MenuItem)window.FindName("SaveCaptureButton")).IsEnabled &&
+                    window.SaveCaptureEnabled &&
                     ((TextBox)window.FindName("EvidenceBox")).Text == prior &&
                     ((TextBlock)window.FindName("CaptureInfo")).Text == priorInfo &&
                     ((ListBox)window.FindName("SourcesList")).Items.Count == priorSources,
@@ -134,20 +134,20 @@ internal static class CaptureBoundaryChecks
                 }
                 catch (Exception error) { pickerError = error; picker.Close(); }
             }, application.Dispatcher);
-            try { ((MenuItem)window.FindName("OpenCaptureButton")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent)); }
+            try { KillerBench.Shell.MainWindow.FindCardTile(window.BuildSessionSourcesCard(), "Str_OpenCapture").RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); }
             finally { timer.Stop(); }
             Require(selected && pickerError is null, "Capture picker failed: " + pickerError);
             if (cancelRead)
                 ((Button)window.FindName("CancelButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             var until = Stopwatch.StartNew();
-            while (!((MenuItem)window.FindName("OpenCaptureButton")).IsEnabled && escaped is null && until.Elapsed < TimeSpan.FromSeconds(10))
+            while (!window.OpenCaptureEnabled && escaped is null && until.Elapsed < TimeSpan.FromSeconds(10))
             {
                 var frame = new DispatcherFrame();
                 application.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => frame.Continue = false));
                 Dispatcher.PushFrame(frame);
                 Thread.Sleep(1);
             }
-            Require(((MenuItem)window.FindName("OpenCaptureButton")).IsEnabled, "Capture controls did not recover within 10 seconds.");
+            Require(window.OpenCaptureEnabled, "Capture controls did not recover within 10 seconds.");
         }
     }
 

@@ -635,7 +635,7 @@ internal static class Program
                 "Security scan and Firewall profile controls resolve their localizable English resources");
             Require(window.FindName("RecipeSelectionPanel") is Expander { Header: "Choose checks (advanced)" } &&
                 window.FindName("AdvancedTools") is Expander { Header: "Windows Update logs" } &&
-                window.FindName("KnowledgeSearchButton") is MenuItem { Header: "Open pack and search text" } &&
+                System.Windows.Automation.AutomationProperties.GetName(KillerBench.Shell.MainWindow.FindCardTile(window.BuildKnowledgeCard(), "Str_Knowledge_Search")) == "Search text" &&
                 window.FindName("ConsoleViewButton") is Button { Content: "Raw output" } &&
                 window.FindName("RepairConsent") is CheckBox { Content: "Run this repair on this PC" },
                 "Advanced selection, knowledge, session and repair controls resolve their localizable English resources");
@@ -757,7 +757,7 @@ internal static class Program
                 "Browser extension inventory appears in Apps without repair controls");
             ((Expander)window.FindName("AdvancedTools")).IsExpanded = true;
             window.UpdateLayout();
-            ((MenuItem)window.FindName("WorkflowActions")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            KillerBench.Shell.MainWindow.FindCardTile(window.BuildSessionSourcesCard(), "Str_Advanced_Workflows").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             var workflowChoices = (ComboBox)window.FindName("RepairChoice");
             var workflowPreview = (TextBox)window.FindName("RepairPreview");
             var workflowConsent = (CheckBox)window.FindName("RepairConsent");
@@ -2129,7 +2129,7 @@ internal static class Program
             var windowsLookup = (Button)window.FindName("KnowledgeRunButton");
             var knowledgeCode = (TextBox)window.FindName("KnowledgeCode");
             string beforeLookup = text.Text;
-            ((MenuItem)window.FindName("KnowledgeSearchButton")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            KillerBench.Shell.MainWindow.FindCardTile(window.BuildKnowledgeCard(), "Str_Knowledge_Search").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(text.Text == beforeLookup, "Empty reference search preserves evidence without opening a picker");
             var referenceDay = new DateOnly(2026, 9, 13);
             var searchEntry = new KnowledgeEntry("fixture", "5", "Fixture title", "Fixture explanation", "https://example.com/reference", referenceDay, "Fixture product");
@@ -2200,7 +2200,7 @@ internal static class Program
             ((Button)window.FindName("OpenButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             for (int attempt = 0; attempt < 60 && ((TextBlock)window.FindName("EvidenceTitle")).Text != "Windows Update capture"; attempt++) Pump();
             Require(((TextBlock)window.FindName("EvidenceTitle")).Text == "Windows Update capture", "Saved capture opens through app workflow");
-            Require(((MenuItem)window.FindName("SaveCaptureButton")).IsEnabled, "Capture save available");
+            Require(window.SaveCaptureEnabled, "Capture save available");
             var captureFindings = (StackPanel)window.FindName("FindingCards");
             Require(FindButtons(captureFindings).Count(b => Equals(b.Content, "Show evidence")) == 2, "Capture overview groups CBS and event findings");
             FindButtons(captureFindings).Single(b => Equals(b.Tag, "KB-CBS-001")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -2216,7 +2216,7 @@ internal static class Program
             var panel = new Border { Style = (Style)window.FindResource("Panel") };
             window.UpdateLayout();
             Require(ReferenceEquals(panel.BorderBrush, window.FindResource("PaneBorderBrush")), "Pane uses family border resource");
-            ((MenuItem)window.FindName("RepairActions")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            KillerBench.Shell.MainWindow.FindCardTile(window.BuildSessionSourcesCard(), "Str_Advanced_Repairs").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
             Require(!((Button)window.FindName("RepairRun")).IsEnabled, "Repair requires explicit consent");
             Require(((TextBox)window.FindName("RepairPreview")).Text.Contains("TARGET: THIS PC") && ((TextBox)window.FindName("RepairPreview")).Text.Contains("/RestoreHealth"), "Repair preview names target and action");
@@ -2224,7 +2224,7 @@ internal static class Program
             ((ComboBox)window.FindName("RepairChoice")).SelectedIndex = 1;
             Require(((CheckBox)window.FindName("RepairConsent")).IsChecked == false, "Changing action clears consent");
             Capture(window, Path.Combine(scratch, "repairs.png"));
-            ((MenuItem)window.FindName("WorkflowActions")).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            KillerBench.Shell.MainWindow.FindCardTile(window.BuildSessionSourcesCard(), "Str_Advanced_Workflows").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
             Require(((Button)window.FindName("RepairRun")).IsEnabled && ((ComboBox)window.FindName("RepairChoice")).Items.Count == Enum.GetValues<WorkflowKind>().Length, "All workflows support diagnosis without repair consent");
             var mainChoices = (ComboBox)window.FindName("MainWorkflow");

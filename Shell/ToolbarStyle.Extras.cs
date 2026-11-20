@@ -11,6 +11,7 @@ public partial class MainWindow
     private void InitializeWorkspaceToolbar()
     {
         InitToolbarStyle();
+        ToolbarMenu.Opened += (_, _) => DimUnsupportedToolbarTiles();
 
         bool CanChangeAppearance() => WorkspaceNavigation.IsEnabled;
         bool CanChangeIconSize() => CanChangeAppearance() && _labelMode != LabelMode.Only;
@@ -39,10 +40,15 @@ public partial class MainWindow
         Settings.Set("ToolbarLabels", _labelMode.ToString());
     }
 
-    partial void AddToolbarMenuRows(ContextMenu menu)
+    // KillerBench's title-bar toolbar has no large icons and no caption under the icon, so the kit card's
+    // Large icons and Text under tiles keep their spots dimmed (card rule 4). The kit re-enables the look
+    // tiles on every restyle, so this runs after each one (OnToolbarStyleApplied) and when the card opens.
+    private void DimUnsupportedToolbarTiles()
     {
-        foreach (var item in menu.Items.OfType<MenuItem>().Where(item => item.Tag is IconSize.Large or LabelMode.Under).ToArray())
-            menu.Items.Remove(item);
+        string large = Loc("Str_Toolbar_LargeIcons"), under = Loc("Str_Toolbar_TextUnder");
+        foreach (var (tile, _, _) in _toolbarMenuTiles)
+            if (AutomationProperties.GetName(tile) is { } name && (name == large || name == under))
+                tile.IsEnabled = false;
     }
 
     private void CompactWorkspaceToolbarButtons()
@@ -95,6 +101,7 @@ public partial class MainWindow
 
     partial void OnToolbarStyleApplied()
     {
+        DimUnsupportedToolbarTiles();
         foreach (var (button, _, key) in ToolbarItems())
             AutomationProperties.SetName(button, Loc(key));
         RefreshWorkspaceToolbarSelection();

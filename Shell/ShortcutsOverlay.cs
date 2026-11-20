@@ -74,8 +74,9 @@ public partial class MainWindow
                     else WorkspaceNavigation.SelectedIndex = target;
                 });
         }
-        BindAction(WorkbenchCommands.OpenCapture, "Str_OpenCapture", OpenCaptureButton, OnOpenCapture);
-        BindAction(WorkbenchCommands.SaveCapture, "Str_SaveCapture", SaveCaptureButton, OnSaveCapture);
+        // The capture actions live on the Session sources card, whose tiles show these chords.
+        BindShortcutCommand(WorkbenchCommands.OpenCapture, "Str_OpenCapture", () => OpenCaptureEnabled, OnOpenCapture);
+        BindShortcutCommand(WorkbenchCommands.SaveCapture, "Str_SaveCapture", () => SaveCaptureEnabled, OnSaveCapture);
         BindAction(WorkbenchCommands.ExportReport, "Str_ExportReport", ExportReportButton, OnExportReport);
         BindAction(WorkbenchCommands.ExportActivity, "Str_ExportActivityHint", ExportActivityButton, OnExportActivity);
         BindAction(WorkbenchCommands.FindEvidence, "Str_AutomationProperties_Name_Filter_evidence", SearchBox,

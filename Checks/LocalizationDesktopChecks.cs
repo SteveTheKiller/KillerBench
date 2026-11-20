@@ -43,10 +43,8 @@ internal static class LocalizationDesktopChecks
             Require(localeNames.Length == 20 && localeNames.Distinct().Count() == 20, "The language menu offers twenty distinct locales");
 
             navigation.SelectedItem = tools;
-            var sourceArea = (Grid)((ListBox)window.FindName("SourcesList")).Parent;
-            var sourceMenu = sourceArea.Children.OfType<DockPanel>().Single().Children.OfType<Button>().Single().ContextMenu;
-            var loadSample = sourceMenu.Items.OfType<MenuItem>().Single(item => Equals(item.Header, window.FindResource("Str_Session_LoadSample")));
-            loadSample.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            var loadSample = KillerBench.Shell.MainWindow.FindCardTile(window.BuildSessionSourcesCard(), "Str_Session_LoadSample");
+            loadSample.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(history.Items.Count == 1, "Loading the built-in sample creates one history entry");
 
             string englishInvalidCode = (string)window.FindResource("Str_Tkp_EnterWindowsCode");

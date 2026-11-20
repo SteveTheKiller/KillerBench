@@ -517,6 +517,13 @@
   <sys:String x:Key="Str_Knowledge_Lookup">Apri pacchetto e cerca codice</sys:String>
   <sys:String x:Key="Str_Knowledge_Search">Apri pacchetto e cerca testo</sys:String>
   <sys:String x:Key="Str_Knowledge_Compare">Confronta revisioni pacchetto</sys:String>
+  <sys:String x:Key="Str_Knowledge_LookupTile">Cerca codice</sys:String>
+  <sys:String x:Key="Str_Knowledge_SearchTile">Cerca testo</sys:String>
+  <sys:String x:Key="Str_Knowledge_CompareTile">Confronta</sys:String>
+  <sys:String x:Key="Str_Ctx_Copy">Copia</sys:String>
+  <sys:String x:Key="Str_Ctx_Cut">Taglia</sys:String>
+  <sys:String x:Key="Str_Ctx_Paste">Incolla</sys:String>
+  <sys:String x:Key="Str_Ctx_SelectAll">Seleziona tutto</sys:String>
   <sys:String x:Key="Str_Knowledge_CompareTip">Scegli file corrente e candidato per esaminare modifiche. Nessun pacchetto viene installato.</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCode">Cerca codice di sistema Windows</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCodeTip">Usa il campo codice con la tabella messaggi Windows installata; nessun pacchetto necessario</sys:String>

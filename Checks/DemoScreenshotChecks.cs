@@ -223,10 +223,9 @@ internal static class DemoScreenshotChecks
             searchPopup.IsOpen = false;
             titleSearch.Clear();
             var toolbar = (ContextMenu)window.FindName("ToolbarMenu");
-            foreach (var (label, file) in new[] { ("Text beside icons", "toolbar-beside.png"), ("No text", "toolbar-icons.png"), ("Text only", "toolbar-text.png") })
+            foreach (var (label, file) in new[] { ("Str_Toolbar_TextBeside", "toolbar-beside.png"), ("Str_Toolbar_TextNone", "toolbar-icons.png"), ("Str_Toolbar_TextOnly", "toolbar-text.png") })
             {
-                toolbar.Items.OfType<MenuItem>().Single(item => Equals(item.Header, label))
-                    .RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+                KillerBench.Shell.MainWindow.FindCardTile(toolbar, label).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 Settle(window);
                 Capture(window, Path.Combine(output, file), 1);
             }

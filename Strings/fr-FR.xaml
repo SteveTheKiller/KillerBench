@@ -154,6 +154,13 @@
   <sys:String x:Key="Str_Knowledge_Lookup">Ouvrir le pack et rechercher le code</sys:String>
   <sys:String x:Key="Str_Knowledge_Search">Ouvrir le pack et rechercher du texte</sys:String>
   <sys:String x:Key="Str_Knowledge_Compare">Comparer les révisions de pack</sys:String>
+  <sys:String x:Key="Str_Knowledge_LookupTile">Chercher un code</sys:String>
+  <sys:String x:Key="Str_Knowledge_SearchTile">Chercher du texte</sys:String>
+  <sys:String x:Key="Str_Knowledge_CompareTile">Comparer</sys:String>
+  <sys:String x:Key="Str_Ctx_Copy">Copier</sys:String>
+  <sys:String x:Key="Str_Ctx_Cut">Couper</sys:String>
+  <sys:String x:Key="Str_Ctx_Paste">Coller</sys:String>
+  <sys:String x:Key="Str_Ctx_SelectAll">Tout sélectionner</sys:String>
   <sys:String x:Key="Str_Knowledge_CompareTip">Choisir les fichiers actuel et candidat pour examiner les changements. Aucun pack n&apos;est installé.</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCode">Rechercher un code système Windows</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCodeTip">Utiliser le champ de code avec la table de messages Windows installée; aucun pack nécessaire</sys:String>

@@ -511,6 +511,13 @@
   <sys:String x:Key="Str_Knowledge_Lookup">Abrir pacote e consultar código</sys:String>
   <sys:String x:Key="Str_Knowledge_Search">Abrir pacote e pesquisar texto</sys:String>
   <sys:String x:Key="Str_Knowledge_Compare">Comparar revisões do pacote</sys:String>
+  <sys:String x:Key="Str_Knowledge_LookupTile">Consultar código</sys:String>
+  <sys:String x:Key="Str_Knowledge_SearchTile">Pesquisar texto</sys:String>
+  <sys:String x:Key="Str_Knowledge_CompareTile">Comparar</sys:String>
+  <sys:String x:Key="Str_Ctx_Copy">Copiar</sys:String>
+  <sys:String x:Key="Str_Ctx_Cut">Recortar</sys:String>
+  <sys:String x:Key="Str_Ctx_Paste">Colar</sys:String>
+  <sys:String x:Key="Str_Ctx_SelectAll">Selecionar tudo</sys:String>
   <sys:String x:Key="Str_Knowledge_CompareTip">Escolha os arquivos atual e candidato para revisar as alterações. Nenhum pacote é instalado.</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCode">Consultar código de sistema do Windows</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCodeTip">Use o campo de código com a tabela de mensagens do Windows instalada; nenhum pacote é necessário</sys:String>

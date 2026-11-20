@@ -518,6 +518,13 @@
   <sys:String x:Key="Str_Knowledge_Lookup">প্যাক খুলুন এবং কোডটি দেখুন</sys:String>
   <sys:String x:Key="Str_Knowledge_Search">প্যাক খুলুন এবং লেখা খুঁজুন</sys:String>
   <sys:String x:Key="Str_Knowledge_Compare">প্যাক সংস্করণ তুলনা করুন</sys:String>
+  <sys:String x:Key="Str_Knowledge_LookupTile">কোড খুঁজুন</sys:String>
+  <sys:String x:Key="Str_Knowledge_SearchTile">টেক্সট খুঁজুন</sys:String>
+  <sys:String x:Key="Str_Knowledge_CompareTile">তুলনা করুন</sys:String>
+  <sys:String x:Key="Str_Ctx_Copy">কপি</sys:String>
+  <sys:String x:Key="Str_Ctx_Cut">কাট</sys:String>
+  <sys:String x:Key="Str_Ctx_Paste">পেস্ট</sys:String>
+  <sys:String x:Key="Str_Ctx_SelectAll">সব নির্বাচন করুন</sys:String>
   <sys:String x:Key="Str_Knowledge_CompareTip">পরিবর্তন পর্যালোচনা করতে বর্তমান এবং প্রার্থী ফাইল বেছে নিন। কোনো প্যাক ইনস্টল করা হয় না।</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCode">উইন্ডোজ সিস্টেমের কোড দেখুন</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCodeTip">ইনস্টল করা উইন্ডোজ মেসেজ টেবিলের সাথে কোড ফিল্ড ব্যবহার করুন; কোনো প্যাক দরকার নেই</sys:String>

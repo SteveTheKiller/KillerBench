@@ -511,6 +511,13 @@
   <sys:String x:Key="Str_Knowledge_Lookup">Mở gói và tra cứu mã</sys:String>
   <sys:String x:Key="Str_Knowledge_Search">Mở gói và tìm kiếm văn bản</sys:String>
   <sys:String x:Key="Str_Knowledge_Compare">So sánh các phiên bản gói</sys:String>
+  <sys:String x:Key="Str_Knowledge_LookupTile">Tra mã</sys:String>
+  <sys:String x:Key="Str_Knowledge_SearchTile">Tìm văn bản</sys:String>
+  <sys:String x:Key="Str_Knowledge_CompareTile">So sánh</sys:String>
+  <sys:String x:Key="Str_Ctx_Copy">Sao chép</sys:String>
+  <sys:String x:Key="Str_Ctx_Cut">Cắt</sys:String>
+  <sys:String x:Key="Str_Ctx_Paste">Dán</sys:String>
+  <sys:String x:Key="Str_Ctx_SelectAll">Chọn tất cả</sys:String>
   <sys:String x:Key="Str_Knowledge_CompareTip">Chọn tệp hiện tại và tệp ứng viên để xem các thay đổi. Không có gói nào được cài đặt.</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCode">Tra cứu mã hệ thống Windows</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCodeTip">Sử dụng trường mã với bảng tin nhắn Windows đã cài đặt; không cần gói</sys:String>

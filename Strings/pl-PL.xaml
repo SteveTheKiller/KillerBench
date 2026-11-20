@@ -512,6 +512,13 @@
   <sys:String x:Key="Str_Knowledge_Lookup">Otwórz pakiet i wyszukaj kod</sys:String>
   <sys:String x:Key="Str_Knowledge_Search">Otwórz pakiet i wyszukaj tekst</sys:String>
   <sys:String x:Key="Str_Knowledge_Compare">Porównaj rewizje pakietu</sys:String>
+  <sys:String x:Key="Str_Knowledge_LookupTile">Wyszukaj kod</sys:String>
+  <sys:String x:Key="Str_Knowledge_SearchTile">Szukaj tekstu</sys:String>
+  <sys:String x:Key="Str_Knowledge_CompareTile">Porównaj</sys:String>
+  <sys:String x:Key="Str_Ctx_Copy">Kopiuj</sys:String>
+  <sys:String x:Key="Str_Ctx_Cut">Wytnij</sys:String>
+  <sys:String x:Key="Str_Ctx_Paste">Wklej</sys:String>
+  <sys:String x:Key="Str_Ctx_SelectAll">Zaznacz wszystko</sys:String>
   <sys:String x:Key="Str_Knowledge_CompareTip">Wybierz bieżący i kandydacki plik, aby przejrzeć zmiany. Żaden pakiet nie jest instalowany.</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCode">Wyszukaj kod systemowy Windows</sys:String>
   <sys:String x:Key="Str_Knowledge_WindowsCodeTip">Użyj pola kodu z zainstalowaną tabelą komunikatów Windows; pakiet nie jest potrzebny</sys:String>
