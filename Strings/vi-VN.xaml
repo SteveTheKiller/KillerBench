@@ -524,6 +524,14 @@
   <sys:String x:Key="Str_Knowledge_DeviceCode">Tra mã Trình quản lý Thiết bị</sys:String>
   <sys:String x:Key="Str_Knowledge_DeviceCodeTip">Dùng trường mã với tài liệu tham khảo mã sự cố Trình quản lý Thiết bị tích hợp sẵn; không cần gói</sys:String>
   <sys:String x:Key="Str_Session_Sources">Nguồn phiên</sys:String>
+  <sys:String x:Key="Str_Card_Edit">Tùy chỉnh thẻ này</sys:String>
+  <sys:String x:Key="Str_Card_EditDone">Xong</sys:String>
+  <sys:String x:Key="Str_Card_EditReset">Đặt lại mặc định</sys:String>
+  <sys:String x:Key="Str_Card_EditResetShort">Đặt lại</sys:String>
+  <sys:String x:Key="Str_Card_Hidden">Đã ẩn</sys:String>
+  <sys:String x:Key="Str_Card_HiddenHint">Kéo một ô vào đây để ẩn</sys:String>
+  <sys:String x:Key="Str_Card_AlwaysShown">Luôn hiển thị</sys:String>
+  <sys:String x:Key="Str_Card_Moved">{0}, vị trí {1} trên {2}</sys:String>
   <sys:String x:Key="Str_Session_LoadSample">Tải mẫu</sys:String>
   <sys:String x:Key="Str_Session_RawOutput">Đầu ra thô</sys:String>
   <sys:String x:Key="Str_Session_RawOutputTip">Hoạt động kỹ thuật và bằng chứng được giữ lại.</sys:String>

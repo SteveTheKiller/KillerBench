@@ -524,6 +524,14 @@
   <sys:String x:Key="Str_Knowledge_DeviceCode">Poišči kodo Upravitelja naprav</sys:String>
   <sys:String x:Key="Str_Knowledge_DeviceCodeTip">Uporabi polje s kodo in vgrajeno zbirko kod težav Upravitelja naprav; paket ni potreben</sys:String>
   <sys:String x:Key="Str_Session_Sources">Viri seje</sys:String>
+  <sys:String x:Key="Str_Card_Edit">Prilagodi to kartico</sys:String>
+  <sys:String x:Key="Str_Card_EditDone">Končano</sys:String>
+  <sys:String x:Key="Str_Card_EditReset">Ponastavi na privzeto</sys:String>
+  <sys:String x:Key="Str_Card_EditResetShort">Ponastavi</sys:String>
+  <sys:String x:Key="Str_Card_Hidden">Skrito</sys:String>
+  <sys:String x:Key="Str_Card_HiddenHint">Povlecite ploščico sem, da jo skrijete</sys:String>
+  <sys:String x:Key="Str_Card_AlwaysShown">Vedno prikazano</sys:String>
+  <sys:String x:Key="Str_Card_Moved">{0}, mesto {1} od {2}</sys:String>
   <sys:String x:Key="Str_Session_LoadSample">Naloži primer</sys:String>
   <sys:String x:Key="Str_Session_RawOutput">Neobdelani izpis</sys:String>
   <sys:String x:Key="Str_Session_RawOutputTip">Tehnična dejavnost in ohranjeni dokazi.</sys:String>

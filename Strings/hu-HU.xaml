@@ -525,6 +525,14 @@
   <sys:String x:Key="Str_Knowledge_DeviceCode">Eszközkezelő-kód keresése</sys:String>
   <sys:String x:Key="Str_Knowledge_DeviceCodeTip">Használja a kódmezőt a beépített Eszközkezelő-problémakód hivatkozással; csomag nem szükséges</sys:String>
   <sys:String x:Key="Str_Session_Sources">Munkamenet-források</sys:String>
+  <sys:String x:Key="Str_Card_Edit">Kártya testreszabása</sys:String>
+  <sys:String x:Key="Str_Card_EditDone">Kész</sys:String>
+  <sys:String x:Key="Str_Card_EditReset">Alapértelmezés visszaállítása</sys:String>
+  <sys:String x:Key="Str_Card_EditResetShort">Visszaállítás</sys:String>
+  <sys:String x:Key="Str_Card_Hidden">Rejtett</sys:String>
+  <sys:String x:Key="Str_Card_HiddenHint">Húzzon ide egy csempét az elrejtéséhez</sys:String>
+  <sys:String x:Key="Str_Card_AlwaysShown">Mindig látható</sys:String>
+  <sys:String x:Key="Str_Card_Moved">{0}, {1}. hely ({2} közül)</sys:String>
   <sys:String x:Key="Str_Session_LoadSample">Minta betöltése</sys:String>
   <sys:String x:Key="Str_Session_RawOutput">Nyers kimenet</sys:String>
   <sys:String x:Key="Str_Session_RawOutputTip">Technikai tevékenység és megőrzött bizonyíték.</sys:String>

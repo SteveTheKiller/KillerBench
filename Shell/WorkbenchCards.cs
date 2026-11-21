@@ -39,8 +39,26 @@ public partial class MainWindow
         string? keys = TileKeys(labelKey);
         string label = LocalizedText.Get(labelKey);
         return new CardTile(glyph, LocalizedText.Get(captionKey ?? labelKey), keys, run, Enabled: enabled)
-        { Hint = CardBuilder.Tip(label, keys) };
+        { Hint = CardBuilder.Tip(label, keys), Id = labelKey };
     }
+
+    /// <summary>The pencil edit mode for a big workbench card, its layout saved under Card.{card}.Layout. Locked
+    /// tiles always show; the rest move between the card and its Hidden drawer.</summary>
+    private static CardEdit WorkbenchCardEdit(string card, string[] locked, string[] hiddenByDefault) =>
+        new(() => KillerBench.Services.ThemeManager.GetSetting($"Card.{card}.Layout") is { Length: > 0 } saved ? saved : null,
+            value => KillerBench.Services.ThemeManager.SetSetting($"Card.{card}.Layout", value ?? ""))
+        {
+            Locked = tile => tile.Id is { } id && locked.Contains(id),
+            DefaultHidden = tile => tile.Id is { } id && hiddenByDefault.Contains(id),
+            EditTip = LocalizedText.Get("Str_Card_Edit"),
+            DoneTip = LocalizedText.Get("Str_Card_EditDone"),
+            ResetTip = LocalizedText.Get("Str_Card_EditReset"),
+            ResetLabel = LocalizedText.Get("Str_Card_EditResetShort"),
+            HiddenLabel = LocalizedText.Get("Str_Card_Hidden"),
+            HiddenHint = LocalizedText.Get("Str_Card_HiddenHint"),
+            LockedTip = LocalizedText.Get("Str_Card_AlwaysShown"),
+            MovedText = LocalizedText.Get("Str_Card_Moved"),
+        };
 
     /// <summary>The Session sources card: open and save a capture, then the workflow journal and the
     /// sample, then the two Tools views.</summary>
@@ -65,11 +83,15 @@ public partial class MainWindow
             WorkbenchTile("", "Str_Advanced_Workflows", () => OnWorkflows(this, Args()), !repairRunning),
             WorkbenchTile("", "Str_Advanced_Repairs", () => OnRepairs(this, Args()), !repairRunning),
         };
-        card.Items.Add(CardBuilder.Slot(CardBuilder.TileGroups(card, title, new[] { capture, session, tools }), new Thickness(0)));
+        // Customizable: Open capture and Save capture are the card's anchor and always show. Nothing starts in the
+        // Hidden drawer: Load sample has no other button in the window, and the rest are the card's everyday actions.
+        var edit = WorkbenchCardEdit("SessionSources", ["Str_OpenCapture", "Str_SaveCapture"], []);
+        card.Items.Add(CardBuilder.Slot(CardBuilder.TileGroups(card, title, new[] { capture, session, tools }, edit), new Thickness(0)));
         return card;
     }
 
-    /// <summary>The Knowledge pack card: look up a code, search the text, compare two revisions.</summary>
+    /// <summary>The Knowledge pack card: look up a code, search the text, compare two revisions. One row of three,
+    /// so it stays a fixed card like every small card.</summary>
     internal ContextMenu BuildKnowledgeCard()
     {
         var card = CardBuilder.Menu(300);

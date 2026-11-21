@@ -167,6 +167,14 @@
   <sys:String x:Key="Str_Knowledge_DeviceCode">Rechercher un code du Gestionnaire de périphériques</sys:String>
   <sys:String x:Key="Str_Knowledge_DeviceCodeTip">Utiliser le champ de code avec la référence intégrée des codes de problème du Gestionnaire de périphériques; aucun pack nécessaire</sys:String>
   <sys:String x:Key="Str_Session_Sources">Sources de session</sys:String>
+  <sys:String x:Key="Str_Card_Edit">Personnaliser cette carte</sys:String>
+  <sys:String x:Key="Str_Card_EditDone">Terminé</sys:String>
+  <sys:String x:Key="Str_Card_EditReset">Rétablir les valeurs par défaut</sys:String>
+  <sys:String x:Key="Str_Card_EditResetShort">Réinitialiser</sys:String>
+  <sys:String x:Key="Str_Card_Hidden">Masqués</sys:String>
+  <sys:String x:Key="Str_Card_HiddenHint">Faites glisser une tuile ici pour la masquer</sys:String>
+  <sys:String x:Key="Str_Card_AlwaysShown">Toujours affiché</sys:String>
+  <sys:String x:Key="Str_Card_Moved">{0}, position {1} sur {2}</sys:String>
   <sys:String x:Key="Str_Session_LoadSample">Charger un exemple</sys:String>
   <sys:String x:Key="Str_Session_RawOutput">Sortie brute</sys:String>
   <sys:String x:Key="Str_Session_RawOutputTip">Activité technique et preuves conservées.</sys:String>

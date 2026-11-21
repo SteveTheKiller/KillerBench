@@ -525,6 +525,14 @@
   <sys:String x:Key="Str_Knowledge_DeviceCode">Құрылғылар реттеушісі кодын іздеу</sys:String>
   <sys:String x:Key="Str_Knowledge_DeviceCodeTip">Код өрісін Құрылғылар реттеушісінің кірістірілген ақау коды анықтамасымен пайдаланыңыз; пакет қажет емес</sys:String>
   <sys:String x:Key="Str_Session_Sources">Сеанс көздері</sys:String>
+  <sys:String x:Key="Str_Card_Edit">Бұл картаны баптау</sys:String>
+  <sys:String x:Key="Str_Card_EditDone">Дайын</sys:String>
+  <sys:String x:Key="Str_Card_EditReset">Әдепкіге қайтару</sys:String>
+  <sys:String x:Key="Str_Card_EditResetShort">Қалпына келтіру</sys:String>
+  <sys:String x:Key="Str_Card_Hidden">Жасырын</sys:String>
+  <sys:String x:Key="Str_Card_HiddenHint">Жасыру үшін тақтаны осында сүйреңіз</sys:String>
+  <sys:String x:Key="Str_Card_AlwaysShown">Әрқашан көрсетіледі</sys:String>
+  <sys:String x:Key="Str_Card_Moved">{0}, {2} ішінен {1}-орын</sys:String>
   <sys:String x:Key="Str_Session_LoadSample">Үлгіні жүктеу</sys:String>
   <sys:String x:Key="Str_Session_RawOutput">Шикі шығыс</sys:String>
   <sys:String x:Key="Str_Session_RawOutputTip">Техникалық әрекет және сақталған дәлел.</sys:String>

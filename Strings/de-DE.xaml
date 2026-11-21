@@ -530,6 +530,14 @@
   <sys:String x:Key="Str_Knowledge_DeviceCode">Geräte-Manager-Code nachschlagen</sys:String>
   <sys:String x:Key="Str_Knowledge_DeviceCodeTip">Codefeld mit der integrierten Geräte-Manager-Problemcode-Referenz verwenden; kein Paket erforderlich</sys:String>
   <sys:String x:Key="Str_Session_Sources">Sitzungsquellen</sys:String>
+  <sys:String x:Key="Str_Card_Edit">Diese Karte anpassen</sys:String>
+  <sys:String x:Key="Str_Card_EditDone">Fertig</sys:String>
+  <sys:String x:Key="Str_Card_EditReset">Auf Standard zurücksetzen</sys:String>
+  <sys:String x:Key="Str_Card_EditResetShort">Zurücksetzen</sys:String>
+  <sys:String x:Key="Str_Card_Hidden">Ausgeblendet</sys:String>
+  <sys:String x:Key="Str_Card_HiddenHint">Kachel hierher ziehen, um sie auszublenden</sys:String>
+  <sys:String x:Key="Str_Card_AlwaysShown">Immer sichtbar</sys:String>
+  <sys:String x:Key="Str_Card_Moved">{0}, Position {1} von {2}</sys:String>
   <sys:String x:Key="Str_Session_LoadSample">Beispiel laden</sys:String>
   <sys:String x:Key="Str_Session_RawOutput">Rohausgabe</sys:String>
   <sys:String x:Key="Str_Session_RawOutputTip">Technische Aktivität und beibehaltene Nachweise.</sys:String>

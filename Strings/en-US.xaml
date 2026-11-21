@@ -532,6 +532,14 @@
   <sys:String x:Key="Str_Knowledge_DeviceCode">Look up Device Manager code</sys:String>
   <sys:String x:Key="Str_Knowledge_DeviceCodeTip">Use the code field with the built-in Device Manager problem-code reference; no pack needed</sys:String>
   <sys:String x:Key="Str_Session_Sources">Session sources</sys:String>
+  <sys:String x:Key="Str_Card_Edit">Customize this card</sys:String>
+  <sys:String x:Key="Str_Card_EditDone">Done</sys:String>
+  <sys:String x:Key="Str_Card_EditReset">Reset to default</sys:String>
+  <sys:String x:Key="Str_Card_EditResetShort">Reset</sys:String>
+  <sys:String x:Key="Str_Card_Hidden">Hidden</sys:String>
+  <sys:String x:Key="Str_Card_HiddenHint">Drag a tile here to hide it</sys:String>
+  <sys:String x:Key="Str_Card_AlwaysShown">Always shown</sys:String>
+  <sys:String x:Key="Str_Card_Moved">{0}, position {1} of {2}</sys:String>
   <sys:String x:Key="Str_Session_LoadSample">Load sample</sys:String>
   <sys:String x:Key="Str_Session_RawOutput">Raw output</sys:String>
   <sys:String x:Key="Str_Session_RawOutputTip">Technical activity and retained evidence.</sys:String>

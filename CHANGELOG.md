@@ -44,11 +44,13 @@
 - The copyright at the right end of the footer ends 8 px before the corner grip, the same gap in every Killer app, and the grip's dots line up with the other apps' grips.
 - Every context menu and flyout is a family card with an icon on each row: the text box menu, the knowledge pack and sources menus, and the file picker's sort and pin menus. The rail menus open from the corner of the content pane, and the knowledge pack menu drops its two lookup rows that repeated the Run button.
 - A translation file that fails to load reports through the family dialog instead of a plain Windows message box.
+- Toolbar buttons, sidebar rows and list rows draw the film grain over their hover fill, the way menu rows and card tiles do. Trash Polka check boxes and radio wells are solid black.
 
 ### Added
 
 - Trash Polka, a new theme under 98SE: black with a tattoo-style ink background in your accent color, from eight accents with Blood red as the default. Under a Windows high contrast theme the ink steps aside for the system colors.
 - Added the app icon to the Chocolatey package listing.
+- The Session sources card is customizable: the pencil moves tiles between the card and its Hidden drawer, and Alt+arrow keys move a tile while editing. Open capture and Save capture always show.
 
 ## [1.0.0] - 2026-11-02
 

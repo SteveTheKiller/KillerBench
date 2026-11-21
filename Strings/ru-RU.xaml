@@ -529,6 +529,14 @@
   <sys:String x:Key="Str_Knowledge_DeviceCode">Найти код Диспетчера устройств</sys:String>
   <sys:String x:Key="Str_Knowledge_DeviceCodeTip">Используйте поле кода с встроенной справкой по кодам проблем Диспетчера устройств; пакет не требуется</sys:String>
   <sys:String x:Key="Str_Session_Sources">Источники сессии</sys:String>
+  <sys:String x:Key="Str_Card_Edit">Настроить эту карточку</sys:String>
+  <sys:String x:Key="Str_Card_EditDone">Готово</sys:String>
+  <sys:String x:Key="Str_Card_EditReset">Сбросить по умолчанию</sys:String>
+  <sys:String x:Key="Str_Card_EditResetShort">Сбросить</sys:String>
+  <sys:String x:Key="Str_Card_Hidden">Скрытые</sys:String>
+  <sys:String x:Key="Str_Card_HiddenHint">Перетащите плитку сюда, чтобы скрыть её</sys:String>
+  <sys:String x:Key="Str_Card_AlwaysShown">Всегда видно</sys:String>
+  <sys:String x:Key="Str_Card_Moved">{0}, позиция {1} из {2}</sys:String>
   <sys:String x:Key="Str_Session_LoadSample">Загрузить пример</sys:String>
   <sys:String x:Key="Str_Session_RawOutput">Необработанный вывод</sys:String>
   <sys:String x:Key="Str_Session_RawOutputTip">Техническая активность и сохранённые доказательства.</sys:String>

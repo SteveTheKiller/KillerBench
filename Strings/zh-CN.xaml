@@ -530,6 +530,14 @@
   <sys:String x:Key="Str_Knowledge_DeviceCode">查找设备管理器代码</sys:String>
   <sys:String x:Key="Str_Knowledge_DeviceCodeTip">使用内置设备管理器问题代码参考的代码字段；无需包</sys:String>
   <sys:String x:Key="Str_Session_Sources">会话来源</sys:String>
+  <sys:String x:Key="Str_Card_Edit">自定义此卡片</sys:String>
+  <sys:String x:Key="Str_Card_EditDone">完成</sys:String>
+  <sys:String x:Key="Str_Card_EditReset">恢复默认</sys:String>
+  <sys:String x:Key="Str_Card_EditResetShort">重置</sys:String>
+  <sys:String x:Key="Str_Card_Hidden">已隐藏</sys:String>
+  <sys:String x:Key="Str_Card_HiddenHint">将磁贴拖到此处即可隐藏</sys:String>
+  <sys:String x:Key="Str_Card_AlwaysShown">始终显示</sys:String>
+  <sys:String x:Key="Str_Card_Moved">{0}，第 {1} 个，共 {2} 个</sys:String>
   <sys:String x:Key="Str_Session_LoadSample">加载样本</sys:String>
   <sys:String x:Key="Str_Session_RawOutput">原始输出</sys:String>
   <sys:String x:Key="Str_Session_RawOutputTip">技术活动和保留的证据。</sys:String>

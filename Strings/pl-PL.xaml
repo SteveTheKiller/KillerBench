@@ -525,6 +525,14 @@
   <sys:String x:Key="Str_Knowledge_DeviceCode">Wyszukaj kod Menedżera urządzeń</sys:String>
   <sys:String x:Key="Str_Knowledge_DeviceCodeTip">Użyj pola kodu z wbudowanym odwołaniem kodów problemów Device Manager; pakiet nie jest potrzebny</sys:String>
   <sys:String x:Key="Str_Session_Sources">Źródła sesji</sys:String>
+  <sys:String x:Key="Str_Card_Edit">Dostosuj tę kartę</sys:String>
+  <sys:String x:Key="Str_Card_EditDone">Gotowe</sys:String>
+  <sys:String x:Key="Str_Card_EditReset">Przywróć domyślne</sys:String>
+  <sys:String x:Key="Str_Card_EditResetShort">Resetuj</sys:String>
+  <sys:String x:Key="Str_Card_Hidden">Ukryte</sys:String>
+  <sys:String x:Key="Str_Card_HiddenHint">Przeciągnij tu kafelek, aby go ukryć</sys:String>
+  <sys:String x:Key="Str_Card_AlwaysShown">Zawsze widoczne</sys:String>
+  <sys:String x:Key="Str_Card_Moved">{0}, pozycja {1} z {2}</sys:String>
   <sys:String x:Key="Str_Session_LoadSample">Wczytaj próbkę</sys:String>
   <sys:String x:Key="Str_Session_RawOutput">Surowe wyjście</sys:String>
   <sys:String x:Key="Str_Session_RawOutputTip">Aktywność techniczna i zachowane dowody.</sys:String>

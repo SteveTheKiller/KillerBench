@@ -530,6 +530,14 @@
   <sys:String x:Key="Str_Knowledge_DeviceCode">Cerca codice Gestione dispositivi</sys:String>
   <sys:String x:Key="Str_Knowledge_DeviceCodeTip">Usa il campo codice con il riferimento integrato ai codici problema di Gestione dispositivi; nessun pacchetto necessario</sys:String>
   <sys:String x:Key="Str_Session_Sources">Fonti sessione</sys:String>
+  <sys:String x:Key="Str_Card_Edit">Personalizza questa scheda</sys:String>
+  <sys:String x:Key="Str_Card_EditDone">Fine</sys:String>
+  <sys:String x:Key="Str_Card_EditReset">Ripristina predefiniti</sys:String>
+  <sys:String x:Key="Str_Card_EditResetShort">Ripristina</sys:String>
+  <sys:String x:Key="Str_Card_Hidden">Nascosti</sys:String>
+  <sys:String x:Key="Str_Card_HiddenHint">Trascina qui un riquadro per nasconderlo</sys:String>
+  <sys:String x:Key="Str_Card_AlwaysShown">Sempre visibile</sys:String>
+  <sys:String x:Key="Str_Card_Moved">{0}, posizione {1} di {2}</sys:String>
   <sys:String x:Key="Str_Session_LoadSample">Carica esempio</sys:String>
   <sys:String x:Key="Str_Session_RawOutput">Output grezzo</sys:String>
   <sys:String x:Key="Str_Session_RawOutputTip">Attività tecnica e prove conservate.</sys:String>

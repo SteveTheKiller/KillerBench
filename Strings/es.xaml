@@ -531,6 +531,14 @@
   <sys:String x:Key="Str_Knowledge_DeviceCode">Buscar código de Administrador de dispositivos</sys:String>
   <sys:String x:Key="Str_Knowledge_DeviceCodeTip">Usa el campo de código con la referencia integrada de códigos de problema de Administrador de dispositivos; no se necesita paquete</sys:String>
   <sys:String x:Key="Str_Session_Sources">Fuentes de sesión</sys:String>
+  <sys:String x:Key="Str_Card_Edit">Personalizar esta tarjeta</sys:String>
+  <sys:String x:Key="Str_Card_EditDone">Listo</sys:String>
+  <sys:String x:Key="Str_Card_EditReset">Restablecer valores predeterminados</sys:String>
+  <sys:String x:Key="Str_Card_EditResetShort">Restablecer</sys:String>
+  <sys:String x:Key="Str_Card_Hidden">Ocultos</sys:String>
+  <sys:String x:Key="Str_Card_HiddenHint">Arrastra un mosaico aquí para ocultarlo</sys:String>
+  <sys:String x:Key="Str_Card_AlwaysShown">Siempre visible</sys:String>
+  <sys:String x:Key="Str_Card_Moved">{0}, posición {1} de {2}</sys:String>
   <sys:String x:Key="Str_Session_LoadSample">Cargar muestra</sys:String>
   <sys:String x:Key="Str_Session_RawOutput">Salida sin procesar</sys:String>
   <sys:String x:Key="Str_Session_RawOutputTip">Actividad técnica y evidencia conservada.</sys:String>

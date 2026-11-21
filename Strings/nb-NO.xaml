@@ -524,6 +524,14 @@
   <sys:String x:Key="Str_Knowledge_DeviceCode">Slå opp Enhetsbehandling-kode</sys:String>
   <sys:String x:Key="Str_Knowledge_DeviceCodeTip">Bruk kodefeltet med den innebygde referansen for problemkoder i Enhetsbehandling; ingen pakke trengs</sys:String>
   <sys:String x:Key="Str_Session_Sources">Øktkilder</sys:String>
+  <sys:String x:Key="Str_Card_Edit">Tilpass dette kortet</sys:String>
+  <sys:String x:Key="Str_Card_EditDone">Ferdig</sys:String>
+  <sys:String x:Key="Str_Card_EditReset">Tilbakestill til standard</sys:String>
+  <sys:String x:Key="Str_Card_EditResetShort">Tilbakestill</sys:String>
+  <sys:String x:Key="Str_Card_Hidden">Skjult</sys:String>
+  <sys:String x:Key="Str_Card_HiddenHint">Dra en flis hit for å skjule den</sys:String>
+  <sys:String x:Key="Str_Card_AlwaysShown">Vises alltid</sys:String>
+  <sys:String x:Key="Str_Card_Moved">{0}, plass {1} av {2}</sys:String>
   <sys:String x:Key="Str_Session_LoadSample">Last inn eksempel</sys:String>
   <sys:String x:Key="Str_Session_RawOutput">Rå utdata</sys:String>
   <sys:String x:Key="Str_Session_RawOutputTip">Teknisk aktivitet og beholdte bevis.</sys:String>

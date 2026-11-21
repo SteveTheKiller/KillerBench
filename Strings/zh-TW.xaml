@@ -530,6 +530,14 @@
   <sys:String x:Key="Str_Knowledge_DeviceCode">查找裝置管理員代碼</sys:String>
   <sys:String x:Key="Str_Knowledge_DeviceCodeTip">使用內建裝置管理員問題代碼參考中的代碼欄位；不需要套件</sys:String>
   <sys:String x:Key="Str_Session_Sources">工作階段來源</sys:String>
+  <sys:String x:Key="Str_Card_Edit">自訂此卡片</sys:String>
+  <sys:String x:Key="Str_Card_EditDone">完成</sys:String>
+  <sys:String x:Key="Str_Card_EditReset">還原為預設</sys:String>
+  <sys:String x:Key="Str_Card_EditResetShort">重設</sys:String>
+  <sys:String x:Key="Str_Card_Hidden">已隱藏</sys:String>
+  <sys:String x:Key="Str_Card_HiddenHint">將圖格拖曳到此處即可隱藏</sys:String>
+  <sys:String x:Key="Str_Card_AlwaysShown">一律顯示</sys:String>
+  <sys:String x:Key="Str_Card_Moved">{0}，第 {1} 個，共 {2} 個</sys:String>
   <sys:String x:Key="Str_Session_LoadSample">載入範例</sys:String>
   <sys:String x:Key="Str_Session_RawOutput">原始輸出</sys:String>
   <sys:String x:Key="Str_Session_RawOutputTip">技術活動與保留證據。</sys:String>

@@ -530,6 +530,14 @@
   <sys:String x:Key="Str_Knowledge_DeviceCode">Aygıt Yöneticisi kodu ara</sys:String>
   <sys:String x:Key="Str_Knowledge_DeviceCodeTip">Yerleşik Aygıt Yöneticisi sorun kodu başvurusuyla kod alanını kullanın; paket gerekmez</sys:String>
   <sys:String x:Key="Str_Session_Sources">Oturum kaynakları</sys:String>
+  <sys:String x:Key="Str_Card_Edit">Bu kartı özelleştir</sys:String>
+  <sys:String x:Key="Str_Card_EditDone">Bitti</sys:String>
+  <sys:String x:Key="Str_Card_EditReset">Varsayılana sıfırla</sys:String>
+  <sys:String x:Key="Str_Card_EditResetShort">Sıfırla</sys:String>
+  <sys:String x:Key="Str_Card_Hidden">Gizli</sys:String>
+  <sys:String x:Key="Str_Card_HiddenHint">Gizlemek için bir kutucuğu buraya sürükleyin</sys:String>
+  <sys:String x:Key="Str_Card_AlwaysShown">Her zaman gösterilir</sys:String>
+  <sys:String x:Key="Str_Card_Moved">{0}, {2} içinde {1}. sıra</sys:String>
   <sys:String x:Key="Str_Session_LoadSample">Örnek yükle</sys:String>
   <sys:String x:Key="Str_Session_RawOutput">Ham çıktı</sys:String>
   <sys:String x:Key="Str_Session_RawOutputTip">Teknik etkinlik ve saklanan kanıt.</sys:String>
