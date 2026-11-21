@@ -73,7 +73,9 @@ public partial class MainWindow
     {
         if (AccentStripHost is null) return;
         bool show = ThemeManager.SupportsAccents(ThemeManager.Current);
-        double target = show ? 38 : 0;
+        // 7 gap from the divider, the 26px pill and its 2px right margin, with no slack, so the
+        // pill's right edge lands 8px inside the card.
+        double target = show ? 35 : 0;
         if (animate) AnimateWidth(AccentStripHost, target); else { AccentStripHost.BeginAnimation(WidthProperty, null); AccentStripHost.Width = target; }
         if (!show) return;
         string family = ThemeLabel(ThemeManager.Current);
@@ -153,13 +155,15 @@ public partial class MainWindow
     {
         if (languageMenu?.IsOpen == true) { languageMenu.IsOpen = false; return; }
         languageMenu = new ContextMenu { Template = ThemeFlyout.Template, ItemContainerStyle = (Style)FindResource("PanelMenuItem") };
-        var panel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(12, 10, 14, 10) };
+        // KillerUI's language menu: each hover row sits 8px from the card's outer edge, and the
+        // divider sits 8px from the hover boxes on both sides.
+        var panel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(15, 7, 5, 7) };
         var left = new StackPanel { Width = 200 };
         var right = new StackPanel { Width = 200 };
         var divider = new Border
         {
             Width = 1,
-            Margin = new Thickness(6, 8, 7, 8),
+            Margin = new Thickness(6, 8, 16, 8),
             Opacity = 0.18,
             IsHitTestVisible = false,
             OpacityMask = new LinearGradientBrush
@@ -185,7 +189,8 @@ public partial class MainWindow
             var grid = new Grid();
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            grid.Children.Add(new TextBlock { Text = name, FontFamily = new FontFamily("Segoe UI, Microsoft JhengHei UI, Nirmala UI"), VerticalAlignment = VerticalAlignment.Center });
+            // The row's own font (UiFont already falls back for other scripts), so the ring centers on the capitals.
+            grid.Children.Add(new TextBlock { Text = name, VerticalAlignment = VerticalAlignment.Center });
             var codeBlock = new TextBlock { Text = code, Margin = new Thickness(12,0,0,0), HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Center };
             codeBlock.SetResourceReference(TextBlock.ForegroundProperty, "MutedTextBrush");
             Grid.SetColumn(codeBlock, 1);
@@ -200,6 +205,10 @@ public partial class MainWindow
             };
             (index++ < split ? left : right).Children.Add(radio);
         }
+        // The rows' 8px gap is for between rows; under the last one it would double the bottom edge.
+        foreach (var column in new[] { left, right })
+            if (column.Children.Count > 0 && column.Children[^1] is FrameworkElement last)
+                last.Margin = new Thickness(last.Margin.Left, last.Margin.Top, last.Margin.Right, 0);
         languageMenu.Items.Add(panel);
         LangButton.ContextMenu = languageMenu;
         OpenFamilyMenu(languageMenu, LangButton);

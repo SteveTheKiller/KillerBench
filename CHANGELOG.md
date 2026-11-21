@@ -11,6 +11,8 @@
 
 ### Fixed
 
+- Theme and language menu labels line up with their radio buttons and check boxes again, instead of sitting a pixel high.
+- The theme and language menus keep 8px between their rows and the card edge on every side, and the language menu's divider has the same gap on each side.
 - The Mourning theme highlights selections in its original peach with dark text again, instead of pink.
 - Invalid captures show a controlled error, and report exports preserve open evidence and existing files when saving fails or the destination changes.
 - Storage reviews refuse redirected roots and retain their directory boundary. Browser extension reviews disclose which account they cover.
