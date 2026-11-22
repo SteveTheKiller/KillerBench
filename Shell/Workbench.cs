@@ -231,17 +231,13 @@ public partial class MainWindow
     }
     private bool HandleShellKey(KeyEventArgs e)
     {
-        if (e.Key == Key.Escape && AboutOverlay.Visibility == Visibility.Visible)
-        { FadeOverlayOut(AboutOverlay); e.Handled = true; return true; }
-        if (e.Key == Key.Escape && ShortcutsOverlay.Visibility == Visibility.Visible)
-        { ShortcutsOverlay.Visibility = Visibility.Collapsed; e.Handled = true; return true; }
+        // F1, F12, Esc on an open card, and the held-modifier layer preview are the kit's.
+        if (HandleShortcutsKey(e) || HandleFamilyKey(e)) return true;
         if (Keyboard.Modifiers != ModifierKeys.None) return false;
         switch (e.Key)
         {
-            case Key.F1: OnShortcuts(this, e); break;
             case Key.F2: OnToggleSources(this, e); break;
             case Key.F3: OnToggleActivity(this, e); break;
-            case Key.F12: _ = ShowAboutAsync(); break;
             default: return false;
         }
         e.Handled = true;

@@ -47,7 +47,7 @@ internal static class ShortcutCommandChecks
         var previous = overlay.Visibility;
         bool wasTerminalOpen = ((FrameworkElement)window.FindName("TerminalPanel")).Visibility == Visibility.Visible;
         bool wasRawView = ((FrameworkElement)window.FindName("ConsolePane")).Visibility == Visibility.Visible;
-        bool wasMapView = ((FrameworkElement)window.FindName("ShortcutMapHost")).Visibility == Visibility.Visible;
+        bool wasMapView = ((FrameworkElement)window.FindName("KsMapHost")).Visibility == Visibility.Visible;
         string? savedMapPreference = Preferences.Get("ShortcutsMapView");
         try
         {
@@ -61,15 +61,16 @@ internal static class ShortcutCommandChecks
             Require(((FrameworkElement)window.FindName("ConsolePane")).Visibility == Visibility.Visible && search.IsVisible,
                 "Evidence-search public command opens the raw-output search surface");
             ((Button)window.FindName("ShortcutButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            ((Button)window.FindName("ShortcutMapButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            ((Button)window.FindName("ShortcutCtrlShiftButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ((Button)window.FindName("KsViewKeyboard")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Button CtrlShiftTab() => ((StackPanel)window.FindName("KsLayerTabs")).Children.OfType<Button>().Single(tab => Equals(tab.Content, "CTRL+SHIFT"));
+            CtrlShiftTab().RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             window.UpdateLayout();
-            Require(((Button)window.FindName("ShortcutCtrlShiftButton")).Tag?.ToString() == "on",
+            Require(CtrlShiftTab().Tag?.ToString() == "on",
                 "Ctrl+Shift has its own keyboard-map layer");
         }
         finally
         {
-            ((Button)window.FindName(wasMapView ? "ShortcutMapButton" : "ShortcutListButton"))
+            ((Button)window.FindName(wasMapView ? "KsViewKeyboard" : "KsViewList"))
                 .RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Preferences.Set("ShortcutsMapView", savedMapPreference ?? "0");
             Preferences.Save();

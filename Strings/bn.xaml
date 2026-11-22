@@ -9,10 +9,10 @@
   <sys:String x:Key="Str_Shortcuts_Keyboard">কীবোর্ড</sys:String>
   <sys:String x:Key="Str_Shortcuts_Base">মূল</sys:String>
   <sys:String x:Key="Str_Shortcuts_Ctrl">Ctrl</sys:String>
-  <sys:String x:Key="Str_Shortcuts_GroupNav">নেভিগেশন</sys:String>
-  <sys:String x:Key="Str_Shortcuts_GroupFile">ফাইল</sys:String>
-  <sys:String x:Key="Str_Shortcuts_GroupHelp">সহায়তা</sys:String>
-  <sys:String x:Key="Str_Shortcuts_Show">কীবোর্ড শর্টকাট</sys:String>
+  <sys:String x:Key="Str_KS_GrpNav">নেভিগেশন</sys:String>
+  <sys:String x:Key="Str_KS_GrpFile">ফাইল</sys:String>
+  <sys:String x:Key="Str_KS_GrpHelp">সহায়তা</sys:String>
+  <sys:String x:Key="Str_KS_ThisList">কীবোর্ড শর্টকাট</sys:String>
   <sys:String x:Key="Str_Theme_Light">হালকা</sys:String>
   <sys:String x:Key="Str_Theme_Black">কালো</sys:String>
   <sys:String x:Key="Str_Theme_SE98">98SE</sys:String>
@@ -33,7 +33,7 @@
   <sys:String x:Key="Str_About_ExeHash">EXE SHA-256</sys:String>
   <sys:String x:Key="Str_Depot_Privacy">গোপনীয়তা</sys:String>
   <sys:String x:Key="Str_About_Aka">অন্য নাম</sys:String>
-  <sys:String x:Key="Str_Shortcuts_GroupView">ভিউ</sys:String>
+  <sys:String x:Key="Str_KS_GrpView">ভিউ</sys:String>
   <sys:String x:Key="Str_Advanced_None">কোনোটি নয়</sys:String>
   <sys:String x:Key="Str_ToolTip_Scroll_here_to_resize_the_interface">ইন্টারফেসের আকার পরিবর্তন করতে এখানে স্ক্রল করুন</sys:String>
   <sys:String x:Key="Str_Text_DIAGNOSTIC_WORKBENCH">উইন্ডোজ মেইনটেন্যান্স ওয়ার্কবেঞ্চ</sys:String>
@@ -87,9 +87,9 @@
   <sys:String x:Key="Str_Shortcuts_ToggleSources">আউটপুট দেখান বা লুকান</sys:String>
   <sys:String x:Key="Str_Shortcuts_ToggleActivity">কার্যক্রম লগ টগল করুন</sys:String>
   <sys:String x:Key="Str_Shortcuts_OpenEvidence">প্রমাণ খুলুন</sys:String>
-  <sys:String x:Key="Str_Shortcuts_About">KillerBench সম্পর্কে</sys:String>
+  <sys:String x:Key="Str_KS_About">KillerBench সম্পর্কে</sys:String>
   <sys:String x:Key="Str_Shortcuts_AppZoom">পুরো অ্যাপ জুম করুন (অ্যাক্সেসযোগ্যতা)</sys:String>
-  <sys:String x:Key="Str_Shortcuts_CloseOrStop">ওভারলে বন্ধ করুন বা পড়া বন্ধ করুন</sys:String>
+  <sys:String x:Key="Str_KS_Close">ওভারলে বন্ধ করুন বা পড়া বন্ধ করুন</sys:String>
   <sys:String x:Key="Str_Content_Close">বন্ধ</sys:String>
   <sys:String x:Key="Str_Theme_Dark">গাঢ়</sys:String>
   <sys:String x:Key="Str_Theme_Cyanotic">নীলাভ</sys:String>

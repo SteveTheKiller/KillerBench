@@ -19,15 +19,6 @@ namespace KillerBench.Shell
         // The card shows the current agent repair settings, so they are read again before it fades in.
         partial void ShowingCard(ref bool handled) => RefreshAgentRepairSettings();
 
-        /// <summary>F12 opens the card, or closes it when it is already open.</summary>
-        private Task ShowAboutAsync()
-        {
-            if (AboutOverlay.Visibility == Visibility.Visible) { FadeOverlayOut(AboutOverlay); return Task.CompletedTask; }
-            ShortcutsOverlay.Visibility = Visibility.Collapsed;
-            ShowAboutOverlay();
-            return Task.CompletedTask;
-        }
-
         private void OnAboutWebsite(object sender, MouseButtonEventArgs e)
         {
             WebLink.Open("https://killerbench.net");

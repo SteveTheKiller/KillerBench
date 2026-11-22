@@ -1439,8 +1439,8 @@
         </Border>
       </Grid>
     </Grid>
-    <Border x:Name="ShortcutsOverlay" Grid.RowSpan="3" Panel.ZIndex="9000" Background="#B0000000" Visibility="Collapsed" MouseLeftButtonDown="OnShortcutsBackdrop">
-      <Border x:Name="ShortcutCard" Style="{StaticResource Panel}" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="430" MaxWidth="640" MouseLeftButtonDown="OnShortcutsCard">
+    <Border x:Name="ShortcutsOverlay" Grid.RowSpan="3" Panel.ZIndex="9000" Background="#B0000000" Visibility="Collapsed" MouseLeftButtonDown="ShortcutsOverlay_Click">
+      <Border x:Name="ShortcutCardGrid" Style="{StaticResource Panel}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="32" MaxWidth="640" MouseLeftButtonDown="ShortcutsCard_Click">
         <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
           <Border Padding="24">
             <Grid>
@@ -1448,22 +1448,18 @@
               <Grid Margin="0,0,0,16">
                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                 <TextBlock Text="{DynamicResource Str_Text_Keyboard_shortcuts}" FontSize="20" VerticalAlignment="Center" TextWrapping="Wrap"/>
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12,0"><Button x:Name="ShortcutListButton" Content="{DynamicResource Str_Shortcuts_List}" Click="OnShortcutList" Margin="0,0,6,0"/><Button x:Name="ShortcutMapButton" Content="{DynamicResource Str_Shortcuts_Keyboard}" Click="OnShortcutMap"/></StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12,0"><Button x:Name="KsViewList" Style="{StaticResource KsToggle}" Content="{DynamicResource Str_Shortcuts_List}" Click="KsViewList_Click" Margin="0,0,6,0"/><Button x:Name="KsViewKeyboard" Style="{StaticResource KsToggle}" Content="{DynamicResource Str_Shortcuts_Keyboard}" Click="KsViewKeyboard_Click"/></StackPanel>
                 <TextBlock Grid.Column="2" FontSize="11" MaxWidth="210" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="12,0,24,0">
                   <Hyperlink NavigateUri="https://killerbench.net/help.html#workspace_themes-languages-and-shortcuts" RequestNavigate="AboutLink_Navigate" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None"><Run Text="{DynamicResource Str_KS_OnlineHelp}"/></Hyperlink>
                 </TextBlock>
               </Grid>
-              <ScrollViewer x:Name="ShortcutListScroll" Grid.Row="1" MaxHeight="520" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
-                            Style="{StaticResource OverlayScrollViewer}" Margin="-24,0,-24,0" Padding="24,0,24,0"><StackPanel x:Name="ShortcutListHost"/></ScrollViewer>
-              <ScrollViewer Grid.Row="1" MaxHeight="520" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
-                            Style="{StaticResource OverlayScrollViewer}" Margin="-24,0,-24,0" Padding="24,0,24,0"
-                            Visibility="{Binding Visibility, ElementName=ShortcutMapHost}">
-              <StackPanel x:Name="ShortcutMapHost" Visibility="Collapsed">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10"><Button x:Name="ShortcutBaseButton" Content="{DynamicResource Str_Shortcuts_Base}" Click="OnShortcutBase" Margin="0,0,6,0"/><Button x:Name="ShortcutCtrlButton" Content="{DynamicResource Str_Shortcuts_Ctrl}" Click="OnShortcutCtrl" Margin="0,0,6,0"/><Button x:Name="ShortcutCtrlShiftButton" Content="CTRL+SHIFT" Click="OnShortcutCtrlShift" Margin="0,0,6,0"/><Button x:Name="ShortcutAltShiftButton" Content="ALT+SHIFT" Click="OnShortcutAltShift"/></StackPanel>
-                <StackPanel x:Name="ShortcutKeyboardRows"/>
+              <ScrollViewer x:Name="KsListHostScroll" Grid.Row="1" MaxHeight="520" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                            Style="{StaticResource OverlayScrollViewer}" Margin="-24,0,-24,0" Padding="24,0,24,0"><StackPanel x:Name="KsListHost"/></ScrollViewer>
+              <StackPanel x:Name="KsMapHost" Grid.Row="1" Visibility="Collapsed">
+                <StackPanel x:Name="KsLayerTabs" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                <Viewbox Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Center"><StackPanel x:Name="KsMapRows"/></Viewbox>
               </StackPanel>
-              </ScrollViewer>
-              <Button Grid.Row="2" Content="{DynamicResource Str_Content_Close}" Click="OnShortcuts" Margin="0,16,0,0"/>
+              <Button Grid.Row="2" Content="{DynamicResource Str_Content_Close}" Click="ShortcutsClose_Click" Margin="0,16,0,0"/>
             </Grid>
           </Border>
         </Grid>

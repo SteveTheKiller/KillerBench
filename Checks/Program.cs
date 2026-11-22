@@ -1495,24 +1495,27 @@ internal static class Program
             var shortcuts = (Border)window.FindName("ShortcutsOverlay");
             ((Button)window.FindName("ShortcutButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
-            ((Button)window.FindName("ShortcutListButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ((Button)window.FindName("KsViewList")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
+            var listColumns = ((StackPanel)window.FindName("KsListHost")).Children.OfType<Grid>().Single();
             Require(shortcuts.Visibility == Visibility.Visible &&
-                ((StackPanel)window.FindName("ShortcutListHost")).Children.OfType<Grid>().Count() == 21 &&
+                listColumns.Children.OfType<StackPanel>().Sum(column => column.Children.OfType<Grid>().Count()) == 21 &&
                 ((Button)window.FindName("ShortcutButton")).ToolTip?.ToString() == KillerFamily.Layout.ShortcutHints.WithHint("Keyboard shortcuts", "F1"),
                 "Shortcut list and rail tooltip come from the shared binding table");
-            ((Button)window.FindName("ShortcutMapButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            ((Button)window.FindName("KsViewKeyboard")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
-            Require(((StackPanel)window.FindName("ShortcutMapHost")).Visibility == Visibility.Visible &&
-                ((StackPanel)window.FindName("ShortcutKeyboardRows")).Children.Count == 6 &&
-                ((Button)window.FindName("ShortcutMapButton")).Tag?.ToString() == "on",
+            Require(((StackPanel)window.FindName("KsMapHost")).Visibility == Visibility.Visible &&
+                ((StackPanel)window.FindName("KsMapRows")).Children.Count == 6 &&
+                ((Button)window.FindName("KsViewKeyboard")).Tag?.ToString() == "on",
                 "Keyboard view renders the shared bindings and records the selected view");
-            ((Button)window.FindName("ShortcutCtrlButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Button LayerTab(string caption) => ((StackPanel)window.FindName("KsLayerTabs")).Children.OfType<Button>().Single(tab => Equals(tab.Content, caption));
+            LayerTab("CTRL").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Pump();
-            Require(((Button)window.FindName("ShortcutCtrlButton")).Tag?.ToString() == "on",
+            Require(LayerTab("CTRL").Tag?.ToString() == "on",
                 "Keyboard map exposes the Ctrl layer for modified shortcuts");
             Capture(window, Path.Combine(scratch, "shortcut-keyboard.png"));
             ((Button)window.FindName("ShortcutButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Pump(); // the kit overlay collapses when its fade-out lands
             Require(shortcuts.Visibility == Visibility.Collapsed,
                 "Shortcut rail button closes the overlay without changing the workspace");
             var categoryTools = (ComboBox)window.FindName("CategoryWorkflow");

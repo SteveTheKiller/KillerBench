@@ -32,7 +32,7 @@ public partial class MainWindow
     }
 
     private static string? TileKeys(string labelKey) =>
-        ShortcutBindings.FirstOrDefault(binding => binding.LabelKey == labelKey).Keys;
+        ShortcutKeys(labelKey);
 
     private CardTile WorkbenchTile(string glyph, string labelKey, Action run, bool enabled = true, string? captionKey = null)
     {

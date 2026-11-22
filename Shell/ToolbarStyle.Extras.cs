@@ -96,7 +96,7 @@ public partial class MainWindow
     {
         string key = IconSizes.FirstOrDefault(option => option.GestureId == id).LabelKey
             ?? LabelModes.Single(option => option.GestureId == id).LabelKey;
-        gesture = ShortcutBindings.FirstOrDefault(binding => binding.LabelKey == key).Keys ?? "";
+        gesture = ShortcutKeys(key);
     }
 
     partial void OnToolbarStyleApplied()

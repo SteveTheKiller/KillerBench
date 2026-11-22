@@ -14,12 +14,19 @@ REQUIRED = {'Ctrl+Shift+O', 'Ctrl+S', 'Ctrl+E', 'Ctrl+Shift+E', 'Ctrl+F'}
 
 
 def bindings():
-    source = (ROOT / 'Shell/ShortcutsOverlay.cs').read_text(encoding='utf-8')
-    block = source.split('ShortcutBinding[] ShortcutBindings =', 1)[1].split('];', 1)[0]
+    # The app's own rows (Shell/ShortcutsOverlay.Rows.cs), then the kit's family rows
+    # (Shell/ShortcutsOverlay.cs): Film Grain, F1, F12 and Esc close the Help table.
+    family = (ROOT / 'Shell/ShortcutsOverlay.cs').read_text(encoding='utf-8')
+    app = (ROOT / 'Shell/ShortcutsOverlay.Rows.cs').read_text(encoding='utf-8')
+    blocks = [app.split('KsBinding[] KsAppRows() =>', 1)[1].split('];', 1)[0],
+              family.split('KsBinding[] KsFamilyRows =', 1)[1].split('];', 1)[0]]
     result = []
-    for keys, label, category, caps in re.findall(r'new\("([^"]+)", "([^"]+)", ShortcutCategory\.(\w+), (?:true|false)([^\n]*)\)', block):
-        layer = 'ctrlshift' if keys.startswith('Ctrl+Shift+') else 'altshift' if keys.startswith('Alt+Shift+') else 'ctrl' if keys.startswith('Ctrl+') else 'base'
-        result.append((keys, label, category.lower(), layer, re.findall(r'"([^"]+)"', caps)))
+    for block in blocks:
+        for keys, label, category, caps in re.findall(r'new\("([^"]+)",\s*"([^"]+)",\s*KsCat\.(\w+)([^\n]*)\)', block):
+            layer = 'ctrlshift' if keys.startswith('Ctrl+Shift+') else 'altshift' if keys.startswith('Alt+Shift+') else 'ctrl' if keys.startswith('Ctrl+') else 'base'
+            # The overlay names WPF keys; the Help board names the = key's cap Plus.
+            caps = ['Plus' if cap == 'Equals' else cap for cap in re.findall(r'"([^"]+)"', caps)]
+            result.append((keys, label, category.lower(), layer, caps))
     return result
 
 
