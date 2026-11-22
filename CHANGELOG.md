@@ -47,6 +47,9 @@
 - Every context menu and flyout is a family card with an icon on each row: the text box menu, the knowledge pack and sources menus, and the file picker's sort and pin menus. The rail menus open from the corner of the content pane, and the knowledge pack menu drops its two lookup rows that repeated the Run button.
 - A translation file that fails to load reports through the family dialog instead of a plain Windows message box.
 - Toolbar buttons, sidebar rows and list rows draw the film grain over their hover fill, the way menu rows and card tiles do. Trash Polka check boxes and radio wells are solid black.
+- A running scan shows as a progress bar in the footer on every page, and the part being scanned pulses on the system map.
+- Reports open with a plain verdict, the problems found and one Fix button that confirms before repairing. The full technical report sits behind a toggle.
+- Clicking a part that was already scanned opens its report instead of scanning again.
 
 ### Added
 
