@@ -1327,6 +1327,8 @@
   <sys:String x:Key="Str_BitResult_ReviewJournal">再試行前にローカル変更ジャーナルと現在の状態を確認してください。</sys:String>
   <sys:String x:Key="Str_Ui_ExportEarlierReport">以前のレポートをエクスポート: {0}</sys:String>
     <sys:String x:Key="Str_Scroll_Up">上へスクロール</sys:String>
+    <sys:String x:Key="Str_Cal_PrevMonth">前の月</sys:String>
+    <sys:String x:Key="Str_Cal_NextMonth">次の月</sys:String>
     <sys:String x:Key="Str_Scroll_Down">下へスクロール</sys:String>
     <sys:String x:Key="Str_Scroll_Left">左へスクロール</sys:String>
     <sys:String x:Key="Str_Scroll_Right">右へスクロール</sys:String>

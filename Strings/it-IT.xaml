@@ -1327,6 +1327,8 @@
   <sys:String x:Key="Str_BitResult_ReviewJournal">Esamina il diario locale delle modifiche e lo stato attuale prima di riprovare.</sys:String>
   <sys:String x:Key="Str_Ui_ExportEarlierReport">Esporta rapporto precedente: {0}</sys:String>
     <sys:String x:Key="Str_Scroll_Up">Scorri verso l'alto</sys:String>
+    <sys:String x:Key="Str_Cal_PrevMonth">Mese precedente</sys:String>
+    <sys:String x:Key="Str_Cal_NextMonth">Mese successivo</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Scorri verso il basso</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Scorri a sinistra</sys:String>
     <sys:String x:Key="Str_Scroll_Right">Scorri a destra</sys:String>

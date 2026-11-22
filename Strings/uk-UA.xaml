@@ -1326,6 +1326,8 @@
   <sys:String x:Key="Str_BitResult_ReviewJournal">Перед повторною спробою перегляньте локальний журнал змін і поточний стан.</sys:String>
   <sys:String x:Key="Str_Ui_ExportEarlierReport">Експортувати попередній звіт: {0}</sys:String>
     <sys:String x:Key="Str_Scroll_Up">Прокрутити вгору</sys:String>
+    <sys:String x:Key="Str_Cal_PrevMonth">Попередній місяць</sys:String>
+    <sys:String x:Key="Str_Cal_NextMonth">Наступний місяць</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Прокрутити вниз</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Прокрутити ліворуч</sys:String>
     <sys:String x:Key="Str_Scroll_Right">Прокрутити праворуч</sys:String>

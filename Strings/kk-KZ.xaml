@@ -1327,6 +1327,8 @@
   <sys:String x:Key="Str_BitResult_ReviewJournal">Қайталамас бұрын жергілікті өзгеріс журналын және ағымдағы күйді қараңыз.</sys:String>
   <sys:String x:Key="Str_Ui_ExportEarlierReport">Алдыңғы есепті экспорттау: {0}</sys:String>
     <sys:String x:Key="Str_Scroll_Up">Жоғары айналдыру</sys:String>
+    <sys:String x:Key="Str_Cal_PrevMonth">Алдыңғы ай</sys:String>
+    <sys:String x:Key="Str_Cal_NextMonth">Келесі ай</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Төмен айналдыру</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Солға айналдыру</sys:String>
     <sys:String x:Key="Str_Scroll_Right">Оңға айналдыру</sys:String>

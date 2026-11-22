@@ -1326,6 +1326,8 @@
   <sys:String x:Key="Str_BitResult_ReviewJournal">Review the local change journal and current state before retrying.</sys:String>
   <sys:String x:Key="Str_Ui_ExportEarlierReport">Export earlier report: {0}</sys:String>
     <sys:String x:Key="Str_Scroll_Up">Scroll up</sys:String>
+    <sys:String x:Key="Str_Cal_PrevMonth">Previous month</sys:String>
+    <sys:String x:Key="Str_Cal_NextMonth">Next month</sys:String>
     <sys:String x:Key="Str_Scroll_Down">Scroll down</sys:String>
     <sys:String x:Key="Str_Scroll_Left">Scroll left</sys:String>
     <sys:String x:Key="Str_Scroll_Right">Scroll right</sys:String>
