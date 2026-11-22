@@ -18,5 +18,7 @@
   <ItemGroup><Compile Include="../Cli/SystemRestoreCommands.cs" Link="SystemRestoreCommands.cs" /></ItemGroup>
   <!-- Friend access tests the production service types instead of shadowing them with copies. -->
   <ItemGroup><Compile Remove="UpdateServiceRelaunch.cs" /></ItemGroup>
+  <!-- Fixture projects build into their own folders; their generated sources are not part of the checks. -->
+  <ItemGroup><Compile Remove="*/bin/**;*/obj/**" /></ItemGroup>
   <ItemGroup><Compile Include="../Packaging/KillerLauncher/InstallerPrerequisitePolicy.cs" Link="InstallerPrerequisitePolicy.cs" /></ItemGroup>
 </Project>

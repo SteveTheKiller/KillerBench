@@ -263,8 +263,21 @@ internal static class DemoScreenshotChecks
                     stage = 1;
                     return;
                 }
+                // The box checks names on the picker's disk worker, so each answer is waited for on the timer.
+                var input = (TextBox)picker.FindName("NewFolderBox");
+                var error = (TextBlock)picker.FindName("NewFolderError");
+                if (stage == 1) { Enter(input, "NUL"); stage = 2; return; }
+                if (stage == 2)
+                {
+                    if (!error.IsVisible) return;
+                    Require(Directory.GetDirectories(root).Length == 0,
+                        "The shared picker rejects a Windows reserved name before creating anything.");
+                    Enter(input, "Fixture folder");
+                    stage = 3;
+                    return;
+                }
+                if (!Directory.Exists(Path.Combine(root, "Fixture folder"))) return;
                 timer.Stop();
-                CheckNames();
                 picker.Close();
             }
             catch (Exception error) { failure = error; timer.Stop(); picker.Close(); }
@@ -274,23 +287,16 @@ internal static class DemoScreenshotChecks
             timer.Start();
             picker.ShowDialog(owner);
             if (failure is not null) throw new InvalidOperationException("Shared picker behavior check failed.", failure);
-            Require(stage == 1, "The shared picker exercised its actual New folder controls.");
+            Require(stage == 3 && Directory.Exists(Path.Combine(root, "Fixture folder")),
+                "The shared picker rejects a reserved name and creates the valid fixture folder through its actual New folder controls.");
         }
         finally { timer.Stop(); if (picker.IsVisible) picker.Close(); }
 
-        void CheckNames()
+        static void Enter(TextBox input, string name)
         {
-            var input = (TextBox)picker.FindName("NewFolderBox");
-            var error = (TextBlock)picker.FindName("NewFolderError");
-            input.Text = "NUL";
+            input.Text = name;
             input.RaiseEvent(new System.Windows.Input.KeyEventArgs(System.Windows.Input.Keyboard.PrimaryDevice,
                 PresentationSource.FromVisual(input), 0, System.Windows.Input.Key.Enter) { RoutedEvent = System.Windows.Input.Keyboard.KeyDownEvent });
-            Require(error.IsVisible && Directory.GetDirectories(root).Length == 0,
-                "The shared picker rejects a Windows reserved name before creating anything.");
-            input.Text = "Fixture folder";
-            input.RaiseEvent(new System.Windows.Input.KeyEventArgs(System.Windows.Input.Keyboard.PrimaryDevice,
-                PresentationSource.FromVisual(input), 0, System.Windows.Input.Key.Enter) { RoutedEvent = System.Windows.Input.Keyboard.KeyDownEvent });
-            Require(Directory.Exists(Path.Combine(root, "Fixture folder")), "The shared picker creates the valid fixture folder.");
         }
     }
 

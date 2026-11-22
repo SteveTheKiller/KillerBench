@@ -45,7 +45,11 @@ internal static class RailMenuGeometryChecks
                         double menuScale = visible.Width / card.ActualWidth;
                         expectedLeft = Math.Clamp(expectedLeft, work.Left + card.Margin.Left * menuScale,
                             Math.Max(work.Left + card.Margin.Left * menuScale, work.Right - visible.Width - card.Margin.Right * menuScale));
-                        double expectedTop = visible.Height > paneBounds.Height ? paneBounds.Top : paneBounds.Bottom - 8 * pixel - visible.Height;
+                        // The kit's rule: the foot sits in the pane's corner, and a menu taller than the pane rises past
+                        // its top, stopping 8px inside the window's top.
+                        var rootElement = (FrameworkElement)window.Content;
+                        double windowTop = rootElement.PointToScreen(new Point()).Y + 8 * pixel;
+                        double expectedTop = Math.Max(windowTop, paneBounds.Bottom - 8 * pixel - visible.Height);
                         expectedTop = Math.Clamp(expectedTop, work.Top + card.Margin.Top * menuScale,
                             Math.Max(work.Top + card.Margin.Top * menuScale, work.Bottom - visible.Height - card.Margin.Bottom * menuScale));
                         // Compare rendered coordinates independently of the placement callback.
