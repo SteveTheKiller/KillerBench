@@ -1,6 +1,6 @@
 # KillerBench Changelog
 
-## [1.1.0] - Unreleased
+## [1.1.0] - 2026-11-22
 
 1.1.0 introduces a graphical diagnostic workspace alongside improvements to captures, report exports, keyboard access, translations and update recovery.
 
