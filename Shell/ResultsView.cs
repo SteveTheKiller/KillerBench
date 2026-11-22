@@ -19,8 +19,8 @@ public partial class MainWindow
         int passed = result.Checks.Count(check => check.EffectiveState == CheckState.Clear);
         var fixes = RunnableRepairs(result);
         bool canFix = fixes.Length > 0;
-        bool repaired = result.Repairs.Count > 0 && result.Repairs.All(Repairs.IsVerified) ||
-            result.Checks.Any(check => check.Name == "Repair verification" && check.EffectiveState == CheckState.Clear);
+        // Fixed means a repair actually ran and verified; a check that merely says so is not enough.
+        bool repaired = result.Repairs.Count > 0 && result.Repairs.All(Repairs.IsVerified);
         // Count what Fix will actually repair, the same list the confirm step shows.
         int fixableCount = fixes.Length;
 
@@ -42,7 +42,7 @@ public partial class MainWindow
         else if (unknown.Length > 0)
         {
             headline = LocalizedText.Get("Str_Results_Incomplete");
-            explain = LocalizedText.Format("Str_Results_IncompleteDetail", unknown.Length);
+            explain = unknown.Length == 1 ? LocalizedText.Get("Str_Results_IncompleteDetailOne") : LocalizedText.Format("Str_Results_IncompleteDetail", unknown.Length);
             tone = "MutedTextBrush";
         }
         else
@@ -99,7 +99,7 @@ public partial class MainWindow
         if (problems.Length + unknown.Length > 12)
             host.Children.Add(Body(LocalizedText.Format("Str_Report_MoreReviewItems", problems.Length + unknown.Length - 12), 12, new Thickness(0, 0, 0, 8), "MutedTextBrush"));
         if (passed > 0 && problems.Length + unknown.Length > 0)
-            host.Children.Add(Body(LocalizedText.Format("Str_Results_Passed", passed), 12, new Thickness(0, 2, 0, 4), "MutedTextBrush"));
+            host.Children.Add(Body(passed == 1 ? LocalizedText.Get("Str_Results_PassedOne") : LocalizedText.Format("Str_Results_Passed", passed), 12, new Thickness(0, 2, 0, 4), "MutedTextBrush"));
     }
 
     // Fix asks once, in place: what will change, then Fix now or Cancel. Nothing runs until Fix now.

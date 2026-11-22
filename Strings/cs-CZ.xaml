@@ -815,6 +815,7 @@
   <sys:String x:Key="Str_Results_FixedDetail">Oprava proběhla a následná kontrola dopadla dobře.</sys:String>
   <sys:String x:Key="Str_Results_Incomplete">Zatím nebylo nic nalezeno</sys:String>
   <sys:String x:Key="Str_Results_IncompleteDetail">Některé kontroly ({0}) se nepodařilo dokončit, takže zatím nejde o úplné potvrzení.</sys:String>
+  <sys:String x:Key="Str_Results_IncompleteDetailOne">Jednu kontrolu se nepodařilo dokončit, takže zatím nejde o úplné potvrzení.</sys:String>
   <sys:String x:Key="Str_Results_AllGood">Vše je v pořádku</sys:String>
   <sys:String x:Key="Str_Results_AllGoodDetail">Úspěšné kontroly: {0}. Nic není potřeba opravovat.</sys:String>
   <sys:String x:Key="Str_Results_Checked">{0}, zkontrolováno v {1}</sys:String>
@@ -830,6 +831,7 @@
   <sys:String x:Key="Str_Results_StateLook">Potřebuje pohled</sys:String>
   <sys:String x:Key="Str_Results_StateUnknown">Nelze zkontrolovat</sys:String>
   <sys:String x:Key="Str_Results_Passed">Další úspěšné kontroly: {0}.</sys:String>
+  <sys:String x:Key="Str_Results_PassedOne">Další úspěšná kontrola: 1.</sys:String>
   <sys:String x:Key="Str_Results_ShowDetails">Technické podrobnosti</sys:String>
   <sys:String x:Key="Str_Results_HideDetails">Skrýt technické podrobnosti</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">Dokončené kontroly nezjistily žádný problém. Než budete počítač považovat za v pořádku, zkontrolujte neúplné pokrytí.</sys:String>

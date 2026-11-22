@@ -815,6 +815,7 @@
   <sys:String x:Key="Str_Results_FixedDetail">La correzione è stata applicata e il controllo successivo è risultato a posto.</sys:String>
   <sys:String x:Key="Str_Results_Incomplete">Nessun problema trovato finora</sys:String>
   <sys:String x:Key="Str_Results_IncompleteDetail">{0} controlli non sono stati completati, quindi non è ancora tutto confermato.</sys:String>
+  <sys:String x:Key="Str_Results_IncompleteDetailOne">1 controllo non è stato completato, quindi non è ancora tutto confermato.</sys:String>
   <sys:String x:Key="Str_Results_AllGood">Tutto a posto</sys:String>
   <sys:String x:Key="Str_Results_AllGoodDetail">{0} controlli superati. Niente da risolvere.</sys:String>
   <sys:String x:Key="Str_Results_Checked">{0}, controllato alle {1}</sys:String>
@@ -830,6 +831,7 @@
   <sys:String x:Key="Str_Results_StateLook">Da controllare</sys:String>
   <sys:String x:Key="Str_Results_StateUnknown">Controllo non riuscito</sys:String>
   <sys:String x:Key="Str_Results_Passed">Altri {0} controlli superati.</sys:String>
+  <sys:String x:Key="Str_Results_PassedOne">Un altro controllo superato.</sys:String>
   <sys:String x:Key="Str_Results_ShowDetails">Dettagli tecnici</sys:String>
   <sys:String x:Key="Str_Results_HideDetails">Nascondi dettagli tecnici</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">I controlli completati non hanno accertato alcun problema. Esamina la copertura incompleta prima di considerare il computer in buono stato.</sys:String>

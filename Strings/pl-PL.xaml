@@ -815,6 +815,7 @@
   <sys:String x:Key="Str_Results_FixedDetail">Naprawa została wykonana, a ponowne sprawdzenie wypadło dobrze.</sys:String>
   <sys:String x:Key="Str_Results_Incomplete">Na razie nie znaleziono problemów</sys:String>
   <sys:String x:Key="Str_Results_IncompleteDetail">Nie udało się dokończyć części sprawdzeń ({0}), więc to jeszcze nie jest pełne potwierdzenie.</sys:String>
+  <sys:String x:Key="Str_Results_IncompleteDetailOne">Nie udało się dokończyć jednego sprawdzenia, więc to jeszcze nie jest pełne potwierdzenie.</sys:String>
   <sys:String x:Key="Str_Results_AllGood">Wszystko w porządku</sys:String>
   <sys:String x:Key="Str_Results_AllGoodDetail">Udane sprawdzenia: {0}. Nic nie wymaga naprawy.</sys:String>
   <sys:String x:Key="Str_Results_Checked">{0}, sprawdzono o {1}</sys:String>
@@ -830,6 +831,7 @@
   <sys:String x:Key="Str_Results_StateLook">Do sprawdzenia</sys:String>
   <sys:String x:Key="Str_Results_StateUnknown">Nie udało się sprawdzić</sys:String>
   <sys:String x:Key="Str_Results_Passed">Pozostałe udane sprawdzenia: {0}.</sys:String>
+  <sys:String x:Key="Str_Results_PassedOne">Jeszcze jedno sprawdzenie zakończyło się powodzeniem.</sys:String>
   <sys:String x:Key="Str_Results_ShowDetails">Szczegóły techniczne</sys:String>
   <sys:String x:Key="Str_Results_HideDetails">Ukryj szczegóły techniczne</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">Zakończone kontrole nie wykazały żadnego problemu. Przejrzyj niepełne pokrycie, zanim uznasz komputer za sprawny.</sys:String>

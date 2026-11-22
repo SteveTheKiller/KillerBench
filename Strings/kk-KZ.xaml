@@ -815,6 +815,7 @@
   <sys:String x:Key="Str_Results_FixedDetail">Түзету орындалды, кейінгі тексеру де сәтті өтті.</sys:String>
   <sys:String x:Key="Str_Results_Incomplete">Әзірге ақау табылған жоқ</sys:String>
   <sys:String x:Key="Str_Results_IncompleteDetail">{0} тексеру аяқталмады, сондықтан бәрі дұрыс деп әлі айту ерте.</sys:String>
+  <sys:String x:Key="Str_Results_IncompleteDetailOne">1 тексеру аяқталмады, сондықтан бәрі дұрыс деп әлі айту ерте.</sys:String>
   <sys:String x:Key="Str_Results_AllGood">Бәрі дұрыс</sys:String>
   <sys:String x:Key="Str_Results_AllGoodDetail">{0} тексеру сәтті өтті. Түзететін ештеңе жоқ.</sys:String>
   <sys:String x:Key="Str_Results_Checked">{0}, {1} кезінде тексерілді</sys:String>
@@ -830,6 +831,7 @@
   <sys:String x:Key="Str_Results_StateLook">Қарап шығу керек</sys:String>
   <sys:String x:Key="Str_Results_StateUnknown">Тексеру мүмкін болмады</sys:String>
   <sys:String x:Key="Str_Results_Passed">Басқа {0} тексеру сәтті өтті.</sys:String>
+  <sys:String x:Key="Str_Results_PassedOne">Басқа 1 тексеру сәтті өтті.</sys:String>
   <sys:String x:Key="Str_Results_ShowDetails">Техникалық мәліметтер</sys:String>
   <sys:String x:Key="Str_Results_HideDetails">Техникалық мәліметтерді жасыру</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">Аяқталған тексерулер мәселе анықтамады. Компьютерді жарамды деп санамас бұрын толық емес қамтуды қарап шығыңыз.</sys:String>

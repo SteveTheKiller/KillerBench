@@ -815,6 +815,7 @@
   <sys:String x:Key="Str_Results_FixedDetail">修复已运行，之后的检查一切正常。</sys:String>
   <sys:String x:Key="Str_Results_Incomplete">目前没有发现问题</sys:String>
   <sys:String x:Key="Str_Results_IncompleteDetail">有 {0} 项检查未能完成，所以还不能确定一切正常。</sys:String>
+  <sys:String x:Key="Str_Results_IncompleteDetailOne">有 1 项检查未能完成，所以还不能确定一切正常。</sys:String>
   <sys:String x:Key="Str_Results_AllGood">一切正常</sys:String>
   <sys:String x:Key="Str_Results_AllGoodDetail">{0} 项检查通过。没有需要修复的问题。</sys:String>
   <sys:String x:Key="Str_Results_Checked">{0}，检查于 {1}</sys:String>
@@ -830,6 +831,7 @@
   <sys:String x:Key="Str_Results_StateLook">需要查看</sys:String>
   <sys:String x:Key="Str_Results_StateUnknown">无法检查</sys:String>
   <sys:String x:Key="Str_Results_Passed">其他 {0} 项检查通过。</sys:String>
+  <sys:String x:Key="Str_Results_PassedOne">其他 1 项检查通过。</sys:String>
   <sys:String x:Key="Str_Results_ShowDetails">技术细节</sys:String>
   <sys:String x:Key="Str_Results_HideDetails">隐藏技术细节</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">已完成的检查未确定任何问题。在认为这台电脑运行正常之前，请先查看未完整覆盖的部分。</sys:String>

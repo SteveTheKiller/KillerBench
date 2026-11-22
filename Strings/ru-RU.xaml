@@ -815,6 +815,7 @@
   <sys:String x:Key="Str_Results_FixedDetail">Исправление выполнено, и повторная проверка прошла успешно.</sys:String>
   <sys:String x:Key="Str_Results_Incomplete">Пока ничего плохого не найдено</sys:String>
   <sys:String x:Key="Str_Results_IncompleteDetail">Не удалось завершить проверок: {0}, поэтому полной уверенности пока нет.</sys:String>
+  <sys:String x:Key="Str_Results_IncompleteDetailOne">Одну проверку не удалось завершить, поэтому полной уверенности пока нет.</sys:String>
   <sys:String x:Key="Str_Results_AllGood">Всё в порядке</sys:String>
   <sys:String x:Key="Str_Results_AllGoodDetail">Пройдено проверок: {0}. Ничего исправлять не нужно.</sys:String>
   <sys:String x:Key="Str_Results_Checked">{0}, проверено в {1}</sys:String>
@@ -830,6 +831,7 @@
   <sys:String x:Key="Str_Results_StateLook">Стоит посмотреть</sys:String>
   <sys:String x:Key="Str_Results_StateUnknown">Не удалось проверить</sys:String>
   <sys:String x:Key="Str_Results_Passed">Других пройденных проверок: {0}.</sys:String>
+  <sys:String x:Key="Str_Results_PassedOne">Ещё одна проверка пройдена.</sys:String>
   <sys:String x:Key="Str_Results_ShowDetails">Технические подробности</sys:String>
   <sys:String x:Key="Str_Results_HideDetails">Скрыть технические подробности</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">Завершённые проверки не выявили проблем. Прежде чем считать компьютер исправным, проверьте неполное покрытие.</sys:String>

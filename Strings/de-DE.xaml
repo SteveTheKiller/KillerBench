@@ -815,6 +815,7 @@
   <sys:String x:Key="Str_Results_FixedDetail">Die Reparatur lief, und die Prüfung war danach in Ordnung.</sys:String>
   <sys:String x:Key="Str_Results_Incomplete">Bisher nichts Auffälliges gefunden</sys:String>
   <sys:String x:Key="Str_Results_IncompleteDetail">{0} Prüfungen konnten nicht abgeschlossen werden, daher ist noch nicht alles bestätigt.</sys:String>
+  <sys:String x:Key="Str_Results_IncompleteDetailOne">1 Prüfung konnte nicht abgeschlossen werden, daher ist noch nicht alles bestätigt.</sys:String>
   <sys:String x:Key="Str_Results_AllGood">Alles in Ordnung</sys:String>
   <sys:String x:Key="Str_Results_AllGoodDetail">{0} Prüfungen bestanden. Nichts muss behoben werden.</sys:String>
   <sys:String x:Key="Str_Results_Checked">{0}, geprüft um {1}</sys:String>
@@ -830,6 +831,7 @@
   <sys:String x:Key="Str_Results_StateLook">Bitte ansehen</sys:String>
   <sys:String x:Key="Str_Results_StateUnknown">Nicht prüfbar</sys:String>
   <sys:String x:Key="Str_Results_Passed">{0} weitere Prüfungen bestanden.</sys:String>
+  <sys:String x:Key="Str_Results_PassedOne">1 weitere Prüfung bestanden.</sys:String>
   <sys:String x:Key="Str_Results_ShowDetails">Technische Details</sys:String>
   <sys:String x:Key="Str_Results_HideDetails">Technische Details ausblenden</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">In den abgeschlossenen Prüfungen wurde kein Problem festgestellt. Unvollständige Abdeckung prüfen, bevor der Computer als fehlerfrei gilt.</sys:String>

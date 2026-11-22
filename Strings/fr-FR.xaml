@@ -815,6 +815,7 @@
   <sys:String x:Key="Str_Results_FixedDetail">La correction a été appliquée et la vérification est ensuite revenue sans problème.</sys:String>
   <sys:String x:Key="Str_Results_Incomplete">Rien d'anormal pour l'instant</sys:String>
   <sys:String x:Key="Str_Results_IncompleteDetail">{0} vérifications n'ont pas pu se terminer, ce n'est donc pas encore un bilan complet.</sys:String>
+  <sys:String x:Key="Str_Results_IncompleteDetailOne">1 vérification n'a pas pu se terminer, ce n'est donc pas encore un bilan complet.</sys:String>
   <sys:String x:Key="Str_Results_AllGood">Tout est en ordre</sys:String>
   <sys:String x:Key="Str_Results_AllGoodDetail">{0} vérifications réussies. Rien à corriger.</sys:String>
   <sys:String x:Key="Str_Results_Checked">{0}, vérifié à {1}</sys:String>
@@ -830,6 +831,7 @@
   <sys:String x:Key="Str_Results_StateLook">À regarder</sys:String>
   <sys:String x:Key="Str_Results_StateUnknown">Vérification impossible</sys:String>
   <sys:String x:Key="Str_Results_Passed">{0} autres vérifications réussies.</sys:String>
+  <sys:String x:Key="Str_Results_PassedOne">1 autre vérification réussie.</sys:String>
   <sys:String x:Key="Str_Results_ShowDetails">Détails techniques</sys:String>
   <sys:String x:Key="Str_Results_HideDetails">Masquer les détails techniques</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">Aucun problème n'a été établi par les vérifications terminées. Examinez la couverture incomplète avant de considérer l'ordinateur comme sain.</sys:String>

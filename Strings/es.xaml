@@ -815,6 +815,7 @@
   <sys:String x:Key="Str_Results_FixedDetail">El arreglo se aplicó y la comprobación salió bien después.</sys:String>
   <sys:String x:Key="Str_Results_Incomplete">Nada mal por ahora</sys:String>
   <sys:String x:Key="Str_Results_IncompleteDetail">{0} comprobaciones no pudieron terminar, así que todavía no se puede dar todo por bueno.</sys:String>
+  <sys:String x:Key="Str_Results_IncompleteDetailOne">1 comprobación no pudo terminar, así que todavía no se puede dar todo por bueno.</sys:String>
   <sys:String x:Key="Str_Results_AllGood">Todo está bien</sys:String>
   <sys:String x:Key="Str_Results_AllGoodDetail">{0} comprobaciones superadas. No hay nada que arreglar.</sys:String>
   <sys:String x:Key="Str_Results_Checked">{0}, comprobado a las {1}</sys:String>
@@ -830,6 +831,7 @@
   <sys:String x:Key="Str_Results_StateLook">Revísalo</sys:String>
   <sys:String x:Key="Str_Results_StateUnknown">No se pudo comprobar</sys:String>
   <sys:String x:Key="Str_Results_Passed">Otras {0} comprobaciones superadas.</sys:String>
+  <sys:String x:Key="Str_Results_PassedOne">Otra comprobación superada.</sys:String>
   <sys:String x:Key="Str_Results_ShowDetails">Detalles técnicos</sys:String>
   <sys:String x:Key="Str_Results_HideDetails">Ocultar detalles técnicos</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">Las comprobaciones completadas no establecieron ningún problema. Revisa la cobertura incompleta antes de considerar que el equipo está en buen estado.</sys:String>

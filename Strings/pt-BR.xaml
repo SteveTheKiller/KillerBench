@@ -814,6 +814,7 @@
   <sys:String x:Key="Str_Results_FixedDetail">A correção foi aplicada e a verificação deu tudo certo depois.</sys:String>
   <sys:String x:Key="Str_Results_Incomplete">Nada de errado até agora</sys:String>
   <sys:String x:Key="Str_Results_IncompleteDetail">{0} verificações não terminaram, então ainda não dá para dizer que está tudo bem.</sys:String>
+  <sys:String x:Key="Str_Results_IncompleteDetailOne">1 verificação não terminou, então ainda não dá para dizer que está tudo bem.</sys:String>
   <sys:String x:Key="Str_Results_AllGood">Tudo certo</sys:String>
   <sys:String x:Key="Str_Results_AllGoodDetail">{0} verificações aprovadas. Nada precisa de correção.</sys:String>
   <sys:String x:Key="Str_Results_Checked">{0}, verificado às {1}</sys:String>
@@ -829,6 +830,7 @@
   <sys:String x:Key="Str_Results_StateLook">Precisa de uma olhada</sys:String>
   <sys:String x:Key="Str_Results_StateUnknown">Não foi possível verificar</sys:String>
   <sys:String x:Key="Str_Results_Passed">Outras {0} verificações aprovadas.</sys:String>
+  <sys:String x:Key="Str_Results_PassedOne">Outra verificação aprovada.</sys:String>
   <sys:String x:Key="Str_Results_ShowDetails">Detalhes técnicos</sys:String>
   <sys:String x:Key="Str_Results_HideDetails">Ocultar detalhes técnicos</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">As verificações concluídas não estabeleceram nenhum problema. Revise a cobertura incompleta antes de considerar o computador saudável.</sys:String>

@@ -822,6 +822,7 @@
   <sys:String x:Key="Str_Results_FixedDetail">The fix ran, and the check came back clean afterward.</sys:String>
   <sys:String x:Key="Str_Results_Incomplete">Nothing wrong found so far</sys:String>
   <sys:String x:Key="Str_Results_IncompleteDetail">{0} checks couldn't finish, so this isn't a clean bill of health yet.</sys:String>
+  <sys:String x:Key="Str_Results_IncompleteDetailOne">1 check couldn't finish, so this isn't a clean bill of health yet.</sys:String>
   <sys:String x:Key="Str_Results_AllGood">Everything checked out</sys:String>
   <sys:String x:Key="Str_Results_AllGoodDetail">{0} checks passed. Nothing needs fixing.</sys:String>
   <sys:String x:Key="Str_Results_Checked">{0}, checked at {1}</sys:String>
@@ -837,6 +838,7 @@
   <sys:String x:Key="Str_Results_StateLook">Needs a look</sys:String>
   <sys:String x:Key="Str_Results_StateUnknown">Couldn't check</sys:String>
   <sys:String x:Key="Str_Results_Passed">{0} other checks passed.</sys:String>
+  <sys:String x:Key="Str_Results_PassedOne">1 other check passed.</sys:String>
   <sys:String x:Key="Str_Results_ShowDetails">Technical details</sys:String>
   <sys:String x:Key="Str_Results_HideDetails">Hide technical details</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">No problem was established in the completed checks. Review incomplete coverage before treating the computer as healthy.</sys:String>

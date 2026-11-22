@@ -814,6 +814,7 @@
   <sys:String x:Key="Str_Results_FixedDetail">Rettingen ble kjørt, og sjekken var i orden etterpå.</sys:String>
   <sys:String x:Key="Str_Results_Incomplete">Ingenting galt funnet så langt</sys:String>
   <sys:String x:Key="Str_Results_IncompleteDetail">{0} sjekker kunne ikke fullføres, så alt er ikke bekreftet ennå.</sys:String>
+  <sys:String x:Key="Str_Results_IncompleteDetailOne">1 sjekk kunne ikke fullføres, så alt er ikke bekreftet ennå.</sys:String>
   <sys:String x:Key="Str_Results_AllGood">Alt er i orden</sys:String>
   <sys:String x:Key="Str_Results_AllGoodDetail">{0} sjekker bestått. Ingenting trenger å fikses.</sys:String>
   <sys:String x:Key="Str_Results_Checked">{0}, sjekket kl. {1}</sys:String>
@@ -829,6 +830,7 @@
   <sys:String x:Key="Str_Results_StateLook">Bør sees på</sys:String>
   <sys:String x:Key="Str_Results_StateUnknown">Kunne ikke sjekke</sys:String>
   <sys:String x:Key="Str_Results_Passed">{0} andre sjekker bestått.</sys:String>
+  <sys:String x:Key="Str_Results_PassedOne">1 annen sjekk bestått.</sys:String>
   <sys:String x:Key="Str_Results_ShowDetails">Tekniske detaljer</sys:String>
   <sys:String x:Key="Str_Results_HideDetails">Skjul tekniske detaljer</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">De fullførte kontrollene fastslo ingen problemer. Gjennomgå ufullstendig dekning før du regner datamaskinen som frisk.</sys:String>

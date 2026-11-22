@@ -815,6 +815,7 @@
   <sys:String x:Key="Str_Results_FixedDetail">修正を実行し、その後のチェックで問題はありませんでした。</sys:String>
   <sys:String x:Key="Str_Results_Incomplete">今のところ問題は見つかっていません</sys:String>
   <sys:String x:Key="Str_Results_IncompleteDetail">{0} 件のチェックが完了しなかったため、まだすべて問題ないとは言えません。</sys:String>
+  <sys:String x:Key="Str_Results_IncompleteDetailOne">1 件のチェックが完了しなかったため、まだすべて問題ないとは言えません。</sys:String>
   <sys:String x:Key="Str_Results_AllGood">すべて問題ありません</sys:String>
   <sys:String x:Key="Str_Results_AllGoodDetail">{0} 件のチェックに合格しました。修正が必要なものはありません。</sys:String>
   <sys:String x:Key="Str_Results_Checked">{0}、{1} にチェック</sys:String>
@@ -830,6 +831,7 @@
   <sys:String x:Key="Str_Results_StateLook">確認が必要</sys:String>
   <sys:String x:Key="Str_Results_StateUnknown">チェックできませんでした</sys:String>
   <sys:String x:Key="Str_Results_Passed">ほかに {0} 件のチェックに合格しました。</sys:String>
+  <sys:String x:Key="Str_Results_PassedOne">ほかに 1 件のチェックに合格しました。</sys:String>
   <sys:String x:Key="Str_Results_ShowDetails">技術的な詳細</sys:String>
   <sys:String x:Key="Str_Results_HideDetails">技術的な詳細を隠す</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">完了したチェックでは問題は確認されませんでした。コンピューターが正常であるとみなす前に、不完全な範囲を確認してください。</sys:String>

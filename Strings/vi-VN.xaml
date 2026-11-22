@@ -814,6 +814,7 @@
   <sys:String x:Key="Str_Results_FixedDetail">Bản sửa đã chạy và lần kiểm tra sau đó không còn lỗi.</sys:String>
   <sys:String x:Key="Str_Results_Incomplete">Chưa thấy gì bất thường</sys:String>
   <sys:String x:Key="Str_Results_IncompleteDetail">{0} mục kiểm tra chưa chạy xong, nên chưa thể khẳng định mọi thứ đều ổn.</sys:String>
+  <sys:String x:Key="Str_Results_IncompleteDetailOne">1 mục kiểm tra chưa chạy xong, nên chưa thể khẳng định mọi thứ đều ổn.</sys:String>
   <sys:String x:Key="Str_Results_AllGood">Mọi thứ đều ổn</sys:String>
   <sys:String x:Key="Str_Results_AllGoodDetail">{0} mục kiểm tra đạt. Không có gì cần sửa.</sys:String>
   <sys:String x:Key="Str_Results_Checked">{0}, kiểm tra lúc {1}</sys:String>
@@ -829,6 +830,7 @@
   <sys:String x:Key="Str_Results_StateLook">Cần xem qua</sys:String>
   <sys:String x:Key="Str_Results_StateUnknown">Không kiểm tra được</sys:String>
   <sys:String x:Key="Str_Results_Passed">{0} mục kiểm tra khác đạt.</sys:String>
+  <sys:String x:Key="Str_Results_PassedOne">1 mục kiểm tra khác đạt.</sys:String>
   <sys:String x:Key="Str_Results_ShowDetails">Chi tiết kỹ thuật</sys:String>
   <sys:String x:Key="Str_Results_HideDetails">Ẩn chi tiết kỹ thuật</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">Các kiểm tra đã hoàn tất không xác lập được vấn đề nào. Hãy xem lại phần phạm vi chưa đầy đủ trước khi coi máy tính là ổn.</sys:String>

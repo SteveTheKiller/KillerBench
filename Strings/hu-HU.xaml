@@ -815,6 +815,7 @@
   <sys:String x:Key="Str_Results_FixedDetail">A javítás lefutott, és az ellenőrzés utána rendben volt.</sys:String>
   <sys:String x:Key="Str_Results_Incomplete">Eddig nem található hiba</sys:String>
   <sys:String x:Key="Str_Results_IncompleteDetail">{0} ellenőrzés nem tudott befejeződni, így még nem biztos, hogy minden rendben van.</sys:String>
+  <sys:String x:Key="Str_Results_IncompleteDetailOne">1 ellenőrzés nem tudott befejeződni, így még nem biztos, hogy minden rendben van.</sys:String>
   <sys:String x:Key="Str_Results_AllGood">Minden rendben</sys:String>
   <sys:String x:Key="Str_Results_AllGoodDetail">{0} ellenőrzés sikeres. Semmit nem kell javítani.</sys:String>
   <sys:String x:Key="Str_Results_Checked">{0}, ellenőrizve: {1}</sys:String>
@@ -830,6 +831,7 @@
   <sys:String x:Key="Str_Results_StateLook">Nézze meg</sys:String>
   <sys:String x:Key="Str_Results_StateUnknown">Nem ellenőrizhető</sys:String>
   <sys:String x:Key="Str_Results_Passed">További {0} ellenőrzés sikeres.</sys:String>
+  <sys:String x:Key="Str_Results_PassedOne">További 1 ellenőrzés sikeres.</sys:String>
   <sys:String x:Key="Str_Results_ShowDetails">Technikai részletek</sys:String>
   <sys:String x:Key="Str_Results_HideDetails">Technikai részletek elrejtése</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">A befejezett ellenőrzések nem állapítottak meg problémát. Mielőtt egészségesnek tekintené a gépet, tekintse át a hiányos lefedettséget.</sys:String>

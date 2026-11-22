@@ -814,6 +814,7 @@
   <sys:String x:Key="Str_Results_FixedDetail">Popravek se je izvedel in preverjanje je bilo nato v redu.</sys:String>
   <sys:String x:Key="Str_Results_Incomplete">Zaenkrat ni najdenih težav</sys:String>
   <sys:String x:Key="Str_Results_IncompleteDetail">Nekaterih preverjanj ({0}) ni bilo mogoče dokončati, zato še ni vse potrjeno.</sys:String>
+  <sys:String x:Key="Str_Results_IncompleteDetailOne">Enega preverjanja ni bilo mogoče dokončati, zato še ni vse potrjeno.</sys:String>
   <sys:String x:Key="Str_Results_AllGood">Vse je v redu</sys:String>
   <sys:String x:Key="Str_Results_AllGoodDetail">Uspešna preverjanja: {0}. Nič ni treba popraviti.</sys:String>
   <sys:String x:Key="Str_Results_Checked">{0}, preverjeno ob {1}</sys:String>
@@ -829,6 +830,7 @@
   <sys:String x:Key="Str_Results_StateLook">Za ogled</sys:String>
   <sys:String x:Key="Str_Results_StateUnknown">Ni bilo mogoče preveriti</sys:String>
   <sys:String x:Key="Str_Results_Passed">Druga uspešna preverjanja: {0}.</sys:String>
+  <sys:String x:Key="Str_Results_PassedOne">Še eno preverjanje je uspešno.</sys:String>
   <sys:String x:Key="Str_Results_ShowDetails">Tehnične podrobnosti</sys:String>
   <sys:String x:Key="Str_Results_HideDetails">Skrij tehnične podrobnosti</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">Dokončana preverjanja niso potrdila težave. Preden računalnik označite kot brezhiben, preglejte nepopolno pokritost.</sys:String>

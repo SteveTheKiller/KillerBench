@@ -814,6 +814,7 @@
   <sys:String x:Key="Str_Results_FixedDetail">Виправлення виконано, і повторна перевірка пройшла успішно.</sys:String>
   <sys:String x:Key="Str_Results_Incomplete">Поки нічого поганого не знайдено</sys:String>
   <sys:String x:Key="Str_Results_IncompleteDetail">Не вдалося завершити перевірок: {0}, тож повної впевненості поки немає.</sys:String>
+  <sys:String x:Key="Str_Results_IncompleteDetailOne">Одну перевірку не вдалося завершити, тож повної впевненості поки немає.</sys:String>
   <sys:String x:Key="Str_Results_AllGood">Усе гаразд</sys:String>
   <sys:String x:Key="Str_Results_AllGoodDetail">Пройдено перевірок: {0}. Нічого виправляти не потрібно.</sys:String>
   <sys:String x:Key="Str_Results_Checked">{0}, перевірено о {1}</sys:String>
@@ -829,6 +830,7 @@
   <sys:String x:Key="Str_Results_StateLook">Варто переглянути</sys:String>
   <sys:String x:Key="Str_Results_StateUnknown">Не вдалося перевірити</sys:String>
   <sys:String x:Key="Str_Results_Passed">Інших пройдених перевірок: {0}.</sys:String>
+  <sys:String x:Key="Str_Results_PassedOne">Ще одну перевірку пройдено.</sys:String>
   <sys:String x:Key="Str_Results_ShowDetails">Технічні подробиці</sys:String>
   <sys:String x:Key="Str_Results_HideDetails">Сховати технічні подробиці</sys:String>
   <sys:String x:Key="Str_Report_NoProblem">Завершені перевірки не виявили проблем. Перш ніж вважати комп'ютер справним, перегляньте неповне охоплення.</sys:String>
