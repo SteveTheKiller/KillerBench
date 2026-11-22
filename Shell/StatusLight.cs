@@ -6,7 +6,9 @@ namespace KillerBench.Shell;
 
 public partial class MainWindow
 {
-    private async void OnMainGo(object sender, RoutedEventArgs e)
+    private async void OnMainGo(object sender, RoutedEventArgs e) => await StartMainWorkflowAsync(sender, e);
+
+    private async System.Threading.Tasks.Task StartMainWorkflowAsync(object sender, RoutedEventArgs e)
     {
         if (readCancellation is not null) return;
         if (MainWorkflow.SelectedItem is not WorkflowDefinition selected) return;

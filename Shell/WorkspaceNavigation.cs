@@ -57,18 +57,31 @@ public partial class MainWindow
             && SymptomForPart(item.DataContext) is { } symptom)
         {
             e.Handled = true;
-            RunSymptom(symptom, sender, e);
+            OpenOrRunPart((ToolCategory)item.DataContext, symptom, sender, e);
             return;
         }
         OnReopenSelected(sender, e);
     }
 
+    // A part that already ran opens its result; a fresh part runs its check.
+    private void OpenOrRunPart(ToolCategory part, GuidedSymptom symptom, object sender, RoutedEventArgs e)
+    {
+        if (homeScanPart is not null) return;
+        if (partSources.ContainsKey(part.Id))
+        {
+            SystemAreas.SelectedItem = part;
+            ShowAreaEvidence();
+            return;
+        }
+        RunSymptom(symptom, sender, e);
+    }
+
     private void OnMachinePartKey(object sender, System.Windows.Input.KeyEventArgs e)
     {
         if (e.Key is not (System.Windows.Input.Key.Enter or System.Windows.Input.Key.Space)) return;
-        if (SymptomForPart(SystemAreas.SelectedItem) is not { } symptom) return;
+        if (SymptomForPart(SystemAreas.SelectedItem) is not { } symptom || SystemAreas.SelectedItem is not ToolCategory part) return;
         e.Handled = true;
-        RunSymptom(symptom, sender, e);
+        OpenOrRunPart(part, symptom, sender, e);
     }
 
     // Problem parts name the problem on hover and to screen readers, in plain words.
@@ -247,8 +260,13 @@ public partial class MainWindow
         BuildAreaSummary(area, null, null);
     }
 
-    private KillerBench.Engine.Evidence.TextEvidence? LatestAreaSource(ToolCategory area) =>
-        sources.LastOrDefault(source => workflowSummaries.TryGetValue(source, out var result) && area.Tools.Contains(result.Kind));
+    // A part's own Home scan wins; a scan another part claimed never colors this one.
+    private KillerBench.Engine.Evidence.TextEvidence? LatestAreaSource(ToolCategory area)
+    {
+        if (partSources.TryGetValue(area.Id, out var own) && sources.Contains(own)) return own;
+        return sources.LastOrDefault(source => workflowSummaries.TryGetValue(source, out var result) && area.Tools.Contains(result.Kind)
+            && !partSources.Values.Contains(source));
+    }
 
     private void RefreshMapEvidence()
     {
@@ -351,14 +369,49 @@ public partial class MainWindow
         if (sender is FrameworkElement { Tag: GuidedSymptom symptom }) RunSymptom(symptom, sender, e);
     }
 
-    private void RunSymptom(GuidedSymptom symptom, object sender, RoutedEventArgs e)
+    // The part a Home scan belongs to, while it runs. Home stays up and the part pulses instead of the output pane covering it.
+    private ToolCategory? homeScanPart;
+    // Each part keeps the scan it ran, so Slow PC colors the fan and not every part sharing its category.
+    private readonly Dictionary<string, KillerBench.Engine.Evidence.TextEvidence> partSources = [];
+
+    private async void RunSymptom(GuidedSymptom symptom, object sender, RoutedEventArgs e)
     {
-        if (!MainGo.IsEnabled || !CanSearchWorkspace) return;
+        if (!MainGo.IsEnabled || !CanSearchWorkspace || homeScanPart is not null) return;
+        var part = ToolCategories.SingleOrDefault(area => area.Id == symptom.Part);
         CategoryList.SelectedItem = ToolCategories.Single(area => area.Id == symptom.Area);
         MainAutoRepair.IsChecked = false;
-        ShowToolsWorkspace();
         MainWorkflow.SelectedItem = KillerBench.Engine.Workflows.WorkflowCatalog.All.Single(tool => tool.Kind == symptom.Workflow);
-        OnMainGo(sender, e);
+        if (part is null)
+        {
+            ShowToolsWorkspace();
+            OnMainGo(sender, e);
+            return;
+        }
+        homeScanPart = part;
+        part.IsRunning = true;
+        SystemAreas.Items.Refresh();
+        int before = sources.Count;
+        try
+        {
+            var run = StartMainWorkflowAsync(sender, e);
+            ShowHome();
+            await run;
+        }
+        finally
+        {
+            homeScanPart = null;
+            part.IsRunning = false;
+            if (sources.Count > before) partSources[part.Id] = sources[^1];
+            RefreshMapEvidence();
+            ShowHome();
+        }
+    }
+
+    private void ShowHome()
+    {
+        WorkspaceNavigation.SelectedIndex = 0;
+        AreaEvidencePanel.Visibility = Visibility.Collapsed;
+        SetOutputOpen(false);
     }
 
     private void SetWorkspaceBusy(bool busy)
@@ -367,7 +420,8 @@ public partial class MainWindow
         SymptomChips.IsEnabled = !busy;
         OverviewCheckButton.IsEnabled = !busy;
         OverviewOpenCaptureButton.IsEnabled = !busy;
-        SystemAreas.IsEnabled = !busy;
+        // A Home scan keeps the map live so its part can pulse; RunSymptom ignores clicks until it finishes.
+        SystemAreas.IsEnabled = !busy || homeScanPart is not null;
         SessionHistory.IsEnabled = !busy;
     }
 

@@ -46,6 +46,8 @@ public partial class MainWindow
     private void SetOutputOpen(bool open)
     {
         if (TerminalPanel is null) return;
+        // A Home part scan keeps Home on screen; the part shows progress and its result opens from the part.
+        if (homeScanPart is not null) open = false;
         // One pane: the output swaps in over the page and Back swaps the page in again. Nothing sits side by side.
         bool wasOpen = TerminalPanel.Visibility == Visibility.Visible;
         TerminalPanel.Visibility = open ? Visibility.Visible : Visibility.Collapsed;

@@ -18,6 +18,8 @@ public partial class MainWindow
         public string EvidenceState => LocalizedText.Get(StateKey);
         public bool IsDemo => StateKey == "Str_Mode_DemoDiagnosis";
         public OverviewScore? Score { get; set; }
+        // True while a Home part's own check runs; the map pulses the part until the result colors it.
+        public bool IsRunning { get; set; }
         public OverviewTone Tone => Score?.Tone ?? OverviewTone.NotChecked;
         public string Badge => Score is null ? string.Empty
             : Score.NeedsAttention > 0 ? Score.NeedsAttention.ToString(System.Globalization.CultureInfo.CurrentCulture)

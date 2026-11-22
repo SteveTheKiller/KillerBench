@@ -705,6 +705,33 @@ internal static class Program
                 window.FindName("SymptomChips") is ItemsControl { IsEnabled: true } &&
                 window.FindName("SessionHistory") is ListBox { IsEnabled: true },
                 "Workspace, area and history selection return when the operation ends.");
+            {
+                // A Home part scan colors only the part that ran it, and Home stays on screen while it runs.
+                var shell = typeof(KillerBench.Shell.MainWindow);
+                var areas = (ListBox)window.FindName("SystemAreas");
+                object Part(string id) => areas.Items.Cast<object>().Single(item => (string)item.GetType().GetProperty("Id")!.GetValue(item)! == id);
+                string Tone(string id) => Part(id).GetType().GetProperty("Tone")!.GetValue(Part(id))!.ToString()!;
+                var fan = Part("Maintenance");
+                var homeScan = shell.GetField("homeScanPart", flags)!;
+                homeScan.SetValue(window, fan);
+                shell.GetMethod("SetOutputOpen", flags)!.Invoke(window, [true]);
+                Require(window.FindName("TerminalPanel") is FrameworkElement { Visibility: Visibility.Collapsed },
+                    "A running Home part scan keeps Home on screen instead of the output pane.");
+                homeScan.SetValue(window, null);
+                var slow = new WorkflowResult(WorkflowKind.StartupPerformance, DemoWorkflow.MachineName, DateTimeOffset.UtcNow, "Needs attention",
+                    [new("Startup apps", CheckState.Attention, "Fixture slow startup")], [], "smoke-journal.json");
+                shell.GetMethod("RegisterWorkflowResult", flags)!.Invoke(window, [slow, null, true]);
+                var sourceList = (System.Collections.IList)shell.GetField("sources", flags)!.GetValue(window)!;
+                var claimed = sourceList[sourceList.Count - 1]!;
+                var owned = (System.Collections.IDictionary)shell.GetField("partSources", flags)!.GetValue(window)!;
+                owned["Maintenance"] = claimed;
+                shell.GetMethod("RefreshMapEvidence", flags)!.Invoke(window, []);
+                Require(Tone("Maintenance") != "NotChecked" && Tone("Diagnostics") == "NotChecked",
+                    "Slow PC colors the fan that ran it, not the reliability part sharing its category. Fan " + Tone("Maintenance") + ", reliability " + Tone("Diagnostics"));
+                owned.Clear();
+                shell.GetMethod("RefreshMapEvidence", flags)!.Invoke(window, []);
+                shell.GetMethod("SetOutputOpen", flags)!.Invoke(window, [false]);
+            }
             var handoffNavigation = (ListBox)window.FindName("WorkspaceNavigation");
             handoffNavigation.SelectedItem = handoffNavigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, "Overview"));
             var actionable = new WorkflowResult(WorkflowKind.CommonProblems, "smoke", DateTimeOffset.UtcNow, "Needs attention",
