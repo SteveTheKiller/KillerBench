@@ -732,6 +732,21 @@ internal static class Program
                 shell.GetMethod("RefreshMapEvidence", flags)!.Invoke(window, []);
                 shell.GetMethod("SetOutputOpen", flags)!.Invoke(window, [false]);
             }
+            {
+                // A running scan shows in the footer on every page, and the bar leaves when the run ends.
+                var shell = typeof(KillerBench.Shell.MainWindow);
+                var bar = (FrameworkElement)window.FindName("ScanProgress");
+                shell.GetMethod("BeginWorkflowOutput", flags)!.Invoke(window, [WorkflowKind.StartupPerformance, true]);
+                window.UpdateLayout();
+                Require(bar.IsVisible && window.FindName("ScanProgressLabel") is TextBlock { Text.Length: > 0 } && bar.ActualWidth > 100,
+                    "A running scan shows a named progress bar in the footer.");
+                shell.GetMethod("ShowToolsWorkspace", flags)!.Invoke(window, []);
+                window.UpdateLayout();
+                Require(bar.IsVisible, "The scan bar stays in the footer after moving to another sidebar page.");
+                shell.GetMethod("CompleteWorkflowOutput", flags)!.Invoke(window, []);
+                window.UpdateLayout();
+                Require(!bar.IsVisible, "The scan bar leaves the footer when the run ends.");
+            }
             var handoffNavigation = (ListBox)window.FindName("WorkspaceNavigation");
             handoffNavigation.SelectedItem = handoffNavigation.Items.OfType<ListBoxItem>().Single(item => Equals(item.Tag, "Overview"));
             var actionable = new WorkflowResult(WorkflowKind.CommonProblems, "smoke", DateTimeOffset.UtcNow, "Needs attention",

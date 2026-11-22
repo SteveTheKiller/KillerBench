@@ -412,7 +412,8 @@ public partial class MainWindow
             part.IsRunning = false;
             if (sources.Count > before) partSources[part.Id] = sources[^1];
             RefreshMapEvidence();
-            ShowHome();
+            // Someone who moved to another page mid-scan stays there; the part's color waits on Home.
+            if (WorkspaceNavigation.SelectedIndex == 0 && TerminalPanel.Visibility != Visibility.Visible) ShowHome();
         }
     }
 

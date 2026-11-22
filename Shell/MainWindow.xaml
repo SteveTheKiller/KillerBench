@@ -1369,12 +1369,22 @@
     <Border Grid.Row="2" Background="{DynamicResource FooterBackgroundBrush}" Panel.ZIndex="-1"
             icons:ThemeMotif.Part="Chrome" icons:ThemeMotif.BaseBrush="FooterBackgroundBrush"/>
     <Grid Grid.Row="2">
-      <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-      <Border Grid.ColumnSpan="2" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>
+      <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <Border Grid.ColumnSpan="3" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}" IsHitTestVisible="False"/>
       <Border x:Name="ScanLight" Width="9" Height="9" CornerRadius="5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,0,0,0" Background="#3FA95F" BorderThickness="1" BorderBrush="#40000000" ToolTip="{DynamicResource Str_Shell_ReadyNoScan}"/>
       <TextBlock x:Name="StatusLabel" Text="{DynamicResource Str_Text_Ready}" FontFamily="{DynamicResource BrandSansFont}" FontSize="16" TextOptions.TextFormattingMode="Ideal" Foreground="{DynamicResource TextFooter}" VerticalAlignment="Center" Margin="22,0,12,0" TextTrimming="CharacterEllipsis"/>
-      <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,25,0" VerticalAlignment="Center"><TextBlock x:Name="ThemeStatus" Opacity="0.75" FontFamily="{DynamicResource BrandSansFont}" FontSize="16" TextOptions.TextFormattingMode="Ideal" Foreground="{DynamicResource TextFooter}" Text="v1.0.0" Margin="0,0,12,0" Cursor="Hand" MouseLeftButtonUp="VersionLabel_Click" ToolTip="{DynamicResource Str_Shortcuts_About}"/><TextBlock Opacity="0.75" Text="&#x00A9; 2026 Steve the Killer" FontFamily="{DynamicResource BrandSansFont}" FontSize="16" TextOptions.TextFormattingMode="Ideal" Foreground="{DynamicResource TextFooter}"/></StackPanel>
-      <Canvas Grid.ColumnSpan="2" Width="13" Height="13" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,4,4" IsHitTestVisible="False">
+      <!-- A running scan shows here on every page; clicking it goes back to the scan. -->
+      <StackPanel x:Name="ScanProgress" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,24,0" Visibility="Collapsed" Cursor="Hand" Background="Transparent" MouseLeftButtonUp="ScanProgress_Click">
+        <TextBlock x:Name="ScanProgressLabel" FontFamily="{DynamicResource BrandSansFont}" FontSize="16" TextOptions.TextFormattingMode="Ideal" Foreground="{DynamicResource TextFooter}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <Grid Width="160" Height="6" VerticalAlignment="Center" ClipToBounds="True">
+          <Border CornerRadius="3" Background="{DynamicResource DimTextBrush}" Opacity="0.35"/>
+          <Border x:Name="ScanProgressFill" Width="48" HorizontalAlignment="Left" CornerRadius="3" Background="{DynamicResource PrimaryBrush}">
+            <Border.RenderTransform><TranslateTransform x:Name="ScanProgressSlide"/></Border.RenderTransform>
+          </Border>
+        </Grid>
+      </StackPanel>
+      <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,25,0" VerticalAlignment="Center"><TextBlock x:Name="ThemeStatus" Opacity="0.75" FontFamily="{DynamicResource BrandSansFont}" FontSize="16" TextOptions.TextFormattingMode="Ideal" Foreground="{DynamicResource TextFooter}" Text="v1.0.0" Margin="0,0,12,0" Cursor="Hand" MouseLeftButtonUp="VersionLabel_Click" ToolTip="{DynamicResource Str_Shortcuts_About}"/><TextBlock Opacity="0.75" Text="&#x00A9; 2026 Steve the Killer" FontFamily="{DynamicResource BrandSansFont}" FontSize="16" TextOptions.TextFormattingMode="Ideal" Foreground="{DynamicResource TextFooter}"/></StackPanel>
+      <Canvas Grid.ColumnSpan="3" Width="13" Height="13" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,4,4" IsHitTestVisible="False">
         <Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="10" Canvas.Top="2"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="6" Canvas.Top="6"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="10" Canvas.Top="6"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="2" Canvas.Top="10"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="6" Canvas.Top="10"/><Rectangle Width="2" Height="2" Fill="{DynamicResource DimTextBrush}" Canvas.Left="10" Canvas.Top="10"/>
       </Canvas>
     </Grid>

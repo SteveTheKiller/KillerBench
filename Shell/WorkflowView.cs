@@ -8,7 +8,41 @@ public partial class MainWindow
     private static readonly string[] DefaultStorageVolumeChoices = ["Windows volume"];
     // Appended to live results for the report; it is not a check the workflow ran.
     private const string NativeCapabilityCheckName = "Native lab capability status";
-    private bool workflowOutputActive;
+    private bool workflowOutputActiveValue;
+    // Every live run passes through this flag, so the footer scan bar follows it on every page.
+    private bool workflowOutputActive
+    {
+        get => workflowOutputActiveValue;
+        set { workflowOutputActiveValue = value; SetScanProgress(value ? runningWorkflowName : null); }
+    }
+    private string? runningWorkflowName;
+    private System.Windows.Media.Animation.DoubleAnimation? scanProgressSweep;
+
+    private void SetScanProgress(string? name)
+    {
+        if (ScanProgress is null) return;
+        if (name is null)
+        {
+            ScanProgress.Visibility = System.Windows.Visibility.Collapsed;
+            ScanProgressSlide.BeginAnimation(System.Windows.Media.TranslateTransform.XProperty, null);
+            return;
+        }
+        ScanProgressLabel.Text = name;
+        System.Windows.Automation.AutomationProperties.SetName(ScanProgress, name);
+        ScanProgress.ToolTip = EvidenceTitle.Text;
+        if (ScanProgress.Visibility == System.Windows.Visibility.Visible) return;
+        ScanProgress.Visibility = System.Windows.Visibility.Visible;
+        scanProgressSweep ??= new(-48, 160, TimeSpan.FromSeconds(1.4)) { RepeatBehavior = System.Windows.Media.Animation.RepeatBehavior.Forever };
+        ScanProgressSlide.BeginAnimation(System.Windows.Media.TranslateTransform.XProperty, scanProgressSweep);
+    }
+
+    // The footer bar takes you back to the run: Home for a part scan, the live output for anything else.
+    private void ScanProgress_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (!workflowOutputActive) return;
+        if (homeScanPart is not null) ShowHome();
+        else SetOutputView();
+    }
     private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, WorkflowResult> workflowSummaries = [];
     private readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextEvidence, string> workflowReportTitles = [];
 
@@ -324,6 +358,8 @@ public partial class MainWindow
 
     private void BeginWorkflowOutput(WorkflowKind kind, bool demo = false)
     {
+        runningWorkflowName = Controls.LocalizedText.Workflow(kind);
+        EvidenceTitle.Text = Controls.LocalizedText.Format("Str_Output_LiveRunning", runningWorkflowName);
         workflowOutputActive = true;
         SourcesList.SelectedIndex = -1;
         SourcesList.IsEnabled = false;
