@@ -206,7 +206,7 @@
               <Grid x:Name="OverviewMapHost">
               <!-- The question block always renders at 100%: it never scales to fit, it stacks above the machine instead. -->
               <Border x:Name="OverviewHeroSpot" HorizontalAlignment="Stretch" VerticalAlignment="Top" Panel.ZIndex="1">
-                <Border x:Name="OverviewHero">
+                <Border x:Name="OverviewHero" Style="{StaticResource Card}" Padding="14,10,6,10">
                 <Grid>
                   <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                   <Viewbox x:Name="OverviewGaugeSpot" Width="96" Height="96" VerticalAlignment="Top" Margin="0,0,16,0">
@@ -223,19 +223,22 @@
                     <TextBlock x:Name="OverviewDetail" Text="{DynamicResource Str_Workspace_MapHint}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,2,0,6"/>
                     <WrapPanel x:Name="OverviewChips" Visibility="Collapsed"/>
                     <!-- Symptoms: ask what's wrong first, then each card runs the matching check. -->
-                    <TextBlock x:Name="SymptomQuestion" Text="{DynamicResource Str_Guided_Title}" FontFamily="{DynamicResource HeadingFont}" FontSize="22" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                    <DockPanel Margin="0,8,8,0">
+                      <WrapPanel x:Name="OverviewMapActions" DockPanel.Dock="Right" VerticalAlignment="Center"><Button x:Name="OverviewCheckButton" Content="{DynamicResource Str_Main_RunDiagnosis}" Click="OnOverviewCheck" Margin="8,0,8,0"/><Button x:Name="OverviewOpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture"/></WrapPanel>
+                      <TextBlock x:Name="SymptomQuestion" Text="{DynamicResource Str_Guided_Title}" FontFamily="{DynamicResource HeadingFont}" FontSize="22" FontWeight="SemiBold" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                    </DockPanel>
                     <ItemsControl x:Name="SymptomChips" AutomationProperties.Name="{DynamicResource Str_Guided_Title}">
                       <ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="3"/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
                       <ItemsControl.ItemTemplate><DataTemplate>
-                        <Button Click="OnSymptomChip" Tag="{Binding}" Margin="0,8,8,0" Padding="12,10" HorizontalContentAlignment="Left" VerticalContentAlignment="Top" AutomationProperties.Name="{Binding Title}" AutomationProperties.HelpText="{Binding Description}">
-                          <StackPanel>
+                        <Button Click="OnSymptomChip" Tag="{Binding}" Margin="0,6,8,0" Padding="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" AutomationProperties.Name="{Binding Title}" AutomationProperties.HelpText="{Binding Description}">
+                          <!-- The kit button centers its content, so the text block takes the button's full width to keep one left edge. -->
+                          <StackPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Button}}" Margin="0,8"><StackPanel Margin="14,0,12,0">
                             <TextBlock Text="{Binding Title}" FontSize="15" FontWeight="SemiBold" TextWrapping="Wrap"/>
                             <TextBlock Text="{Binding Description}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,3,0,0"/>
-                          </StackPanel>
+                          </StackPanel></StackPanel>
                         </Button>
                       </DataTemplate></ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <WrapPanel x:Name="OverviewMapActions" Margin="0,10,0,0"><Button x:Name="OverviewCheckButton" Content="{DynamicResource Str_Main_RunDiagnosis}" Click="OnOverviewCheck" Margin="0,0,8,0"/><Button x:Name="OverviewOpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture"/></WrapPanel>
                   </StackPanel>
                 </Grid>
                 </Border>
