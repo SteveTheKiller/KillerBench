@@ -67,10 +67,12 @@ public partial class MainWindow
     private void OpenOrRunPart(ToolCategory part, GuidedSymptom symptom, object sender, RoutedEventArgs e)
     {
         if (homeScanPart is not null) return;
-        if (partSources.ContainsKey(part.Id))
+        // A part that was already scanned opens straight to its results, where Fix lives.
+        if (partSources.TryGetValue(part.Id, out var owned) && sources.Contains(owned))
         {
             SystemAreas.SelectedItem = part;
-            ShowAreaEvidence();
+            areaSummarySource = owned;
+            OnAreaOpenReport(this, e);
             return;
         }
         RunSymptom(symptom, sender, e);

@@ -37,7 +37,7 @@ internal static class PackageReviewLocalizationChecks
             Verify(window, expectedTitle);
             if (locale.ToString() == "De")
             {
-                var heading = Descendants((DependencyObject)window.FindName("ReportContent")).OfType<TextBlock>().First();
+                var heading = Descendants((DependencyObject)window.FindName("ReportContent")).OfType<TextBlock>().First(text => text.Text == expectedTitle);
                 string previous = heading.Text;
                 try
                 {

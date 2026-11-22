@@ -64,6 +64,28 @@ public partial class MainWindow
         lastReport = (result, title);
         ReportContent.Children.Clear();
         string reportTitle = title is null ? LocalizedText.Workflow(result.Kind) : LocalizePackageReviewText(LocalizeBitLockerResultText(LocalizeProfileResultText(title)));
+
+        // The plain answer first: what was found, one button that fixes it, then the problems in plain words.
+        // Everything technical folds away under one toggle at the bottom.
+        var simple = new StackPanel();
+        BuildResultsVerdict(simple, result, reportTitle, demo);
+        ReportContent.Children.Add(simple);
+        var details = new StackPanel { Visibility = Visibility.Collapsed, Tag = "TechnicalDetails" };
+        var toggle = new Button { HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 6, 0, 12), Content = LocalizedText.Get("Str_Results_ShowDetails") };
+        toggle.SetResourceReference(StyleProperty, "SurfaceButton");
+        toggle.Click += (_, _) =>
+        {
+            bool open = details.Visibility != Visibility.Visible;
+            details.Visibility = open ? Visibility.Visible : Visibility.Collapsed;
+            toggle.Content = LocalizedText.Get(open ? "Str_Results_HideDetails" : "Str_Results_ShowDetails");
+        };
+        ReportContent.Children.Add(toggle);
+        ReportContent.Children.Add(details);
+        BuildTechnicalReport(details, result, title, reportTitle, demo);
+    }
+
+    private void BuildTechnicalReport(StackPanel ReportContent, WorkflowResult result, string? title, string reportTitle, bool demo)
+    {
         ReportContent.Children.Add(Heading(LocalizedText.Format("Str_Report_Title", reportTitle), 15));
         ReportContent.Children.Add(Body(LocalizedStatus(result.Status) + " | " + result.StartedUtc.ToString("g"), 12, new Thickness(0, 0, 0, 14)));
 
@@ -83,13 +105,6 @@ public partial class MainWindow
         ReportContent.Children.Add(Card(LocalizedText.Get("Str_Report_RecommendedNextStep"), "",
             NextAction(result),
             LocalizedText.Get("Str_Report_NoActionStarts"), "PrimaryBrush"));
-        if (!demo)
-        {
-            if (HasRepairAvailable(result)) ReportContent.Children.Add(RepairNavigationButton(result));
-            if (HasMaintenanceOptions(result)) ReportContent.Children.Add(MaintenanceNavigationButton(result.Kind));
-            if (HasSecurityOptions(result)) ReportContent.Children.Add(SecurityNavigationButton(result.Kind));
-            if (HasNetworkOptions(result)) ReportContent.Children.Add(NetworkNavigationButton());
-        }
 
         ReportContent.Children.Add(Heading(LocalizedText.Get("Str_Report_NeedsAttention"), 13));
         var problems = result.Checks.Where(check => check.EffectiveState is CheckState.Attention or CheckState.Repairable or CheckState.Unknown)

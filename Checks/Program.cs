@@ -758,16 +758,24 @@ internal static class Program
             Require(FindTextBlocks(window).Any(block => block.Text == "Collected information") &&
                 FindTextBlocks(window).Any(block => block.Text.Contains("Fixture informational evidence", StringComparison.Ordinal)),
                 "Readable reports retain collected evidence alongside repairable findings");
-            var repairNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review System files repair"));
+            Require(FindTextBlocks(window).Any(block => block.Text == "1 problem found" && ShownInReport(block)) &&
+                FindTextBlocks(window).Any(block => block.Text == "KillerBench can fix this for you." && ShownInReport(block)),
+                "The results page leads with a plain verdict that says KillerBench can fix it");
+            var fixButton = FindButtons(window).Single(button => Equals(button.Content, "Fix it"));
             var maintenanceNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review maintenance options"));
-            repairNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Require(ShownInReport(fixButton) && !FindButtons(window).Any(button => Equals(button.Content, "Fix now") && ShownInReport(button)) &&
+                !FindButtons(window).Any(button => Equals(button.Content, "Review System files repair")),
+                "A fixable result shows one Fix button and no second repair handoff, and nothing runs before Fix now");
+            fixButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             window.UpdateLayout();
-            Require(window.FindName("ConsoleBank") is FrameworkElement { IsVisible: true },
-                "Repair report handoff opens the visible Tools workspace from Overview");
-            Require(window.FindName("CategoryList") is ListBox { SelectedItem: not null } categories && categories.SelectedItem.ToString() == "Repair" &&
-                window.FindName("MainWorkflow") is ComboBox { SelectedItem: WorkflowDefinition { Kind: WorkflowKind.SystemFiles } } &&
+            Require(FindButtons(window).Any(button => Equals(button.Content, "Fix now") && ShownInReport(button)) &&
+                FindTextBlocks(window).Any(block => block.Text.Contains("Repair Service repair", StringComparison.Ordinal) && ShownInReport(block)) &&
                 window.FindName("MainAutoRepair") is CheckBox { IsChecked: not true },
-                "Single-repair reports lead to their focused unapproved Repair option");
+                "Fix asks first, naming the exact repair, without arming auto-repair");
+            FindButtons(window).Single(button => Equals(button.Content, "Cancel") && ShownInReport(button)).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            window.UpdateLayout();
+            Require(ShownInReport(fixButton) && !FindButtons(window).Any(button => Equals(button.Content, "Fix now") && ShownInReport(button)),
+                "Cancel puts the Fix button back without running anything");
             maintenanceNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             window.UpdateLayout();
             Require(window.FindName("CategoryList") is ListBox { SelectedItem: not null } maintenanceCategories && maintenanceCategories.SelectedItem.ToString() == "Maintenance" &&
@@ -779,9 +787,8 @@ internal static class Program
                  new("Print repair", CheckState.Repairable, "Fixture repair option", RepairKind.PrintSpooler)], [], "smoke-journal.json");
             typeof(KillerBench.Shell.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [mixed]);
             window.UpdateLayout();
-            Require(FindButtons(window).Any(button => Equals(button.Content, "Review repair options")) &&
-                !FindButtons(window).Any(button => Equals(button.Content, "Review System files repair")),
-                "Mixed repair reports retain a broader Repair handoff instead of guessing");
+            Require(FindButtons(window).Any(button => Equals(button.Content, "Fix 2 problems")),
+                "Reports with two repairs offer one Fix that covers both");
             string systemFilesRecipe = RecipeCatalog.ForWorkflow(WorkflowKind.CommonProblems)
                 .Single(recipe => recipe.Action == RepairKind.SystemFiles).Id;
             var recipeOnly = new WorkflowResult(WorkflowKind.CommonProblems, "smoke", DateTimeOffset.UtcNow, "Needs attention", [], [], "smoke-journal.json")
@@ -790,8 +797,8 @@ internal static class Program
             };
             typeof(KillerBench.Shell.MainWindow).GetMethod("RenderWorkflowReport", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(window, [recipeOnly]);
             window.UpdateLayout();
-            Require(FindButtons(window).Any(button => Equals(button.Content, "Review System files repair")),
-                "Recipe-only repair reports identify their focused Repair workflow");
+            Require(FindButtons(window).Any(button => Equals(button.Content, "Fix it")),
+                "Recipe-only repair reports offer Fix for the repair their recipe found");
             ((ComboBox)window.FindName("MainWorkflow")).SelectedItem = WorkflowCatalog.All.Single(workflow => workflow.Kind == WorkflowKind.BrowserExtensions);
             window.UpdateLayout();
             Require(window.FindName("CategoryList") is ListBox { SelectedItem: not null } browserCategories && browserCategories.SelectedItem.ToString() == "Apps" &&
@@ -2320,10 +2327,10 @@ internal static class Program
                 "Workflow result summary uses recorded checks instead of log-rule findings: " + outcomeLabel.Text);
             Require(window.FindName("ReportPane") is Border { Visibility: Visibility.Visible } &&
                 window.FindName("StartGuide") is TextBlock { Visibility: Visibility.Collapsed } &&
-                ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>().Any(card => card.Child is Grid { Children: [Border { Child: StackPanel }, Border grain] } && grain.Style == window.FindResource("FlyoutGrain")),
+                LogicalDescendants((StackPanel)window.FindName("ReportContent")).OfType<Border>().Any(card => card.Child is Grid { Children: [Border { Child: StackPanel }, Border grain] } && grain.Style == window.FindResource("FlyoutGrain")),
                 "Completed workflows open a formatted report in the center pane, separate from the raw-output terminal");
             typeof(KillerBench.Shell.MainWindow).GetMethod("OnSourceSelected", flags)!.Invoke(window, [window, null]);
-            Require(((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Focused service review report"),
+            Require(TechnicalReport(window).Children.OfType<TextBlock>().Any(block => block.Text == "Focused service review report"),
                 "Reopening a workflow source retains its focused readable report title");
             ((Button)window.FindName("ConsoleViewButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(window.FindName("ConsolePane") is Border { Visibility: Visibility.Visible } &&
@@ -2337,7 +2344,7 @@ internal static class Program
             typeof(KillerBench.Shell.MainWindow).GetMethod("ShowEvidence", flags)!.Invoke(window, null);
             ((Button)window.FindName("ReportViewButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Require(window.FindName("ReportPane") is Border { Visibility: Visibility.Visible } &&
-                ((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Next step"),
+                TechnicalReport(window).Children.OfType<TextBlock>().Any(block => block.Text == "Next step"),
                 "Report view leads with a distinct next-action section");
             using var historicalRecord = JsonDocument.Parse(JsonSerializer.Serialize(completedWorkflow, KillerBench.Engine.Evidence.Capture.JsonOptions));
             var historicalSnapshot = new WorkflowJournalSnapshot("fixture-history.json", "fixture", "Services", "Needs attention",
@@ -2350,8 +2357,8 @@ internal static class Program
                 historicalReport.Checks.Any(check => check.Name == "Current health" && check.State == CheckState.Unknown),
                 "Historical workflow review is a readable current-health-unknown report without an action replay");
             typeof(KillerBench.Shell.MainWindow).GetMethod("RenderNamedWorkflowReport", flags)!.Invoke(window, [historicalReport, "Saved workflow"]);
-            Require(((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().Any(block => block.Text == "Saved workflow report") &&
-                ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>().Any(card => card.Child is Grid { Children: [Border { Child: StackPanel panel }, ..] } &&
+            Require(TechnicalReport(window).Children.OfType<TextBlock>().Any(block => block.Text == "Saved workflow report") &&
+                LogicalDescendants((StackPanel)window.FindName("ReportContent")).OfType<Border>().Any(card => card.Child is Grid { Children: [Border { Child: StackPanel panel }, ..] } &&
                     panel.Children.OfType<TextBlock>().Any(block => block.Text == "Current health")),
                 "Historical workflow evidence opens the readable report instead of raw JSON only");
             var largeWorkflow = completedWorkflow with
@@ -2360,7 +2367,7 @@ internal static class Program
                     CheckState.Attention, "Fixture attention item"))]
             };
             typeof(KillerBench.Shell.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [largeWorkflow]);
-            var reportContent = (StackPanel)window.FindName("ReportContent");
+            var reportContent = TechnicalReport(window);
             Require(reportContent.Children.OfType<Border>().Count() == 13 &&
                 reportContent.Children.OfType<TextBlock>().Any(block => block.Text.Contains("4 additional review items")),
                 "Report caps the visible triage list while retaining the remaining review items");
@@ -2374,26 +2381,21 @@ internal static class Program
                 ]
             };
             typeof(KillerBench.Shell.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [prioritizedWorkflow]);
-            string[] cardTitles = [.. ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>()
+            string[] cardTitles = [.. TechnicalReport(window).Children.OfType<Border>()
                 .Select(card => ((StackPanel)((Border)((Grid)card.Child).Children[0]).Child).Children.OfType<TextBlock>().First().Text)];
             Require(cardTitles.Take(4).SequenceEqual(["Recommended next step", "Repairable item", "Attention item", "Unknown item"]),
                 "Report orders actionable findings before attention and incomplete evidence");
-            var prioritizedCards = ((StackPanel)window.FindName("ReportContent")).Children.OfType<Border>().ToArray();
-            var reportStateChart = ((StackPanel)window.FindName("ReportContent")).Children.OfType<StackPanel>()
+            var prioritizedCards = TechnicalReport(window).Children.OfType<Border>().ToArray();
+            var reportStateChart = TechnicalReport(window).Children.OfType<StackPanel>()
                 .SelectMany(panel => panel.Children.OfType<Grid>()).FirstOrDefault();
             string reportStateName = reportStateChart is null ? "" : System.Windows.Automation.AutomationProperties.GetName(reportStateChart);
             Require(reportStateChart is { ColumnDefinitions.Count: 3 } && reportStateName.Contains("Fixable: 1", StringComparison.Ordinal) &&
                     prioritizedCards[1].BorderThickness.Left == 4 && prioritizedCards[1].BorderBrush == window.FindResource("DangerRed") &&
                     !((StackPanel)((Border)((Grid)prioritizedCards[3].Child).Children[0]).Child).Children.OfType<TextBlock>().Any(text => text.Text.StartsWith("Next:", StringComparison.Ordinal)),
                 "The report draws the result's state bar, marks each finding with its tone stripe, and drops the stock next line. Chart: " + reportStateName);
-            var repairNavigation = FindButtons(window).Single(button => Equals(button.Content, "Review System files repair"));
-            categories.SelectedItem = categories.Items.Cast<object>().Single(category => category.ToString() == "Diagnostics");
-            Pump();
-            repairNavigation.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            Pump();
-            Require(categories.SelectedItem?.ToString() == "Repair" && allTools.SelectedItem is WorkflowDefinition { Kind: WorkflowKind.SystemFiles } &&
-                automaticRepair.IsChecked != true && window.FindName("ReportPane") is Border { Visibility: Visibility.Visible },
-                "Actionable reports open the focused Repair option without approving or starting a repair");
+            var reportButtons = FindButtons(window).Select(button => button.Content as string).ToArray();
+            Require(reportButtons.Contains("Fix it") && !reportButtons.Contains("Review System files repair") && automaticRepair.IsChecked != true,
+                "Actionable reports offer one Fix button, with no second repair entry point and nothing started");
             var defenderWorkflow = new WorkflowResult(WorkflowKind.Defender, "fixture", DateTimeOffset.UtcNow, "Needs attention",
                 [new("Defender fixture", CheckState.Attention, "Security review required.")], [], "fixture-journal.json");
             typeof(KillerBench.Shell.MainWindow).GetMethod("RenderWorkflowReport", flags)!.Invoke(window, [defenderWorkflow]);
@@ -2473,6 +2475,25 @@ internal static class Program
             if (child is Button button) yield return button;
             foreach (var nested in FindButtons(child)) yield return nested;
         }
+    }
+
+    internal static StackPanel TechnicalReport(FrameworkElement window) =>
+        LogicalDescendants((DependencyObject)window.FindName("ReportContent")).OfType<StackPanel>()
+            .First(panel => Equals(panel.Tag, "TechnicalDetails"));
+
+    private static IEnumerable<object> LogicalDescendants(DependencyObject parent) =>
+        LogicalTreeHelper.GetChildren(parent).Cast<object>()
+            .SelectMany(child => child is DependencyObject node ? LogicalDescendants(node).Prepend(child) : [child]);
+
+    // Shown inside the report: nothing between the element and ReportContent is collapsed.
+    private static bool ShownInReport(FrameworkElement element)
+    {
+        for (DependencyObject? node = element; node is not null; node = System.Windows.Media.VisualTreeHelper.GetParent(node))
+        {
+            if (node is UIElement { Visibility: not Visibility.Visible }) return false;
+            if (node is FrameworkElement { Name: "ReportContent" }) return true;
+        }
+        return false;
     }
 
     private static IEnumerable<TextBlock> FindTextBlocks(DependencyObject parent)

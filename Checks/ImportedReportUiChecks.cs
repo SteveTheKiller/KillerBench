@@ -78,7 +78,7 @@ internal static class ImportedReportUiChecks
     private static void VerifyScale(KillerBench.Shell.MainWindow window, Border pane, Button evidenceButton)
     {
         var icon = (FrameworkElement)window.FindName("TitlebarIcon");
-        var heading = ((StackPanel)window.FindName("ReportContent")).Children.OfType<TextBlock>().First();
+        var heading = Program.TechnicalReport(window).Children.OfType<TextBlock>().First();
         var run = (Button)window.FindName("MainGo");
         double headingFont = heading.FontSize, buttonFont = run.FontSize;
         double titleHeight = ((FrameworkElement)window.FindName("CaptionBar")).ActualHeight;

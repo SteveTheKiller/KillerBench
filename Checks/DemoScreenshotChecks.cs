@@ -361,8 +361,9 @@ internal static class DemoScreenshotChecks
             var workflowPicker = (ComboBox)window.FindName("MainWorkflow");
             var raw = (TextBox)window.FindName("EvidenceBox");
             var report = (StackPanel)window.FindName("ReportContent");
-            Require(report.Children[0] is TextBlock initialHeading &&
-                initialHeading.Text == "Full system scan report" &&
+            static IEnumerable<object> Logical(object node) =>
+                node is DependencyObject parent ? LogicalTreeHelper.GetChildren(parent).Cast<object>().SelectMany(child => Logical(child).Prepend(child)) : [];
+            Require(Logical(report).OfType<TextBlock>().Any(heading => heading.Text == "Full system scan report") &&
                 window.FindName("ZoomViewport") is Grid { IsHitTestVisible: false } && !window.AllowDrop,
                 "Screenshot launch opens a finished, read-only synthetic report");
 
@@ -387,7 +388,7 @@ internal static class DemoScreenshotChecks
                 !raw.Text.Contains(Environment.MachineName, StringComparison.OrdinalIgnoreCase) &&
                 !raw.Text.Contains("Starting live checks", StringComparison.Ordinal),
                 "Raw demo output contains only the fictional machine");
-            Require(report.Children[0] is TextBlock heading && heading.Text.EndsWith(" report", StringComparison.Ordinal) &&
+            Require(Logical(report).OfType<TextBlock>().Any(heading => heading.Text.EndsWith(" report", StringComparison.Ordinal)) &&
                 !System.Text.RegularExpressions.Regex.IsMatch(raw.Text,
                     "demo|fabricated|synthetic|simulat", System.Text.RegularExpressions.RegexOptions.IgnoreCase) &&
                 ((TextBlock)window.FindName("ModeLabel")).Text == "OPERATION ENDED",
@@ -406,7 +407,7 @@ internal static class DemoScreenshotChecks
                 Require(window.FindName("AreaCoverageChart") is FrameworkElement { IsVisible: true } &&
                     window.FindName("AreaEvidencePanel") is FrameworkElement { IsVisible: true } &&
                     window.FindName("AreaFullReportButton") is FrameworkElement { IsVisible: true } &&
-                    report.Children[0] is TextBlock { Text: "Full system scan report" },
+                    Logical(report).OfType<TextBlock>().Any(heading => heading.Text == "Full system scan report"),
                     "Returning to Overview shows scoped coverage and review cards with the full report available.");
                 var areas = (ListBox)window.FindName("SystemAreas");
                 var selectedArea = areas.ItemContainerGenerator.ContainerFromItem(areas.SelectedItem);
