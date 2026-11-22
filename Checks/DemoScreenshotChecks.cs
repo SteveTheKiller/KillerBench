@@ -57,6 +57,10 @@ internal static class DemoScreenshotChecks
             new("10.png", WorkflowKind.BitLocker, light, A(KillerBench.Services.Accent.Green), Grain: false, Height: 960),
             new("11.png", WorkflowKind.CommonProblems, dark, A(KillerBench.Services.Accent.Blue), Shortcuts: true, Width: 1280),
             new("12.png", WorkflowKind.Certificates, KillerBench.Services.Theme.Greed, null, Scale: 1.2, Width: 1920, Height: 1080),
+            new("13.png", WorkflowKind.CommonProblems, KillerBench.Services.Theme.TrashPolka, null, Width: 1600, Height: 1000),
+            new("14.png", WorkflowKind.Network, KillerBench.Services.Theme.TrashPolka, null, Scale: 1.25, Width: 1600, Height: 1000),
+            new("15.png", WorkflowKind.CommonProblems, KillerBench.Services.Theme.TrashPolka, null, Shortcuts: true, Width: 1280),
+            new("16.png", WorkflowKind.CoreWindowsServices, KillerBench.Services.Theme.TrashPolka, null, Repair: true, Width: 1600, Height: 1000),
             new("overview-storage.png", WorkflowKind.Storage, dark, A(KillerBench.Services.Accent.Yellow), Width: 1600, Height: 1000, Area: 11),
             new("matrix-privacy.png", WorkflowKind.Privacy, KillerBench.Services.Theme.Cyanotic, null, Scale: 1.25, OutputHidden: true, Height: 1000),
             new("matrix-maintenance.png", WorkflowKind.Cleanup, KillerBench.Services.Theme.Blood, null, Scale: 1.5, Width: 1600, Height: 1000),
@@ -68,7 +72,7 @@ internal static class DemoScreenshotChecks
         KillerBench.Services.ThemeManager.Apply(dark);
         File.WriteAllText(Path.Combine(output, "capture-manifest.json"), System.Text.Json.JsonSerializer.Serialize(shots,
             new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
-        Console.WriteLine("PASS: four workspace views, grouped search, three toolbar modes, twelve gallery images and five size, zoom and tool variants rendered without a cursor: " + output);
+        Console.WriteLine("PASS: four workspace views, grouped search, three toolbar modes, sixteen gallery images and five size, zoom and tool variants rendered without a cursor: " + output);
         application.Shutdown();
         return 0;
     }
@@ -444,7 +448,16 @@ internal static class DemoScreenshotChecks
             }
             if (shot.Raw) Call(window, "ShowRawOutput");
             if (shot.OutputHidden) Call(window, "SetOutputOpen", false);
-            if (shot.Shortcuts) Call(window, "OnShortcuts", window, new RoutedEventArgs());
+            if (shot.Shortcuts)
+            {
+                Call(window, "OnShortcuts", window, new RoutedEventArgs());
+                // The overlay fades in on the animation clock, which a blocked capture thread never
+                // ticks; land the fade so the still shows the card, not an empty frame.
+                var overlay = (UIElement)window.FindName("ShortcutsOverlay");
+                overlay.BeginAnimation(UIElement.OpacityProperty, null);
+                overlay.Opacity = 1;
+                Require(overlay.Visibility == Visibility.Visible, "The shortcuts shot shows the F1 overlay.");
+            }
             Thread.Sleep(180);
             Settle(window);
             Require(Math.Abs(window.ActualWidth - shot.Width) < 0.5 && Math.Abs(window.ActualHeight - shot.Height) < 0.5,
