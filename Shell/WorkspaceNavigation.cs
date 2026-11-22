@@ -140,46 +140,36 @@ public partial class MainWindow
     private void FitSystemMap()
     {
         if (!OverviewPage.IsVisible || OverviewScroll.ViewportHeight <= 0) return;
-        // The question block fills the strip above the monitor at its natural 100% size; nothing on Home scales down.
-        // When the block is taller than that strip, the machine moves down by the overflow only, so no empty band appears.
-        var machine = FindChild<KillerBench.Controls.MachineMapPanel>(SystemAreas);
-        double overflow = 0;
-        if (machine is { GaugeRect.IsEmpty: false } && machine.GaugeRect.Height > 0)
+        // Header row on top, machine below, together filling the pane from top to floor. The machine takes the height its
+        // width allows; the header never drops below 100% and grows into whatever height is left, so no band opens anywhere.
+        double paneWidth = OverviewScroll.ViewportWidth, paneHeight = OverviewScroll.ViewportHeight - 2;
+        if (paneWidth <= 0) return;
+        const double gap = 12;
+        var fitKey = (Math.Round(paneWidth), Math.Round(paneHeight), SymptomHint.Visibility, OverviewHeadline.Text, OverviewDetail.Text, OverviewChips.Children.Count, SymptomQuestion.Text);
+        // Only refit when the pane or the header's content changed; re-fitting every pass would loop the layout.
+        if (Equals(fitKey, heroFitKey)) return;
+        heroFitKey = fitKey;
+        // The Viewbox measures its child at unlimited width, so the header is wrapped to a chosen width before it scales.
+        OverviewHero.MaxWidth = double.PositiveInfinity;
+        OverviewHero.Measure(new Size(paneWidth, double.PositiveInfinity));
+        double natural = OverviewHero.DesiredSize.Height;
+        // A wider window earns a bigger header: up to 1.5x, reserved before the machine takes the rest.
+        double headerScale = Math.Clamp(paneWidth / 1000, 1, 1.5);
+        double machineHeight = Math.Max(280, Math.Min(paneHeight - natural * headerScale - gap, paneWidth * 430 / 740));
+        double headerHeight = Math.Max(natural, paneHeight - machineHeight - gap);
+        // The header spans exactly the drawn machine: ring over the monitor's left edge, actions over the tower's right edge.
+        double machineWidth = Math.Min(paneWidth, machineHeight * 740 / 430);
+        double grow = 1;
+        for (double step = 1.05; step <= 1.6; step += 0.05)
         {
-            Rect strip = machine.GaugeRect;
-            var origin = machine.TranslatePoint(new Point(strip.X, strip.Y), OverviewMapHost);
-            double width = Math.Max(300, strip.Width);
-            if (double.IsNaN(OverviewHeroSpot.Width) || Math.Abs(OverviewHeroSpot.Width - width) > 0.5) OverviewHeroSpot.Width = width;
-            OverviewHeroSpot.HorizontalAlignment = HorizontalAlignment.Left;
-            // The Viewbox measures its child at unlimited width, so the header is wrapped to a chosen width: the largest
-            // growth whose wrapped height still fits the strip. Text never runs under the tower and never leaves a band above.
-            // Only refit when the strip or the header's content changed; re-fitting every pass would loop the layout.
-            var fitKey = (Math.Round(width), Math.Round(strip.Height), SymptomHint.Visibility, OverviewHeadline.Text, OverviewDetail.Text, OverviewChips.Children.Count, SymptomQuestion.Text);
-            if (!Equals(fitKey, heroFitKey))
-            {
-                heroFitKey = fitKey;
-                double grow = 1;
-                OverviewHero.MaxWidth = double.PositiveInfinity;
-                for (double step = 1.05; step <= 1.75; step += 0.05)
-                {
-                    OverviewHero.Measure(new Size(width / step, double.PositiveInfinity));
-                    if (OverviewHero.DesiredSize.Height * step > strip.Height - 12) break;
-                    grow = step;
-                }
-                OverviewHero.MaxWidth = width / grow;
-                OverviewHero.Measure(new Size(width / grow, double.PositiveInfinity));
-            }
-            // The header's own 100% height: it grows to fill the strip, and only a header taller than the strip moves the machine down.
-            double natural = OverviewHero.DesiredSize.Height;
-            overflow = Math.Max(0, natural + 12 - strip.Height);
-            double spot = Math.Max(natural, strip.Height - 12);
-            if (double.IsNaN(OverviewHeroSpot.Height) || Math.Abs(OverviewHeroSpot.Height - spot) > 0.5) OverviewHeroSpot.Height = spot;
-            // The block fills the strip from its top edge down to just above the monitor.
-            SetMargin(OverviewHeroSpot, new Thickness(origin.X, Math.Max(0, origin.Y + strip.Height - spot - 12), 0, 0));
+            OverviewHero.Measure(new Size(machineWidth / step, double.PositiveInfinity));
+            if (OverviewHero.DesiredSize.Height * step > headerHeight) break;
+            grow = step;
         }
-        SetMargin(SystemAreas, new Thickness(0, overflow, 0, 0));
-        double height = Math.Max(280, OverviewScroll.ViewportHeight - overflow - 2);
-        if (double.IsNaN(SystemAreas.Height) || Math.Abs(SystemAreas.Height - height) > 1) SystemAreas.Height = height;
+        OverviewHero.Width = machineWidth / grow;
+        OverviewHeroSpot.Height = headerHeight;
+        SetMargin(SystemAreas, new Thickness(0, gap, 0, 0));
+        SystemAreas.Height = machineHeight;
     }
 
     private static void SetMargin(FrameworkElement element, Thickness margin)

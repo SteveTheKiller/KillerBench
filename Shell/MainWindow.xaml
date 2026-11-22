@@ -200,18 +200,18 @@
         <Border x:Name="OverviewPage" Grid.Column="2" Style="{StaticResource Panel}" Background="{DynamicResource ContentPaneBrush}" icons:ThemeMotif.Part="Window" icons:ThemeMotif.BaseBrush="ContentPaneBrush">
           <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/><Border>
           <ScrollViewer x:Name="OverviewScroll" Style="{StaticResource ShadowScrollViewer}" Padding="16" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <!-- Home: the machine sits on the pane's floor. The monitor is flush with the tower's base, and the space
-                 above the monitor holds the gauge, the status, the symptom buttons and the actions (MachineMapPanel.GaugeRect). -->
+            <!-- Home: a header row across the whole pane (ring, question and status, actions), then the machine below it,
+                 sized so the two together fill the pane from top to floor. The monitor stands level with the tower. -->
             <Grid x:Name="OverviewLayout">
               <Grid x:Name="OverviewMapHost">
-              <!-- The question block always renders at 100%: it never scales to fit, it stacks above the machine instead. -->
-              <Border x:Name="OverviewHeroSpot" HorizontalAlignment="Stretch" VerticalAlignment="Top" Panel.ZIndex="1">
-                <!-- UpOnly: the header grows to fill the strip above the monitor and never drops below 100%. -->
-                <Viewbox x:Name="OverviewHeroScale" Stretch="Uniform" StretchDirection="UpOnly" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+              <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+              <!-- The header never drops below 100%; it grows to fill whatever height the machine leaves. -->
+              <Border x:Name="OverviewHeroSpot" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                <Viewbox x:Name="OverviewHeroScale" Stretch="Uniform" StretchDirection="UpOnly" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                 <Border x:Name="OverviewHero">
                 <Grid>
-                  <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                  <Viewbox x:Name="OverviewGaugeSpot" Width="96" Height="96" VerticalAlignment="Top" Margin="0,0,16,0">
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                  <Viewbox x:Name="OverviewGaugeSpot" Width="96" Height="96" VerticalAlignment="Center" Margin="0,0,20,0">
                     <Grid Width="96" Height="96">
                       <icons:CoverageGauge x:Name="OverviewGauge" TrackBrush="{DynamicResource PaneBorderBrush}" CoverageBrush="{DynamicResource PrimaryBrush}" ToneBrush="{DynamicResource PaneBorderBrush}" IsHitTestVisible="False"/>
                       <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -220,7 +220,7 @@
                       </StackPanel>
                     </Grid>
                   </Viewbox>
-                  <StackPanel Grid.Column="1" VerticalAlignment="Top">
+                  <StackPanel Grid.Column="1" VerticalAlignment="Center">
                     <!-- Home asks what's wrong; the machine below is the answer. Each problem part runs its check when clicked. -->
                     <TextBlock x:Name="SymptomQuestion" Text="{DynamicResource Str_Guided_Title}" FontFamily="{DynamicResource HeadingFont}" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap"/>
                     <TextBlock x:Name="SymptomHint" Text="{DynamicResource Str_Workspace_MapHint}" FontSize="14" TextWrapping="Wrap" Margin="0,2,0,8"/>
@@ -239,13 +239,13 @@
                         </Button>
                       </DataTemplate></ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <WrapPanel x:Name="OverviewMapActions" Margin="0,10,0,0"><Button x:Name="OverviewCheckButton" Content="{DynamicResource Str_Main_RunDiagnosis}" Click="OnOverviewCheck" Margin="0,0,8,0"/><Button x:Name="OverviewOpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture"/></WrapPanel>
                   </StackPanel>
+                  <StackPanel x:Name="OverviewMapActions" Grid.Column="2" VerticalAlignment="Center" Margin="20,0,0,0"><Button x:Name="OverviewCheckButton" Content="{DynamicResource Str_Main_RunDiagnosis}" Click="OnOverviewCheck" Margin="0,0,0,8"/><Button x:Name="OverviewOpenCaptureButton" Content="{DynamicResource Str_OpenCapture}" Click="OnOpenCapture"/></StackPanel>
                 </Grid>
                 </Border>
                 </Viewbox>
               </Border>
-              <ListBox x:Name="SystemAreas" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" SelectionChanged="OnSystemAreaSelected" PreviewMouseLeftButtonUp="OnMachinePartUp" PreviewKeyDown="OnMachinePartKey" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
+              <ListBox x:Name="SystemAreas" Grid.Row="1" Margin="0,12,0,0" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" SelectionChanged="OnSystemAreaSelected" PreviewMouseLeftButtonUp="OnMachinePartUp" PreviewKeyDown="OnMachinePartKey" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
                 <ListBox.ItemsPanel><ItemsPanelTemplate><icons:MachineMapPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
                 <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}">
                   <Setter Property="Padding" Value="10,6"/><Setter Property="Margin" Value="0"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Cursor" Value="Hand"/><Setter Property="AutomationProperties.Name" Value="{Binding Title}"/><Setter Property="ToolTip" Value="{Binding Title}"/><Setter Property="icons:MachineMapPanel.Part" Value="{Binding Id}"/>

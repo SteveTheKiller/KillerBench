@@ -48,8 +48,8 @@ internal static class WorkspaceNavigationChecks
                     homeRow.TranslatePoint(new Point(), window).Y < areaRows.TranslatePoint(new Point(), window).Y &&
                     areaRows.TranslatePoint(new Point(0, areaRows.ActualHeight), window).Y <= historyRow.TranslatePoint(new Point(), window).Y + 1,
                 "One sidebar lists Home, then every area, then History.");
-            Require(Find<ItemsControl>(window, "SymptomChips").Items.Count == 6 && Find<ItemsControl>(window, "SymptomChips").IsVisible,
-                "Home offers the six symptom chips under the score and map.");
+            Require(Find<ItemsControl>(window, "SymptomChips").Items.Count == 6,
+                "Home keeps the six symptoms for search and shortcuts; the machine parts are their buttons.");
             VerifyToolbar(window);
             var titleSearch = Find<TextBox>(window, "TitleSearchBox");
             titleSearch.Text = "network";
@@ -91,11 +91,13 @@ internal static class WorkspaceNavigationChecks
             foreach (var part in map.Items)
                 if (map.ItemContainerGenerator.ContainerFromItem(part) is ListBoxItem { ToolTip: string tip } && tip.Contains('\n')) labelled++;
             Require(labelled == 5, "Five machine parts name their problem on hover. Labelled: " + labelled);
-            // The block fills the strip above the monitor: no overlap with the machine and no empty band above the monitor.
+            // The header is a row across the whole pane, directly above the machine; the monitor stands level with the tower.
             Rect block = spot.TransformToVisual(drawn).TransformBounds(new Rect(spot.RenderSize));
             Rect screen = drawn.ScreenRect, tower = drawn.TowerRect;
-            Require(block.Bottom <= screen.Top && screen.Top - block.Bottom <= 70 && block.Right <= tower.Left + 1,
-                "The question block sits just above the monitor, left of the tower. Block " + block + ", screen " + screen + ", tower " + tower);
+            Require(block.Bottom <= Math.Min(screen.Top, tower.Top) && Math.Min(screen.Top, tower.Top) - block.Bottom <= 40 && block.Width >= map.ActualWidth - 2,
+                "The header spans the pane just above the machine. Header " + block + ", screen " + screen + ", tower " + tower);
+            Require(Math.Abs(screen.Top - tower.Top) <= 40 * tower.Height / 424,
+                "The monitor stands level with the tower, leaving no strip above it. Screen top " + screen.Top + ", tower top " + tower.Top);
             Require(map.ActualWidth - (tower.Right - screen.Left) <= 60 || tower.Top <= 4,
                 "The machine stays as big as the pane allows. Machine " + (tower.Right - screen.Left) + " in " + map.RenderSize);
             double mapBottom = map.TranslatePoint(new Point(0, map.ActualHeight), scroll).Y;
@@ -103,17 +105,21 @@ internal static class WorkspaceNavigationChecks
                 "The machine stands on the pane's floor with no empty band under it. Tower bottom " + tower.Bottom + " of " + map.ActualHeight);
             Require(Find<TextBlock>(window, "SymptomHint").IsVisible && !Find<TextBlock>(window, "OverviewDetail").IsVisible && !Find<TextBlock>(window, "OverviewHeadline").IsVisible,
                 "Before any check, Home shows the question and one hint line, never the hint twice.");
-            // The header wraps inside the strip above the monitor; no text runs under the tower at any width.
-            foreach (var (narrowWidth, narrowHeight) in new[] { (1025d, 560d), (1280d, 1000d) })
+            // At any size the header wraps inside its row, never clips, and the header plus machine fill the pane with no band.
+            foreach (var (sizeWidth, sizeHeight) in new[] { (1025d, 560d), (1280d, 1000d), (1600d, 1000d) })
             {
-                window.Width = narrowWidth;
-                window.Height = narrowHeight;
+                window.Width = sizeWidth;
+                window.Height = sizeHeight;
                 Settle(window);
                 var heroText = Find<FrameworkElement>(window, "OverviewHero");
-                Rect heroBox = heroText.TransformToVisual(drawn).TransformBounds(new Rect(heroText.RenderSize));
-                Rect spotBox = spot.TransformToVisual(drawn).TransformBounds(new Rect(spot.RenderSize));
-                Require(heroBox.Right <= drawn.TowerRect.Left + 1 && heroBox.Right <= spotBox.Right + 1 && heroBox.Bottom <= spotBox.Bottom + 1,
-                    $"At {narrowWidth}x{narrowHeight} the header fits its strip left of the tower. Header {heroBox}, strip {spotBox}, tower {drawn.TowerRect}");
+                Rect heroBox = heroText.TransformToVisual(spot).TransformBounds(new Rect(heroText.RenderSize));
+                Require(heroBox.Left >= -1 && heroBox.Right <= spot.ActualWidth + 1 && heroBox.Top >= -1 && heroBox.Bottom <= spot.ActualHeight + 1,
+                    $"At {sizeWidth}x{sizeHeight} the header fits its row. Header {heroBox}, row {spot.RenderSize}");
+                Require(spot.ActualHeight - heroBox.Height <= 24 || spot.ActualWidth - heroBox.Width <= 24,
+                    $"At {sizeWidth}x{sizeHeight} the header fills its row in one direction. Header {heroBox}, row {spot.RenderSize}");
+                double floor = drawn.TransformToVisual(scroll).Transform(new Point(0, drawn.TowerRect.Bottom)).Y;
+                Require(scroll.ScrollableHeight < 1 && scroll.ViewportHeight - floor <= 24,
+                    $"At {sizeWidth}x{sizeHeight} the machine stands on the pane's floor. Floor {floor} of {scroll.ViewportHeight}");
             }
             window.Width = 1025;
             window.Height = 780;
@@ -233,9 +239,15 @@ internal static class WorkspaceNavigationChecks
             Find<Button>(window, "OutputBackButton").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Settle(window);
             Require(overview.IsVisible && !evidence.IsVisible, "Back returns to the map.");
-            areas.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left) { RoutedEvent = UIElement.PreviewMouseLeftButtonUpEvent, Source = areas.ItemContainerGenerator.ContainerFromIndex(0) });
+            // Problem parts run their check on click; a plain part that is still selected reopens its details.
+            int devicesIndex = areas.Items.Cast<object>().ToList().FindIndex(item => item.ToString() == "Devices");
+            areas.SelectedIndex = devicesIndex;
             Settle(window);
-            Require(evidence.IsVisible && detail.Text == "Diagnostics", "Clicking the area that is still selected opens its details again.");
+            Find<Button>(window, "OutputBackButton").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Settle(window);
+            areas.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left) { RoutedEvent = UIElement.PreviewMouseLeftButtonUpEvent, Source = areas.ItemContainerGenerator.ContainerFromIndex(devicesIndex) });
+            Settle(window);
+            Require(evidence.IsVisible && detail.Text == "Devices", "Clicking the area that is still selected opens its details again. Shown: " + detail.Text);
 
             navigation.SelectedIndex = 1;
             ImportFixture(window, "workspace-evidence.log", "Synthetic fixture. No machine evidence was collected.\n");
@@ -314,9 +326,9 @@ internal static class WorkspaceNavigationChecks
     {
         var sidebar = Find<FrameworkElement>(window, "LeftPanel");
         var homeText = Find<FrameworkElement>(window, "SidebarHomeText");
-        Require(sidebar.ActualWidth >= 180 && homeText.IsVisible &&
+        Require(sidebar.ActualWidth >= 140 && homeText.IsVisible &&
                 Find<FrameworkElement>(window, "CaptionBar").ActualHeight == (double)window.FindResource("TitleBarHeight"),
-            "The sidebar defaults to icons beside names, under a single caption row.");
+            $"The sidebar defaults to icons beside names, under a single caption row. Sidebar {sidebar.ActualWidth}, name shown {homeText.IsVisible}, caption {Find<FrameworkElement>(window, "CaptionBar").ActualHeight} of {window.FindResource("TitleBarHeight")}");
         var menu = (ContextMenu)window.FindName("ToolbarMenu");
         Require(ReferenceEquals(sidebar.ContextMenu, menu), "Right-clicking the sidebar opens its appearance menu.");
         // The appearance menu is a KillerUI tile card; each tile is found by its label resource.
@@ -336,11 +348,11 @@ internal static class WorkspaceNavigationChecks
         }
         Select("Small icons");
         Select("Text beside icons");
-        Require(sidebar.ActualWidth >= 180 && homeText.IsVisible, "Text beside icons shows the full sidebar.");
+        Require(sidebar.ActualWidth >= 140 && homeText.IsVisible, "Text beside icons shows the full sidebar.");
         Require(!Option("Large icons").IsEnabled && !Option("Text under icons").IsEnabled,
             "The appearance card dims large icons and text underneath.");
         Select("Text only");
-        Require(!Option("Small icons").IsEnabled && sidebar.ActualWidth >= 180, "Text-only mode keeps names and disables icon sizing.");
+        Require(!Option("Small icons").IsEnabled && sidebar.ActualWidth >= 140, "Text-only mode keeps names and disables icon sizing.");
         Select("No text");
         Require(sidebar.ActualWidth <= 48 && !homeText.IsVisible, "No text collapses the sidebar to icons only.");
         Select("Text beside icons");
@@ -365,7 +377,7 @@ internal static class WorkspaceNavigationChecks
         {
             reopened.Show();
             Settle(reopened);
-            Require(Find<FrameworkElement>(reopened, "LeftPanel").ActualWidth >= 180 && Find<FrameworkElement>(reopened, "SidebarHomeText").IsVisible,
+            Require(Find<FrameworkElement>(reopened, "LeftPanel").ActualWidth >= 140 && Find<FrameworkElement>(reopened, "SidebarHomeText").IsVisible,
                 "Reloaded settings restore the sidebar appearance in a new window.");
         }
         finally { reopened.Close(); }

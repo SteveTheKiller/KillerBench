@@ -41,10 +41,12 @@ public sealed class MachineMapPanel : Panel
         ["Repair"] = new(448, 340, 284, 82),
     };
 
-    // The monitor sits flush on the tower's floor line; the strip it frees above it is GaugeRect, where the
-    // Overview puts its score gauge. Monitor parts are drawn in the old coordinates and shifted down by MonitorDrop.
-    private const double MonitorDrop = 124;
+    // The monitor stands on a stand, its top level with the tower's top, so the machine is one block with no strip
+    // above the monitor. The stand fills the height below the screen down to the tower's floor line.
+    private const double MonitorDrop = 0;
     private static readonly Rect Monitor = new(4, 4, 424, 300);
+    private static readonly Rect StandNeck = new(186, 304, 60, 96);
+    private static readonly Rect StandFoot = new(96, 398, 240, 30);
     private static readonly Rect MonitorScreen = new(16, 32, 410, 260);
     private static readonly Rect Tower = new(438, 4, 300, 424);
 
@@ -87,12 +89,11 @@ public sealed class MachineMapPanel : Panel
             return finalSize;
         }
         scale = Math.Min(finalSize.Width / DesignWidth, finalSize.Height / DesignHeight);
-        // Centered across, sitting on the floor: spare height goes above the machine, into the space over the monitor.
+        // Centered across, sitting on the floor: the Overview sizes this panel to the machine, so there is no spare height.
         offset = new Vector((finalSize.Width - DesignWidth * scale) / 2, Math.Max(0, finalSize.Height - DesignHeight * scale));
         ScreenRect = ToView(Placed(MonitorScreen));
-        // Everything above the monitor, from the panel's top edge down to just over the webcam.
-        var monitorView = ToView(Placed(Monitor));
-        GaugeRect = new Rect(monitorView.X, 0, monitorView.Width, Math.Max(0, ToView(Placed(Parts["Privacy"])).Y - 6 * scale));
+        // No strip above the monitor any more; kept empty for callers that still ask.
+        GaugeRect = Rect.Empty;
         TowerRect = ToView(Tower);
         foreach (UIElement child in InternalChildren)
             child.Arrange(Parts.TryGetValue(GetPart(child), out var part) ? ToView(Placed(part)) : new Rect(-9999, -9999, 0, 0));
@@ -143,6 +144,9 @@ public sealed class MachineMapPanel : Panel
 
     private void DrawMonitor(DrawingContext dc)
     {
+        // The stand: a neck into a wide foot that sits on the tower's floor line.
+        dc.DrawRectangle(Metal, Line(MetalEdge, 1.5), StandNeck);
+        dc.DrawRoundedRectangle(Metal, Line(MetalEdge, 1.5), StandFoot, 8, 8);
         dc.DrawRoundedRectangle(Case, Line(Edge, 2), Monitor, 12, 12);
         dc.DrawRectangle(ScreenFill, null, new Rect(MonitorScreen.X, MonitorScreen.Y, MonitorScreen.Width - 12, MonitorScreen.Height - 4));
         dc.DrawRectangle(Taskbar, null, new Rect(MonitorScreen.X, 270, MonitorScreen.Width - 12, 18));
