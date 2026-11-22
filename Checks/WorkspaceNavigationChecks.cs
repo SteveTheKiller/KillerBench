@@ -86,9 +86,13 @@ internal static class WorkspaceNavigationChecks
             Rect asked = question.TransformToVisual(window).TransformBounds(new Rect(question.RenderSize));
             Require(question.IsVisible && asked.Height >= question.FontSize, "The question renders at full size. Height " + asked.Height);
             Require(Find<ItemsControl>(window, "SymptomChips").Items.Count == 6, "Home offers all six problems to pick from.");
-            Rect block = spot.TransformToVisual(map).TransformBounds(new Rect(spot.RenderSize));
-            Require(block.Bottom <= 1, "The question block stacks above the machine instead of overlapping it. Block " + block);
-            Rect tower = drawn.TowerRect;
+            // The block fills the strip above the monitor: no overlap with the machine and no empty band above the monitor.
+            Rect block = spot.TransformToVisual(drawn).TransformBounds(new Rect(spot.RenderSize));
+            Rect screen = drawn.ScreenRect, tower = drawn.TowerRect;
+            Require(block.Bottom <= screen.Top && screen.Top - block.Bottom <= 70 && block.Right <= tower.Left + 1,
+                "The question block sits just above the monitor, left of the tower. Block " + block + ", screen " + screen + ", tower " + tower);
+            Require(map.ActualWidth - (tower.Right - screen.Left) <= 60 || tower.Top <= 4,
+                "The machine stays as big as the pane allows. Machine " + (tower.Right - screen.Left) + " in " + map.RenderSize);
             double mapBottom = map.TranslatePoint(new Point(0, map.ActualHeight), scroll).Y;
             Require(scroll.ScrollableHeight < 1 && scroll.ActualHeight - mapBottom <= 24 && map.ActualHeight - tower.Bottom <= 8,
                 "The machine stands on the pane's floor with no empty band under it. Tower bottom " + tower.Bottom + " of " + map.ActualHeight);

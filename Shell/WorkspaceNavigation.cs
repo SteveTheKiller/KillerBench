@@ -87,11 +87,23 @@ public partial class MainWindow
     private void FitSystemMap()
     {
         if (!OverviewPage.IsVisible || OverviewScroll.ViewportHeight <= 0) return;
-        // The question block sits on top at its natural 100% size, and the machine takes whatever height is left.
-        // Below 280px the page scrolls instead of shrinking the machine to nothing. Nothing on Home ever scales down.
-        double top = OverviewHeroSpot.ActualHeight + 16;
-        SetMargin(SystemAreas, new Thickness(0, top, 0, 0));
-        double height = Math.Max(280, OverviewScroll.ViewportHeight - top - 2);
+        // The question block fills the strip above the monitor at its natural 100% size; nothing on Home scales down.
+        // When the block is taller than that strip, the machine moves down by the overflow only, so no empty band appears.
+        var machine = FindChild<KillerBench.Controls.MachineMapPanel>(SystemAreas);
+        double overflow = 0;
+        if (machine is { GaugeRect.IsEmpty: false } && machine.GaugeRect.Height > 0)
+        {
+            Rect strip = machine.GaugeRect;
+            var origin = machine.TranslatePoint(new Point(strip.X, strip.Y), OverviewMapHost);
+            double width = Math.Max(300, strip.Width);
+            if (double.IsNaN(OverviewHeroSpot.Width) || Math.Abs(OverviewHeroSpot.Width - width) > 0.5) OverviewHeroSpot.Width = width;
+            OverviewHeroSpot.HorizontalAlignment = HorizontalAlignment.Left;
+            overflow = Math.Max(0, OverviewHeroSpot.ActualHeight + 12 - strip.Height);
+            // Bottom of the block rests just above the monitor.
+            SetMargin(OverviewHeroSpot, new Thickness(origin.X, Math.Max(0, origin.Y + strip.Height - OverviewHeroSpot.ActualHeight - 12), 0, 0));
+        }
+        SetMargin(SystemAreas, new Thickness(0, overflow, 0, 0));
+        double height = Math.Max(280, OverviewScroll.ViewportHeight - overflow - 2);
         if (double.IsNaN(SystemAreas.Height) || Math.Abs(SystemAreas.Height - height) > 1) SystemAreas.Height = height;
     }
 
