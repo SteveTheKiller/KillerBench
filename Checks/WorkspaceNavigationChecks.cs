@@ -77,18 +77,21 @@ internal static class WorkspaceNavigationChecks
             var gauge = Find<FrameworkElement>(window, "OverviewGaugeSpot");
             var actions = Find<FrameworkElement>(window, "OverviewMapActions");
             var drawn = FindVisual<KillerBench.Controls.MachineMapPanel>(map)!;
-            Require(chips.IsDescendantOf(spot) && gauge.IsDescendantOf(spot) && actions.IsDescendantOf(spot), "The gauge, symptoms and actions sit together above the monitor.");
+            Require(chips.IsDescendantOf(spot) && gauge.IsDescendantOf(spot) && actions.IsDescendantOf(spot), "The gauge, question and actions sit together at the top of Home.");
             var scroll = Find<ScrollViewer>(window, "OverviewScroll");
-            Rect block = spot.TransformToVisual(drawn).TransformBounds(new Rect(spot.RenderSize));
-            Rect screen = drawn.ScreenRect, tower = drawn.TowerRect;
-            // The screen glass starts below the bezel and webcam, so the block may sit up to the bezel's height plus a small gap above it.
-            Require(block.Bottom <= screen.Top && screen.Top - block.Bottom <= 70 &&block.Left >= screen.Left - 20 && block.Right <= tower.Left,
-                "The status block sits just above the monitor, left of the tower. Block " + block + ", screen " + screen + ", tower " + tower);
+            // Home opens at 100%: nothing between the question and the page scales it, so the text is its real size.
+            for (DependencyObject? up = chips; up is not null && up != mapPane; up = System.Windows.Media.VisualTreeHelper.GetParent(up))
+                Require(up is not Viewbox, "No Viewbox shrinks the Home question.");
+            var question = Find<TextBlock>(window, "SymptomQuestion");
+            Rect asked = question.TransformToVisual(window).TransformBounds(new Rect(question.RenderSize));
+            Require(question.IsVisible && asked.Height >= question.FontSize, "The question renders at full size. Height " + asked.Height);
+            Require(Find<ItemsControl>(window, "SymptomChips").Items.Count == 6, "Home offers all six problems to pick from.");
+            Rect block = spot.TransformToVisual(map).TransformBounds(new Rect(spot.RenderSize));
+            Require(block.Bottom <= 1, "The question block stacks above the machine instead of overlapping it. Block " + block);
+            Rect tower = drawn.TowerRect;
             double mapBottom = map.TranslatePoint(new Point(0, map.ActualHeight), scroll).Y;
             Require(scroll.ScrollableHeight < 1 && scroll.ActualHeight - mapBottom <= 24 && map.ActualHeight - tower.Bottom <= 8,
                 "The machine stands on the pane's floor with no empty band under it. Tower bottom " + tower.Bottom + " of " + map.ActualHeight);
-            Require(map.ActualWidth - (tower.Right - screen.Left) <= 60 || tower.Top <= 4,
-                "The machine is as big as the pane allows. Machine " + (tower.Right - screen.Left) + "x" + tower.Height + " in " + map.RenderSize);
             Require(Find<TextBlock>(window, "OverviewDetail") is { IsVisible: true } detailLine && detailLine.Text.Length > 1,
                 "Before any check, the score card carries the map instruction instead of an empty line.");
             window.Width = 1025;

@@ -204,8 +204,9 @@
                  above the monitor holds the gauge, the status, the symptom buttons and the actions (MachineMapPanel.GaugeRect). -->
             <Grid x:Name="OverviewLayout">
               <Grid x:Name="OverviewMapHost">
-              <Viewbox x:Name="OverviewHeroSpot" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform" StretchDirection="DownOnly" Panel.ZIndex="1">
-                <Border x:Name="OverviewHero" Width="440">
+              <!-- The question block always renders at 100%: it never scales to fit, it stacks above the machine instead. -->
+              <Border x:Name="OverviewHeroSpot" HorizontalAlignment="Stretch" VerticalAlignment="Top" Panel.ZIndex="1">
+                <Border x:Name="OverviewHero">
                 <Grid>
                   <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                   <Viewbox x:Name="OverviewGaugeSpot" Width="96" Height="96" VerticalAlignment="Top" Margin="0,0,16,0">
@@ -221,12 +222,16 @@
                     <TextBlock x:Name="OverviewHeadline" Text="{DynamicResource Str_Workspace_SystemMap}" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap"/>
                     <TextBlock x:Name="OverviewDetail" Text="{DynamicResource Str_Workspace_MapHint}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,2,0,6"/>
                     <WrapPanel x:Name="OverviewChips" Visibility="Collapsed"/>
-                    <!-- Symptoms: each one opens its area and runs the matching check. -->
+                    <!-- Symptoms: ask what's wrong first, then each card runs the matching check. -->
+                    <TextBlock x:Name="SymptomQuestion" Text="{DynamicResource Str_Guided_Title}" FontFamily="{DynamicResource HeadingFont}" FontSize="22" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,10,0,0"/>
                     <ItemsControl x:Name="SymptomChips" AutomationProperties.Name="{DynamicResource Str_Guided_Title}">
                       <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
                       <ItemsControl.ItemTemplate><DataTemplate>
-                        <Button Click="OnSymptomChip" Tag="{Binding}" Margin="0,4,6,0" Padding="8,3" AutomationProperties.Name="{Binding Title}" ToolTip="{Binding Description}">
-                          <TextBlock Text="{Binding Title}" FontSize="12"/>
+                        <Button Click="OnSymptomChip" Tag="{Binding}" Width="220" Margin="0,8,8,0" Padding="12,10" HorizontalContentAlignment="Left" VerticalContentAlignment="Top" AutomationProperties.Name="{Binding Title}" AutomationProperties.HelpText="{Binding Description}">
+                          <StackPanel>
+                            <TextBlock Text="{Binding Title}" FontSize="15" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding Description}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,3,0,0"/>
+                          </StackPanel>
                         </Button>
                       </DataTemplate></ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -234,7 +239,7 @@
                   </StackPanel>
                 </Grid>
                 </Border>
-              </Viewbox>
+              </Border>
               <ListBox x:Name="SystemAreas" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" SelectionChanged="OnSystemAreaSelected" PreviewMouseLeftButtonUp="OnReopenSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
                 <ListBox.ItemsPanel><ItemsPanelTemplate><icons:MachineMapPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
                 <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}">
