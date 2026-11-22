@@ -1371,6 +1371,9 @@
   <sys:String x:Key="Str_PackageReview_Journal">パッケージのスナップショットの読み取り専用の確認です。ジャーナルは書き込まれていません。</sys:String>
   <sys:String x:Key="Str_About_UpdateRejected">更新を検証できなかったため、破棄しました。何もインストールされていません。もう一度お試しいただけます。</sys:String>
   <sys:String x:Key="Str_About_UpdateHandoffFailed">更新を開始できませんでした。KillerBench は開いたままです。もう一度お試しいただけます。</sys:String>
+  <sys:String x:Key="Str_About_UpdateBusy">別のインストールが実行中です。何もインストールされていません。完了してからもう一度お試しください。</sys:String>
+  <sys:String x:Key="Str_About_UpdateDiskFull">更新をインストールするためのディスク容量が不足しています。何もインストールされていません。空き容量を確保してから、もう一度お試しください。</sys:String>
+  <sys:String x:Key="Str_About_UpdateSecurityRejected">Windows のセキュリティ ポリシーによって更新がブロックされました。何もインストールされていません。</sys:String>
   <sys:String x:Key="Str_About_UpdateElevationCanceled">Windows のアクセス許可の確認画面で更新がキャンセルされました。何もインストールされていません。もう一度お試しいただけます。</sys:String>
   <sys:String x:Key="Str_ExportFailure_ChooseAgain">保存する前に、エクスポート先をもう一度選択してください。</sys:String>
   <sys:String x:Key="Str_ExportFailure_Changed">確認後にエクスポート先が変更されました。保存する前にもう一度選択してください。</sys:String>

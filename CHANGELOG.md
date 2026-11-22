@@ -28,6 +28,8 @@
 - An update started from an administrator's copy reopens KillerBench at normal rights. An update that is applied but cannot record its version in the registry now finishes and reopens instead of reporting failure.
 - Update downloads stream to disk with a size cap and an overall deadline, and the update check reads only the release's own fields, so release notes that quote them cannot confuse it.
 - Updating KillerBench no longer removes a relaunch another Killer app scheduled for its own update.
+- No repair can start once an update is handing off, so closing for the update never cuts a repair short.
+- A failed update says when another installation is running, the disk is full or Windows policy blocked it, instead of one generic message.
 - The file picker no longer stalls on a disconnected network folder when it opens, a relative or malformed path typed in the path box is refused instead of being looked up against the wrong folder, a pattern such as *.log typed in the name box filters the list, and a full path typed in the name box can be accepted even when the shown folder failed to list.
 - Changing the file type in the save picker while the name box holds characters no file name can carry keeps the name as typed and shows the invalid-path message.
 - About opens at once instead of waiting on the signature check, which can stall for many seconds on a network that drops revocation traffic; the publisher and thumbprint fill in when it finishes.

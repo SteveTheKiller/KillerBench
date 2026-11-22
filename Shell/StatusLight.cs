@@ -28,7 +28,10 @@ public partial class MainWindow
             kind == WorkflowKind.Orca && IsOrcaCacheRetentionSelected();
         RepairConsent.IsChecked = (Workflows.SupportsRepair(kind) || focusedOperation) && MainAutoRepair.IsChecked == true;
         SetDetailsOpen(false);
-        await RunWorkflowAsync();
+        // Consent given here covers this one run. A run refused during option checks never reaches the
+        // run's own reset, so clear it here too, or a later Run would repair with options nobody approved.
+        try { await RunWorkflowAsync(); }
+        finally { RepairConsent.IsChecked = false; }
     }
 
     private void SetScanLight(string state, string detail)

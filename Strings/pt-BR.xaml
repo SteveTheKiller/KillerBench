@@ -1370,6 +1370,9 @@
   <sys:String x:Key="Str_PackageReview_Journal">Revisão somente leitura do instantâneo de pacotes. Nenhum diário foi gravado.</sys:String>
   <sys:String x:Key="Str_About_UpdateRejected">Não foi possível verificar a atualização e ela foi descartada. Nada foi instalado. Você pode tentar novamente.</sys:String>
   <sys:String x:Key="Str_About_UpdateHandoffFailed">Não foi possível iniciar a atualização. O KillerBench continua aberto. Você pode tentar novamente.</sys:String>
+  <sys:String x:Key="Str_About_UpdateBusy">Outra instalação está em andamento. Nada foi instalado. Tente novamente quando ela terminar.</sys:String>
+  <sys:String x:Key="Str_About_UpdateDiskFull">Não há espaço em disco suficiente para instalar a atualização. Nada foi instalado. Libere algum espaço e tente novamente.</sys:String>
+  <sys:String x:Key="Str_About_UpdateSecurityRejected">A política de segurança do Windows bloqueou a atualização. Nada foi instalado.</sys:String>
   <sys:String x:Key="Str_About_UpdateElevationCanceled">A atualização foi cancelada na solicitação de permissão do Windows. Nada foi instalado. Você pode tentar novamente.</sys:String>
   <sys:String x:Key="Str_ExportFailure_ChooseAgain">Escolha novamente o destino da exportação antes de salvar.</sys:String>
   <sys:String x:Key="Str_ExportFailure_Changed">O destino da exportação mudou após a confirmação. Escolha-o novamente antes de salvar.</sys:String>

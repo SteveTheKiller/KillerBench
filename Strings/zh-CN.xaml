@@ -1371,6 +1371,9 @@
   <sys:String x:Key="Str_PackageReview_Journal">软件包快照的只读审查。未写入日志。</sys:String>
   <sys:String x:Key="Str_About_UpdateRejected">无法验证更新，已将其丢弃。未安装任何内容。您可以重试。</sys:String>
   <sys:String x:Key="Str_About_UpdateHandoffFailed">无法启动更新。KillerBench 仍处于打开状态。您可以重试。</sys:String>
+  <sys:String x:Key="Str_About_UpdateBusy">另一个安装正在进行。未安装任何内容。请在其完成后重试。</sys:String>
+  <sys:String x:Key="Str_About_UpdateDiskFull">磁盘空间不足，无法安装更新。未安装任何内容。请释放一些空间后重试。</sys:String>
+  <sys:String x:Key="Str_About_UpdateSecurityRejected">Windows 安全策略阻止了此更新。未安装任何内容。</sys:String>
   <sys:String x:Key="Str_About_UpdateElevationCanceled">在 Windows 权限提示处取消了更新。未安装任何内容。您可以重试。</sys:String>
   <sys:String x:Key="Str_ExportFailure_ChooseAgain">保存前请重新选择导出目标。</sys:String>
   <sys:String x:Key="Str_ExportFailure_Changed">确认后导出目标已更改。保存前请重新选择。</sys:String>

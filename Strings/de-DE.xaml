@@ -1371,6 +1371,9 @@
   <sys:String x:Key="Str_PackageReview_Journal">Schreibgeschützte Prüfung der Paketmomentaufnahme. Es wurde kein Journal geschrieben.</sys:String>
   <sys:String x:Key="Str_About_UpdateRejected">Das Update konnte nicht verifiziert werden und wurde verworfen. Es wurde nichts installiert. Sie können es erneut versuchen.</sys:String>
   <sys:String x:Key="Str_About_UpdateHandoffFailed">Das Update konnte nicht gestartet werden. KillerBench ist weiterhin geöffnet. Sie können es erneut versuchen.</sys:String>
+  <sys:String x:Key="Str_About_UpdateBusy">Eine andere Installation wird gerade ausgeführt. Es wurde nichts installiert. Versuchen Sie es erneut, wenn sie abgeschlossen ist.</sys:String>
+  <sys:String x:Key="Str_About_UpdateDiskFull">Es ist nicht genügend Speicherplatz für die Installation des Updates vorhanden. Es wurde nichts installiert. Geben Sie etwas Speicherplatz frei und versuchen Sie es erneut.</sys:String>
+  <sys:String x:Key="Str_About_UpdateSecurityRejected">Eine Windows-Sicherheitsrichtlinie hat das Update blockiert. Es wurde nichts installiert.</sys:String>
   <sys:String x:Key="Str_About_UpdateElevationCanceled">Das Update wurde bei der Windows-Berechtigungsabfrage abgebrochen. Es wurde nichts installiert. Sie können es erneut versuchen.</sys:String>
   <sys:String x:Key="Str_ExportFailure_ChooseAgain">Wählen Sie das Exportziel vor dem Speichern erneut aus.</sys:String>
   <sys:String x:Key="Str_ExportFailure_Changed">Das Exportziel wurde nach der Bestätigung geändert. Wählen Sie es vor dem Speichern erneut aus.</sys:String>

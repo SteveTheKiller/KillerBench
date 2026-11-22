@@ -17,12 +17,12 @@ public partial class MainWindow
         var unknown = result.Checks.Where(check => check.EffectiveState == CheckState.Unknown)
             .OrderBy(check => check.Name, StringComparer.Ordinal).ToArray();
         int passed = result.Checks.Count(check => check.EffectiveState == CheckState.Clear);
-        var fixes = FixableRepairs(result);
-        bool canFix = FixWorkflows(result, fixes).Length > 0;
+        var fixes = RunnableRepairs(result);
+        bool canFix = fixes.Length > 0;
         bool repaired = result.Repairs.Count > 0 && result.Repairs.All(Repairs.IsVerified) ||
             result.Checks.Any(check => check.Name == "Repair verification" && check.EffectiveState == CheckState.Clear);
-        int fixableCount = problems.Count(check => check.EffectiveState == CheckState.Repairable) +
-            result.Recipes.Count(recipe => recipe.EffectiveOutcome == RecipeOutcome.RepairAvailable);
+        // Count what Fix will actually repair, the same list the confirm step shows.
+        int fixableCount = fixes.Length;
 
         string headline, explain, tone;
         if (problems.Length > 0)
@@ -77,7 +77,7 @@ public partial class MainWindow
             actions.Children.Add(fix);
             BuildFixConfirm(confirm, actions, result, fixes);
         }
-        else if (!demo && fixes.Length > 0) actions.Children.Add(RepairNavigationButton(result));
+        else if (!demo && FixableRepairs(result).Length > 0) actions.Children.Add(RepairNavigationButton(result));
         if (!demo)
         {
             if (HasMaintenanceOptions(result)) actions.Children.Add(MaintenanceNavigationButton(result.Kind));
@@ -122,7 +122,12 @@ public partial class MainWindow
         var row = new WrapPanel();
         var now = ResultsButton(LocalizedText.Get("Str_Results_FixNow"), "PrimaryButton");
         now.Margin = new Thickness(0, 0, 8, 0);
-        now.Click += async (_, _) => await RunFromReportAsync(result, autoRepair: true);
+        now.Click += async (_, _) =>
+        {
+            now.IsEnabled = false;
+            try { await RunFromReportAsync(result, autoRepair: true); }
+            finally { now.IsEnabled = true; }
+        };
         var cancel = ResultsButton(LocalizedText.Get("Str_Results_Cancel"), "OutlineButton");
         cancel.Click += (_, _) =>
         {
@@ -193,6 +198,12 @@ public partial class MainWindow
                 .Select(repair => repair!.Value))
             .Distinct()];
 
+    // The repairs Fix can really run: all of them on a check that repairs, and on a full scan only those
+    // whose owning check repairs. The confirm list and the button count both use this.
+    private static RepairKind[] RunnableRepairs(WorkflowResult result) =>
+        Workflows.SupportsRepair(result.Kind) ? FixableRepairs(result)
+            : [.. FixableRepairs(result).Where(kind => RepairWorkflow(kind) is { } owner && Workflows.SupportsRepair(owner))];
+
     // The checks whose guarded auto-repair covers these repairs. A check that repairs runs itself; a full
     // scan, which only diagnoses, hands each repair to the focused check that owns it.
     private static WorkflowKind[] FixWorkflows(WorkflowResult result, RepairKind[] fixes) =>
@@ -208,18 +219,19 @@ public partial class MainWindow
         if (readCancellation is not null || workflowOutputActive) return;
         string? part = partSources.FirstOrDefault(pair => workflowSummaries.TryGetValue(pair.Value, out var owned) && ReferenceEquals(owned, result)).Key;
         var runs = new List<(WorkflowKind Kind, bool Repair)>();
-        if (autoRepair) runs.AddRange(FixWorkflows(result, FixableRepairs(result)).Select(kind => (kind, true)));
+        if (autoRepair) runs.AddRange(FixWorkflows(result, RunnableRepairs(result)).Select(kind => (kind, true)));
         if (!runs.Any(run => run.Kind == result.Kind)) runs.Add((result.Kind, false));
         try
         {
             foreach (var (kind, repair) in runs)
             {
-                int before = sources.Count;
+                // Compare the newest source, not the count: a full list drops its oldest entry as it adds one.
+                var before = sources.LastOrDefault();
                 MainWorkflow.SelectedItem = WorkflowCatalog.All.Single(workflow => workflow.Kind == kind);
                 MainAutoRepair.IsChecked = repair;
                 await StartMainWorkflowAsync(this, new RoutedEventArgs());
                 // A stopped or refused run leaves no new result; the rest of the plan waits for the person.
-                if (sources.Count == before) break;
+                if (sources.Count == 0 || ReferenceEquals(sources[^1], before)) break;
                 if (kind == result.Kind && part is not null) partSources[part] = sources[^1];
             }
         }

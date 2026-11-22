@@ -21,4 +21,17 @@ public partial class MainWindow : IAboutRepairHold
         Report(Controls.LocalizedText.Get("Str_Ui_UpdateWaits"));
         return true;
     }
+
+    // Set once the update commits to its handoff. The app closes as soon as the helper is running, so a
+    // repair started in those seconds would be cut off mid-command; runs wait until the handoff ends.
+    private bool updateHandoffActive;
+
+    void IAboutRepairHold.HoldRunsForUpdate(bool hold) => updateHandoffActive = hold;
+
+    private bool RefuseForUpdate()
+    {
+        if (!updateHandoffActive) return false;
+        Report(Controls.LocalizedText.Get("Str_About_UpdateDetail"));
+        return true;
+    }
 }

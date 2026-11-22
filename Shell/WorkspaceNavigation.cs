@@ -198,6 +198,8 @@ public partial class MainWindow
         var page = (FrameworkElement)OverviewScroll.Content;
         // A Height left over from a larger window would inflate the sum; FitSystemMap sets it again after layout.
         SystemAreas.ClearValue(HeightProperty);
+        // The cleared height must be fitted again, so drop the key FitSystemMap uses to skip unchanged fits.
+        heroFitKey = null;
         page.Measure(new Size(width, double.PositiveInfinity));
         CaptionBar.Measure(new Size(Width, double.PositiveInfinity));
         double content = page.DesiredSize.Height + OverviewScroll.Padding.Top + OverviewScroll.Padding.Bottom + 12;
@@ -401,18 +403,25 @@ public partial class MainWindow
         homeScanPart = part;
         part.IsRunning = true;
         SystemAreas.Items.Refresh();
-        int before = sources.Count;
+        // Compare the newest source, not the count: a full list drops its oldest entry as it adds one.
+        var before = sources.LastOrDefault();
         try
         {
             var run = StartMainWorkflowAsync(sender, e);
             ShowHome();
             await run;
         }
+        catch (Exception error)
+        {
+            // async void: an escaped exception would close the app. Report it and leave the part's last result alone.
+            before = null;
+            Report(error.Message);
+        }
         finally
         {
             homeScanPart = null;
             part.IsRunning = false;
-            if (sources.Count > before) partSources[part.Id] = sources[^1];
+            if (sources.Count > 0 && !ReferenceEquals(sources[^1], before)) partSources[part.Id] = sources[^1];
             RefreshMapEvidence();
             // Someone who moved to another page mid-scan stays there; the part's color waits on Home.
             if (WorkspaceNavigation.SelectedIndex == 0 && TerminalPanel.Visibility != Visibility.Visible) ShowHome();

@@ -1370,6 +1370,9 @@
   <sys:String x:Key="Str_PackageReview_Journal">Xem xét ảnh chụp gói ở chế độ chỉ đọc. Không ghi nhật ký.</sys:String>
   <sys:String x:Key="Str_About_UpdateRejected">Không thể xác minh bản cập nhật nên đã loại bỏ bản cập nhật. Không cài đặt gì. Bạn có thể thử lại.</sys:String>
   <sys:String x:Key="Str_About_UpdateHandoffFailed">Không thể bắt đầu cập nhật. KillerBench vẫn đang mở. Bạn có thể thử lại.</sys:String>
+  <sys:String x:Key="Str_About_UpdateBusy">Một quá trình cài đặt khác đang chạy. Không cài đặt gì. Hãy thử lại khi quá trình đó kết thúc.</sys:String>
+  <sys:String x:Key="Str_About_UpdateDiskFull">Không đủ dung lượng đĩa để cài đặt bản cập nhật. Không cài đặt gì. Hãy giải phóng bớt dung lượng rồi thử lại.</sys:String>
+  <sys:String x:Key="Str_About_UpdateSecurityRejected">Chính sách bảo mật của Windows đã chặn bản cập nhật. Không cài đặt gì.</sys:String>
   <sys:String x:Key="Str_About_UpdateElevationCanceled">Bản cập nhật đã bị hủy tại lời nhắc cấp quyền của Windows. Không cài đặt gì. Bạn có thể thử lại.</sys:String>
   <sys:String x:Key="Str_ExportFailure_ChooseAgain">Chọn lại đích xuất trước khi lưu.</sys:String>
   <sys:String x:Key="Str_ExportFailure_Changed">Đích xuất đã thay đổi sau khi xác nhận. Chọn lại đích trước khi lưu.</sys:String>

@@ -32,12 +32,23 @@ public partial class MainWindow
         ScanProgress.ToolTip = EvidenceTitle.Text;
         if (ScanProgress.Visibility == System.Windows.Visibility.Visible) return;
         ScanProgress.Visibility = System.Windows.Visibility.Visible;
+        // With Windows animations off the bar holds still in the middle instead of sweeping.
+        if (!System.Windows.SystemParameters.ClientAreaAnimation) { ScanProgressSlide.X = 56; return; }
         scanProgressSweep ??= new(-48, 160, TimeSpan.FromSeconds(1.4)) { RepeatBehavior = System.Windows.Media.Animation.RepeatBehavior.Forever };
         ScanProgressSlide.BeginAnimation(System.Windows.Media.TranslateTransform.XProperty, scanProgressSweep);
     }
 
     // The footer bar takes you back to the run: Home for a part scan, the live output for anything else.
-    private void ScanProgress_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    private void ScanProgress_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        if (e.Key is not (System.Windows.Input.Key.Enter or System.Windows.Input.Key.Space)) return;
+        e.Handled = true;
+        ReturnToRun();
+    }
+
+    private void ScanProgress_Click(object sender, System.Windows.Input.MouseButtonEventArgs e) => ReturnToRun();
+
+    private void ReturnToRun()
     {
         if (!workflowOutputActive) return;
         if (homeScanPart is not null) ShowHome();
@@ -388,7 +399,7 @@ public partial class MainWindow
 
     private async Task RunWorkflowAsync()
     {
-        if (readCancellation is not null) return;
+        if (readCancellation is not null || RefuseForUpdate()) return;
         if (RepairChoice.SelectedItem is not System.Windows.Controls.ComboBoxItem { Tag: WorkflowKind kind }) return;
         if (App.DemoMode)
         {

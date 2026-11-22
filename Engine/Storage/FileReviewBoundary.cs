@@ -12,6 +12,9 @@ internal sealed class FileReviewBoundary : IDisposable
     {
         if (!OperatingSystem.IsWindows()) throw new IOException("Local directory identity cannot be held on this platform.");
         string full = Path.TrimEndingDirectorySeparator(Path.GetFullPath(path));
+        // A local long path (\\?\C:\...) is still local; \\?\UNC\ keeps its prefix and is refused as network below.
+        if (full.StartsWith(@"\\?\", StringComparison.Ordinal) && !full.StartsWith(@"\\?\UNC\", StringComparison.OrdinalIgnoreCase))
+            full = full[4..];
         string volume = Path.GetPathRoot(full)!;
         if (volume.StartsWith("\\\\", StringComparison.Ordinal) || new DriveInfo(volume).DriveType == DriveType.Network)
             throw new IOException("Network or redirected review roots are unsupported.");

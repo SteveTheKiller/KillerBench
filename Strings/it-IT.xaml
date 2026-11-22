@@ -1371,6 +1371,9 @@
   <sys:String x:Key="Str_PackageReview_Journal">Revisione in sola lettura dell’istantanea dei pacchetti. Nessun registro è stato scritto.</sys:String>
   <sys:String x:Key="Str_About_UpdateRejected">Non è stato possibile verificare l’aggiornamento, che è stato scartato. Non è stato installato nulla. Puoi riprovare.</sys:String>
   <sys:String x:Key="Str_About_UpdateHandoffFailed">Non è stato possibile avviare l’aggiornamento. KillerBench è ancora aperto. Puoi riprovare.</sys:String>
+  <sys:String x:Key="Str_About_UpdateBusy">È in corso un’altra installazione. Non è stato installato nulla. Riprova quando sarà terminata.</sys:String>
+  <sys:String x:Key="Str_About_UpdateDiskFull">Lo spazio su disco non è sufficiente per installare l’aggiornamento. Non è stato installato nulla. Libera un po’ di spazio e riprova.</sys:String>
+  <sys:String x:Key="Str_About_UpdateSecurityRejected">I criteri di sicurezza di Windows hanno bloccato l’aggiornamento. Non è stato installato nulla.</sys:String>
   <sys:String x:Key="Str_About_UpdateElevationCanceled">L’aggiornamento è stato annullato alla richiesta di autorizzazione di Windows. Non è stato installato nulla. Puoi riprovare.</sys:String>
   <sys:String x:Key="Str_ExportFailure_ChooseAgain">Scegli di nuovo la destinazione di esportazione prima di salvare.</sys:String>
   <sys:String x:Key="Str_ExportFailure_Changed">La destinazione di esportazione è cambiata dopo la conferma. Sceglila di nuovo prima di salvare.</sys:String>

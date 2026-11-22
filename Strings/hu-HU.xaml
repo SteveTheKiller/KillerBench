@@ -1371,6 +1371,9 @@
   <sys:String x:Key="Str_PackageReview_Journal">A csomagpillanatkép csak olvasható áttekintése. Nem készült napló.</sys:String>
   <sys:String x:Key="Str_About_UpdateRejected">A frissítést nem sikerült ellenőrizni, ezért el lett vetve. Semmi nem lett telepítve. Újra megpróbálhatja.</sys:String>
   <sys:String x:Key="Str_About_UpdateHandoffFailed">A frissítést nem sikerült elindítani. A KillerBench továbbra is nyitva van. Újra megpróbálhatja.</sys:String>
+  <sys:String x:Key="Str_About_UpdateBusy">Egy másik telepítés van folyamatban. Semmi nem lett telepítve. Próbálja újra, amikor befejeződik.</sys:String>
+  <sys:String x:Key="Str_About_UpdateDiskFull">Nincs elég szabad lemezterület a frissítés telepítéséhez. Semmi nem lett telepítve. Szabadítson fel helyet, majd próbálja újra.</sys:String>
+  <sys:String x:Key="Str_About_UpdateSecurityRejected">A Windows biztonsági házirendje letiltotta a frissítést. Semmi nem lett telepítve.</sys:String>
   <sys:String x:Key="Str_About_UpdateElevationCanceled">A frissítés a Windows engedélykérő ablakánál megszakadt. Semmi nem lett telepítve. Újra megpróbálhatja.</sys:String>
   <sys:String x:Key="Str_ExportFailure_ChooseAgain">Mentés előtt válassza ki újra az exportálás célját.</sys:String>
   <sys:String x:Key="Str_ExportFailure_Changed">Az exportálás célja a megerősítés után megváltozott. Mentés előtt válassza ki újra.</sys:String>

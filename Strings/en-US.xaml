@@ -1370,6 +1370,9 @@
   <sys:String x:Key="Str_PackageReview_Journal">Read-only package snapshot review. No journal was written.</sys:String>
   <sys:String x:Key="Str_About_UpdateRejected">The update could not be verified and was discarded. Nothing was installed. You can try again.</sys:String>
   <sys:String x:Key="Str_About_UpdateHandoffFailed">The update could not start. KillerBench is still open. You can try again.</sys:String>
+  <sys:String x:Key="Str_About_UpdateBusy">Another installation is running. Nothing was installed. Try again when it finishes.</sys:String>
+  <sys:String x:Key="Str_About_UpdateDiskFull">There is not enough disk space to install the update. Nothing was installed. Free some space and try again.</sys:String>
+  <sys:String x:Key="Str_About_UpdateSecurityRejected">Windows security policy blocked the update. Nothing was installed.</sys:String>
   <sys:String x:Key="Str_About_UpdateElevationCanceled">The update was canceled at the Windows permission prompt. Nothing was installed. You can try again.</sys:String>
   <sys:String x:Key="Str_ExportFailure_ChooseAgain">Choose the export destination again before saving.</sys:String>
   <sys:String x:Key="Str_ExportFailure_Changed">The export destination changed after confirmation. Choose it again before saving.</sys:String>

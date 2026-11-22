@@ -1371,6 +1371,9 @@
   <sys:String x:Key="Str_PackageReview_Journal">Пакеттер суретін тек оқуға арналған шолу. Журнал жазылмады.</sys:String>
   <sys:String x:Key="Str_About_UpdateRejected">Жаңартуды тексеру мүмкін болмады, сондықтан ол жойылды. Ештеңе орнатылмады. Қайталап көруге болады.</sys:String>
   <sys:String x:Key="Str_About_UpdateHandoffFailed">Жаңартуды бастау мүмкін болмады. KillerBench әлі ашық. Қайталап көруге болады.</sys:String>
+  <sys:String x:Key="Str_About_UpdateBusy">Басқа орнату жүріп жатыр. Ештеңе орнатылмады. Ол аяқталғаннан кейін қайталап көріңіз.</sys:String>
+  <sys:String x:Key="Str_About_UpdateDiskFull">Жаңартуды орнатуға дискіде орын жеткіліксіз. Ештеңе орнатылмады. Біраз орын босатып, қайталап көріңіз.</sys:String>
+  <sys:String x:Key="Str_About_UpdateSecurityRejected">Windows қауіпсіздік саясаты жаңартуды бұғаттады. Ештеңе орнатылмады.</sys:String>
   <sys:String x:Key="Str_About_UpdateElevationCanceled">Жаңарту Windows рұқсат сұрау терезесінде тоқтатылды. Ештеңе орнатылмады. Қайталап көруге болады.</sys:String>
   <sys:String x:Key="Str_ExportFailure_ChooseAgain">Сақтау алдында экспорттау орнын қайта таңдаңыз.</sys:String>
   <sys:String x:Key="Str_ExportFailure_Changed">Экспорттау орны расталғаннан кейін өзгерді. Сақтау алдында оны қайта таңдаңыз.</sys:String>

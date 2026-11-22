@@ -1371,6 +1371,9 @@
   <sys:String x:Key="Str_PackageReview_Journal">Обзор снимка пакетов только для чтения. Журнал не записан.</sys:String>
   <sys:String x:Key="Str_About_UpdateRejected">Не удалось проверить обновление, поэтому оно было удалено. Ничего не установлено. Можно повторить попытку.</sys:String>
   <sys:String x:Key="Str_About_UpdateHandoffFailed">Не удалось запустить обновление. KillerBench остается открытым. Можно повторить попытку.</sys:String>
+  <sys:String x:Key="Str_About_UpdateBusy">Выполняется другая установка. Ничего не установлено. Повторите попытку, когда она завершится.</sys:String>
+  <sys:String x:Key="Str_About_UpdateDiskFull">Недостаточно места на диске для установки обновления. Ничего не установлено. Освободите место и повторите попытку.</sys:String>
+  <sys:String x:Key="Str_About_UpdateSecurityRejected">Политика безопасности Windows заблокировала обновление. Ничего не установлено.</sys:String>
   <sys:String x:Key="Str_About_UpdateElevationCanceled">Обновление отменено в окне запроса разрешения Windows. Ничего не установлено. Можно повторить попытку.</sys:String>
   <sys:String x:Key="Str_ExportFailure_ChooseAgain">Перед сохранением выберите место экспорта еще раз.</sys:String>
   <sys:String x:Key="Str_ExportFailure_Changed">Место экспорта изменилось после подтверждения. Перед сохранением выберите его еще раз.</sys:String>

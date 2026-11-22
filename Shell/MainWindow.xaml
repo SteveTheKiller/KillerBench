@@ -266,9 +266,16 @@
                     <DataTrigger Binding="{Binding Tone}" Value="Fixable"><Setter TargetName="PartGlow" Property="Background" Value="{DynamicResource DangerRed}"/><Setter TargetName="NodeFace" Property="BorderBrush" Value="{DynamicResource DangerRed}"/><Setter TargetName="PartBadge" Property="Background" Value="{DynamicResource DangerRed}"/><Setter TargetName="PartBadge" Property="Visibility" Value="Visible"/></DataTrigger>
                     <DataTrigger Binding="{Binding IsRunning}" Value="True">
                       <Setter TargetName="PartGlow" Property="Background" Value="{DynamicResource PrimaryBrush}"/><Setter TargetName="NodeFace" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/><Setter TargetName="PartBadge" Property="Visibility" Value="Collapsed"/>
-                      <DataTrigger.EnterActions><BeginStoryboard x:Name="PartPulse"><Storyboard><DoubleAnimation Storyboard.TargetName="PartGlow" Storyboard.TargetProperty="Opacity" From="0.25" To="0.9" Duration="0:0:0.7" AutoReverse="True" RepeatBehavior="Forever"/></Storyboard></BeginStoryboard></DataTrigger.EnterActions>
-                      <DataTrigger.ExitActions><RemoveStoryboard BeginStoryboardName="PartPulse"/></DataTrigger.ExitActions>
                     </DataTrigger>
+                    <!-- The pulse honors Windows' animation setting; with it off the part just holds the accent color. -->
+                    <MultiDataTrigger>
+                      <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsRunning}" Value="True"/>
+                        <Condition Binding="{Binding Source={x:Static SystemParameters.ClientAreaAnimation}}" Value="True"/>
+                      </MultiDataTrigger.Conditions>
+                      <MultiDataTrigger.EnterActions><BeginStoryboard x:Name="PartPulse"><Storyboard><DoubleAnimation Storyboard.TargetName="PartGlow" Storyboard.TargetProperty="Opacity" From="0.25" To="0.9" Duration="0:0:0.7" AutoReverse="True" RepeatBehavior="Forever"/></Storyboard></BeginStoryboard></MultiDataTrigger.EnterActions>
+                      <MultiDataTrigger.ExitActions><RemoveStoryboard BeginStoryboardName="PartPulse"/></MultiDataTrigger.ExitActions>
+                    </MultiDataTrigger>
                     <Trigger Property="icons:MachineMapPanel.IsDrawn" Value="True"><Setter TargetName="ListContent" Property="Visibility" Value="Collapsed"/></Trigger>
                     <Trigger Property="icons:MachineMapPanel.IsDrawn" Value="False"><Setter TargetName="PartBadge" Property="Visibility" Value="Collapsed"/></Trigger>
                     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="PartGlow" Property="Opacity" Value="0.65"/><Setter TargetName="NodeFace" Property="Background" Value="#22FFFFFF"/></Trigger>
@@ -1374,7 +1381,7 @@
       <Border x:Name="ScanLight" Width="9" Height="9" CornerRadius="5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,0,0,0" Background="#3FA95F" BorderThickness="1" BorderBrush="#40000000" ToolTip="{DynamicResource Str_Shell_ReadyNoScan}"/>
       <TextBlock x:Name="StatusLabel" Text="{DynamicResource Str_Text_Ready}" FontFamily="{DynamicResource BrandSansFont}" FontSize="16" TextOptions.TextFormattingMode="Ideal" Foreground="{DynamicResource TextFooter}" VerticalAlignment="Center" Margin="22,0,12,0" TextTrimming="CharacterEllipsis"/>
       <!-- A running scan shows here on every page; clicking it goes back to the scan. -->
-      <StackPanel x:Name="ScanProgress" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,24,0" Visibility="Collapsed" Cursor="Hand" Background="Transparent" MouseLeftButtonUp="ScanProgress_Click">
+      <StackPanel x:Name="ScanProgress" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,24,0" Visibility="Collapsed" Cursor="Hand" Background="Transparent" Focusable="True" MouseLeftButtonUp="ScanProgress_Click" KeyDown="ScanProgress_KeyDown">
         <TextBlock x:Name="ScanProgressLabel" FontFamily="{DynamicResource BrandSansFont}" FontSize="16" TextOptions.TextFormattingMode="Ideal" Foreground="{DynamicResource TextFooter}" VerticalAlignment="Center" Margin="0,0,10,0"/>
         <Grid Width="160" Height="6" VerticalAlignment="Center" ClipToBounds="True">
           <Border CornerRadius="3" Background="{DynamicResource DimTextBrush}" Opacity="0.35"/>

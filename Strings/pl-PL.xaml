@@ -1371,6 +1371,9 @@
   <sys:String x:Key="Str_PackageReview_Journal">Przegląd obrazu stanu pakietów tylko do odczytu. Nie zapisano dziennika.</sys:String>
   <sys:String x:Key="Str_About_UpdateRejected">Nie udało się zweryfikować aktualizacji i została odrzucona. Niczego nie zainstalowano. Możesz spróbować ponownie.</sys:String>
   <sys:String x:Key="Str_About_UpdateHandoffFailed">Nie udało się uruchomić aktualizacji. KillerBench nadal jest otwarty. Możesz spróbować ponownie.</sys:String>
+  <sys:String x:Key="Str_About_UpdateBusy">Trwa inna instalacja. Niczego nie zainstalowano. Spróbuj ponownie, gdy się zakończy.</sys:String>
+  <sys:String x:Key="Str_About_UpdateDiskFull">Za mało miejsca na dysku, aby zainstalować aktualizację. Niczego nie zainstalowano. Zwolnij trochę miejsca i spróbuj ponownie.</sys:String>
+  <sys:String x:Key="Str_About_UpdateSecurityRejected">Zasady zabezpieczeń systemu Windows zablokowały aktualizację. Niczego nie zainstalowano.</sys:String>
   <sys:String x:Key="Str_About_UpdateElevationCanceled">Aktualizacja została anulowana w oknie uprawnień systemu Windows. Niczego nie zainstalowano. Możesz spróbować ponownie.</sys:String>
   <sys:String x:Key="Str_ExportFailure_ChooseAgain">Przed zapisaniem ponownie wybierz miejsce docelowe eksportu.</sys:String>
   <sys:String x:Key="Str_ExportFailure_Changed">Miejsce docelowe eksportu zmieniło się po potwierdzeniu. Wybierz je ponownie przed zapisaniem.</sys:String>

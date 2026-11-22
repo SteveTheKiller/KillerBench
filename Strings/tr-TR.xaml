@@ -1371,6 +1371,9 @@
   <sys:String x:Key="Str_PackageReview_Journal">Salt okunur paket anlık görüntüsü incelemesi. Günlük yazılmadı.</sys:String>
   <sys:String x:Key="Str_About_UpdateRejected">Güncelleme doğrulanamadı ve atıldı. Hiçbir şey yüklenmedi. Yeniden deneyebilirsiniz.</sys:String>
   <sys:String x:Key="Str_About_UpdateHandoffFailed">Güncelleme başlatılamadı. KillerBench hâlâ açık. Yeniden deneyebilirsiniz.</sys:String>
+  <sys:String x:Key="Str_About_UpdateBusy">Başka bir yükleme devam ediyor. Hiçbir şey yüklenmedi. Bittiğinde yeniden deneyin.</sys:String>
+  <sys:String x:Key="Str_About_UpdateDiskFull">Güncellemeyi yüklemek için yeterli disk alanı yok. Hiçbir şey yüklenmedi. Biraz yer açıp yeniden deneyin.</sys:String>
+  <sys:String x:Key="Str_About_UpdateSecurityRejected">Windows güvenlik ilkesi güncellemeyi engelledi. Hiçbir şey yüklenmedi.</sys:String>
   <sys:String x:Key="Str_About_UpdateElevationCanceled">Güncelleme, Windows izin isteminde iptal edildi. Hiçbir şey yüklenmedi. Yeniden deneyebilirsiniz.</sys:String>
   <sys:String x:Key="Str_ExportFailure_ChooseAgain">Kaydetmeden önce dışa aktarma hedefini yeniden seçin.</sys:String>
   <sys:String x:Key="Str_ExportFailure_Changed">Dışa aktarma hedefi onaydan sonra değişti. Kaydetmeden önce yeniden seçin.</sys:String>

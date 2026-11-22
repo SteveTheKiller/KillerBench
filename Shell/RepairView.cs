@@ -70,7 +70,7 @@ public partial class MainWindow
     private async void OnRunRepair(object sender, RoutedEventArgs e)
     {
         if (workflowMode) { await RunWorkflowAsync(); return; }
-        if (readCancellation is not null || RepairConsent.IsChecked != true) return;
+        if (readCancellation is not null || RepairConsent.IsChecked != true || RefuseForUpdate()) return;
         var kind = RepairChoice.SelectedIndex == 1 ? RepairKind.SystemFiles : RepairKind.ComponentStore;
         var workflowKind = kind == RepairKind.SystemFiles ? WorkflowKind.SystemFiles : WorkflowKind.ComponentCleanup;
         if (App.DemoMode) { await RunDemoWorkflowAsync(workflowKind, simulateRepair: true, screenshotPreset: App.ScreenshotMode); return; }
