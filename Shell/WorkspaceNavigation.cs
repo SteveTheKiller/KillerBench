@@ -28,7 +28,8 @@ public partial class MainWindow
 
     private sealed record HistoryCheck(string Name, string State, System.Windows.Media.Brush Tone);
 
-    private sealed record GuidedSymptom(string Id, string Art, string Area, WorkflowKind Workflow)
+    // Part is the machine part on Home that stands for the problem: clicking it runs the problem's check.
+    private sealed record GuidedSymptom(string Id, string Art, string Area, WorkflowKind Workflow, string Part)
     {
         public string Title => Controls.LocalizedText.Get("Str_Guided_" + Id);
         public string Description => Controls.LocalizedText.Get("Str_Guided_" + Id + "Hint");
@@ -37,13 +38,50 @@ public partial class MainWindow
 
     private static readonly GuidedSymptom[] GuidedSymptoms =
     [
-        new("Slow", "SlowPC", "Diagnostics", WorkflowKind.StartupPerformance),
-        new("Updates", "Updates", "Updates", WorkflowKind.WindowsUpdate),
-        new("Network", "Network", "Network", WorkflowKind.Network),
-        new("Storage", "Storage", "Storage", WorkflowKind.Storage),
-        new("Apps", "AppCrashes", "Diagnostics", WorkflowKind.ReliabilityHistory),
-        new("Other", "Other", "Diagnostics", WorkflowKind.CommonProblems)
+        new("Slow", "SlowPC", "Diagnostics", WorkflowKind.StartupPerformance, "Maintenance"),
+        new("Updates", "Updates", "Updates", WorkflowKind.WindowsUpdate, "Updates"),
+        new("Network", "Network", "Network", WorkflowKind.Network, "Network"),
+        new("Storage", "Storage", "Storage", WorkflowKind.Storage, "Storage"),
+        new("Apps", "AppCrashes", "Diagnostics", WorkflowKind.ReliabilityHistory, "Diagnostics"),
+        new("Other", "Other", "Diagnostics", WorkflowKind.CommonProblems, "")
     ];
+
+    private static GuidedSymptom? SymptomForPart(object? item) =>
+        item is ToolCategory area ? GuidedSymptoms.FirstOrDefault(symptom => symptom.Part.Length > 0 && symptom.Part == area.Id) : null;
+
+    // A click on a problem part runs that problem's check; any other part opens its evidence as before.
+    private void OnMachinePartUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (e.OriginalSource is DependencyObject source
+            && ItemsControl.ContainerFromElement(SystemAreas, source) is ListBoxItem item
+            && SymptomForPart(item.DataContext) is { } symptom)
+        {
+            e.Handled = true;
+            RunSymptom(symptom, sender, e);
+            return;
+        }
+        OnReopenSelected(sender, e);
+    }
+
+    private void OnMachinePartKey(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        if (e.Key is not (System.Windows.Input.Key.Enter or System.Windows.Input.Key.Space)) return;
+        if (SymptomForPart(SystemAreas.SelectedItem) is not { } symptom) return;
+        e.Handled = true;
+        RunSymptom(symptom, sender, e);
+    }
+
+    // Problem parts name the problem on hover and to screen readers, in plain words.
+    private void LabelMachineParts()
+    {
+        foreach (var area in ToolCategories)
+            if (SystemAreas.ItemContainerGenerator.ContainerFromItem(area) is ListBoxItem item && SymptomForPart(area) is { } symptom)
+            {
+                item.ToolTip = symptom.Title + "\n" + symptom.Description;
+                System.Windows.Automation.AutomationProperties.SetName(item, symptom.Title);
+                System.Windows.Automation.AutomationProperties.SetHelpText(item, symptom.Description);
+            }
+    }
 
     private void OnWorkspaceSelected(object sender, SelectionChangedEventArgs e)
     {
@@ -81,7 +119,7 @@ public partial class MainWindow
         SystemAreas.ItemsSource = ToolCategories;
         SymptomChips.ItemsSource = GuidedSymptoms;
         SystemAreas.SelectedIndex = 0;
-        OverviewScroll.LayoutUpdated += (_, _) => FitSystemMap();
+        SystemAreas.ItemContainerGenerator.StatusChanged += (_, _) => LabelMachineParts();        OverviewScroll.LayoutUpdated += (_, _) => FitSystemMap();
     }
 
     private void FitSystemMap()
@@ -98,9 +136,13 @@ public partial class MainWindow
             double width = Math.Max(300, strip.Width);
             if (double.IsNaN(OverviewHeroSpot.Width) || Math.Abs(OverviewHeroSpot.Width - width) > 0.5) OverviewHeroSpot.Width = width;
             OverviewHeroSpot.HorizontalAlignment = HorizontalAlignment.Left;
-            overflow = Math.Max(0, OverviewHeroSpot.ActualHeight + 12 - strip.Height);
-            // Bottom of the block rests just above the monitor.
-            SetMargin(OverviewHeroSpot, new Thickness(origin.X, Math.Max(0, origin.Y + strip.Height - OverviewHeroSpot.ActualHeight - 12), 0, 0));
+            // The header's own 100% height: it grows to fill the strip, and only a header taller than the strip moves the machine down.
+            double natural = OverviewHero.DesiredSize.Height;
+            overflow = Math.Max(0, natural + 12 - strip.Height);
+            double spot = Math.Max(natural, strip.Height - 12);
+            if (double.IsNaN(OverviewHeroSpot.Height) || Math.Abs(OverviewHeroSpot.Height - spot) > 0.5) OverviewHeroSpot.Height = spot;
+            // The block fills the strip from its top edge down to just above the monitor.
+            SetMargin(OverviewHeroSpot, new Thickness(origin.X, Math.Max(0, origin.Y + strip.Height - spot - 12), 0, 0));
         }
         SetMargin(SystemAreas, new Thickness(0, overflow, 0, 0));
         double height = Math.Max(280, OverviewScroll.ViewportHeight - overflow - 2);
@@ -138,7 +180,12 @@ public partial class MainWindow
         Height = Math.Max(MinHeight, content * appScale + CaptionBar.DesiredSize.Height + 28);
     }
 
-    private void OnSystemAreaSelected(object sender, SelectionChangedEventArgs e) => ShowAreaEvidence();
+    // A mouse press on a problem part waits for the click, which runs the check instead of opening evidence.
+    private void OnSystemAreaSelected(object sender, SelectionChangedEventArgs e)
+    {
+        if (System.Windows.Input.Mouse.LeftButton == System.Windows.Input.MouseButtonState.Pressed && SymptomForPart(SystemAreas.SelectedItem) is not null) return;
+        ShowAreaEvidence();
+    }
 
     private void RefreshSessionHistory()
     {
@@ -301,7 +348,12 @@ public partial class MainWindow
     // A Home chip opens the symptom's area and runs its matching check in one step.
     private void OnSymptomChip(object sender, RoutedEventArgs e)
     {
-        if (sender is not FrameworkElement { Tag: GuidedSymptom symptom } || !MainGo.IsEnabled || !CanSearchWorkspace) return;
+        if (sender is FrameworkElement { Tag: GuidedSymptom symptom }) RunSymptom(symptom, sender, e);
+    }
+
+    private void RunSymptom(GuidedSymptom symptom, object sender, RoutedEventArgs e)
+    {
+        if (!MainGo.IsEnabled || !CanSearchWorkspace) return;
         CategoryList.SelectedItem = ToolCategories.Single(area => area.Id == symptom.Area);
         MainAutoRepair.IsChecked = false;
         ShowToolsWorkspace();

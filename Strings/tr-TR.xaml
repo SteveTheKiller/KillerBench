@@ -1367,7 +1367,7 @@
   <sys:String x:Key="Str_Overview_Unknown">Bilinmiyor: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Fine">Sorunsuz: {0}</sys:String>
   <sys:String x:Key="Str_Area_SpaceUsed">{0}: {2} alanın {1} kadarı kullanılıyor</sys:String>
-  <sys:String x:Key="Str_Workspace_MapHint">İlgili kanıtları incelemek için bir alan seçin. Tanılamayı çalıştırana kadar hiçbir denetim yapılmaz.</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Bilgisayarın sorun çıkaran parçasına tıklayın, KillerBench onu denetlesin.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Denetlenmedi</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Bir sistem alanı seçin</sys:String>
   <sys:String x:Key="Str_Workspace_ReviewArea">Bu alanı incele</sys:String>

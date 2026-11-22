@@ -1366,7 +1366,7 @@
   <sys:String x:Key="Str_Overview_Unknown">Neznano: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Fine">V redu: {0}</sys:String>
   <sys:String x:Key="Str_Area_SpaceUsed">{0}: zasedeno {1} od {2}</sys:String>
-  <sys:String x:Key="Str_Workspace_MapHint">Izberite področje, da pregledate zbrane dokaze zanj. Preverjanja se izvedejo šele, ko zaženete diagnostiko.</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Kliknite del računalnika, ki nagaja, in KillerBench ga preveri.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Ni preverjeno</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Izberite področje sistema</sys:String>
   <sys:String x:Key="Str_Workspace_ReviewArea">Preglejte to področje</sys:String>

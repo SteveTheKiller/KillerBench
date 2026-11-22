@@ -1356,7 +1356,7 @@
   <sys:String x:Key="Str_Workspace_Home">Home</sys:String>
   <sys:String x:Key="Str_Output_Back">Back</sys:String>
   <sys:String x:Key="Str_Workspace_SystemMap">Your system at a glance</sys:String>
-  <sys:String x:Key="Str_Workspace_MapHint">Choose an area to review its evidence. Nothing is checked until you run diagnostics.</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Click the part of the PC that is acting up, and KillerBench checks it.</sys:String>
   <sys:String x:Key="Str_Overview_Checked">checked</sys:String>
   <sys:String x:Key="Str_Overview_HeadlineReview">Things to review: {0}</sys:String>
   <sys:String x:Key="Str_Overview_HeadlineClear">Nothing needs a look</sys:String>

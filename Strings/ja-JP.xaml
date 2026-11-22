@@ -1367,7 +1367,7 @@
   <sys:String x:Key="Str_Overview_Unknown">不明: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Fine">問題なし: {0}</sys:String>
   <sys:String x:Key="Str_Area_SpaceUsed">{0}: {2} 中 {1} 使用</sys:String>
-  <sys:String x:Key="Str_Workspace_MapHint">領域を選択して、その領域の証拠を確認します。診断を実行するまでチェックは行われません。</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">調子の悪い PC の部分をクリックすると、KillerBench がチェックします。</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">未確認</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">システムの領域を選択</sys:String>
   <sys:String x:Key="Str_Workspace_ReviewArea">この領域を確認</sys:String>

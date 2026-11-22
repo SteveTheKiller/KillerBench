@@ -1367,7 +1367,7 @@
   <sys:String x:Key="Str_Overview_Unknown">Unbekannt: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Fine">In Ordnung: {0}</sys:String>
   <sys:String x:Key="Str_Area_SpaceUsed">{0}: {1} von {2} belegt</sys:String>
-  <sys:String x:Key="Str_Workspace_MapHint">Wählen Sie einen Bereich, um die zugehörigen Nachweise einzusehen. Erst wenn Sie die Diagnose starten, werden Prüfungen ausgeführt.</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Klicken Sie auf den Teil des PCs, der Probleme macht, und KillerBench prüft ihn.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Nicht geprüft</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Systembereich auswählen</sys:String>
   <sys:String x:Key="Str_Workspace_ReviewArea">Diesen Bereich prüfen</sys:String>

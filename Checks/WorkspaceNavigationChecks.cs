@@ -81,11 +81,16 @@ internal static class WorkspaceNavigationChecks
             var scroll = Find<ScrollViewer>(window, "OverviewScroll");
             // Home opens at 100%: nothing between the question and the page scales it, so the text is its real size.
             for (DependencyObject? up = chips; up is not null && up != mapPane; up = System.Windows.Media.VisualTreeHelper.GetParent(up))
-                Require(up is not Viewbox, "No Viewbox shrinks the Home question.");
+                Require(up is not Viewbox { StretchDirection: not StretchDirection.UpOnly }, "No Viewbox shrinks the Home question; it may only grow.");
             var question = Find<TextBlock>(window, "SymptomQuestion");
             Rect asked = question.TransformToVisual(window).TransformBounds(new Rect(question.RenderSize));
             Require(question.IsVisible && asked.Height >= question.FontSize, "The question renders at full size. Height " + asked.Height);
-            Require(Find<ItemsControl>(window, "SymptomChips").Items.Count == 6, "Home offers all six problems to pick from.");
+            // The machine parts are the problem buttons: five parts name their problem on hover, with no separate card row.
+            Require(!Find<ItemsControl>(window, "SymptomChips").IsVisible, "Home has no separate card row; the machine parts are the buttons.");
+            int labelled = 0;
+            foreach (var part in map.Items)
+                if (map.ItemContainerGenerator.ContainerFromItem(part) is ListBoxItem { ToolTip: string tip } && tip.Contains('\n')) labelled++;
+            Require(labelled == 5, "Five machine parts name their problem on hover. Labelled: " + labelled);
             // The block fills the strip above the monitor: no overlap with the machine and no empty band above the monitor.
             Rect block = spot.TransformToVisual(drawn).TransformBounds(new Rect(spot.RenderSize));
             Rect screen = drawn.ScreenRect, tower = drawn.TowerRect;

@@ -1367,7 +1367,7 @@
   <sys:String x:Key="Str_Overview_Unknown">Inconnues : {0}</sys:String>
   <sys:String x:Key="Str_Overview_Fine">Correctes : {0}</sys:String>
   <sys:String x:Key="Str_Area_SpaceUsed">{0} : {1} utilisés sur {2}</sys:String>
-  <sys:String x:Key="Str_Workspace_MapHint">Choisissez une zone pour examiner les preuves recueillies. Aucune vérification n’est effectuée avant le lancement du diagnostic.</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Cliquez sur la partie du PC qui pose problème, et KillerBench la vérifie.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Non vérifié</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Choisissez une zone du système</sys:String>
   <sys:String x:Key="Str_Workspace_ReviewArea">Examiner cette zone</sys:String>

@@ -1366,7 +1366,7 @@
   <sys:String x:Key="Str_Overview_Unknown">Không xác định: {0}</sys:String>
   <sys:String x:Key="Str_Overview_Fine">Ổn: {0}</sys:String>
   <sys:String x:Key="Str_Area_SpaceUsed">{0}: đã dùng {1} trên {2}</sys:String>
-  <sys:String x:Key="Str_Workspace_MapHint">Chọn một mục để xem bằng chứng liên quan. Việc kiểm tra chỉ bắt đầu khi bạn chạy chẩn đoán.</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">Nhấp vào bộ phận của PC đang gặp trục trặc, KillerBench sẽ kiểm tra nó.</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">Chưa kiểm tra</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">Chọn một mục của hệ thống</sys:String>
   <sys:String x:Key="Str_Workspace_ReviewArea">Xem lại mục này</sys:String>

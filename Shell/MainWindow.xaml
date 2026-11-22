@@ -206,6 +206,8 @@
               <Grid x:Name="OverviewMapHost">
               <!-- The question block always renders at 100%: it never scales to fit, it stacks above the machine instead. -->
               <Border x:Name="OverviewHeroSpot" HorizontalAlignment="Stretch" VerticalAlignment="Top" Panel.ZIndex="1">
+                <!-- UpOnly: the header grows to fill the strip above the monitor and never drops below 100%. -->
+                <Viewbox x:Name="OverviewHeroScale" Stretch="Uniform" StretchDirection="UpOnly" HorizontalAlignment="Left" VerticalAlignment="Bottom">
                 <Border x:Name="OverviewHero">
                 <Grid>
                   <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
@@ -219,12 +221,14 @@
                     </Grid>
                   </Viewbox>
                   <StackPanel Grid.Column="1" VerticalAlignment="Top">
+                    <!-- Home asks what's wrong; the machine below is the answer. Each problem part runs its check when clicked. -->
+                    <TextBlock x:Name="SymptomQuestion" Text="{DynamicResource Str_Guided_Title}" FontFamily="{DynamicResource HeadingFont}" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="SymptomHint" Text="{DynamicResource Str_Workspace_MapHint}" FontSize="14" TextWrapping="Wrap" Margin="0,2,0,8"/>
                     <TextBlock x:Name="OverviewHeadline" Text="{DynamicResource Str_Workspace_SystemMap}" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap"/>
                     <TextBlock x:Name="OverviewDetail" Text="{DynamicResource Str_Workspace_MapHint}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,2,0,6"/>
                     <WrapPanel x:Name="OverviewChips" Visibility="Collapsed"/>
-                    <!-- Symptoms: ask what's wrong first, then each card runs the matching check. -->
-                    <TextBlock x:Name="SymptomQuestion" Text="{DynamicResource Str_Guided_Title}" FontFamily="{DynamicResource HeadingFont}" FontSize="22" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,10,0,0"/>
-                    <ItemsControl x:Name="SymptomChips" AutomationProperties.Name="{DynamicResource Str_Guided_Title}">
+                    <!-- The problem list stays for the search and shortcut paths; on Home the machine parts are the buttons. -->
+                    <ItemsControl x:Name="SymptomChips" Visibility="Collapsed" AutomationProperties.Name="{DynamicResource Str_Guided_Title}">
                       <ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="3"/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
                       <ItemsControl.ItemTemplate><DataTemplate>
                         <Button Click="OnSymptomChip" Tag="{Binding}" Margin="0,8,8,0" Padding="12,10" HorizontalContentAlignment="Left" VerticalContentAlignment="Top" AutomationProperties.Name="{Binding Title}" AutomationProperties.HelpText="{Binding Description}">
@@ -239,8 +243,9 @@
                   </StackPanel>
                 </Grid>
                 </Border>
+                </Viewbox>
               </Border>
-              <ListBox x:Name="SystemAreas" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" SelectionChanged="OnSystemAreaSelected" PreviewMouseLeftButtonUp="OnReopenSelected" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
+              <ListBox x:Name="SystemAreas" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" SelectionChanged="OnSystemAreaSelected" PreviewMouseLeftButtonUp="OnMachinePartUp" PreviewKeyDown="OnMachinePartKey" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" AutomationProperties.Name="{DynamicResource Str_Workspace_SelectArea}">
                 <ListBox.ItemsPanel><ItemsPanelTemplate><icons:MachineMapPanel/></ItemsPanelTemplate></ListBox.ItemsPanel>
                 <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem" BasedOn="{StaticResource SourceItem}">
                   <Setter Property="Padding" Value="10,6"/><Setter Property="Margin" Value="0"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Cursor" Value="Hand"/><Setter Property="AutomationProperties.Name" Value="{Binding Title}"/><Setter Property="ToolTip" Value="{Binding Title}"/><Setter Property="icons:MachineMapPanel.Part" Value="{Binding Id}"/>

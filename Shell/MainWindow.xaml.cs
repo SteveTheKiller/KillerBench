@@ -142,6 +142,7 @@ public partial class MainWindow : Window
         RefreshNativeCapabilityStatus();
         RefreshPrivacyLanguage();
         RefreshWorkflowReportLanguage();
+        LabelMachineParts();
         RefreshWorkspaceToolbarLanguage();
         QueueTitleSearch();
         // One pane: the details cover the page, so rebuild them when they were showing, not when the page is.

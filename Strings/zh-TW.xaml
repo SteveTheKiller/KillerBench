@@ -1367,7 +1367,7 @@
   <sys:String x:Key="Str_Overview_Unknown">未知：{0}</sys:String>
   <sys:String x:Key="Str_Overview_Fine">正常：{0}</sys:String>
   <sys:String x:Key="Str_Area_SpaceUsed">{0}：已使用 {1}，共 {2}</sys:String>
-  <sys:String x:Key="Str_Workspace_MapHint">選擇一個區域以檢閱相關證據。執行診斷前不會進行任何檢查。</sys:String>
+  <sys:String x:Key="Str_Workspace_MapHint">點擊電腦上出問題的部件，KillerBench 就會檢查它。</sys:String>
   <sys:String x:Key="Str_Workspace_NotChecked">尚未檢查</sys:String>
   <sys:String x:Key="Str_Workspace_SelectArea">選擇系統區域</sys:String>
   <sys:String x:Key="Str_Workspace_ReviewArea">檢閱此區域</sys:String>
