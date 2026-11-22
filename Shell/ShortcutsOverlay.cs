@@ -60,7 +60,7 @@ using System.Windows.Shapes;
 //                      around KsMapRows, the StackPanel the board is built into. DownOnly so it
 //                      shrinks to fit a narrow window but never blows up on a wide one - a keyboard
 //                      at 200% looks absurd and the cap text is sized for 100%. The detail line is
-//                      added to KsMapHost after the Viewbox in code.
+//                      added in code beside KsLayerTabs, in one row, so nothing sits under the board.
 //   a close button wired to ShortcutsClose_Click
 // ============================================================
 namespace KillerBench.Shell
@@ -342,6 +342,18 @@ namespace KillerBench.Shell
 
         /// <summary>The detail line that sits under the board and reads out the hovered key.
         /// Add it to the map host AFTER the Viewbox.</summary>
+        /// <summary>Room for the detail line right of the layer tabs, whether the tabs sit
+        /// centered or at the left of their row, so the readout never runs under a tab.</summary>
+        internal static double DetailRoom(double rowWidth, Panel tabs)
+        {
+            double content = 0;
+            foreach (FrameworkElement tab in tabs.Children)
+                content += tab.ActualWidth + tab.Margin.Left + tab.Margin.Right;
+            double free = tabs.HorizontalAlignment == HorizontalAlignment.Center
+                ? (rowWidth - content) / 2 : rowWidth - content;
+            return Math.Max(0, free - 12);
+        }
+
         internal static TextBlock DetailLine()
         {
             var t = new TextBlock
@@ -349,8 +361,10 @@ namespace KillerBench.Shell
                 Text = " ",
                 FontFamily = new FontFamily("Consolas"),
                 FontSize = 12.5,
-                Margin = new Thickness(2, 10, 0, 0),
                 Height = 18,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Center,
+                TextTrimming = TextTrimming.CharacterEllipsis,
             };
             t.SetResourceReference(TextBlock.ForegroundProperty, "PrimaryBrush");
             return t;
@@ -455,6 +469,25 @@ namespace KillerBench.Shell
         private KsLayer _ksLayer;
         private TextBlock? _ksDetail;
 
+        private void FitKsDetail()
+        {
+            if (_ksDetail?.Parent is not FrameworkElement row) return;
+            // Tabs are rebuilt with the board, so measure once they have laid out.
+            Dispatcher.BeginInvoke(() => _ksDetail.MaxWidth = KsKeyboard.DetailRoom(row.ActualWidth, KsLayerTabs),
+                System.Windows.Threading.DispatcherPriority.Loaded);
+        }
+
+        // The board never scales up (DownOnly), so a card wider than the board left a strip of
+        // empty card on each side. Cap the keyboard card at the board's own width plus the card's
+        // padding and edge, so the card's inner padding is the same on every side.
+        private void FitKsCard() =>
+            Dispatcher.BeginInvoke(() =>
+            {
+                if (KsMapHost.Visibility != Visibility.Visible || KsMapHost.ActualWidth <= 0) return;
+                double chrome = ShortcutCardGrid.ActualWidth - KsMapHost.ActualWidth;
+                ShortcutCardGrid.MaxWidth = Math.Min(1080, KsMapRows.DesiredSize.Width + chrome);
+            }, System.Windows.Threading.DispatcherPriority.Loaded);
+
         private string KsLoc(string key) => TryFindResource(key) as string ?? key;
 
         /// <summary>
@@ -538,7 +571,7 @@ namespace KillerBench.Shell
             // wall of whitespace with the keys on one edge and the descriptions on the other.
             ShortcutCardGrid.MaxWidth = keyboard ? 1080 : 640;
 
-            if (keyboard) BuildKeyboardMap(); else BuildShortcutsList();
+            if (keyboard) { BuildKeyboardMap(); FitKsCard(); } else BuildShortcutsList();
         }
 
         // ---- LIST view ----
@@ -647,12 +680,21 @@ namespace KillerBench.Shell
             }
 
             // The detail line reads out the hovered key at a size you can actually read, so a
-            // caption that had to be clipped on a narrow cap is still recoverable.
+            // caption that had to be clipped on a narrow cap is still recoverable. It shares the
+            // layer-tab row, right of the centered tabs, so the board has no empty strip under it.
             if (_ksDetail == null)
             {
                 _ksDetail = KsKeyboard.DetailLine();
-                KsMapHost.Children.Add(_ksDetail);
+                int at = KsMapHost.Children.IndexOf(KsLayerTabs);
+                KsMapHost.Children.Remove(KsLayerTabs);
+                var row = new Grid { Margin = KsLayerTabs.Margin };
+                KsLayerTabs.Margin = new Thickness(0);
+                row.Children.Add(KsLayerTabs);
+                row.Children.Add(_ksDetail);
+                KsMapHost.Children.Insert(Math.Max(at, 0), row);
+                row.SizeChanged += (_, _) => FitKsDetail();
             }
+            FitKsDetail();
             _ksDetail.Text = " ";
 
             // Which cap ids are lit, and by what, on the layer being shown. The modifier caps that
@@ -682,6 +724,11 @@ namespace KillerBench.Shell
                 }
                 KsMapRows.Children.Add(panel);
             }
+            // The gaps between caps and rows are trailing margins; drop them on the outer edge so
+            // the board meets the card padding evenly on the right and bottom too.
+            foreach (StackPanel panel in KsMapRows.Children)
+                if (panel.Children.Count > 0) ((FrameworkElement)panel.Children[^1]).Margin = new Thickness(0);
+            if (KsMapRows.Children.Count > 0) ((FrameworkElement)KsMapRows.Children[^1]).Margin = new Thickness(0);
         }
     }
 }

@@ -1447,7 +1447,7 @@
         <Border Background="{DynamicResource OverlayWindowBrush}" BorderBrush="{DynamicResource OverlayEdgeBrush}" BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}">
         <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
           <Button Content="{DynamicResource AboutCloseGlyph}" Style="{StaticResource OverlayCloseButton}" Click="ShortcutsClose_Click" ToolTip="{DynamicResource Str_Content_Close}" AutomationProperties.Name="{DynamicResource Str_Content_Close}" HorizontalAlignment="Right" VerticalAlignment="Top" Panel.ZIndex="2" Width="{DynamicResource AboutCloseWidth}" Height="{DynamicResource AboutCloseHeight}" Margin="{DynamicResource AboutCloseMargin}"/>
-          <Border Padding="24,18,24,18">
+          <Border Padding="8">
             <Grid>
               <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
               <Grid Margin="0,0,0,10">
@@ -1461,7 +1461,7 @@
                 </StackPanel>
               </Grid>
               <ScrollViewer x:Name="KsListHostScroll" Grid.Row="1" MaxHeight="520" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
-                            Style="{StaticResource OverlayScrollViewer}" Margin="-24,0,-24,0" Padding="24,0,24,0"><StackPanel x:Name="KsListHost"/></ScrollViewer>
+                            Style="{StaticResource OverlayScrollViewer}" Margin="-8,0,-8,0" Padding="8,0,8,0"><StackPanel x:Name="KsListHost"/></ScrollViewer>
               <StackPanel x:Name="KsMapHost" Grid.Row="1" Visibility="Collapsed">
                 <StackPanel x:Name="KsLayerTabs" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10"/>
                 <Viewbox Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Center"><StackPanel x:Name="KsMapRows"/></Viewbox>
