@@ -13,6 +13,8 @@
 
 - Theme and language menu labels line up with their radio buttons and check boxes again, instead of sitting a pixel high.
 - The theme and language menus keep 8px between their rows and the card edge on every side, and the language menu's divider has the same gap on each side.
+- Confirm dialogs size to what they say, so a short prompt is narrower. The heading sits a few pixels higher, with more room above the checkboxes, and on 98SE the dialog is spaced like a Win98 message box.
+- On 98SE the theme and language menus pack their rows like Win98 menus, tab titles sit centered, and the window frame is the 4px Win98 sizing frame.
 - The Mourning theme highlights selections in its original peach with dark text again, instead of pink.
 - Invalid captures show a controlled error, and report exports preserve open evidence and existing files when saving fails or the destination changes.
 - Storage reviews refuse redirected roots and retain their directory boundary. Browser extension reviews disclose which account they cover.
