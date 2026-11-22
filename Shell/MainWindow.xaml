@@ -1440,18 +1440,25 @@
       </Grid>
     </Grid>
     <Border x:Name="ShortcutsOverlay" Grid.RowSpan="3" Panel.ZIndex="9000" Background="#B0000000" Visibility="Collapsed" MouseLeftButtonDown="ShortcutsOverlay_Click">
-      <Border x:Name="ShortcutCardGrid" Style="{StaticResource Panel}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="32" MaxWidth="640" MouseLeftButtonDown="ShortcutsCard_Click">
+      <Grid x:Name="ShortcutCardGrid" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="32" MaxWidth="640" MouseLeftButtonDown="ShortcutsCard_Click">
+        <Border Background="{DynamicResource OverlayWindowBrush}" CornerRadius="{DynamicResource PanelCornerRadius}" IsHitTestVisible="False">
+          <Border.Effect><DropShadowEffect Color="Black" BlurRadius="26" ShadowDepth="5" Direction="270" Opacity="{DynamicResource FlyoutShadowOpacity}"/></Border.Effect>
+        </Border>
+        <Border Background="{DynamicResource OverlayWindowBrush}" BorderBrush="{DynamicResource OverlayEdgeBrush}" BorderThickness="1" CornerRadius="{DynamicResource PanelCornerRadius}">
         <Grid><Border IsHitTestVisible="False" CornerRadius="{DynamicResource PanelCornerRadius}" Background="{DynamicResource GrainTileBrush}" Opacity="{DynamicResource GrainOpacity}"/>
-          <Border Padding="24">
+          <Border Padding="24,18,24,24">
             <Grid>
               <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
               <Grid Margin="0,0,0,16">
                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                 <TextBlock Text="{DynamicResource Str_Text_Keyboard_shortcuts}" FontSize="20" VerticalAlignment="Center" TextWrapping="Wrap"/>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12,0"><Button x:Name="KsViewList" Style="{StaticResource KsToggle}" Content="{DynamicResource Str_Shortcuts_List}" Click="KsViewList_Click" Margin="0,0,6,0"/><Button x:Name="KsViewKeyboard" Style="{StaticResource KsToggle}" Content="{DynamicResource Str_Shortcuts_Keyboard}" Click="KsViewKeyboard_Click"/></StackPanel>
-                <TextBlock Grid.Column="2" FontSize="11" MaxWidth="210" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="12,0,24,0">
-                  <Hyperlink NavigateUri="https://killerbench.net/help.html#workspace_themes-languages-and-shortcuts" RequestNavigate="AboutLink_Navigate" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None"><Run Text="{DynamicResource Str_KS_OnlineHelp}"/></Hyperlink>
-                </TextBlock>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                  <TextBlock FontSize="11" MaxWidth="190" TextWrapping="Wrap" TextAlignment="Center" VerticalAlignment="Center" Margin="12,0,12,0">
+                    <Hyperlink NavigateUri="https://killerbench.net/help.html#workspace_themes-languages-and-shortcuts" RequestNavigate="AboutLink_Navigate" Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None"><Run Text="{DynamicResource Str_KS_OnlineHelp}"/></Hyperlink>
+                  </TextBlock>
+                  <Button Content="{DynamicResource AboutCloseGlyph}" Style="{StaticResource OverlayCloseButton}" Click="ShortcutsClose_Click" ToolTip="{DynamicResource Str_Content_Close}" AutomationProperties.Name="{DynamicResource Str_Content_Close}" Width="{DynamicResource AboutCloseWidth}" Height="{DynamicResource AboutCloseHeight}" VerticalAlignment="Center"/>
+                </StackPanel>
               </Grid>
               <ScrollViewer x:Name="KsListHostScroll" Grid.Row="1" MaxHeight="520" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
                             Style="{StaticResource OverlayScrollViewer}" Margin="-24,0,-24,0" Padding="24,0,24,0"><StackPanel x:Name="KsListHost"/></ScrollViewer>
@@ -1459,11 +1466,11 @@
                 <StackPanel x:Name="KsLayerTabs" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10"/>
                 <Viewbox Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Center"><StackPanel x:Name="KsMapRows"/></Viewbox>
               </StackPanel>
-              <Button Grid.Row="2" Content="{DynamicResource Str_Content_Close}" Click="ShortcutsClose_Click" Margin="0,16,0,0"/>
             </Grid>
           </Border>
         </Grid>
-      </Border>
+        </Border>
+      </Grid>
     </Border>
   </Grid>
   </Border>
