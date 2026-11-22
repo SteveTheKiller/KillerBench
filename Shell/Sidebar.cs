@@ -7,7 +7,7 @@ namespace KillerBench.Shell;
 // One left column drives every page: Home, one row per area, History. WorkspaceNavigation stays the page model.
 public partial class MainWindow
 {
-    private const double SidebarFullWidth = 188;
+    private const double SidebarFullWidth = 156;
     private const double SidebarIconWidth = 44;
     private bool sidebarCompact;
 
@@ -84,7 +84,7 @@ public partial class MainWindow
         if (SidebarRail.Children.OfType<StackPanel>().FirstOrDefault() is { } rail)
             rail.Orientation = compact ? Orientation.Vertical : Orientation.Horizontal;
         foreach (var button in SidebarRail.Children.OfType<StackPanel>().SelectMany(panel => panel.Children.OfType<Button>()))
-            button.Margin = compact ? new Thickness(0, 0, 0, 12) : new Thickness(0, 0, 16, 0);
+            button.Margin = compact ? new Thickness(0, 0, 0, 12) : new Thickness(0, 0, 14, 0);
         SidebarRail.Margin = compact ? new Thickness(12, 0, 0, 4) : new Thickness(10, 0, 0, 10);
         if (LeftPanel.Child is DockPanel dock && dock.Children[0] is Border spacer)
             spacer.Height = compact ? 4 * 32 : 34;

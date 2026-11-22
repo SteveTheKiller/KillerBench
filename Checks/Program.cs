@@ -562,9 +562,9 @@ internal static class Program
                 "The app buttons sit inside the sidebar column, separate from the evidence divider.");
             RenderedTypographyChecks.VerifySubtitle(window);
             var windowDpi = VisualTreeHelper.GetDpi(window);
-            Require(!WithinPixelRounding(1025 + 1 / windowDpi.DpiScaleX, 1025, windowDpi.DpiScaleX),
+            Require(!WithinPixelRounding(940 + 1 / windowDpi.DpiScaleX, 940, windowDpi.DpiScaleX),
                 "Window geometry rejects a whole physical pixel of displacement");
-            Require(WithinPixelRounding(window.Width, 1025, windowDpi.DpiScaleX) &&
+            Require(WithinPixelRounding(window.Width, 940, windowDpi.DpiScaleX) &&
                 window.Height >= window.MinHeight && window.Height < 700 && window.MinWidth == 800 && window.MinHeight == 500 &&
                 window.SizeToContent == SizeToContent.Manual,
                 $"Workbench window keeps its family window geometry within native pixel rounding: {window.Width:R} x {window.Height:R}, minimum {window.MinWidth:R} x {window.MinHeight:R}, {window.SizeToContent}, DPI {windowDpi.DpiScaleX:R}.");
@@ -1447,7 +1447,7 @@ internal static class Program
             setThirdPartyResult.Invoke(window, [null]);
             updateSnapshotField.SetValue(window, null);
             ((CheckBox)window.FindName("UpdateDownloadedOnly")).IsChecked = false;
-            Require(window.Width > window.Height && window.Width == 1025 && window.Height < 700,
+            Require(window.Width > window.Height && window.Width == 940 && window.Height < 700,
                 "Workbench opens in a landscape layout fitted to the system map, without a blank band beneath it");
             window.WindowStartupLocation = WindowStartupLocation.Manual;
             window.ShowActivated = false;

@@ -6,7 +6,7 @@
         xmlns:workflows="clr-namespace:KillerBench.Engine.Workflows;assembly=KillerBench.Engine"
         xmlns:security="clr-namespace:KillerBench.Engine.Security;assembly=KillerBench.Engine"
         xmlns:bitlocker="clr-namespace:KillerBench.Engine.BitLocker;assembly=KillerBench.Engine"
-        Title="KillerBench" Icon="/Assets/AppIcon.ico" Width="1025" Height="780" MinWidth="800" MinHeight="500"
+        Title="KillerBench" Icon="/Assets/AppIcon.ico" Width="940" Height="660" MinWidth="800" MinHeight="500"
         WindowStyle="None" ResizeMode="CanResize" SizeToContent="Manual" Background="{DynamicResource BackgroundBrush}"
         Foreground="{DynamicResource TextBrush}" FontFamily="{DynamicResource UiFont}" FontSize="12"
         TextOptions.TextFormattingMode="Display" TextOptions.TextRenderingMode="ClearType"
@@ -130,7 +130,7 @@
         <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="8"/><ColumnDefinition Width="3*" MinWidth="300"/><ColumnDefinition Width="0"/><ColumnDefinition Width="0"/></Grid.ColumnDefinitions>
         <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
         <!-- One left column: Home, every area, History, and the four app buttons pinned underneath. -->
-        <Border x:Name="LeftPanel" Grid.Column="0" Grid.RowSpan="2" Width="188" Background="{DynamicResource SidebarPaneBrush}">
+        <Border x:Name="LeftPanel" Grid.Column="0" Grid.RowSpan="2" Width="156" Background="{DynamicResource SidebarPaneBrush}">
           <DockPanel>
             <Border DockPanel.Dock="Bottom" Height="34"/>
             <Button x:Name="SidebarHistory" DockPanel.Dock="Bottom" Style="{StaticResource SideNavButton}" Click="OnSidebarHistory" AutomationProperties.Name="{DynamicResource Str_Workspace_History}" ToolTip="{DynamicResource Str_Workspace_History}" Margin="0,0,0,4">
