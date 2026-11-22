@@ -101,8 +101,20 @@ internal static class WorkspaceNavigationChecks
             double mapBottom = map.TranslatePoint(new Point(0, map.ActualHeight), scroll).Y;
             Require(scroll.ScrollableHeight < 1 && scroll.ActualHeight - mapBottom <= 24 && map.ActualHeight - tower.Bottom <= 8,
                 "The machine stands on the pane's floor with no empty band under it. Tower bottom " + tower.Bottom + " of " + map.ActualHeight);
-            Require(Find<TextBlock>(window, "OverviewDetail") is { IsVisible: true } detailLine && detailLine.Text.Length > 1,
-                "Before any check, the score card carries the map instruction instead of an empty line.");
+            Require(Find<TextBlock>(window, "SymptomHint").IsVisible && !Find<TextBlock>(window, "OverviewDetail").IsVisible && !Find<TextBlock>(window, "OverviewHeadline").IsVisible,
+                "Before any check, Home shows the question and one hint line, never the hint twice.");
+            // The header wraps inside the strip above the monitor; no text runs under the tower at any width.
+            foreach (var (narrowWidth, narrowHeight) in new[] { (1025d, 560d), (1280d, 1000d) })
+            {
+                window.Width = narrowWidth;
+                window.Height = narrowHeight;
+                Settle(window);
+                var heroText = Find<FrameworkElement>(window, "OverviewHero");
+                Rect heroBox = heroText.TransformToVisual(drawn).TransformBounds(new Rect(heroText.RenderSize));
+                Rect spotBox = spot.TransformToVisual(drawn).TransformBounds(new Rect(spot.RenderSize));
+                Require(heroBox.Right <= drawn.TowerRect.Left + 1 && heroBox.Right <= spotBox.Right + 1 && heroBox.Bottom <= spotBox.Bottom + 1,
+                    $"At {narrowWidth}x{narrowHeight} the header fits its strip left of the tower. Header {heroBox}, strip {spotBox}, tower {drawn.TowerRect}");
+            }
             window.Width = 1025;
             window.Height = 780;
             Settle(window);

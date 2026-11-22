@@ -212,11 +212,11 @@
                 <Grid>
                   <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                   <Viewbox x:Name="OverviewGaugeSpot" Width="96" Height="96" VerticalAlignment="Top" Margin="0,0,16,0">
-                    <Grid Width="120" Height="120">
+                    <Grid Width="96" Height="96">
                       <icons:CoverageGauge x:Name="OverviewGauge" TrackBrush="{DynamicResource PaneBorderBrush}" CoverageBrush="{DynamicResource PrimaryBrush}" ToneBrush="{DynamicResource PaneBorderBrush}" IsHitTestVisible="False"/>
                       <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock x:Name="OverviewPercent" Text="0%" FontFamily="{DynamicResource HeadingFont}" FontSize="26" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                        <TextBlock Text="{DynamicResource Str_Overview_Checked}" FontSize="11" Foreground="{DynamicResource MutedTextBrush}" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="OverviewPercent" Text="0%" FontFamily="{DynamicResource HeadingFont}" FontSize="24" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource Str_Overview_Checked}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" HorizontalAlignment="Center"/>
                       </StackPanel>
                     </Grid>
                   </Viewbox>
@@ -224,8 +224,8 @@
                     <!-- Home asks what's wrong; the machine below is the answer. Each problem part runs its check when clicked. -->
                     <TextBlock x:Name="SymptomQuestion" Text="{DynamicResource Str_Guided_Title}" FontFamily="{DynamicResource HeadingFont}" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap"/>
                     <TextBlock x:Name="SymptomHint" Text="{DynamicResource Str_Workspace_MapHint}" FontSize="14" TextWrapping="Wrap" Margin="0,2,0,8"/>
-                    <TextBlock x:Name="OverviewHeadline" Text="{DynamicResource Str_Workspace_SystemMap}" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap"/>
-                    <TextBlock x:Name="OverviewDetail" Text="{DynamicResource Str_Workspace_MapHint}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,2,0,6"/>
+                    <TextBlock x:Name="OverviewHeadline" Visibility="Collapsed" Text="{DynamicResource Str_Workspace_SystemMap}" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="OverviewDetail" Visibility="Collapsed" Text="{DynamicResource Str_Workspace_MapHint}" FontSize="12" Foreground="{DynamicResource MutedTextBrush}" TextWrapping="Wrap" Margin="0,2,0,6"/>
                     <WrapPanel x:Name="OverviewChips" Visibility="Collapsed"/>
                     <!-- The problem list stays for the search and shortcut paths; on Home the machine parts are the buttons. -->
                     <ItemsControl x:Name="SymptomChips" Visibility="Collapsed" AutomationProperties.Name="{DynamicResource Str_Guided_Title}">

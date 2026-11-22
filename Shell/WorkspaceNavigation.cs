@@ -135,6 +135,8 @@ public partial class MainWindow
         SystemAreas.ItemContainerGenerator.StatusChanged += (_, _) => LabelMachineParts();        OverviewScroll.LayoutUpdated += (_, _) => FitSystemMap();
     }
 
+    private object? heroFitKey;
+
     private void FitSystemMap()
     {
         if (!OverviewPage.IsVisible || OverviewScroll.ViewportHeight <= 0) return;
@@ -149,6 +151,24 @@ public partial class MainWindow
             double width = Math.Max(300, strip.Width);
             if (double.IsNaN(OverviewHeroSpot.Width) || Math.Abs(OverviewHeroSpot.Width - width) > 0.5) OverviewHeroSpot.Width = width;
             OverviewHeroSpot.HorizontalAlignment = HorizontalAlignment.Left;
+            // The Viewbox measures its child at unlimited width, so the header is wrapped to a chosen width: the largest
+            // growth whose wrapped height still fits the strip. Text never runs under the tower and never leaves a band above.
+            // Only refit when the strip or the header's content changed; re-fitting every pass would loop the layout.
+            var fitKey = (Math.Round(width), Math.Round(strip.Height), SymptomHint.Visibility, OverviewHeadline.Text, OverviewDetail.Text, OverviewChips.Children.Count, SymptomQuestion.Text);
+            if (!Equals(fitKey, heroFitKey))
+            {
+                heroFitKey = fitKey;
+                double grow = 1;
+                OverviewHero.MaxWidth = double.PositiveInfinity;
+                for (double step = 1.05; step <= 1.75; step += 0.05)
+                {
+                    OverviewHero.Measure(new Size(width / step, double.PositiveInfinity));
+                    if (OverviewHero.DesiredSize.Height * step > strip.Height - 12) break;
+                    grow = step;
+                }
+                OverviewHero.MaxWidth = width / grow;
+                OverviewHero.Measure(new Size(width / grow, double.PositiveInfinity));
+            }
             // The header's own 100% height: it grows to fill the strip, and only a header taller than the strip moves the machine down.
             double natural = OverviewHero.DesiredSize.Height;
             overflow = Math.Max(0, natural + 12 - strip.Height);
@@ -300,14 +320,13 @@ public partial class MainWindow
         });
         if (score.Total == 0)
         {
-            OverviewHeadline.SetResourceReference(TextBlock.TextProperty, "Str_Workspace_SystemMap");
-            // Hidden, not collapsed: the hero keeps its height so the map doesn't jump once a scan fills the line.
-            // Before any check the card says what to do with the map beside it, in the space the coverage line will use.
-            OverviewDetail.SetResourceReference(TextBlock.TextProperty, "Str_Workspace_MapHint");
-            OverviewDetail.Visibility = Visibility.Visible;
-            OverviewChips.Visibility = Visibility.Collapsed;
+            // Before any check the question and its one hint line are the whole header; the result lines replace the hint later.
+            SymptomHint.Visibility = Visibility.Visible;
+            OverviewHeadline.Visibility = OverviewDetail.Visibility = OverviewChips.Visibility = Visibility.Collapsed;
             return;
         }
+        SymptomHint.Visibility = Visibility.Collapsed;
+        OverviewHeadline.Visibility = Visibility.Visible;
         OverviewHeadline.Text = score.NeedsAttention > 0 ? Controls.LocalizedText.Format("Str_Overview_HeadlineReview", score.NeedsAttention)
             : Controls.LocalizedText.Get(score.Unknown > 0 ? "Str_Overview_HeadlineIncomplete" : "Str_Overview_HeadlineClear");
         OverviewDetail.Text = Controls.LocalizedText.Format("Str_Overview_Coverage", score.Ran, score.Total);
